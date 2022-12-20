@@ -1,0 +1,16 @@
+{
+	"name": "cypher-lsp-server",
+	"description": "Cypher LSP's server",
+	"author": "ncordon",
+	"license": "Apache",
+	"version": "0.0.1",
+	"dependencies": {
+		"antlr4-c3": "^2.2.1",
+		"antlr4ts": "^0.5.0-alpha.4",
+		"vscode-languageserver": "^7.0.0",
+		"vscode-languageserver-textdocument": "^1.0.4"
+	},
+	"scripts": {
+		"antlr4ts": "antlr4ts -visitor src/antlr/Cypher.g4"
+	}
+}

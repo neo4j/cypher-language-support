@@ -1,0 +1,42 @@
+{
+	"name": "cypher-lsp",
+	"description": "Cypher LSP",
+	"license": "Apache",
+	"version": "1.0.0",
+	"categories": [],
+	"engines": {
+		"vscode": "^1.74.0"
+	},
+	"activationEvents": [
+		"onLanguage:cypher"
+	],
+	"main": "./client/out/extension",
+	"contributes": {
+		"languages": [
+			{
+				"id": "cypher",
+				"extensions": [
+					".cypher"
+				],
+				"aliases": [
+					"Cypher"
+				]
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+	},
+	"devDependencies": {
+		"@types/mocha": "^9.1.0",
+		"@types/node": "^16.11.7",
+		"mocha": "^9.2.1",
+		"typescript": "^4.8.4"
+	},
+	"dependencies": {
+		"opentelemetry": "^0.1.0"
+	}
+}

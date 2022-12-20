@@ -1,0 +1,8 @@
+out
+node_modules
+client/server
+.vscode-test
+*.DS_Store
+*.interp
+*.tokens
+server/src/antlr/*.ts
