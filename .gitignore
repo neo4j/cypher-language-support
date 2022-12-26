@@ -6,3 +6,4 @@ client/server
 *.interp
 *.tokens
 server/src/antlr/*.ts
+server/src/antlr/.antlr/*
