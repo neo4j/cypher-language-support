@@ -32,7 +32,6 @@ import {
 	CypherParser
 } from './antlr/CypherParser';
 
-
 // ************************************************************
 // Part of the code that does the autocompletion
 // ************************************************************
@@ -48,22 +47,21 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
 		const inputStream = new ANTLRInputStream(lineText);
 		const lexer = new CypherLexer(inputStream);
 		const tokenStream = new CommonTokenStream(lexer);
-		
 		const parser = new CypherParser(tokenStream);
-
-		// FIXME: What do I want this for?
 		const tree = parser.oC_Cypher();
-
 		const codeCompletion = new CodeCompletionCore(parser);
-		const candidates = codeCompletion.collectCandidates(0);
+		const caretIndex = tree.stop?.tokenIndex ?? 0;
+
+		// TODO Can this be extracted for more performance?
 		const allPosibleTokens = new Map;
 		lexer.getTokenTypeMap().forEach(function(value, key, map) {
 			allPosibleTokens.set(map.get(key), key);
 		});
+
+		const candidates = codeCompletion.collectCandidates(caretIndex as number);
 		const tokens = candidates.tokens.keys();
 		const tokenCandidates = Array.from(tokens).map(t => allPosibleTokens.get(t));
 		
-
 		return tokenCandidates.map(t => {
 			return {
 				label: t,
