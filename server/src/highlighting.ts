@@ -129,10 +129,18 @@ export class DocumentSemanticTokensProvider implements DocumentSemanticTokensPro
 		const tree = parser.oC_Cypher();
 
 		const builder = new SemanticTokensBuilder();
-		const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => a.startCharacter - b.startCharacter)
-		
+
 		// When we push to the builder, tokens need to be sorted in ascending starting position
-		// i.e. as we find them when we read them from left to right in the line
+		// i.e. as we find them when we read them from left to right, and from top to bottom in the file
+		const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => {
+			const lineDiff = (a.line - b.line)
+			if (lineDiff != 0) {
+				return lineDiff
+			} else {
+				return a.startCharacter - b.startCharacter
+			}
+		})
+		
 		sortedTokens.forEach((token) => {
 			// Nacho: FIXME The 0 index for the token modifiers at the end is hardcoded
 			const index = this._encodeTokenType(token.tokenType)
@@ -156,7 +164,7 @@ class SyntaxHighlighter implements CypherListener {
 		if (token.startIndex >= 0) {
 			this.allTokens.push({
 				line: token.line - 1,
-				startCharacter: token.startIndex,
+				startCharacter: token.charPositionInLine,
 				length: token.stopIndex - token.startIndex + 1,
 				tokenType: tokenType
 			});
