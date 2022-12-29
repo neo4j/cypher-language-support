@@ -28,7 +28,7 @@
 grammar Cypher;
 
 oC_Cypher
-      :  SP? oC_Statement ( SP? ';' )? SP? EOF ;
+      : oC_Statement;
 
 oC_Statement
          :  oC_Query ;
@@ -51,17 +51,11 @@ UNION : ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ;
 ALL : ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
 oC_SingleQuery
-           :  oC_SinglePartQuery
-               | oC_MultiPartQuery
-               ;
+           :  oC_SinglePartQuery;
 
 oC_SinglePartQuery
                :  ( ( oC_ReadingClause SP? )* oC_Return )
-                   | ( ( oC_ReadingClause SP? )* oC_UpdatingClause ( SP? oC_UpdatingClause )* ( SP? oC_Return )? )
                    ;
-
-oC_MultiPartQuery
-              :  ( ( oC_ReadingClause SP? )* ( oC_UpdatingClause SP? )* oC_With SP? )+ oC_SinglePartQuery ;
 
 oC_UpdatingClause
               :  oC_Create

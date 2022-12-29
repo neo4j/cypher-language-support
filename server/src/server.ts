@@ -85,7 +85,6 @@ connection.onInitialized(() => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
 	const textDocument = change.document
-	semanticTokensProvider.provideDocumentSemanticTokens(textDocument);
 	const diagnostics = validateTextDocument(textDocument);
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: diagnostics });
 

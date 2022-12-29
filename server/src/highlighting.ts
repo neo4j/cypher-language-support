@@ -19,15 +19,26 @@ import {
 	CommonToken,
 	RecognitionException, 
 	Recognizer, 
-	Token
+	Token,
+	DefaultErrorStrategy,
+	Parser
 } from "antlr4ts";
+
+import { 
+	ParserATNSimulator
+} from "antlr4ts/atn/ParserATNSimulator"
 
 import { 
 	ParseTreeListener
 } from "antlr4ts/tree/ParseTreeListener"
 
+
 import { 
-	CypherLexer 
+	IntervalSet
+} from "antlr4ts/misc"
+
+import { 
+	CypherLexer
 } from './antlr/CypherLexer';
 
 import { 
@@ -44,10 +55,28 @@ import {
 import {
 	CypherListener
 } from './antlr/CypherListener'
+import { PredictionMode } from 'antlr4ts/atn/PredictionMode';
+import { debug } from 'console';
 
 
 const tokenTypesMap = new Map<string, number>();
 const tokenModifiersMap = new Map<string, number>();
+
+export class CompletionErrorStrategy extends DefaultErrorStrategy {
+	protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
+		const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
+	
+		if (recognizer.ruleContext.ruleIndex === CypherParser.RULE_oC_SingleQuery) {
+		  const followSet = new IntervalSet();
+		  followSet.add(CypherLexer.RETURN);
+
+		  const intersection = defaultRecoverySet.and(followSet);
+		  if (intersection.size > 0) return intersection;
+		}
+	
+		return defaultRecoverySet;
+	  }
+}
 
 // ************************************************************
 // Part of the code that does the highlighting
@@ -94,7 +123,7 @@ export class DocumentSemanticTokensProvider implements DocumentSemanticTokensPro
 		const tokenStream = new CommonTokenStream(lexer);
 		
 		const parser = new CypherParser(tokenStream);
-		
+		//parser.errorHandler = new CompletionErrorStrategy()
 		const syntaxHighliter = new SyntaxHighlighter();
 		parser.addParseListener(syntaxHighliter as ParseTreeListener);
 		const tree = parser.oC_Cypher();
@@ -123,24 +152,22 @@ export class DocumentSemanticTokensProvider implements DocumentSemanticTokensPro
 class SyntaxHighlighter implements CypherListener {
 	allTokens: IParsedToken[] = []
 	
+	private addToken(token: Token, tokenType: string) {
+		if (token.startIndex >= 0) {
+			this.allTokens.push({
+				line: token.line - 1,
+				startCharacter: token.startIndex,
+				length: token.stopIndex - token.startIndex + 1,
+				tokenType: tokenType
+			});
+		}
+	}
 	enterOC_LabelName(ctx: OC_LabelNameContext) {
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "typeParameter"
-		});
+		this.addToken(ctx.start, "typeParameter")
 	}
 
 	enterOC_Return(ctx: OC_ReturnContext) {
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "keyword"
-		});
+		this.addToken(ctx.start, "keyword")
 	}
 	
 	exitOC_Match(ctx: OC_MatchContext) {
@@ -149,63 +176,29 @@ class SyntaxHighlighter implements CypherListener {
 
 		if (opt) {
 			const optToken = opt.symbol
-			this.allTokens.push({
-				line: optToken.line - 1,
-				startCharacter: optToken.startIndex,
-				length: optToken.stopIndex - optToken.startIndex + 1,
-				tokenType: "decorator"
-			});
+			this.addToken(optToken, "decorator")
 		}
 
 		const matchToken = match.symbol
-		this.allTokens.push({
-			line: matchToken.line - 1,
-			startCharacter: matchToken.startIndex,
-			length: matchToken.stopIndex - matchToken.startIndex + 1,
-			tokenType: "method"
-		});
+		this.addToken(matchToken, "method")
 	}
 
 	enterOC_Variable(ctx: OC_VariableContext) {
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "variable"
-		});
+		this.addToken(ctx.start, "variable")
 	}
 
 	enterOC_Where(ctx: OC_WhereContext) {
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "keyword"
-		});
+		this.addToken(ctx.start, "keyword")
 	}
 
 	enterOC_PropertyKeyName(ctx: OC_PropertyKeyNameContext) {
 		// FIXME Is this correct in this case for all cases, not just simple properties?
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "property"
-		});
+		this.addToken(ctx.start, "property")
 	}
 
 	
 	enterOC_Literal(ctx: OC_LiteralContext) {
-		const token = ctx.start
-		this.allTokens.push({
-			line: token.line - 1,
-			startCharacter: token.startIndex,
-			length: token.stopIndex - token.startIndex + 1,
-			tokenType: "string"
-		});
+		this.addToken(ctx.start, "string")
 	}
 }
 
@@ -246,6 +239,7 @@ export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
 	const tokenStream = new CommonTokenStream(lexer);
 	
 	const parser = new CypherParser(tokenStream);
+	// parser.errorHandler = new CompletionErrorStrategy()
 	const errorListener = new ErrorListener(textDocument);
 	parser.addErrorListener(errorListener);
 	const tree = parser.oC_Cypher();
