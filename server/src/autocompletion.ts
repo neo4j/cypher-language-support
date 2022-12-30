@@ -40,7 +40,9 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
 		const d = documents.get(textDocumentPosition.textDocument.uri);
 		const position: Position = textDocumentPosition.position;
 		const range: Range = {
-			start: Position.create(position.line, 0),
+			// TODO Nacho: We are parsing from the begining of the file. 
+			// Do we need to parse from the begining of the current query?
+			start: Position.create(0, 0),
 			end: position
 		};
 		const lineText: string = d?.getText(range) ?? '';
