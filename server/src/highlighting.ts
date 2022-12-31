@@ -55,8 +55,6 @@ import {
 import {
 	CypherListener
 } from './antlr/CypherListener'
-import { PredictionMode } from 'antlr4ts/atn/PredictionMode';
-import { debug } from 'console';
 
 
 const tokenTypesMap = new Map<string, number>();
@@ -241,8 +239,9 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 }
 
 export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
-	const lineText: string = textDocument.getText();
-	const inputStream = new ANTLRInputStream(lineText);
+	// Remove trailings EOF when we read the file
+	const wholeFileText: string = textDocument.getText().trimEnd();
+	const inputStream = new ANTLRInputStream(wholeFileText);
 	const lexer = new CypherLexer(inputStream);
 	const tokenStream = new CommonTokenStream(lexer);
 	

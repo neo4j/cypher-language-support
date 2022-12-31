@@ -28,7 +28,7 @@
 grammar Cypher;
 
 oC_Cypher
-      :  oC_Statement ;
+      : ( oC_Statement ';'? SP?)+;
 
 oC_Statement
          :  oC_Query ;
