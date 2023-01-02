@@ -28,10 +28,10 @@
 grammar Cypher;
 
 oC_Cypher
-      : ( oC_Statement ';'? SP?)+;
+      : ( oC_Statement SP? )+ ;
 
 oC_Statement
-         :  oC_Query ;
+         :  oC_Query ';'? ;
 
 oC_Query
      :  oC_RegularQuery
