@@ -1,17 +1,17 @@
 {
-	"name": "cypher-lsp-client",
-	"description": "Cypher LSP's client",
-	"author": "ncordon",
-	"license": "Apache",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.63.0"
-	},
-	"dependencies": {
-		"vscode-languageclient": "^7.0.0"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.63.0",
-		"@vscode/test-electron": "^2.1.2"
-	}
+  "name": "cypher-lsp-client",
+  "description": "Cypher LSP's client",
+  "author": "ncordon",
+  "license": "Apache",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.63.0",
+    "@vscode/test-electron": "^2.1.2"
+  }
 }

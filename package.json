@@ -1,63 +1,64 @@
 {
-	"name": "cypher-lsp",
-	"description": "Cypher LSP",
-	"license": "Apache",
-	"version": "1.0.0",
-	"categories": [],
-	"engines": {
-		"vscode": "^1.74.0"
-	},
-	"activationEvents": [
-		"onLanguage:cypher"
-	],
-	"main": "./client/out/extension",
-	"contributes": {
-		"languages": [
-			{
-				"id": "cypher",
-				"extensions": [
-					".cypher"
-				],
-				"aliases": [
-					"Cypher"
-				]
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Configuration properties",
-			"properties": {
-				"cypherLSP.trace.server": {
-					"scope": "window",
-					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
-					"default": "verbose",
-					"description": "Traces the communication between VS Code and the language server."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -b",
-		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd .."
-	},
-	"devDependencies": {
-		"@types/mocha": "^9.1.0",
-		"@types/node": "^16.11.7",
-		"@typescript-eslint/eslint-plugin": "^5.48.0",
-		"mocha": "^9.2.1",
-		"prettier-plugin-organize-imports": "^3.2.1",
-		"typescript": "^4.8.4"
-	},
-	"dependencies": {
-		"eslint-config-prettier": "^8.6.0",
-		"opentelemetry": "^0.1.0",
-		"prettier": "^2.8.1"
-	}
+  "name": "cypher-lsp",
+  "description": "Cypher LSP",
+  "license": "Apache",
+  "version": "1.0.0",
+  "categories": [],
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "activationEvents": [
+    "onLanguage:cypher"
+  ],
+  "main": "./client/out/extension",
+  "contributes": {
+    "languages": [
+      {
+        "id": "cypher",
+        "extensions": [
+          ".cypher"
+        ],
+        "aliases": [
+          "Cypher"
+        ]
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Configuration properties",
+      "properties": {
+        "cypherLSP.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "verbose",
+          "description": "Traces the communication between VS Code and the language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "gen-parser": "cd server && npm run gen-parser && cd ..",
+    "compile": "npm run gen-parser && tsc -b",
+    "watch": "tsc -b -w",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "mocha": "^9.2.1",
+    "prettier-plugin-organize-imports": "^3.2.1",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "eslint-config-prettier": "^8.6.0",
+    "opentelemetry": "^0.1.0",
+    "prettier": "^2.8.1"
+  }
 }
