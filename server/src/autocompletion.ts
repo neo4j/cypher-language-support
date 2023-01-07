@@ -19,14 +19,6 @@ import { CypherParser, OC_LabelNameContext } from './antlr/CypherParser';
 
 import { auth, driver, session } from 'neo4j-driver';
 
-function createParser(text: string) {
-  const inputStream = new ANTLRInputStream(text);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  return parser;
-}
-
 import { CypherListener } from './antlr/CypherListener';
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
@@ -70,41 +62,39 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
       start: Position.create(0, 0),
       end: position,
     };
-    const wholeFileText: string = d?.getText(range) ?? '';
-    const children = createParser(wholeFileText).oC_Cypher().children;
-    const node = children?.at(children.length - 1);
-
-    // TODO Fix me, this shouldn't be fired everytime but periodically
+    const wholeFileText: string = d?.getText(range).trim() ?? '';
+    const inputStream = new ANTLRInputStream(wholeFileText);
+    const lexer = new CypherLexer(inputStream);
+    const tokenStream = new CommonTokenStream(lexer);
+    const wholeFileParser = new CypherParser(tokenStream);
     updateLabels();
 
-    if (node) {
-      const statementText: string = node?.text;
-      const labelDectector = new LabelDectector();
-      const statementParser = createParser(statementText);
-      statementParser.addParseListener(labelDectector as ParseTreeListener);
-      const tree = statementParser.oC_Cypher();
+    const labelDetector = new LabelDectector();
+    wholeFileParser.addParseListener(labelDetector as ParseTreeListener);
+    const tree = wholeFileParser.oC_Cypher();
 
-      // If we are parsing a label, offer labels from the database as autocompletion
-      const parsedLabels = labelDectector.parsedLabels;
-      let lastParsedLabel: string | undefined;
+    // If we are parsing a label, offer labels from the database as autocompletion
+    const parsedLabels = labelDetector.parsedLabels;
+    let lastParsedLabel: string | undefined;
 
-      if (parsedLabels.length > 0) {
-        lastParsedLabel = parsedLabels.at(parsedLabels.length - 1);
-      }
-      if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
-        return labels.map((t) => {
-          return {
-            label: t,
-            kind: CompletionItemKind.Keyword,
-          };
-        });
-      } else {
-        const codeCompletion = new CodeCompletionCore(statementParser);
-        const caretIndex = tree.stop?.tokenIndex ?? 0;
+    if (parsedLabels.length > 0) {
+      lastParsedLabel = parsedLabels.at(parsedLabels.length - 1);
+    }
+    if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
+      return labels.map((t) => {
+        return {
+          label: t,
+          kind: CompletionItemKind.Keyword,
+        };
+      });
+    } else {
+      const codeCompletion = new CodeCompletionCore(wholeFileParser);
+      const caretIndex = tokenStream.size - 2;
 
+      if (caretIndex >= 0) {
         // TODO Can this be extracted for more performance?
         const allPosibleTokens = new Map();
-        statementParser.getTokenTypeMap().forEach(function (value, key, map) {
+        wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
           allPosibleTokens.set(map.get(key), key);
         });
         const candidates = codeCompletion.collectCandidates(
@@ -121,9 +111,9 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
             kind: CompletionItemKind.Keyword,
           };
         });
+      } else {
+        return [];
       }
-    } else {
-      return [];
     }
   };
 }
