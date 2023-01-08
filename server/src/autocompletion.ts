@@ -11,7 +11,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { CodeCompletionCore } from 'antlr4-c3';
 
-import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
+import { CharStreams, CommonTokenStream } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
@@ -137,7 +137,7 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
       end: position,
     };
     const wholeFileText: string = d?.getText(range).trim() ?? '';
-    const inputStream = new ANTLRInputStream(wholeFileText);
+    const inputStream = CharStreams.fromString(wholeFileText);
     const lexer = new CypherLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const wholeFileParser = new CypherParser(tokenStream);

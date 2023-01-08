@@ -11,7 +11,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
   ANTLRErrorListener,
-  ANTLRInputStream,
+  CharStreams,
   CommonToken,
   CommonTokenStream,
   DefaultErrorStrategy,
@@ -126,7 +126,7 @@ export class DocumentSemanticTokensProvider
     textDocument: TextDocument,
   ): Promise<SemanticTokens> {
     const lineText: string = textDocument.getText();
-    const inputStream = new ANTLRInputStream(lineText);
+    const inputStream = CharStreams.fromString(lineText);
     const lexer = new CypherLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -256,7 +256,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
 export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
   // Remove trailings EOF when we read the file
   const wholeFileText: string = textDocument.getText().trimEnd();
-  const inputStream = new ANTLRInputStream(wholeFileText);
+  const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
 
