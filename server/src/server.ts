@@ -18,6 +18,7 @@ import {
 } from './highlighting';
 
 import { doAutoCompletion } from './autocompletion';
+import { doSignatureHelp } from './signatureHelp';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -51,6 +52,9 @@ connection.onInitialize(() => {
         full: {
           delta: false,
         },
+      },
+      signatureHelpProvider: {
+        triggerCharacters: ['(', ','],
       },
     },
   };
@@ -95,6 +99,8 @@ connection.languages.semanticTokens.on((params) => {
 
   return semanticTokensProvider.provideDocumentSemanticTokens(document);
 });
+
+connection.onSignatureHelp(doSignatureHelp(documents));
 
 connection.onCompletion(doAutoCompletion(documents));
 documents.listen(connection);

@@ -426,7 +426,10 @@ oC_ExistentialSubquery
 EXISTS : ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' ) ;
 
 oC_ExplicitProcedureInvocation
-                           :  oC_ProcedureName SP? '(' SP? ( oC_Expression SP? ( ',' SP? oC_Expression SP? )* )? ')' ;
+                           :  oC_ProcedureName SP? '(' ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
+
+oc_ProcedureNameArg
+                :  SP? oC_Expression SP? ;
 
 oC_ImplicitProcedureInvocation
                            :  oC_ProcedureName ;
