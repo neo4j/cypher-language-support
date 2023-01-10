@@ -2,6 +2,22 @@
 
 LSP for Neo4j's Cypher query language
 
+## Try out only the parser
+
+To generate the parser only:
+
+```
+npm run gen-parser
+```
+
+Run a query with
+
+```
+antlr4-parse server/src/antlr/Cypher.g4 oC_Cypher -gui
+[Write query][Enter]
+[Ctrl-D]
+```
+
 ## Testing it out
 
 To start a database:

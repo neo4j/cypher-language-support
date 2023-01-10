@@ -31,41 +31,18 @@ const neo4j = driver(
   auth.basic('neo4j', 'pass12345'),
 );
 
-interface MethodInfo {
-  description: string;
-  parameters: ParameterInfo[];
-  returnType: string;
+const procedureSignatures: Map<string, SignatureInformation> = new Map();
+
+function getParamsInfo(param: string): ParameterInformation {
+  // FIXME: There are cases where this doesn't work:
+  // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
+  const [headerInfo, paramType] = param.split(' :: ');
+  const [paramName, defaultValue] = headerInfo.split(' = ');
+
+  return ParameterInformation.create(paramName, param);
 }
 
-interface ParameterInfo {
-  name: string;
-  type: string;
-  mandatory: boolean;
-  defaultValue: string | undefined;
-}
-
-const procedureNames: Map<string, MethodInfo> = new Map();
-
-function getParamsInfo(params: string[]): ParameterInfo[] {
-  return params.map((p: string) => {
-    // FIXME: There are cases where this doesn't work:
-    // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
-    const [headerInfo, paramType] = p.split(' :: ');
-    const [paramName, defaultValue] = headerInfo.split(' = ');
-    const mandatory = !(paramType?.endsWith('?') ?? false);
-
-    const sanitisedType = paramType ? paramType.replace(/\?$/, '') : paramType;
-
-    return {
-      name: paramName,
-      type: sanitisedType,
-      mandatory: mandatory,
-      defaultValue: defaultValue,
-    };
-  });
-}
-
-function updateProcedureNames() {
+function updateProcedureCache() {
   const s = neo4j.session({ defaultAccessMode: session.WRITE });
   const tx = s.beginTransaction();
   const resultPromise = tx.run(
@@ -74,13 +51,13 @@ function updateProcedureNames() {
 
   resultPromise.then((result) => {
     result.records.map((record) => {
-      const name = record.get('name');
+      const procedureName = record.get('name');
       const signature = record.get('signature');
       const description = record.get('description');
 
       const [header, returnType] = signature.split(') :: ');
       const paramsString = header
-        .replace(name, '')
+        .replace(procedureName, '')
         .replace('(', '')
         .replace(')', '')
         .trim();
@@ -88,25 +65,39 @@ function updateProcedureNames() {
       const params: string[] =
         paramsString.length > 0 ? paramsString.split(', ') : [];
 
-      procedureNames.set(name, {
-        description: description,
-        parameters: getParamsInfo(params),
-        returnType: returnType,
-      });
+      procedureSignatures.set(
+        procedureName,
+        SignatureInformation.create(
+          procedureName,
+          description,
+          ...params.map(getParamsInfo),
+        ),
+      );
     });
   });
 }
 
 class CallProcedureDetector implements CypherListener {
-  parsedProcedureNames: string[] = [];
+  parsedProcedureName = '';
   numProcedureArgs = 0;
 
   exitOC_ProcedureName(ctx: OC_ProcedureNameContext) {
-    this.parsedProcedureNames.push(ctx.text);
+    this.parsedProcedureName = ctx.text;
   }
 
   exitOc_ProcedureNameArg(ctx: Oc_ProcedureNameArgContext) {
     this.numProcedureArgs++;
+  }
+}
+
+function decreasePosition(position: Position) {
+  const c = position.character - 1;
+  const l = position.line;
+
+  if (c > 0) {
+    return Position.create(l, c);
+  } else {
+    return Position.create(l - 1, -1);
   }
 }
 
@@ -115,49 +106,64 @@ class CallProcedureDetector implements CypherListener {
 // ************************************************************
 export function doSignatureHelp(documents: TextDocuments<TextDocument>) {
   return (params: SignatureHelpParams) => {
-    const d = documents.get(params.textDocument.uri);
-    const position = params.position;
-    const range: Range = {
-      // TODO Nacho: We are parsing from the begining of the file.
-      // Do we need to parse from the begining of the current query?
-      start: Position.create(0, 0),
-      end: position,
-    };
-    const wholeFileText: string = d?.getText(range).trim() ?? '';
-    const argOffset = wholeFileText.endsWith(',') ? 0 : -1;
-    const text = wholeFileText.replace(/,$/, '') + ')';
-    const inputStream = CharStreams.fromString(text);
-    const lexer = new CypherLexer(inputStream);
-    const tokenStream = new CommonTokenStream(lexer);
-    const wholeFileParser = new CypherParser(tokenStream);
+    const endOfTriggerHelp = params.context?.triggerCharacter == ')';
 
-    // Block to update cached labels, procedure names, etc
-    updateProcedureNames();
+    if (endOfTriggerHelp) {
+      const signatureHelp: SignatureHelp = {
+        signatures: [],
+        activeSignature: null,
+        activeParameter: null,
+      };
 
-    const procedureNameDetector = new CallProcedureDetector();
-    wholeFileParser.addParseListener(
-      procedureNameDetector as ParseTreeListener,
-    );
+      return signatureHelp;
+    } else {
+      const d = documents.get(params.textDocument.uri);
+      let procedureName: string | undefined = undefined;
+      let numProcedureArgs = 0;
+      let position = params.position;
+      let argOffset = 0;
+      // Block to update cached labels, procedure names, etc
+      updateProcedureCache();
 
-    // FIXME: half parsed arguments
-    // CALL method([1,2
-    const tree = wholeFileParser.oC_Cypher();
+      // Backtrack in the line until we've managed to parse a procedure name
+      while (!procedureName) {
+        const range: Range = {
+          // TODO Nacho: We are parsing from the begining of the file.
+          // Do we need to parse from the begining of the current query?
+          start: Position.create(0, 0),
+          end: position,
+        };
+        const wholeFileText: string = d?.getText(range).trim() ?? '';
+        argOffset = wholeFileText.endsWith(',') ? 0 : -1;
+        const text = wholeFileText.replace(/,$/, '') + ')';
+        const inputStream = CharStreams.fromString(text);
+        const lexer = new CypherLexer(inputStream);
+        const tokenStream = new CommonTokenStream(lexer);
+        const wholeFileParser = new CypherParser(tokenStream);
 
-    const numProcedureArgs = procedureNameDetector.numProcedureArgs;
+        const procedureNameDetector = new CallProcedureDetector();
+        wholeFileParser.addParseListener(
+          procedureNameDetector as ParseTreeListener,
+        );
 
-    const signatureHelp: SignatureHelp = {
-      signatures: [
-        SignatureInformation.create(
-          'apoc.coll.zipToRows',
-          '',
-          ParameterInformation.create('list1', 'list1 :: LIST? OF ANY?'),
-          ParameterInformation.create('list2', 'list2 :: LIST? OF ANY?'),
-        ),
-      ],
-      activeSignature: 0,
-      activeParameter: numProcedureArgs + argOffset,
-    };
+        // FIXME: half parsed arguments
+        // CALL method([1,2
+        wholeFileParser.oC_Cypher();
 
-    return signatureHelp;
+        procedureName = procedureNameDetector.parsedProcedureName;
+        numProcedureArgs = procedureNameDetector.numProcedureArgs;
+        position = decreasePosition(position);
+      }
+
+      const procedure = procedureSignatures.get(procedureName);
+      const signatures = procedure ? [procedure] : [];
+
+      const signatureHelp: SignatureHelp = {
+        signatures: signatures,
+        activeSignature: procedure ? 0 : null,
+        activeParameter: Math.max(numProcedureArgs + argOffset, 0),
+      };
+      return signatureHelp;
+    }
   };
 }

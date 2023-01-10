@@ -54,7 +54,7 @@ connection.onInitialize(() => {
         },
       },
       signatureHelpProvider: {
-        triggerCharacters: ['(', ','],
+        triggerCharacters: ['(', ',', ')'],
       },
     },
   };
