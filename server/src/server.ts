@@ -18,6 +18,7 @@ import {
 } from './highlighting';
 
 import { doAutoCompletion } from './autocompletion';
+import { DbInfo } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
 
 const connection = createConnection(ProposedFeatures.all);
@@ -27,6 +28,8 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 const legend = new Legend();
 const semanticTokensProvider = new DocumentSemanticTokensProvider();
+
+const dbInfo = new DbInfo();
 
 documents.onDidClose(() => {
   console.log('closing document');
@@ -100,8 +103,8 @@ connection.languages.semanticTokens.on((params) => {
   return semanticTokensProvider.provideDocumentSemanticTokens(document);
 });
 
-connection.onSignatureHelp(doSignatureHelp(documents));
+connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
 
-connection.onCompletion(doAutoCompletion(documents));
+connection.onCompletion(doAutoCompletion(documents, dbInfo));
 documents.listen(connection);
 connection.listen();

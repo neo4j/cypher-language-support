@@ -21,95 +21,10 @@ import {
   OC_ProcedureNameContext,
 } from './antlr/CypherParser';
 
-import { auth, driver, session } from 'neo4j-driver';
-
 import { CypherListener } from './antlr/CypherListener';
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
-
-const neo4j = driver(
-  'neo4j://localhost',
-  // TODO Nacho This is hardcoded
-  auth.basic('neo4j', 'pass12345'),
-);
-
-interface MethodInfo {
-  description: string;
-  parameters: ParameterInfo[];
-  returnType: string;
-}
-
-interface ParameterInfo {
-  name: string;
-  type: string;
-  mandatory: boolean;
-  defaultValue: string | undefined;
-}
-
-let labels: string[] = [];
-const procedureNames: Map<string, MethodInfo> = new Map();
-
-function updateLabels() {
-  const s = neo4j.session({ defaultAccessMode: session.WRITE });
-  const tx = s.beginTransaction();
-  // Nacho FIXME Do we have to close the transaction?
-  const resultPromise = tx.run('CALL db.labels()');
-
-  resultPromise.then((result) => {
-    labels = result.records.map((record) => record.get('label'));
-  });
-}
-
-function getParamsInfo(params: string[]): ParameterInfo[] {
-  return params.map((p: string) => {
-    // FIXME: There are cases where this doesn't work:
-    // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
-    const [headerInfo, paramType] = p.split(' :: ');
-    const [paramName, defaultValue] = headerInfo.split(' = ');
-    const mandatory = !(paramType?.endsWith('?') ?? false);
-
-    const sanitisedType = paramType ? paramType.replace(/\?$/, '') : paramType;
-
-    return {
-      name: paramName,
-      type: sanitisedType,
-      mandatory: mandatory,
-      defaultValue: defaultValue,
-    };
-  });
-}
-
-function updateProcedureNames() {
-  const s = neo4j.session({ defaultAccessMode: session.WRITE });
-  const tx = s.beginTransaction();
-  const resultPromise = tx.run(
-    'SHOW PROCEDURES yield name, signature, description;',
-  );
-
-  resultPromise.then((result) => {
-    result.records.map((record) => {
-      const name = record.get('name');
-      const signature = record.get('signature');
-      const description = record.get('description');
-
-      const [header, returnType] = signature.split(') :: ');
-      const paramsString = header
-        .replace(name, '')
-        .replace('(', '')
-        .replace(')', '')
-        .trim();
-
-      const params: string[] =
-        paramsString.length > 0 ? paramsString.split(', ') : [];
-
-      procedureNames.set(name, {
-        description: description,
-        parameters: getParamsInfo(params),
-        returnType: returnType,
-      });
-    });
-  });
-}
+import { DbInfo } from './dbInfo';
 
 class LabelDectector implements CypherListener {
   parsedLabels: string[] = [];
@@ -130,7 +45,10 @@ class CallProcedureDetector implements CypherListener {
 // ************************************************************
 // Part of the code that does the autocompletion
 // ************************************************************
-export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
+export function doAutoCompletion(
+  documents: TextDocuments<TextDocument>,
+  dbInfo: DbInfo,
+) {
   return (textDocumentPosition: TextDocumentPositionParams) => {
     const d = documents.get(textDocumentPosition.textDocument.uri);
     const position: Position = textDocumentPosition.position;
@@ -145,10 +63,6 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
     const lexer = new CypherLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const wholeFileParser = new CypherParser(tokenStream);
-
-    // Block to update cached labels, procedure names, etc
-    updateLabels();
-    updateProcedureNames();
 
     const labelDetector = new LabelDectector();
     const procedureNameDetector = new CallProcedureDetector();
@@ -167,7 +81,7 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
     );
 
     if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
-      return labels.map((t) => {
+      return dbInfo.labels.map((t) => {
         return {
           label: t,
           kind: CompletionItemKind.Keyword,
@@ -177,7 +91,7 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
       lastParsedProcedureName &&
       tree.stop?.text == lastParsedProcedureName
     ) {
-      return Array.from(procedureNames.keys()).map((t) => {
+      return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
         return {
           label: t,
           kind: CompletionItemKind.Function,
