@@ -2,6 +2,10 @@
 
 LSP for Neo4j's Cypher query language
 
+## Requirements
+
+- Having [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) VSCode extension installed.
+
 ## Try out only the parser
 
 To generate the parser only:

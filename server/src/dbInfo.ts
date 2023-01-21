@@ -5,7 +5,14 @@ import {
 
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
 
-export class DbInfo {
+export interface DbInfo {
+  // TODO Nacho Should this be getters?
+  procedureSignatures: Map<string, SignatureInformation>;
+  functionSignatures: Map<string, SignatureInformation>;
+  labels: string[];
+}
+
+export class DbInfoImpl implements DbInfo {
   procedureSignatures: Map<string, SignatureInformation> = new Map();
   functionSignatures: Map<string, SignatureInformation> = new Map();
   labels: string[] = [];
@@ -27,7 +34,7 @@ export class DbInfo {
     setInterval(updateEverything, 60000);
   }
 
-  getParamsInfo(param: string): ParameterInformation {
+  private getParamsInfo(param: string): ParameterInformation {
     // FIXME: There are cases where this doesn't work:
     // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
     const [headerInfo, paramType] = param.split(' :: ');

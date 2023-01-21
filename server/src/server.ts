@@ -18,7 +18,7 @@ import {
 } from './highlighting';
 
 import { doAutoCompletion } from './autocompletion';
-import { DbInfo } from './dbInfo';
+import { DbInfo, DbInfoImpl } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
 
 const connection = createConnection(ProposedFeatures.all);
@@ -29,7 +29,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const legend = new Legend();
 const semanticTokensProvider = new DocumentSemanticTokensProvider();
 
-const dbInfo = new DbInfo();
+const dbInfo: DbInfo = new DbInfoImpl();
 
 documents.onDidClose(() => {
   console.log('closing document');
