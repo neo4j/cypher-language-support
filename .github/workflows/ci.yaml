@@ -1,0 +1,38 @@
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check there are no linting errors
+        run: npm run lint
+
+      - name: List files that have not been formatted properly
+        run: |
+          npm run prettier-format
+          (git diff-index --name-status HEAD | grep ".*\.ts" && exit 1) || echo "\n\nAll Typescript files are correctly formatted"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies and generate parser
+        run: |
+          npm install
+          npm run gen-parser
+
+      - name: Run tests
+        run: npm run test
