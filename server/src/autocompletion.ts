@@ -1,4 +1,5 @@
 import {
+  CompletionItem,
   CompletionItemKind,
   Position,
   TextDocumentPositionParams,
@@ -17,6 +18,7 @@ import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
+  OC_ExpressionContext,
   OC_LabelNameContext,
   OC_ProcedureNameContext,
 } from './antlr/CypherParser';
@@ -39,6 +41,29 @@ class CallProcedureDetector implements CypherListener {
 
   exitOC_ProcedureName(ctx: OC_ProcedureNameContext) {
     this.parsedProcedureNames.push(ctx.text);
+  }
+}
+
+class ExpressionsDetector implements CypherListener {
+  parsedExpression: string | undefined;
+  position: Position;
+
+  constructor(position: Position) {
+    this.position = position;
+  }
+
+  exitOC_Expression(ctx: OC_ExpressionContext) {
+    const stop = ctx.stop;
+    if (stop) {
+      const textLength = stop.text?.length ?? 0;
+      const line = stop.line;
+      const col = stop.charPositionInLine;
+      if (
+        line - 1 == this.position.line &&
+        col + textLength == this.position.character
+      )
+        this.parsedExpression = ctx.text;
+    }
   }
 }
 
@@ -66,10 +91,12 @@ export function doAutoCompletion(
 
     const labelDetector = new LabelDectector();
     const procedureNameDetector = new CallProcedureDetector();
+    const expressionsDetector = new ExpressionsDetector(position);
     wholeFileParser.addParseListener(labelDetector as ParseTreeListener);
     wholeFileParser.addParseListener(
       procedureNameDetector as ParseTreeListener,
     );
+    wholeFileParser.addParseListener(expressionsDetector as ParseTreeListener);
     const tree = wholeFileParser.oC_Cypher();
 
     // If we are parsing a label, offer labels from the database as autocompletion
@@ -79,6 +106,15 @@ export function doAutoCompletion(
     const lastParsedProcedureName = parsedProcedureNames?.at(
       parsedProcedureNames.length - 1,
     );
+
+    const functionCompletions: CompletionItem[] = Array.from(
+      dbInfo.functionSignatures.keys(),
+    ).map((t) => {
+      return {
+        label: t,
+        kind: CompletionItemKind.Function,
+      };
+    });
 
     if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
       return dbInfo.labels.map((t) => {
@@ -97,11 +133,15 @@ export function doAutoCompletion(
           kind: CompletionItemKind.Function,
         };
       });
+    } else if (expressionsDetector.parsedExpression) {
+      return functionCompletions;
     } else {
       // If we are not completing a label of a procedure name,
       // we need to use the antlr completion
 
       const codeCompletion = new CodeCompletionCore(wholeFileParser);
+
+      // TODO Why did it have to be -2 here?
       const caretIndex = tokenStream.size - 2;
 
       if (caretIndex >= 0) {
@@ -118,12 +158,14 @@ export function doAutoCompletion(
           allPosibleTokens.get(t),
         );
 
-        return tokenCandidates.map((t) => {
+        const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
           return {
             label: t,
             kind: CompletionItemKind.Keyword,
           };
         });
+
+        return tokenCompletions;
       } else {
         return [];
       }

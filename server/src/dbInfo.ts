@@ -3,21 +3,28 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 
-import { auth, driver, session } from 'neo4j-driver';
+import { auth, driver, Driver, Session, session } from 'neo4j-driver';
 
 export class DbInfo {
   procedureSignatures: Map<string, SignatureInformation> = new Map();
+  functionSignatures: Map<string, SignatureInformation> = new Map();
   labels: string[] = [];
 
-  private neo4j = driver(
+  private neo4j: Driver = driver(
     'neo4j://localhost',
     // TODO Nacho This is hardcoded
     auth.basic('neo4j', 'pass12345'),
   );
 
   constructor() {
-    setInterval(() => this.updateProcedureCache(), 10000);
-    setInterval(() => this.updateLabels(), 10000);
+    const updateEverything = () => {
+      this.updateProceduresCache();
+      this.updateFunctionsCache();
+      this.updateLabels();
+    };
+
+    updateEverything();
+    setInterval(updateEverything, 60000);
   }
 
   getParamsInfo(param: string): ParameterInformation {
@@ -29,33 +36,45 @@ export class DbInfo {
     return ParameterInformation.create(paramName, param);
   }
 
-  private updateLabels() {
-    const s = this.neo4j.session({ defaultAccessMode: session.WRITE });
-    const tx = s.beginTransaction();
-    // Nacho FIXME Do we have to close the transaction?
-    const resultPromise = tx.run('CALL db.labels()');
+  private async updateLabels() {
+    const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
 
-    resultPromise.then((result) => {
+    try {
+      const result = await s.run('CALL db.labels()');
       this.labels = result.records.map((record) => record.get('label'));
-    });
+    } catch (error) {
+      console.log('coult not contact the database to update labels');
+    } finally {
+      await s.close();
+    }
   }
 
-  private updateProcedureCache() {
-    const s = this.neo4j.session({ defaultAccessMode: session.WRITE });
-    const tx = s.beginTransaction();
-    const resultPromise = tx.run(
-      'SHOW PROCEDURES yield name, signature, description;',
-    );
+  private updateProceduresCache() {
+    this.updateMethodsCache(this.procedureSignatures);
+  }
 
-    resultPromise.then((result) => {
+  private updateFunctionsCache() {
+    this.updateMethodsCache(this.functionSignatures);
+  }
+
+  private async updateMethodsCache(cache: Map<string, SignatureInformation>) {
+    const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
+    const updateTarget =
+      cache == this.functionSignatures ? 'functions' : 'procedures';
+
+    try {
+      const result = await s.run(
+        'SHOW ' + updateTarget + ' yield name, signature, description;',
+      );
+
       result.records.map((record) => {
-        const procedureName = record.get('name');
+        const methodName = record.get('name');
         const signature = record.get('signature');
         const description = record.get('description');
 
         const [header, returnType] = signature.split(') :: ');
         const paramsString = header
-          .replace(procedureName, '')
+          .replace(methodName, '')
           .replace('(', '')
           .replace(')', '')
           .trim();
@@ -63,15 +82,19 @@ export class DbInfo {
         const params: string[] =
           paramsString.length > 0 ? paramsString.split(', ') : [];
 
-        this.procedureSignatures.set(
-          procedureName,
+        cache.set(
+          methodName,
           SignatureInformation.create(
-            procedureName,
+            methodName,
             description,
             ...params.map(this.getParamsInfo),
           ),
         );
       });
-    });
+    } catch (error) {
+      console.log('coult not contact the database to update ' + updateTarget);
+    } finally {
+      await s.close();
+    }
   }
 }

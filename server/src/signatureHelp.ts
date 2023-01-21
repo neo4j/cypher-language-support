@@ -37,7 +37,7 @@ export function doSignatureHelp(
     } else {
       const d = documents.get(params.textDocument.uri);
       const position = params.position;
-      let procedureName: string | undefined = undefined;
+      let methodName: string | undefined = undefined;
       let numProcedureArgs: number | undefined = undefined;
 
       const range: Range = {
@@ -55,16 +55,16 @@ export function doSignatureHelp(
       let keepParsing = true;
       let prevTokenIndex = -1;
 
-      while (keepParsing && procedureName == undefined) {
+      while (keepParsing && methodName == undefined) {
         const tree = wholeFileParser.oC_Statement();
         const index = tree.start.tokenIndex;
         keepParsing = index != prevTokenIndex;
         prevTokenIndex = index;
         const tokens = tokenStream.getRange(index, tokenStream.size);
-        const maybeProcedureCallText = tokens.map((t) => t.text).join('');
+        const maybeMethodInvocationText = tokens.map((t) => t.text).join('');
 
         const callProcedureStream = CharStreams.fromString(
-          maybeProcedureCallText,
+          maybeMethodInvocationText,
         );
         const callProcedureParser = new CypherParser(
           new CommonTokenStream(new CypherLexer(callProcedureStream)),
@@ -74,12 +74,12 @@ export function doSignatureHelp(
           .oC_StandaloneCall()
           ?.oC_ExplicitProcedureInvocation();
 
-        procedureName = procedureCallTree?.oC_ProcedureName().text;
+        methodName = procedureCallTree?.oC_ProcedureName().text;
         numProcedureArgs = procedureCallTree?.oc_ProcedureNameArg().length;
       }
 
-      if (procedureName) {
-        const procedure = dbInfo.procedureSignatures.get(procedureName);
+      if (methodName) {
+        const procedure = dbInfo.procedureSignatures.get(methodName);
         const signatures = procedure ? [procedure] : [];
         const argPosition =
           numProcedureArgs != undefined
