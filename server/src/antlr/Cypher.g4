@@ -441,7 +441,8 @@ oC_ProcedureName
              :  oC_Namespace oC_SymbolicName ;
 
 oC_Namespace
-         :  ( oC_SymbolicName '.' )* ;
+         :  ( oC_SymbolicName '.' )* |
+         ( oC_SymbolicName '.' )* ;
 
 oC_Variable
         :  oC_SymbolicName ;
@@ -605,7 +606,6 @@ oC_ReservedWord
                 | TRUE
                 | NULL
                 | CONSTRAINT
-                | DO
                 | FOR
                 | REQUIRE
                 | UNIQUE
@@ -622,8 +622,6 @@ oC_ReservedWord
                 ;
 
 CONSTRAINT : ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'T' | 't' ) ;
-
-DO : ( 'D' | 'd' ) ( 'O' | 'o' ) ;
 
 FOR : ( 'F' | 'f' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ;
 
@@ -651,6 +649,7 @@ oC_SymbolicName
                 | ANY
                 | NONE
                 | SINGLE
+                | WHEN
                 ;
 
 FILTER : ( 'F' | 'f' ) ( 'I' | 'i' ) ( 'L' | 'l' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ;

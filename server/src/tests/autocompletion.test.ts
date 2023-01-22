@@ -6,22 +6,7 @@ import {
 } from 'vscode-languageserver/node';
 import { autoCompleteQuery } from '../autocompletion';
 import { DbInfo } from '../dbInfo';
-
-class MockDbInfo implements DbInfo {
-  procedureSignatures: Map<string, SignatureInformation>;
-  functionSignatures: Map<string, SignatureInformation>;
-  labels: string[];
-
-  constructor(
-    labels: string[] = [],
-    procedureSignatures: Map<string, SignatureInformation> = new Map(),
-    functionSignatures: Map<string, SignatureInformation> = new Map(),
-  ) {
-    this.labels = labels;
-    this.procedureSignatures = procedureSignatures;
-    this.functionSignatures = functionSignatures;
-  }
-}
+import { MockDbInfo } from './helpers';
 
 export async function testCompletion(
   fileText: string,
