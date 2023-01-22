@@ -106,7 +106,7 @@ export function autoCompleteQuery(
     return dbInfo.labels.map((t) => {
       return {
         label: t,
-        kind: CompletionItemKind.Keyword,
+        kind: CompletionItemKind.TypeParameter,
       };
     });
   } else if (
