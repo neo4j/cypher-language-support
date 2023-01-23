@@ -2,7 +2,7 @@
 
 LSP for Neo4j's Cypher query language
 
-## Requirements
+## Requirements
 
 - Having [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) VSCode extension installed.
 

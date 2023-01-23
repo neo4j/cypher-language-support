@@ -21,7 +21,7 @@ jobs:
 
       - name: List files that have not been formatted properly
         run: |
-          npm run prettier-format
+          npm run format
           (git diff-index --name-status HEAD | grep ".*\.ts" && exit 1) || echo "\n\nAll Typescript files are correctly formatted"
 
   test:
@@ -35,4 +35,4 @@ jobs:
           npm run gen-parser
 
       - name: Run tests
-        run: npm run test
+        run: npm test

@@ -2,9 +2,10 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   Position,
-  SemanticTokens,
   SemanticTokensBuilder,
   SemanticTokensLegend,
+  SemanticTokensParams,
+  TextDocuments,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -32,8 +33,10 @@ import {
   OC_LabelNameContext,
   OC_LiteralContext,
   OC_MatchContext,
+  OC_ProcedureNameContext,
   OC_PropertyKeyNameContext,
   OC_ReturnContext,
+  OC_StandaloneCallContext,
   OC_VariableContext,
   OC_WhereContext,
 } from './antlr/CypherParser';
@@ -112,69 +115,29 @@ export class Legend implements SemanticTokensLegend {
   }
 }
 
-interface IParsedToken {
+export interface ParsedToken {
   line: number;
   startCharacter: number;
   length: number;
   tokenType: string;
-}
-
-export class DocumentSemanticTokensProvider
-  implements DocumentSemanticTokensProvider
-{
-  async provideDocumentSemanticTokens(
-    textDocument: TextDocument,
-  ): Promise<SemanticTokens> {
-    const lineText: string = textDocument.getText();
-    const inputStream = CharStreams.fromString(lineText);
-    const lexer = new CypherLexer(inputStream);
-    const tokenStream = new CommonTokenStream(lexer);
-
-    const parser = new CypherParser(tokenStream);
-    //parser.errorHandler = new CompletionErrorStrategy()
-    const syntaxHighliter = new SyntaxHighlighter();
-    parser.addParseListener(syntaxHighliter as ParseTreeListener);
-    parser.oC_Cypher();
-
-    const builder = new SemanticTokensBuilder();
-
-    // When we push to the builder, tokens need to be sorted in ascending starting position
-    // i.e. as we find them when we read them from left to right, and from top to bottom in the file
-    const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => {
-      const lineDiff = a.line - b.line;
-      if (lineDiff != 0) {
-        return lineDiff;
-      } else {
-        return a.startCharacter - b.startCharacter;
-      }
-    });
-
-    sortedTokens.forEach((token) => {
-      // Nacho: FIXME The 0 index for the token modifiers at the end is hardcoded
-      const index = this._encodeTokenType(token.tokenType) ?? 0;
-      builder.push(token.line, token.startCharacter, token.length, index, 0);
-    });
-    return builder.build();
-  }
-
-  private _encodeTokenType(tokenType: string): number | undefined {
-    if (tokenTypesMap.has(tokenType)) {
-      return tokenTypesMap.get(tokenType);
-    }
-    return 0;
-  }
+  token: string | undefined;
 }
 
 class SyntaxHighlighter implements CypherListener {
-  allTokens: IParsedToken[] = [];
+  allTokens: ParsedToken[] = [];
 
-  private addToken(token: Token, tokenType: string) {
+  private addToken(
+    token: Token,
+    tokenType: string,
+    tokenStr: string = token.text ?? '',
+  ) {
     if (token.startIndex >= 0) {
       this.allTokens.push({
         line: token.line - 1,
         startCharacter: token.charPositionInLine,
         length: token.stopIndex - token.startIndex + 1,
         tokenType: tokenType,
+        token: tokenStr,
       });
     }
   }
@@ -199,6 +162,22 @@ class SyntaxHighlighter implements CypherListener {
     this.addToken(matchToken, 'method');
   }
 
+  exitOC_StandaloneCall(ctx: OC_StandaloneCallContext) {
+    const call = ctx.CALL();
+    const _yield = ctx.YIELD();
+
+    this.addToken(call.symbol, 'method');
+
+    if (_yield) {
+      const yieldToken = _yield.symbol;
+      this.addToken(yieldToken, 'keyword');
+    }
+  }
+
+  exitOC_ProcedureName(ctx: OC_ProcedureNameContext) {
+    this.addToken(ctx.start, 'function', ctx.text);
+  }
+
   enterOC_Variable(ctx: OC_VariableContext) {
     this.addToken(ctx.start, 'variable');
   }
@@ -217,16 +196,66 @@ class SyntaxHighlighter implements CypherListener {
   }
 }
 
+function encodeTokenType(tokenType: string): number | undefined {
+  if (tokenTypesMap.has(tokenType)) {
+    return tokenTypesMap.get(tokenType);
+  }
+  return 0;
+}
+
+export function doSemanticHighlightingText(
+  wholeFileText: string,
+): ParsedToken[] {
+  const inputStream = CharStreams.fromString(wholeFileText);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+
+  const parser = new CypherParser(tokenStream);
+  //parser.errorHandler = new CompletionErrorStrategy()
+  const syntaxHighliter = new SyntaxHighlighter();
+  parser.addParseListener(syntaxHighliter as ParseTreeListener);
+  parser.oC_Cypher();
+
+  // When we push to the builder, tokens need to be sorted in ascending starting position
+  // i.e. as we find them when we read them from left to right, and from top to bottom in the file
+  const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => {
+    const lineDiff = a.line - b.line;
+    if (lineDiff != 0) {
+      return lineDiff;
+    } else {
+      return a.startCharacter - b.startCharacter;
+    }
+  });
+
+  return sortedTokens;
+}
+
+export function doSemanticHighlighting(documents: TextDocuments<TextDocument>) {
+  return (params: SemanticTokensParams) => {
+    const textDocument = documents.get(params.textDocument.uri);
+    if (textDocument == undefined) return { data: [] };
+
+    const wholeFileText: string = textDocument.getText();
+    const tokens = doSemanticHighlightingText(wholeFileText);
+
+    const builder = new SemanticTokensBuilder();
+    tokens.forEach((token) => {
+      // Nacho: FIXME The 0 index for the token modifiers at the end is hardcoded
+      const index = encodeTokenType(token.tokenType) ?? 0;
+      builder.push(token.line, token.startCharacter, token.length, index, 0);
+    });
+    return builder.build();
+  };
+}
+
 // ************************************************************
 // Part of the code that highlights the syntax errors
 // ************************************************************
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];
-  textDocument: TextDocument;
 
-  constructor(textDocument: TextDocument) {
+  constructor() {
     this.diagnostics = [];
-    this.textDocument = textDocument;
   }
 
   public syntaxError<T extends Token>(
@@ -253,18 +282,22 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 }
 
-export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
-  // Remove trailings EOF when we read the file
-  const wholeFileText: string = textDocument.getText().trimEnd();
+export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
 
   const parser = new CypherParser(tokenStream);
   // parser.errorHandler = new CompletionErrorStrategy()
-  const errorListener = new ErrorListener(textDocument);
+  const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
   parser.oC_Cypher();
 
   return errorListener.diagnostics;
+}
+
+export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
+  // Remove trailings EOF when we read the file
+  const wholeFileText: string = textDocument.getText().trimEnd();
+  return provideSyntaxErrors(wholeFileText);
 }

@@ -141,4 +141,15 @@ describe('Misc auto-completion', () => {
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
+
+  test('Correctly completes MATCH in multiline statement', async () => {
+    const query = `CALL dbms.info() YIELD *;
+      
+      M`;
+    const position = Position.create(2, 1);
+
+    await testCompletion(query, position, new MockDbInfo(), [
+      { label: 'MATCH', kind: CompletionItemKind.Keyword },
+    ]);
+  });
 });

@@ -12,7 +12,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
-  DocumentSemanticTokensProvider,
+  doSemanticHighlighting,
   Legend,
   validateTextDocument,
 } from './highlighting';
@@ -25,10 +25,7 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-
 const legend = new Legend();
-const semanticTokensProvider = new DocumentSemanticTokensProvider();
-
 const dbInfo: DbInfo = new DbInfoImpl();
 
 documents.onDidClose(() => {
@@ -96,15 +93,8 @@ documents.onDidChangeContent((change) => {
   });
 });
 
-connection.languages.semanticTokens.on((params) => {
-  const document = documents.get(params.textDocument.uri);
-  if (document == undefined) return { data: [] };
-
-  return semanticTokensProvider.provideDocumentSemanticTokens(document);
-});
-
+connection.languages.semanticTokens.on(doSemanticHighlighting(documents));
 connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
-
 connection.onCompletion(doAutoCompletion(documents, dbInfo));
 documents.listen(connection);
 connection.listen();

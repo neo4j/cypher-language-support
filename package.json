@@ -49,7 +49,7 @@
     "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "prettier-format": "prettier --config .prettierrc.json '**/*.ts' --write"
+    "format": "prettier --config .prettierrc.json '**/*.ts' --write"
   },
   "devDependencies": {
     "@types/jest": "^29.2.6",
