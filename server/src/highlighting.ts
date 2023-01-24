@@ -211,7 +211,6 @@ export function doSemanticHighlightingText(
   const tokenStream = new CommonTokenStream(lexer);
 
   const parser = new CypherParser(tokenStream);
-  //parser.errorHandler = new CompletionErrorStrategy()
   const syntaxHighliter = new SyntaxHighlighter();
   parser.addParseListener(syntaxHighliter as ParseTreeListener);
   parser.oC_Cypher();
@@ -288,7 +287,6 @@ export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
   const tokenStream = new CommonTokenStream(lexer);
 
   const parser = new CypherParser(tokenStream);
-  // parser.errorHandler = new CompletionErrorStrategy()
   const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
   parser.oC_Cypher();

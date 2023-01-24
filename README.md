@@ -2,6 +2,8 @@
 
 LSP for Neo4j's Cypher query language
 
+![](./auto-completion.gif)
+
 ## Requirements
 
 - Having [Jest](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) VSCode extension installed.
@@ -22,7 +24,7 @@ antlr4-parse server/src/antlr/Cypher.g4 oC_Cypher -gui
 [Ctrl-D]
 ```
 
-## Testing it out
+## Testing it out
 
 To start a database:
 
@@ -48,5 +50,3 @@ Credentials are hardcoded to `neo4/pass12345` in the server.
 - Auto completion: works moderately well. Has a proof of concept on how to complete elements coming from the database (e.g. labels).
 - Multi-query: works well but it should be improved.
 - Error highlighting: still to improve, inaccurate positions and errors. No semantic errors.
-
-![](./auto-completion.gif)

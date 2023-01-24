@@ -4,7 +4,7 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 import { DbInfo } from '../dbInfo';
-import { doSignatureHelpForQuery } from '../signatureHelp';
+import { doSignatureHelpForQuery, emptyResult } from '../signatureHelp';
 import { MockDbInfo } from './helpers';
 
 export async function testSignatureHelp(
@@ -96,6 +96,32 @@ describe('Procedures signature help', () => {
       'CALL apoc.do.when(true, "foo", false, "bar"',
       dbWithProcedure,
       expectedArgIndex(3),
+    );
+  });
+
+  test('Provides signature help with several statements where cursor one requires autocompletion', async () => {
+    // await testSignatureHelp(
+    //   `MATCH (n) RETURN n
+    //    CALL apoc.do.when(`,
+    //   dbWithProcedure,
+    //   expectedArgIndex(0),
+    // );
+
+    await testSignatureHelp(
+      `MATCH (n)
+       CALL apoc.do.when(`,
+      dbWithProcedure,
+      expectedArgIndex(0),
+    );
+  });
+
+  test('Does not provide signature help with several statements where cursor one does not require autocompletion', async () => {
+    await testSignatureHelp(
+      `CALL apoc.do.when(true, "foo", false, "bar");
+ 
+       MATCH (`,
+      dbWithProcedure,
+      emptyResult,
     );
   });
 });

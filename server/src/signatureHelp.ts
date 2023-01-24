@@ -8,7 +8,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { CharStreams, CommonTokenStream } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
@@ -16,7 +16,7 @@ import { CypherParser } from './antlr/CypherParser';
 
 import { DbInfo } from './dbInfo';
 
-const emptyResult: SignatureHelp = {
+export const emptyResult: SignatureHelp = {
   signatures: [],
   activeSignature: null,
   activeParameter: null,
@@ -34,14 +34,13 @@ export function doSignatureHelpForQuery(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
-  let keepParsing = true;
-  let prevTokenIndex = -1;
+  const tree = wholeFileParser.oC_Cypher();
+  const children = tree.children;
 
-  while (keepParsing && methodName == undefined) {
-    const tree = wholeFileParser.oC_Statement();
-    const index = tree.start.tokenIndex;
-    keepParsing = index != prevTokenIndex;
-    prevTokenIndex = index;
+  // Get last statement and try to parse it as a procedure call
+  if (children && children.length > 0) {
+    const lastChild = children[children.length - 1];
+    const index = (lastChild as ParserRuleContext).start.tokenIndex;
     const tokens = tokenStream.getRange(index, tokenStream.size);
     const maybeMethodInvocationText = tokens.map((t) => t.text).join('');
 
@@ -51,7 +50,6 @@ export function doSignatureHelpForQuery(
     const callProcedureParser = new CypherParser(
       new CommonTokenStream(new CypherLexer(callProcedureStream)),
     );
-
     const procedureCallTree = callProcedureParser
       .oC_StandaloneCall()
       ?.oC_ExplicitProcedureInvocation();

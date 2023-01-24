@@ -93,14 +93,16 @@ export function autoCompleteQuery(
     parsedProcedureNames.length - 1,
   );
 
-  const functionCompletions: CompletionItem[] = Array.from(
-    dbInfo.functionSignatures.keys(),
-  ).map((t) => {
-    return {
-      label: t,
-      kind: CompletionItemKind.Function,
-    };
-  });
+  // TODO Nacho Re-enable this for function completions
+  //      when we find a better way to do it
+  // const functionCompletions: CompletionItem[] = Array.from(
+  //   dbInfo.functionSignatures.keys(),
+  // ).map((t) => {
+  //   return {
+  //     label: t,
+  //     kind: CompletionItemKind.Function,
+  //   };
+  // });
 
   if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
     return dbInfo.labels.map((t) => {
@@ -119,19 +121,22 @@ export function autoCompleteQuery(
         kind: CompletionItemKind.Function,
       };
     });
-  } else if (expressionsDetector.parsedExpression) {
-    return functionCompletions;
+    // TODO Nacho Re-enable this for function completions
+    //      when we find a better way to do it
+    //} else if (expressionsDetector.parsedExpression) {
+    //  return functionCompletions;
   } else {
     // If we are not completing a label of a procedure name,
     // we need to use the antlr completion
 
     const codeCompletion = new CodeCompletionCore(wholeFileParser);
 
-    // TODO Why did it have to be -2 here?
+    // TODO Nacho Why did it have to be -2 here?
+    // Is it because of the end of file?
     const caretIndex = tokenStream.size - 2;
 
     if (caretIndex >= 0) {
-      // TODO Can this be extracted for more performance?
+      // TODO Nacho Can this be extracted for more performance?
       const allPosibleTokens = new Map();
       wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
         allPosibleTokens.set(map.get(key), key);
