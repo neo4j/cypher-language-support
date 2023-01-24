@@ -43,6 +43,22 @@ describe('Procedures signature help', () => {
     };
   }
 
+  test('Provides signature help for subquery CALLs', async () => {
+    await testSignatureHelp(
+      `MATCH (n)
+       CALL apoc.do.when(`,
+      dbWithProcedure,
+      expectedArgIndex(0),
+    );
+
+    await testSignatureHelp(
+      `MATCH (n)
+       CALL apoc.do.when(true,`,
+      dbWithProcedure,
+      expectedArgIndex(1),
+    );
+  });
+
   test('Provides signature help for CALLs first argument', async () => {
     await testSignatureHelp(
       'CALL apoc.do.when(',
@@ -100,15 +116,8 @@ describe('Procedures signature help', () => {
   });
 
   test('Provides signature help with several statements where cursor one requires autocompletion', async () => {
-    // await testSignatureHelp(
-    //   `MATCH (n) RETURN n
-    //    CALL apoc.do.when(`,
-    //   dbWithProcedure,
-    //   expectedArgIndex(0),
-    // );
-
     await testSignatureHelp(
-      `MATCH (n)
+      `MATCH (n) RETURN n;
        CALL apoc.do.when(`,
       dbWithProcedure,
       expectedArgIndex(0),

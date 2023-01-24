@@ -12,8 +12,9 @@ import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
-import { CypherParser } from './antlr/CypherParser';
+import { CypherParser, OC_InQueryCallContext } from './antlr/CypherParser';
 
+import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { DbInfo } from './dbInfo';
 
 export const emptyResult: SignatureHelp = {
@@ -22,43 +23,109 @@ export const emptyResult: SignatureHelp = {
   activeParameter: null,
 };
 
+interface ParsedProcedure {
+  methodName: string;
+  numProcedureArgs: number;
+}
+
+function findLastStandaloneCall(
+  lastStatementStr: string,
+): ParsedProcedure | undefined {
+  const inputStream = CharStreams.fromString(lastStatementStr);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const wholeFileParser = new CypherParser(tokenStream);
+  const procedureCallTree = wholeFileParser
+    .oC_StandaloneCall()
+    ?.oC_ExplicitProcedureInvocation();
+
+  const methodName = procedureCallTree?.oC_ProcedureName().text;
+  const numProcedureArgs = procedureCallTree?.oc_ProcedureNameArg().length ?? 0;
+
+  if (methodName) {
+    return {
+      methodName: methodName,
+      numProcedureArgs: numProcedureArgs,
+    };
+  } else {
+    return undefined;
+  }
+}
+
+function findLastInQueryCall(
+  lastStatementStr: string,
+): ParsedProcedure | undefined {
+  // Get last statement
+  const inputStream = CharStreams.fromString(lastStatementStr);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const wholeFileParser = new CypherParser(tokenStream);
+  let current: ParserRuleContext | undefined =
+    wholeFileParser.oC_Statement() as ParserRuleContext;
+
+  while (current) {
+    if (current instanceof OC_InQueryCallContext) {
+      const proc = (
+        current as OC_InQueryCallContext
+      ).oC_ExplicitProcedureInvocation();
+      const procName = proc.oC_ProcedureName().text;
+      const numProcedureArgs = proc.oc_ProcedureNameArg().length;
+
+      return {
+        methodName: procName,
+        numProcedureArgs: numProcedureArgs,
+      };
+    }
+
+    const children = current.children;
+    current = undefined;
+
+    if (children && children.length > 0) {
+      let index = children.length - 1;
+      let child = children[index];
+
+      while (
+        index > 0 &&
+        (child instanceof TerminalNode || child.text.length == 0)
+      ) {
+        index--;
+        child = children[index];
+      }
+      current = child as ParserRuleContext;
+    }
+  }
+
+  return undefined;
+}
+
 export function doSignatureHelpForQuery(
   wholeFileText: string,
   dbInfo: DbInfo,
 ): SignatureHelp {
-  let methodName: string | undefined = undefined;
-  let numProcedureArgs: number | undefined = undefined;
-
-  const text = wholeFileText;
-  const inputStream = CharStreams.fromString(text);
+  const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
   const tree = wholeFileParser.oC_Cypher();
-  const children = tree.children;
+  const statements = tree.children;
+  let lastStatementStr = '';
+  let parsedProc: ParsedProcedure | undefined = undefined;
 
-  // Get last statement and try to parse it as a procedure call
-  if (children && children.length > 0) {
-    const lastChild = children[children.length - 1];
-    const index = (lastChild as ParserRuleContext).start.tokenIndex;
+  if (statements) {
+    const lastStatement = statements[statements.length - 1];
+    const index = (lastStatement as ParserRuleContext).start.tokenIndex;
     const tokens = tokenStream.getRange(index, tokenStream.size);
-    const maybeMethodInvocationText = tokens.map((t) => t.text).join('');
-
-    const callProcedureStream = CharStreams.fromString(
-      maybeMethodInvocationText,
-    );
-    const callProcedureParser = new CypherParser(
-      new CommonTokenStream(new CypherLexer(callProcedureStream)),
-    );
-    const procedureCallTree = callProcedureParser
-      .oC_StandaloneCall()
-      ?.oC_ExplicitProcedureInvocation();
-
-    methodName = procedureCallTree?.oC_ProcedureName().text;
-    numProcedureArgs = procedureCallTree?.oc_ProcedureNameArg().length;
+    lastStatementStr = tokens.map((t) => t.text).join('');
   }
 
-  if (methodName) {
+  parsedProc = findLastStandaloneCall(lastStatementStr);
+  if (!parsedProc) {
+    parsedProc = findLastInQueryCall(lastStatementStr);
+  }
+
+  if (parsedProc) {
+    const methodName = parsedProc.methodName;
+    const numProcedureArgs = parsedProc.numProcedureArgs;
     const procedure = dbInfo.procedureSignatures.get(methodName);
     const signatures = procedure ? [procedure] : [];
     const argPosition =
