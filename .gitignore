@@ -7,3 +7,4 @@ client/server
 *.tokens
 server/src/antlr/*.ts
 server/src/antlr/.antlr/*
+*.vsix
