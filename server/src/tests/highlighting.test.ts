@@ -328,6 +328,13 @@ describe('Syntax highlighting', () => {
       },
       {
         line: 2,
+        startCharacter: 6,
+        length: 4,
+        tokenType: 'method',
+        token: 'CALL',
+      },
+      {
+        line: 2,
         startCharacter: 11,
         length: 4,
         tokenType: 'function',
@@ -360,6 +367,13 @@ describe('Syntax highlighting', () => {
         length: 5,
         tokenType: 'string',
         token: '"bar"',
+      },
+      {
+        line: 2,
+        startCharacter: 51,
+        length: 5,
+        tokenType: 'keyword',
+        token: 'YIELD',
       },
       {
         line: 2,

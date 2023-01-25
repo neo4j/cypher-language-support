@@ -54,8 +54,13 @@ oC_SingleQuery
            :  oC_SinglePartQuery;
 
 oC_SinglePartQuery
-               :  ( ( oC_ReadingClause SP? )* oC_Return )
-                   ;
+               :  oC_ReadingClause* oC_RestSinglePartQuery;
+
+oC_RestSinglePartQuery
+    : ( SP? oC_Return ) | ( ( SP? oC_UpdatingClause )+ ( SP? oC_Return )? ) ;
+
+oC_MultiPartQuery
+              :  ( ( oC_ReadingClause SP? )* ( oC_UpdatingClause SP? )* oC_With SP? )+ oC_SinglePartQuery ;
 
 oC_UpdatingClause
               :  oC_Create

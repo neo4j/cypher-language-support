@@ -79,10 +79,38 @@ describe('MATCH auto-completion', () => {
     const position = Position.create(0, query.length);
 
     await testCompletion(query, position, new MockDbInfo(), [
-      { label: 'OPTIONAL', kind: CompletionItemKind.Keyword },
-      { label: 'MATCH', kind: CompletionItemKind.Keyword },
-      { label: 'UNWIND', kind: CompletionItemKind.Keyword },
-      { label: 'CALL', kind: CompletionItemKind.Keyword },
+      { label: 'RETURN', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});
+
+describe('CREATE auto-completion', () => {
+  test('Correctly completes CREATE', async () => {
+    const query = 'CR';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(query, position, new MockDbInfo(), [
+      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes label in CREATE', async () => {
+    const query = 'CREATE (n:P';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo(['Cat', 'Person', 'Dog']),
+      [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    );
+  });
+
+  test('Correctly completes RETURN', async () => {
+    const query = 'CREATE (n:Person) RET';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(query, position, new MockDbInfo(), [
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
