@@ -135,7 +135,7 @@ class SyntaxHighlighter implements CypherListener {
       this.allTokens.push({
         line: token.line - 1,
         startCharacter: token.charPositionInLine,
-        length: token.stopIndex - token.startIndex + 1,
+        length: tokenStr.length,
         tokenType: tokenType,
         token: tokenStr,
       });

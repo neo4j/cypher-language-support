@@ -104,7 +104,7 @@ describe('Syntax highlighting', () => {
       {
         line: 0,
         startCharacter: 5,
-        length: 4,
+        length: 9,
         tokenType: 'function',
         token: 'dbms.info',
       },
@@ -133,7 +133,7 @@ describe('Syntax highlighting', () => {
       {
         line: 0,
         startCharacter: 5,
-        length: 4,
+        length: 12,
         tokenType: 'function',
         token: 'apoc.do.when',
       },
@@ -239,7 +239,7 @@ describe('Syntax highlighting', () => {
       {
         line: 1,
         startCharacter: 9,
-        length: 4,
+        length: 12,
         tokenType: 'function',
         token: 'apoc.do.when',
       },
@@ -336,7 +336,7 @@ describe('Syntax highlighting', () => {
       {
         line: 2,
         startCharacter: 11,
-        length: 4,
+        length: 12,
         tokenType: 'function',
         token: 'apoc.do.when',
       },
