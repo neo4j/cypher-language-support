@@ -51,19 +51,19 @@ UNION : ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ;
 ALL : ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
 oC_SingleQuery
-           :  oC_ReadingClause* oC_RestSingleQuery;
+           :  (SP? oC_ReadingClause)* (SP? oC_RestSingleQuery);
 
 oC_RestSingleQuery
-    : ( SP? oC_Return ) 
-    | ( SP? oC_With SP? oC_MultiPartQuery )
-    | ( ( SP? oC_UpdatingClause )+ oC_EndSingleQuery ) ;
+    : oC_Return
+    | ( oC_With SP? oC_MultiPartQuery )
+    | ( ( oC_UpdatingClause )+ SP? oC_EndSingleQuery ) ;
 
 oC_EndSingleQuery:
-    ( SP? oC_With SP? oC_MultiPartQuery ) | ( SP? oC_Return )?
+    ( oC_With SP? oC_MultiPartQuery ) | ( SP? oC_Return )?
     ;
 
 oC_SinglePartQuery
-                : oC_ReadingClause* ( 
+                : (oC_ReadingClause)* ( 
                         ( SP? oC_Return ) | ( ( SP? oC_UpdatingClause )+ ( SP? oC_Return )? ) 
                 ) ;
 

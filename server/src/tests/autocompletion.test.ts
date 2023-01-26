@@ -117,8 +117,17 @@ describe('CREATE auto-completion', () => {
 });
 
 describe('Procedures auto-completion', () => {
-  test('Correctly completes CALL', async () => {
+  test('Correctly completes CALL in standalone', async () => {
     const query = 'C';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(query, position, new MockDbInfo(), [
+      { label: 'CALL', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes CALL in subquery', async () => {
+    const query = 'MATCH (n) C';
     const position = Position.create(0, query.length);
 
     await testCompletion(query, position, new MockDbInfo(), [
