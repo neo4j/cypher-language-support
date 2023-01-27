@@ -5,7 +5,7 @@ import {
 } from 'vscode-languageserver/node';
 import { DbInfo } from '../dbInfo';
 import { doSignatureHelpForQuery, emptyResult } from '../signatureHelp';
-import { MockDbInfo } from './helpers';
+import { MockDbInfo } from './testhelpers';
 
 export async function testSignatureHelp(
   fileText: string,

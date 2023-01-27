@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node';
 import { autoCompleteQuery } from '../autocompletion';
 import { DbInfo } from '../dbInfo';
-import { MockDbInfo } from './helpers';
+import { MockDbInfo } from './testhelpers';
 
 export async function testCompletion(
   fileText: string,
