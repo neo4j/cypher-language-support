@@ -28,15 +28,13 @@
 grammar Cypher;
 
 oC_Cypher
-      : oC_Statement+ ;
+      : oC_Statement+ EOF;
 
 oC_Statement
-         :  oC_Query ';'? SP?;
+         :  oC_Query SP? ';'? SP?;
 
 oC_Query
-     :  oC_RegularQuery
-         | oC_StandaloneCall
-         ;
+     :  oC_RegularQuery | oC_StandaloneCall;
 
 oC_RegularQuery
             :  oC_SingleQuery ( SP? oC_Union )* ;
@@ -51,7 +49,10 @@ UNION : ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ;
 ALL : ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
 oC_SingleQuery
-           :  (SP? oC_ReadingClause)* (SP? oC_RestSingleQuery);
+           :  oc_StartSingleQuery? SP? oC_RestSingleQuery;
+
+oc_StartSingleQuery
+           : (oC_Match | oC_Unwind) SP? oC_ReadingClause*;
 
 oC_RestSingleQuery
     : oC_Return
@@ -83,7 +84,6 @@ oC_ReadingClause
                  | oC_Unwind
                  | oC_InQueryCall
                  ;
-
 oC_Match
      :  ( OPTIONAL SP )? MATCH SP? oC_Pattern ( SP? oC_Where )? ;
 
@@ -145,14 +145,16 @@ oC_RemoveItem
               ;
 
 oC_InQueryCall
-           :  CALL SP oC_ExplicitProcedureInvocation ( SP? YIELD SP oC_YieldItems )? ;
+           :  CALL SP? oC_ProcedureName SP? oC_ExplicitProcedureInvocation ( SP? YIELD SP oC_YieldItems )? ;
 
 CALL : ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
 YIELD : ( 'Y' | 'y' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'L' | 'l' ) ( 'D' | 'd' ) ;
 
 oC_StandaloneCall
-              :  CALL SP ( oC_ExplicitProcedureInvocation | oC_ImplicitProcedureInvocation ) ( SP? YIELD SP ( '*' | oC_YieldItems ) )? ;
+              :  CALL SP? 
+              ( oC_ProcedureName SP? oC_ExplicitProcedureInvocation? )? 
+              ( SP? YIELD SP ( '*' | oC_YieldItems ) )? ;
 
 oC_YieldItems
           :  oC_YieldItem ( SP? ',' SP? oC_YieldItem )* ( SP? oC_Where )? ;
@@ -439,13 +441,10 @@ oC_ExistentialSubquery
 EXISTS : ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' ) ;
 
 oC_ExplicitProcedureInvocation
-                           :  oC_ProcedureName SP? '(' ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
+                           : '(' ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
 
 oc_ProcedureNameArg
                 :  SP? oC_Expression SP? ;
-
-oC_ImplicitProcedureInvocation
-                           :  oC_ProcedureName ;
 
 oC_ProcedureResultField
                     :  oC_SymbolicName ;

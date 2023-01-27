@@ -27,22 +27,7 @@ import { CypherListener } from './antlr/CypherListener';
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 import { DbInfo } from './dbInfo';
-
-class LabelDectector implements CypherListener {
-  parsedLabels: string[] = [];
-
-  exitOC_LabelName(ctx: OC_LabelNameContext) {
-    this.parsedLabels.push(ctx.text);
-  }
-}
-
-class CallProcedureDetector implements CypherListener {
-  parsedProcedureNames: string[] = [];
-
-  exitOC_ProcedureName(ctx: OC_ProcedureNameContext) {
-    this.parsedProcedureNames.push(ctx.text);
-  }
-}
+import { findParent, findStopNode } from './helpers';
 
 class ExpressionsDetector implements CypherListener {
   parsedExpression: string | undefined;
@@ -76,22 +61,9 @@ export function autoCompleteQuery(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
-
-  const labelDetector = new LabelDectector();
-  const procedureNameDetector = new CallProcedureDetector();
   const expressionsDetector = new ExpressionsDetector(position);
-  wholeFileParser.addParseListener(labelDetector as ParseTreeListener);
-  wholeFileParser.addParseListener(procedureNameDetector as ParseTreeListener);
   wholeFileParser.addParseListener(expressionsDetector as ParseTreeListener);
   const tree = wholeFileParser.oC_Cypher();
-
-  // If we are parsing a label, offer labels from the database as autocompletion
-  const parsedLabels = labelDetector.parsedLabels;
-  const lastParsedLabel = parsedLabels?.at(parsedLabels.length - 1);
-  const parsedProcedureNames = procedureNameDetector.parsedProcedureNames;
-  const lastParsedProcedureName = parsedProcedureNames?.at(
-    parsedProcedureNames.length - 1,
-  );
 
   // TODO Nacho Re-enable this for function completions
   //      when we find a better way to do it
@@ -104,7 +76,9 @@ export function autoCompleteQuery(
   //   };
   // });
 
-  if (lastParsedLabel && tree.stop?.text == lastParsedLabel) {
+  const stopNode = findStopNode(tree);
+
+  if (findParent(stopNode, (p) => p instanceof OC_LabelNameContext)) {
     return dbInfo.labels.map((t) => {
       return {
         label: t,
@@ -112,8 +86,7 @@ export function autoCompleteQuery(
       };
     });
   } else if (
-    lastParsedProcedureName &&
-    tree.stop?.text == lastParsedProcedureName
+    findParent(stopNode, (p) => p instanceof OC_ProcedureNameContext)
   ) {
     return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
       return {

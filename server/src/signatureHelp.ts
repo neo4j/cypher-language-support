@@ -8,14 +8,19 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4ts';
+import { CharStreams, CommonTokenStream } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
-import { CypherParser, OC_InQueryCallContext } from './antlr/CypherParser';
+import {
+  CypherParser,
+  OC_CypherContext,
+  OC_InQueryCallContext,
+  OC_StandaloneCallContext,
+} from './antlr/CypherParser';
 
-import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { DbInfo } from './dbInfo';
+import { findParent, findStopNode } from './helpers';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -28,19 +33,10 @@ interface ParsedProcedure {
   numProcedureArgs: number;
 }
 
-function findLastStandaloneCall(
-  lastStatementStr: string,
-): ParsedProcedure | undefined {
-  const inputStream = CharStreams.fromString(lastStatementStr);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const wholeFileParser = new CypherParser(tokenStream);
-  const procedureCallTree = wholeFileParser
-    .oC_StandaloneCall()
-    ?.oC_ExplicitProcedureInvocation();
-
-  const methodName = procedureCallTree?.oC_ProcedureName().text;
-  const numProcedureArgs = procedureCallTree?.oc_ProcedureNameArg().length ?? 0;
+function parseStandaloneProcedure(ctx: OC_StandaloneCallContext) {
+  const methodName = ctx.oC_ProcedureName()?.text;
+  const numProcedureArgs =
+    ctx?.oC_ExplicitProcedureInvocation()?.oc_ProcedureNameArg().length ?? 0;
 
   if (methodName) {
     return {
@@ -52,77 +48,53 @@ function findLastStandaloneCall(
   }
 }
 
-function findLastInQueryCall(
-  lastStatementStr: string,
+function parseInQueryProcedure(
+  ctx: OC_InQueryCallContext,
 ): ParsedProcedure | undefined {
-  // Get last statement
-  const inputStream = CharStreams.fromString(lastStatementStr);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const wholeFileParser = new CypherParser(tokenStream);
-  let current: ParserRuleContext | undefined =
-    wholeFileParser.oC_Statement() as ParserRuleContext;
+  const procName = ctx.oC_ProcedureName().text;
+  const numProcedureArgs = ctx
+    .oC_ExplicitProcedureInvocation()
+    .oc_ProcedureNameArg().length;
 
-  while (current) {
-    if (current instanceof OC_InQueryCallContext) {
-      const proc = (
-        current as OC_InQueryCallContext
-      ).oC_ExplicitProcedureInvocation();
-      const procName = proc.oC_ProcedureName().text;
-      const numProcedureArgs = proc.oc_ProcedureNameArg().length;
-
-      return {
-        methodName: procName,
-        numProcedureArgs: numProcedureArgs,
-      };
-    }
-
-    const children = current.children;
-    current = undefined;
-
-    if (children && children.length > 0) {
-      let index = children.length - 1;
-      let child = children[index];
-
-      while (
-        index > 0 &&
-        (child instanceof TerminalNode || child.text.length == 0)
-      ) {
-        index--;
-        child = children[index];
-      }
-      current = child as ParserRuleContext;
-    }
-  }
-
-  return undefined;
+  return {
+    methodName: procName,
+    numProcedureArgs: numProcedureArgs,
+  };
 }
 
-export function doSignatureHelpForQuery(
-  wholeFileText: string,
-  dbInfo: DbInfo,
-): SignatureHelp {
-  const inputStream = CharStreams.fromString(wholeFileText);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const wholeFileParser = new CypherParser(tokenStream);
-  const tree = wholeFileParser.oC_Cypher();
-  const statements = tree.children;
-  let lastStatementStr = '';
+function tryParseProcedure(
+  root: OC_CypherContext,
+): ParsedProcedure | undefined {
   let parsedProc: ParsedProcedure | undefined = undefined;
+  const currentNode = findStopNode(root);
 
-  if (statements) {
-    const lastStatement = statements[statements.length - 1];
-    const index = (lastStatement as ParserRuleContext).start.tokenIndex;
-    const tokens = tokenStream.getRange(index, tokenStream.size);
-    lastStatementStr = tokens.map((t) => t.text).join('');
+  const standaloneCall = findParent(
+    currentNode,
+    (node) => node instanceof OC_StandaloneCallContext,
+  );
+  if (standaloneCall) {
+    parsedProc = parseStandaloneProcedure(
+      standaloneCall as OC_StandaloneCallContext,
+    );
   }
 
-  parsedProc = findLastStandaloneCall(lastStatementStr);
   if (!parsedProc) {
-    parsedProc = findLastInQueryCall(lastStatementStr);
+    const inqueryCall = findParent(
+      currentNode,
+      (node) => node instanceof OC_InQueryCallContext,
+    );
+    if (inqueryCall) {
+      parsedProc = parseInQueryProcedure(inqueryCall as OC_InQueryCallContext);
+    }
   }
 
+  return parsedProc;
+}
+
+function toSignatureHelp(
+  dbInfo: DbInfo,
+  parsedProc: ParsedProcedure | undefined,
+) {
   if (parsedProc) {
     const methodName = parsedProc.methodName;
     const numProcedureArgs = parsedProc.numProcedureArgs;
@@ -140,6 +112,20 @@ export function doSignatureHelpForQuery(
   } else {
     return emptyResult;
   }
+}
+
+export function doSignatureHelpForQuery(
+  wholeFileText: string,
+  dbInfo: DbInfo,
+): SignatureHelp {
+  const inputStream = CharStreams.fromString(wholeFileText);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const wholeFileParser = new CypherParser(tokenStream);
+  const root = wholeFileParser.oC_Cypher();
+  const parsedProc = tryParseProcedure(root);
+
+  return toSignatureHelp(dbInfo, parsedProc);
 }
 
 // ************************************************************

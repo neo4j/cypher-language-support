@@ -82,6 +82,15 @@ describe('MATCH auto-completion', () => {
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
+
+  test('Correctly completes AS', async () => {
+    const query = 'MATCH (n) RETURN n A';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(query, position, new MockDbInfo(), [
+      { label: 'AS', kind: CompletionItemKind.Keyword },
+    ]);
+  });
 });
 
 describe('CREATE auto-completion', () => {
