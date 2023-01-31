@@ -35,16 +35,16 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test('Correctly completes OPTIONAL', async () => {
+  test('Correctly completes OPTIONAL MATCH', async () => {
     const query = 'OP';
     const position = Position.create(0, query.length);
 
     await testCompletion(query, position, new MockDbInfo(), [
-      { label: 'OPTIONAL', kind: CompletionItemKind.Keyword },
+      { label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
 
-  test('Correctly completes OPTIONAL MATCH', async () => {
+  test('Correctly completes MATCH in OPTIONAL MATCH', async () => {
     const query = 'OPTIONAL M';
     const position = Position.create(0, query.length);
 

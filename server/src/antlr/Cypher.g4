@@ -83,7 +83,13 @@ oC_ReadingClause
                  | oC_InQueryCall
                  ;
 oC_Match
-     :  OPTIONAL? MATCH oC_Pattern oC_Where? ;
+     :  (oC_OptionalMatch | oC_SimpleMatch) oC_Pattern oC_Where? ;
+
+oC_OptionalMatch:
+    OPTIONAL MATCH;
+
+oC_SimpleMatch:
+    MATCH;
 
 OPTIONAL : ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'A' | 'a' ) ( 'L' | 'l' ) ;
 

@@ -28,7 +28,7 @@ describe('Syntax highlighting', () => {
         line: 0,
         startCharacter: 0,
         length: 5,
-        tokenType: 'method',
+        tokenType: 'keyword',
         token: 'MATCH',
       },
       {
@@ -198,7 +198,7 @@ describe('Syntax highlighting', () => {
         line: 0,
         startCharacter: 0,
         length: 5,
-        tokenType: 'method',
+        tokenType: 'keyword',
         token: 'MATCH',
       },
       {
@@ -309,7 +309,7 @@ describe('Syntax highlighting', () => {
         line: 0,
         startCharacter: 0,
         length: 5,
-        tokenType: 'method',
+        tokenType: 'keyword',
         token: 'MATCH',
       },
       {

@@ -110,15 +110,19 @@ export function autoCompleteQuery(
 
     if (caretIndex >= 0) {
       // TODO Nacho Can this be extracted for more performance?
-      const allPosibleTokens = new Map();
+      const allPosibleTokens: Map<number | undefined, string> = new Map();
       wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
         allPosibleTokens.set(map.get(key), key);
       });
       const candidates = codeCompletion.collectCandidates(caretIndex as number);
-      const tokens = candidates.tokens.keys();
-      const tokenCandidates = Array.from(tokens).map((t) =>
-        allPosibleTokens.get(t),
-      );
+      const tokens = candidates.tokens.entries();
+      const tokenCandidates = Array.from(tokens).map((value) => {
+        const [tokenNumber, followUpList] = value;
+        return [tokenNumber]
+          .concat(followUpList)
+          .map((value, index, array) => allPosibleTokens.get(value))
+          .join(' ');
+      });
 
       const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
         return {

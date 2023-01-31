@@ -32,10 +32,11 @@ import {
   CypherParser,
   OC_LabelNameContext,
   OC_LiteralContext,
-  OC_MatchContext,
+  OC_OptionalMatchContext,
   OC_ProcedureNameContext,
   OC_PropertyKeyNameContext,
   OC_ReturnContext,
+  OC_SimpleMatchContext,
   OC_StandaloneCallContext,
   OC_VariableContext,
   OC_WhereContext,
@@ -149,17 +150,12 @@ class SyntaxHighlighter implements CypherListener {
     this.addToken(ctx.start, 'keyword');
   }
 
-  exitOC_Match(ctx: OC_MatchContext) {
-    const opt = ctx.OPTIONAL();
-    const match = ctx.MATCH();
+  enterOC_SimpleMatch(ctx: OC_SimpleMatchContext) {
+    this.addToken(ctx.start, 'keyword');
+  }
 
-    if (opt) {
-      const optToken = opt.symbol;
-      this.addToken(optToken, 'decorator');
-    }
-
-    const matchToken = match.symbol;
-    this.addToken(matchToken, 'method');
+  enterOC_OptionalMatch(ctx: OC_OptionalMatchContext) {
+    this.addToken(ctx.start, 'method');
   }
 
   exitOC_StandaloneCall(ctx: OC_StandaloneCallContext) {
