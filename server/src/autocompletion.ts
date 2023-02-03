@@ -21,6 +21,7 @@ import {
   OC_ExpressionContext,
   OC_LabelNameContext,
   OC_ProcedureNameContext,
+  OC_RelTypeNameContext,
 } from './antlr/CypherParser';
 
 import { CypherListener } from './antlr/CypherListener';
@@ -65,21 +66,17 @@ export function autoCompleteQuery(
   wholeFileParser.addParseListener(expressionsDetector as ParseTreeListener);
   const tree = wholeFileParser.oC_Cypher();
 
-  // TODO Nacho Re-enable this for function completions
-  //      when we find a better way to do it
-  // const functionCompletions: CompletionItem[] = Array.from(
-  //   dbInfo.functionSignatures.keys(),
-  // ).map((t) => {
-  //   return {
-  //     label: t,
-  //     kind: CompletionItemKind.Function,
-  //   };
-  // });
-
   const stopNode = findStopNode(tree);
 
   if (findParent(stopNode, (p) => p instanceof OC_LabelNameContext)) {
     return dbInfo.labels.map((t) => {
+      return {
+        label: t,
+        kind: CompletionItemKind.TypeParameter,
+      };
+    });
+  } else if (findParent(stopNode, (p) => p instanceof OC_RelTypeNameContext)) {
+    return dbInfo.relationshipTypes.map((t) => {
       return {
         label: t,
         kind: CompletionItemKind.TypeParameter,
@@ -94,14 +91,9 @@ export function autoCompleteQuery(
         kind: CompletionItemKind.Function,
       };
     });
-    // TODO Nacho Re-enable this for function completions
-    //      when we find a better way to do it
-    //} else if (expressionsDetector.parsedExpression) {
-    //  return functionCompletions;
   } else {
     // If we are not completing a label of a procedure name,
     // we need to use the antlr completion
-
     const codeCompletion = new CodeCompletionCore(wholeFileParser);
 
     // TODO Nacho Why did it have to be -2 here?

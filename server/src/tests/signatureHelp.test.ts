@@ -32,6 +32,7 @@ describe('Procedures signature help', () => {
   );
   const dbWithProcedure = new MockDbInfo(
     [],
+    [],
     new Map([['apoc.do.when', procedureSignature]]),
   );
 

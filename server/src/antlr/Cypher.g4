@@ -250,11 +250,9 @@ oC_PatternElementChain
                    :  oC_RelationshipPattern oC_NodePattern ;
 
 oC_RelationshipPattern
-                   :  ( oC_LeftArrowHead oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead )
-                       | ( oC_LeftArrowHead oC_Dash oC_RelationshipDetail? oC_Dash )
-                       | ( oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead )
-                       | ( oC_Dash oC_RelationshipDetail? oC_Dash )
-                       ;
+                   :  ( oC_LeftArrowHead oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead? )
+                    | ( oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead? )
+                    ;
 
 oC_RelationshipDetail
                   :  '[' oC_Variable? oC_RelationshipTypes? oC_RangeLiteral? oC_Properties? ']' ;

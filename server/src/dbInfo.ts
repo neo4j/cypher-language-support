@@ -10,12 +10,14 @@ export interface DbInfo {
   procedureSignatures: Map<string, SignatureInformation>;
   functionSignatures: Map<string, SignatureInformation>;
   labels: string[];
+  relationshipTypes: string[];
 }
 
 export class DbInfoImpl implements DbInfo {
   procedureSignatures: Map<string, SignatureInformation> = new Map();
   functionSignatures: Map<string, SignatureInformation> = new Map();
   labels: string[] = [];
+  relationshipTypes: string[] = [];
 
   private neo4j: Driver = driver(
     'neo4j://localhost',
@@ -24,14 +26,16 @@ export class DbInfoImpl implements DbInfo {
   );
 
   constructor() {
-    const updateEverything = () => {
-      this.updateProceduresCache();
-      this.updateFunctionsCache();
+    // We do not need to update procedures and functions because they are cached
+    const updateLabelsAndTypes = () => {
       this.updateLabels();
+      this.updateRelationshipTypes();
     };
 
-    updateEverything();
-    setInterval(updateEverything, 60000);
+    this.updateProceduresCache();
+    this.updateFunctionsCache();
+    updateLabelsAndTypes();
+    setInterval(updateLabelsAndTypes, 20000);
   }
 
   private getParamsInfo(param: string): ParameterInformation {
@@ -50,7 +54,22 @@ export class DbInfoImpl implements DbInfo {
       const result = await s.run('CALL db.labels()');
       this.labels = result.records.map((record) => record.get('label'));
     } catch (error) {
-      console.log('coult not contact the database to update labels');
+      console.log('coult not contact the database to fetch labels');
+    } finally {
+      await s.close();
+    }
+  }
+
+  private async updateRelationshipTypes() {
+    const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
+
+    try {
+      const result = await s.run('CALL db.relationshipTypes()');
+      this.relationshipTypes = result.records.map((record) =>
+        record.get('relationshipType'),
+      );
+    } catch (error) {
+      console.log('coult not contact the database to fetch relationship types');
     } finally {
       await s.close();
     }
@@ -99,7 +118,7 @@ export class DbInfoImpl implements DbInfo {
         );
       });
     } catch (error) {
-      console.log('coult not contact the database to update ' + updateTarget);
+      console.log('coult not contact the database to fetch ' + updateTarget);
     } finally {
       await s.close();
     }

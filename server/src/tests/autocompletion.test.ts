@@ -125,6 +125,20 @@ describe('CREATE auto-completion', () => {
   });
 });
 
+describe('Type relationship auto-completion', () => {
+  test('Correctly completes relationship type', async () => {
+    const query = 'MATCH (n)-[r:R';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo([], ['RelationshipType']),
+      [{ label: 'RelationshipType', kind: CompletionItemKind.TypeParameter }],
+    );
+  });
+});
+
 describe('Procedures auto-completion', () => {
   test('Correctly completes CALL in standalone', async () => {
     const query = 'C';
@@ -152,6 +166,7 @@ describe('Procedures auto-completion', () => {
       query,
       position,
       new MockDbInfo(
+        [],
         [],
         new Map([
           ['foo.bar', SignatureInformation.create('')],
