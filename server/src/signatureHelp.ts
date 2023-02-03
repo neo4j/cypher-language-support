@@ -3,18 +3,19 @@ import {
   Range,
   SignatureHelp,
   SignatureHelpParams,
+  SignatureInformation,
   TextDocuments,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { CharStreams, CommonTokenStream } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
-  OC_CypherContext,
+  OC_FunctionInvocationContext,
   OC_InQueryCallContext,
   OC_StandaloneCallContext,
 } from './antlr/CypherParser';
@@ -28,7 +29,7 @@ export const emptyResult: SignatureHelp = {
   activeParameter: null,
 };
 
-interface ParsedProcedure {
+interface ParsedMethod {
   methodName: string;
   numProcedureArgs: number;
 }
@@ -50,7 +51,7 @@ function parseStandaloneProcedure(ctx: OC_StandaloneCallContext) {
 
 function parseInQueryProcedure(
   ctx: OC_InQueryCallContext,
-): ParsedProcedure | undefined {
+): ParsedMethod | undefined {
   const procName = ctx.oC_ProcedureName().text;
   const numProcedureArgs = ctx
     .oC_ExplicitProcedureInvocation()
@@ -63,10 +64,9 @@ function parseInQueryProcedure(
 }
 
 function tryParseProcedure(
-  root: OC_CypherContext,
-): ParsedProcedure | undefined {
-  let parsedProc: ParsedProcedure | undefined = undefined;
-  const currentNode = findStopNode(root);
+  currentNode: ParserRuleContext,
+): ParsedMethod | undefined {
+  let parsedProc: ParsedMethod | undefined = undefined;
 
   const standaloneCall = findParent(
     currentNode,
@@ -91,27 +91,45 @@ function tryParseProcedure(
   return parsedProc;
 }
 
-function toSignatureHelp(
-  dbInfo: DbInfo,
-  parsedProc: ParsedProcedure | undefined,
-) {
-  if (parsedProc) {
-    const methodName = parsedProc.methodName;
-    const numProcedureArgs = parsedProc.numProcedureArgs;
-    const procedure = dbInfo.procedureSignatures.get(methodName);
-    const signatures = procedure ? [procedure] : [];
-    const argPosition =
-      numProcedureArgs != undefined ? Math.max(numProcedureArgs - 1, 0) : null;
+function tryParseFunction(
+  currentNode: ParserRuleContext,
+): ParsedMethod | undefined {
+  const functionInvocation = findParent(
+    currentNode,
+    (node) => node instanceof OC_FunctionInvocationContext,
+  );
 
-    const signatureHelp: SignatureHelp = {
-      signatures: signatures,
-      activeSignature: procedure ? 0 : null,
-      activeParameter: argPosition,
+  if (functionInvocation) {
+    const ctx = functionInvocation as OC_FunctionInvocationContext;
+    const methodName = ctx.oC_FunctionName().text;
+    const numMethodArgs = ctx.oc_ProcedureNameArg().length ?? 0;
+
+    return {
+      methodName: methodName,
+      numProcedureArgs: numMethodArgs,
     };
-    return signatureHelp;
   } else {
-    return emptyResult;
+    return undefined;
   }
+}
+
+function toSignatureHelp(
+  methodSignatures: Map<string, SignatureInformation>,
+  parsedMethod: ParsedMethod,
+) {
+  const methodName = parsedMethod.methodName;
+  const numMethodArgs = parsedMethod.numProcedureArgs;
+  const method = methodSignatures.get(methodName);
+  const signatures = method ? [method] : [];
+  const argPosition =
+    numMethodArgs != undefined ? Math.max(numMethodArgs - 1, 0) : null;
+
+  const signatureHelp: SignatureHelp = {
+    signatures: signatures,
+    activeSignature: method ? 0 : null,
+    activeParameter: argPosition,
+  };
+  return signatureHelp;
 }
 
 export function doSignatureHelpForQuery(
@@ -123,9 +141,22 @@ export function doSignatureHelpForQuery(
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
   const root = wholeFileParser.oC_Cypher();
-  const parsedProc = tryParseProcedure(root);
 
-  return toSignatureHelp(dbInfo, parsedProc);
+  const stopNode = findStopNode(root);
+  let result: SignatureHelp = emptyResult;
+
+  const parsedProc = tryParseProcedure(stopNode);
+  if (parsedProc) {
+    result = toSignatureHelp(dbInfo.procedureSignatures, parsedProc);
+  } else {
+    const parsedFunc = tryParseFunction(stopNode);
+
+    if (parsedFunc) {
+      result = toSignatureHelp(dbInfo.functionSignatures, parsedFunc);
+    }
+  }
+
+  return result;
 }
 
 // ************************************************************

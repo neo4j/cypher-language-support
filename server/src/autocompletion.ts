@@ -21,6 +21,7 @@ import {
   OC_ExpressionContext,
   OC_LabelNameContext,
   OC_ProcedureNameContext,
+  OC_PropertyOrLabelsExpressionContext,
   OC_RelTypeNameContext,
 } from './antlr/CypherParser';
 
@@ -82,50 +83,71 @@ export function autoCompleteQuery(
         kind: CompletionItemKind.TypeParameter,
       };
     });
-  } else if (
-    findParent(stopNode, (p) => p instanceof OC_ProcedureNameContext)
-  ) {
-    return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
-      return {
-        label: t,
-        kind: CompletionItemKind.Function,
-      };
-    });
   } else {
-    // If we are not completing a label of a procedure name,
-    // we need to use the antlr completion
-    const codeCompletion = new CodeCompletionCore(wholeFileParser);
+    // Completes expressions that are prefixes of function names as function names
+    const expr = findParent(
+      stopNode,
+      (p) => p instanceof OC_PropertyOrLabelsExpressionContext,
+    );
 
-    // TODO Nacho Why did it have to be -2 here?
-    // Is it because of the end of file?
-    const caretIndex = tokenStream.size - 2;
-
-    if (caretIndex >= 0) {
-      // TODO Nacho Can this be extracted for more performance?
-      const allPosibleTokens: Map<number | undefined, string> = new Map();
-      wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
-        allPosibleTokens.set(map.get(key), key);
-      });
-      const candidates = codeCompletion.collectCandidates(caretIndex as number);
-      const tokens = candidates.tokens.entries();
-      const tokenCandidates = Array.from(tokens).map((value) => {
-        const [tokenNumber, followUpList] = value;
-        return [tokenNumber]
-          .concat(followUpList)
-          .map((value, index, array) => allPosibleTokens.get(value))
-          .join(' ');
-      });
-
-      const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
+    if (expr) {
+      return Array.from(dbInfo.functionSignatures.keys())
+        .filter((functionName) => {
+          return functionName.startsWith(expr.text);
+        })
+        .map((t) => {
+          return {
+            label: t,
+            kind: CompletionItemKind.Function,
+          };
+        });
+    } else if (
+      findParent(stopNode, (p) => p instanceof OC_ProcedureNameContext)
+    ) {
+      return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
         return {
           label: t,
-          kind: CompletionItemKind.Keyword,
+          kind: CompletionItemKind.Function,
         };
       });
-
-      return tokenCompletions;
     } else {
-      return [];
+      // If we are not completing a label of a procedure name,
+      // we need to use the antlr completion
+      const codeCompletion = new CodeCompletionCore(wholeFileParser);
+
+      // TODO Nacho Why did it have to be -2 here?
+      // Is it because of the end of file?
+      const caretIndex = tokenStream.size - 2;
+
+      if (caretIndex >= 0) {
+        // TODO Nacho Can this be extracted for more performance?
+        const allPosibleTokens: Map<number | undefined, string> = new Map();
+        wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
+          allPosibleTokens.set(map.get(key), key);
+        });
+        const candidates = codeCompletion.collectCandidates(
+          caretIndex as number,
+        );
+        const tokens = candidates.tokens.entries();
+        const tokenCandidates = Array.from(tokens).map((value) => {
+          const [tokenNumber, followUpList] = value;
+          return [tokenNumber]
+            .concat(followUpList)
+            .map((value) => allPosibleTokens.get(value))
+            .join(' ');
+        });
+
+        const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
+          return {
+            label: t,
+            kind: CompletionItemKind.Keyword,
+          };
+        });
+
+        return tokenCompletions;
+      } else {
+        return [];
+      }
     }
   }
 }

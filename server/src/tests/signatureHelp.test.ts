@@ -20,7 +20,7 @@ export async function testSignatureHelp(
 }
 
 describe('Procedures signature help', () => {
-  const procedureSignature = SignatureInformation.create(
+  const signature = SignatureInformation.create(
     'apoc.do.when',
     'Runs the given read/write ifQuery if the conditional has evaluated to true, otherwise the elseQuery will run.',
     ...[
@@ -33,12 +33,12 @@ describe('Procedures signature help', () => {
   const dbWithProcedure = new MockDbInfo(
     [],
     [],
-    new Map([['apoc.do.when', procedureSignature]]),
+    new Map([['apoc.do.when', signature]]),
   );
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
-      signatures: [procedureSignature],
+      signatures: [signature],
       activeSignature: 0,
       activeParameter: i,
     };
@@ -54,9 +54,9 @@ describe('Procedures signature help', () => {
 
     await testSignatureHelp(
       `MATCH (n)
-       CALL apoc.do.when(true,`,
+       CALL apoc.do.when(true`,
       dbWithProcedure,
-      expectedArgIndex(1),
+      expectedArgIndex(0),
     );
   });
 
@@ -131,6 +131,95 @@ describe('Procedures signature help', () => {
  
        MATCH (`,
       dbWithProcedure,
+      emptyResult,
+    );
+  });
+});
+
+describe('Functions signature help', () => {
+  const signature = SignatureInformation.create(
+    'apoc.do.when',
+    'Runs the given read/write ifQuery if the conditional has evaluated to true, otherwise the elseQuery will run.',
+    ...[
+      ParameterInformation.create('condition', 'condition :: BOOLEAN?'),
+      ParameterInformation.create('ifQuery', 'ifQuery :: STRING?'),
+      ParameterInformation.create('elseQuery', 'condition :: STRING?'),
+    ],
+  );
+  const dbWithFunction = new MockDbInfo(
+    [],
+    [],
+    new Map(),
+    new Map([['apoc.do.when', signature]]),
+  );
+
+  function expectedArgIndex(i: number): SignatureHelp {
+    return {
+      signatures: [signature],
+      activeSignature: 0,
+      activeParameter: i,
+    };
+  }
+
+  test('Provides signature help for functions first argument', async () => {
+    await testSignatureHelp(
+      `MATCH (n)
+       RETURN apoc.do.when(`,
+      dbWithFunction,
+      expectedArgIndex(0),
+    );
+
+    await testSignatureHelp(
+      `MATCH (n)
+       RETURN apoc.do.when(true`,
+      dbWithFunction,
+      expectedArgIndex(0),
+    );
+  });
+
+  test('Provides signature help for functions second argument', async () => {
+    await testSignatureHelp(
+      'MATCH (n) WHERE apoc.do.when(true,',
+      dbWithFunction,
+      expectedArgIndex(1),
+    );
+
+    await testSignatureHelp(
+      'MATCH (n) WHERE apoc.do.when(true, "foo"',
+      dbWithFunction,
+      expectedArgIndex(1),
+    );
+  });
+
+  test('Provides signature help for functions third argument', async () => {
+    await testSignatureHelp(
+      'RETURN true OR apoc.do.when(true, "foo",',
+      dbWithFunction,
+      expectedArgIndex(2),
+    );
+
+    await testSignatureHelp(
+      'RETURN true OR apoc.do.when(true, "foo", false',
+      dbWithFunction,
+      expectedArgIndex(2),
+    );
+  });
+
+  test('Provides signature help with several statements where cursor one requires autocompletion', async () => {
+    await testSignatureHelp(
+      `MATCH (n) RETURN n;
+       MATCH (m) WHERE apoc.do.when(`,
+      dbWithFunction,
+      expectedArgIndex(0),
+    );
+  });
+
+  test('Does not provide signature help with several statements where cursor one does not require autocompletion', async () => {
+    await testSignatureHelp(
+      `RETURN apoc.do.when(true, "foo", false, "bar");
+ 
+       MATCH (`,
+      dbWithFunction,
       emptyResult,
     );
   });

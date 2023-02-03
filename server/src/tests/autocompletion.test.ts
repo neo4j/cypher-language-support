@@ -193,6 +193,75 @@ describe('Procedures auto-completion', () => {
   });
 });
 
+describe('Functions auto-completion', () => {
+  const functionSignatures: [string, SignatureInformation][] = [
+    ['a.b', SignatureInformation.create('')],
+    ['xx.yy.proc', SignatureInformation.create('')],
+    ['xx.yy.procedure', SignatureInformation.create('')],
+    ['db.info', SignatureInformation.create('')],
+  ];
+
+  test('Correctly completes function name in left hand side of WHERE', async () => {
+    const query = 'MATCH (n) WHERE xx.yy';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      [
+        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+      ],
+    );
+  });
+
+  test('Correctly completes function name in right hand side of WHERE', async () => {
+    const query = 'MATCH (n) WHERE n.name = xx.yy';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      [
+        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+      ],
+    );
+  });
+
+  test('Correctly completes function name in RETURN', async () => {
+    const query = 'RETURN xx.yy';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      [
+        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+      ],
+    );
+  });
+
+  test('Correctly completes function name in an AND', async () => {
+    const query = 'RETURN true AND xx.yy';
+    const position = Position.create(0, query.length);
+
+    await testCompletion(
+      query,
+      position,
+      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      [
+        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+      ],
+    );
+  });
+});
+
 describe('Misc auto-completion', () => {
   test('Correctly completes RETURN', async () => {
     const query = 'RET';

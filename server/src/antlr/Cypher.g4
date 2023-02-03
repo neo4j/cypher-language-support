@@ -187,9 +187,7 @@ oC_ProjectionItems
                    ;
 
 oC_ProjectionItem
-              :  ( oC_Expression AS oC_Variable )
-                  | oC_Expression
-                  ;
+              :  oC_Expression (AS oC_Variable)? ;
 
 oC_Order
      :  ORDER BY oC_SortItem ( ',' oC_SortItem )* ;
@@ -432,10 +430,13 @@ oC_IdInColl
         :  oC_Variable IN oC_Expression ;
 
 oC_FunctionInvocation
-                  :  oC_FunctionName '(' DISTINCT? ( oC_Expression ( ',' oC_Expression )* )? ')' ;
+                  :  oC_FunctionName '(' DISTINCT? ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
 
 oC_FunctionName
             :  oC_Namespace oC_SymbolicName ;
+
+oc_FunctionNameArg
+            :  oC_Expression;
 
 oC_ExistentialSubquery
                    :  EXISTS '{' ( oC_RegularQuery | ( oC_Pattern oC_Where? ) ) '}' ;
