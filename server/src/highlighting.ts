@@ -15,8 +15,6 @@ import {
   CharStreams,
   CommonToken,
   CommonTokenStream,
-  DefaultErrorStrategy,
-  Parser,
   RecognitionException,
   Recognizer,
   Token,
@@ -24,44 +22,26 @@ import {
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 
-import { IntervalSet } from 'antlr4ts/misc';
-
 import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
-  OC_LabelNameContext,
-  OC_LiteralContext,
-  OC_OptionalMatchContext,
-  OC_ProcedureNameContext,
-  OC_PropertyKeyNameContext,
-  OC_ReturnContext,
-  OC_SimpleMatchContext,
-  OC_StandaloneCallContext,
-  OC_VariableContext,
-  OC_WhereContext,
+  LabelNameContext,
+  LiteralContext,
+  OptionalMatchContext,
+  ProcedureNameContext,
+  PropertyKeyNameContext,
+  ReturnStatementContext,
+  SimpleMatchContext,
+  StandaloneCallContext,
+  VariableContext,
+  WhereContext,
 } from './antlr/CypherParser';
 
 import { CypherListener } from './antlr/CypherListener';
 
 const tokenTypesMap = new Map<string, number>();
 const tokenModifiersMap = new Map<string, number>();
-
-export class CompletionErrorStrategy extends DefaultErrorStrategy {
-  protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
-    const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
-
-    if (recognizer.ruleContext.ruleIndex === CypherParser.RULE_oC_SingleQuery) {
-      const followSet = new IntervalSet();
-      followSet.add(CypherLexer.RETURN);
-
-      const intersection = defaultRecoverySet.and(followSet);
-      if (intersection.size > 0) return intersection;
-    }
-
-    return defaultRecoverySet;
-  }
-}
 
 // ************************************************************
 // Part of the code that does the highlighting
@@ -142,23 +122,23 @@ class SyntaxHighlighter implements CypherListener {
       });
     }
   }
-  enterOC_LabelName(ctx: OC_LabelNameContext) {
+  enterLabelName(ctx: LabelNameContext) {
     this.addToken(ctx.start, 'typeParameter');
   }
 
-  enterOC_Return(ctx: OC_ReturnContext) {
+  enterReturnStatement(ctx: ReturnStatementContext) {
     this.addToken(ctx.start, 'keyword');
   }
 
-  enterOC_SimpleMatch(ctx: OC_SimpleMatchContext) {
+  enterSimpleMatch(ctx: SimpleMatchContext) {
     this.addToken(ctx.start, 'keyword');
   }
 
-  enterOC_OptionalMatch(ctx: OC_OptionalMatchContext) {
+  enterOptionalMatch(ctx: OptionalMatchContext) {
     this.addToken(ctx.start, 'method');
   }
 
-  exitOC_StandaloneCall(ctx: OC_StandaloneCallContext) {
+  exitStandaloneCall(ctx: StandaloneCallContext) {
     const call = ctx.CALL();
     const _yield = ctx.YIELD();
 
@@ -170,24 +150,24 @@ class SyntaxHighlighter implements CypherListener {
     }
   }
 
-  exitOC_ProcedureName(ctx: OC_ProcedureNameContext) {
+  exitProcedureName(ctx: ProcedureNameContext) {
     this.addToken(ctx.start, 'function', ctx.text);
   }
 
-  enterOC_Variable(ctx: OC_VariableContext) {
+  enterVariable(ctx: VariableContext) {
     this.addToken(ctx.start, 'variable');
   }
 
-  enterOC_Where(ctx: OC_WhereContext) {
+  enterWhere(ctx: WhereContext) {
     this.addToken(ctx.start, 'keyword');
   }
 
-  enterOC_PropertyKeyName(ctx: OC_PropertyKeyNameContext) {
+  enterPropertyKeyName(ctx: PropertyKeyNameContext) {
     // FIXME Is this correct in this case for all cases, not just simple properties?
     this.addToken(ctx.start, 'property');
   }
 
-  enterOC_Literal(ctx: OC_LiteralContext) {
+  enterLiteral(ctx: LiteralContext) {
     this.addToken(ctx.start, 'string');
   }
 }
@@ -209,7 +189,7 @@ export function doSemanticHighlightingText(
   const parser = new CypherParser(tokenStream);
   const syntaxHighliter = new SyntaxHighlighter();
   parser.addParseListener(syntaxHighliter as ParseTreeListener);
-  parser.oC_Cypher();
+  parser.cypher();
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
@@ -285,7 +265,7 @@ export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
   const parser = new CypherParser(tokenStream);
   const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
-  parser.oC_Cypher();
+  parser.cypher();
 
   return errorListener.diagnostics;
 }

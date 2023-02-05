@@ -15,9 +15,9 @@ import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
-  OC_FunctionInvocationContext,
-  OC_InQueryCallContext,
-  OC_StandaloneCallContext,
+  FunctionInvocationContext,
+  InQueryCallContext,
+  StandaloneCallContext,
 } from './antlr/CypherParser';
 
 import { DbInfo } from './dbInfo';
@@ -34,10 +34,10 @@ interface ParsedMethod {
   numProcedureArgs: number;
 }
 
-function parseStandaloneProcedure(ctx: OC_StandaloneCallContext) {
-  const methodName = ctx.oC_ProcedureName()?.text;
+function parseStandaloneProcedure(ctx: StandaloneCallContext) {
+  const methodName = ctx.procedureName()?.text;
   const numProcedureArgs =
-    ctx?.oC_ExplicitProcedureInvocation()?.oc_ProcedureNameArg().length ?? 0;
+    ctx?.explicitProcedureInvocation()?.procedureNameArg().length ?? 0;
 
   if (methodName) {
     return {
@@ -50,12 +50,12 @@ function parseStandaloneProcedure(ctx: OC_StandaloneCallContext) {
 }
 
 function parseInQueryProcedure(
-  ctx: OC_InQueryCallContext,
+  ctx: InQueryCallContext,
 ): ParsedMethod | undefined {
-  const procName = ctx.oC_ProcedureName().text;
+  const procName = ctx.procedureName().text;
   const numProcedureArgs = ctx
-    .oC_ExplicitProcedureInvocation()
-    .oc_ProcedureNameArg().length;
+    .explicitProcedureInvocation()
+    .procedureNameArg().length;
 
   return {
     methodName: procName,
@@ -70,21 +70,21 @@ function tryParseProcedure(
 
   const standaloneCall = findParent(
     currentNode,
-    (node) => node instanceof OC_StandaloneCallContext,
+    (node) => node instanceof StandaloneCallContext,
   );
   if (standaloneCall) {
     parsedProc = parseStandaloneProcedure(
-      standaloneCall as OC_StandaloneCallContext,
+      standaloneCall as StandaloneCallContext,
     );
   }
 
   if (!parsedProc) {
     const inqueryCall = findParent(
       currentNode,
-      (node) => node instanceof OC_InQueryCallContext,
+      (node) => node instanceof InQueryCallContext,
     );
     if (inqueryCall) {
-      parsedProc = parseInQueryProcedure(inqueryCall as OC_InQueryCallContext);
+      parsedProc = parseInQueryProcedure(inqueryCall as InQueryCallContext);
     }
   }
 
@@ -96,13 +96,13 @@ function tryParseFunction(
 ): ParsedMethod | undefined {
   const functionInvocation = findParent(
     currentNode,
-    (node) => node instanceof OC_FunctionInvocationContext,
+    (node) => node instanceof FunctionInvocationContext,
   );
 
   if (functionInvocation) {
-    const ctx = functionInvocation as OC_FunctionInvocationContext;
-    const methodName = ctx.oC_FunctionName().text;
-    const numMethodArgs = ctx.oc_ProcedureNameArg().length ?? 0;
+    const ctx = functionInvocation as FunctionInvocationContext;
+    const methodName = ctx.functionName().text;
+    const numMethodArgs = ctx.procedureNameArg().length ?? 0;
 
     return {
       methodName: methodName,
@@ -140,7 +140,7 @@ export function doSignatureHelpForQuery(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
-  const root = wholeFileParser.oC_Cypher();
+  const root = wholeFileParser.cypher();
 
   const stopNode = findStopNode(root);
   let result: SignatureHelp = emptyResult;

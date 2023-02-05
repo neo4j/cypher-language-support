@@ -1,7 +1,7 @@
 import { ParserRuleContext } from 'antlr4ts';
-import { OC_CypherContext } from './antlr/CypherParser';
+import { CypherContext } from './antlr/CypherParser';
 
-export function findStopNode(root: OC_CypherContext) {
+export function findStopNode(root: CypherContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 

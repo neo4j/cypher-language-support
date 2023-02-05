@@ -18,11 +18,11 @@ import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
-  OC_LabelNameContext,
-  OC_NodePatternContext,
-  OC_ProcedureNameContext,
-  OC_PropertyOrLabelsExpressionContext,
-  OC_RelTypeNameContext,
+  LabelNameContext,
+  NodePatternContext,
+  ProcedureNameContext,
+  PropertyOrLabelsExpressionContext,
+  RelTypeNameContext,
 } from './antlr/CypherParser';
 
 import { DbInfo } from './dbInfo';
@@ -45,7 +45,7 @@ export function autoCompleteQuery(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
-  const tree = wholeFileParser.oC_Cypher();
+  const tree = wholeFileParser.cypher();
   const tokens = tokenStream.getTokens();
   const lastToken = tokens[tokens.length - 2];
 
@@ -54,31 +54,27 @@ export function autoCompleteQuery(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (findParent(stopNode, (p) => p instanceof OC_LabelNameContext)) {
+    if (findParent(stopNode, (p) => p instanceof LabelNameContext)) {
       return dbInfo.labels.map((t) => {
         return {
           label: t,
           kind: CompletionItemKind.TypeParameter,
         };
       });
-    } else if (
-      findParent(stopNode, (p) => p instanceof OC_RelTypeNameContext)
-    ) {
+    } else if (findParent(stopNode, (p) => p instanceof RelTypeNameContext)) {
       return dbInfo.relationshipTypes.map((t) => {
         return {
           label: t,
           kind: CompletionItemKind.TypeParameter,
         };
       });
-    } else if (
-      findParent(stopNode, (p) => p instanceof OC_NodePatternContext)
-    ) {
+    } else if (findParent(stopNode, (p) => p instanceof NodePatternContext)) {
       return [];
     } else {
       // Completes expressions that are prefixes of function names as function names
       const expr = findParent(
         stopNode,
-        (p) => p instanceof OC_PropertyOrLabelsExpressionContext,
+        (p) => p instanceof PropertyOrLabelsExpressionContext,
       );
 
       if (expr) {
@@ -93,7 +89,7 @@ export function autoCompleteQuery(
             };
           });
       } else if (
-        findParent(stopNode, (p) => p instanceof OC_ProcedureNameContext)
+        findParent(stopNode, (p) => p instanceof ProcedureNameContext)
       ) {
         return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
           return {

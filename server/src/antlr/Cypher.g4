@@ -27,187 +27,187 @@
  */
 grammar Cypher;
 
-oC_Cypher
-      : oC_Statement+ EOF;
+cypher
+      : statement+ EOF;
 
-oC_Statement
-         :  oC_Query ';'?;
+statement
+         :  query ';'?;
 
-oC_Query
-     :  oC_RegularQuery | oC_StandaloneCall;
+query
+     :  regularQuery | standaloneCall;
 
-oC_RegularQuery
-            :  oC_SingleQuery oC_Union* ;
+regularQuery
+            :  singleQuery union* ;
 
-oC_Union
-     :  ( UNION ALL oC_SingleQuery )
-         | ( UNION oC_SingleQuery )
+union
+     :  ( UNION ALL singleQuery )
+         | ( UNION singleQuery )
          ;
 
 UNION : ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ;
 
 ALL : ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
-oC_SingleQuery
-           :  oc_StartSingleQuery? oC_RestSingleQuery;
+singleQuery
+           :  startSingleQuery? restSingleQuery;
 
-oc_StartSingleQuery
-           : (oC_Match | oC_Unwind) oC_ReadingClause*;
+startSingleQuery
+           : (matchStatement | unwind) readingClause*;
 
-oC_RestSingleQuery
-    : oC_Return
-    | ( oC_With oC_MultiPartQuery )
-    | ( oC_UpdatingClause+ oC_EndSingleQuery ) ;
+restSingleQuery
+    : returnStatement
+    | ( with multiPartQuery )
+    | ( updatingClause+ endSingleQuery ) ;
 
-oC_EndSingleQuery:
-    ( oC_With oC_MultiPartQuery ) | oC_Return?
+endSingleQuery:
+    ( with multiPartQuery ) | returnStatement?
     ;
 
-oC_SinglePartQuery
-                : oC_ReadingClause ( oC_Return | ( oC_UpdatingClause+ oC_Return? ) ) ;
+singlePartQuery
+                : readingClause ( returnStatement | ( updatingClause+ returnStatement? ) ) ;
 
-oC_MultiPartQuery
-              :  ( oC_ReadingClause oC_UpdatingClause* oC_With )* oC_SinglePartQuery ;
+multiPartQuery
+              :  ( readingClause updatingClause* with )* singlePartQuery ;
 
-oC_UpdatingClause
-              :  oC_Create
-                  | oC_Merge
-                  | oC_Delete
-                  | oC_Set
-                  | oC_Remove
+updatingClause
+              :  create
+                  | merge
+                  | delete
+                  | set
+                  | remove
                   ;
 
-oC_ReadingClause
-             :  oC_Match
-                 | oC_Unwind
-                 | oC_InQueryCall
+readingClause
+             :  matchStatement
+                 | unwind
+                 | inQueryCall
                  ;
-oC_Match
-     :  (oC_OptionalMatch | oC_SimpleMatch) oC_Pattern oC_Where? ;
+matchStatement
+     :  (optionalMatch | simpleMatch) pattern where? ;
 
-oC_OptionalMatch:
+optionalMatch:
     OPTIONAL MATCH;
 
-oC_SimpleMatch:
+simpleMatch:
     MATCH;
 
 OPTIONAL : ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'A' | 'a' ) ( 'L' | 'l' ) ;
 
 MATCH : ( 'M' | 'm' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'C' | 'c' ) ( 'H' | 'h' ) ;
 
-oC_Unwind
-      :  UNWIND oC_Expression AS oC_Variable ;
+unwind
+      :  UNWIND expression AS variable ;
 
 UNWIND : ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'W' | 'w' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ;
 
 AS : ( 'A' | 'a' ) ( 'S' | 's' ) ;
 
-oC_Merge
-     :  MERGE oC_PatternPart oC_MergeAction* ;
+merge
+     :  MERGE patternPart mergeAction* ;
 
 MERGE : ( 'M' | 'm' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'G' | 'g' ) ( 'E' | 'e' ) ;
 
-oC_MergeAction
-           :  ( ON MATCH oC_Set )
-               | ( ON CREATE oC_Set )
+mergeAction
+           :  ( ON MATCH set )
+               | ( ON CREATE set )
                ;
 
 ON : ( 'O' | 'o' ) ( 'N' | 'n' ) ;
 
 CREATE : ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) ;
 
-oC_Create
-      :  CREATE oC_Pattern ;
+create
+      :  CREATE pattern ;
 
-oC_Set
-   :  SET oC_SetItem ( ',' oC_SetItem )* ;
+set
+   :  SET setItem ( ',' setItem )* ;
 
 SET : ( 'S' | 's' ) ( 'E' | 'e' ) ( 'T' | 't' ) ;
 
-oC_SetItem
-       :  ( oC_PropertyExpression '=' oC_Expression )
-           | ( oC_Variable '=' oC_Expression )
-           | ( oC_Variable '+=' oC_Expression )
-           | ( oC_Variable oC_NodeLabels )
+setItem
+       :  ( propertyExpression '=' expression )
+           | ( variable '=' expression )
+           | ( variable '+=' expression )
+           | ( variable nodeLabels )
            ;
 
-oC_Delete
-      :  DETACH? DELETE oC_Expression ( ',' oC_Expression )* ;
+delete
+      :  DETACH? DELETE expression ( ',' expression )* ;
 
 DETACH : ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'C' | 'c' ) ( 'H' | 'h' ) ;
 
 DELETE : ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'L' | 'l' ) ( 'E' | 'e' ) ( 'T' | 't' ) ( 'E' | 'e' ) ;
 
-oC_Remove
-      :  REMOVE oC_RemoveItem ( ',' oC_RemoveItem )* ;
+remove
+      :  REMOVE removeItem ( ',' removeItem )* ;
 
 REMOVE : ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'M' | 'm' ) ( 'O' | 'o' ) ( 'V' | 'v' ) ( 'E' | 'e' ) ;
 
-oC_RemoveItem
-          :  ( oC_Variable oC_NodeLabels )
-              | oC_PropertyExpression
+removeItem
+          :  ( variable nodeLabels )
+              | propertyExpression
               ;
 
-oC_InQueryCall
-           :  CALL oC_ProcedureName oC_ExplicitProcedureInvocation ( YIELD oC_YieldItems )? ;
+inQueryCall
+           :  CALL procedureName explicitProcedureInvocation ( YIELD yieldItems )? ;
 
 CALL : ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
 YIELD : ( 'Y' | 'y' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'L' | 'l' ) ( 'D' | 'd' ) ;
 
-oC_StandaloneCall
+standaloneCall
               :  CALL 
-              ( oC_ProcedureName oC_ExplicitProcedureInvocation? )? 
-              ( YIELD ( '*' | oC_YieldItems ) )? ;
+              ( procedureName explicitProcedureInvocation? )? 
+              ( YIELD ( '*' | yieldItems ) )? ;
 
-oC_YieldItems
-          :  oC_YieldItem ( ',' oC_YieldItem )* oC_Where? ;
+yieldItems
+          :  yieldItem ( ',' yieldItem )* where? ;
 
-oC_YieldItem
-         :  ( oC_ProcedureResultField AS )? oC_Variable ;
+yieldItem
+         :  ( procedureResultField AS )? variable ;
 
-oC_With
-    :  WITH oC_ProjectionBody oC_Where? ;
+with
+    :  WITH projectionBody where? ;
 
 WITH : ( 'W' | 'w' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'H' | 'h' ) ;
 
-oC_Return
-      :  RETURN oC_ProjectionBody ;
+returnStatement
+      :  RETURN projectionBody ;
 
 RETURN : ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'T' | 't' ) ( 'U' | 'u' ) ( 'R' | 'r' ) ( 'N' | 'n' ) ;
 
-oC_ProjectionBody
-              :  DISTINCT? oC_ProjectionItems oC_Order? oC_Skip? oC_Limit? ;
+projectionBody
+              :  DISTINCT? projectionItems order? skip? limit? ;
 
 DISTINCT : ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'T' | 't' ) ;
 
-oC_ProjectionItems
-               :  ( '*' ( ',' oC_ProjectionItem )* )
-                   | ( oC_ProjectionItem ( ',' oC_ProjectionItem )* )
+projectionItems
+               :  ( '*' ( ',' projectionItem )* )
+                   | ( projectionItem ( ',' projectionItem )* )
                    ;
 
-oC_ProjectionItem
-              :  oC_Expression (AS oC_Variable)? ;
+projectionItem
+              :  expression (AS variable)? ;
 
-oC_Order
-     :  ORDER BY oC_SortItem ( ',' oC_SortItem )* ;
+order
+     :  ORDER BY sortItem ( ',' sortItem )* ;
 
 ORDER : ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ;
 
 BY : ( 'B' | 'b' ) ( 'Y' | 'y' ) ;
 
-oC_Skip
-    :  L_SKIP oC_Expression ;
+skip
+    :  L_SKIP expression ;
 
 L_SKIP : ( 'S' | 's' ) ( 'K' | 'k' ) ( 'I' | 'i' ) ( 'P' | 'p' ) ;
 
-oC_Limit
-     :  LIMIT oC_Expression ;
+limit
+     :  LIMIT expression ;
 
 LIMIT : ( 'L' | 'l' ) ( 'I' | 'i' ) ( 'M' | 'm' ) ( 'I' | 'i' ) ( 'T' | 't' ) ;
 
-oC_SortItem
-        :  oC_Expression ( ASCENDING | ASC | DESCENDING | DESC )? ;
+sortItem
+        :  expression ( ASCENDING | ASC | DESCENDING | DESC )? ;
 
 ASCENDING : ( 'A' | 'a' ) ( 'S' | 's' ) ( 'C' | 'c' ) ( 'E' | 'e' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' ) ;
 
@@ -217,107 +217,110 @@ DESCENDING : ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'S' | 's' ) ( 'C' | 'c' ) ( 'E' | 'e'
 
 DESC : ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'S' | 's' ) ( 'C' | 'c' ) ;
 
-oC_Where
-     :  WHERE oC_Expression ;
+where
+     :  WHERE expression ;
 
 WHERE : ( 'W' | 'w' ) ( 'H' | 'h' ) ( 'E' | 'e' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ;
 
-oC_Pattern
-       :  oC_PatternPart ( ',' oC_PatternPart )* ;
+pattern
+       :  patternPart ( ',' patternPart )* ;
 
-oC_PatternPart
-           :  ( oC_Variable '=' oC_PatternElement )
-               | oC_PatternElement
+patternPart
+           :  ( variable '=' anonymousPatternPart )
+               | anonymousPatternPart
                ;
 
-oC_PatternElement
-              :  ( oC_NodePattern oC_PatternElementChain* )
-                  | ( '(' oC_PatternElement ')' )
+anonymousPatternPart
+                    :  patternElement ;
+
+patternElement
+              :  ( nodePattern patternElementChain* )
+                  | ( '(' patternElement ')' )
                   ;
 
-oC_RelationshipsPattern
-                    :  oC_NodePattern oC_PatternElementChain+ ;
+relationshipsPattern
+                    :  nodePattern patternElementChain+ ;
 
-oC_NodePattern
-           :  '(' oC_Variable? oC_NodeLabels? oC_Properties? ')' ;
+nodePattern
+           :  '(' variable? nodeLabels? properties? ')' ;
 
-oC_PatternElementChain
-                   :  oC_RelationshipPattern oC_NodePattern ;
+patternElementChain
+                   :  relationshipPattern nodePattern ;
 
-oC_RelationshipPattern
-                   :  ( oC_LeftArrowHead oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead? )
-                    | ( oC_Dash oC_RelationshipDetail? oC_Dash oC_RightArrowHead? )
+relationshipPattern
+                   :  ( leftArrowHead dash relationshipDetail? dash rightArrowHead? )
+                    | ( dash relationshipDetail? dash rightArrowHead? )
                     ;
 
-oC_RelationshipDetail
-                  :  '[' oC_Variable? oC_RelationshipTypes? oC_RangeLiteral? oC_Properties? ']' ;
+relationshipDetail
+                  :  '[' variable? relationshipTypes? rangeLiteral? properties? ']' ;
 
-oC_Properties
-          :  oC_MapLiteral
-              | oC_Parameter
+properties
+          :  mapLiteral
+              | parameter
               ;
 
-oC_RelationshipTypes
-                 :  ':' oC_RelTypeName ( '|' ':'? oC_RelTypeName )* ;
+relationshipTypes
+                 :  ':' relTypeName ( '|' ':'? relTypeName )* ;
 
-oC_NodeLabels
-          :  oC_NodeLabel oC_NodeLabel* ;
+nodeLabels
+          :  nodeLabel nodeLabel* ;
 
-oC_NodeLabel
-         :  ':' oC_LabelName ;
+nodeLabel
+         :  ':' labelName ;
 
-oC_RangeLiteral
-            :  '*' oC_IntegerLiteral? ( '..' oC_IntegerLiteral? )? ;
+rangeLiteral
+            :  '*' integerLiteral? ( '..' integerLiteral? )? ;
 
-oC_LabelName
-         :  oC_SchemaName ;
+labelName
+         :  schemaName ;
 
-oC_RelTypeName
-           :  oC_SchemaName ;
+relTypeName
+           :  schemaName ;
 
-oC_PropertyExpression
-                  :  oC_Atom oC_PropertyLookup+ ;
+propertyExpression
+                  :  atom propertyLookup+ ;
 
-oC_Expression
-          :  oC_OrExpression ;
+expression
+          :  orExpression ;
 
-oC_OrExpression
-            :  oC_XorExpression ( OR oC_XorExpression )* ;
+orExpression
+            :  xorExpression ( OR xorExpression )* ;
 
 OR : ( 'O' | 'o' ) ( 'R' | 'r' ) ;
 
-oC_XorExpression
-             :  oC_AndExpression ( XOR oC_AndExpression )* ;
+xorExpression
+             :  andExpression ( XOR andExpression )* ;
 
 XOR : ( 'X' | 'x' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ;
 
-oC_AndExpression
-             :  oC_NotExpression ( AND oC_NotExpression )* ;
+andExpression
+             :  notExpression ( AND notExpression )* ;
 
 AND : ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ;
 
-oC_NotExpression
-             :  NOT* oC_ComparisonExpression ;
+notExpression
+             :  NOT* comparisonExpression ;
 
 NOT : ( 'N' | 'n' ) ( 'O' | 'o' ) ( 'T' | 't' ) ;
 
-oC_ComparisonExpression
-                    :  oC_StringListNullPredicateExpression oC_PartialComparisonExpression* ;
+comparisonExpression
+                    :  stringListNullPredicateExpression partialComparisonExpression* ;
 
-oC_PartialComparisonExpression
-                           :  ( '=' oC_StringListNullPredicateExpression )
-                               | ( '<>' oC_StringListNullPredicateExpression )
-                               | ( '<' oC_StringListNullPredicateExpression )
-                               | ( '>' oC_StringListNullPredicateExpression )
-                               | ( '<=' oC_StringListNullPredicateExpression )
-                               | ( '>=' oC_StringListNullPredicateExpression )
+partialComparisonExpression
+                           :  ( '=' stringListNullPredicateExpression )
+                               | ( '<>' stringListNullPredicateExpression )
+                               | ( '<' stringListNullPredicateExpression )
+                               | ( '>' stringListNullPredicateExpression )
+                               | ( '<=' stringListNullPredicateExpression )
+                               | ( '>=' stringListNullPredicateExpression )
                                ;
 
-oC_StringListNullPredicateExpression
-                                 :  oC_AddOrSubtractExpression ( oC_StringPredicateExpression | oC_ListPredicateExpression | oC_NullPredicateExpression )* ;
+stringListNullPredicateExpression
+                                 :  addOrSubtractExpression ( stringPredicateExpression | listPredicateExpression | nullPredicateExpression )* ;
 
-oC_StringPredicateExpression
-                         :  ( ( STARTS WITH ) | ( ENDS WITH ) | CONTAINS ) oC_AddOrSubtractExpression ;
+stringPredicateExpression
+                         :  ( ( STARTS WITH ) | ( ENDS WITH ) | CONTAINS ) addOrSubtractExpression ;
 
 STARTS : ( 'S' | 's' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'S' | 's' ) ;
 
@@ -325,12 +328,12 @@ ENDS : ( 'E' | 'e' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'S' | 's' ) ;
 
 CONTAINS : ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'S' | 's' ) ;
 
-oC_ListPredicateExpression
-                       :  IN oC_AddOrSubtractExpression ;
+listPredicateExpression
+                       :  IN addOrSubtractExpression ;
 
 IN : ( 'I' | 'i' ) ( 'N' | 'n' ) ;
 
-oC_NullPredicateExpression
+nullPredicateExpression
                        :  ( IS NULL )
                            | ( IS NOT NULL )
                            ;
@@ -339,48 +342,48 @@ IS : ( 'I' | 'i' ) ( 'S' | 's' ) ;
 
 NULL : ( 'N' | 'n' ) ( 'U' | 'u' ) ( 'L' | 'l' ) ( 'L' | 'l' ) ;
 
-oC_AddOrSubtractExpression
-                       :  oC_MultiplyDivideModuloExpression ( ( '+' oC_MultiplyDivideModuloExpression ) | ( '-' oC_MultiplyDivideModuloExpression ) )* ;
+addOrSubtractExpression
+                       :  multiplyDivideModuloExpression ( ( '+' multiplyDivideModuloExpression ) | ( '-' multiplyDivideModuloExpression ) )* ;
 
-oC_MultiplyDivideModuloExpression
-                              :  oC_PowerOfExpression ( ( '*' oC_PowerOfExpression ) | ( '/' oC_PowerOfExpression ) | ( '%' oC_PowerOfExpression ) )* ;
+multiplyDivideModuloExpression
+                              :  powerOfExpression ( ( '*' powerOfExpression ) | ( '/' powerOfExpression ) | ( '%' powerOfExpression ) )* ;
 
-oC_PowerOfExpression
-                 :  oC_UnaryAddOrSubtractExpression ( '^' oC_UnaryAddOrSubtractExpression )* ;
+powerOfExpression
+                 :  unaryAddOrSubtractExpression ( '^' unaryAddOrSubtractExpression )* ;
 
-oC_UnaryAddOrSubtractExpression
-                            :  oC_ListOperatorExpression
-                                | ( ( '+' | '-' ) oC_ListOperatorExpression )
+unaryAddOrSubtractExpression
+                            :  listOperatorExpression
+                                | ( ( '+' | '-' ) listOperatorExpression )
                                 ;
 
-oC_ListOperatorExpression
-                      :  oC_PropertyOrLabelsExpression ( ( '[' oC_Expression ']' ) | ( '[' oC_Expression? '..' oC_Expression? ']' ) )* ;
+listOperatorExpression
+                      :  propertyOrLabelsExpression ( ( '[' expression ']' ) | ( '[' expression? '..' expression? ']' ) )* ;
 
-oC_PropertyOrLabelsExpression
-                          :  oC_Atom oC_PropertyLookup* oC_NodeLabels? ;
+propertyOrLabelsExpression
+                          :  atom propertyLookup* nodeLabels? ;
 
-oC_PropertyLookup
-              :  '.' oC_PropertyKeyName ;
+propertyLookup
+              :  '.' propertyKeyName ;
 
-oC_Atom
-    :  oC_Literal
-        | oC_Parameter
-        | oC_CaseExpression
+atom
+    :  literal
+        | parameter
+        | caseExpression
         | ( COUNT '(' '*' ')' )
-        | oC_ListComprehension
-        | oC_PatternComprehension
-        | oC_Quantifier
-        | oC_PatternPredicate
-        | oC_ParenthesizedExpression
-        | oC_FunctionInvocation
-        | oC_ExistentialSubquery
-        | oC_Variable
+        | listComprehension
+        | patternComprehension
+        | quantifier
+        | patternPredicate
+        | parenthesizedExpression
+        | functionInvocation
+        | existentialSubquery
+        | variable
         ;
 
 COUNT : ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'T' | 't' ) ;
 
-oC_CaseExpression
-              :  ( ( CASE oC_CaseAlternative+ ) | ( CASE oC_Expression oC_CaseAlternative+ ) ) ( ELSE oC_Expression )? END ;
+caseExpression
+              :  ( ( CASE caseAlternative+ ) | ( CASE expression caseAlternative+ ) ) ( ELSE expression )? END ;
 
 CASE : ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'E' | 'e' ) ;
 
@@ -388,24 +391,24 @@ ELSE : ( 'E' | 'e' ) ( 'L' | 'l' ) ( 'S' | 's' ) ( 'E' | 'e' ) ;
 
 END : ( 'E' | 'e' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ;
 
-oC_CaseAlternative
-               :  WHEN oC_Expression THEN oC_Expression ;
+caseAlternative
+               :  WHEN expression THEN expression ;
 
 WHEN : ( 'W' | 'w' ) ( 'H' | 'h' ) ( 'E' | 'e' ) ( 'N' | 'n' ) ;
 
 THEN : ( 'T' | 't' ) ( 'H' | 'h' ) ( 'E' | 'e' ) ( 'N' | 'n' ) ;
 
-oC_ListComprehension
-                 :  '[' oC_FilterExpression ( '|' oC_Expression )? ']' ;
+listComprehension
+                 :  '[' filterExpression ( '|' expression )? ']' ;
 
-oC_PatternComprehension
-                    :  '[' ( oC_Variable '=' )? oC_RelationshipsPattern oC_Where? '|' oC_Expression ']' ;
+patternComprehension
+                    :  '[' ( variable '=' )? relationshipsPattern where? '|' expression ']' ;
 
-oC_Quantifier
-          :  ( ALL '(' oC_FilterExpression ')' )
-              | ( ANY '(' oC_FilterExpression ')' )
-              | ( NONE '(' oC_FilterExpression ')' )
-              | ( SINGLE '(' oC_FilterExpression ')' )
+quantifier
+          :  ( ALL '(' filterExpression ')' )
+              | ( ANY '(' filterExpression ')' )
+              | ( NONE '(' filterExpression ')' )
+              | ( SINGLE '(' filterExpression ')' )
               ;
 
 ANY : ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'Y' | 'y' ) ;
@@ -414,61 +417,61 @@ NONE : ( 'N' | 'n' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ;
 
 SINGLE : ( 'S' | 's' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' ) ( 'L' | 'l' ) ( 'E' | 'e' ) ;
 
-oC_FilterExpression
-                :  oC_IdInColl oC_Where? ;
+filterExpression
+                :  idInColl where? ;
 
-oC_PatternPredicate
-                :  oC_RelationshipsPattern ;
+patternPredicate
+                :  relationshipsPattern ;
 
-oC_ParenthesizedExpression
-                       :  '(' oC_Expression ')' ;
+parenthesizedExpression
+                       :  '(' expression ')' ;
 
-oC_IdInColl
-        :  oC_Variable IN oC_Expression ;
+idInColl
+        :  variable IN expression ;
 
-oC_FunctionInvocation
-                  :  oC_FunctionName '(' DISTINCT? ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
+functionInvocation
+                  :  functionName '(' DISTINCT? ( procedureNameArg ( ',' procedureNameArg )* )? ')' ;
 
-oC_FunctionName
-            :  oC_Namespace oC_SymbolicName ;
+functionName
+            :  namespace symbolicName ;
 
-oc_FunctionNameArg
-            :  oC_Expression;
+functionNameArg
+            :  expression;
 
-oC_ExistentialSubquery
-                   :  EXISTS '{' ( oC_RegularQuery | ( oC_Pattern oC_Where? ) ) '}' ;
+existentialSubquery
+                   :  EXISTS '{' ( regularQuery | ( pattern where? ) ) '}' ;
 
 EXISTS : ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' ) ;
 
-oC_ExplicitProcedureInvocation
-                           : '(' ( oc_ProcedureNameArg ( ',' oc_ProcedureNameArg )* )? ')' ;
+explicitProcedureInvocation
+                           : '(' ( procedureNameArg ( ',' procedureNameArg )* )? ')' ;
 
-oc_ProcedureNameArg
-                :  oC_Expression ;
+procedureNameArg
+                :  expression ;
 
-oC_ProcedureResultField
-                    :  oC_SymbolicName ;
+procedureResultField
+                    :  symbolicName ;
 
-oC_ProcedureName
-             :  oC_Namespace oC_SymbolicName ;
+procedureName
+             :  namespace symbolicName ;
 
-oC_Namespace
-         :  ( oC_SymbolicName '.' )* |
-         ( oC_SymbolicName '.' )* ;
+namespace
+         :  ( symbolicName '.' )* |
+         ( symbolicName '.' )* ;
 
-oC_Variable
-        :  oC_SymbolicName ;
+variable
+        :  symbolicName ;
 
-oC_Literal
-       :  oC_BooleanLiteral
+literal
+       :  booleanLiteral
            | NULL
-           | oC_NumberLiteral
+           | numberLiteral
            | StringLiteral
-           | oC_ListLiteral
-           | oC_MapLiteral
+           | listLiteral
+           | mapLiteral
            ;
 
-oC_BooleanLiteral
+booleanLiteral
               :  TRUE
                   | FALSE
                   ;
@@ -477,12 +480,12 @@ TRUE : ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'E' | 'e' ) ;
 
 FALSE : ( 'F' | 'f' ) ( 'A' | 'a' ) ( 'L' | 'l' ) ( 'S' | 's' ) ( 'E' | 'e' ) ;
 
-oC_NumberLiteral
-             :  oC_DoubleLiteral
-                 | oC_IntegerLiteral
+numberLiteral
+             :  doubleLiteral
+                 | integerLiteral
                  ;
 
-oC_IntegerLiteral
+integerLiteral
               :  HexInteger
                   | OctalInteger
                   | DecimalInteger
@@ -542,7 +545,7 @@ OctDigit
 ZeroDigit
          :  '0' ;
 
-oC_DoubleLiteral
+doubleLiteral
              :  ExponentDecimalReal
                  | RegularDecimalReal
                  ;
@@ -561,24 +564,24 @@ StringLiteral
 EscapedChar
            :  '\\' ( '\\' | '\'' | '"' | ( ( 'B' | 'b' ) ) | ( ( 'F' | 'f' ) ) | ( ( 'N' | 'n' ) ) | ( ( 'R' | 'r' ) ) | ( ( 'T' | 't' ) ) | ( ( ( 'U' | 'u' ) ) ( HexDigit HexDigit HexDigit HexDigit ) ) | ( ( ( 'U' | 'u' ) ) ( HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit ) ) ) ;
 
-oC_ListLiteral
-           :  '[' ( oC_Expression ( ',' oC_Expression )* )? ']' ;
+listLiteral
+           :  '[' ( expression ( ',' expression )* )? ']' ;
 
-oC_MapLiteral
-          :  '{' ( oC_PropertyKeyName ':' oC_Expression ( ',' oC_PropertyKeyName ':' oC_Expression )* )? '}' ;
+mapLiteral
+          :  '{' ( propertyKeyName ':' expression ( ',' propertyKeyName ':' expression )* )? '}' ;
 
-oC_PropertyKeyName
-               :  oC_SchemaName ;
+propertyKeyName
+               :  schemaName ;
 
-oC_Parameter
-         :  '$' ( oC_SymbolicName | DecimalInteger ) ;
+parameter
+         :  '$' ( symbolicName | DecimalInteger ) ;
 
-oC_SchemaName
-          :  oC_SymbolicName
-              | oC_ReservedWord
+schemaName
+          :  symbolicName
+              | reservedWord
               ;
 
-oC_ReservedWord
+reservedWord
             :  ALL
                 | ASC
                 | ASCENDING
@@ -651,7 +654,7 @@ ADD : ( 'A' | 'a' ) ( 'D' | 'd' ) ( 'D' | 'd' ) ;
 
 DROP : ( 'D' | 'd' ) ( 'R' | 'r' ) ( 'O' | 'o' ) ( 'P' | 'p' ) ;
 
-oC_SymbolicName
+symbolicName
             :  UnescapedSymbolicName
                 | EscapedSymbolicName
                 | HexLetter
@@ -702,7 +705,7 @@ Comment
            | ( '//' Comment_3* CR? ( LF | EOF ) )
            ;
 
-oC_LeftArrowHead
+leftArrowHead
              :  '<'
                  | '\u27e8'
                  | '\u3008'
@@ -710,7 +713,7 @@ oC_LeftArrowHead
                  | '\uff1c'
                  ;
 
-oC_RightArrowHead
+rightArrowHead
               :  '>'
                   | '\u27e9'
                   | '\u3009'
@@ -718,7 +721,7 @@ oC_RightArrowHead
                   | '\uff1e'
                   ;
 
-oC_Dash
+dash
     :  '-'
         | '\u00ad'
         | '\u2010'
