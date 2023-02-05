@@ -19,6 +19,7 @@ import { CypherLexer } from './antlr/CypherLexer';
 import {
   CypherParser,
   OC_LabelNameContext,
+  OC_NodePatternContext,
   OC_ProcedureNameContext,
   OC_PropertyOrLabelsExpressionContext,
   OC_RelTypeNameContext,
@@ -69,6 +70,10 @@ export function autoCompleteQuery(
           kind: CompletionItemKind.TypeParameter,
         };
       });
+    } else if (
+      findParent(stopNode, (p) => p instanceof OC_NodePatternContext)
+    ) {
+      return [];
     } else {
       // Completes expressions that are prefixes of function names as function names
       const expr = findParent(

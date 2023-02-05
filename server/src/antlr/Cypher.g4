@@ -226,12 +226,9 @@ oC_Pattern
        :  oC_PatternPart ( ',' oC_PatternPart )* ;
 
 oC_PatternPart
-           :  ( oC_Variable '=' oC_AnonymousPatternPart )
-               | oC_AnonymousPatternPart
+           :  ( oC_Variable '=' oC_PatternElement )
+               | oC_PatternElement
                ;
-
-oC_AnonymousPatternPart
-                    :  oC_PatternElement ;
 
 oC_PatternElement
               :  ( oC_NodePattern oC_PatternElementChain* )

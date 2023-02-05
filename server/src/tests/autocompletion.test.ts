@@ -113,6 +113,17 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
+  test('Does not offer keywords for variable autocompletion', async () => {
+    const query = 'MATCH (n';
+    const position = Position.create(0, query.length);
+
+    await testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'NONE', kind: CompletionItemKind.Keyword },
+      { label: 'UnescapedSymbolicName', kind: CompletionItemKind.Keyword },
+      { label: 'EscapedSymbolicName', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
   test('Correctly completes AS', async () => {
     const query = 'MATCH (n) RETURN n A';
     const position = Position.create(0, query.length);
