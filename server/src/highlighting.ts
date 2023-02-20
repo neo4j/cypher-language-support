@@ -135,10 +135,11 @@ class SyntaxHighlighter implements CypherParserListener {
     const match = ctx.MATCH();
 
     if (optional) {
-      const yieldToken = optional.symbol;
-      this.addToken(yieldToken, 'keyword');
+      this.addToken(optional.symbol, 'keyword');
     }
-    this.addToken(match.symbol, 'keyword');
+    if (match) {
+      this.addToken(match.symbol, 'keyword');
+    }
   }
 
   exitCallClause(ctx: CallClauseContext) {
