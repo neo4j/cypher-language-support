@@ -11,15 +11,11 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  doSyntacticValidation,
-  doSyntaxColouring,
-  Legend,
-} from './highlighting';
-
 import { doAutoCompletion } from './autocompletion';
 import { DbInfo, DbInfoImpl } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
+import { doSyntaxColouring, Legend } from './syntaxColouring';
+import { doSyntaxValidation } from './syntaxValidation';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -74,7 +70,7 @@ connection.onInitialized(() => {
 });
 
 // Trigger the syntactic errors highlighting on every document change
-connection.onDidChangeTextDocument(doSyntacticValidation(documents));
+connection.onDidChangeTextDocument(doSyntaxValidation(documents));
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(doSyntaxColouring(documents));
 // Trigger the signature help, providing info about functions / procedures

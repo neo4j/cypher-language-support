@@ -97,10 +97,10 @@ function toSignatureHelp(
 }
 
 export function doSignatureHelpText(
-  wholeFileText: string,
+  textUntilPosition: string,
   dbInfo: DbInfo,
 ): SignatureHelp {
-  const inputStream = CharStreams.fromString(wholeFileText);
+  const inputStream = CharStreams.fromString(textUntilPosition);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);

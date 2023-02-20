@@ -8,7 +8,7 @@ import { doAutoCompletionText } from '../autocompletion';
 import { DbInfo } from '../dbInfo';
 import { MockDbInfo } from './testhelpers';
 
-export async function testCompletionContains(
+export async function testAutoCompletionContains(
   fileText: string,
   position: Position,
   dbInfo: DbInfo,
@@ -48,7 +48,7 @@ describe('MATCH auto-completion', () => {
     const query = 'M';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -57,7 +57,7 @@ describe('MATCH auto-completion', () => {
     const query = 'OP';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -66,7 +66,7 @@ describe('MATCH auto-completion', () => {
     const query = 'OPTIONAL M';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -75,7 +75,7 @@ describe('MATCH auto-completion', () => {
     const query = 'MATCH (n:P';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo(['Cat', 'Person', 'Dog']),
@@ -87,7 +87,7 @@ describe('MATCH auto-completion', () => {
     const query = 'MATCH (n:Person) W';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -96,7 +96,7 @@ describe('MATCH auto-completion', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" R';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -105,7 +105,7 @@ describe('MATCH auto-completion', () => {
     const query = 'MATCH (n) R';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -137,7 +137,7 @@ describe('MATCH auto-completion', () => {
     const query = 'MATCH (n) RETURN n A';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'AS', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -148,7 +148,7 @@ describe('CREATE auto-completion', () => {
     const query = 'CR';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'CREATE', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -157,7 +157,7 @@ describe('CREATE auto-completion', () => {
     const query = 'CREATE (n:P';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo(['Cat', 'Person', 'Dog']),
@@ -169,7 +169,7 @@ describe('CREATE auto-completion', () => {
     const query = 'CREATE (n:Person) RET';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -180,7 +180,7 @@ describe('Type relationship auto-completion', () => {
     const query = 'MATCH (n)-[r:R';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo([], ['RelationshipType']),
@@ -194,7 +194,7 @@ describe('Procedures auto-completion', () => {
     const query = 'C';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'CALL', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -203,7 +203,7 @@ describe('Procedures auto-completion', () => {
     const query = 'MATCH (n) C';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'CALL', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -212,7 +212,7 @@ describe('Procedures auto-completion', () => {
     const query = 'CALL db';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo(
@@ -237,7 +237,7 @@ describe('Procedures auto-completion', () => {
     const query = 'CALL proc() Y';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'YIELD', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -255,7 +255,7 @@ describe('Functions auto-completion', () => {
     const query = 'MATCH (n) WHERE xx.yy';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
@@ -270,7 +270,7 @@ describe('Functions auto-completion', () => {
     const query = 'MATCH (n) WHERE n.name = xx.yy';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
@@ -285,7 +285,7 @@ describe('Functions auto-completion', () => {
     const query = 'RETURN xx.yy';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
@@ -300,7 +300,7 @@ describe('Functions auto-completion', () => {
     const query = 'RETURN true AND xx.yy';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(
+    await testAutoCompletionContains(
       query,
       position,
       new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
@@ -317,7 +317,7 @@ describe('Misc auto-completion', () => {
     const query = 'RET';
     const position = Position.create(0, query.length);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'RETURN', kind: CompletionItemKind.Keyword },
     ]);
   });
@@ -327,7 +327,7 @@ describe('Misc auto-completion', () => {
 M`;
     const position = Position.create(1, 1);
 
-    await testCompletionContains(query, position, new MockDbInfo(), [
+    await testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
