@@ -13,7 +13,7 @@
     "vscode-languageserver-textdocument": "^1.0.4"
   },
   "scripts": {
-    "gen-parser": "antlr4ts -visitor src/antlr/Cypher.g4"
+    "gen-parser": "antlr4ts -visitor src/antlr/CypherParser.g4 src/antlr/CypherLexer.g4"
   },
   "devDependencies": {
     "antlr4ts-cli": "^0.5.0-alpha.4"

@@ -18,11 +18,11 @@ import { CypherLexer } from './antlr/CypherLexer';
 
 import {
   CypherParser,
-  LabelNameContext,
+  Expression2Context,
+  LabelExpressionNameContext,
   NodePatternContext,
   ProcedureNameContext,
-  PropertyOrLabelsExpressionContext,
-  RelTypeNameContext,
+  RelationshipPatternContext,
 } from './antlr/CypherParser';
 
 import { DbInfo } from './dbInfo';
@@ -45,7 +45,7 @@ export function autoCompleteQuery(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
-  const tree = wholeFileParser.cypher();
+  const tree = wholeFileParser.statements();
   const tokens = tokenStream.getTokens();
   const lastToken = tokens[tokens.length - 2];
 
@@ -54,14 +54,24 @@ export function autoCompleteQuery(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (findParent(stopNode, (p) => p instanceof LabelNameContext)) {
+    if (
+      findParent(
+        findParent(stopNode, (p) => p instanceof LabelExpressionNameContext),
+        (p) => p instanceof NodePatternContext,
+      )
+    ) {
       return dbInfo.labels.map((t) => {
         return {
           label: t,
           kind: CompletionItemKind.TypeParameter,
         };
       });
-    } else if (findParent(stopNode, (p) => p instanceof RelTypeNameContext)) {
+    } else if (
+      findParent(
+        findParent(stopNode, (p) => p instanceof LabelExpressionNameContext),
+        (p) => p instanceof RelationshipPatternContext,
+      )
+    ) {
       return dbInfo.relationshipTypes.map((t) => {
         return {
           label: t,
@@ -72,10 +82,7 @@ export function autoCompleteQuery(
       return [];
     } else {
       // Completes expressions that are prefixes of function names as function names
-      const expr = findParent(
-        stopNode,
-        (p) => p instanceof PropertyOrLabelsExpressionContext,
-      );
+      const expr = findParent(stopNode, (p) => p instanceof Expression2Context);
 
       if (expr) {
         return Array.from(dbInfo.functionSignatures.keys())
@@ -112,6 +119,17 @@ export function autoCompleteQuery(
           wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
             allPosibleTokens.set(map.get(key), key);
           });
+          // We need this to ignore the list of tokens from:
+          // * unescapedSymbolicNameString, because a lot of keywords are allowed there
+          // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
+          //
+          // That way we do not populate tokens that are coming from those rules and those
+          // are collected as rule names instead
+          codeCompletion.preferredRules = new Set<number>()
+            .add(CypherParser.RULE_unescapedSymbolicNameString)
+            .add(CypherParser.RULE_escapedSymbolicNameString);
+
+          // TODO Nacho Exclude minus, plus, comma, arrow_left_head, lparen etc
           const candidates = codeCompletion.collectCandidates(
             caretIndex as number,
           );

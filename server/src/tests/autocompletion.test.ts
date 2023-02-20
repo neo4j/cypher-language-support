@@ -101,6 +101,15 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
+  test('Correctly completes simple RETURN', async () => {
+    const query = 'MATCH (n) R';
+    const position = Position.create(0, query.length);
+
+    await testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'RETURN', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
   test('Does not offer keywords for expression auto-completion', async () => {
     const query = 'MATCH (n:Person) WHERE n.name = "N';
     const position = Position.create(0, query.length);

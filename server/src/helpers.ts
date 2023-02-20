@@ -1,7 +1,7 @@
 import { ParserRuleContext } from 'antlr4ts';
-import { CypherContext } from './antlr/CypherParser';
+import { StatementsContext } from './antlr/CypherParser';
 
-export function findStopNode(root: CypherContext) {
+export function findStopNode(root: StatementsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 
@@ -9,7 +9,12 @@ export function findStopNode(root: CypherContext) {
     let index = children.length - 1;
     let child = children[index];
 
-    while (index > 0 && (child === root.EOF() || child.text === '')) {
+    while (
+      index > 0 &&
+      (child === root.EOF() ||
+        child.text === '' ||
+        child.text.startsWith('<missing'))
+    ) {
       index--;
       child = children[index];
     }
@@ -21,7 +26,7 @@ export function findStopNode(root: CypherContext) {
 }
 
 export function findParent(
-  leaf: ParserRuleContext,
+  leaf: ParserRuleContext | undefined,
   condition: (node: ParserRuleContext) => boolean,
 ) {
   let current: ParserRuleContext | undefined = leaf;

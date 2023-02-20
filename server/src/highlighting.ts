@@ -25,20 +25,20 @@ import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 import { CypherLexer } from './antlr/CypherLexer';
 
 import {
+  CallClauseContext,
   CypherParser,
-  LabelNameContext,
+  LabelExpression1Context,
   LiteralContext,
-  OptionalMatchContext,
+  MatchClauseContext,
   ProcedureNameContext,
+  ProcedureResultItemContext,
   PropertyKeyNameContext,
-  ReturnStatementContext,
-  SimpleMatchContext,
-  StandaloneCallContext,
+  ReturnClauseContext,
   VariableContext,
-  WhereContext,
+  WhereClauseContext,
 } from './antlr/CypherParser';
 
-import { CypherListener } from './antlr/CypherListener';
+import { CypherParserListener } from './antlr/CypherParserListener';
 
 const tokenTypesMap = new Map<string, number>();
 const tokenModifiersMap = new Map<string, number>();
@@ -104,7 +104,7 @@ export interface ParsedToken {
   token: string | undefined;
 }
 
-class SyntaxHighlighter implements CypherListener {
+class SyntaxHighlighter implements CypherParserListener {
   allTokens: ParsedToken[] = [];
 
   private addToken(
@@ -122,23 +122,26 @@ class SyntaxHighlighter implements CypherListener {
       });
     }
   }
-  enterLabelName(ctx: LabelNameContext) {
+  enterLabelExpression1(ctx: LabelExpression1Context) {
     this.addToken(ctx.start, 'typeParameter');
   }
 
-  enterReturnStatement(ctx: ReturnStatementContext) {
+  enterReturnClause(ctx: ReturnClauseContext) {
     this.addToken(ctx.start, 'keyword');
   }
 
-  enterSimpleMatch(ctx: SimpleMatchContext) {
-    this.addToken(ctx.start, 'keyword');
+  exitMatchClause(ctx: MatchClauseContext) {
+    const optional = ctx.OPTIONAL();
+    const match = ctx.MATCH();
+
+    if (optional) {
+      const yieldToken = optional.symbol;
+      this.addToken(yieldToken, 'keyword');
+    }
+    this.addToken(match.symbol, 'keyword');
   }
 
-  enterOptionalMatch(ctx: OptionalMatchContext) {
-    this.addToken(ctx.start, 'method');
-  }
-
-  exitStandaloneCall(ctx: StandaloneCallContext) {
+  exitCallClause(ctx: CallClauseContext) {
     const call = ctx.CALL();
     const _yield = ctx.YIELD();
 
@@ -158,8 +161,12 @@ class SyntaxHighlighter implements CypherListener {
     this.addToken(ctx.start, 'variable');
   }
 
-  enterWhere(ctx: WhereContext) {
+  enterWhereClause(ctx: WhereClauseContext) {
     this.addToken(ctx.start, 'keyword');
+  }
+
+  exitProcedureResultItem(ctx: ProcedureResultItemContext) {
+    this.addToken(ctx.start, 'variable');
   }
 
   enterPropertyKeyName(ctx: PropertyKeyNameContext) {
@@ -167,7 +174,7 @@ class SyntaxHighlighter implements CypherListener {
     this.addToken(ctx.start, 'property');
   }
 
-  enterLiteral(ctx: LiteralContext) {
+  exitLiteral(ctx: LiteralContext) {
     this.addToken(ctx.start, 'string');
   }
 }
@@ -189,7 +196,7 @@ export function doSemanticHighlightingText(
   const parser = new CypherParser(tokenStream);
   const syntaxHighliter = new SyntaxHighlighter();
   parser.addParseListener(syntaxHighliter as ParseTreeListener);
-  parser.cypher();
+  const tree = parser.statements();
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
@@ -265,7 +272,7 @@ export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
   const parser = new CypherParser(tokenStream);
   const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
-  parser.cypher();
+  parser.statements();
 
   return errorListener.diagnostics;
 }
