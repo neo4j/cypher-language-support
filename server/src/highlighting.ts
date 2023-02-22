@@ -1,6 +1,7 @@
 import {
   Diagnostic,
   DiagnosticSeverity,
+  DidChangeTextDocumentParams,
   Position,
   SemanticTokensBuilder,
   SemanticTokensLegend,
@@ -187,9 +188,7 @@ function encodeTokenType(tokenType: string): number | undefined {
   return 0;
 }
 
-export function doSemanticHighlightingText(
-  wholeFileText: string,
-): ParsedToken[] {
+export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
@@ -203,7 +202,7 @@ export function doSemanticHighlightingText(
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
   const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => {
     const lineDiff = a.line - b.line;
-    if (lineDiff != 0) {
+    if (lineDiff !== 0) {
       return lineDiff;
     } else {
       return a.startCharacter - b.startCharacter;
@@ -213,13 +212,12 @@ export function doSemanticHighlightingText(
   return sortedTokens;
 }
 
-export function doSemanticHighlighting(documents: TextDocuments<TextDocument>) {
+export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const wholeFileText: string = textDocument.getText();
-    const tokens = doSemanticHighlightingText(wholeFileText);
+    const tokens = doSyntaxColouringText(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
@@ -265,7 +263,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 }
 
-export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
+export function doSyntacticValidationText(wholeFileText: string): Diagnostic[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
@@ -278,8 +276,11 @@ export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
   return errorListener.diagnostics;
 }
 
-export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
-  // Remove trailings EOF when we read the file
-  const wholeFileText: string = textDocument.getText().trimEnd();
-  return provideSyntaxErrors(wholeFileText);
+export function doSyntacticValidation(documents: TextDocuments<TextDocument>) {
+  return (documentChangeParams: DidChangeTextDocumentParams) => {
+    const textDocument = documents.get(documentChangeParams.textDocument.uri);
+    if (textDocument === undefined) return [];
+
+    return doSyntacticValidationText(textDocument.getText());
+  };
 }

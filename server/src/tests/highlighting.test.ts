@@ -1,10 +1,10 @@
-import { doSemanticHighlightingText, ParsedToken } from '../highlighting';
+import { doSyntaxColouringText, ParsedToken } from '../highlighting';
 
 export async function testSemanticHighlighting(
   fileText: string,
   expected: ParsedToken[],
 ) {
-  const actualTokens = doSemanticHighlightingText(fileText);
+  const actualTokens = doSyntaxColouringText(fileText);
 
   expect(actualTokens.length).toBe(expected.length);
 
