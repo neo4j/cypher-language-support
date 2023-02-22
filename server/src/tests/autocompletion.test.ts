@@ -19,7 +19,7 @@ export async function testCompletionContains(
   expected.forEach((expectedItem) => {
     const elementFound = actualCompletionList.find(
       (value) =>
-        value.kind == expectedItem.kind && value.label == expectedItem.label,
+        value.kind === expectedItem.kind && value.label === expectedItem.label,
     );
     expect(elementFound).toBeDefined();
   });
@@ -36,8 +36,8 @@ export async function testCompletionDoesNotContain(
   excluded.forEach((notExpectedItem) => {
     const elementFound = actualCompletionList.find(
       (value) =>
-        value.kind == notExpectedItem.kind &&
-        value.label == notExpectedItem.label,
+        value.kind === notExpectedItem.kind &&
+        value.label === notExpectedItem.label,
     );
     expect(elementFound).toBeUndefined();
   });

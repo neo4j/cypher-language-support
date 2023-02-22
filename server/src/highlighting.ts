@@ -216,7 +216,7 @@ export function doSemanticHighlightingText(
 export function doSemanticHighlighting(documents: TextDocuments<TextDocument>) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
-    if (textDocument == undefined) return { data: [] };
+    if (textDocument === undefined) return { data: [] };
 
     const wholeFileText: string = textDocument.getText();
     const tokens = doSemanticHighlightingText(wholeFileText);

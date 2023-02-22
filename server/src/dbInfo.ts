@@ -86,7 +86,7 @@ export class DbInfoImpl implements DbInfo {
   private async updateMethodsCache(cache: Map<string, SignatureInformation>) {
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
     const updateTarget =
-      cache == this.functionSignatures ? 'functions' : 'procedures';
+      cache === this.functionSignatures ? 'functions' : 'procedures';
 
     try {
       const result = await s.run(

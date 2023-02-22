@@ -131,7 +131,7 @@ export function doSignatureHelp(
   dbInfo: DbInfo,
 ) {
   return (params: SignatureHelpParams) => {
-    const endOfTriggerHelp = params.context?.triggerCharacter == ')';
+    const endOfTriggerHelp = params.context?.triggerCharacter === ')';
 
     if (endOfTriggerHelp) {
       return emptyResult;
