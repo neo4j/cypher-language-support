@@ -189,7 +189,7 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly parses multi-statements', async () => {
+  test('Correctly colours multi-statements', async () => {
     const query = `MATCH (n:Person) RETURN n
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
@@ -295,7 +295,7 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly parses unfinished multi-statements', async () => {
+  test('Correctly colours unfinished multi-statements', async () => {
     const query = `MATCH (n:Person);
 
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;

@@ -6,7 +6,7 @@ import {
 } from 'vscode-languageserver/node';
 import { doAutoCompletionText } from '../autocompletion';
 import { DbInfo } from '../dbInfo';
-import { MockDbInfo } from './testhelpers';
+import { MockDbInfo } from './testHelpers';
 
 export async function testAutoCompletionContains(
   fileText: string,
