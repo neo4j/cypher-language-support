@@ -7,9 +7,6 @@
   "engines": {
     "vscode": "^1.43.0"
   },
-  "activationEvents": [
-    "onLanguage:cypher"
-  ],
   "main": "./client/out/extension",
   "contributes": {
     "languages": [
@@ -21,6 +18,28 @@
         "aliases": [
           "Cypher"
         ]
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "labelType",
+        "superType": "type",
+        "description": "Label in Cypher"
+      },
+      {
+        "id": "relationshipType",
+        "superType": "type",
+        "description": "Relationship type in Cypher"
+      },
+      {
+        "id": "procedure",
+        "superType": "function",
+        "description": "Procedure in Cypher"
+      },
+      {
+        "id": "literal",
+        "superType": "string",
+        "description": "Procedure in Cypher"
       }
     ],
     "configuration": {
@@ -46,6 +65,7 @@
     "vscode:prepublish": "npm run compile",
     "gen-parser": "cd server && npm run gen-parser && cd ..",
     "compile": "npm run gen-parser && tsc -b",
+    "clean": "rm -r ./client/out||true && rm -r ./server/out||true",
     "watch": "tsc -b -w",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
     "test": "jest --silent=true",

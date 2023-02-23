@@ -13,9 +13,9 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { doAutoCompletion } from './autocompletion';
 import { DbInfo, DbInfoImpl } from './dbInfo';
+import { doSyntaxColouring, Legend } from './highlighting/syntaxColouring';
+import { doSyntaxValidationText } from './highlighting/syntaxValidation';
 import { doSignatureHelp } from './signatureHelp';
-import { doSyntaxColouring, Legend } from './syntaxColouring';
-import { doSyntaxValidationText } from './syntaxValidation';
 
 const connection = createConnection(ProposedFeatures.all);
 
