@@ -1,23 +1,36 @@
-// import { doSyntaxColouringText, ParsedToken } from '../syntaxColouring';
+import {
+  doSyntaxColouringText,
+  ParsedToken,
+} from '../highlighting/syntaxColouring';
 
-// export async function testSyntaxColouring(
-//   fileText: string,
-//   expected: ParsedToken[],
-// ) {
-//   const actualTokens = doSyntaxColouringText(fileText);
+export async function testSyntaxColouring(
+  fileText: string,
+  expected: ParsedToken[],
+) {
+  const actualTokens = doSyntaxColouringText(fileText);
 
-//   expect(actualTokens.length).toBe(expected.length);
+  expect(actualTokens.length).toBe(expected.length);
 
-//   expected.forEach((expectedToken, i) => {
-//     const token = actualTokens[i];
+  expected.forEach((expectedToken, i) => {
+    const token = actualTokens[i];
 
-//     expect(token.length).toBe(expectedToken.length);
-//     expect(token.line).toBe(expectedToken.line);
-//     expect(token.startCharacter).toBe(token.startCharacter);
-//     expect(token.token).toBe(expectedToken.token);
-//     expect(token.tokenType).toBe(expectedToken.tokenType);
-//   });
-// }
+    expect(token.length).toBe(expectedToken.length);
+    expect(token.position.line).toBe(expectedToken.position.line);
+    expect(token.position.startCharacter).toBe(token.position.startCharacter);
+    expect(token.token).toBe(expectedToken.token);
+    expect(token.tokenType).toBe(expectedToken.tokenType);
+  });
+}
+
+describe('Syntax colouring', () => {
+  test('Correctly colours MATCH', async () => {
+    const query = `MATCH (n:\`Label
+Other\`)
+	`;
+
+    await testSyntaxColouring(query, []);
+  });
+});
 
 // describe('Syntax colouring', () => {
 //   test('Correctly colours MATCH', async () => {

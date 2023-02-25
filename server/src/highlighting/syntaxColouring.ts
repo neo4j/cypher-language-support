@@ -48,48 +48,63 @@ export class Legend implements SemanticTokensLegend {
   }
 }
 
-enum TokenAnnotation {
-  Lexer,
-  TreeTraversal,
+interface TokenPosition {
+  line: number;
+  startCharacter: number;
+}
+
+function toString(tokenPosition: TokenPosition): string {
+  return `${tokenPosition.line},${tokenPosition.startCharacter}`;
 }
 
 export interface ParsedToken {
-  line: number;
-  startCharacter: number;
+  position: TokenPosition;
   length: number;
   tokenType: TokenType;
   token: string | undefined;
-  tokenAnnotation: TokenAnnotation;
 }
 
-function toParsedToken(
-  token: Token,
-  tokenType: TokenType,
-  tokenAnnotation: TokenAnnotation,
-  tokenStr: string = token.text ?? '',
-): ParsedToken {
+function getTokenPosition(token: Token): TokenPosition {
   return {
     line: token.line - 1,
     startCharacter: token.charPositionInLine,
-    length: tokenStr.length,
-    tokenType: tokenType,
-    token: tokenStr,
-    tokenAnnotation,
   };
 }
+
+function toParsedTokens(
+  tokenPosition: TokenPosition,
+  tokenType: TokenType,
+  tokenStr: string,
+): ParsedToken[] {
+  return tokenStr.split('\n').map((tokenChunk, i) => {
+    const position =
+      i == 0
+        ? tokenPosition
+        : { line: tokenPosition.line + i, startCharacter: 0 };
+
+    return {
+      position: position,
+      length: tokenChunk.length,
+      tokenType: tokenType,
+      token: tokenChunk,
+    };
+  });
+}
 class SyntaxHighlighter implements CypherParserListener {
-  allTokens: ParsedToken[] = [];
+  colouredTokens: Map<string, ParsedToken> = new Map();
+
+  constructor(colouredTokens: Map<string, ParsedToken>) {
+    this.colouredTokens = colouredTokens;
+  }
 
   private addToken(token: Token, tokenType: TokenType, tokenStr: string) {
     if (token.startIndex >= 0) {
-      this.allTokens.push(
-        toParsedToken(
-          token,
-          tokenType,
-          TokenAnnotation.TreeTraversal,
-          tokenStr,
-        ),
-      );
+      const tokenPosition = getTokenPosition(token);
+
+      toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
+        const tokenPos = toString(token.position);
+        this.colouredTokens.set(tokenPos, token);
+      });
     }
   }
 
@@ -98,7 +113,21 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitProcedureName(ctx: ProcedureNameContext) {
-    this.addToken(ctx.start, TokenType.function, ctx.text);
+    const namespace = ctx.namespace();
+
+    namespace.symbolicNameString().forEach((namespaceName) => {
+      this.addToken(
+        namespaceName.start,
+        TokenType.function,
+        namespaceName.text,
+      );
+    });
+    namespace.DOT().forEach((dot) => {
+      this.addToken(dot.symbol, TokenType.function, dot.text);
+    });
+
+    const nameOfMethod = ctx.symbolicNameString();
+    this.addToken(nameOfMethod.start, TokenType.function, nameOfMethod.text);
   }
 
   exitVariable(ctx: VariableContext) {
@@ -115,35 +144,34 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 }
 
-function identifyInputTokens(tokenStream: CommonTokenStream) {
-  const recognizedKeywords = new Array<ParsedToken>();
+function colourLexerTokens(tokenStream: CommonTokenStream) {
+  const result = new Map<string, ParsedToken>();
 
   tokenStream.getTokens().forEach((token) => {
     const tokenNumber = token.type;
-    const colour = colouringTable.get(tokenNumber);
-    if (colour) {
-      recognizedKeywords.push(
-        toParsedToken(token, colour, TokenAnnotation.Lexer),
+    const tokenType = colouringTable.get(tokenNumber);
+    if (tokenType) {
+      const tokenPosition = getTokenPosition(token);
+
+      toParsedTokens(tokenPosition, tokenType, token.text ?? '').forEach(
+        (token) => {
+          const tokenPos = toString(token.position);
+
+          result.set(tokenPos, token);
+        },
       );
     }
   });
 
-  return recognizedKeywords;
+  return result;
 }
 
 function sortTokens(tokens: ParsedToken[]) {
   return tokens.sort((a, b) => {
-    const lineDiff = a.line - b.line;
+    const lineDiff = a.position.line - b.position.line;
     if (lineDiff !== 0) return lineDiff;
-    const colDiff = a.startCharacter - b.startCharacter;
-    if (colDiff !== 0) return colDiff;
 
-    // If the tokens are on the same line and start at the same column,
-    // give precedence to the tree annotation
-    if (a.tokenAnnotation === TokenAnnotation.TreeTraversal) return -1;
-    if (b.tokenAnnotation === TokenAnnotation.TreeTraversal) return 1;
-
-    return 0;
+    return a.position.startCharacter - b.position.startCharacter;
   });
 }
 
@@ -151,22 +179,23 @@ export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
+  tokenStream.fill();
+
+  const lexerTokens: Map<string, ParsedToken> = colourLexerTokens(tokenStream);
 
   const parser = new CypherParser(tokenStream);
-  const treeSyntaxHighlighter = new SyntaxHighlighter();
+  const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
   parser.addParseListener(treeSyntaxHighlighter as ParseTreeListener);
   // Parse input
   parser.statements();
 
-  const structuralTokens = treeSyntaxHighlighter.allTokens;
-  const lexerTokens = identifyInputTokens(tokenStream);
-  const allTokens = structuralTokens.concat(lexerTokens);
+  const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
-  const sortedTokens = sortTokens(allTokens);
+  const result = sortTokens(Array.from(allColouredTokens.values()));
 
-  return sortedTokens;
+  return result;
 }
 
 export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
@@ -179,8 +208,8 @@ export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
       builder.push(
-        token.line,
-        token.startCharacter,
+        token.position.line,
+        token.position.startCharacter,
         token.length,
         token.tokenType.valueOf(),
         0,

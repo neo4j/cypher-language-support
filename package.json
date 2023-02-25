@@ -27,16 +27,6 @@
         "description": "Label in Cypher"
       },
       {
-        "id": "relationshipType",
-        "superType": "type",
-        "description": "Relationship type in Cypher"
-      },
-      {
-        "id": "procedure",
-        "superType": "function",
-        "description": "Procedure in Cypher"
-      },
-      {
         "id": "literal",
         "superType": "string",
         "description": "Procedure in Cypher"
