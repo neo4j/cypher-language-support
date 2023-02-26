@@ -22,11 +22,6 @@
     ],
     "semanticTokenTypes": [
       {
-        "id": "labelType",
-        "superType": "type",
-        "description": "Label in Cypher"
-      },
-      {
         "id": "literal",
         "superType": "string",
         "description": "Procedure in Cypher"

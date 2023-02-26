@@ -1,6 +1,5 @@
 import {
   createConnection,
-  DidChangeConfigurationNotification,
   InitializeResult,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
@@ -27,7 +26,7 @@ const dbInfo: DbInfo = new DbInfoImpl();
 connection.onInitialize(() => {
   const result: InitializeResult = {
     capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Incremental,
+      textDocumentSync: TextDocumentSyncKind.Full,
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
@@ -50,11 +49,6 @@ connection.onInitialize(() => {
 });
 
 connection.onInitialized(() => {
-  connection.client.register(
-    DidChangeConfigurationNotification.type,
-    undefined,
-  );
-
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: null,
     legend: legend,

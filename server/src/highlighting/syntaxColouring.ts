@@ -19,15 +19,14 @@ import {
   LiteralContext,
   ProcedureNameContext,
   PropertyKeyNameContext,
+  StringTokenContext,
+  SymbolicNameOrStringParameterContext,
   VariableContext,
 } from '../antlr/CypherParser';
 
 import { CypherParserListener } from '../antlr/CypherParserListener';
 import { colouringTable, TokenType } from './colouringTable';
 
-// ************************************************************
-// Part of the code that does the highlighting
-// ************************************************************
 export class Legend implements SemanticTokensLegend {
   tokenTypes: string[] = [];
   tokenModifiers: string[] = [];
@@ -36,14 +35,13 @@ export class Legend implements SemanticTokensLegend {
     this.tokenTypes = [
       TokenType[TokenType.comment],
       TokenType[TokenType.keyword],
-      TokenType[TokenType.labelType],
+      TokenType[TokenType.type],
       TokenType[TokenType.function],
       TokenType[TokenType.variable],
       TokenType[TokenType.parameter],
       TokenType[TokenType.property],
       TokenType[TokenType.literal],
       TokenType[TokenType.operator],
-      TokenType[TokenType.decorator],
     ];
   }
 }
@@ -109,7 +107,7 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitLabelExpression1(ctx: LabelExpression1Context) {
-    this.addToken(ctx.start, TokenType.labelType, ctx.text);
+    this.addToken(ctx.start, TokenType.type, ctx.text);
   }
 
   exitProcedureName(ctx: ProcedureNameContext) {
@@ -121,9 +119,6 @@ class SyntaxHighlighter implements CypherParserListener {
         TokenType.function,
         namespaceName.text,
       );
-    });
-    namespace.DOT().forEach((dot) => {
-      this.addToken(dot.symbol, TokenType.function, dot.text);
     });
 
     const nameOfMethod = ctx.symbolicNameString();
@@ -139,6 +134,14 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(ctx.start, TokenType.property, ctx.text);
   }
 
+  exitSymbolicNameOrStringParameter(ctx: SymbolicNameOrStringParameterContext) {
+    this.addToken(ctx.start, TokenType.parameter, ctx.text);
+  }
+
+  exitStringToken(ctx: StringTokenContext) {
+    this.addToken(ctx.start, TokenType.literal, ctx.text);
+  }
+
   exitLiteral(ctx: LiteralContext) {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
   }
@@ -149,18 +152,16 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
 
   tokenStream.getTokens().forEach((token) => {
     const tokenNumber = token.type;
-    const tokenType = colouringTable.get(tokenNumber);
-    if (tokenType) {
-      const tokenPosition = getTokenPosition(token);
+    // Colours everything, setting a defautl token type of none
+    const tokenType = colouringTable.get(tokenNumber) ?? TokenType.none;
+    const tokenPosition = getTokenPosition(token);
+    const tokenStr = token.text ?? '';
 
-      toParsedTokens(tokenPosition, tokenType, token.text ?? '').forEach(
-        (token) => {
-          const tokenPos = toString(token.position);
+    toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
+      const tokenPos = toString(token.position);
 
-          result.set(tokenPos, token);
-        },
-      );
-    }
+      result.set(tokenPos, token);
+    });
   });
 
   return result;
@@ -181,12 +182,19 @@ export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const tokenStream = new CommonTokenStream(lexer);
   tokenStream.fill();
 
+  // Get a first pass at the colouring using only the lexer
   const lexerTokens: Map<string, ParsedToken> = colourLexerTokens(tokenStream);
 
   const parser = new CypherParser(tokenStream);
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
   parser.addParseListener(treeSyntaxHighlighter as ParseTreeListener);
-  // Parse input
+  /* Get a second pass at the colouring correcting the colours
+     using structural information from the parsing tree
+  
+     This allows to correclty colour things that are
+     recognized as keywords by the lexer in positions
+     where they are not keywords (e.g. MATCH (MATCH: MATCH))
+  */
   parser.statements();
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
@@ -207,13 +215,15 @@ export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
 
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
-      builder.push(
-        token.position.line,
-        token.position.startCharacter,
-        token.length,
-        token.tokenType.valueOf(),
-        0,
-      );
+      if (token.tokenType !== TokenType.none) {
+        builder.push(
+          token.position.line,
+          token.position.startCharacter,
+          token.length,
+          token.tokenType.valueOf(),
+          0,
+        );
+      }
     });
     const results = builder.build();
     return results;
