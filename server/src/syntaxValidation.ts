@@ -1,12 +1,8 @@
 import {
   Diagnostic,
   DiagnosticSeverity,
-  DidChangeTextDocumentParams,
   Position,
-  TextDocuments,
 } from 'vscode-languageserver/node';
-
-import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
   ANTLRErrorListener,
@@ -64,13 +60,4 @@ export function doSyntaxValidationText(wholeFileText: string): Diagnostic[] {
   parser.statements();
 
   return errorListener.diagnostics;
-}
-
-export function doSyntaxValidation(documents: TextDocuments<TextDocument>) {
-  return (documentChangeParams: DidChangeTextDocumentParams) => {
-    const textDocument = documents.get(documentChangeParams.textDocument.uri);
-    if (textDocument === undefined) return [];
-
-    return doSyntaxValidationText(textDocument.getText());
-  };
 }

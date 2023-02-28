@@ -15,7 +15,7 @@ import { doAutoCompletion } from './autocompletion';
 import { DbInfo, DbInfoImpl } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
 import { doSyntaxColouring, Legend } from './syntaxColouring';
-import { doSyntaxValidation } from './syntaxValidation';
+import { doSyntaxValidationText } from './syntaxValidation';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -70,7 +70,14 @@ connection.onInitialized(() => {
 });
 
 // Trigger the syntactic errors highlighting on every document change
-connection.onDidChangeTextDocument(doSyntaxValidation(documents));
+documents.onDidChangeContent((change) => {
+  const document = change.document;
+  const diagnostics = doSyntaxValidationText(document.getText());
+  connection.sendDiagnostics({
+    uri: document.uri,
+    diagnostics: diagnostics,
+  });
+});
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(doSyntaxColouring(documents));
 // Trigger the signature help, providing info about functions / procedures
