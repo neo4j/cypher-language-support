@@ -18,6 +18,7 @@ import {
   LabelExpression1Context,
   LiteralContext,
   ProcedureNameContext,
+  ProcedureResultItemContext,
   PropertyKeyNameContext,
   StringTokenContext,
   SymbolicNameOrStringParameterContext,
@@ -126,6 +127,10 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitVariable(ctx: VariableContext) {
+    this.addToken(ctx.start, TokenType.variable, ctx.text);
+  }
+
+  exitProcedureResultItem(ctx: ProcedureResultItemContext) {
     this.addToken(ctx.start, TokenType.variable, ctx.text);
   }
 

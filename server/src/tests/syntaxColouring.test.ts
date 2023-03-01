@@ -1,3 +1,4 @@
+import { TokenType } from '../highlighting/colouringTable';
 import {
   doSyntaxColouringText,
   ParsedToken,
@@ -24,380 +25,1490 @@ export async function testSyntaxColouring(
 
 describe('Syntax colouring', () => {
   test('Correctly colours MATCH', async () => {
+    const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'MATCH',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 8,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ':',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 6,
+        tokenType: TokenType.type,
+        token: 'Person',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'WHERE',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 22,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 24,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 25,
+        },
+        length: 4,
+        tokenType: TokenType.property,
+        token: 'name',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 29,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 30,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '=',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 31,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 32,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"foo"',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 37,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 38,
+        },
+        length: 6,
+        tokenType: TokenType.keyword,
+        token: 'RETURN',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 44,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 45,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 46,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
+  });
+
+  test('Correctly colours standalone procedure CALL', async () => {
+    const query = 'CALL dbms.info() YIELD *';
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 4,
+        tokenType: TokenType.keyword,
+        token: 'CALL',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 4,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'dbms',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 10,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'info',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 14,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'YIELD',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 22,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '*',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 24,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
+  });
+
+  test('Correctly colours procedure CALL with yield', async () => {
+    const query =
+      'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 4,
+        tokenType: TokenType.keyword,
+        token: 'CALL',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 4,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'apoc',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 10,
+        },
+        length: 2,
+        tokenType: TokenType.function,
+        token: 'do',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 12,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 13,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'when',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 18,
+        },
+        length: 4,
+        tokenType: TokenType.literal,
+        token: 'true',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 22,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 24,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"foo"',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 29,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 30,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 31,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: 'false',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 36,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 37,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 38,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"bar"',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 43,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 44,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 45,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'YIELD',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 50,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 51,
+        },
+        length: 4,
+        tokenType: TokenType.variable,
+        token: 'name',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 55,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 56,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 57,
+        },
+        length: 6,
+        tokenType: TokenType.variable,
+        token: 'result',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 63,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
+  });
+
+  test('Correctly colours multi-statements', async () => {
+    const query = `MATCH (n:Person) RETURN n
+      CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'MATCH',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 8,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ':',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 6,
+        tokenType: TokenType.type,
+        token: 'Person',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+        },
+        length: 6,
+        tokenType: TokenType.keyword,
+        token: 'RETURN',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 24,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 25,
+        },
+        length: 0,
+        tokenType: TokenType.none,
+        token: '',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 0,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 1,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 2,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 3,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 4,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 6,
+        },
+        length: 4,
+        tokenType: TokenType.keyword,
+        token: 'CALL',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 10,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 11,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'apoc',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 16,
+        },
+        length: 2,
+        tokenType: TokenType.function,
+        token: 'do',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 18,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 19,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'when',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 24,
+        },
+        length: 4,
+        tokenType: TokenType.literal,
+        token: 'true',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 28,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 29,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 30,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"foo"',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 35,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 36,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 37,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: 'false',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 42,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 43,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 44,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"bar"',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 49,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 50,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 51,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'YIELD',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 56,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 57,
+        },
+        length: 4,
+        tokenType: TokenType.variable,
+        token: 'name',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 61,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 62,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 63,
+        },
+        length: 6,
+        tokenType: TokenType.variable,
+        token: 'result',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 69,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
+  });
+
+  test('Correctly colours unfinished multi-statements', async () => {
+    const query = `MATCH (n:Person);
+
+      CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'MATCH',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 8,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ':',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 6,
+        tokenType: TokenType.type,
+        token: 'Person',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ';',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+        },
+        length: 0,
+        tokenType: TokenType.none,
+        token: '',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 0,
+        },
+        length: 0,
+        tokenType: TokenType.none,
+        token: '',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 0,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 1,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 2,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 3,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 4,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 6,
+        },
+        length: 4,
+        tokenType: TokenType.keyword,
+        token: 'CALL',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 10,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 11,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'apoc',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 15,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 16,
+        },
+        length: 2,
+        tokenType: TokenType.function,
+        token: 'do',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 18,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: '.',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 19,
+        },
+        length: 4,
+        tokenType: TokenType.function,
+        token: 'when',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 23,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 24,
+        },
+        length: 4,
+        tokenType: TokenType.literal,
+        token: 'true',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 28,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 29,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 30,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"foo"',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 35,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 36,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 37,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: 'false',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 42,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 43,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 44,
+        },
+        length: 5,
+        tokenType: TokenType.literal,
+        token: '"bar"',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 49,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 50,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 51,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'YIELD',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 56,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 57,
+        },
+        length: 4,
+        tokenType: TokenType.variable,
+        token: 'name',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 61,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ',',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 62,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 63,
+        },
+        length: 6,
+        tokenType: TokenType.variable,
+        token: 'result',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 69,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
+  });
+
+  test('Correctly colours multiline label', async () => {
     const query = `MATCH (n:\`Label
 Other\`)
 	`;
 
-    await testSyntaxColouring(query, []);
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 5,
+        tokenType: TokenType.keyword,
+        token: 'MATCH',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ' ',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '(',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+        },
+        length: 1,
+        tokenType: TokenType.variable,
+        token: 'n',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 8,
+        },
+        length: 1,
+        tokenType: TokenType.operator,
+        token: ':',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+        },
+        length: 6,
+        tokenType: TokenType.type,
+        token: '`Label',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 0,
+        },
+        length: 6,
+        tokenType: TokenType.type,
+        token: 'Other`',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 6,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: ')',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 7,
+        },
+        length: 0,
+        tokenType: TokenType.none,
+        token: '',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 0,
+        },
+        length: 1,
+        tokenType: TokenType.none,
+        token: '\t',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 1,
+        },
+        length: 5,
+        tokenType: TokenType.none,
+        token: '<EOF>',
+      },
+    ]);
   });
 });
-
-// describe('Syntax colouring', () => {
-//   test('Correctly colours MATCH', async () => {
-//     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
-
-//     await testSyntaxColouring(query, [
-//       {
-//         line: 0,
-//         startCharacter: 0,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'MATCH',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 7,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 9,
-//         length: 6,
-//         tokenType: 'typeParameter',
-//         token: 'Person',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 17,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'WHERE',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 23,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 25,
-//         length: 4,
-//         tokenType: 'property',
-//         token: 'name',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 32,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"foo"',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 38,
-//         length: 6,
-//         tokenType: 'keyword',
-//         token: 'RETURN',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 45,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//     ]);
-//   });
-
-//   test('Correctly colours standalone procedure CALL', async () => {
-//     const query = 'CALL dbms.info() YIELD *';
-
-//     await testSyntaxColouring(query, [
-//       {
-//         line: 0,
-//         startCharacter: 0,
-//         length: 4,
-//         tokenType: 'method',
-//         token: 'CALL',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 5,
-//         length: 9,
-//         tokenType: 'function',
-//         token: 'dbms.info',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 17,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'YIELD',
-//       },
-//     ]);
-//   });
-
-//   test('Correctly colours procedure CALL with yield', async () => {
-//     const query =
-//       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
-
-//     await testSyntaxColouring(query, [
-//       {
-//         line: 0,
-//         startCharacter: 0,
-//         length: 4,
-//         tokenType: 'method',
-//         token: 'CALL',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 5,
-//         length: 12,
-//         tokenType: 'function',
-//         token: 'apoc.do.when',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 18,
-//         length: 4,
-//         tokenType: 'string',
-//         token: 'true',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 24,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"foo"',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 31,
-//         length: 5,
-//         tokenType: 'string',
-//         token: 'false',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 38,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"bar"',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 45,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'YIELD',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 51,
-//         length: 4,
-//         tokenType: 'variable',
-//         token: 'name',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 57,
-//         length: 6,
-//         tokenType: 'variable',
-//         token: 'result',
-//       },
-//     ]);
-//   });
-
-//   test('Correctly colours multi-statements', async () => {
-//     const query = `MATCH (n:Person) RETURN n
-//       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
-
-//     await testSyntaxColouring(query, [
-//       {
-//         line: 0,
-//         startCharacter: 0,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'MATCH',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 7,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 9,
-//         length: 6,
-//         tokenType: 'typeParameter',
-//         token: 'Person',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 17,
-//         length: 6,
-//         tokenType: 'keyword',
-//         token: 'RETURN',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 24,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 4,
-//         length: 4,
-//         tokenType: 'method',
-//         token: 'CALL',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 9,
-//         length: 12,
-//         tokenType: 'function',
-//         token: 'apoc.do.when',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 22,
-//         length: 4,
-//         tokenType: 'string',
-//         token: 'true',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 28,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"foo"',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 35,
-//         length: 5,
-//         tokenType: 'string',
-//         token: 'false',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 42,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"bar"',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 49,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'YIELD',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 55,
-//         length: 4,
-//         tokenType: 'variable',
-//         token: 'name',
-//       },
-//       {
-//         line: 1,
-//         startCharacter: 61,
-//         length: 6,
-//         tokenType: 'variable',
-//         token: 'result',
-//       },
-//     ]);
-//   });
-
-//   test('Correctly colours unfinished multi-statements', async () => {
-//     const query = `MATCH (n:Person);
-
-//       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
-
-//     await testSyntaxColouring(query, [
-//       {
-//         line: 0,
-//         startCharacter: 0,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'MATCH',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 7,
-//         length: 1,
-//         tokenType: 'variable',
-//         token: 'n',
-//       },
-//       {
-//         line: 0,
-//         startCharacter: 9,
-//         length: 6,
-//         tokenType: 'typeParameter',
-//         token: 'Person',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 6,
-//         length: 4,
-//         tokenType: 'method',
-//         token: 'CALL',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 11,
-//         length: 12,
-//         tokenType: 'function',
-//         token: 'apoc.do.when',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 24,
-//         length: 4,
-//         tokenType: 'string',
-//         token: 'true',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 30,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"foo"',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 37,
-//         length: 5,
-//         tokenType: 'string',
-//         token: 'false',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 44,
-//         length: 5,
-//         tokenType: 'string',
-//         token: '"bar"',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 51,
-//         length: 5,
-//         tokenType: 'keyword',
-//         token: 'YIELD',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 57,
-//         length: 4,
-//         tokenType: 'variable',
-//         token: 'name',
-//       },
-//       {
-//         line: 2,
-//         startCharacter: 63,
-//         length: 6,
-//         tokenType: 'variable',
-//         token: 'result',
-//       },
-//     ]);
-//   });
-// });
