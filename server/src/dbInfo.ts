@@ -41,8 +41,8 @@ export class DbInfoImpl implements DbInfo {
   private getParamsInfo(param: string): ParameterInformation {
     // FIXME: There are cases where this doesn't work:
     // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
-    const [headerInfo, paramType] = param.split(' :: ');
-    const [paramName, defaultValue] = headerInfo.split(' = ');
+    const [headerInfo] = param.split(' :: ');
+    const [paramName] = headerInfo.split(' = ');
 
     return ParameterInformation.create(paramName, param);
   }
@@ -98,7 +98,7 @@ export class DbInfoImpl implements DbInfo {
         const signature = record.get('signature');
         const description = record.get('description');
 
-        const [header, returnType] = signature.split(') :: ');
+        const [header] = signature.split(') :: ');
         const paramsString = header
           .replace(methodName, '')
           .replace('(', '')

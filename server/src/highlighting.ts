@@ -15,7 +15,6 @@ import {
   CharStreams,
   CommonToken,
   CommonTokenStream,
-  RecognitionException,
   Recognizer,
   Token,
 } from 'antlr4ts';
@@ -38,6 +37,7 @@ import {
   WhereClauseContext,
 } from './antlr/CypherParser';
 
+import type { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
 import { CypherParserListener } from './antlr/CypherParserListener';
 
 const tokenTypesMap = new Map<string, number>();
@@ -197,7 +197,7 @@ export function doSemanticHighlightingText(
   const parser = new CypherParser(tokenStream);
   const syntaxHighliter = new SyntaxHighlighter();
   parser.addParseListener(syntaxHighliter as ParseTreeListener);
-  const tree = parser.statements();
+  parser.statements();
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
@@ -242,12 +242,11 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 
   public syntaxError<T extends Token>(
-    recognizer: Recognizer<T, any>,
+    recognizer: Recognizer<T, ATNSimulator>,
     offendingSymbol: T | undefined,
     line: number,
     charPositionInLine: number,
     msg: string,
-    _: RecognitionException | undefined,
   ): void {
     const lineIndex = (offendingSymbol?.line ?? 1) - 1;
     const start = offendingSymbol?.startIndex ?? 0;
