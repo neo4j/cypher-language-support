@@ -11,15 +11,11 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  doSemanticHighlighting,
-  Legend,
-  validateTextDocument,
-} from './highlighting';
-
 import { doAutoCompletion } from './autocompletion';
 import { DbInfo, DbInfoImpl } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
+import { doSyntaxColouring, Legend } from './syntaxColouring';
+import { doSyntaxValidationText } from './syntaxValidation';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -28,20 +24,11 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const legend = new Legend();
 const dbInfo: DbInfo = new DbInfoImpl();
 
-documents.onDidClose(() => {
-  console.log('closing document');
-});
-
-connection.onDidChangeWatchedFiles(() => {
-  // Monitored files have change in VSCode
-  connection.console.log('We received a file change event');
-});
-
 connection.onInitialize(() => {
   const result: InitializeResult = {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,
-      // Tell the client that this server supports code completion.
+      // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
       },
@@ -82,19 +69,21 @@ connection.onInitialized(() => {
   );
 });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
+// Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
-  const textDocument = change.document;
-  const diagnostics = validateTextDocument(textDocument);
+  const document = change.document;
+  const diagnostics = doSyntaxValidationText(document.getText());
   connection.sendDiagnostics({
-    uri: textDocument.uri,
+    uri: document.uri,
     diagnostics: diagnostics,
   });
 });
-
-connection.languages.semanticTokens.on(doSemanticHighlighting(documents));
+// Trigger the syntax colouring
+connection.languages.semanticTokens.on(doSyntaxColouring(documents));
+// Trigger the signature help, providing info about functions / procedures
 connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
+// Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, dbInfo));
+
 documents.listen(connection);
 connection.listen();

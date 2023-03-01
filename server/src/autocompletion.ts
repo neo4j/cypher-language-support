@@ -36,7 +36,7 @@ export function positionIsParsableToken(lastToken: Token, position: Position) {
   );
 }
 
-export function autoCompleteQuery(
+export function doAutoCompletionText(
   textUntilPosition: string,
   position: Position,
   dbInfo: DbInfo,
@@ -168,7 +168,9 @@ export function doAutoCompletion(
   dbInfo: DbInfo,
 ) {
   return (textDocumentPosition: TextDocumentPositionParams) => {
-    const d = documents.get(textDocumentPosition.textDocument.uri);
+    const textDocument = documents.get(textDocumentPosition.textDocument.uri);
+    if (textDocument === undefined) return [];
+
     const position: Position = textDocumentPosition.position;
     const range: Range = {
       // TODO Nacho: We are parsing from the begining of the file.
@@ -176,7 +178,7 @@ export function doAutoCompletion(
       start: Position.create(0, 0),
       end: position,
     };
-    const wholeFileText: string = d?.getText(range).trim() ?? '';
-    return autoCompleteQuery(wholeFileText, position, dbInfo);
+
+    return doAutoCompletionText(textDocument.getText(range), position, dbInfo);
   };
 }

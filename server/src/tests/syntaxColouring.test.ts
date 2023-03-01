@@ -1,10 +1,10 @@
-import { doSemanticHighlightingText, ParsedToken } from '../highlighting';
+import { doSyntaxColouringText, ParsedToken } from '../syntaxColouring';
 
-export async function testSemanticHighlighting(
+export async function testSyntaxColouring(
   fileText: string,
   expected: ParsedToken[],
 ) {
-  const actualTokens = doSemanticHighlightingText(fileText);
+  const actualTokens = doSyntaxColouringText(fileText);
 
   expect(actualTokens.length).toBe(expected.length);
 
@@ -19,11 +19,11 @@ export async function testSemanticHighlighting(
   });
 }
 
-describe('Syntax highlighting', () => {
-  test('Correctly highlights MATCH', async () => {
+describe('Syntax colouring', () => {
+  test('Correctly colours MATCH', async () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
 
-    await testSemanticHighlighting(query, [
+    await testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -90,10 +90,10 @@ describe('Syntax highlighting', () => {
     ]);
   });
 
-  test('Correctly highlights standalone procedure CALL', async () => {
+  test('Correctly colours standalone procedure CALL', async () => {
     const query = 'CALL dbms.info() YIELD *';
 
-    await testSemanticHighlighting(query, [
+    await testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -118,11 +118,11 @@ describe('Syntax highlighting', () => {
     ]);
   });
 
-  test('Correctly highlights procedure CALL with yield', async () => {
+  test('Correctly colours procedure CALL with yield', async () => {
     const query =
       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
-    await testSemanticHighlighting(query, [
+    await testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -189,11 +189,11 @@ describe('Syntax highlighting', () => {
     ]);
   });
 
-  test('Correctly parses multi-statements', async () => {
+  test('Correctly colours multi-statements', async () => {
     const query = `MATCH (n:Person) RETURN n
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    await testSemanticHighlighting(query, [
+    await testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -295,16 +295,12 @@ describe('Syntax highlighting', () => {
     ]);
   });
 
-  test('Correctly parses unfinished multi-statements', async () => {
+  test('Correctly colours unfinished multi-statements', async () => {
     const query = `MATCH (n:Person);
 
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    // TODO Nacho Can we improve this?
-    // In this case we are missing the CALL in the semantic highlighting,
-    // because the first statement was not finished and the parser does not
-    // know how to detect the beginning of the second one
-    await testSemanticHighlighting(query, [
+    await testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
