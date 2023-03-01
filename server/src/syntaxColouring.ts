@@ -1,7 +1,4 @@
 import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
   SemanticTokensBuilder,
   SemanticTokensLegend,
   SemanticTokensParams,
@@ -10,15 +7,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  ANTLRErrorListener,
-  CharStreams,
-  CommonToken,
-  CommonTokenStream,
-  RecognitionException,
-  Recognizer,
-  Token,
-} from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 
@@ -187,9 +176,7 @@ function encodeTokenType(tokenType: string): number | undefined {
   return 0;
 }
 
-export function doSemanticHighlightingText(
-  wholeFileText: string,
-): ParsedToken[] {
+export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
@@ -203,7 +190,7 @@ export function doSemanticHighlightingText(
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
   const sortedTokens = syntaxHighliter.allTokens.sort((a, b) => {
     const lineDiff = a.line - b.line;
-    if (lineDiff != 0) {
+    if (lineDiff !== 0) {
       return lineDiff;
     } else {
       return a.startCharacter - b.startCharacter;
@@ -213,13 +200,12 @@ export function doSemanticHighlightingText(
   return sortedTokens;
 }
 
-export function doSemanticHighlighting(documents: TextDocuments<TextDocument>) {
+export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
-    if (textDocument == undefined) return { data: [] };
+    if (textDocument === undefined) return { data: [] };
 
-    const wholeFileText: string = textDocument.getText();
-    const tokens = doSemanticHighlightingText(wholeFileText);
+    const tokens = doSyntaxColouringText(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
@@ -229,57 +215,4 @@ export function doSemanticHighlighting(documents: TextDocuments<TextDocument>) {
     });
     return builder.build();
   };
-}
-
-// ************************************************************
-// Part of the code that highlights the syntax errors
-// ************************************************************
-export class ErrorListener implements ANTLRErrorListener<CommonToken> {
-  diagnostics: Diagnostic[];
-
-  constructor() {
-    this.diagnostics = [];
-  }
-
-  public syntaxError<T extends Token>(
-    recognizer: Recognizer<T, any>,
-    offendingSymbol: T | undefined,
-    line: number,
-    charPositionInLine: number,
-    msg: string,
-    _: RecognitionException | undefined,
-  ): void {
-    const lineIndex = (offendingSymbol?.line ?? 1) - 1;
-    const start = offendingSymbol?.startIndex ?? 0;
-    const end = (offendingSymbol?.stopIndex ?? 0) + 1;
-
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, start),
-        end: Position.create(lineIndex, end),
-      },
-      message: msg,
-    };
-    this.diagnostics.push(diagnostic);
-  }
-}
-
-export function provideSyntaxErrors(wholeFileText: string): Diagnostic[] {
-  const inputStream = CharStreams.fromString(wholeFileText);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-
-  const parser = new CypherParser(tokenStream);
-  const errorListener = new ErrorListener();
-  parser.addErrorListener(errorListener);
-  parser.statements();
-
-  return errorListener.diagnostics;
-}
-
-export function validateTextDocument(textDocument: TextDocument): Diagnostic[] {
-  // Remove trailings EOF when we read the file
-  const wholeFileText: string = textDocument.getText().trimEnd();
-  return provideSyntaxErrors(wholeFileText);
 }

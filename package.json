@@ -47,7 +47,7 @@
     "compile": "npm run gen-parser && tsc -b",
     "watch": "tsc -b -w",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-    "test": "jest",
+    "test": "jest --silent=true",
     "lint": "eslint . --ext .ts",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write"
   },

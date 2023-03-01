@@ -86,7 +86,7 @@ function toSignatureHelp(
   const method = methodSignatures.get(methodName);
   const signatures = method ? [method] : [];
   const argPosition =
-    numMethodArgs != undefined ? Math.max(numMethodArgs - 1, 0) : null;
+    numMethodArgs !== undefined ? Math.max(numMethodArgs - 1, 0) : null;
 
   const signatureHelp: SignatureHelp = {
     signatures: signatures,
@@ -96,11 +96,11 @@ function toSignatureHelp(
   return signatureHelp;
 }
 
-export function doSignatureHelpForQuery(
-  wholeFileText: string,
+export function doSignatureHelpText(
+  textUntilPosition: string,
   dbInfo: DbInfo,
 ): SignatureHelp {
-  const inputStream = CharStreams.fromString(wholeFileText);
+  const inputStream = CharStreams.fromString(textUntilPosition);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
@@ -131,22 +131,16 @@ export function doSignatureHelp(
   dbInfo: DbInfo,
 ) {
   return (params: SignatureHelpParams) => {
-    const endOfTriggerHelp = params.context?.triggerCharacter == ')';
+    const textDocument = documents.get(params.textDocument.uri);
+    const endOfTriggerHelp = params.context?.triggerCharacter === ')';
+    if (textDocument === undefined || endOfTriggerHelp) return emptyResult;
 
-    if (endOfTriggerHelp) {
-      return emptyResult;
-    } else {
-      const d = documents.get(params.textDocument.uri);
-      const position = params.position;
-      const range: Range = {
-        // TODO Nacho: We are parsing from the begining of the file.
-        // Do we need to parse from the begining of the current query?
-        start: Position.create(0, 0),
-        end: position,
-      };
-      const wholeFileText: string = d?.getText(range).trim() ?? '';
+    const position = params.position;
+    const range: Range = {
+      start: Position.create(0, 0),
+      end: position,
+    };
 
-      return doSignatureHelpForQuery(wholeFileText, dbInfo);
-    }
+    return doSignatureHelpText(textDocument.getText(range), dbInfo);
   };
 }
