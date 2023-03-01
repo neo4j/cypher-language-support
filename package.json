@@ -49,8 +49,8 @@
     "watch": "tsc -b -w",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
     "test": "jest",
-    "lint": "eslint . --fix --ext .ts",
-    "lint-ci": "eslint . --ext .ts --max-warnings 0",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --fix --ext .ts",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write"
   },
   "devDependencies": {

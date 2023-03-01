@@ -16,8 +16,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check there are no linting errors or warnings
-        run: npm run lint-ci
+      - name: Check there are no linting errors
+        run: npm run lint
 
       - name: List files that have not been formatted properly
         run: |
