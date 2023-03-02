@@ -279,7 +279,9 @@ labelExpression2
    ;
 
 labelExpression1
-   : (LPAREN labelExpression4 RPAREN | PERCENT | symbolicNameString)
+   : (LPAREN labelExpression4 RPAREN) #ParenthesizedLabelExpression
+     | PERCENT                        #AnyLabel
+     | symbolicNameString             #LabelName
    ;
 
 expression

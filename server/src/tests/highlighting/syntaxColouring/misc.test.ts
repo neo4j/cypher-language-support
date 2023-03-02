@@ -1,4 +1,4 @@
-import { TokenType } from '../../highlighting/colouringTable';
+import { TokenType } from '../../../highlighting/colouringTable';
 import { testSyntaxColouring } from './helpers';
 
 describe('Miscelanea syntax colouring', () => {

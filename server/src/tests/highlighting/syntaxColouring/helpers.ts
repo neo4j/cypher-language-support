@@ -1,7 +1,7 @@
 import {
   doSyntaxColouringText,
   ParsedToken,
-} from '../../highlighting/syntaxColouring';
+} from '../../../highlighting/syntaxColouring';
 
 export async function testSyntaxColouring(
   fileText: string,

@@ -15,7 +15,7 @@ import { CypherLexer } from '../antlr/CypherLexer';
 
 import {
   CypherParser,
-  LabelExpression1Context,
+  LabelNameContext,
   LiteralContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
@@ -107,7 +107,7 @@ class SyntaxHighlighter implements CypherParserListener {
     }
   }
 
-  exitLabelExpression1(ctx: LabelExpression1Context) {
+  exitLabelName(ctx: LabelNameContext) {
     this.addToken(ctx.start, TokenType.type, ctx.text);
   }
 
