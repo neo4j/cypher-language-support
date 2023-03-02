@@ -156,17 +156,19 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
   const result = new Map<string, ParsedToken>();
 
   tokenStream.getTokens().forEach((token) => {
-    const tokenNumber = token.type;
-    // Colours everything, setting a defautl token type of none
-    const tokenType = colouringTable.get(tokenNumber) ?? TokenType.none;
-    const tokenPosition = getTokenPosition(token);
-    const tokenStr = token.text ?? '';
+    if (token.channel !== Token.HIDDEN_CHANNEL && token.type !== Token.EOF) {
+      const tokenNumber = token.type;
+      // Colours everything, setting a defautl token type of none
+      const tokenType = colouringTable.get(tokenNumber) ?? TokenType.none;
+      const tokenPosition = getTokenPosition(token);
+      const tokenStr = token.text ?? '';
 
-    toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
-      const tokenPos = toString(token.position);
+      toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
+        const tokenPos = toString(token.position);
 
-      result.set(tokenPos, token);
-    });
+        result.set(tokenPos, token);
+      });
+    }
   });
 
   return result;
