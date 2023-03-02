@@ -9,13 +9,13 @@ import {
   CharStreams,
   CommonToken,
   CommonTokenStream,
-  RecognitionException,
   Recognizer,
   Token,
 } from 'antlr4ts';
 
 import { CypherLexer } from './antlr/CypherLexer';
 
+import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
 import { CypherParser } from './antlr/CypherParser';
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
@@ -26,12 +26,11 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 
   public syntaxError<T extends Token>(
-    recognizer: Recognizer<T, any>,
+    recognizer: Recognizer<T, ATNSimulator>,
     offendingSymbol: T | undefined,
     line: number,
     charPositionInLine: number,
     msg: string,
-    _: RecognitionException | undefined,
   ): void {
     const lineIndex = (offendingSymbol?.line ?? 1) - 1;
     const start = offendingSymbol?.startIndex ?? 0;

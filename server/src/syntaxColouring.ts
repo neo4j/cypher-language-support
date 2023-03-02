@@ -184,7 +184,7 @@ export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const parser = new CypherParser(tokenStream);
   const syntaxHighliter = new SyntaxHighlighter();
   parser.addParseListener(syntaxHighliter as ParseTreeListener);
-  const tree = parser.statements();
+  parser.statements();
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file

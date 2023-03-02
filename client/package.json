@@ -1,7 +1,7 @@
 {
   "name": "cypher-lsp-client",
   "description": "Cypher LSP's client",
-  "author": "ncordon",
+  "author": "neo4j",
   "license": "Apache",
   "version": "0.0.1",
   "engines": {
