@@ -7,6 +7,9 @@
   "engines": {
     "vscode": "^1.43.0"
   },
+  "activationEvents": [
+    "onLanguage:cypher"
+  ],
   "main": "./client/out/extension",
   "contributes": {
     "languages": [

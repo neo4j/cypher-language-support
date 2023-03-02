@@ -30,7 +30,7 @@ export const colouringTable = new Map<number, TokenType>([
   [CypherLexer.ASSERT, TokenType.keyword],
   [CypherLexer.ASSIGN, TokenType.keyword],
   [CypherLexer.AT, TokenType.keyword],
-  [CypherLexer.BAR, TokenType.keyword],
+  [CypherLexer.BAR, TokenType.operator],
   [CypherLexer.BOOSTED, TokenType.keyword],
   [CypherLexer.BREAK, TokenType.keyword],
   [CypherLexer.BRIEF, TokenType.keyword],
