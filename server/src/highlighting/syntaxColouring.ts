@@ -147,7 +147,7 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
   }
 
-  exitLiteral(ctx: LiteralContext) {
+  exitScalarLiteral(ctx: LiteralContext) {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
   }
 }
