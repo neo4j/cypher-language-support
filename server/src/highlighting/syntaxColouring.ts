@@ -18,6 +18,7 @@ import {
   FunctionNameContext,
   LabelNameContext,
   LiteralContext,
+  ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
@@ -44,6 +45,7 @@ export class Legend implements SemanticTokensLegend {
       TokenType[TokenType.operator],
       TokenType[TokenType.literal],
       TokenType[TokenType.property],
+      TokenType[TokenType.namespace],
     ];
   }
 }
@@ -158,6 +160,13 @@ class SyntaxHighlighter implements CypherParserListener {
 
   exitScalarLiteral(ctx: LiteralContext) {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
+  }
+
+  exitParameter(ctx: ParameterContext) {
+    const dollar = ctx.DOLLAR();
+    const parameterName = ctx.parameterName();
+    this.addToken(dollar.symbol, TokenType.namespace, dollar.text);
+    this.addToken(parameterName.start, TokenType.parameter, parameterName.text);
   }
 }
 

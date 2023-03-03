@@ -10,6 +10,7 @@ export enum TokenType {
   operator,
   literal,
   property,
+  namespace,
   none,
 }
 

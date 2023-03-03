@@ -449,7 +449,11 @@ propertyKeyName
    ;
 
 parameter
-   : DOLLAR (variable | UNSIGNED_DECIMAL_INTEGER)
+   : DOLLAR parameterName
+   ;
+
+parameterName
+   : (variable | UNSIGNED_DECIMAL_INTEGER)
    ;
 
 functionInvocation
