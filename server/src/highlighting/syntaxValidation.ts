@@ -15,12 +15,8 @@ import {
 
 import { CypherLexer } from '../antlr/CypherLexer';
 
-<<<<<<< HEAD:server/src/syntaxValidation.ts
 import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
-import { CypherParser } from './antlr/CypherParser';
-=======
 import { CypherParser } from '../antlr/CypherParser';
->>>>>>> e3aaa99 (Adds colouring table):server/src/highlighting/syntaxValidation.ts
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];
