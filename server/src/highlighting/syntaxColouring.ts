@@ -15,6 +15,7 @@ import { CypherLexer } from '../antlr/CypherLexer';
 
 import {
   CypherParser,
+  FunctionNameContext,
   LabelNameContext,
   LiteralContext,
   ProcedureNameContext,
@@ -40,9 +41,9 @@ export class Legend implements SemanticTokensLegend {
       TokenType[TokenType.function],
       TokenType[TokenType.variable],
       TokenType[TokenType.parameter],
-      TokenType[TokenType.property],
-      TokenType[TokenType.literal],
       TokenType[TokenType.operator],
+      TokenType[TokenType.literal],
+      TokenType[TokenType.property],
     ];
   }
 }
@@ -111,7 +112,15 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(ctx.start, TokenType.type, ctx.text);
   }
 
+  exitFunctionName(ctx: FunctionNameContext) {
+    this.colourMethodName(ctx);
+  }
+
   exitProcedureName(ctx: ProcedureNameContext) {
+    this.colourMethodName(ctx);
+  }
+
+  private colourMethodName(ctx: FunctionNameContext | ProcedureNameContext) {
     const namespace = ctx.namespace();
 
     namespace.symbolicNameString().forEach((namespaceName) => {
