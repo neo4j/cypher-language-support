@@ -1,7 +1,7 @@
-import { TokenType } from '../../../highlighting/colouringTable';
+import { TokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
-describe('Miscelanea syntax colouring', () => {
+describe('Multiline syntax colouring', () => {
   test('Correctly colours multi-statements', async () => {
     const query = `MATCH (n:Person) RETURN n
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;

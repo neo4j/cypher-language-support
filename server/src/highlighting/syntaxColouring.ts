@@ -14,21 +14,26 @@ import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 import { CypherLexer } from '../antlr/CypherLexer';
 
 import {
+  AllExpressionContext,
+  AnyExpressionContext,
   CypherParser,
   FunctionNameContext,
   LabelNameContext,
   LiteralContext,
+  NoneExpressionContext,
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
+  ReduceExpressionContext,
+  SingleExpressionContext,
   StringTokenContext,
   SymbolicNameOrStringParameterContext,
   VariableContext,
 } from '../antlr/CypherParser';
 
 import { CypherParserListener } from '../antlr/CypherParserListener';
-import { colouringTable, TokenType } from './colouringTable';
+import { lexerSymbols, TokenType } from '../lexerSymbols';
 
 export class Legend implements SemanticTokensLegend {
   tokenTypes: string[] = [];
@@ -168,6 +173,31 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(dollar.symbol, TokenType.namespace, dollar.text);
     this.addToken(parameterName.start, TokenType.parameter, parameterName.text);
   }
+
+  exitAllExpression(ctx: AllExpressionContext) {
+    const all = ctx.ALL();
+    this.addToken(all.symbol, TokenType.function, all.text);
+  }
+
+  exitAnyExpression(ctx: AnyExpressionContext) {
+    const any = ctx.ANY();
+    this.addToken(any.symbol, TokenType.function, any.text);
+  }
+
+  exitNoneExpression(ctx: NoneExpressionContext) {
+    const none = ctx.NONE();
+    this.addToken(none.symbol, TokenType.function, none.text);
+  }
+
+  exitSingleExpression(ctx: SingleExpressionContext) {
+    const single = ctx.SINGLE();
+    this.addToken(single.symbol, TokenType.function, single.text);
+  }
+
+  exitReduceExpression(ctx: ReduceExpressionContext) {
+    const reduce = ctx.REDUCE();
+    this.addToken(reduce.symbol, TokenType.function, reduce.text);
+  }
 }
 
 function colourLexerTokens(tokenStream: CommonTokenStream) {
@@ -177,7 +207,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
     if (token.channel !== Token.HIDDEN_CHANNEL && token.type !== Token.EOF) {
       const tokenNumber = token.type;
       // Colours everything, setting a defautl token type of none
-      const tokenType = colouringTable.get(tokenNumber) ?? TokenType.none;
+      const tokenType = lexerSymbols.get(tokenNumber) ?? TokenType.none;
       const tokenPosition = getTokenPosition(token);
       const tokenStr = token.text ?? '';
 

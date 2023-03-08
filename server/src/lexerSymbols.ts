@@ -1,4 +1,4 @@
-import { CypherLexer } from '../antlr/CypherLexer';
+import { CypherLexer } from './antlr/CypherLexer';
 
 export enum TokenType {
   comment,
@@ -14,7 +14,7 @@ export enum TokenType {
   none,
 }
 
-export const colouringTable = new Map<number, TokenType>([
+export const lexerSymbols = new Map<number, TokenType>([
   [CypherLexer.ACCESS, TokenType.keyword],
   [CypherLexer.ACTIVE, TokenType.keyword],
   [CypherLexer.ADMIN, TokenType.keyword],
