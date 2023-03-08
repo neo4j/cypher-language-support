@@ -1245,6 +1245,290 @@ describe('USE colouring', () => {
   });
 });
 
+describe('UNWIND colouring', () => {
+  test('Correctly colours UNWIND', async () => {
+    const query = `
+      WITH [[1, 2], [3, 4], 5] AS nested
+      UNWIND nested AS ix
+      UNWIND ix AS iy
+      RETURN iy AS number
+    `;
+
+    await testSyntaxColouring(query, [
+      {
+        position: {
+          line: 1,
+          startCharacter: 6,
+        },
+        length: 4,
+        tokenType: 1,
+        token: 'WITH',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 11,
+        },
+        length: 1,
+        tokenType: 10,
+        token: '[',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 12,
+        },
+        length: 1,
+        tokenType: 10,
+        token: '[',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 13,
+        },
+        length: 1,
+        tokenType: 7,
+        token: '1',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 14,
+        },
+        length: 1,
+        tokenType: 6,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 16,
+        },
+        length: 1,
+        tokenType: 7,
+        token: '2',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 17,
+        },
+        length: 1,
+        tokenType: 10,
+        token: ']',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 18,
+        },
+        length: 1,
+        tokenType: 6,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 20,
+        },
+        length: 1,
+        tokenType: 10,
+        token: '[',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 21,
+        },
+        length: 1,
+        tokenType: 7,
+        token: '3',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 22,
+        },
+        length: 1,
+        tokenType: 6,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 24,
+        },
+        length: 1,
+        tokenType: 7,
+        token: '4',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 25,
+        },
+        length: 1,
+        tokenType: 10,
+        token: ']',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 26,
+        },
+        length: 1,
+        tokenType: 6,
+        token: ',',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 28,
+        },
+        length: 1,
+        tokenType: 7,
+        token: '5',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 29,
+        },
+        length: 1,
+        tokenType: 10,
+        token: ']',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 31,
+        },
+        length: 2,
+        tokenType: 1,
+        token: 'AS',
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 34,
+        },
+        length: 6,
+        tokenType: 4,
+        token: 'nested',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 6,
+        },
+        length: 6,
+        tokenType: 1,
+        token: 'UNWIND',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 13,
+        },
+        length: 6,
+        tokenType: 4,
+        token: 'nested',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 20,
+        },
+        length: 2,
+        tokenType: 1,
+        token: 'AS',
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 23,
+        },
+        length: 2,
+        tokenType: 4,
+        token: 'ix',
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 6,
+        },
+        length: 6,
+        tokenType: 1,
+        token: 'UNWIND',
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 13,
+        },
+        length: 2,
+        tokenType: 4,
+        token: 'ix',
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 16,
+        },
+        length: 2,
+        tokenType: 1,
+        token: 'AS',
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 19,
+        },
+        length: 2,
+        tokenType: 4,
+        token: 'iy',
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 6,
+        },
+        length: 6,
+        tokenType: 1,
+        token: 'RETURN',
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 13,
+        },
+        length: 2,
+        tokenType: 4,
+        token: 'iy',
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 16,
+        },
+        length: 2,
+        tokenType: 1,
+        token: 'AS',
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 19,
+        },
+        length: 6,
+        tokenType: 4,
+        token: 'number',
+      },
+    ]);
+  });
+});
+
 describe('Subqueries colouring', () => {
   test('Correctly colours subquery with two union parts', async () => {
     const query = `
