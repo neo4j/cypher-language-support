@@ -243,7 +243,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'all',
       },
     ]);
@@ -259,7 +259,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'any',
       },
     ]);
@@ -275,7 +275,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'none',
       },
     ]);
@@ -291,7 +291,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'single',
       },
     ]);
@@ -307,7 +307,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'reduce',
       },
     ]);

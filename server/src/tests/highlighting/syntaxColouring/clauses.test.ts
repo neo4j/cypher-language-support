@@ -280,7 +280,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -289,7 +289,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -298,7 +298,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -307,7 +307,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -316,7 +316,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -325,7 +325,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -334,7 +334,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'r',
       },
       {
@@ -343,7 +343,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -352,7 +352,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -361,7 +361,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -370,7 +370,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -379,7 +379,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'm',
       },
       {
@@ -388,7 +388,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -397,7 +397,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -406,7 +406,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CASE',
       },
       {
@@ -415,7 +415,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 8,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHEN',
       },
       {
@@ -424,7 +424,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -433,7 +433,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -442,7 +442,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'A',
       },
       {
@@ -451,7 +451,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '&',
       },
       {
@@ -460,7 +460,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'B',
       },
       {
@@ -469,7 +469,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 19,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'THEN',
       },
       {
@@ -478,7 +478,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '1',
       },
       {
@@ -487,7 +487,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 8,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHEN',
       },
       {
@@ -496,7 +496,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'r',
       },
       {
@@ -505,7 +505,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -514,7 +514,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '!',
       },
       {
@@ -523,7 +523,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'R1',
       },
       {
@@ -532,7 +532,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '&',
       },
       {
@@ -541,7 +541,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '!',
       },
       {
@@ -550,7 +550,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 20,
         },
         length: 2,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'R2',
       },
       {
@@ -559,7 +559,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 23,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'THEN',
       },
       {
@@ -568,7 +568,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '2',
       },
       {
@@ -577,7 +577,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 8,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'ELSE',
       },
       {
@@ -586,7 +586,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 2,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '-1',
       },
       {
@@ -595,7 +595,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '1',
       },
       {
@@ -604,7 +604,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'END',
       },
       {
@@ -613,7 +613,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 10,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -622,7 +622,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 6,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'result',
       },
     ]);
@@ -648,7 +648,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'LOAD',
       },
       {
@@ -657,7 +657,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 11,
         },
         length: 3,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CSV',
       },
       {
@@ -666,7 +666,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 15,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WITH',
       },
       {
@@ -675,7 +675,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 20,
         },
         length: 7,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'HEADERS',
       },
       {
@@ -684,7 +684,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 28,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'FROM',
       },
       {
@@ -693,7 +693,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
         },
         length: 74,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token:
           "'https://neo4j.com/docs/cypher-cheat-sheet/5/csv/artists-with-headers.csv'",
       },
@@ -703,7 +703,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -712,7 +712,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 9,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'line',
       },
       {
@@ -721,7 +721,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CALL',
       },
       {
@@ -730,7 +730,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -739,7 +739,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 8,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WITH',
       },
       {
@@ -748,7 +748,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 13,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'line',
       },
       {
@@ -757,7 +757,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 8,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -766,7 +766,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -775,7 +775,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -784,7 +784,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 17,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Artist',
       },
       {
@@ -793,7 +793,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -802,7 +802,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 25,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -811,7 +811,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -820,7 +820,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 31,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'line',
       },
       {
@@ -829,7 +829,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -838,7 +838,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 36,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'Name',
       },
       {
@@ -847,7 +847,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 40,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -856,7 +856,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 42,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'year',
       },
       {
@@ -865,7 +865,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 46,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -874,7 +874,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 48,
         },
         length: 9,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'toInteger',
       },
       {
@@ -883,7 +883,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 57,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -892,7 +892,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 58,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'line',
       },
       {
@@ -901,7 +901,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 62,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -910,7 +910,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 63,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'Year',
       },
       {
@@ -919,7 +919,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 67,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -928,7 +928,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 68,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -937,7 +937,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 69,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -946,7 +946,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -955,7 +955,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 8,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'IN',
       },
       {
@@ -964,7 +964,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 11,
         },
         length: 12,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'TRANSACTIONS',
       },
       {
@@ -973,7 +973,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 24,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'OF',
       },
       {
@@ -982,7 +982,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 27,
         },
         length: 3,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '500',
       },
       {
@@ -991,7 +991,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 31,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'ROWS',
       },
     ]);
@@ -1013,7 +1013,7 @@ describe('USE colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'USE',
       },
       {
@@ -1022,7 +1022,7 @@ describe('USE colouring', () => {
           startCharacter: 10,
         },
         length: 5,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'neo4j',
       },
       {
@@ -1031,7 +1031,7 @@ describe('USE colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -1040,7 +1040,7 @@ describe('USE colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1049,7 +1049,7 @@ describe('USE colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -1058,7 +1058,7 @@ describe('USE colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1067,7 +1067,7 @@ describe('USE colouring', () => {
           startCharacter: 15,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -1076,7 +1076,7 @@ describe('USE colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1085,7 +1085,7 @@ describe('USE colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1094,7 +1094,7 @@ describe('USE colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1103,7 +1103,7 @@ describe('USE colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1112,7 +1112,7 @@ describe('USE colouring', () => {
           startCharacter: 25,
         },
         length: 5,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'KNOWS',
       },
       {
@@ -1121,7 +1121,7 @@ describe('USE colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1130,7 +1130,7 @@ describe('USE colouring', () => {
           startCharacter: 31,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1139,7 +1139,7 @@ describe('USE colouring', () => {
           startCharacter: 32,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -1148,7 +1148,7 @@ describe('USE colouring', () => {
           startCharacter: 33,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1157,7 +1157,7 @@ describe('USE colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'm',
       },
       {
@@ -1166,7 +1166,7 @@ describe('USE colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1175,7 +1175,7 @@ describe('USE colouring', () => {
           startCharacter: 36,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -1184,7 +1184,7 @@ describe('USE colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1193,7 +1193,7 @@ describe('USE colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -1202,7 +1202,7 @@ describe('USE colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -1211,7 +1211,7 @@ describe('USE colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -1220,7 +1220,7 @@ describe('USE colouring', () => {
           startCharacter: 14,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -1229,7 +1229,7 @@ describe('USE colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '=',
       },
       {
@@ -1238,7 +1238,7 @@ describe('USE colouring', () => {
           startCharacter: 21,
         },
         length: 7,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'Alice'",
       },
     ]);
@@ -1264,7 +1264,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CALL',
       },
       {
@@ -1273,7 +1273,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -1282,7 +1282,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -1291,7 +1291,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1300,7 +1300,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1309,7 +1309,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1318,7 +1318,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 17,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -1327,7 +1327,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1336,7 +1336,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1345,7 +1345,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1354,7 +1354,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1363,7 +1363,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 27,
         },
         length: 9,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'FRIEND_OF',
       },
       {
@@ -1372,7 +1372,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1381,7 +1381,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1390,7 +1390,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -1399,7 +1399,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 39,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1408,7 +1408,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 40,
         },
         length: 5,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'other',
       },
       {
@@ -1417,7 +1417,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 45,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1426,7 +1426,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 46,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -1435,7 +1435,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 52,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1444,7 +1444,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -1453,7 +1453,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1462,7 +1462,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1471,7 +1471,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 18,
         },
         length: 5,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'other',
       },
       {
@@ -1480,7 +1480,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'UNION',
       },
       {
@@ -1489,7 +1489,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -1498,7 +1498,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1507,7 +1507,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1516,7 +1516,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1525,7 +1525,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 17,
         },
         length: 5,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Child',
       },
       {
@@ -1534,7 +1534,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1543,7 +1543,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1552,7 +1552,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1561,7 +1561,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1570,7 +1570,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 26,
         },
         length: 8,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'CHILD_OF',
       },
       {
@@ -1579,7 +1579,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1588,7 +1588,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1597,7 +1597,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -1606,7 +1606,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1615,7 +1615,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 38,
         },
         length: 5,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'other',
       },
       {
@@ -1624,7 +1624,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1633,7 +1633,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 44,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Parent',
       },
       {
@@ -1642,7 +1642,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1651,7 +1651,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -1660,7 +1660,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1669,7 +1669,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1678,7 +1678,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 18,
         },
         length: 5,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'other',
       },
       {
@@ -1687,7 +1687,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
     ]);
@@ -1710,7 +1710,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -1719,7 +1719,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1728,7 +1728,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1737,7 +1737,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1746,7 +1746,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -1755,7 +1755,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1764,7 +1764,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -1773,7 +1773,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 12,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'EXISTS',
       },
       {
@@ -1782,7 +1782,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -1791,7 +1791,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -1800,7 +1800,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1809,7 +1809,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1818,7 +1818,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1827,7 +1827,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1836,7 +1836,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1845,7 +1845,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1854,7 +1854,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 20,
         },
         length: 7,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'HAS_DOG',
       },
       {
@@ -1863,7 +1863,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1872,7 +1872,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -1881,7 +1881,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -1890,7 +1890,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1899,7 +1899,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 31,
         },
         length: 3,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'dog',
       },
       {
@@ -1908,7 +1908,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1917,7 +1917,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 35,
         },
         length: 3,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Dog',
       },
       {
@@ -1926,7 +1926,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1935,7 +1935,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 8,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -1944,7 +1944,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -1953,7 +1953,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -1962,7 +1962,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -1971,7 +1971,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '=',
       },
       {
@@ -1980,7 +1980,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 3,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'dog',
       },
       {
@@ -1989,7 +1989,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -1998,7 +1998,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 27,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -2007,7 +2007,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -2016,7 +2016,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -2025,7 +2025,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 13,
         },
         length: 6,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'person',
       },
       {
@@ -2034,7 +2034,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -2043,7 +2043,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 20,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -2052,7 +2052,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 25,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -2061,7 +2061,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 28,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'name',
       },
     ]);
@@ -2081,7 +2081,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -2090,7 +2090,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -2099,7 +2099,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -2108,7 +2108,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -2117,7 +2117,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 6,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Person',
       },
       {
@@ -2126,7 +2126,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -2135,7 +2135,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -2144,7 +2144,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 12,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'COUNT',
       },
       {
@@ -2153,7 +2153,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -2162,7 +2162,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -2171,7 +2171,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -2180,7 +2180,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -2189,7 +2189,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -2198,7 +2198,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -2207,7 +2207,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -2216,7 +2216,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 26,
         },
         length: 7,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'HAS_DOG',
       },
       {
@@ -2225,7 +2225,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 33,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -2234,7 +2234,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -2243,7 +2243,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -2252,7 +2252,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -2261,7 +2261,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'd',
       },
       {
@@ -2270,7 +2270,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -2279,7 +2279,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 39,
         },
         length: 3,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Dog',
       },
       {
@@ -2288,7 +2288,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -2297,7 +2297,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 44,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -2306,7 +2306,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 46,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -2315,7 +2315,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 48,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '1',
       },
       {
@@ -2324,7 +2324,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -2333,7 +2333,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -2342,7 +2342,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -2351,7 +2351,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 15,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -2360,7 +2360,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 20,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -2369,7 +2369,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'name',
       },
     ]);

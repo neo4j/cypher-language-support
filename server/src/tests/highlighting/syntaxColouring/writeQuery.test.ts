@@ -1,3 +1,4 @@
+import { TokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring, testSyntaxColouringContains } from './helpers';
 
 describe('RETURN syntax colouring', () => {
@@ -11,7 +12,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -20,7 +21,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 9,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -29,7 +30,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 12,
         },
         length: 4,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'node',
       },
       {
@@ -38,7 +39,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -47,7 +48,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'r',
       },
       {
@@ -56,7 +57,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 20,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -65,7 +66,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 23,
         },
         length: 3,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'rel',
       },
       {
@@ -74,7 +75,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 27,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'SKIP',
       },
       {
@@ -83,7 +84,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 32,
         },
         length: 2,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '10',
       },
     ]);
@@ -99,7 +100,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 27,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'ORDER',
       },
       {
@@ -108,7 +109,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 33,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'BY',
       },
       {
@@ -117,7 +118,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -126,7 +127,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -135,7 +136,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 38,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -144,7 +145,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 43,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'DESC',
       },
     ]);
@@ -162,7 +163,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -171,7 +172,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -180,7 +181,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 8,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -189,7 +190,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -198,7 +199,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 10,
         },
         length: 5,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Label',
       },
       {
@@ -207,7 +208,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -216,7 +217,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -225,7 +226,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -234,7 +235,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -243,7 +244,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 19,
         },
         length: 4,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'TYPE',
       },
       {
@@ -252,7 +253,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -261,7 +262,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 25,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -270,7 +271,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -279,7 +280,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 31,
         },
         length: 1,
-        tokenType: 9,
+        tokenType: TokenType.namespace,
         token: '$',
       },
       {
@@ -288,7 +289,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 32,
         },
         length: 5,
-        tokenType: 5,
+        tokenType: TokenType.parameter,
         token: 'value',
       },
       {
@@ -297,7 +298,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -306,7 +307,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -315,7 +316,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 39,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '-',
       },
       {
@@ -324,7 +325,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 40,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '>',
       },
       {
@@ -333,7 +334,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 41,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -342,7 +343,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'm',
       },
       {
@@ -351,7 +352,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -360,7 +361,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 44,
         },
         length: 5,
-        tokenType: 2,
+        tokenType: TokenType.type,
         token: 'Label',
       },
       {
@@ -369,7 +370,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
     ]);
@@ -399,7 +400,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 0,
         },
         length: 3,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'SET',
       },
       {
@@ -408,7 +409,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 4,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -417,7 +418,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 2,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '+=',
       },
       {
@@ -426,7 +427,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -435,7 +436,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'a',
       },
       {
@@ -444,7 +445,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -453,7 +454,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '1',
       },
       {
@@ -462,7 +463,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -471,7 +472,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'b',
       },
       {
@@ -480,7 +481,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -489,7 +490,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 9,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'example'",
       },
       {
@@ -498,7 +499,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -507,7 +508,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'c',
       },
       {
@@ -516,7 +517,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -525,7 +526,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 4,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: 'true',
       },
       {
@@ -534,7 +535,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -543,7 +544,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'd',
       },
       {
@@ -552,7 +553,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -561,7 +562,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 4,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'date',
       },
       {
@@ -570,7 +571,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -579,7 +580,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 12,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'2022-05-04'",
       },
       {
@@ -588,7 +589,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -597,7 +598,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -606,7 +607,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'e',
       },
       {
@@ -615,7 +616,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -624,7 +625,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 5,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'point',
       },
       {
@@ -633,7 +634,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -642,7 +643,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -651,7 +652,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'x',
       },
       {
@@ -660,7 +661,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -669,7 +670,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '2',
       },
       {
@@ -678,7 +679,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -687,7 +688,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'y',
       },
       {
@@ -696,7 +697,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -705,7 +706,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '3',
       },
       {
@@ -714,7 +715,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -723,7 +724,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -732,7 +733,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -741,7 +742,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'f',
       },
       {
@@ -750,7 +751,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -759,7 +760,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -768,7 +769,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '1',
       },
       {
@@ -777,7 +778,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -786,7 +787,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '2',
       },
       {
@@ -795,7 +796,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -804,7 +805,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '3',
       },
       {
@@ -813,7 +814,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -822,7 +823,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -831,7 +832,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'g',
       },
       {
@@ -840,7 +841,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -849,7 +850,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -858,7 +859,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 5,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'abc'",
       },
       {
@@ -867,7 +868,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -876,7 +877,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 17,
         },
         length: 9,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'example'",
       },
       {
@@ -885,7 +886,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -894,7 +895,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -903,7 +904,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'h',
       },
       {
@@ -912,7 +913,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -921,7 +922,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -930,7 +931,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 4,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: 'true',
       },
       {
@@ -939,7 +940,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -948,7 +949,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 5,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: 'false',
       },
       {
@@ -957,7 +958,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -966,7 +967,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 23,
         },
         length: 5,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: 'false',
       },
       {
@@ -975,7 +976,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -984,7 +985,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -993,7 +994,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'i',
       },
       {
@@ -1002,7 +1003,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1011,7 +1012,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1020,7 +1021,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 4,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'date',
       },
       {
@@ -1029,7 +1030,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1038,7 +1039,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 12,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: "'2022-05-04'",
       },
       {
@@ -1047,7 +1048,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1056,7 +1057,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1065,7 +1066,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 30,
         },
         length: 4,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'date',
       },
       {
@@ -1074,7 +1075,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1083,7 +1084,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1092,7 +1093,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1101,7 +1102,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1110,7 +1111,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'j',
       },
       {
@@ -1119,7 +1120,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1128,7 +1129,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1137,7 +1138,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 5,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'point',
       },
       {
@@ -1146,7 +1147,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1155,7 +1156,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -1164,7 +1165,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'x',
       },
       {
@@ -1173,7 +1174,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1182,7 +1183,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '2',
       },
       {
@@ -1191,7 +1192,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1200,7 +1201,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'y',
       },
       {
@@ -1209,7 +1210,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1218,7 +1219,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '3',
       },
       {
@@ -1227,7 +1228,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -1236,7 +1237,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1245,7 +1246,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1254,7 +1255,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 31,
         },
         length: 5,
-        tokenType: 3,
+        tokenType: TokenType.function,
         token: 'point',
       },
       {
@@ -1263,7 +1264,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -1272,7 +1273,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '{',
       },
       {
@@ -1281,7 +1282,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'x',
       },
       {
@@ -1290,7 +1291,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 39,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1299,7 +1300,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 41,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '5',
       },
       {
@@ -1308,7 +1309,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1317,7 +1318,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 44,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'y',
       },
       {
@@ -1326,7 +1327,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 45,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1335,7 +1336,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 47,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '5',
       },
       {
@@ -1344,7 +1345,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 48,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
       {
@@ -1353,7 +1354,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -1362,7 +1363,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1371,7 +1372,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 51,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1380,7 +1381,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'k',
       },
       {
@@ -1389,7 +1390,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -1398,7 +1399,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 4,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: 'null',
       },
       {
@@ -1407,7 +1408,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 4,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '}',
       },
     ]);
@@ -1428,7 +1429,7 @@ describe('REMOVE syntax colouring', () => {
           startCharacter: 4,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'REMOVE',
       },
       {
@@ -1437,7 +1438,7 @@ describe('REMOVE syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'n',
       },
       {
@@ -1446,7 +1447,7 @@ describe('REMOVE syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -1455,7 +1456,7 @@ describe('REMOVE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 5,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'alias',
       },
     ]);

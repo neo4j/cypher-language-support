@@ -1,3 +1,4 @@
+import { TokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
 describe('Administration commands syntax colouring', () => {
@@ -11,7 +12,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -20,7 +21,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 7,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'INDEXES',
       },
       {
@@ -29,7 +30,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -38,7 +39,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '*',
       },
     ]);
@@ -54,7 +55,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -63,7 +64,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 5,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'INDEX',
       },
       {
@@ -72,7 +73,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 10,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: 'index_name',
       },
       {
@@ -81,7 +82,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 3,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'FOR',
       },
       {
@@ -90,7 +91,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -99,7 +100,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -108,7 +109,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ':',
       },
       {
@@ -117,7 +118,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 6,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: 'Person',
       },
       {
@@ -126,7 +127,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
       {
@@ -135,7 +136,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 39,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'ON',
       },
       {
@@ -144,7 +145,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '(',
       },
       {
@@ -153,7 +154,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'p',
       },
       {
@@ -162,7 +163,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: '.',
       },
       {
@@ -171,7 +172,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 45,
         },
         length: 4,
-        tokenType: 8,
+        tokenType: TokenType.property,
         token: 'name',
       },
       {
@@ -180,7 +181,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ')',
       },
     ]);
