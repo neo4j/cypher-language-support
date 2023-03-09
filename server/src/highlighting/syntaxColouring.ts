@@ -29,6 +29,7 @@ import {
   SingleExpressionContext,
   StringTokenContext,
   SymbolicNameOrStringParameterContext,
+  SymbolicNameStringContext,
   VariableContext,
 } from '../antlr/CypherParser';
 
@@ -197,6 +198,10 @@ class SyntaxHighlighter implements CypherParserListener {
   exitReduceExpression(ctx: ReduceExpressionContext) {
     const reduce = ctx.REDUCE();
     this.addToken(reduce.symbol, TokenType.function, reduce.text);
+  }
+
+  exitSymbolicNameString(ctx: SymbolicNameStringContext) {
+    this.addToken(ctx.start, TokenType.variable, ctx.text);
   }
 }
 

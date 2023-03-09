@@ -1261,7 +1261,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'WITH',
       },
       {
@@ -1270,7 +1270,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1279,7 +1279,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1288,7 +1288,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '1',
       },
       {
@@ -1297,7 +1297,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1306,7 +1306,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '2',
       },
       {
@@ -1315,7 +1315,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1324,7 +1324,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1333,7 +1333,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: '[',
       },
       {
@@ -1342,7 +1342,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '3',
       },
       {
@@ -1351,7 +1351,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1360,7 +1360,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '4',
       },
       {
@@ -1369,7 +1369,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1378,7 +1378,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: TokenType.operator,
         token: ',',
       },
       {
@@ -1387,7 +1387,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: 7,
+        tokenType: TokenType.literal,
         token: '5',
       },
       {
@@ -1396,7 +1396,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: 10,
+        tokenType: TokenType.none,
         token: ']',
       },
       {
@@ -1405,7 +1405,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 31,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -1414,7 +1414,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 34,
         },
         length: 6,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'nested',
       },
       {
@@ -1423,7 +1423,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'UNWIND',
       },
       {
@@ -1432,7 +1432,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 13,
         },
         length: 6,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'nested',
       },
       {
@@ -1441,7 +1441,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 20,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -1450,7 +1450,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 23,
         },
         length: 2,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'ix',
       },
       {
@@ -1459,7 +1459,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'UNWIND',
       },
       {
@@ -1468,7 +1468,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 13,
         },
         length: 2,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'ix',
       },
       {
@@ -1477,7 +1477,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -1486,7 +1486,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 19,
         },
         length: 2,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'iy',
       },
       {
@@ -1495,7 +1495,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -1504,7 +1504,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 13,
         },
         length: 2,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'iy',
       },
       {
@@ -1513,7 +1513,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: 1,
+        tokenType: TokenType.keyword,
         token: 'AS',
       },
       {
@@ -1522,7 +1522,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 19,
         },
         length: 6,
-        tokenType: 4,
+        tokenType: TokenType.variable,
         token: 'number',
       },
     ]);
