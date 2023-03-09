@@ -155,7 +155,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 18,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {
@@ -191,7 +191,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 31,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'false',
       },
       {
@@ -478,7 +478,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '1',
       },
       {
@@ -568,7 +568,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2',
       },
       {
@@ -586,7 +586,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 13,
         },
         length: 2,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '-1',
       },
       {
@@ -982,7 +982,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 27,
         },
         length: 3,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '500',
       },
       {
@@ -1288,7 +1288,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '1',
       },
       {
@@ -1306,7 +1306,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2',
       },
       {
@@ -1342,7 +1342,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '3',
       },
       {
@@ -1360,7 +1360,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '4',
       },
       {
@@ -1387,7 +1387,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '5',
       },
       {
@@ -2599,7 +2599,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 48,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '1',
       },
       {

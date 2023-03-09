@@ -148,7 +148,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {
@@ -184,7 +184,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 37,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'false',
       },
       {
@@ -391,7 +391,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {
@@ -427,7 +427,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 37,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'false',
       },
       {

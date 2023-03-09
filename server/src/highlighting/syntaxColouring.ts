@@ -16,17 +16,20 @@ import { CypherLexer } from '../antlr/CypherLexer';
 import {
   AllExpressionContext,
   AnyExpressionContext,
+  BooleanLiteralContext,
   CypherParser,
   FunctionNameContext,
+  KeywordLiteralContext,
   LabelNameContext,
-  LiteralContext,
   NoneExpressionContext,
+  NumberLiteralContext,
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
   ReduceExpressionContext,
   SingleExpressionContext,
+  StringsLiteralContext,
   StringTokenContext,
   SymbolicNameOrStringParameterContext,
   SymbolicNameStringContext,
@@ -50,6 +53,7 @@ export class Legend implements SemanticTokensLegend {
       TokenType[TokenType.parameter],
       TokenType[TokenType.operator],
       TokenType[TokenType.literal],
+      TokenType[TokenType.number],
       TokenType[TokenType.property],
       TokenType[TokenType.namespace],
     ];
@@ -164,10 +168,22 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
   }
 
-  exitScalarLiteral(ctx: LiteralContext) {
+  exitStringsLiteral(ctx: StringsLiteralContext) {
     this.addToken(ctx.start, TokenType.literal, ctx.text);
   }
 
+  exitBooleanLiteral(ctx: BooleanLiteralContext) {
+    // Normally booleans are coloured as numbers in other languages
+    this.addToken(ctx.start, TokenType.number, ctx.text);
+  }
+
+  exitNumberLiteral(ctx: NumberLiteralContext) {
+    this.addToken(ctx.start, TokenType.number, ctx.text);
+  }
+
+  exitKeywordLiteral(ctx: KeywordLiteralContext) {
+    this.addToken(ctx.start, TokenType.literal, ctx.text);
+  }
   exitParameter(ctx: ParameterContext) {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();

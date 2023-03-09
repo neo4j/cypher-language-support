@@ -1,157 +1,6 @@
 import { TokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring, testSyntaxColouringContains } from './helpers';
 
-describe('RETURN syntax colouring', () => {
-  test('Correctly colours AS and SKIP', async () => {
-    const query = 'RETURN n AS node, r AS rel SKIP 10';
-
-    await testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 7,
-        },
-        length: 1,
-        tokenType: TokenType.variable,
-        token: 'n',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 9,
-        },
-        length: 2,
-        tokenType: TokenType.keyword,
-        token: 'AS',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 12,
-        },
-        length: 4,
-        tokenType: TokenType.variable,
-        token: 'node',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: TokenType.operator,
-        token: ',',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 18,
-        },
-        length: 1,
-        tokenType: TokenType.variable,
-        token: 'r',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 20,
-        },
-        length: 2,
-        tokenType: TokenType.keyword,
-        token: 'AS',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 23,
-        },
-        length: 3,
-        tokenType: TokenType.variable,
-        token: 'rel',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 27,
-        },
-        length: 4,
-        tokenType: TokenType.keyword,
-        token: 'SKIP',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 32,
-        },
-        length: 2,
-        tokenType: TokenType.literal,
-        token: '10',
-      },
-    ]);
-  });
-
-  test('Correctly colours ORDER BY', async () => {
-    const query = 'RETURN n AS node, r AS rel ORDER BY n.name DESC';
-
-    await testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 27,
-        },
-        length: 5,
-        tokenType: TokenType.keyword,
-        token: 'ORDER',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 33,
-        },
-        length: 2,
-        tokenType: TokenType.keyword,
-        token: 'BY',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 36,
-        },
-        length: 1,
-        tokenType: TokenType.variable,
-        token: 'n',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 37,
-        },
-        length: 1,
-        tokenType: TokenType.operator,
-        token: '.',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 38,
-        },
-        length: 4,
-        tokenType: TokenType.property,
-        token: 'name',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 43,
-        },
-        length: 4,
-        tokenType: TokenType.keyword,
-        token: 'DESC',
-      },
-    ]);
-  });
-});
-
 describe('CREATE syntax colouring', () => {
   test('Correctly colours CREATE', async () => {
     const query = 'CREATE (n:Label)-[:TYPE {name: $value}]->(m:Label)';
@@ -454,7 +303,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '1',
       },
       {
@@ -526,7 +375,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {
@@ -670,7 +519,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2',
       },
       {
@@ -706,7 +555,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '3',
       },
       {
@@ -769,7 +618,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '1',
       },
       {
@@ -787,7 +636,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2',
       },
       {
@@ -805,7 +654,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '3',
       },
       {
@@ -931,7 +780,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {
@@ -949,7 +798,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'false',
       },
       {
@@ -967,7 +816,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 23,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'false',
       },
       {
@@ -1183,7 +1032,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2',
       },
       {
@@ -1219,7 +1068,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '3',
       },
       {
@@ -1300,7 +1149,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 41,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '5',
       },
       {
@@ -1336,7 +1185,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 47,
         },
         length: 1,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '5',
       },
       {

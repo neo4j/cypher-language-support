@@ -118,7 +118,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 26,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {

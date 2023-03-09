@@ -353,15 +353,15 @@ expression1
    ;
 
 literal
-   : numberLiteral    #ScalarLiteral
-   | stringLiteral    #ScalarLiteral
+   : numberLiteral    #NummericLiteral
+   | stringLiteral    #StringsLiteral
    | mapLiteral       #OtherLiteral
    | listLiteral      #OtherLiteral
-   | TRUE             #ScalarLiteral
-   | FALSE            #ScalarLiteral
-   | (INFINITY | INF) #ScalarLiteral
-   | NAN              #ScalarLiteral
-   | NULL             #ScalarLiteral
+   | TRUE             #BooleanLiteral
+   | FALSE            #BooleanLiteral
+   | (INFINITY | INF) #KeywordLiteral
+   | NAN              #KeywordLiteral
+   | NULL             #KeywordLiteral
    ;
 
 caseExpression

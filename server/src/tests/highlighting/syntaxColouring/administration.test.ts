@@ -2178,7 +2178,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: 'true',
       },
       {

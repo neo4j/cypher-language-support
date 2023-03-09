@@ -799,7 +799,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 11,
         },
         length: 2,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '10',
       },
     ]);
@@ -1328,7 +1328,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 5,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: TokenType.number,
         token: '2000',
       },
       {
