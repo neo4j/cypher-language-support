@@ -27,7 +27,7 @@
       {
         "id": "literal",
         "superType": "string",
-        "description": "Procedure in Cypher"
+        "description": "Cypher literal"
       }
     ],
     "configuration": {
