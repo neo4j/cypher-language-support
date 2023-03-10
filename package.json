@@ -23,13 +23,6 @@
         ]
       }
     ],
-    "semanticTokenTypes": [
-      {
-        "id": "literal",
-        "superType": "string",
-        "description": "Procedure in Cypher"
-      }
-    ],
     "configuration": {
       "type": "object",
       "title": "Configuration properties",
