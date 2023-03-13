@@ -39,7 +39,16 @@
           "description": "Traces the communication between VS Code and the language server."
         }
       }
+    },
+    "configurationDefaults": {
+      "[cypher]": {
+        "editor.semanticHighlighting.enabled": true
+      }
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neo4j/cypher-lsp.git"
   },
   "scripts": {
     "prepare": "husky install",
@@ -51,12 +60,14 @@
     "test": "jest --silent=true",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
-    "format": "prettier --config .prettierrc.json '**/*.ts' --write"
+    "format": "prettier --config .prettierrc.json '**/*.ts' --write",
+    "build-extension-dev": "vsce package --baseContentUrl https://none --baseImagesUrl https://none"
   },
   "devDependencies": {
     "@types/jest": "^29.2.6",
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@vscode/vsce": "^2.18.0",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "husky": "^8.0.0",
