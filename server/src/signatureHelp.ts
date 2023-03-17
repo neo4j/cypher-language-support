@@ -24,8 +24,8 @@ import { findParent, findStopNode } from './helpers';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
-  activeSignature: null,
-  activeParameter: null,
+  activeSignature: undefined,
+  activeParameter: undefined,
 };
 
 interface ParsedMethod {
@@ -86,11 +86,11 @@ function toSignatureHelp(
   const method = methodSignatures.get(methodName);
   const signatures = method ? [method] : [];
   const argPosition =
-    numMethodArgs !== undefined ? Math.max(numMethodArgs - 1, 0) : null;
+    numMethodArgs !== undefined ? Math.max(numMethodArgs - 1, 0) : undefined;
 
   const signatureHelp: SignatureHelp = {
     signatures: signatures,
-    activeSignature: method ? 0 : null,
+    activeSignature: method ? 0 : undefined,
     activeParameter: argPosition,
   };
   return signatureHelp;
