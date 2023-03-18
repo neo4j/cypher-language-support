@@ -252,6 +252,26 @@ function sortTokens(tokens: ParsedToken[]) {
   });
 }
 
+// Assumes the tokens are already sorted
+function removeOverlappingTokens(tokens: ParsedToken[]) {
+  const result: ParsedToken[] = [];
+  let prev: TokenPosition = { line: -1, startCharacter: -1 };
+  let prevEndCharacter = 0;
+
+  tokens.forEach((token) => {
+    const current = token.position;
+    if (current.line > prev.line || current.startCharacter > prevEndCharacter) {
+      // Add current token to the list and in further iterations
+      // remove tokens overlapping with it
+      result.push(token);
+      prev = current;
+      prevEndCharacter = prev.startCharacter + (token.token?.length ?? 0) - 1;
+    }
+  });
+
+  return result;
+}
+
 export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
@@ -277,7 +297,11 @@ export function doSyntaxColouringText(wholeFileText: string): ParsedToken[] {
 
   // When we push to the builder, tokens need to be sorted in ascending starting position
   // i.e. as we find them when we read them from left to right, and from top to bottom in the file
-  const result = sortTokens(Array.from(allColouredTokens.values()));
+  //
+  // After that we should remove overlapping tokens
+  const result = removeOverlappingTokens(
+    sortTokens(Array.from(allColouredTokens.values())),
+  );
 
   return result;
 }

@@ -591,15 +591,6 @@ describe('CASE syntax colouring', () => {
       },
       {
         position: {
-          line: 6,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: TokenType.none,
-        token: '1',
-      },
-      {
-        position: {
           line: 7,
           startCharacter: 6,
         },
