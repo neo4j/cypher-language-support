@@ -1,4 +1,4 @@
-import { TokenType } from '../../../lexerSymbols';
+import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
 describe('Administration commands syntax colouring', () => {
@@ -12,7 +12,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -21,7 +21,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'INDEXES',
       },
       {
@@ -30,7 +30,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -39,7 +39,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '*',
       },
     ]);
@@ -55,7 +55,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -64,7 +64,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'INDEX',
       },
       {
@@ -73,7 +73,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 10,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'index_name',
       },
       {
@@ -82,7 +82,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FOR',
       },
       {
@@ -91,7 +91,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -100,7 +100,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'p',
       },
       {
@@ -109,7 +109,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -118,7 +118,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'Person',
       },
       {
@@ -127,7 +127,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -136,7 +136,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 39,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ON',
       },
       {
@@ -145,7 +145,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -154,7 +154,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'p',
       },
       {
@@ -163,7 +163,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -172,7 +172,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 45,
         },
         length: 4,
-        tokenType: TokenType.property,
+        tokenType: CypherTokenType.property,
         token: 'name',
       },
       {
@@ -181,7 +181,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -197,7 +197,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -206,7 +206,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'INDEX',
       },
       {
@@ -215,7 +215,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 10,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'index_name',
       },
       {
@@ -224,7 +224,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FOR',
       },
       {
@@ -233,7 +233,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -242,7 +242,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'p',
       },
       {
@@ -251,7 +251,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -260,7 +260,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'Person',
       },
       {
@@ -269,7 +269,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -278,7 +278,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 39,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ON',
       },
       {
@@ -287,7 +287,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -296,7 +296,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'p',
       },
       {
@@ -305,7 +305,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -314,7 +314,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 45,
         },
         length: 4,
-        tokenType: TokenType.property,
+        tokenType: CypherTokenType.property,
         token: 'name',
       },
       {
@@ -323,7 +323,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -339,7 +339,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -348,7 +348,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FUNCTIONS',
       },
       {
@@ -357,7 +357,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'EXECUTABLE',
       },
       {
@@ -366,7 +366,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'BY',
       },
       {
@@ -375,7 +375,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 9,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
     ]);
@@ -397,7 +397,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -406,7 +406,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 12,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TRANSACTIONS',
       },
       {
@@ -415,7 +415,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -424,7 +424,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 13,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'transactionId',
       },
       {
@@ -433,7 +433,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AS',
       },
       {
@@ -442,7 +442,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'txId',
       },
       {
@@ -451,7 +451,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -460,7 +460,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 35,
         },
         length: 8,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'username',
       },
       {
@@ -469,7 +469,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -478,7 +478,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 8,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'username',
       },
       {
@@ -487,7 +487,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -496,7 +496,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 23,
         },
         length: 11,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'user_name'",
       },
       {
@@ -505,7 +505,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 4,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TERMINATE',
       },
       {
@@ -514,7 +514,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 14,
         },
         length: 12,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TRANSACTIONS',
       },
       {
@@ -523,7 +523,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 27,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'txId',
       },
       {
@@ -532,7 +532,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -541,7 +541,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 7,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'message',
       },
       {
@@ -550,7 +550,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -559,7 +559,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'NOT',
       },
       {
@@ -568,7 +568,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 7,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'message',
       },
       {
@@ -577,7 +577,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -586,7 +586,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 25,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'Transaction terminated.'",
       },
       {
@@ -595,7 +595,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -604,7 +604,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'txId',
       },
     ]);
@@ -621,7 +621,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -630,7 +630,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -639,7 +639,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 18,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`topology-example`',
       },
       {
@@ -648,7 +648,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 35,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'IF',
       },
       {
@@ -657,7 +657,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 38,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'NOT',
       },
       {
@@ -666,7 +666,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'EXISTS',
       },
       {
@@ -675,7 +675,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TOPOLOGY',
       },
       {
@@ -684,7 +684,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 58,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '1',
       },
       {
@@ -693,7 +693,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 60,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PRIMARY',
       },
       {
@@ -702,7 +702,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 68,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '0',
       },
       {
@@ -711,7 +711,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 70,
         },
         length: 11,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SECONDARIES',
       },
     ]);
@@ -727,7 +727,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'START',
       },
       {
@@ -736,7 +736,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -745,7 +745,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 15,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`database-name`',
       },
     ]);
@@ -761,7 +761,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'STOP',
       },
       {
@@ -770,7 +770,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -779,7 +779,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 14,
         },
         length: 15,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`database-name`',
       },
     ]);
@@ -796,7 +796,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALTER',
       },
       {
@@ -805,7 +805,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -814,7 +814,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 18,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`topology-example`',
       },
       {
@@ -823,7 +823,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 34,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -832,7 +832,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 38,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TOPOLOGY',
       },
       {
@@ -841,7 +841,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 47,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '1',
       },
       {
@@ -850,7 +850,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PRIMARY',
       },
       {
@@ -859,7 +859,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 57,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -868,7 +868,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 61,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ACCESS',
       },
       {
@@ -877,7 +877,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 68,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'READ',
       },
       {
@@ -886,7 +886,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 73,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ONLY',
       },
     ]);
@@ -905,7 +905,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -914,7 +914,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASES',
       },
       {
@@ -923,7 +923,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -932,7 +932,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'name',
       },
       {
@@ -941,7 +941,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -950,7 +950,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 18,
         },
         length: 13,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'currentStatus',
       },
       {
@@ -959,7 +959,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -968,7 +968,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'name',
       },
       {
@@ -977,7 +977,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CONTAINS',
       },
       {
@@ -986,7 +986,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 4,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'my'",
       },
       {
@@ -995,7 +995,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AND',
       },
       {
@@ -1004,7 +1004,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 13,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'currentStatus',
       },
       {
@@ -1013,7 +1013,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -1022,7 +1022,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 8,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'online'",
       },
     ]);
@@ -1043,7 +1043,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -1052,7 +1052,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'OR',
       },
       {
@@ -1061,7 +1061,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'REPLACE',
       },
       {
@@ -1070,7 +1070,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 18,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALIAS',
       },
       {
@@ -1079,7 +1079,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 25,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`composite-database-name`',
       },
       {
@@ -1088,7 +1088,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -1097,7 +1097,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 50,
         },
         length: 25,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`alias-in-composite-name`',
       },
       {
@@ -1106,7 +1106,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FOR',
       },
       {
@@ -1115,7 +1115,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -1124,7 +1124,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 10,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'PROPERTIES',
       },
       {
@@ -1133,7 +1133,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '{',
       },
       {
@@ -1142,7 +1142,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 32,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'property',
       },
       {
@@ -1151,7 +1151,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 41,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -1160,7 +1160,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '$',
       },
       {
@@ -1169,7 +1169,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 5,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: 'value',
       },
       {
@@ -1178,7 +1178,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '}',
       },
       {
@@ -1187,7 +1187,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AT',
       },
       {
@@ -1196,7 +1196,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '$',
       },
       {
@@ -1205,7 +1205,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 3,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: 'url',
       },
       {
@@ -1214,7 +1214,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USER',
       },
       {
@@ -1223,7 +1223,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: 'user_name',
       },
       {
@@ -1232,7 +1232,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PASSWORD',
       },
       {
@@ -1241,7 +1241,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '$',
       },
       {
@@ -1250,7 +1250,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'password',
       },
     ]);
@@ -1270,7 +1270,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALTER',
       },
       {
@@ -1279,7 +1279,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALIAS',
       },
       {
@@ -1288,7 +1288,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 23,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`remote-database-alias`',
       },
       {
@@ -1297,7 +1297,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 36,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'IF',
       },
       {
@@ -1306,7 +1306,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 39,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'EXISTS',
       },
       {
@@ -1315,7 +1315,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -1324,7 +1324,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -1333,7 +1333,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USER',
       },
       {
@@ -1342,7 +1342,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
       {
@@ -1351,7 +1351,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PASSWORD',
       },
       {
@@ -1360,7 +1360,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.namespace,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -1369,7 +1369,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 8,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.paramValue,
         token: 'password',
       },
     ]);
@@ -1385,7 +1385,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DROP',
       },
       {
@@ -1394,7 +1394,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALIAS',
       },
       {
@@ -1403,7 +1403,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 16,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`database-alias`',
       },
       {
@@ -1412,7 +1412,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'IF',
       },
       {
@@ -1421,7 +1421,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'EXISTS',
       },
       {
@@ -1430,7 +1430,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 38,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FOR',
       },
       {
@@ -1439,7 +1439,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
     ]);
@@ -1455,7 +1455,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -1464,7 +1464,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALIASES',
       },
       {
@@ -1473,7 +1473,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FOR',
       },
       {
@@ -1482,7 +1482,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -1491,7 +1491,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -1500,7 +1500,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 32,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '*',
       },
     ]);
@@ -1516,7 +1516,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ENABLE',
       },
       {
@@ -1525,7 +1525,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SERVER',
       },
       {
@@ -1534,7 +1534,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 14,
         },
         length: 10,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'serverId'",
       },
     ]);
@@ -1550,7 +1550,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALTER',
       },
       {
@@ -1559,7 +1559,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SERVER',
       },
       {
@@ -1568,7 +1568,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 6,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'name'",
       },
       {
@@ -1577,7 +1577,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -1586,7 +1586,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'OPTIONS',
       },
       {
@@ -1595,7 +1595,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 32,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '{',
       },
       {
@@ -1604,7 +1604,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 14,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: 'modeConstraint',
       },
       {
@@ -1613,7 +1613,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 47,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -1622,7 +1622,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 9,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'PRIMARY'",
       },
       {
@@ -1631,7 +1631,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 58,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '}',
       },
     ]);
@@ -1647,7 +1647,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RENAME',
       },
       {
@@ -1656,7 +1656,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SERVER',
       },
       {
@@ -1665,7 +1665,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 14,
         },
         length: 9,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'oldName'",
       },
       {
@@ -1674,7 +1674,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TO',
       },
       {
@@ -1683,7 +1683,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 27,
         },
         length: 9,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'newName'",
       },
     ]);
@@ -1699,7 +1699,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DEALLOCATE',
       },
       {
@@ -1708,7 +1708,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASES',
       },
       {
@@ -1717,7 +1717,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 21,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FROM',
       },
       {
@@ -1726,7 +1726,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 26,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SERVER',
       },
       {
@@ -1735,7 +1735,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 6,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'name'",
       },
     ]);
@@ -1751,7 +1751,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'REALLOCATE',
       },
       {
@@ -1760,7 +1760,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASES',
       },
     ]);
@@ -1776,7 +1776,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -1785,7 +1785,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 7,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SERVERS',
       },
     ]);
@@ -1806,7 +1806,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -1815,7 +1815,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USER',
       },
       {
@@ -1824,7 +1824,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
       {
@@ -1833,7 +1833,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -1842,7 +1842,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PASSWORD',
       },
       {
@@ -1851,7 +1851,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: TokenType.namespace,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -1860,7 +1860,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 8,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.paramValue,
         token: 'password',
       },
       {
@@ -1869,7 +1869,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CHANGE',
       },
       {
@@ -1878,7 +1878,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'NOT',
       },
       {
@@ -1887,7 +1887,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'REQUIRED',
       },
       {
@@ -1896,7 +1896,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -1905,7 +1905,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'STATUS',
       },
       {
@@ -1914,7 +1914,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SUSPENDED',
       },
       {
@@ -1923,7 +1923,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -1932,7 +1932,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'HOME',
       },
       {
@@ -1941,7 +1941,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -1950,7 +1950,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 15,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`database-name`',
       },
     ]);
@@ -1971,7 +1971,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ALTER',
       },
       {
@@ -1980,7 +1980,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USER',
       },
       {
@@ -1989,7 +1989,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
       {
@@ -1998,7 +1998,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -2007,7 +2007,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PASSWORD',
       },
       {
@@ -2016,7 +2016,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: TokenType.namespace,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -2025,7 +2025,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 8,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.paramValue,
         token: 'password',
       },
       {
@@ -2034,7 +2034,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CHANGE',
       },
       {
@@ -2043,7 +2043,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'NOT',
       },
       {
@@ -2052,7 +2052,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'REQUIRED',
       },
       {
@@ -2061,7 +2061,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -2070,7 +2070,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'STATUS',
       },
       {
@@ -2079,7 +2079,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 17,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ACTIVE',
       },
       {
@@ -2088,7 +2088,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SET',
       },
       {
@@ -2097,7 +2097,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'HOME',
       },
       {
@@ -2106,7 +2106,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
       },
       {
@@ -2115,7 +2115,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 15,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.symbolicName,
         token: '`database-name`',
       },
     ]);
@@ -2133,7 +2133,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2142,7 +2142,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USERS',
       },
       {
@@ -2151,7 +2151,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -2160,7 +2160,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'suspended',
       },
       {
@@ -2169,7 +2169,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -2178,7 +2178,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
       },
       {
@@ -2187,7 +2187,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AND',
       },
       {
@@ -2196,7 +2196,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 22,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'passwordChangeRequired',
       },
     ]);
@@ -2213,7 +2213,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -2222,7 +2222,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2231,7 +2231,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
       },
       {
@@ -2240,7 +2240,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'IF',
       },
       {
@@ -2249,7 +2249,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 25,
         },
         length: 3,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'NOT',
       },
       {
@@ -2258,7 +2258,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 29,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'EXISTS',
       },
       {
@@ -2267,7 +2267,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 36,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AS',
       },
       {
@@ -2276,7 +2276,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 39,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'COPY',
       },
       {
@@ -2285,7 +2285,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'OF',
       },
       {
@@ -2294,7 +2294,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 47,
         },
         length: 15,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'other_role_name',
       },
     ]);
@@ -2310,7 +2310,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
       },
       {
@@ -2319,7 +2319,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2328,7 +2328,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
       },
       {
@@ -2337,7 +2337,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AS',
       },
       {
@@ -2346,7 +2346,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 25,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'COPY',
       },
       {
@@ -2355,7 +2355,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'OF',
       },
       {
@@ -2364,7 +2364,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 15,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'other_role_name',
       },
     ]);
@@ -2384,7 +2384,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2393,7 +2393,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLES',
       },
       {
@@ -2402,7 +2402,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WITH',
       },
       {
@@ -2411,7 +2411,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USERS',
       },
       {
@@ -2420,7 +2420,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -2429,7 +2429,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'member',
       },
       {
@@ -2438,7 +2438,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -2447,7 +2447,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'role',
       },
       {
@@ -2456,7 +2456,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
       },
       {
@@ -2465,7 +2465,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'member',
       },
       {
@@ -2474,7 +2474,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '=',
       },
       {
@@ -2483,7 +2483,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: TokenType.namespace,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -2492,7 +2492,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 4,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.paramValue,
         token: 'user',
       },
       {
@@ -2501,7 +2501,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -2510,7 +2510,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 13,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'role',
       },
     ]);
@@ -2526,7 +2526,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2535,7 +2535,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 9,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'POPULATED',
       },
       {
@@ -2544,7 +2544,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLES',
       },
     ]);
@@ -2560,7 +2560,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'GRANT',
       },
       {
@@ -2569,7 +2569,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2578,7 +2578,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 10,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name1',
       },
       {
@@ -2587,7 +2587,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -2596,7 +2596,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 23,
         },
         length: 10,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name2',
       },
       {
@@ -2605,7 +2605,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 34,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TO',
       },
       {
@@ -2614,7 +2614,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
     ]);
@@ -2630,7 +2630,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'REVOKE',
       },
       {
@@ -2639,7 +2639,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2648,7 +2648,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
       },
       {
@@ -2657,7 +2657,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'FROM',
       },
       {
@@ -2666,7 +2666,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 27,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
     ]);
@@ -2682,7 +2682,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RENAME',
       },
       {
@@ -2691,7 +2691,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2700,7 +2700,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 12,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
       },
       {
@@ -2709,7 +2709,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 22,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'TO',
       },
       {
@@ -2718,7 +2718,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 25,
         },
         length: 15,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'other_role_name',
       },
     ]);
@@ -2734,7 +2734,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2743,7 +2743,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'ROLE',
       },
       {
@@ -2752,7 +2752,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
       },
       {
@@ -2761,7 +2761,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PRIVILEGES',
       },
       {
@@ -2770,7 +2770,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AS',
       },
       {
@@ -2779,7 +2779,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 34,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'COMMANDS',
       },
     ]);
@@ -2795,7 +2795,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2804,7 +2804,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PRIVILEGES',
       },
       {
@@ -2813,7 +2813,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'AS',
       },
       {
@@ -2822,7 +2822,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 19,
         },
         length: 8,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'COMMANDS',
       },
     ]);
@@ -2838,7 +2838,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'SHOW',
       },
       {
@@ -2847,7 +2847,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 5,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'USER',
       },
       {
@@ -2856,7 +2856,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 9,
-        tokenType: TokenType.parameter,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
       {
@@ -2865,7 +2865,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 20,
         },
         length: 10,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'PRIVILEGES',
       },
     ]);

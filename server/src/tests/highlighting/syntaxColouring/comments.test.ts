@@ -1,3 +1,4 @@
+import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
 describe('Comments syntax colouring', () => {
@@ -15,7 +16,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 4,
         },
         length: 15,
-        tokenType: 0,
+        tokenType: CypherTokenType.comment,
         token: '// Some comment',
       },
       {
@@ -24,7 +25,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 4,
         },
         length: 18,
-        tokenType: 0,
+        tokenType: CypherTokenType.comment,
         token: '// Another comment',
       },
       {
@@ -33,7 +34,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 4,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: CypherTokenType.keyword,
         token: 'CALL',
       },
       {
@@ -42,7 +43,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 9,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: CypherTokenType.procedure,
         token: 'foo',
       },
       {
@@ -51,7 +52,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -60,7 +61,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 13,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: CypherTokenType.procedure,
         token: 'bar',
       },
       {
@@ -69,7 +70,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 11,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -78,7 +79,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 11,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -99,7 +100,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 4,
         },
         length: 17,
-        tokenType: 0,
+        tokenType: CypherTokenType.comment,
         token: '/* Some multiline',
       },
       {
@@ -108,7 +109,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 0,
         },
         length: 11,
-        tokenType: 0,
+        tokenType: CypherTokenType.comment,
         token: '    comment',
       },
       {
@@ -117,7 +118,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: 0,
+        tokenType: CypherTokenType.comment,
         token: '    */',
       },
       {
@@ -126,7 +127,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 4,
         },
         length: 4,
-        tokenType: 1,
+        tokenType: CypherTokenType.keyword,
         token: 'CALL',
       },
       {
@@ -135,7 +136,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 9,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: CypherTokenType.procedure,
         token: 'foo',
       },
       {
@@ -144,7 +145,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: 6,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -153,7 +154,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 13,
         },
         length: 3,
-        tokenType: 3,
+        tokenType: CypherTokenType.procedure,
         token: 'bar',
       },
       {
@@ -162,7 +163,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: 11,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -171,7 +172,7 @@ describe('Comments syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: 11,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);

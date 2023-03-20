@@ -1,4 +1,4 @@
-import { TokenType } from '../../../lexerSymbols';
+import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
 describe('Multiline syntax colouring', () => {
@@ -13,7 +13,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -22,7 +22,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -31,7 +31,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'n',
       },
       {
@@ -40,7 +40,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 8,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -49,7 +49,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 9,
         },
         length: 6,
-        tokenType: TokenType.type,
+        tokenType: CypherTokenType.label,
         token: 'Person',
       },
       {
@@ -58,7 +58,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -67,7 +67,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 17,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -76,7 +76,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'n',
       },
       {
@@ -85,7 +85,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CALL',
       },
       {
@@ -94,7 +94,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 11,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'apoc',
       },
       {
@@ -103,7 +103,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -112,7 +112,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'do',
       },
       {
@@ -121,7 +121,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -130,7 +130,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 19,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'when',
       },
       {
@@ -139,7 +139,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -148,7 +148,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
       },
       {
@@ -157,7 +157,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -166,7 +166,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 30,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: '"foo"',
       },
       {
@@ -175,7 +175,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -184,7 +184,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 37,
         },
         length: 5,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'false',
       },
       {
@@ -193,7 +193,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -202,7 +202,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 44,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: '"bar"',
       },
       {
@@ -211,7 +211,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -220,7 +220,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 51,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -229,7 +229,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 57,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'name',
       },
       {
@@ -238,7 +238,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 61,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -247,7 +247,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 63,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'result',
       },
     ]);
@@ -265,7 +265,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -274,7 +274,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -283,7 +283,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'n',
       },
       {
@@ -292,7 +292,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 8,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -301,7 +301,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 9,
         },
         length: 6,
-        tokenType: TokenType.type,
+        tokenType: CypherTokenType.label,
         token: 'Person',
       },
       {
@@ -310,7 +310,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -319,7 +319,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ';',
       },
       {
@@ -328,7 +328,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CALL',
       },
       {
@@ -337,7 +337,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 11,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'apoc',
       },
       {
@@ -346,7 +346,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -355,7 +355,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 16,
         },
         length: 2,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'do',
       },
       {
@@ -364,7 +364,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -373,7 +373,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 19,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'when',
       },
       {
@@ -382,7 +382,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -391,7 +391,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 24,
         },
         length: 4,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
       },
       {
@@ -400,7 +400,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -409,7 +409,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 30,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: '"foo"',
       },
       {
@@ -418,7 +418,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -427,7 +427,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 37,
         },
         length: 5,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'false',
       },
       {
@@ -436,7 +436,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -445,7 +445,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 44,
         },
         length: 5,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: '"bar"',
       },
       {
@@ -454,7 +454,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
       {
@@ -463,7 +463,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 51,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
       },
       {
@@ -472,7 +472,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 57,
         },
         length: 4,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'name',
       },
       {
@@ -481,7 +481,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 61,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -490,7 +490,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 63,
         },
         length: 6,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'result',
       },
     ]);
@@ -508,7 +508,7 @@ Other\`)
           startCharacter: 0,
         },
         length: 5,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
       },
       {
@@ -517,7 +517,7 @@ Other\`)
           startCharacter: 6,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -526,7 +526,7 @@ Other\`)
           startCharacter: 7,
         },
         length: 1,
-        tokenType: TokenType.variable,
+        tokenType: CypherTokenType.variable,
         token: 'n',
       },
       {
@@ -535,7 +535,7 @@ Other\`)
           startCharacter: 8,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ':',
       },
       {
@@ -544,7 +544,7 @@ Other\`)
           startCharacter: 9,
         },
         length: 6,
-        tokenType: TokenType.type,
+        tokenType: CypherTokenType.label,
         token: '`Label',
       },
       {
@@ -553,7 +553,7 @@ Other\`)
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.type,
+        tokenType: CypherTokenType.label,
         token: 'Other`',
       },
       {
@@ -562,7 +562,7 @@ Other\`)
           startCharacter: 6,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -581,7 +581,7 @@ Other\`)
           startCharacter: 0,
         },
         length: 4,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'CALL',
       },
       {
@@ -590,7 +590,7 @@ Other\`)
           startCharacter: 5,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'apoc',
       },
       {
@@ -599,7 +599,7 @@ Other\`)
           startCharacter: 9,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -608,7 +608,7 @@ Other\`)
           startCharacter: 6,
         },
         length: 2,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'do',
       },
       {
@@ -617,7 +617,7 @@ Other\`)
           startCharacter: 8,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -626,7 +626,7 @@ Other\`)
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.procedure,
         token: 'when',
       },
       {
@@ -635,7 +635,7 @@ Other\`)
           startCharacter: 10,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -644,7 +644,7 @@ Other\`)
           startCharacter: 11,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);

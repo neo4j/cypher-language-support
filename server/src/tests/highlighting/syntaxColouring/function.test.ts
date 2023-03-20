@@ -1,4 +1,4 @@
-import { TokenType } from '../../../lexerSymbols';
+import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring, testSyntaxColouringContains } from './helpers';
 
 describe('Function syntax colouring', () => {
@@ -12,7 +12,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -21,7 +21,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'reduce',
       },
       {
@@ -30,7 +30,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -39,7 +39,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -55,7 +55,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -64,7 +64,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'some',
       },
       {
@@ -73,7 +73,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -82,7 +82,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 12,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'apoc',
       },
       {
@@ -91,7 +91,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -100,7 +100,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 17,
         },
         length: 8,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'function',
       },
       {
@@ -109,7 +109,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -118,7 +118,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 26,
         },
         length: 4,
-        tokenType: TokenType.number,
+        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
       },
       {
@@ -127,7 +127,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -136,7 +136,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 32,
         },
         length: 11,
-        tokenType: TokenType.literal,
+        tokenType: CypherTokenType.stringLiteral,
         token: "'something'",
       },
       {
@@ -145,7 +145,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -164,7 +164,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 0,
         },
         length: 6,
-        tokenType: TokenType.keyword,
+        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
       },
       {
@@ -173,7 +173,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'some',
       },
       {
@@ -182,7 +182,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -191,7 +191,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 6,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'apoc',
       },
       {
@@ -200,7 +200,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: TokenType.operator,
+        tokenType: CypherTokenType.operator,
         token: '.',
       },
       {
@@ -209,7 +209,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 6,
         },
         length: 8,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.function,
         token: 'function',
       },
       {
@@ -218,7 +218,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: '(',
       },
       {
@@ -227,7 +227,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: TokenType.none,
+        tokenType: CypherTokenType.none,
         token: ')',
       },
     ]);
@@ -243,7 +243,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 3,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.predicateFunction,
         token: 'all',
       },
     ]);
@@ -259,7 +259,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 3,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.predicateFunction,
         token: 'any',
       },
     ]);
@@ -275,7 +275,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 4,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.predicateFunction,
         token: 'none',
       },
     ]);
@@ -291,7 +291,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.predicateFunction,
         token: 'single',
       },
     ]);
@@ -307,7 +307,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 7,
         },
         length: 6,
-        tokenType: TokenType.function,
+        tokenType: CypherTokenType.predicateFunction,
         token: 'reduce',
       },
     ]);

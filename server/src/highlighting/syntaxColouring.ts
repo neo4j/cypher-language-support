@@ -32,16 +32,14 @@ import {
   SingleExpressionContext,
   StringsLiteralContext,
   StringTokenContext,
-  SymbolicNameOrStringParameterContext,
   SymbolicNameStringContext,
   VariableContext,
 } from '../antlr/CypherParser';
 
 import { CypherParserListener } from '../antlr/CypherParserListener';
 import {
+  CypherTokenType as CypherTokenTypes,
   lexerSymbols,
-  TokenType as CypherTokenType,
-  TokenType,
 } from '../lexerSymbols';
 
 export class Legend implements SemanticTokensLegend {
@@ -65,15 +63,15 @@ function toString(tokenPosition: TokenPosition): string {
 export interface ParsedCypherToken {
   position: TokenPosition;
   length: number;
-  tokenType: CypherTokenType;
-  token: string | undefined;
+  tokenType: CypherTokenTypes;
+  token: string;
 }
 
 export interface ColouredToken {
   position: TokenPosition;
   length: number;
   tokenColour: SemanticTokenTypes;
-  token: string | undefined;
+  token: string;
 }
 
 function getTokenPosition(token: Token): TokenPosition {
@@ -85,7 +83,7 @@ function getTokenPosition(token: Token): TokenPosition {
 
 function toParsedTokens(
   tokenPosition: TokenPosition,
-  tokenType: CypherTokenType,
+  tokenType: CypherTokenTypes,
   tokenStr: string,
 ): ParsedCypherToken[] {
   return tokenStr
@@ -112,7 +110,11 @@ class SyntaxHighlighter implements CypherParserListener {
     this.colouredTokens = colouredTokens;
   }
 
-  private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
+  private addToken(
+    token: Token,
+    tokenType: CypherTokenTypes,
+    tokenStr: string,
+  ) {
     if (token.startIndex >= 0) {
       const tokenPosition = getTokenPosition(token);
 
@@ -124,125 +126,125 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitLabelName(ctx: LabelNameContext) {
-    this.addToken(ctx.start, CypherTokenType.type, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.label, ctx.text);
   }
 
   exitFunctionName(ctx: FunctionNameContext) {
-    this.colourMethodName(ctx);
+    this.colourMethodName(ctx, CypherTokenTypes.function);
   }
 
   exitProcedureName(ctx: ProcedureNameContext) {
-    this.colourMethodName(ctx);
+    this.colourMethodName(ctx, CypherTokenTypes.procedure);
   }
 
-  private colourMethodName(ctx: FunctionNameContext | ProcedureNameContext) {
+  private colourMethodName(
+    ctx: FunctionNameContext | ProcedureNameContext,
+    tokenType: CypherTokenTypes.function | CypherTokenTypes.procedure,
+  ) {
     const namespace = ctx.namespace();
 
     namespace.symbolicNameString().forEach((namespaceName) => {
-      this.addToken(
-        namespaceName.start,
-        CypherTokenType.function,
-        namespaceName.text,
-      );
+      this.addToken(namespaceName.start, tokenType, namespaceName.text);
     });
 
     const nameOfMethod = ctx.symbolicNameString();
-    this.addToken(
-      nameOfMethod.start,
-      CypherTokenType.function,
-      nameOfMethod.text,
-    );
+    this.addToken(nameOfMethod.start, tokenType, nameOfMethod.text);
   }
 
   exitVariable(ctx: VariableContext) {
-    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.variable, ctx.text);
   }
 
   exitProcedureResultItem(ctx: ProcedureResultItemContext) {
-    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.variable, ctx.text);
   }
 
   exitPropertyKeyName(ctx: PropertyKeyNameContext) {
     // FIXME Is this correct in this case for all cases, not just simple properties?
-    this.addToken(ctx.start, CypherTokenType.property, ctx.text);
-  }
-
-  exitSymbolicNameOrStringParameter(ctx: SymbolicNameOrStringParameterContext) {
-    this.addToken(ctx.start, CypherTokenType.parameter, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.property, ctx.text);
   }
 
   exitStringToken(ctx: StringTokenContext) {
-    this.addToken(ctx.start, CypherTokenType.literal, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.stringLiteral, ctx.text);
   }
 
   exitStringsLiteral(ctx: StringsLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.literal, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.stringLiteral, ctx.text);
   }
 
   exitBooleanLiteral(ctx: BooleanLiteralContext) {
     // Normally booleans are coloured as numbers in other languages
-    this.addToken(ctx.start, CypherTokenType.number, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.booleanLiteral, ctx.text);
   }
 
   exitNumberLiteral(ctx: NumberLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.number, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.numberLiteral, ctx.text);
   }
 
   exitKeywordLiteral(ctx: KeywordLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.literal, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.keywordLiteral, ctx.text);
   }
+
   exitParameter(ctx: ParameterContext) {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
-    this.addToken(dollar.symbol, CypherTokenType.namespace, dollar.text);
+    this.addToken(dollar.symbol, CypherTokenTypes.paramDollar, dollar.text);
     this.addToken(
       parameterName.start,
-      CypherTokenType.parameter,
+      CypherTokenTypes.paramValue,
       parameterName.text,
     );
   }
 
   exitAllExpression(ctx: AllExpressionContext) {
     const all = ctx.ALL();
-    this.addToken(all.symbol, CypherTokenType.function, all.text);
+    this.addToken(all.symbol, CypherTokenTypes.predicateFunction, all.text);
   }
 
   exitAnyExpression(ctx: AnyExpressionContext) {
     const any = ctx.ANY();
-    this.addToken(any.symbol, CypherTokenType.function, any.text);
+    this.addToken(any.symbol, CypherTokenTypes.predicateFunction, any.text);
   }
 
   exitNoneExpression(ctx: NoneExpressionContext) {
     const none = ctx.NONE();
-    this.addToken(none.symbol, CypherTokenType.function, none.text);
+    this.addToken(none.symbol, CypherTokenTypes.predicateFunction, none.text);
   }
 
   exitSingleExpression(ctx: SingleExpressionContext) {
     const single = ctx.SINGLE();
-    this.addToken(single.symbol, CypherTokenType.function, single.text);
+    this.addToken(
+      single.symbol,
+      CypherTokenTypes.predicateFunction,
+      single.text,
+    );
   }
 
   exitReduceExpression(ctx: ReduceExpressionContext) {
     const reduce = ctx.REDUCE();
-    this.addToken(reduce.symbol, CypherTokenType.function, reduce.text);
+    this.addToken(
+      reduce.symbol,
+      CypherTokenTypes.predicateFunction,
+      reduce.text,
+    );
   }
 
   exitSymbolicNameString(ctx: SymbolicNameStringContext) {
-    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
+    this.addToken(ctx.start, CypherTokenTypes.symbolicName, ctx.text);
   }
 }
 
-function getCypherTokenType(token: Token): CypherTokenType {
+function getCypherTokenType(token: Token): CypherTokenTypes {
   const tokenNumber = token.type;
 
   if (
     tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
     tokenNumber === CypherLexer.MULTI_LINE_COMMENT
   ) {
-    return CypherTokenType.comment;
+    return CypherTokenTypes.comment;
   } else {
     // Defautl token type is none
-    return lexerSymbols.get(tokenNumber) ?? CypherTokenType.none;
+    return lexerSymbols.get(tokenNumber) ?? CypherTokenTypes.none;
   }
 }
 
@@ -348,43 +350,50 @@ const semanticTokenTypesNumber: Map<string, number> = new Map(
 );
 
 function mapCypherToSemanticTokenIndex(
-  cypherTokenType: CypherTokenType,
+  cypherTokenType: CypherTokenTypes,
 ): number {
   let semanticTokenType: SemanticTokenTypes | undefined = undefined;
   let result = -1;
 
   switch (cypherTokenType) {
-    case TokenType.comment:
+    case CypherTokenTypes.comment:
       semanticTokenType = SemanticTokenTypes.comment;
       break;
-    case TokenType.function:
+    case CypherTokenTypes.procedure:
+    case CypherTokenTypes.function:
+    case CypherTokenTypes.predicateFunction:
       semanticTokenType = SemanticTokenTypes.function;
       break;
-    case TokenType.keyword:
+    case CypherTokenTypes.keyword:
       semanticTokenType = SemanticTokenTypes.keyword;
       break;
-    case TokenType.literal:
+    case CypherTokenTypes.keywordLiteral:
+    case CypherTokenTypes.stringLiteral:
       semanticTokenType = SemanticTokenTypes.string;
       break;
-    case TokenType.namespace:
-      semanticTokenType = SemanticTokenTypes.namespace;
-      break;
-    case TokenType.number:
+    case CypherTokenTypes.numberLiteral:
+    case CypherTokenTypes.booleanLiteral:
       semanticTokenType = SemanticTokenTypes.number;
       break;
-    case TokenType.operator:
+    case CypherTokenTypes.operator:
       semanticTokenType = SemanticTokenTypes.operator;
       break;
-    case TokenType.parameter:
+    case CypherTokenTypes.paramDollar:
+      semanticTokenType = SemanticTokenTypes.namespace;
+      break;
+    case CypherTokenTypes.paramValue:
       semanticTokenType = SemanticTokenTypes.parameter;
       break;
-    case TokenType.property:
+    case CypherTokenTypes.property:
       semanticTokenType = SemanticTokenTypes.property;
       break;
-    case TokenType.type:
+    case CypherTokenTypes.label:
       semanticTokenType = SemanticTokenTypes.type;
       break;
-    case TokenType.variable:
+    case CypherTokenTypes.variable:
+      semanticTokenType = SemanticTokenTypes.variable;
+      break;
+    case CypherTokenTypes.symbolicName:
       semanticTokenType = SemanticTokenTypes.variable;
       break;
     default:
@@ -407,7 +416,7 @@ export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
 
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
-      if (token.tokenType !== CypherTokenType.none) {
+      if (token.tokenType !== CypherTokenTypes.none) {
         builder.push(
           token.position.line,
           token.position.startCharacter,
