@@ -88,19 +88,22 @@ function toParsedTokens(
   tokenType: TokenType,
   tokenStr: string,
 ): ParsedToken[] {
-  return tokenStr.split('\n').map((tokenChunk, i) => {
-    const position =
-      i == 0
-        ? tokenPosition
-        : { line: tokenPosition.line + i, startCharacter: 0 };
+  return tokenStr
+    .split('\n')
+    .filter((tokenChunk) => tokenChunk.length > 0)
+    .map((tokenChunk, i) => {
+      const position =
+        i == 0
+          ? tokenPosition
+          : { line: tokenPosition.line + i, startCharacter: 0 };
 
-    return {
-      position: position,
-      length: tokenChunk.length,
-      tokenType: tokenType,
-      token: tokenChunk,
-    };
-  });
+      return {
+        position: position,
+        length: tokenChunk.length,
+        tokenType: tokenType,
+        token: tokenChunk,
+      };
+    });
 }
 class SyntaxHighlighter implements CypherParserListener {
   colouredTokens: Map<string, ParsedToken> = new Map();
@@ -221,14 +224,36 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 }
 
+function getCypherTokenType(token: Token): TokenType {
+  const tokenNumber = token.type;
+
+  if (
+    tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
+    tokenNumber === CypherLexer.MULTI_LINE_COMMENT
+  ) {
+    return TokenType.comment;
+  } else {
+    // Defautl token type is none
+    return lexerSymbols.get(tokenNumber) ?? TokenType.none;
+  }
+}
+
+function assignTokenType(token: Token): boolean {
+  const nonEOF = token.type !== Token.EOF;
+  const inMainChannel = token.channel !== Token.HIDDEN_CHANNEL;
+  const isComment =
+    token.type === CypherLexer.SINGLE_LINE_COMMENT ||
+    token.type === CypherLexer.MULTI_LINE_COMMENT;
+
+  return nonEOF && (inMainChannel || isComment);
+}
+
 function colourLexerTokens(tokenStream: CommonTokenStream) {
   const result = new Map<string, ParsedToken>();
 
   tokenStream.getTokens().forEach((token) => {
-    if (token.channel !== Token.HIDDEN_CHANNEL && token.type !== Token.EOF) {
-      const tokenNumber = token.type;
-      // Colours everything, setting a defautl token type of none
-      const tokenType = lexerSymbols.get(tokenNumber) ?? TokenType.none;
+    if (assignTokenType(token)) {
+      const tokenType = getCypherTokenType(token);
       const tokenPosition = getTokenPosition(token);
       const tokenStr = token.text ?? '';
 
