@@ -19,7 +19,7 @@ export class DbInfoImpl implements DbInfo {
   public labels: string[] = [];
   public relationshipTypes: string[] = [];
 
-  private interval: NodeJS.Timer | undefined;
+  private dbPollingInterval: NodeJS.Timer | undefined;
 
   private neo4j: Driver | undefined;
 
@@ -39,8 +39,8 @@ export class DbInfoImpl implements DbInfo {
   }
 
   public stopPolling(): void {
-    clearInterval(this.interval);
-    this.interval = undefined;
+    clearInterval(this.dbPollingInterval);
+    this.dbPollingInterval = undefined;
   }
 
   public async startSignaturesPolling(): Promise<void> {
@@ -57,7 +57,7 @@ export class DbInfoImpl implements DbInfo {
     await this.updateMethodsCache(this.functionSignatures);
     await updateLabelsAndTypes();
 
-    this.interval = setInterval(updateLabelsAndTypes, 20000);
+    this.dbPollingInterval = setInterval(updateLabelsAndTypes, 20000);
   }
 
   private getParamsInfo(param: string): ParameterInformation {
