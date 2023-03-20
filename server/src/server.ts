@@ -12,7 +12,10 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { doAutoCompletion } from './autocompletion';
 import { DbInfo, DbInfoImpl } from './dbInfo';
-import { doSyntaxColouring, Legend } from './highlighting/syntaxColouring';
+import {
+  doSyntaxColouring,
+  legend as syntaxColouringLegend,
+} from './highlighting/syntaxColouring';
 import { doSyntaxValidationText } from './highlighting/syntaxValidation';
 import { doSignatureHelp } from './signatureHelp';
 
@@ -20,7 +23,6 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-const legend = new Legend();
 const dbInfo: DbInfo = new DbInfoImpl();
 
 connection.onInitialize(() => {
@@ -33,7 +35,7 @@ connection.onInitialize(() => {
       },
       semanticTokensProvider: {
         documentSelector: null,
-        legend: legend,
+        legend: syntaxColouringLegend,
         range: false,
         full: {
           delta: false,
@@ -51,7 +53,7 @@ connection.onInitialize(() => {
 connection.onInitialized(() => {
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: null,
-    legend: legend,
+    legend: syntaxColouringLegend,
     range: false,
     full: {
       delta: false,

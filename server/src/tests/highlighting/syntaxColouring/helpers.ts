@@ -1,11 +1,11 @@
 import {
   doSyntaxColouringText,
-  ParsedToken,
+  ParsedCypherToken,
 } from '../../../highlighting/syntaxColouring';
 
 export async function testSyntaxColouring(
   fileText: string,
-  expected: ParsedToken[],
+  expected: ParsedCypherToken[],
 ) {
   const actualTokens = doSyntaxColouringText(fileText);
 
@@ -26,7 +26,7 @@ export async function testSyntaxColouring(
 
 export async function testSyntaxColouringContains(
   fileText: string,
-  expected: ParsedToken[],
+  expected: ParsedCypherToken[],
 ) {
   let actualTokens = doSyntaxColouringText(fileText);
   let foundIndex = 0;
