@@ -36,6 +36,7 @@ import {
   VariableContext,
 } from '../antlr/CypherParser';
 
+import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { CypherParserListener } from '../antlr/CypherParserListener';
 import {
   CypherTokenType as CypherTokenTypes,
@@ -151,6 +152,10 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(nameOfMethod.start, tokenType, nameOfMethod.text);
   }
 
+  private colourPredicateFunction(ctx: TerminalNode) {
+    this.addToken(ctx.symbol, CypherTokenTypes.predicateFunction, ctx.text);
+  }
+
   exitVariable(ctx: VariableContext) {
     this.addToken(ctx.start, CypherTokenTypes.variable, ctx.text);
   }
@@ -197,36 +202,23 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitAllExpression(ctx: AllExpressionContext) {
-    const all = ctx.ALL();
-    this.addToken(all.symbol, CypherTokenTypes.predicateFunction, all.text);
+    this.colourPredicateFunction(ctx.ALL());
   }
 
   exitAnyExpression(ctx: AnyExpressionContext) {
-    const any = ctx.ANY();
-    this.addToken(any.symbol, CypherTokenTypes.predicateFunction, any.text);
+    this.colourPredicateFunction(ctx.ANY());
   }
 
   exitNoneExpression(ctx: NoneExpressionContext) {
-    const none = ctx.NONE();
-    this.addToken(none.symbol, CypherTokenTypes.predicateFunction, none.text);
+    this.colourPredicateFunction(ctx.NONE());
   }
 
   exitSingleExpression(ctx: SingleExpressionContext) {
-    const single = ctx.SINGLE();
-    this.addToken(
-      single.symbol,
-      CypherTokenTypes.predicateFunction,
-      single.text,
-    );
+    this.colourPredicateFunction(ctx.SINGLE());
   }
 
   exitReduceExpression(ctx: ReduceExpressionContext) {
-    const reduce = ctx.REDUCE();
-    this.addToken(
-      reduce.symbol,
-      CypherTokenTypes.predicateFunction,
-      reduce.text,
-    );
+    this.colourPredicateFunction(ctx.REDUCE());
   }
 
   exitSymbolicNameString(ctx: SymbolicNameStringContext) {
