@@ -20,7 +20,8 @@
         ],
         "aliases": [
           "Cypher"
-        ]
+        ],
+        "configuration": "./cypher-language-configuration.json"
       }
     ],
     "semanticTokenTypes": [
@@ -31,8 +32,7 @@
       }
     ],
     "configuration": {
-      "type": "object",
-      "title": "Configuration properties",
+      "title": "Cypher LSP",
       "properties": {
         "cypherLSP.trace.server": {
           "scope": "window",
@@ -44,6 +44,30 @@
           ],
           "default": "verbose",
           "description": "Traces the communication between VS Code and the language server."
+        },
+        "cypherLSP.neo4j.connect": {
+          "order": 1,
+          "type": "boolean",
+          "default": true,
+          "description": "Shall connect to Neo4j to gather data about labels and types."
+        },
+        "cypherLSP.neo4j.URL": {
+          "order": 2,
+          "type": "string",
+          "default": "bolt://localhost:7687",
+          "description": "Url of the database to connect."
+        },
+        "cypherLSP.neo4j.user": {
+          "order": 3,
+          "type": "string",
+          "default": "neo4j",
+          "description": "Username of the database to connect."
+        },
+        "cypherLSP.neo4j.password": {
+          "order": 4,
+          "type": "string",
+          "default": "password",
+          "description": "Password of the database to connect."
         }
       }
     },
