@@ -1,3 +1,4 @@
+import { BracketType } from '../../../highlighting/syntaxColouring';
 import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring, testSyntaxColouringContains } from './helpers';
 
@@ -21,8 +22,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 7,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -57,8 +62,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -75,8 +84,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -102,8 +115,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -147,8 +164,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -156,8 +177,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -183,8 +208,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 41,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -219,8 +248,12 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -276,8 +309,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -420,8 +457,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -438,8 +479,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -483,8 +528,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -492,8 +541,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -564,8 +617,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -573,8 +630,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -609,8 +670,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -663,8 +728,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -699,8 +768,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -735,8 +808,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -771,8 +848,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -825,8 +906,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -861,8 +946,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -879,8 +968,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -897,8 +990,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -924,8 +1021,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -933,8 +1034,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -942,8 +1047,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -978,8 +1087,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -996,8 +1109,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1005,8 +1122,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1077,8 +1198,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1086,8 +1211,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1113,8 +1242,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1122,8 +1255,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1194,8 +1331,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 48,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1203,8 +1344,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1212,8 +1357,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1257,8 +1406,12 @@ describe('SET syntax colouring', () => {
           startCharacter: 4,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
     ]);
   });

@@ -1,3 +1,4 @@
+import { BracketType } from '../../../highlighting/syntaxColouring';
 import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
@@ -91,8 +92,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -127,8 +132,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -145,8 +154,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -181,8 +194,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -233,8 +250,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -269,8 +290,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -287,8 +312,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -323,8 +352,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -1133,8 +1166,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1178,8 +1215,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1595,8 +1636,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 32,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1631,8 +1676,12 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 58,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
     ]);
   });

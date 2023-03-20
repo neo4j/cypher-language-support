@@ -66,6 +66,18 @@ export interface ParsedCypherToken {
   length: number;
   tokenType: CypherTokenTypes;
   token: string;
+  bracketInfo?: BracketInfo;
+}
+
+export interface BracketInfo {
+  bracketType: BracketType;
+  bracketLevel: number;
+}
+
+export enum BracketType {
+  bracket,
+  parenthesis,
+  curly,
 }
 
 export interface ColouredToken {
@@ -82,10 +94,44 @@ function getTokenPosition(token: Token): TokenPosition {
   };
 }
 
+function getBracketType(token: Token): BracketType | undefined {
+  switch (token.type) {
+    case CypherLexer.LPAREN:
+    case CypherLexer.RPAREN:
+      return BracketType.parenthesis;
+    case CypherLexer.LBRACKET:
+    case CypherLexer.RBRACKET:
+      return BracketType.bracket;
+    case CypherLexer.LCURLY:
+    case CypherLexer.RCURLY:
+      return BracketType.curly;
+    default:
+      return undefined;
+  }
+}
+
+function isClosingBracket(token: Token): boolean {
+  return (
+    token.type === CypherLexer.RPAREN ||
+    token.type === CypherLexer.RBRACKET ||
+    token.type === CypherLexer.RCURLY
+  );
+}
+
+function isOpeningBracket(token: Token): boolean {
+  return (
+    token.type === CypherLexer.LPAREN ||
+    token.type === CypherLexer.LBRACKET ||
+    token.type === CypherLexer.LCURLY
+  );
+}
+
 function toParsedTokens(
   tokenPosition: TokenPosition,
   tokenType: CypherTokenTypes,
   tokenStr: string,
+  token: Token,
+  bracketsLevel?: Map<BracketType, number>,
 ): ParsedCypherToken[] {
   return tokenStr
     .split('\n')
@@ -96,14 +142,38 @@ function toParsedTokens(
           ? tokenPosition
           : { line: tokenPosition.line + i, startCharacter: 0 };
 
+      let bracketInfo: BracketInfo | undefined = undefined;
+
+      if (bracketsLevel) {
+        const bracketType = getBracketType(token);
+        if (bracketType !== undefined) {
+          let bracketLevel = bracketsLevel.get(bracketType) ?? 0;
+
+          if (isOpeningBracket(token)) {
+            bracketsLevel.set(bracketType, ++bracketLevel);
+          }
+
+          bracketInfo = {
+            bracketLevel: bracketLevel,
+            bracketType: bracketType,
+          };
+
+          if (isClosingBracket(token)) {
+            bracketsLevel.set(bracketType, --bracketLevel);
+          }
+        }
+      }
+
       return {
         position: position,
         length: tokenChunk.length,
         tokenType: tokenType,
         token: tokenChunk,
+        bracketInfo: bracketInfo,
       };
     });
 }
+
 class SyntaxHighlighter implements CypherParserListener {
   colouredTokens: Map<string, ParsedCypherToken> = new Map();
 
@@ -119,10 +189,12 @@ class SyntaxHighlighter implements CypherParserListener {
     if (token.startIndex >= 0) {
       const tokenPosition = getTokenPosition(token);
 
-      toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
-        const tokenPos = toString(token.position);
-        this.colouredTokens.set(tokenPos, token);
-      });
+      toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
+        (token) => {
+          const tokenPos = toString(token.position);
+          this.colouredTokens.set(tokenPos, token);
+        },
+      );
     }
   }
 
@@ -252,6 +324,11 @@ function assignTokenType(token: Token): boolean {
 
 function colourLexerTokens(tokenStream: CommonTokenStream) {
   const result = new Map<string, ParsedCypherToken>();
+  const bracketsLevel = new Map<BracketType, number>([
+    [BracketType.curly, -1],
+    [BracketType.bracket, -1],
+    [BracketType.parenthesis, -1],
+  ]);
 
   tokenStream.getTokens().forEach((token) => {
     if (assignTokenType(token)) {
@@ -259,7 +336,13 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
       const tokenPosition = getTokenPosition(token);
       const tokenStr = token.text ?? '';
 
-      toParsedTokens(tokenPosition, tokenType, tokenStr).forEach((token) => {
+      toParsedTokens(
+        tokenPosition,
+        tokenType,
+        tokenStr,
+        token,
+        bracketsLevel,
+      ).forEach((token) => {
         const tokenPos = toString(token.position);
 
         result.set(tokenPos, token);
@@ -408,15 +491,13 @@ export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
 
     const builder = new SemanticTokensBuilder();
     tokens.forEach((token) => {
-      if (token.tokenType !== CypherTokenTypes.none) {
-        builder.push(
-          token.position.line,
-          token.position.startCharacter,
-          token.length,
-          mapCypherToSemanticTokenIndex(token.tokenType),
-          0,
-        );
-      }
+      builder.push(
+        token.position.line,
+        token.position.startCharacter,
+        token.length,
+        mapCypherToSemanticTokenIndex(token.tokenType),
+        0,
+      );
     });
     const results = builder.build();
     return results;

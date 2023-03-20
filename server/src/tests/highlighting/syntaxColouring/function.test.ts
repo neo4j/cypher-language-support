@@ -1,3 +1,4 @@
+import { BracketType } from '../../../highlighting/syntaxColouring';
 import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring, testSyntaxColouringContains } from './helpers';
 
@@ -30,8 +31,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -39,8 +44,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -109,8 +118,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 25,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -145,8 +158,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -218,8 +235,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -227,8 +248,12 @@ describe('Function syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });

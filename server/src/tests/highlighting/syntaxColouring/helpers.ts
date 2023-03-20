@@ -21,6 +21,13 @@ export async function testSyntaxColouring(
     );
     expect(token.token).toBe(expectedToken.token);
     expect(token.tokenType).toBe(expectedToken.tokenType);
+
+    expect(token.bracketInfo?.bracketType).toBe(
+      expectedToken.bracketInfo?.bracketType,
+    );
+    expect(token.bracketInfo?.bracketLevel).toBe(
+      expectedToken.bracketInfo?.bracketLevel,
+    );
   });
 }
 

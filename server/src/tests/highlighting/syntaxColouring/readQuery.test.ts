@@ -1,3 +1,4 @@
+import { BracketType } from '../../../highlighting/syntaxColouring';
 import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
@@ -21,8 +22,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -75,8 +80,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -100,8 +109,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -154,8 +167,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -179,8 +196,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -224,8 +245,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -249,8 +274,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -276,8 +305,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -330,8 +363,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -357,8 +394,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -382,8 +423,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -418,8 +463,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -436,8 +485,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -463,8 +516,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -517,8 +574,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -544,8 +605,12 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 31,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
     ]);
   });
@@ -574,8 +639,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -610,8 +679,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -628,8 +701,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -646,8 +723,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -673,8 +754,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -709,8 +794,12 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -959,8 +1048,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -995,8 +1088,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1094,8 +1191,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 6,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1130,8 +1231,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1166,8 +1271,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1202,8 +1311,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1364,8 +1477,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1400,8 +1517,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '{',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1436,8 +1557,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 33,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '}',
+        bracketInfo: {
+          bracketType: BracketType.curly,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1445,8 +1570,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1463,8 +1592,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1472,8 +1605,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1490,8 +1627,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1508,8 +1649,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '[',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1598,8 +1743,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 48,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 1,
+        },
       },
       {
         position: {
@@ -1625,8 +1774,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 51,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: '(',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1661,8 +1814,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 60,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ')',
+        bracketInfo: {
+          bracketType: BracketType.parenthesis,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
@@ -1706,8 +1863,12 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 71,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.bracket,
         token: ']',
+        bracketInfo: {
+          bracketType: BracketType.bracket,
+          bracketLevel: 0,
+        },
       },
       {
         position: {
