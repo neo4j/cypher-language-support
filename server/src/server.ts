@@ -12,17 +12,18 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { doAutoCompletion } from './autocompletion';
-import { DbInfo, DbInfoImpl } from './dbInfo';
+import { DbInfoImpl } from './dbInfo';
 import { doSignatureHelp } from './signatureHelp';
 import { doSyntaxColouring, Legend } from './syntaxColouring';
 import { doSyntaxValidationText } from './syntaxValidation';
+import { CypherLSPSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const legend = new Legend();
-const dbInfo: DbInfo = new DbInfoImpl();
+const dbInfo = new DbInfoImpl();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -50,10 +51,9 @@ connection.onInitialize(() => {
 });
 
 connection.onInitialized(() => {
-  connection.client.register(
-    DidChangeConfigurationNotification.type,
-    undefined,
-  );
+  connection.client.register(DidChangeConfigurationNotification.type, {
+    section: 'cypherLSP',
+  });
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: null,
@@ -84,6 +84,28 @@ connection.languages.semanticTokens.on(doSyntaxColouring(documents));
 connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, dbInfo));
+
+connection.onDidChangeConfiguration(
+  (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
+    const neo4jConfig = params.settings.cypherLSP.neo4j;
+
+    if (
+      neo4jConfig.connect &&
+      neo4jConfig.password &&
+      neo4jConfig.URL &&
+      neo4jConfig.user
+    ) {
+      dbInfo.setConfig({
+        url: neo4jConfig.URL,
+        user: neo4jConfig.user,
+        password: neo4jConfig.password,
+      });
+      dbInfo.startSignaturesPolling();
+    } else {
+      dbInfo.stopPolling();
+    }
+  },
+);
 
 documents.listen(connection);
 connection.listen();

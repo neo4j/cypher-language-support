@@ -14,28 +14,50 @@ export interface DbInfo {
 }
 
 export class DbInfoImpl implements DbInfo {
-  procedureSignatures: Map<string, SignatureInformation> = new Map();
-  functionSignatures: Map<string, SignatureInformation> = new Map();
-  labels: string[] = [];
-  relationshipTypes: string[] = [];
+  public procedureSignatures: Map<string, SignatureInformation> = new Map();
+  public functionSignatures: Map<string, SignatureInformation> = new Map();
+  public labels: string[] = [];
+  public relationshipTypes: string[] = [];
 
-  private neo4j: Driver = driver(
-    'neo4j://localhost',
-    // TODO Nacho This is hardcoded
-    auth.basic('neo4j', 'pass12345'),
-  );
+  private dbPollingInterval: NodeJS.Timer | undefined;
 
-  constructor() {
+  private neo4j: Driver | undefined;
+
+  public setConfig({
+    url,
+    user,
+    password,
+  }: {
+    url: string;
+    user: string;
+    password: string;
+  }): void {
+    if (this.neo4j) {
+      this.neo4j.close();
+    }
+    this.neo4j = driver(url, auth.basic(user, password));
+  }
+
+  public stopPolling(): void {
+    clearInterval(this.dbPollingInterval);
+    this.dbPollingInterval = undefined;
+  }
+
+  public async startSignaturesPolling(): Promise<void> {
+    this.stopPolling();
+
+    if (!this.neo4j) return;
     // We do not need to update procedures and functions because they are cached
-    const updateLabelsAndTypes = () => {
-      this.updateLabels();
-      this.updateRelationshipTypes();
+    const updateLabelsAndTypes = async () => {
+      await this.updateLabels();
+      await this.updateRelationshipTypes();
     };
 
-    this.updateProceduresCache();
-    this.updateFunctionsCache();
-    updateLabelsAndTypes();
-    setInterval(updateLabelsAndTypes, 20000);
+    await this.updateMethodsCache(this.procedureSignatures);
+    await this.updateMethodsCache(this.functionSignatures);
+    await updateLabelsAndTypes();
+
+    this.dbPollingInterval = setInterval(updateLabelsAndTypes, 20000);
   }
 
   private getParamsInfo(param: string): ParameterInformation {
@@ -48,19 +70,21 @@ export class DbInfoImpl implements DbInfo {
   }
 
   private async updateLabels() {
+    if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
 
     try {
       const result = await s.run('CALL db.labels()');
       this.labels = result.records.map((record) => record.get('label'));
     } catch (error) {
-      console.log('coult not contact the database to fetch labels');
+      console.log('could not contact the database to fetch labels');
     } finally {
       await s.close();
     }
   }
 
   private async updateRelationshipTypes() {
+    if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
 
     try {
@@ -69,21 +93,14 @@ export class DbInfoImpl implements DbInfo {
         record.get('relationshipType'),
       );
     } catch (error) {
-      console.log('coult not contact the database to fetch relationship types');
+      console.log('could not contact the database to fetch relationship types');
     } finally {
       await s.close();
     }
   }
 
-  private updateProceduresCache() {
-    this.updateMethodsCache(this.procedureSignatures);
-  }
-
-  private updateFunctionsCache() {
-    this.updateMethodsCache(this.functionSignatures);
-  }
-
   private async updateMethodsCache(cache: Map<string, SignatureInformation>) {
+    if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
     const updateTarget =
       cache === this.functionSignatures ? 'functions' : 'procedures';
@@ -118,7 +135,7 @@ export class DbInfoImpl implements DbInfo {
         );
       });
     } catch (error) {
-      console.log('coult not contact the database to fetch ' + updateTarget);
+      console.log('could not contact the database to fetch ' + updateTarget);
     } finally {
       await s.close();
     }

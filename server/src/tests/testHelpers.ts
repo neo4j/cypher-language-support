@@ -2,10 +2,10 @@ import { SignatureInformation } from 'vscode-languageserver/node';
 import { DbInfo } from '../dbInfo';
 
 export class MockDbInfo implements DbInfo {
-  procedureSignatures: Map<string, SignatureInformation>;
-  functionSignatures: Map<string, SignatureInformation>;
-  labels: string[];
-  relationshipTypes: string[];
+  public procedureSignatures: Map<string, SignatureInformation>;
+  public functionSignatures: Map<string, SignatureInformation>;
+  public labels: string[];
+  public relationshipTypes: string[];
 
   constructor(
     labels: string[] = [],
