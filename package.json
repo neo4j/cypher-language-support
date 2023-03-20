@@ -20,7 +20,8 @@
         ],
         "aliases": [
           "Cypher"
-        ]
+        ],
+        "configuration": "./cypher-language-configuration.json"
       }
     ],
     "configuration": {
