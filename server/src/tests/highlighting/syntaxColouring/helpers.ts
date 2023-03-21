@@ -1,7 +1,5 @@
-import {
-  doSyntaxColouringText,
-  ParsedCypherToken,
-} from '../../../highlighting/syntaxColouring';
+import { doSyntaxColouringText } from '../../../highlighting/syntaxColouring';
+import { ParsedCypherToken } from '../../../highlighting/syntaxColouringHelpers';
 
 export async function testSyntaxColouring(
   fileText: string,

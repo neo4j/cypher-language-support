@@ -24,13 +24,6 @@
         "configuration": "./cypher-language-configuration.json"
       }
     ],
-    "semanticTokenTypes": [
-      {
-        "id": "literal",
-        "superType": "string",
-        "description": "Cypher literal"
-      }
-    ],
     "configuration": {
       "title": "Cypher LSP",
       "properties": {

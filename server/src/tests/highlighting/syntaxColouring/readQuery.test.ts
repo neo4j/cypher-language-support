@@ -1,4 +1,4 @@
-import { BracketType } from '../../../highlighting/syntaxColouring';
+import { BracketType } from '../../../highlighting/syntaxColouringHelpers';
 import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 

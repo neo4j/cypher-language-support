@@ -38,10 +38,18 @@ import {
 
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { CypherParserListener } from '../antlr/CypherParserListener';
+import { CypherTokenType as CypherTokenTypes } from '../lexerSymbols';
 import {
-  CypherTokenType as CypherTokenTypes,
-  lexerSymbols,
-} from '../lexerSymbols';
+  BracketType,
+  getCypherTokenType,
+  getTokenPosition,
+  ParsedCypherToken,
+  removeOverlappingTokens,
+  shouldAssignTokenType,
+  sortTokens,
+  tokenPositionToString,
+  toParsedTokens,
+} from './syntaxColouringHelpers';
 
 export class Legend implements SemanticTokensLegend {
   tokenTypes: string[] = [];
@@ -52,126 +60,67 @@ export class Legend implements SemanticTokensLegend {
   }
 }
 
-interface TokenPosition {
-  line: number;
-  startCharacter: number;
-}
+export const legend = new Legend();
+const semanticTokenTypesNumber: Map<string, number> = new Map(
+  legend.tokenTypes.map((tokenType, i) => [tokenType, i]),
+);
 
-function toString(tokenPosition: TokenPosition): string {
-  return `${tokenPosition.line},${tokenPosition.startCharacter}`;
-}
+function mapCypherToSemanticTokenIndex(
+  cypherTokenType: CypherTokenTypes,
+): number {
+  let semanticTokenType: SemanticTokenTypes | undefined = undefined;
+  let result = -1;
 
-export interface ParsedCypherToken {
-  position: TokenPosition;
-  length: number;
-  tokenType: CypherTokenTypes;
-  token: string;
-  bracketInfo?: BracketInfo;
-}
-
-export interface BracketInfo {
-  bracketType: BracketType;
-  bracketLevel: number;
-}
-
-export enum BracketType {
-  bracket,
-  parenthesis,
-  curly,
-}
-
-export interface ColouredToken {
-  position: TokenPosition;
-  length: number;
-  tokenColour: SemanticTokenTypes;
-  token: string;
-}
-
-function getTokenPosition(token: Token): TokenPosition {
-  return {
-    line: token.line - 1,
-    startCharacter: token.charPositionInLine,
-  };
-}
-
-function getBracketType(token: Token): BracketType | undefined {
-  switch (token.type) {
-    case CypherLexer.LPAREN:
-    case CypherLexer.RPAREN:
-      return BracketType.parenthesis;
-    case CypherLexer.LBRACKET:
-    case CypherLexer.RBRACKET:
-      return BracketType.bracket;
-    case CypherLexer.LCURLY:
-    case CypherLexer.RCURLY:
-      return BracketType.curly;
+  switch (cypherTokenType) {
+    case CypherTokenTypes.comment:
+      semanticTokenType = SemanticTokenTypes.comment;
+      break;
+    case CypherTokenTypes.procedure:
+    case CypherTokenTypes.function:
+    case CypherTokenTypes.predicateFunction:
+      semanticTokenType = SemanticTokenTypes.function;
+      break;
+    case CypherTokenTypes.keyword:
+      semanticTokenType = SemanticTokenTypes.keyword;
+      break;
+    case CypherTokenTypes.keywordLiteral:
+    case CypherTokenTypes.stringLiteral:
+      semanticTokenType = SemanticTokenTypes.string;
+      break;
+    case CypherTokenTypes.numberLiteral:
+    case CypherTokenTypes.booleanLiteral:
+      semanticTokenType = SemanticTokenTypes.number;
+      break;
+    case CypherTokenTypes.operator:
+      semanticTokenType = SemanticTokenTypes.operator;
+      break;
+    case CypherTokenTypes.paramDollar:
+      semanticTokenType = SemanticTokenTypes.namespace;
+      break;
+    case CypherTokenTypes.paramValue:
+      semanticTokenType = SemanticTokenTypes.parameter;
+      break;
+    case CypherTokenTypes.property:
+      semanticTokenType = SemanticTokenTypes.property;
+      break;
+    case CypherTokenTypes.label:
+      semanticTokenType = SemanticTokenTypes.type;
+      break;
+    case CypherTokenTypes.variable:
+      semanticTokenType = SemanticTokenTypes.variable;
+      break;
+    case CypherTokenTypes.symbolicName:
+      semanticTokenType = SemanticTokenTypes.variable;
+      break;
     default:
-      return undefined;
+      break;
   }
-}
 
-function isClosingBracket(token: Token): boolean {
-  return (
-    token.type === CypherLexer.RPAREN ||
-    token.type === CypherLexer.RBRACKET ||
-    token.type === CypherLexer.RCURLY
-  );
-}
+  if (semanticTokenType) {
+    result = semanticTokenTypesNumber.get(semanticTokenType) ?? result;
+  }
 
-function isOpeningBracket(token: Token): boolean {
-  return (
-    token.type === CypherLexer.LPAREN ||
-    token.type === CypherLexer.LBRACKET ||
-    token.type === CypherLexer.LCURLY
-  );
-}
-
-function toParsedTokens(
-  tokenPosition: TokenPosition,
-  tokenType: CypherTokenTypes,
-  tokenStr: string,
-  token: Token,
-  bracketsLevel?: Map<BracketType, number>,
-): ParsedCypherToken[] {
-  return tokenStr
-    .split('\n')
-    .filter((tokenChunk) => tokenChunk.length > 0)
-    .map((tokenChunk, i) => {
-      const position =
-        i == 0
-          ? tokenPosition
-          : { line: tokenPosition.line + i, startCharacter: 0 };
-
-      let bracketInfo: BracketInfo | undefined = undefined;
-
-      if (bracketsLevel) {
-        const bracketType = getBracketType(token);
-        if (bracketType !== undefined) {
-          let bracketLevel = bracketsLevel.get(bracketType) ?? 0;
-
-          if (isOpeningBracket(token)) {
-            bracketsLevel.set(bracketType, ++bracketLevel);
-          }
-
-          bracketInfo = {
-            bracketLevel: bracketLevel,
-            bracketType: bracketType,
-          };
-
-          if (isClosingBracket(token)) {
-            bracketsLevel.set(bracketType, --bracketLevel);
-          }
-        }
-      }
-
-      return {
-        position: position,
-        length: tokenChunk.length,
-        tokenType: tokenType,
-        token: tokenChunk,
-        bracketInfo: bracketInfo,
-      };
-    });
+  return result;
 }
 
 class SyntaxHighlighter implements CypherParserListener {
@@ -191,7 +140,7 @@ class SyntaxHighlighter implements CypherParserListener {
 
       toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
         (token) => {
-          const tokenPos = toString(token.position);
+          const tokenPos = tokenPositionToString(token.position);
           this.colouredTokens.set(tokenPos, token);
         },
       );
@@ -298,30 +247,6 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 }
 
-function getCypherTokenType(token: Token): CypherTokenTypes {
-  const tokenNumber = token.type;
-
-  if (
-    tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
-    tokenNumber === CypherLexer.MULTI_LINE_COMMENT
-  ) {
-    return CypherTokenTypes.comment;
-  } else {
-    // Defautl token type is none
-    return lexerSymbols.get(tokenNumber) ?? CypherTokenTypes.none;
-  }
-}
-
-function assignTokenType(token: Token): boolean {
-  const nonEOF = token.type !== Token.EOF;
-  const inMainChannel = token.channel !== Token.HIDDEN_CHANNEL;
-  const isComment =
-    token.type === CypherLexer.SINGLE_LINE_COMMENT ||
-    token.type === CypherLexer.MULTI_LINE_COMMENT;
-
-  return nonEOF && (inMainChannel || isComment);
-}
-
 function colourLexerTokens(tokenStream: CommonTokenStream) {
   const result = new Map<string, ParsedCypherToken>();
   const bracketsLevel = new Map<BracketType, number>([
@@ -331,7 +256,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
   ]);
 
   tokenStream.getTokens().forEach((token) => {
-    if (assignTokenType(token)) {
+    if (shouldAssignTokenType(token)) {
       const tokenType = getCypherTokenType(token);
       const tokenPosition = getTokenPosition(token);
       const tokenStr = token.text ?? '';
@@ -343,39 +268,10 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
         token,
         bracketsLevel,
       ).forEach((token) => {
-        const tokenPos = toString(token.position);
+        const tokenPos = tokenPositionToString(token.position);
 
         result.set(tokenPos, token);
       });
-    }
-  });
-
-  return result;
-}
-
-function sortTokens(tokens: ParsedCypherToken[]) {
-  return tokens.sort((a, b) => {
-    const lineDiff = a.position.line - b.position.line;
-    if (lineDiff !== 0) return lineDiff;
-
-    return a.position.startCharacter - b.position.startCharacter;
-  });
-}
-
-// Assumes the tokens are already sorted
-function removeOverlappingTokens(tokens: ParsedCypherToken[]) {
-  const result: ParsedCypherToken[] = [];
-  let prev: TokenPosition = { line: -1, startCharacter: -1 };
-  let prevEndCharacter = 0;
-
-  tokens.forEach((token) => {
-    const current = token.position;
-    if (current.line > prev.line || current.startCharacter > prevEndCharacter) {
-      // Add current token to the list and in further iterations
-      // remove tokens overlapping with it
-      result.push(token);
-      prev = current;
-      prevEndCharacter = prev.startCharacter + (token.token?.length ?? 0) - 1;
     }
   });
 
@@ -408,76 +304,19 @@ export function doSyntaxColouringText(
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 
-  // When we push to the builder, tokens need to be sorted in ascending starting position
-  // i.e. as we find them when we read them from left to right, and from top to bottom in the file
+  // When we push to the builder, tokens need to be sorted in ascending
+  // starting position i.e. as we find them when we read them from left
+  // to right, and from top to bottom in the file
   //
-  // After that we should remove overlapping tokens
+  // After that we should remove overlapping tokens. We need this because
+  // certain tokens are double coloured by the lexer and the parsing tree, but
+  // their positions in the map of Position -> ParsedToken are different
+  //
+  // Example: -1 would be split as [-, UNSIGNED_DECIMAL_INTEGER] by the lexer
+  // (2 tokens), but as a unique numeric literal by the parsing tree
   const result = removeOverlappingTokens(
     sortTokens(Array.from(allColouredTokens.values())),
   );
-
-  return result;
-}
-
-export const legend = new Legend();
-const semanticTokenTypesNumber: Map<string, number> = new Map(
-  legend.tokenTypes.map((tokenType, i) => [tokenType, i]),
-);
-
-function mapCypherToSemanticTokenIndex(
-  cypherTokenType: CypherTokenTypes,
-): number {
-  let semanticTokenType: SemanticTokenTypes | undefined = undefined;
-  let result = -1;
-
-  switch (cypherTokenType) {
-    case CypherTokenTypes.comment:
-      semanticTokenType = SemanticTokenTypes.comment;
-      break;
-    case CypherTokenTypes.procedure:
-    case CypherTokenTypes.function:
-    case CypherTokenTypes.predicateFunction:
-      semanticTokenType = SemanticTokenTypes.function;
-      break;
-    case CypherTokenTypes.keyword:
-      semanticTokenType = SemanticTokenTypes.keyword;
-      break;
-    case CypherTokenTypes.keywordLiteral:
-    case CypherTokenTypes.stringLiteral:
-      semanticTokenType = SemanticTokenTypes.string;
-      break;
-    case CypherTokenTypes.numberLiteral:
-    case CypherTokenTypes.booleanLiteral:
-      semanticTokenType = SemanticTokenTypes.number;
-      break;
-    case CypherTokenTypes.operator:
-      semanticTokenType = SemanticTokenTypes.operator;
-      break;
-    case CypherTokenTypes.paramDollar:
-      semanticTokenType = SemanticTokenTypes.namespace;
-      break;
-    case CypherTokenTypes.paramValue:
-      semanticTokenType = SemanticTokenTypes.parameter;
-      break;
-    case CypherTokenTypes.property:
-      semanticTokenType = SemanticTokenTypes.property;
-      break;
-    case CypherTokenTypes.label:
-      semanticTokenType = SemanticTokenTypes.type;
-      break;
-    case CypherTokenTypes.variable:
-      semanticTokenType = SemanticTokenTypes.variable;
-      break;
-    case CypherTokenTypes.symbolicName:
-      semanticTokenType = SemanticTokenTypes.variable;
-      break;
-    default:
-      break;
-  }
-
-  if (semanticTokenType) {
-    result = semanticTokenTypesNumber.get(semanticTokenType) ?? result;
-  }
 
   return result;
 }
