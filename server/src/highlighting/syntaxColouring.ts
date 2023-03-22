@@ -67,9 +67,9 @@ const semanticTokenTypesNumber: Map<string, number> = new Map(
 
 function mapCypherToSemanticTokenIndex(
   cypherTokenType: CypherTokenTypes,
-): number {
+): number | undefined {
   let semanticTokenType: SemanticTokenTypes | undefined = undefined;
-  let result = -1;
+  let result: number | undefined = undefined;
 
   switch (cypherTokenType) {
     case CypherTokenTypes.comment:
@@ -329,14 +329,19 @@ export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
     const tokens = doSyntaxColouringText(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
+
     tokens.forEach((token) => {
-      builder.push(
-        token.position.line,
-        token.position.startCharacter,
-        token.length,
-        mapCypherToSemanticTokenIndex(token.tokenType),
-        0,
-      );
+      const tokenColour = mapCypherToSemanticTokenIndex(token.tokenType);
+
+      if (tokenColour !== undefined) {
+        builder.push(
+          token.position.line,
+          token.position.startCharacter,
+          token.length,
+          tokenColour,
+          0,
+        );
+      }
     });
     const results = builder.build();
     return results;
