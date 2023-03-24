@@ -1,6 +1,6 @@
 {
-  "name": "cypher-lsp-client",
-  "description": "Cypher LSP's client",
+  "name": "cypher-ls-vscode-playground",
+  "description": "Cypher Language Server VSCode Playground",
   "author": "neo4j",
   "license": "Apache",
   "version": "0.0.1",

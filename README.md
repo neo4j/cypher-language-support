@@ -40,7 +40,7 @@ To run the extension in development mode in VSCode:
 npm run compile
 ```
 
-Go to `Run & Debug` tab and `Launch Cypher Language Client`.
+Go to `Run & Debug` tab and `VSCode Playground`.
 
 Credentials are hardcoded to `neo4/pass12345` in the server.
 

@@ -1,4 +1,4 @@
 server/out/*.js
-client/out/*.js
+vscode-playground/out/*.js
 server/src/antlr/*.ts
 server/out/antlr/*.js
