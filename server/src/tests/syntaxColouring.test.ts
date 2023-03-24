@@ -1,9 +1,6 @@
 import { doSyntaxColouringText, ParsedToken } from '../syntaxColouring';
 
-export async function testSyntaxColouring(
-  fileText: string,
-  expected: ParsedToken[],
-) {
+export function testSyntaxColouring(fileText: string, expected: ParsedToken[]) {
   const actualTokens = doSyntaxColouringText(fileText);
 
   expect(actualTokens.length).toBe(expected.length);
@@ -20,10 +17,10 @@ export async function testSyntaxColouring(
 }
 
 describe('Syntax colouring', () => {
-  test('Correctly colours MATCH', async () => {
+  test('Correctly colours MATCH', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -90,10 +87,10 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours standalone procedure CALL', async () => {
+  test('Correctly colours standalone procedure CALL', () => {
     const query = 'CALL dbms.info() YIELD *';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -118,11 +115,11 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours procedure CALL with yield', async () => {
+  test('Correctly colours procedure CALL with yield', () => {
     const query =
       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -189,11 +186,11 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours multi-statements', async () => {
+  test('Correctly colours multi-statements', () => {
     const query = `MATCH (n:Person) RETURN n
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,
@@ -295,12 +292,12 @@ describe('Syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours unfinished multi-statements', async () => {
+  test('Correctly colours unfinished multi-statements', () => {
     const query = `MATCH (n:Person);
 
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         line: 0,
         startCharacter: 0,

@@ -7,7 +7,7 @@ import { DbInfo } from '../dbInfo';
 import { doSignatureHelpText, emptyResult } from '../signatureHelp';
 import { MockDbInfo } from './testHelpers';
 
-export async function testSignatureHelp(
+export function testSignatureHelp(
   fileText: string,
   dbInfo: DbInfo,
   expected: SignatureHelp,
@@ -44,15 +44,15 @@ describe('Procedures signature help', () => {
     };
   }
 
-  test('Provides signature help for subquery CALLs', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for subquery CALLs', () => {
+    testSignatureHelp(
       `MATCH (n)
        CALL apoc.do.when(`,
       dbWithProcedure,
       expectedArgIndex(0),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       `MATCH (n)
        CALL apoc.do.when(true`,
       dbWithProcedure,
@@ -60,64 +60,64 @@ describe('Procedures signature help', () => {
     );
   });
 
-  test('Provides signature help for CALLs first argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for CALLs first argument', () => {
+    testSignatureHelp(
       'CALL apoc.do.when(',
       dbWithProcedure,
       expectedArgIndex(0),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'CALL apoc.do.when(true',
       dbWithProcedure,
       expectedArgIndex(0),
     );
   });
 
-  test('Provides signature help for CALLs second argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for CALLs second argument', () => {
+    testSignatureHelp(
       'CALL apoc.do.when(true,',
       dbWithProcedure,
       expectedArgIndex(1),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'CALL apoc.do.when(true, "foo"',
       dbWithProcedure,
       expectedArgIndex(1),
     );
   });
 
-  test('Provides signature help for CALLs third argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for CALLs third argument', () => {
+    testSignatureHelp(
       'CALL apoc.do.when(true, "foo",',
       dbWithProcedure,
       expectedArgIndex(2),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'CALL apoc.do.when(true, "foo", false',
       dbWithProcedure,
       expectedArgIndex(2),
     );
   });
 
-  test('Provides signature help for CALLs fourth argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for CALLs fourth argument', () => {
+    testSignatureHelp(
       'CALL apoc.do.when(true, "foo", false,',
       dbWithProcedure,
       expectedArgIndex(3),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'CALL apoc.do.when(true, "foo", false, "bar"',
       dbWithProcedure,
       expectedArgIndex(3),
     );
   });
 
-  test('Provides signature help with several statements where cursor one requires autocompletion', async () => {
-    await testSignatureHelp(
+  test('Provides signature help with several statements where cursor one requires autocompletion', () => {
+    testSignatureHelp(
       `MATCH (n) RETURN n;
        CALL apoc.do.when(`,
       dbWithProcedure,
@@ -125,8 +125,8 @@ describe('Procedures signature help', () => {
     );
   });
 
-  test('Does not provide signature help with several statements where cursor one does not require autocompletion', async () => {
-    await testSignatureHelp(
+  test('Does not provide signature help with several statements where cursor one does not require autocompletion', () => {
+    testSignatureHelp(
       `CALL apoc.do.when(true, "foo", false, "bar");
  
        MATCH (`,
@@ -161,15 +161,15 @@ describe('Functions signature help', () => {
     };
   }
 
-  test('Provides signature help for functions first argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for functions first argument', () => {
+    testSignatureHelp(
       `MATCH (n)
        RETURN apoc.do.when(`,
       dbWithFunction,
       expectedArgIndex(0),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       `MATCH (n)
        RETURN apoc.do.when(true`,
       dbWithFunction,
@@ -177,36 +177,36 @@ describe('Functions signature help', () => {
     );
   });
 
-  test('Provides signature help for functions second argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for functions second argument', () => {
+    testSignatureHelp(
       'MATCH (n) WHERE apoc.do.when(true,',
       dbWithFunction,
       expectedArgIndex(1),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'MATCH (n) WHERE apoc.do.when(true, "foo"',
       dbWithFunction,
       expectedArgIndex(1),
     );
   });
 
-  test('Provides signature help for functions third argument', async () => {
-    await testSignatureHelp(
+  test('Provides signature help for functions third argument', () => {
+    testSignatureHelp(
       'RETURN true OR apoc.do.when(true, "foo",',
       dbWithFunction,
       expectedArgIndex(2),
     );
 
-    await testSignatureHelp(
+    testSignatureHelp(
       'RETURN true OR apoc.do.when(true, "foo", false',
       dbWithFunction,
       expectedArgIndex(2),
     );
   });
 
-  test('Provides signature help with several statements where cursor one requires autocompletion', async () => {
-    await testSignatureHelp(
+  test('Provides signature help with several statements where cursor one requires autocompletion', () => {
+    testSignatureHelp(
       `MATCH (n) RETURN n;
        MATCH (m) WHERE apoc.do.when(`,
       dbWithFunction,
@@ -214,8 +214,8 @@ describe('Functions signature help', () => {
     );
   });
 
-  test('Does not provide signature help with several statements where cursor one does not require autocompletion', async () => {
-    await testSignatureHelp(
+  test('Does not provide signature help with several statements where cursor one does not require autocompletion', () => {
+    testSignatureHelp(
       `RETURN apoc.do.when(true, "foo", false, "bar");
  
        MATCH (`,

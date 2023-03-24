@@ -33,7 +33,7 @@ export class DbInfoImpl implements DbInfo {
     password: string;
   }): void {
     if (this.neo4j) {
-      this.neo4j.close();
+      void this.neo4j.close();
     }
     this.neo4j = driver(url, auth.basic(user, password));
   }
@@ -43,7 +43,7 @@ export class DbInfoImpl implements DbInfo {
     this.dbPollingInterval = undefined;
   }
 
-  public async startSignaturesPolling(): Promise<void> {
+  public async startSignaturesPolling() {
     this.stopPolling();
 
     if (!this.neo4j) return;
@@ -57,17 +57,21 @@ export class DbInfoImpl implements DbInfo {
     await this.updateMethodsCache(this.functionSignatures);
     await updateLabelsAndTypes();
 
-    this.dbPollingInterval = setInterval(updateLabelsAndTypes, 20000);
+    this.dbPollingInterval = setInterval(
+      () => void updateLabelsAndTypes(),
+      20000,
+    );
+    return;
   }
 
-  private getParamsInfo(param: string): ParameterInformation {
+  private getParamsInfo = (param: string) => {
     // FIXME: There are cases where this doesn't work:
     // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
     const [headerInfo] = param.split(' :: ');
     const [paramName] = headerInfo.split(' = ');
 
     return ParameterInformation.create(paramName, param);
-  }
+  };
 
   private async updateLabels() {
     if (!this.neo4j) return;
@@ -75,7 +79,9 @@ export class DbInfoImpl implements DbInfo {
 
     try {
       const result = await s.run('CALL db.labels()');
-      this.labels = result.records.map((record) => record.get('label'));
+      this.labels = result.records.map(
+        (record) => record.get('label') as string,
+      );
     } catch (error) {
       console.log('could not contact the database to fetch labels');
     } finally {
@@ -89,8 +95,8 @@ export class DbInfoImpl implements DbInfo {
 
     try {
       const result = await s.run('CALL db.relationshipTypes()');
-      this.relationshipTypes = result.records.map((record) =>
-        record.get('relationshipType'),
+      this.relationshipTypes = result.records.map(
+        (record) => record.get('relationshipType') as string,
       );
     } catch (error) {
       console.log('could not contact the database to fetch relationship types');
@@ -111,9 +117,9 @@ export class DbInfoImpl implements DbInfo {
       );
 
       result.records.map((record) => {
-        const methodName = record.get('name');
-        const signature = record.get('signature');
-        const description = record.get('description');
+        const methodName = record.get('name') as string;
+        const signature = record.get('signature') as string;
+        const description = record.get('description') as string;
 
         const [header] = signature.split(') :: ');
         const paramsString = header

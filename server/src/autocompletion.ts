@@ -130,9 +130,7 @@ export function doAutoCompletionText(
             .add(CypherParser.RULE_escapedSymbolicNameString);
 
           // TODO Nacho Exclude minus, plus, comma, arrow_left_head, lparen etc
-          const candidates = codeCompletion.collectCandidates(
-            caretIndex as number,
-          );
+          const candidates = codeCompletion.collectCandidates(caretIndex);
           const tokens = candidates.tokens.entries();
           const tokenCandidates = Array.from(tokens).map((value) => {
             const [tokenNumber, followUpList] = value;
