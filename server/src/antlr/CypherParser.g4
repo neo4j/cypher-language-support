@@ -227,7 +227,7 @@ nodePatternProperties
    ;
 
 nodePatternComplex
-   : (labelExpression WHERE expression | variable properties (WHERE expression)? | variable WHERE expression | WHERE expression | variable labelExpression properties? (WHERE expression)? | labelExpression properties (WHERE expression)? | labelExpression) RPAREN
+   : (labelExpression WHERE expression | variable properties (WHERE expression)? | variable WHERE expression | WHERE expression | labelExpression) RPAREN
    ;
 
 parenthesizedPath
@@ -291,7 +291,7 @@ relationshipPatternOnlyVariablePathLength
    ;
 
 relationshipPatternComplex
-   : (labelExpression pathLength? WHERE expression | variable pathLength? properties (WHERE expression)? | variable pathLength? WHERE expression | WHERE expression | variable labelExpression pathLength? properties? (WHERE expression)? | labelExpression pathLength? properties (WHERE expression)? | labelExpression pathLength?) RBRACKET arrowLine rightArrow?
+   : (labelExpression pathLength? WHERE expression | variable pathLength? properties (WHERE expression)? | variable pathLength? WHERE expression | WHERE expression | labelExpression pathLength?) RBRACKET arrowLine rightArrow?
    ;
 
 leftArrow
