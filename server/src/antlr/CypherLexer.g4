@@ -164,6 +164,10 @@ COMMA
    : ','
    ;
 
+COLLECT
+   : C O L L E C T
+   ;
+
 COMMAND
    : C O M M A N D
    ;

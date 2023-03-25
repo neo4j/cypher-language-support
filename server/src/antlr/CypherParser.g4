@@ -3,11 +3,11 @@ parser grammar CypherParser;
 
 options { tokenVocab = CypherLexer; }
 statements
-   : statement+ EOF
+   : statement (SEMICOLON statement)* SEMICOLON? EOF
    ;
 
 statement
-   : periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand) SEMICOLON?
+   : periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand)
    ;
 
 singleQueryOrCommand
@@ -203,7 +203,31 @@ everyPathPatternNonEmpty
    ;
 
 nodePattern
-   : LPAREN (variable WHERE expression | variable properties (WHERE expression)? | WHERE expression | variable? labelExpression? properties? (WHERE expression)?) RPAREN
+   : LPAREN (nodePatternEmpty | nodePatternOnlyVariable | nodePatternColon | nodePatternVariableColon | nodePatternProperties | nodePatternComplex)
+   ;
+
+nodePatternEmpty
+   : RPAREN
+   ;
+
+nodePatternOnlyVariable
+   : variable RPAREN
+   ;
+
+nodePatternColon
+   : labelExpression properties? (WHERE expression)? RPAREN
+   ;
+
+nodePatternVariableColon
+   : variable labelExpression properties? (WHERE expression)? RPAREN
+   ;
+
+nodePatternProperties
+   : properties (WHERE expression)? RPAREN
+   ;
+
+nodePatternComplex
+   : (labelExpression WHERE expression | variable properties (WHERE expression)? | variable WHERE expression | WHERE expression | variable labelExpression properties? (WHERE expression)? | labelExpression properties (WHERE expression)? | labelExpression) RPAREN
    ;
 
 parenthesizedPath
@@ -231,7 +255,43 @@ properties
    ;
 
 relationshipPattern
-   : leftArrow? arrowLine (LBRACKET (variable WHERE expression | variable properties (WHERE expression)? | WHERE expression | variable? labelExpression? pathLength? properties? (WHERE expression)?) RBRACKET)? arrowLine rightArrow?
+   : leftArrow? arrowLine (relationshipPatternDoubleDash | LBRACKET (relationshipPatternEmpty | relationshipPatternOnlyVariable | relationshipPatternColon | relationshipPatternVariableColon | relationshipPatternProperties | relationshipPatternPathLength | relationshipPatternOnlyVariablePathLength | relationshipPatternComplex))
+   ;
+
+relationshipPatternDoubleDash
+   : arrowLine rightArrow?
+   ;
+
+relationshipPatternEmpty
+   : RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternOnlyVariable
+   : variable RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternColon
+   : labelExpression pathLength? properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternVariableColon
+   : variable labelExpression pathLength? properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternProperties
+   : properties (WHERE expression)? RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternPathLength
+   : pathLength properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternOnlyVariablePathLength
+   : variable pathLength RBRACKET arrowLine rightArrow?
+   ;
+
+relationshipPatternComplex
+   : (labelExpression pathLength? WHERE expression | variable pathLength? properties (WHERE expression)? | variable pathLength? WHERE expression | WHERE expression | variable labelExpression pathLength? properties? (WHERE expression)? | labelExpression pathLength? properties (WHERE expression)? | labelExpression pathLength?) RBRACKET arrowLine rightArrow?
    ;
 
 leftArrow
@@ -255,7 +315,7 @@ pathLengthLiteral
    ;
 
 labelExpression
-   : COLON labelExpressionName
+   : (COLON | IS) labelExpressionName
    ;
 
 labelExpressionName
@@ -337,7 +397,7 @@ expression2
    ;
 
 postFix1
-   : (property | labelExpressionPredicate | LBRACKET expression RBRACKET | LBRACKET expression? DOTDOT expression? RBRACKET)
+   : (property | IS NULL | IS NOT NULL | labelExpressionPredicate | LBRACKET expression RBRACKET | LBRACKET expression? DOTDOT expression? RBRACKET)
    ;
 
 property
@@ -377,7 +437,7 @@ patternComprehension
    ;
 
 patternComprehensionPrefix
-   : LBRACKET (variable EQ)? everyPathPattern (WHERE | BAR)
+   : LBRACKET (variable EQ)? everyPathPatternNonEmpty (WHERE | BAR)
    ;
 
 reduceExpression
@@ -422,6 +482,10 @@ existsExpression
 
 countExpression
    : COUNT LCURLY (regularQuery | patternList whereClause?) RCURLY
+   ;
+
+collectExpression
+   : COLLECT LCURLY regularQuery RCURLY
    ;
 
 stringLiteral
@@ -717,7 +781,7 @@ setPassword
    ;
 
 passwordExpression
-   : stringToken | parameter
+   : (stringToken | parameter)
    ;
 
 passwordChangeRequired
@@ -869,7 +933,7 @@ dropDatabase
    ;
 
 alterDatabase
-   : DATABASE symbolicAliasName (IF EXISTS)? ((SET (ACCESS READ (ONLY | WRITE) | TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+ | OPTION symbolicNameString expression))+ | (REMOVE OPTION symbolicNameString)+)
+   : DATABASE symbolicAliasName (IF EXISTS)? ((SET (ACCESS READ (ONLY | WRITE) | TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+ | OPTION symbolicNameString expression))+ | (REMOVE OPTION symbolicNameString)+) waitClause?
    ;
 
 startDatabase
@@ -977,209 +1041,7 @@ escapedSymbolicNameString
    ;
 
 unescapedSymbolicNameString
-   : (IDENTIFIER |
-      ACCESS |
-      ACTIVE |
-      ADMIN |
-      ADMINISTRATOR |
-      ALIAS |
-      ALIASES |
-      ALL_SHORTEST_PATH |
-      ALL |
-      ALTER |
-      AND |
-      ANY |
-      AS |
-      ASC |
-      ASSERT |
-      ASSIGN |
-      AT |
-      BOOSTED |
-      BREAK |
-      BRIEF |
-      BTREE |
-      BUILT |
-      BY |
-      CALL |
-      CASE |
-      CHANGE |
-      COMMAND |
-      COMMANDS |
-      COMMIT |
-      COMPOSITE |
-      CONSTRAINT |
-      CONSTRAINTS |
-      CONTAINS |
-      CONTINUE |
-      COPY |
-      COUNT |
-      CREATE |
-      CSV |
-      CURRENT |
-      DATA |
-      DATABASE |
-      DATABASES |
-      DBMS |
-      DEALLOCATE |
-      DEFAULT_TOKEN |
-      DEFINED |
-      DELETE |
-      DENY |
-      DESC |
-      DESTROY |
-      DETACH |
-      DISTINCT |
-      DRIVER |
-      DROP |
-      DRYRUN |
-      DUMP |
-      EACH |
-      ELEMENT |
-      ELEMENTS |
-      ELSE |
-      ENABLE |
-      ENCRYPTED |
-      END |
-      ENDS |
-      ERROR |
-      EXECUTABLE |
-      EXECUTE |
-      EXIST |
-      EXISTENCE |
-      EXISTS |
-      FAIL |
-      FALSE |
-      FIELDTERMINATOR |
-      FOREACH |
-      FOR |
-      FROM |
-      FULLTEXT |
-      FUNCTION |
-      FUNCTIONS |
-      GRANT |
-      GRAPH |
-      GRAPHS |
-      HEADERS |
-      HOME |
-      IF |
-      IMMUTABLE |
-      IN |
-      INDEX |
-      INDEXES |
-      INF |
-      INFINITY |
-      IS |
-      JOIN |
-      KEY |
-      LABEL |
-      LABELS |
-      LIMITROWS |
-      LOAD |
-      LOOKUP |
-      MATCH |
-      MANAGEMENT |
-      MERGE |
-      NAME |
-      NAMES |
-      NAN |
-      NEW |
-      NODE |
-      NODES |
-      NONE |
-      NOT |
-      NOWAIT |
-      NULL |
-      OF |
-      ON |
-      ONLY |
-      OPTIONAL |
-      OPTIONS |
-      OPTION |
-      OR |
-      ORDER |
-      OUTPUT |
-      PASSWORD |
-      PASSWORDS |
-      PERIODIC |
-      PLAINTEXT |
-      POINT |
-      POPULATED |
-      PRIMARY |
-      PRIMARIES |
-      PRIVILEGE |
-      PRIVILEGES |
-      PROCEDURE |
-      PROCEDURES |
-      PROPERTIES |
-      PROPERTY |
-      RANGE |
-      READ |
-      REALLOCATE |
-      REDUCE |
-      REL |
-      RELATIONSHIP |
-      RELATIONSHIPS |
-      REMOVE |
-      RENAME |
-      REPLACE |
-      REPORT |
-      REQUIRE |
-      REQUIRED |
-      RETURN |
-      REVOKE |
-      ROLE |
-      ROLES |
-      ROW |
-      ROWS |
-      SCAN |
-      SEC |
-      SECOND |
-      SECONDARY |
-      SECONDARIES |
-      SECONDS |
-      SEEK |
-      SERVER |
-      SERVERS |
-      SET |
-      SETTING |
-      SETTINGS |
-      SHORTEST_PATH |
-      SHOW |
-      SINGLE |
-      SKIPROWS |
-      START |
-      STARTS |
-      STATUS |
-      STOP |
-      SUSPENDED |
-      TARGET |
-      TERMINATE |
-      TEXT |
-      THEN |
-      TO |
-      TOPOLOGY |
-      TRANSACTION |
-      TRANSACTIONS |
-      TRAVERSE |
-      TRUE |
-      TYPE |
-      TYPES |
-      UNION |
-      UNIQUE |
-      UNIQUENESS |
-      UNWIND |
-      USE |
-      USER |
-      USERS |
-      USING |
-      VERBOSE |
-      WAIT |
-      WHEN |
-      WHERE |
-      WITH |
-      WRITE |
-      XOR |
-      YIELD)
+   : (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | AS | ASC | ASSERT | ASSIGN | AT | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DBMS | DEALLOCATE | DEFAULT_TOKEN | DEFINED | DELETE | DENY | DESC | DESTROY | DETACH | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | EACH | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INF | INFINITY | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LOAD | LOOKUP | MATCH | MANAGEMENT | MERGE | NAME | NAMES | NAN | NEW | NODE | NODES | NONE | NOT | NOWAIT | NULL | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST_PATH | SHOW | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | USE | USER | USERS | USING | VERBOSE | WAIT | WHEN | WHERE | WITH | WRITE | XOR | YIELD)
    ;
 
 endOfFile
