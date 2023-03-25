@@ -3,11 +3,11 @@ parser grammar CypherParser;
 
 options { tokenVocab = CypherLexer; }
 statements
-   : statement (SEMICOLON statement)* SEMICOLON? EOF
+   : statement+ EOF
    ;
 
 statement
-   : periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand)
+   : periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand) SEMICOLON?
    ;
 
 singleQueryOrCommand
