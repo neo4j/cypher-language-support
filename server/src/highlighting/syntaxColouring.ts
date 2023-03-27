@@ -38,7 +38,7 @@ import {
 
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { CypherParserListener } from '../antlr/CypherParserListener';
-import { CypherTokenType as CypherTokenTypes } from '../lexerSymbols';
+import { CypherTokenType } from '../lexerSymbols';
 import {
   BracketType,
   getCypherTokenType,
@@ -51,70 +51,38 @@ import {
   toParsedTokens,
 } from './syntaxColouringHelpers';
 
-export class Legend implements SemanticTokensLegend {
-  tokenTypes: string[] = [];
-  tokenModifiers: string[] = [];
+export const legend: SemanticTokensLegend = {
+  tokenModifiers: [],
+  tokenTypes: Object.keys(SemanticTokenTypes),
+};
 
-  constructor() {
-    this.tokenTypes = Object.keys(SemanticTokenTypes);
-  }
-}
-
-export const legend = new Legend();
 const semanticTokenTypesNumber: Map<string, number> = new Map(
   legend.tokenTypes.map((tokenType, i) => [tokenType, i]),
 );
 
 function mapCypherToSemanticTokenIndex(
-  cypherTokenType: CypherTokenTypes,
+  cypherTokenType: CypherTokenType,
 ): number | undefined {
-  let semanticTokenType: SemanticTokenTypes | undefined = undefined;
   let result: number | undefined = undefined;
 
-  switch (cypherTokenType) {
-    case CypherTokenTypes.comment:
-      semanticTokenType = SemanticTokenTypes.comment;
-      break;
-    case CypherTokenTypes.procedure:
-    case CypherTokenTypes.function:
-    case CypherTokenTypes.predicateFunction:
-      semanticTokenType = SemanticTokenTypes.function;
-      break;
-    case CypherTokenTypes.keyword:
-      semanticTokenType = SemanticTokenTypes.keyword;
-      break;
-    case CypherTokenTypes.keywordLiteral:
-    case CypherTokenTypes.stringLiteral:
-      semanticTokenType = SemanticTokenTypes.string;
-      break;
-    case CypherTokenTypes.numberLiteral:
-    case CypherTokenTypes.booleanLiteral:
-      semanticTokenType = SemanticTokenTypes.number;
-      break;
-    case CypherTokenTypes.operator:
-      semanticTokenType = SemanticTokenTypes.operator;
-      break;
-    case CypherTokenTypes.paramDollar:
-      semanticTokenType = SemanticTokenTypes.namespace;
-      break;
-    case CypherTokenTypes.paramValue:
-      semanticTokenType = SemanticTokenTypes.parameter;
-      break;
-    case CypherTokenTypes.property:
-      semanticTokenType = SemanticTokenTypes.property;
-      break;
-    case CypherTokenTypes.label:
-      semanticTokenType = SemanticTokenTypes.type;
-      break;
-    case CypherTokenTypes.variable:
-      semanticTokenType = SemanticTokenTypes.variable;
-      break;
-    case CypherTokenTypes.symbolicName:
-      semanticTokenType = SemanticTokenTypes.variable;
-      break;
-    default:
-      break;
-  }
+  const tokenMappings: { [key in CypherTokenType]?: SemanticTokenTypes } = {
+    [CypherTokenType.comment]: SemanticTokenTypes.comment,
+    [CypherTokenType.predicateFunction]: SemanticTokenTypes.function,
+    [CypherTokenType.keyword]: SemanticTokenTypes.keyword,
+    [CypherTokenType.keywordLiteral]: SemanticTokenTypes.string,
+    [CypherTokenType.stringLiteral]: SemanticTokenTypes.string,
+    [CypherTokenType.numberLiteral]: SemanticTokenTypes.number,
+    [CypherTokenType.booleanLiteral]: SemanticTokenTypes.number,
+    [CypherTokenType.operator]: SemanticTokenTypes.operator,
+    [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
+    [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
+    [CypherTokenType.property]: SemanticTokenTypes.property,
+    [CypherTokenType.label]: SemanticTokenTypes.type,
+    [CypherTokenType.variable]: SemanticTokenTypes.variable,
+    [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
+  };
+
+  const semanticTokenType = tokenMappings[cypherTokenType];
 
   if (semanticTokenType) {
     result = semanticTokenTypesNumber.get(semanticTokenType) ?? result;
@@ -130,11 +98,7 @@ class SyntaxHighlighter implements CypherParserListener {
     this.colouredTokens = colouredTokens;
   }
 
-  private addToken(
-    token: Token,
-    tokenType: CypherTokenTypes,
-    tokenStr: string,
-  ) {
+  private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
     if (token.startIndex >= 0) {
       const tokenPosition = getTokenPosition(token);
 
@@ -148,20 +112,20 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitLabelName(ctx: LabelNameContext) {
-    this.addToken(ctx.start, CypherTokenTypes.label, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.label, ctx.text);
   }
 
   exitFunctionName(ctx: FunctionNameContext) {
-    this.colourMethodName(ctx, CypherTokenTypes.function);
+    this.colourMethodName(ctx, CypherTokenType.function);
   }
 
   exitProcedureName(ctx: ProcedureNameContext) {
-    this.colourMethodName(ctx, CypherTokenTypes.procedure);
+    this.colourMethodName(ctx, CypherTokenType.procedure);
   }
 
   private colourMethodName(
     ctx: FunctionNameContext | ProcedureNameContext,
-    tokenType: CypherTokenTypes.function | CypherTokenTypes.procedure,
+    tokenType: CypherTokenType.function | CypherTokenType.procedure,
   ) {
     const namespace = ctx.namespace();
 
@@ -174,50 +138,50 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   private colourPredicateFunction(ctx: TerminalNode) {
-    this.addToken(ctx.symbol, CypherTokenTypes.predicateFunction, ctx.text);
+    this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.text);
   }
 
   exitVariable(ctx: VariableContext) {
-    this.addToken(ctx.start, CypherTokenTypes.variable, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
   }
 
   exitProcedureResultItem(ctx: ProcedureResultItemContext) {
-    this.addToken(ctx.start, CypherTokenTypes.variable, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
   }
 
   exitPropertyKeyName(ctx: PropertyKeyNameContext) {
     // FIXME Is this correct in this case for all cases, not just simple properties?
-    this.addToken(ctx.start, CypherTokenTypes.property, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.property, ctx.text);
   }
 
   exitStringToken(ctx: StringTokenContext) {
-    this.addToken(ctx.start, CypherTokenTypes.stringLiteral, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.text);
   }
 
   exitStringsLiteral(ctx: StringsLiteralContext) {
-    this.addToken(ctx.start, CypherTokenTypes.stringLiteral, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.text);
   }
 
   exitBooleanLiteral(ctx: BooleanLiteralContext) {
     // Normally booleans are coloured as numbers in other languages
-    this.addToken(ctx.start, CypherTokenTypes.booleanLiteral, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.text);
   }
 
   exitNumberLiteral(ctx: NumberLiteralContext) {
-    this.addToken(ctx.start, CypherTokenTypes.numberLiteral, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.text);
   }
 
   exitKeywordLiteral(ctx: KeywordLiteralContext) {
-    this.addToken(ctx.start, CypherTokenTypes.keywordLiteral, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.text);
   }
 
   exitParameter(ctx: ParameterContext) {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
-    this.addToken(dollar.symbol, CypherTokenTypes.paramDollar, dollar.text);
+    this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.text);
     this.addToken(
       parameterName.start,
-      CypherTokenTypes.paramValue,
+      CypherTokenType.paramValue,
       parameterName.text,
     );
   }
@@ -243,7 +207,7 @@ class SyntaxHighlighter implements CypherParserListener {
   }
 
   exitSymbolicNameString(ctx: SymbolicNameStringContext) {
-    this.addToken(ctx.start, CypherTokenTypes.symbolicName, ctx.text);
+    this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.text);
   }
 }
 

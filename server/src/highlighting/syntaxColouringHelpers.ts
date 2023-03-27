@@ -1,25 +1,10 @@
-import {
-  SemanticTokensLegend,
-  SemanticTokenTypes,
-} from 'vscode-languageserver/node';
+import { SemanticTokenTypes } from 'vscode-languageserver/node';
 
 import { Token } from 'antlr4ts';
 
 import { CypherLexer } from '../antlr/CypherLexer';
 
-import {
-  CypherTokenType as CypherTokenTypes,
-  lexerSymbols,
-} from '../lexerSymbols';
-
-export class Legend implements SemanticTokensLegend {
-  tokenTypes: string[] = [];
-  tokenModifiers: string[] = [];
-
-  constructor() {
-    this.tokenTypes = Object.keys(SemanticTokenTypes);
-  }
-}
+import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 
 interface TokenPosition {
   line: number;
@@ -33,7 +18,7 @@ export function tokenPositionToString(tokenPosition: TokenPosition): string {
 export interface ParsedCypherToken {
   position: TokenPosition;
   length: number;
-  tokenType: CypherTokenTypes;
+  tokenType: CypherTokenType;
   token: string;
   bracketInfo?: BracketInfo;
 }
@@ -44,9 +29,9 @@ export interface BracketInfo {
 }
 
 export enum BracketType {
-  bracket,
-  parenthesis,
-  curly,
+  bracket = 'bracket',
+  parenthesis = 'parenthesis',
+  curly = 'curly',
 }
 
 export interface ColouredToken {
@@ -64,35 +49,31 @@ export function getTokenPosition(token: Token): TokenPosition {
 }
 
 function getBracketType(token: Token): BracketType | undefined {
-  switch (token.type) {
-    case CypherLexer.LPAREN:
-    case CypherLexer.RPAREN:
-      return BracketType.parenthesis;
-    case CypherLexer.LBRACKET:
-    case CypherLexer.RBRACKET:
-      return BracketType.bracket;
-    case CypherLexer.LCURLY:
-    case CypherLexer.RCURLY:
-      return BracketType.curly;
-    default:
-      return undefined;
-  }
+  const bracketType: { [n: number]: BracketType } = {
+    [CypherLexer.LPAREN]: BracketType.parenthesis,
+    [CypherLexer.RPAREN]: BracketType.parenthesis,
+    [CypherLexer.LBRACKET]: BracketType.bracket,
+    [CypherLexer.RBRACKET]: BracketType.bracket,
+    [CypherLexer.LCURLY]: BracketType.curly,
+    [CypherLexer.RCURLY]: BracketType.curly,
+  };
+  return bracketType[token.type];
 }
 
 function isClosingBracket(token: Token): boolean {
-  return (
-    token.type === CypherLexer.RPAREN ||
-    token.type === CypherLexer.RBRACKET ||
-    token.type === CypherLexer.RCURLY
-  );
+  return [
+    CypherLexer.RPAREN,
+    CypherLexer.RBRACKET,
+    CypherLexer.RCURLY,
+  ].includes(token.type);
 }
 
 function isOpeningBracket(token: Token): boolean {
-  return (
-    token.type === CypherLexer.LPAREN ||
-    token.type === CypherLexer.LBRACKET ||
-    token.type === CypherLexer.LCURLY
-  );
+  return [
+    CypherLexer.LPAREN,
+    CypherLexer.LBRACKET,
+    CypherLexer.LCURLY,
+  ].includes(token.type);
 }
 
 function computeBracketInfo(
@@ -126,7 +107,7 @@ function computeBracketInfo(
 
 export function toParsedTokens(
   tokenPosition: TokenPosition,
-  tokenType: CypherTokenTypes,
+  tokenType: CypherTokenType,
   tokenStr: string,
   token: Token,
   bracketsLevel?: Map<BracketType, number>,
@@ -155,17 +136,17 @@ export function toParsedTokens(
     });
 }
 
-export function getCypherTokenType(token: Token): CypherTokenTypes {
+export function getCypherTokenType(token: Token): CypherTokenType {
   const tokenNumber = token.type;
 
   if (
     tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
     tokenNumber === CypherLexer.MULTI_LINE_COMMENT
   ) {
-    return CypherTokenTypes.comment;
+    return CypherTokenType.comment;
   } else {
     // Defautl token type is none
-    return lexerSymbols.get(tokenNumber) ?? CypherTokenTypes.none;
+    return lexerSymbols.get(tokenNumber) ?? CypherTokenType.none;
   }
 }
 
