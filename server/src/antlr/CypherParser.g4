@@ -203,31 +203,7 @@ everyPathPatternNonEmpty
    ;
 
 nodePattern
-   : LPAREN (nodePatternEmpty | nodePatternOnlyVariable | nodePatternColon | nodePatternVariableColon | nodePatternProperties | nodePatternComplex)
-   ;
-
-nodePatternEmpty
-   : RPAREN
-   ;
-
-nodePatternOnlyVariable
-   : variable RPAREN
-   ;
-
-nodePatternColon
-   : labelExpression properties? (WHERE expression)? RPAREN
-   ;
-
-nodePatternVariableColon
-   : variable labelExpression properties? (WHERE expression)? RPAREN
-   ;
-
-nodePatternProperties
-   : properties (WHERE expression)? RPAREN
-   ;
-
-nodePatternComplex
-   : (labelExpression WHERE expression | variable properties (WHERE expression)? | variable WHERE expression | WHERE expression | labelExpression) RPAREN
+   : LPAREN variable? labelExpression? properties? (WHERE expression)? RPAREN
    ;
 
 parenthesizedPath
@@ -255,43 +231,9 @@ properties
    ;
 
 relationshipPattern
-   : leftArrow? arrowLine (relationshipPatternDoubleDash | LBRACKET (relationshipPatternEmpty | relationshipPatternOnlyVariable | relationshipPatternColon | relationshipPatternVariableColon | relationshipPatternProperties | relationshipPatternPathLength | relationshipPatternOnlyVariablePathLength | relationshipPatternComplex))
-   ;
-
-relationshipPatternDoubleDash
-   : arrowLine rightArrow?
-   ;
-
-relationshipPatternEmpty
-   : RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternOnlyVariable
-   : variable RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternColon
-   : labelExpression pathLength? properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternVariableColon
-   : variable labelExpression pathLength? properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternProperties
-   : properties (WHERE expression)? RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternPathLength
-   : pathLength properties? (WHERE expression)? RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternOnlyVariablePathLength
-   : variable pathLength RBRACKET arrowLine rightArrow?
-   ;
-
-relationshipPatternComplex
-   : (labelExpression pathLength? WHERE expression | variable pathLength? properties (WHERE expression)? | variable pathLength? WHERE expression | WHERE expression | labelExpression pathLength?) RBRACKET arrowLine rightArrow?
+   : leftArrow? arrowLine LBRACKET 
+   variable? labelExpression? pathLength? properties? (WHERE expression)?
+   RBRACKET arrowLine rightArrow?
    ;
 
 leftArrow
