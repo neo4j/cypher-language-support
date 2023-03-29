@@ -10,7 +10,7 @@
   "activationEvents": [
     "onLanguage:cypher"
   ],
-  "main": "./client/out/extension",
+  "main": "./vscode-playground/out/extension",
   "contributes": {
     "languages": [
       {
@@ -21,7 +21,7 @@
         "aliases": [
           "Cypher"
         ],
-        "configuration": "./cypher-language-configuration.json"
+        "configuration": "./vscode-playground/cypher-language-configuration.json"
       }
     ],
     "configuration": {
@@ -81,7 +81,7 @@
     "compile": "npm run gen-parser && tsc -b",
     "clean": "rm -r ./client/out||true && rm -r ./server/out||true",
     "watch": "tsc -b -w",
-    "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+    "postinstall": "cd vscode-playground && npm install && cd ../server && npm install && cd ..",
     "test": "jest --silent=true",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",

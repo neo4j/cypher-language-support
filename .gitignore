@@ -1,6 +1,6 @@
 out
 node_modules
-client/server
+vscode-playground/server
 .vscode-test
 *.DS_Store
 *.interp
