@@ -79,6 +79,7 @@
     "vscode:prepublish": "npm run compile",
     "gen-parser": "cd server && npm run gen-parser && cd ..",
     "compile": "npm run gen-parser && tsc -b",
+    "clean": "rm -r ./client/out||true && rm -r ./server/out||true",
     "watch": "tsc -b -w",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
     "test": "jest --silent=true",
