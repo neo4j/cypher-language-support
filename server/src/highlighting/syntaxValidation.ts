@@ -13,10 +13,10 @@ import {
   Token,
 } from 'antlr4ts';
 
-import { CypherLexer } from './antlr/CypherLexer';
+import { CypherLexer } from '../antlr/CypherLexer';
 
 import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
-import { CypherParser } from './antlr/CypherParser';
+import { CypherParser } from '../antlr/CypherParser';
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];

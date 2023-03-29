@@ -13,29 +13,31 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { doAutoCompletion } from './autocompletion';
 import { DbInfoImpl } from './dbInfo';
+import {
+  doSyntaxColouring,
+  legend as syntaxColouringLegend,
+} from './highlighting/syntaxColouring';
+import { doSyntaxValidationText } from './highlighting/syntaxValidation';
 import { doSignatureHelp } from './signatureHelp';
-import { doSyntaxColouring, Legend } from './syntaxColouring';
-import { doSyntaxValidationText } from './syntaxValidation';
 import { CypherLSPSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-const legend = new Legend();
 const dbInfo = new DbInfoImpl();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
     capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Incremental,
+      textDocumentSync: TextDocumentSyncKind.Full,
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
       },
       semanticTokensProvider: {
         documentSelector: null,
-        legend: legend,
+        legend: syntaxColouringLegend,
         range: false,
         full: {
           delta: false,
@@ -51,19 +53,19 @@ connection.onInitialize(() => {
 });
 
 connection.onInitialized(() => {
-  connection.client.register(DidChangeConfigurationNotification.type, {
+  void connection.client.register(DidChangeConfigurationNotification.type, {
     section: 'cypherLSP',
   });
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: null,
-    legend: legend,
+    legend: syntaxColouringLegend,
     range: false,
     full: {
       delta: false,
     },
   };
-  connection.client.register(
+  void connection.client.register(
     SemanticTokensRegistrationType.type,
     registrationOptions,
   );
@@ -73,7 +75,7 @@ connection.onInitialized(() => {
 documents.onDidChangeContent((change) => {
   const document = change.document;
   const diagnostics = doSyntaxValidationText(document.getText());
-  connection.sendDiagnostics({
+  void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
   });
@@ -100,7 +102,7 @@ connection.onDidChangeConfiguration(
         user: neo4jConfig.user,
         password: neo4jConfig.password,
       });
-      dbInfo.startSignaturesPolling();
+      void dbInfo.startSignaturesPolling();
     } else {
       dbInfo.stopPolling();
     }

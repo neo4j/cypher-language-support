@@ -279,7 +279,9 @@ labelExpression2
    ;
 
 labelExpression1
-   : (LPAREN labelExpression4 RPAREN | PERCENT | symbolicNameString)
+   : (LPAREN labelExpression4 RPAREN) #ParenthesizedLabelExpression
+     | PERCENT                        #AnyLabel
+     | symbolicNameString             #LabelName
    ;
 
 expression
@@ -351,7 +353,15 @@ expression1
    ;
 
 literal
-   : numberLiteral | stringLiteral | mapLiteral | listLiteral | TRUE | FALSE | (INFINITY | INF) | NAN | NULL
+   : numberLiteral    #NummericLiteral
+   | stringLiteral    #StringsLiteral
+   | mapLiteral       #OtherLiteral
+   | listLiteral      #OtherLiteral
+   | TRUE             #BooleanLiteral
+   | FALSE            #BooleanLiteral
+   | (INFINITY | INF) #KeywordLiteral
+   | NAN              #KeywordLiteral
+   | NULL             #KeywordLiteral
    ;
 
 caseExpression
@@ -439,7 +449,11 @@ propertyKeyName
    ;
 
 parameter
-   : DOLLAR (variable | UNSIGNED_DECIMAL_INTEGER)
+   : DOLLAR parameterName
+   ;
+
+parameterName
+   : (variable | UNSIGNED_DECIMAL_INTEGER)
    ;
 
 functionInvocation
