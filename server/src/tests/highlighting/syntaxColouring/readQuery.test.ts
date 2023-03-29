@@ -3,10 +3,10 @@ import { CypherTokenType } from '../../../lexerSymbols';
 import { testSyntaxColouring } from './helpers';
 
 describe('MATCH syntax colouring', () => {
-  test('Correctly colours labels conjunction', async () => {
+  test('Correctly colours labels conjunction', () => {
     const query = 'MATCH (n:A&B)';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -90,10 +90,10 @@ describe('MATCH syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours labels disjuntion', async () => {
+  test('Correctly colours labels disjuntion', () => {
     const query = 'MATCH (n:A|B)';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -177,10 +177,10 @@ describe('MATCH syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours negated label', async () => {
+  test('Correctly colours negated label', () => {
     const query = 'MATCH (n:!A)';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -255,10 +255,10 @@ describe('MATCH syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours parenthesized label expressions', async () => {
+  test('Correctly colours parenthesized label expressions', () => {
     const query = 'MATCH (n:(!A&!B)|C)';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -404,10 +404,10 @@ describe('MATCH syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours parenthesized relationship type expressions', async () => {
+  test('Correctly colours parenthesized relationship type expressions', () => {
     const query = 'MATCH (n:Label)-[r:(!R1&!R2)|R3]';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -617,13 +617,13 @@ describe('MATCH syntax colouring', () => {
 });
 
 describe('RETURN syntax colouring', () => {
-  test('Correctly colours AS and SKIP', async () => {
+  test('Correctly colours AS and SKIP', () => {
     const query = `MATCH (n:Label)-[r]->(m:Label)
       RETURN n AS node, r AS rel
       SKIP 10
     `;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -894,10 +894,10 @@ describe('RETURN syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours ORDER BY', async () => {
+  test('Correctly colours ORDER BY', () => {
     const query = `RETURN n AS node, r AS rel ORDER BY n.name DESC`;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -1029,10 +1029,10 @@ describe('RETURN syntax colouring', () => {
 });
 
 describe('WHERE syntax colouring', () => {
-  test('Correctly colours MATCH with WHERE and RETURN', async () => {
+  test('Correctly colours MATCH with WHERE and RETURN', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -1170,12 +1170,12 @@ describe('WHERE syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours WHERE with parameter', async () => {
+  test('Correctly colours WHERE with parameter', () => {
     const query = `MATCH (n:Label)-->(m:Label)
     WHERE n.property <> $value
     RETURN n, m`;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,
@@ -1420,12 +1420,12 @@ describe('WHERE syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours relationship with WHERE', async () => {
+  test('Correctly colours relationship with WHERE', () => {
     const query = `WITH 2000 AS minYear
     MATCH (a:Person {name: 'Andy'})
     RETURN [(a)-[r:KNOWS WHERE r.since < minYear]->(b:Person) | r.since] AS years`;
 
-    await testSyntaxColouring(query, [
+    testSyntaxColouring(query, [
       {
         position: {
           line: 0,

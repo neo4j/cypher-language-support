@@ -1,7 +1,7 @@
 import { doSyntaxColouringText } from '../../../highlighting/syntaxColouring';
 import { ParsedCypherToken } from '../../../highlighting/syntaxColouringHelpers';
 
-export async function testSyntaxColouring(
+export function testSyntaxColouring(
   fileText: string,
   expected: ParsedCypherToken[],
 ) {
@@ -29,7 +29,7 @@ export async function testSyntaxColouring(
   });
 }
 
-export async function testSyntaxColouringContains(
+export function testSyntaxColouringContains(
   fileText: string,
   expected: ParsedCypherToken[],
 ) {

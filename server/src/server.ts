@@ -53,7 +53,7 @@ connection.onInitialize(() => {
 });
 
 connection.onInitialized(() => {
-  connection.client.register(DidChangeConfigurationNotification.type, {
+  void connection.client.register(DidChangeConfigurationNotification.type, {
     section: 'cypherLSP',
   });
 
@@ -65,7 +65,7 @@ connection.onInitialized(() => {
       delta: false,
     },
   };
-  connection.client.register(
+  void connection.client.register(
     SemanticTokensRegistrationType.type,
     registrationOptions,
   );
@@ -75,7 +75,7 @@ connection.onInitialized(() => {
 documents.onDidChangeContent((change) => {
   const document = change.document;
   const diagnostics = doSyntaxValidationText(document.getText());
-  connection.sendDiagnostics({
+  void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
   });
@@ -102,7 +102,7 @@ connection.onDidChangeConfiguration(
         user: neo4jConfig.user,
         password: neo4jConfig.password,
       });
-      dbInfo.startSignaturesPolling();
+      void dbInfo.startSignaturesPolling();
     } else {
       dbInfo.stopPolling();
     }
