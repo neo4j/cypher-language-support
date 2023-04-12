@@ -13,7 +13,6 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "gen-parser": "cd server && npm run gen-parser && cd ..",
     "build": "turbo run build",
     "clean": "turbo run clean",
     "watch": "turbo run watch",

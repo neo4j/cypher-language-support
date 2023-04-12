@@ -32,7 +32,6 @@ jobs:
       - name: Install dependencies and generate parser
         run: |
           npm install
-          npm run gen-parser
 
       - name: Run tests
         run: npm test
