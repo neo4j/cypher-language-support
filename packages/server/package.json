@@ -4,16 +4,22 @@
   "author": "neo4j",
   "license": "Apache",
   "version": "0.0.1",
+  "main": "out/server.js",
+  "types": "src/server.ts",
   "dependencies": {
     "antlr4-c3": "^2.2.1",
     "antlr4ts": "^0.5.0-alpha.4",
     "neo4j-driver": "^5.3.0",
-    "vscode": "^1.1.34",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "scripts": {
-    "gen-parser": "antlr4ts -visitor src/antlr/CypherParser.g4 src/antlr/CypherLexer.g4"
+    "gen-parser": "antlr4ts -visitor src/antlr/CypherParser.g4 src/antlr/CypherLexer.g4",
+    "postinstall": "npm run gen-parser",
+    "build": "npm run gen-parser && tsc -b",
+    "clean": "rm -rf out",
+    "watch": "tsc -b -w",
+    "test": "jest"
   },
   "devDependencies": {
     "antlr4ts-cli": "^0.5.0-alpha.4"

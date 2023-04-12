@@ -16,9 +16,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Compile the project
-        run: npm run compile
-
       - name: Check there are no linting errors
         run: npm run lint
 

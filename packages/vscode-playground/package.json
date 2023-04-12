@@ -1,0 +1,91 @@
+{
+  "name": "cypher-ls-vscode-playground",
+  "description": "Cypher Language Server VSCode Playground",
+  "author": "neo4j",
+  "license": "Apache",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "activationEvents": [
+    "onLanguage:cypher"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "languages": [
+      {
+        "id": "cypher",
+        "extensions": [
+          ".cypher"
+        ],
+        "aliases": [
+          "Cypher"
+        ],
+        "configuration": "./cypher-language-configuration.json"
+      }
+    ],
+    "configuration": {
+      "title": "Cypher LSP",
+      "properties": {
+        "cypherLSP.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "verbose",
+          "description": "Traces the communication between VS Code and the language server."
+        },
+        "cypherLSP.neo4j.connect": {
+          "order": 1,
+          "type": "boolean",
+          "default": true,
+          "description": "Shall connect to Neo4j to gather data about labels and types."
+        },
+        "cypherLSP.neo4j.URL": {
+          "order": 2,
+          "type": "string",
+          "default": "bolt://localhost:7687",
+          "description": "Url of the database to connect."
+        },
+        "cypherLSP.neo4j.user": {
+          "order": 3,
+          "type": "string",
+          "default": "neo4j",
+          "description": "Username of the database to connect."
+        },
+        "cypherLSP.neo4j.password": {
+          "order": 4,
+          "type": "string",
+          "default": "password",
+          "description": "Password of the database to connect."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[cypher]": {
+        "editor.semanticHighlighting.enabled": true
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf out",
+    "watch": "tsc -b -w"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.6",
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.75.1",
+    "@vscode/test-electron": "^2.2.3",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.8.4",
+    "vsce": "^2.15.0"
+  }
+}

@@ -1,10 +1,11 @@
 out
 node_modules
-vscode-playground/server
+packages/vscode-playground/server
 .vscode-test
 *.DS_Store
 *.interp
 *.tokens
-server/src/antlr/*.ts
-server/src/antlr/.antlr/*
+packages/server/src/antlr/*.ts
+packages/server/src/antlr/.antlr/*
 *.vsix
+.turbo
