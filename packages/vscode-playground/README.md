@@ -17,4 +17,4 @@ The following settings refer to the database connection used for signature loadi
 
 ### Debug
 
-- `cypherLSP.trace.server`: Deprecated
+- `cypherLSP.trace.server`: Traces the communication between VS Code and the language server for debugging purposes.

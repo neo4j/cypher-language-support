@@ -1,6 +1,3 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  modulePathIgnorePatterns: ['out'],
-};
+const sharedConfig = require('../../jest.config.js')
+
+module.exports = sharedConfig
