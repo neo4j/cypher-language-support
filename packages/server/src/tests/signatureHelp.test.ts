@@ -47,14 +47,14 @@ describe('Procedures signature help', () => {
   test('Provides signature help for subquery CALLs', () => {
     testSignatureHelp(
       `MATCH (n)
-       CALL apoc.do.when(`,
+         CALL apoc.do.when(`,
       dbWithProcedure,
       expectedArgIndex(0),
     );
 
     testSignatureHelp(
       `MATCH (n)
-       CALL apoc.do.when(true`,
+         CALL apoc.do.when(true`,
       dbWithProcedure,
       expectedArgIndex(0),
     );
@@ -119,7 +119,7 @@ describe('Procedures signature help', () => {
   test('Provides signature help with several statements where cursor one requires autocompletion', () => {
     testSignatureHelp(
       `MATCH (n) RETURN n;
-       CALL apoc.do.when(`,
+         CALL apoc.do.when(`,
       dbWithProcedure,
       expectedArgIndex(0),
     );
@@ -128,8 +128,8 @@ describe('Procedures signature help', () => {
   test('Does not provide signature help with several statements where cursor one does not require autocompletion', () => {
     testSignatureHelp(
       `CALL apoc.do.when(true, "foo", false, "bar");
- 
-       MATCH (`,
+   
+         MATCH (`,
       dbWithProcedure,
       emptyResult,
     );
@@ -164,14 +164,14 @@ describe('Functions signature help', () => {
   test('Provides signature help for functions first argument', () => {
     testSignatureHelp(
       `MATCH (n)
-       RETURN apoc.do.when(`,
+         RETURN apoc.do.when(`,
       dbWithFunction,
       expectedArgIndex(0),
     );
 
     testSignatureHelp(
       `MATCH (n)
-       RETURN apoc.do.when(true`,
+         RETURN apoc.do.when(true`,
       dbWithFunction,
       expectedArgIndex(0),
     );
@@ -208,7 +208,7 @@ describe('Functions signature help', () => {
   test('Provides signature help with several statements where cursor one requires autocompletion', () => {
     testSignatureHelp(
       `MATCH (n) RETURN n;
-       MATCH (m) WHERE apoc.do.when(`,
+         MATCH (m) WHERE apoc.do.when(`,
       dbWithFunction,
       expectedArgIndex(0),
     );
@@ -217,8 +217,8 @@ describe('Functions signature help', () => {
   test('Does not provide signature help with several statements where cursor one does not require autocompletion', () => {
     testSignatureHelp(
       `RETURN apoc.do.when(true, "foo", false, "bar");
- 
-       MATCH (`,
+   
+         MATCH (`,
       dbWithFunction,
       emptyResult,
     );

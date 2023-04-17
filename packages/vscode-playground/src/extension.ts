@@ -1,6 +1,5 @@
 import * as path from 'path';
 import { ExtensionContext, workspace } from 'vscode';
-
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -13,7 +12,7 @@ let client: LanguageClient;
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
   const serverModule = context.asAbsolutePath(
-    path.join('server', 'out', 'server.js'),
+    path.join('..', 'server', 'out', 'server.js'),
   );
 
   // If the extension is launched in debug mode then the debug server options are used
@@ -45,7 +44,7 @@ export function activate(context: ExtensionContext) {
   );
 
   // Start the client. This will also launch the server
-  client.start();
+  void client.start();
 }
 
 export function deactivate(): Promise<void> | undefined {

@@ -7,8 +7,10 @@
       "request": "launch",
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
-      "outFiles": ["${workspaceRoot}/vscode-playground/out/**/*.js"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-playground"
+      ],
+      "outFiles": ["${workspaceRoot}/packages/vscode-playground/out/**/*.js"],
       "autoAttachChildProcesses": true,
       "preLaunchTask": {
         "type": "npm",

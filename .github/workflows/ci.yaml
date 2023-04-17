@@ -16,9 +16,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Compile the project
-        run: npm run compile
-
       - name: Check there are no linting errors
         run: npm run lint
 
@@ -35,7 +32,6 @@ jobs:
       - name: Install dependencies and generate parser
         run: |
           npm install
-          npm run gen-parser
 
       - name: Run tests
         run: npm test
