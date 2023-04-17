@@ -3,8 +3,8 @@ import {
   CompletionItemKind,
   Position,
   SignatureInformation,
-} from 'vscode-languageserver/node';
-import { doAutoCompletionText } from '../autocompletion';
+} from 'vscode-languageserver-types';
+import { autocomplete } from '../autocompletion';
 import { DbInfo } from '../dbInfo';
 import { MockDbInfo } from './testHelpers';
 
@@ -14,7 +14,7 @@ export function testAutoCompletionContains(
   dbInfo: DbInfo,
   expected: CompletionItem[],
 ) {
-  const actualCompletionList = doAutoCompletionText(fileText, position, dbInfo);
+  const actualCompletionList = autocomplete(fileText, position, dbInfo);
 
   expected.forEach((expectedItem) => {
     const elementFound = actualCompletionList.find(
@@ -31,7 +31,7 @@ export function testCompletionDoesNotContain(
   dbInfo: DbInfo,
   excluded: CompletionItem[],
 ) {
-  const actualCompletionList = doAutoCompletionText(fileText, position, dbInfo);
+  const actualCompletionList = autocomplete(fileText, position, dbInfo);
 
   excluded.forEach((notExpectedItem) => {
     const elementFound = actualCompletionList.find(

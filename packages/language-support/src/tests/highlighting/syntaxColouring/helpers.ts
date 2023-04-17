@@ -1,11 +1,11 @@
-import { doSyntaxColouringText } from '../../../highlighting/syntaxColouring';
+import { applySyntaxColouring } from '../../../highlighting/syntaxColouring';
 import { ParsedCypherToken } from '../../../highlighting/syntaxColouringHelpers';
 
 export function testSyntaxColouring(
   fileText: string,
   expected: ParsedCypherToken[],
 ) {
-  const actualTokens = doSyntaxColouringText(fileText);
+  const actualTokens = applySyntaxColouring(fileText);
 
   expect(actualTokens.length).toBe(expected.length);
 
@@ -33,7 +33,7 @@ export function testSyntaxColouringContains(
   fileText: string,
   expected: ParsedCypherToken[],
 ) {
-  let actualTokens = doSyntaxColouringText(fileText);
+  let actualTokens = applySyntaxColouring(fileText);
   let foundIndex = 0;
 
   expected.forEach((expectedToken) => {

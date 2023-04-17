@@ -2,7 +2,7 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   Position,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver-types';
 
 import {
   ANTLRErrorListener,
@@ -13,10 +13,10 @@ import {
   Token,
 } from 'antlr4ts';
 
-import { CypherLexer } from '../antlr/CypherLexer';
+import { CypherLexer } from '../generated-parser/CypherLexer';
 
 import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
-import { CypherParser } from '../antlr/CypherParser';
+import { CypherParser } from '../generated-parser/CypherParser';
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];
@@ -48,7 +48,7 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 }
 
-export function doSyntaxValidationText(wholeFileText: string): Diagnostic[] {
+export function validateSyntax(wholeFileText: string): Diagnostic[] {
   const inputStream = CharStreams.fromString(wholeFileText);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);

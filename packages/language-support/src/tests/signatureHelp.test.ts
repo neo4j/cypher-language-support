@@ -2,9 +2,9 @@ import {
   ParameterInformation,
   SignatureHelp,
   SignatureInformation,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
-import { doSignatureHelpText, emptyResult } from '../signatureHelp';
+import { emptyResult, signatureHelp } from '../signatureHelp';
 import { MockDbInfo } from './testHelpers';
 
 export function testSignatureHelp(
@@ -12,7 +12,7 @@ export function testSignatureHelp(
   dbInfo: DbInfo,
   expected: SignatureHelp,
 ) {
-  const actualSignatureHelp = doSignatureHelpText(fileText, dbInfo);
+  const actualSignatureHelp = signatureHelp(fileText, dbInfo);
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);

@@ -1,18 +1,8 @@
-import {
-  SemanticTokensBuilder,
-  SemanticTokensLegend,
-  SemanticTokensParams,
-  SemanticTokenTypes,
-  TextDocuments,
-} from 'vscode-languageserver/node';
-
-import { TextDocument } from 'vscode-languageserver-textdocument';
-
 import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 
 import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
 
-import { CypherLexer } from '../antlr/CypherLexer';
+import { CypherLexer } from '../generated-parser/CypherLexer';
 
 import {
   AllExpressionContext,
@@ -34,10 +24,14 @@ import {
   StringTokenContext,
   SymbolicNameStringContext,
   VariableContext,
-} from '../antlr/CypherParser';
+} from '../generated-parser/CypherParser';
 
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
-import { CypherParserListener } from '../antlr/CypherParserListener';
+import {
+  SemanticTokensLegend,
+  SemanticTokenTypes,
+} from 'vscode-languageserver-types';
+import { CypherParserListener } from '../generated-parser/CypherParserListener';
 import { CypherTokenType } from '../lexerSymbols';
 import {
   BracketType,
@@ -51,20 +45,18 @@ import {
   toParsedTokens,
 } from './syntaxColouringHelpers';
 
-export const legend: SemanticTokensLegend = {
+export const syntaxColouringLegend: SemanticTokensLegend = {
   tokenModifiers: [],
   tokenTypes: Object.keys(SemanticTokenTypes),
 };
 
 const semanticTokenTypesNumber: Map<string, number> = new Map(
-  legend.tokenTypes.map((tokenType, i) => [tokenType, i]),
+  syntaxColouringLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
 );
 
-function mapCypherToSemanticTokenIndex(
+export function mapCypherToSemanticTokenIndex(
   cypherTokenType: CypherTokenType,
 ): number | undefined {
-  let result: number | undefined = undefined;
-
   const tokenMappings: { [key in CypherTokenType]?: SemanticTokenTypes } = {
     [CypherTokenType.comment]: SemanticTokenTypes.comment,
     [CypherTokenType.predicateFunction]: SemanticTokenTypes.function,
@@ -85,10 +77,10 @@ function mapCypherToSemanticTokenIndex(
   const semanticTokenType = tokenMappings[cypherTokenType];
 
   if (semanticTokenType) {
-    result = semanticTokenTypesNumber.get(semanticTokenType) ?? result;
+    return semanticTokenTypesNumber.get(semanticTokenType);
   }
 
-  return result;
+  return undefined;
 }
 
 class SyntaxHighlighter implements CypherParserListener {
@@ -242,7 +234,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
   return result;
 }
 
-export function doSyntaxColouringText(
+export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
   const inputStream = CharStreams.fromString(wholeFileText);
@@ -283,31 +275,4 @@ export function doSyntaxColouringText(
   );
 
   return result;
-}
-
-export function doSyntaxColouring(documents: TextDocuments<TextDocument>) {
-  return (params: SemanticTokensParams) => {
-    const textDocument = documents.get(params.textDocument.uri);
-    if (textDocument === undefined) return { data: [] };
-
-    const tokens = doSyntaxColouringText(textDocument.getText());
-
-    const builder = new SemanticTokensBuilder();
-
-    tokens.forEach((token) => {
-      const tokenColour = mapCypherToSemanticTokenIndex(token.tokenType);
-
-      if (tokenColour !== undefined) {
-        builder.push(
-          token.position.line,
-          token.position.startCharacter,
-          token.length,
-          tokenColour,
-          0,
-        );
-      }
-    });
-    const results = builder.build();
-    return results;
-  };
 }

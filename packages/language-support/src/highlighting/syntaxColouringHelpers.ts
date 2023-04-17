@@ -1,8 +1,8 @@
-import { SemanticTokenTypes } from 'vscode-languageserver/node';
+import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4ts';
 
-import { CypherLexer } from '../antlr/CypherLexer';
+import { CypherLexer } from '../generated-parser/CypherLexer';
 
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 
@@ -49,7 +49,7 @@ export function getTokenPosition(token: Token): TokenPosition {
 }
 
 function getBracketType(token: Token): BracketType | undefined {
-  const bracketType: { [n: number]: BracketType } = {
+  const bracketType: Record<number, BracketType> = {
     [CypherLexer.LPAREN]: BracketType.parenthesis,
     [CypherLexer.RPAREN]: BracketType.parenthesis,
     [CypherLexer.LBRACKET]: BracketType.bracket,
@@ -145,8 +145,7 @@ export function getCypherTokenType(token: Token): CypherTokenType {
   ) {
     return CypherTokenType.comment;
   } else {
-    // Defautl token type is none
-    return lexerSymbols.get(tokenNumber) ?? CypherTokenType.none;
+    return lexerSymbols[tokenNumber] ?? CypherTokenType.none;
   }
 }
 

@@ -1,4 +1,4 @@
-import { SignatureInformation } from 'vscode-languageserver/node';
+import { SignatureInformation } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 
 export class MockDbInfo implements DbInfo {

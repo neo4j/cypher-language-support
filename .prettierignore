@@ -1,4 +1,2 @@
-packages/server/out/*.js
-packages/vscode-playground/out/*.js
-packages/server/src/antlr/*.ts
-packages/server/out/antlr/*.js
+out/
+packages/language-support/src/generated-parser/*

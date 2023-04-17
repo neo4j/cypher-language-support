@@ -1,11 +1,9 @@
 out
 node_modules
-packages/vscode-playground/server
+generated-parser
 .vscode-test
 *.DS_Store
 *.interp
 *.tokens
-packages/server/src/antlr/*.ts
-packages/server/src/antlr/.antlr/*
 *.vsix
 .turbo
