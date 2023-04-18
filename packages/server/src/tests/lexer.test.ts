@@ -1,8 +1,8 @@
 import { CypherLexer } from '../antlr/CypherLexer';
 import { lexerSymbols } from '../lexerSymbols';
 
-function removeSpecialCharacters(array: Array<string | undefined>) {
-  const specialCharacters: Array<string | undefined> = [
+function removeSpecialCharacters(array: (string | undefined)[]) {
+  const specialCharacters = [
     'SPACE',
     'SINGLE_LINE_COMMENT',
     'DECIMAL_DOUBLE',
@@ -38,36 +38,19 @@ function removeSpecialCharacters(array: Array<string | undefined>) {
 }
 
 describe('Keywords', () => {
-  it('Lexer keywords should match parser keywords', () => {
-    // Collects all members of CypherLexer.tx
-    // This includes numbered special characters and keywords of form [string, number]
-    const parserSymbols: Array<[string, number]> = Object.entries(
-      CypherLexer,
-    ).filter((pair) => typeof pair[1] === 'number') as Array<[string, number]>;
+  test('Lexer keywords should match parser keywords', () => {
     // Read in auto-generated symbolic names from the parser and remove special characters
-    const symbolicNames: Array<string | undefined> =
-      CypherLexer['_SYMBOLIC_NAMES'];
-
-    const parserKeywords: Array<string> =
-      removeSpecialCharacters(symbolicNames);
+    const symbolicNames = CypherLexer['_SYMBOLIC_NAMES'];
+    const parserKeywords = removeSpecialCharacters(symbolicNames);
 
     // Lexer keyword list which we want to keep up-to-date
-    // Note that it is numeric so we need to convert it into strings using parserSymbols
-    const lexerKeywordNbrs: Array<number> = Array.from(lexerSymbols.keys());
+    // Note that it is numeric so we need to convert it into strings using symbolicNames
+    const lexerKeywordNbrs = Array.from(lexerSymbols.keys());
 
-    const lexerKeywords: Array<string> = lexerKeywordNbrs.reduce(
-      (acc: Array<string>, nbr: number) => {
-        const parserSymbol: [string, number] | undefined = parserSymbols.find(
-          (keyValuePair) => keyValuePair[1] === nbr,
-        );
-        if (typeof parserSymbol === 'undefined') {
-          // It shouldn't be possible to end up here...
-          throw new Error(
-            'A lexer keyword referenced a number not present in the CypherLexer.ts.',
-          );
-        } else {
-          return acc.concat((parserSymbol as [string, number])[0]);
-        }
+    const lexerKeywords = lexerKeywordNbrs.reduce(
+      (acc: string[], nbr: number) => {
+        const parserSymbol = symbolicNames[nbr];
+        return acc.concat(parserSymbol);
       },
       [],
     );
@@ -79,6 +62,7 @@ describe('Keywords', () => {
     expect(addedKeywords).toHaveLength(0);
 
     // Check for keywords that exist in the lexer but not the parser
+    // With the current setup this should not happen
     const deletedKeywords = lexerKeywords.filter(
       (x) => !parserKeywords.includes(x),
     );
