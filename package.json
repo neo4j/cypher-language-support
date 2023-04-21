@@ -20,10 +20,9 @@
     "scripts": {
         "build": "tsc",
         "prepublishOnly": "npm run generate && npm run test",
-        "jest": "NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --max-worker=1",
-        "test": "npm run build && npm run jest",
-        "test-ci": "jest --testMatch [ \"**/tests/**/*.spec.ts\" ] --no-coverage --watchAll=false --silent",
-        "test-coverage": "jest  --testMatch [ \"**/tests/**/*.spec.ts\" ] --coverage --silent",
+        "test": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --max-worker=1",
+        "test-ci": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --silent",
+        "test-coverage": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --coverage --silent",
         "generate": "tests/generate.sh",
         "eslint": "eslint ."
     },
