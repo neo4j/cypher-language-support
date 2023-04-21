@@ -5,8 +5,7 @@
  * See LICENSE file for more info.
  */
 
-import { CommonToken } from "antlr4ts";
-import { TerminalNode } from "antlr4ts/tree/TerminalNode";
+import { CommonToken, TerminalNode } from "antlr4";
 
 import { BaseSymbol } from "../src/BaseSymbol";
 import { BlockSymbol } from "../src/BlockSymbol";
@@ -24,7 +23,8 @@ import { SymbolTable } from "../src/SymbolTable";
 import { TypeAlias } from "../src/TypeAlias";
 import { VariableSymbol } from "../src/VariableSymbol";
 
-const dummyNode = new TerminalNode(new CommonToken(-2, "Dummy", undefined, 0, 10, 20));
+const dummyNode = new TerminalNode();
+dummyNode.symbol = new CommonToken([null] as any, -2, 0, 10, 20);
 
 /**
  * Creates a single symbol table setup with a simple base structure:

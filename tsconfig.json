@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "declaration": true,
-        "module": "Node16",
+        "module": "ES2022",
         "target": "ES2022",
         "moduleResolution": "node",
         "outDir": "lib",
@@ -13,16 +13,17 @@
         "inlineSources": true,
         "isolatedModules": false,
         "allowSyntheticDefaultImports": false,
-        "strictNullChecks": true
+        "strictNullChecks": false
     },
     "compileOnSave": true,
     "include": [
         "src/**/*.ts",
-        "index.ts"
+        "index.ts",
+        "tests/**/*"
     ],
     "exclude": [
         "node_modules",
         "lib/**/*",
-        "tests/**/*"
+       
     ]
 }

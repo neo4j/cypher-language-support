@@ -5,7 +5,7 @@
  * See LICENSE file for more info.
  */
 
-import { ParseTree } from "antlr4ts/tree/ParseTree";
+import { ParseTree } from "antlr4";
 
 import { MemberVisibility, Modifier, SymbolConstructor } from "./types";
 

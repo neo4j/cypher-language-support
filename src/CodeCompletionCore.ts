@@ -7,16 +7,70 @@
 
 /* eslint-disable max-classes-per-file */
 
-import { Parser, Vocabulary, Token, TokenStream, ParserRuleContext } from "antlr4ts";
-import {
-    ATN, ATNState, ATNStateType, Transition, TransitionType, PredicateTransition, RuleTransition, RuleStartState,
-    PrecedencePredicateTransition,
-} from "antlr4ts/atn";
-import { IntervalSet } from "antlr4ts/misc/IntervalSet";
+
+
+import { Parser, TokenStream, ParserRuleContext, ATN, IntervalSet, Token, Interval } from 'antlr4';
+import { Vocabulary } from './Vocabulary';
+import { VocabularyImpl } from './VocabularyImpl';
+declare module "antlr4" {
+    
+    interface ParserRuleContext {
+        ruleIndex: number;
+    }
+    interface RuleStartState {
+        isPrecedenceRule: boolean;
+    }
+    interface ATN {
+        maxTokenType: number;
+    }
+    interface Token {
+        channel: number;
+    }
+    namespace Token {
+        const MIN_USER_TOKEN_TYPE: number;
+        const DEFAULT_CHANNEL: number;
+    }
+    interface IntervalSet {
+        addInterval(v: Interval): void;
+        addSet(other: IntervalSet): IntervalSet;
+        toArray(): number[];
+    }
+    namespace IntervalSet {
+        function of(a: number, b: number): IntervalSet;
+    }
+    interface Parser {
+        getLiteralNames(): string[];
+        getSymbolicNames(): string[];
+        getTokenNames(): string[];
+        ruleNames: string[];
+        atn: ATN;
+    }
+}
+
+enum ATNStateType {
+INVALID_TYPE= 0,
+BASIC = 1,
+RULE_START = 2,
+BLOCK_START = 3,
+PLUS_BLOCK_START = 4,
+STAR_BLOCK_START = 5,
+TOKEN_START = 6,
+RULE_STOP = 7,
+BLOCK_END = 8,
+STAR_LOOP_BACK = 9,
+STAR_LOOP_ENTRY = 10,
+PLUS_LOOP_BACK = 11,
+LOOP_END = 12,
+INVALID_STATE_NUMBER = -1,
+}
 
 export type TokenList = number[];
 export type RuleList = number[];
+type ATNState = any;
 
+ type RuleStopState = any;
+
+ type RuleStartState = any;
 export interface CandidateRule {
     startTokenIndex: number;
     ruleList: RuleList;
@@ -68,6 +122,44 @@ type RuleEndStatus = Set<number>;
 interface IPipelineEntry {
     state: ATNState;
     tokenListIndex: number;
+}
+
+export enum TransitionType {
+    EPSILON = 1,
+    RANGE = 2,
+    RULE = 3,
+    PREDICATE = 4,
+    ATOM = 5,
+    ACTION = 6,
+    SET = 7,
+    NOT_SET = 8,
+    WILDCARD = 9,
+    PRECEDENCE = 10,
+  }
+  
+type PredicateTransition = any;
+type Transition = any;
+type RuleTransition = any;
+type PrecedencePredicateTransition = any;
+
+IntervalSet.of = function(a: number, b:number): IntervalSet {
+    let s: IntervalSet = new IntervalSet();
+    s.addInterval(new Interval(a, b));
+    return s;
+}
+
+IntervalSet.prototype.toArray = function(this: IntervalSet): number[] {
+    let values: number[] = [];
+    let n = this.intervals.length;
+    for (let i = 0; i < n; i++) {
+        const interval = this.intervals[i];
+        const a = interval.start;
+        const b = interval.stop;
+        for (let v = a; v < b; v++) {
+            values.push(v);
+        }
+    }
+    return values;
 }
 
 // The main class for doing the collection process.
@@ -136,7 +228,7 @@ export class CodeCompletionCore {
     public constructor(parser: Parser) {
         this.parser = parser;
         this.atn = parser.atn;
-        this.vocabulary = parser.vocabulary;
+        this.vocabulary = new VocabularyImpl(parser.getLiteralNames(), parser.getSymbolicNames(), parser.getTokenNames());
         this.ruleNames = parser.ruleNames;
         this.ignoredTokens = new Set();
         this.preferredRules = new Set();
@@ -161,7 +253,7 @@ export class CodeCompletionCore {
         this.precedenceStack = [];
 
         this.tokenStartIndex = context ? context.start.tokenIndex : 0;
-        const tokenStream: TokenStream = this.parser.inputStream;
+        const tokenStream: TokenStream = this.parser._input;
 
         this.tokens = [];
         let offset = this.tokenStartIndex;
@@ -223,7 +315,7 @@ export class CodeCompletionCore {
      * @returns the evaluation result of the predicate.
      */
     private checkPredicate(transition: PredicateTransition): boolean {
-        return transition.predicate.eval(this.parser, ParserRuleContext.emptyContext());
+        return transition.predicate.eval(this.parser, new ParserRuleContext());
     }
 
     /**
@@ -319,7 +411,7 @@ export class CodeCompletionCore {
             const state = pipeline.pop();
 
             if (state) {
-                state.getTransitions().forEach((outgoing) => {
+                state.transitions.forEach((outgoing: any) => {
                     if (outgoing.serializationType === TransitionType.ATOM) {
                         if (!outgoing.isEpsilon) {
                             const list = outgoing.label!.toArray();
@@ -354,7 +446,7 @@ export class CodeCompletionCore {
         // it is also useful to have a set with all symbols combined.
         const combined = new IntervalSet();
         for (const set of sets) {
-            combined.addAll(set.intervals);
+            combined.addSet(set.intervals);
         }
 
         return {sets, isExhaustive, combined};
@@ -387,7 +479,7 @@ export class CodeCompletionCore {
         }
 
         let isExhaustive = true;
-        for (const transition of s.getTransitions()) {
+        for (const transition of s.transitions) {
             if (transition.serializationType === TransitionType.RULE) {
                 const ruleTransition: RuleTransition = transition as RuleTransition;
                 if (ruleStack.indexOf(ruleTransition.target.ruleIndex) !== -1) {
@@ -424,7 +516,7 @@ export class CodeCompletionCore {
                 followSets.push(set);
             } else {
                 let label = transition.label;
-                if (label && label.size > 0) {
+                if (label && label.length > 0) {
                     if (transition.serializationType === TransitionType.NOT_SET) {
                         label = label.complement(IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType));
                     }
@@ -597,7 +689,7 @@ export class CodeCompletionCore {
                 continue;
             }
 
-            const transitions = currentEntry.state.getTransitions();
+            const transitions = currentEntry.state.transitions;
 
             // We simulate here the same precedence handling as the parser does, which uses hard coded values.
             // For rules that are not left recursive this value is ignored (since there is no precedence transition).
@@ -668,7 +760,7 @@ export class CodeCompletionCore {
                         }
 
                         let set = transition.label;
-                        if (set && set.size > 0) {
+                        if (set && set.length > 0) {
                             if (transition.serializationType === TransitionType.NOT_SET) {
                                 set = set.complement(IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType));
                             }
@@ -720,7 +812,7 @@ export class CodeCompletionCore {
     }
 
     private generateBaseDescription(state: ATNState): string {
-        const stateValue = state.stateNumber === ATNState.INVALID_STATE_NUMBER ? "Invalid" : state.stateNumber;
+        const stateValue = state.stateNumber === ATNStateType.INVALID_STATE_NUMBER ? "Invalid" : state.stateNumber;
 
         return `[${stateValue} ${CodeCompletionCore.atnStateTypeMap[state.stateType]}] in ` +
             `${this.ruleNames[state.ruleIndex]}`;
@@ -733,7 +825,7 @@ export class CodeCompletionCore {
 
         let transitionDescription = "";
         if (this.debugOutputWithTransitions) {
-            for (const transition of state.getTransitions()) {
+            for (const transition of state.transitions) {
                 let labels = "";
                 const symbols: number[] = transition.label ? transition.label.toArray() : [];
                 if (symbols.length > 2) {
@@ -778,3 +870,4 @@ export class CodeCompletionCore {
     }
 
 }
+

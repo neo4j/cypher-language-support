@@ -4,14 +4,15 @@
     // For further information visit https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "node",
             "request": "launch",
-            "name": "Run current Jest test",
+            "name": "Run tests",
             "runtimeExecutable": null,
             "runtimeArgs": [
+                "--experimental-vm-modules",
                 "${workspaceRoot}/node_modules/.bin/jest",
-                "${fileBasenameNoExtension}.ts",
                 "--no-coverage",
                 "--runInBand"
             ],
@@ -20,7 +21,7 @@
             "sourceMaps": true,
             "resolveSourceMapLocations": [
                 "${workspaceFolder}/**",
-                "!**/node_modules/**"
+                
             ],
             "smartStep": true,
             "trace": false

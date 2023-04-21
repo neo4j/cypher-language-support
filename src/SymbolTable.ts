@@ -8,7 +8,7 @@
 import { SymbolTableOptions, SymbolConstructor } from "./types";
 
 import { BaseSymbol } from "./BaseSymbol";
-import { ParseTree } from "antlr4ts/tree/ParseTree";
+import { ParseTree } from "antlr4";
 import { IScopedSymbol, ScopedSymbol } from "./ScopedSymbol";
 import { NamespaceSymbol } from "./NamespaceSymbol";
 
