@@ -3,15 +3,8 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 
+import { DbInfo } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
-
-export interface DbInfo {
-  procedureSignatures: Map<string, SignatureInformation>;
-  functionSignatures: Map<string, SignatureInformation>;
-  labels: string[];
-  relationshipTypes: string[];
-}
-
 export class DbInfoImpl implements DbInfo {
   public procedureSignatures: Map<string, SignatureInformation> = new Map();
   public functionSignatures: Map<string, SignatureInformation> = new Map();

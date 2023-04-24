@@ -1,5 +1,5 @@
 import { ParserRuleContext } from 'antlr4ts';
-import { StatementsContext } from './antlr/CypherParser';
+import { StatementsContext } from './generated-parser/CypherParser';
 
 export function findStopNode(root: StatementsContext) {
   let children = root.children;

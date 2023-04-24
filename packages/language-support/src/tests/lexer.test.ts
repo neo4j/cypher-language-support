@@ -1,4 +1,4 @@
-import { CypherLexer } from '../antlr/CypherLexer';
+import { CypherLexer } from '../generated-parser/CypherLexer';
 import { lexerSymbols } from '../lexerSymbols';
 
 function removeSpecialCharacters(array: (string | undefined)[]) {
@@ -44,15 +44,9 @@ describe('Keywords', () => {
     const parserKeywords = removeSpecialCharacters(symbolicNames);
 
     // Lexer keyword list which we want to keep up-to-date
-    // Note that it is numeric so we need to convert it into strings using symbolicNames
-    const lexerKeywordNbrs = Array.from(lexerSymbols.keys());
-
-    const lexerKeywords = lexerKeywordNbrs.reduce(
-      (acc: string[], nbr: number) => {
-        const parserSymbol = symbolicNames[nbr];
-        return acc.concat(parserSymbol);
-      },
-      [],
+    // Note that it is numeric so we need to map to it's corresponding symbolicName
+    const lexerKeywords = Object.keys(lexerSymbols).map(
+      (k) => symbolicNames[parseInt(k, 10)],
     );
 
     // Check for keywords that exist in the parser but not the lexer

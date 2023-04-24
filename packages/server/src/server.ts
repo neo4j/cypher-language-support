@@ -11,14 +11,11 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+import { syntaxColouringLegend, validateSyntax } from 'language-support';
 import { doAutoCompletion } from './autocompletion';
 import { DbInfoImpl } from './dbInfo';
-import {
-  doSyntaxColouring,
-  legend as syntaxColouringLegend,
-} from './highlighting/syntaxColouring';
-import { doSyntaxValidationText } from './highlighting/syntaxValidation';
 import { doSignatureHelp } from './signatureHelp';
+import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { CypherLSPSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
@@ -74,14 +71,16 @@ connection.onInitialized(() => {
 // Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
   const document = change.document;
-  const diagnostics = doSyntaxValidationText(document.getText());
+  const diagnostics = validateSyntax(document.getText());
   void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
   });
 });
 // Trigger the syntax colouring
-connection.languages.semanticTokens.on(doSyntaxColouring(documents));
+connection.languages.semanticTokens.on(
+  applySyntaxColouringForDocument(documents),
+);
 // Trigger the signature help, providing info about functions / procedures
 connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
 // Trigger the auto completion

@@ -1,5 +1,3 @@
-packages/server/out/*.js
-packages/vscode-playground/out/*.js
-packages/server/src/antlr/*.ts
-packages/server/out/antlr/*.js
-packages/server/jest.config.js
+out/*.js
+packages/language-support/src/generated-parser/*
+jest.config.js
