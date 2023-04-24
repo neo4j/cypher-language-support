@@ -1,6 +1,6 @@
 import { Input, Parser, PartialParse, Tree } from '@lezer/common';
-import { Token } from 'antlr4ts';
-import { getTokenStream, lexerSymbols } from 'language-support';
+import { applySyntaxColouring } from 'language-support';
+import { ParsedCypherToken } from 'language-support/out/highlighting/syntaxColouringHelpers';
 import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
@@ -14,14 +14,11 @@ const DEFAULT_NODE_GROUP_SIZE = 4;
 // determine if we want to map to a lezer tree with codemirror types
 
 export class ParserAdapter extends Parser {
-  private createBufferForTokens(tokens: Token[]) {
+  private createBufferForTokens(tokens: ParsedCypherToken[]) {
     return tokens.map((token) => {
-      const nodeTypeId =
-        cypherTokenTypeToNode[lexerSymbols[token.type] ?? 'none'].id;
-
-      const startOffset = token.startIndex;
-      // Adding 1 to include the character that lies to the right of the stopIndex (which is included in the word)
-      const endOffset = token.stopIndex + 1;
+      const nodeTypeId = cypherTokenTypeToNode[token.tokenType].id;
+      const startOffset = token.position.startCharacter;
+      const endOffset = token.position.startCharacter + token.length;
 
       return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
     });
@@ -42,7 +39,8 @@ export class ParserAdapter extends Parser {
   }
 
   private buildTree(document: string) {
-    const tokens = getTokenStream(document);
+    const tokens = applySyntaxColouring(document);
+    console.log(tokens);
 
     if (tokens.length < 1) {
       return Tree.build({

@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Editor } from './language/Editor';
+import { Editor } from './Editor';
 import { TokenTable } from './language/TokenTable';
-import './style.css';
 
 export function App() {
-  const [value, setValue] = useState('abc');
+  const [value, setValue] = useState(
+    'MATCH (n:Person) WHERE n.name = "Steve" RETURN n;',
+  );
 
   return (
     <div className="App">

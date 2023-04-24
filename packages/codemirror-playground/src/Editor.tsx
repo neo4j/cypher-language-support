@@ -1,7 +1,6 @@
 import CodeEditor from '@uiw/react-codemirror';
 import { useCallback } from 'react';
-import { ayuLight } from 'thememirror';
-import { cypher } from '../lang-cypher/lang-cypher';
+import { cypher } from './lang-cypher/lang-cypher';
 
 interface Props {
   value: string;
@@ -14,7 +13,7 @@ export function Editor({ value, setValue }: Props) {
   return (
     <CodeEditor
       value={value}
-      extensions={[cypher, ayuLight]}
+      extensions={[cypher]}
       onChange={handleOnChange}
       style={{ width: '500px', marginRight: '20px' }}
       indentWithTab={false}
