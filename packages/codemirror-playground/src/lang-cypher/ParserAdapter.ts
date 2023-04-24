@@ -5,14 +5,6 @@ import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
 
-// Simplified tree ->
-// Statements
-// statement
-
-// start with pretending the lexer could do it all.
-// then look at how the tree strcuture would work
-// determine if we want to map to a lezer tree with codemirror types
-
 export class ParserAdapter extends Parser {
   private createBufferForTokens(tokens: ParsedCypherToken[]) {
     return tokens.map((token) => {
@@ -40,7 +32,6 @@ export class ParserAdapter extends Parser {
 
   private buildTree(document: string) {
     const tokens = applySyntaxColouring(document);
-    console.log(tokens);
 
     if (tokens.length < 1) {
       return Tree.build({

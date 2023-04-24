@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Editor } from './Editor';
-import { TokenTable } from './language/TokenTable';
+import { TokenTable } from './TokenTable';
 
 export function App() {
   const [value, setValue] = useState(

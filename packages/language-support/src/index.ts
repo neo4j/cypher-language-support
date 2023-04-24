@@ -9,4 +9,3 @@ export {
 export { validateSyntax } from './highlighting/syntaxValidation';
 export { lexerSymbols } from './lexerSymbols';
 export { signatureHelp } from './signatureHelp';
-export { getTokenStream } from './utils';

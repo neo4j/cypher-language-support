@@ -6,7 +6,6 @@
   "version": "0.0.1",
   "main": "./out/index.js",
   "types": "./out/index.d.ts",
-  "type": "module",
   "dependencies": {
     "antlr4-c3": "^2.2.1",
     "antlr4ts": "^0.5.0-alpha.4",
