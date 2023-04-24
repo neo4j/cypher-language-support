@@ -1,4 +1,5 @@
 export { autocomplete } from './autocompletion';
+export type { DbInfo } from './dbInfo';
 export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,

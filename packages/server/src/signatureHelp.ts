@@ -7,9 +7,8 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
+import type { DbInfo } from 'language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
-import { DbInfo } from './dbInfo';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],

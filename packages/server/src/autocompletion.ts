@@ -6,9 +6,8 @@ import {
 
 import { Range } from 'vscode-languageserver-types';
 
-import { autocomplete } from 'language-support';
+import { autocomplete, DbInfo } from 'language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DbInfo } from './dbInfo';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
