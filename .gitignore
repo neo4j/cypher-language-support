@@ -7,3 +7,5 @@ generated-parser
 *.tokens
 *.vsix
 .turbo
+build/
+dist/
