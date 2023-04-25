@@ -14,5 +14,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ['./**/tsconfig.json', './**/tsconfig.node.json'],
   },
-  rules: {},
+  rules: {
+    '@typescript-eslint/consistent-type-exports': 'error',
+  },
 };
