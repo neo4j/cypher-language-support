@@ -6,6 +6,7 @@ export {
   mapCypherToSemanticTokenIndex,
   syntaxColouringLegend,
 } from './highlighting/syntaxColouring';
+export { ParsedCypherToken } from './highlighting/syntaxColouringHelpers';
 export { validateSyntax } from './highlighting/syntaxValidation';
-export { lexerSymbols } from './lexerSymbols';
+export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { signatureHelp } from './signatureHelp';

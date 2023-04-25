@@ -1,6 +1,6 @@
 import { NodeSet, NodeType } from '@lezer/common';
 import { styleTags, tags } from '@lezer/highlight';
-import { CypherTokenType } from 'language-support/src/lexerSymbols';
+import { CypherTokenType } from 'language-support';
 
 export const cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
   topNode: NodeType;

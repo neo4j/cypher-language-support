@@ -1,6 +1,5 @@
 import { Input, Parser, PartialParse, Tree } from '@lezer/common';
-import { applySyntaxColouring } from 'language-support';
-import { ParsedCypherToken } from 'language-support/out/highlighting/syntaxColouringHelpers';
+import { applySyntaxColouring, ParsedCypherToken } from 'language-support';
 import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
