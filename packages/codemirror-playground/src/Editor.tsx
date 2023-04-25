@@ -2,12 +2,12 @@ import CodeEditor from '@uiw/react-codemirror';
 import { useCallback } from 'react';
 import { cypher } from './lang-cypher/lang-cypher';
 
-interface Props {
+type EditorProps = {
   value: string;
   setValue(value: string): void;
-}
+};
 
-export function Editor({ value, setValue }: Props) {
+export function Editor({ value, setValue }: EditorProps) {
   const handleOnChange = useCallback((value: string) => setValue(value), []);
 
   return (
@@ -15,7 +15,6 @@ export function Editor({ value, setValue }: Props) {
       value={value}
       extensions={[cypher]}
       onChange={handleOnChange}
-      style={{ width: '500px', marginRight: '20px' }}
       indentWithTab={false}
       basicSetup={{
         foldGutter: false,

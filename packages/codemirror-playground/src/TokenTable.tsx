@@ -1,39 +1,26 @@
 import { applySyntaxColouring } from 'language-support';
+import React from 'react';
 
 export function TokenTable({ document }: { document: string }) {
   const tokens = applySyntaxColouring(document);
 
-  const table = tokens.map((token) => ({
-    text: token.token,
-    type: token.tokenType,
-    startIndex: token.position.startCharacter,
-    stopIndex: token.position.startCharacter + token.token.length,
-  }));
-
-  const tableHeadings = Object.keys(table[0]);
+  const tableHeadings = ['text', 'type', 'startIndex'];
 
   return (
-    <div className="mt-35">
-      {tableHeadings.map((heading, i) => (
-        <span
-          key={i.toString() + 'a23b'}
-          style={{ width: '100px', display: 'inline-block' }}
-        >
+    <div className="grid grid-cols-3 gap-x-1">
+      {tableHeadings.map((heading) => (
+        <span key={heading} className="font-bold">
           {heading}
         </span>
       ))}
-      {table.map((row, i) => (
-        <div key={i}>
-          {Object.values(row).map((value, i) => (
-            <span
-              key={i.toString() + 'ab'}
-              className="font-bold"
-              style={{ width: '100px', display: 'inline-block' }}
-            >
-              {value}
-            </span>
-          ))}
-        </div>
+      {tokens.map(({ token, tokenType, position }) => (
+        <React.Fragment key={`${position.line}:${position.startCharacter}`}>
+          <div>{token}</div>
+          <div>{tokenType}</div>
+          <div>
+            {position.line}:{position.startCharacter}
+          </div>
+        </React.Fragment>
       ))}
     </div>
   );
