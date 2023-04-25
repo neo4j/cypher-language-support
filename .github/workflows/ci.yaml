@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies with frozen lock file
+        run: npm ci
 
       - name: Check there are no linting errors
         run: npm run lint
@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies and generate parser
         run: |
-          npm install
+          npm ci
 
       - name: Run tests
         run: npm test
