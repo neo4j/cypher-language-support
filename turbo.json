@@ -7,6 +7,9 @@
     },
     "clean": {},
     "watch": {},
-    "test": {}
+    "test": {},
+    "codemirror-playground#dev": {
+      "dependsOn": ["language-support#build"]
+    }
   }
 }

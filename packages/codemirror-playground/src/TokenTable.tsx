@@ -13,7 +13,7 @@ export function TokenTable({ document }: { document: string }) {
   const tableHeadings = Object.keys(table[0]);
 
   return (
-    <div>
+    <div className="mt-35">
       {tableHeadings.map((heading, i) => (
         <span
           key={i.toString() + 'a23b'}
@@ -24,16 +24,15 @@ export function TokenTable({ document }: { document: string }) {
       ))}
       {table.map((row, i) => (
         <div key={i}>
-          {Object.entries(row).map(([_key, value], i) => {
-            return (
-              <span
-                key={i.toString() + 'ab'}
-                style={{ width: '100px', display: 'inline-block' }}
-              >
-                {value}
-              </span>
-            );
-          })}
+          {Object.values(row).map((value, i) => (
+            <span
+              key={i.toString() + 'ab'}
+              className="font-bold"
+              style={{ width: '100px', display: 'inline-block' }}
+            >
+              {value}
+            </span>
+          ))}
         </div>
       ))}
     </div>

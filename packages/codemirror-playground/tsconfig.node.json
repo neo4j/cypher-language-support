@@ -4,7 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true
   },
-  "include": ["vite.config.ts", "src/vite-env.d.ts"]
+  "include": ["*.config.ts", "*.config.js", "src/vite-env.d.ts"]
 }

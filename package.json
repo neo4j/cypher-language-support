@@ -17,6 +17,7 @@
     "clean": "turbo run clean",
     "watch": "turbo run watch",
     "test": "turbo run test",
+    "dev-codemirror": "turbo run codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write"

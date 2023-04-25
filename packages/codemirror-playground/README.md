@@ -1,3 +1,3 @@
 # Codemirror Playground
 
-After running `npm install` in root, you can run `npm run dev` in this directory to start a dev server.
+Run `npm install` && `npm run dev-codemirror` in the root folder of the project or use launch the demo from the "Run & Debug" tab.

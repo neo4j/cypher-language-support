@@ -8,9 +8,9 @@ export function App() {
   );
 
   return (
-    <div className="App">
+    <div>
       <h1>Editor</h1>
-      <div style={{ display: 'flex' }}>
+      <div className="flex">
         <Editor value={value} setValue={setValue} />
         <TokenTable document={value} />
       </div>
