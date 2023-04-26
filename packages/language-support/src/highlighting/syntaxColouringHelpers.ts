@@ -9,6 +9,7 @@ import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 interface TokenPosition {
   line: number;
   startCharacter: number;
+  startOffset?: number;
 }
 
 export function tokenPositionToString(tokenPosition: TokenPosition): string {
@@ -45,6 +46,7 @@ export function getTokenPosition(token: Token): TokenPosition {
   return {
     line: token.line - 1,
     startCharacter: token.charPositionInLine,
+    startOffset: token.startIndex,
   };
 }
 
