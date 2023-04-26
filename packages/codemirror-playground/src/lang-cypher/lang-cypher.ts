@@ -1,22 +1,41 @@
+import { CompletionContext, CompletionSource } from '@codemirror/autocomplete';
 import {
   defineLanguageFacet,
   Language,
   LanguageSupport,
 } from '@codemirror/language';
+import { autocomplete } from 'language-support';
+import { CompletionItemKind } from 'vscode-languageserver-types';
 import { ParserAdapter } from './ParserAdapter';
 
-function myCompletions(context: CompletionContext) {
-  const word = context.matchBefore(/\w*/);
-  if (word.from == word.to && !context.explicit) return null;
-  return {
-    from: word.from,
-    options: [
-      { label: 'match', type: 'keyword' },
-      { label: 'hello', type: 'variable', info: '(World)' },
-      { label: 'magic', type: 'text', apply: '⠁⭒*.✩.*⭒⠁', detail: 'macro' },
-    ],
+const completionKindToCodemirrorType = (c: CompletionItemKind) => {
+  const map: Partial<Record<CompletionItemKind, string>> = {
+    [CompletionItemKind.Keyword]: 'keyword',
   };
-}
+
+  return map[c];
+};
+
+const myCompletions: CompletionSource = (context: CompletionContext) => {
+  const options = autocomplete(
+    context.state.doc.toString(),
+    { line: 0, character: context.pos },
+    {
+      functionSignatures: new Map(),
+      procedureSignatures: new Map(),
+      relationshipTypes: [],
+      labels: [],
+    },
+  );
+
+  return {
+    from: context.matchBefore(/\w*$/).from,
+    options: options.map((o) => ({
+      label: o.label,
+      type: completionKindToCodemirrorType(o.kind),
+    })),
+  };
+};
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
@@ -26,8 +45,6 @@ const facet = defineLanguageFacet({
 const parserAdapter = new ParserAdapter(facet);
 
 export const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
-
-import { CompletionContext } from '@codemirror/autocomplete';
 
 export function cypher() {
   return new LanguageSupport(

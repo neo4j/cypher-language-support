@@ -19,7 +19,8 @@
     "language-support": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1"
+    "vite-plugin-node-stdlib-browser": "^0.2.1",
+    "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
