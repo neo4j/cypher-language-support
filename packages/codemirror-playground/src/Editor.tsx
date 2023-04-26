@@ -1,4 +1,4 @@
-import CodeEditor from '@uiw/react-codemirror';
+import CodeEditor, { basicSetup } from '@uiw/react-codemirror';
 import { useCallback } from 'react';
 import { cypher } from './lang-cypher/lang-cypher';
 
@@ -13,29 +13,9 @@ export function Editor({ value, setValue }: EditorProps) {
   return (
     <CodeEditor
       value={value}
-      extensions={[cypher]}
+      extensions={[basicSetup(), cypher()]}
       onChange={handleOnChange}
-      indentWithTab={false}
-      basicSetup={{
-        foldGutter: false,
-        lineNumbers: true,
-        highlightActiveLineGutter: true,
-        dropCursor: false,
-        allowMultipleSelections: false,
-        indentOnInput: false,
-        bracketMatching: false,
-        closeBrackets: false,
-        autocompletion: false,
-        rectangularSelection: false,
-        crosshairCursor: false,
-        highlightActiveLine: true,
-        highlightSelectionMatches: false,
-        closeBracketsKeymap: false,
-        searchKeymap: false,
-        foldKeymap: false,
-        completionKeymap: false,
-        lintKeymap: false,
-      }}
+      indentWithTab={true}
     />
   );
 }
