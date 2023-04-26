@@ -14,16 +14,7 @@ export class ParserAdapter extends Parser {
     topNode: NodeType;
   };
 
-  constructor(
-    facet: Facet<
-      {
-        [name: string]: any;
-      },
-      readonly {
-        [name: string]: any;
-      }[]
-    >,
-  ) {
+  constructor(facet: Facet<unknown>) {
     super();
     this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
   }
@@ -63,7 +54,7 @@ export class ParserAdapter extends Parser {
           document.length,
           DEFAULT_NODE_GROUP_SIZE,
         ],
-        nodeSet: parserAdapterNodeSet,
+        nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
         topID: this.cypherTokenTypeToNode.topNode.id,
       });
     }
@@ -73,7 +64,7 @@ export class ParserAdapter extends Parser {
 
     return Tree.build({
       buffer: buffer.flat(),
-      nodeSet: parserAdapterNodeSet,
+      nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
       topID: this.cypherTokenTypeToNode.topNode.id,
     });
   }
