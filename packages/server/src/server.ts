@@ -27,7 +27,10 @@ const dbInfo = new DbInfoImpl();
 connection.onInitialize(() => {
   const result: InitializeResult = {
     capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Full,
+      textDocumentSync: {
+        openClose: true,
+        change: TextDocumentSyncKind.Full,
+      },
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,

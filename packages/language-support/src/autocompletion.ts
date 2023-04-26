@@ -3,6 +3,7 @@ import {
   CompletionItem,
   CompletionItemKind,
   Position,
+  Range,
 } from 'vscode-languageserver-types';
 
 import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
@@ -138,6 +139,13 @@ export function autocomplete(
               return {
                 label: t,
                 kind: CompletionItemKind.Keyword,
+                textEdit: {
+                  range: Range.create(
+                    Position.create(0, 0),
+                    Position.create(0, 0),
+                  ),
+                  newText: t,
+                },
               };
             },
           );
