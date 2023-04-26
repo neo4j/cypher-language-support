@@ -1,3 +1,4 @@
-out/*.js
+out/
 packages/language-support/src/generated-parser/*
 jest.config.js
+index.html

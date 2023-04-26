@@ -2,7 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src"],
   "compilerOptions": {
-    "outDir": "out",
-    "declaration": true
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["DOM"],
+    "esModuleInterop": true
   }
 }

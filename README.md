@@ -4,6 +4,7 @@ The mono repo for Neo4j's Cypher Language support, it contains:
 
 - LSP server.
 - VSCode extension playground for testing.
+- Web Editor (codemirror) playground
 
 The Trello board for the project is [here](https://trello.com/b/0MAa3MMW/cypher-language-support).
 
@@ -19,6 +20,10 @@ The Trello board for the project is [here](https://trello.com/b/0MAa3MMW/cypher-
 ## Getting started
 
 Run `npm install` in the root folder. This installs all dependencies in each package and generates the parser in the server package. The next steps depend on which project you want to run.
+
+## Running the codemirror demo
+
+Run `npm run dev-codemirror` in the root folder. This will start a vite dev server and open a browser window with the codemirror demo.
 
 ### Running the VScode playground
 

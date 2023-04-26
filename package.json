@@ -17,6 +17,7 @@
     "clean": "turbo run clean",
     "watch": "turbo run watch",
     "test": "turbo run test",
+    "dev-codemirror": "turbo run codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write"
@@ -29,7 +30,7 @@
     "lint-staged": "^13.1.2",
     "prettier": "^2.8.1",
     "prettier-plugin-organize-imports": "^3.2.1",
-    "typescript": "^4.8.4",
-    "turbo": "^1.8.8"
+    "turbo": "^1.8.8",
+    "typescript": "^4.8.4"
   }
 }
