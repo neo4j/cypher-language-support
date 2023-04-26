@@ -8,8 +8,8 @@ export class ParserAdapter extends Parser {
   private createBufferForTokens(tokens: ParsedCypherToken[]) {
     return tokens.map((token) => {
       const nodeTypeId = cypherTokenTypeToNode[token.tokenType].id;
-      const startOffset = token.position.startCharacter;
-      const endOffset = token.position.startCharacter + token.length;
+      const startOffset = token.position.startOffset;
+      const endOffset = token.position.startOffset + token.length;
 
       return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
     });
