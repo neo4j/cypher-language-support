@@ -1,4 +1,4 @@
-import { CompletionContext, CompletionSource } from '@codemirror/autocomplete';
+import { CompletionSource } from '@codemirror/autocomplete';
 import {
   defineLanguageFacet,
   Language,
@@ -8,15 +8,37 @@ import { autocomplete } from 'language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { ParserAdapter } from './ParserAdapter';
 
-const completionKindToCodemirrorType = (c: CompletionItemKind) => {
-  const map: Partial<Record<CompletionItemKind, string>> = {
+// From codemirror docs, the base built in icons in autocomplete list are:
+type CodemirrorBuiltinIcons =
+  | `class`
+  | `constant`
+  | `enum`
+  | `function`
+  | `interface`
+  | `keyword`
+  | `method`
+  | `namespace`
+  | `property`
+  | `text`
+  | `type`
+  | `variable`;
+
+const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
+  const map: Partial<Record<CompletionItemKind, CodemirrorBuiltinIcons>> = {
+    [CompletionItemKind.Constant]: 'constant',
+    [CompletionItemKind.Function]: 'function',
     [CompletionItemKind.Keyword]: 'keyword',
+    [CompletionItemKind.Method]: 'method',
+    [CompletionItemKind.Property]: 'property',
+    [CompletionItemKind.Text]: 'text',
+    [CompletionItemKind.TypeParameter]: 'type',
+    [CompletionItemKind.Variable]: 'variable',
   };
 
-  return map[c];
+  return map[c] ?? 'text';
 };
 
-const myCompletions: CompletionSource = (context: CompletionContext) => {
+const myCompletions: CompletionSource = (context) => {
   const options = autocomplete(
     context.state.doc.toString(),
     { line: 0, character: context.pos },
@@ -32,7 +54,7 @@ const myCompletions: CompletionSource = (context: CompletionContext) => {
     from: context.matchBefore(/\w*$/).from,
     options: options.map((o) => ({
       label: o.label,
-      type: completionKindToCodemirrorType(o.kind),
+      type: completionKindToCodemirrorIcon(o.kind),
     })),
   };
 };

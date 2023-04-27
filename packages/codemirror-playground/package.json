@@ -11,7 +11,6 @@
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
-    "@codemirror/lang-css": "^6.1.1",
     "@codemirror/language": "^6.6.0",
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
