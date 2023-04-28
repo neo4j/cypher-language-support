@@ -4,7 +4,10 @@ import { TokenTable } from './TokenTable';
 
 export function App() {
   const [value, setValue] = useState(
-    `MATCH (n:Person) WHERE n.name = "Steve" RETURN n LIMIT 12;`,
+    `MATCH (n:Person)
+WHERE n.name = "Steve" 
+RETURN n 
+LIMIT 12;`,
   );
 
   return (
