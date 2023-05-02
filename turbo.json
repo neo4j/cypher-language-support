@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "outputs": ["out/**"],
+      "outputs": ["out/**", "dist/**"],
       "dependsOn": ["^build"]
     },
     "clean": {},
@@ -11,5 +11,6 @@
     "codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
     }
-  }
+  },
+  "globalDependencies": ["tsconfig.base.json"]
 }

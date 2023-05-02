@@ -13,7 +13,6 @@
   },
   "scripts": {
     "gen-parser": "antlr4ts -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "postinstall": "npm run gen-parser",
     "build": "npm run gen-parser && tsc -b",
     "clean": "rm -rf out",
     "watch": "tsc -b -w",

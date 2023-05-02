@@ -16,8 +16,7 @@
     "@uiw/react-codemirror": "^4.19.9",
     "language-support": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
