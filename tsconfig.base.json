@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2022",
-    "lib": ["es2022"],
-    "sourceMap": true
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "sourceMap": true,
+    "moduleResolution": "Node"
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
