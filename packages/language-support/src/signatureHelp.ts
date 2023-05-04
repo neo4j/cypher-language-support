@@ -3,13 +3,10 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4ts';
-
-import { CypherLexer } from './generated-parser/CypherLexer';
-
-import {
+import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4';
+import CypherLexer from './generated-parser/CypherLexer';
+import CypherParser, {
   CallClauseContext,
-  CypherParser,
   FunctionInvocationContext,
 } from './generated-parser/CypherParser';
 
@@ -38,8 +35,8 @@ function tryParseProcedure(
   if (callClause) {
     const ctx = callClause as CallClauseContext;
 
-    const methodName = ctx.procedureName().text;
-    const numProcedureArgs = ctx.procedureArgument().length;
+    const methodName = ctx.procedureName().getText();
+    const numProcedureArgs = ctx.procedureArgument_list().length;
     return {
       methodName: methodName,
       numProcedureArgs: numProcedureArgs,
@@ -59,8 +56,8 @@ function tryParseFunction(
 
   if (functionInvocation) {
     const ctx = functionInvocation as FunctionInvocationContext;
-    const methodName = ctx.functionName().text;
-    const numMethodArgs = ctx.functionArgument().length ?? 0;
+    const methodName = ctx.functionName().getText();
+    const numMethodArgs = ctx.functionArgument_list().length;
 
     return {
       methodName: methodName,

@@ -5,12 +5,11 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Token, TokenStream } from 'antlr4';
 
-import { CypherLexer } from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherLexer';
 
-import {
-  CypherParser,
+import CypherParser, {
   Expression2Context,
   LabelExpressionNameContext,
   NodePatternContext,
@@ -24,7 +23,7 @@ import { findParent, findStopNode } from './helpers';
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
   return (
-    lastToken.charPositionInLine + tokenLength === position.character &&
+    lastToken.column + tokenLength === position.character &&
     lastToken.line - 1 === position.line
   );
 }
@@ -39,7 +38,7 @@ export function autocomplete(
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
   const tree = wholeFileParser.statements();
-  const tokens = tokenStream.getTokens();
+  const tokens = tokenStream.;
   const lastToken = tokens[tokens.length - 2];
 
   if (!positionIsParsableToken(lastToken, position)) {
@@ -80,7 +79,7 @@ export function autocomplete(
       if (expr) {
         return Array.from(dbInfo.functionSignatures.keys())
           .filter((functionName) => {
-            return functionName.startsWith(expr.text);
+            return functionName.startsWith(expr.getText());
           })
           .map((t) => {
             return {
@@ -100,7 +99,7 @@ export function autocomplete(
       } else {
         // If we are not completing a label of a procedure name,
         // we need to use the antlr completion
-        const codeCompletion = new CodeCompletionCore(wholeFileParser);
+        const codeCompletion = new CodeCompletionCore(wholeFileParser as any);
 
         // TODO Nacho Why did it have to be -2 here?
         // Is it because of the end of file?
