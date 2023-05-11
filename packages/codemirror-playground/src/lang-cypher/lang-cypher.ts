@@ -3,17 +3,21 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
+import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
-
-const parserAdapter = new ParserAdapter();
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
   closeBrackets: { brackets: ['(', '[', '{', "'", '"', '`'] },
 });
 
-export const cypherLanguage = new Language(facet, parserAdapter, [], 'Cypher');
+const parserAdapter = new ParserAdapter(facet);
+
+export const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
 export function cypher() {
-  return new LanguageSupport(cypherLanguage);
+  return new LanguageSupport(
+    cypherLanguage,
+    cypherLanguage.data.of({ autocomplete: cypherAutocomplete }),
+  );
 }

@@ -1,13 +1,27 @@
-import { Input, Parser, PartialParse, Tree } from '@lezer/common';
-import { applySyntaxColouring, ParsedCypherToken } from 'language-support';
+import { Facet } from '@codemirror/state';
+import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
+import {
+  applySyntaxColouring,
+  CypherTokenType,
+  ParsedCypherToken,
+} from 'language-support';
 import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
 
 export class ParserAdapter extends Parser {
+  cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
+    topNode: NodeType;
+  };
+
+  constructor(facet: Facet<unknown>) {
+    super();
+    this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
+  }
+
   private createBufferForTokens(tokens: ParsedCypherToken[]) {
     return tokens.map((token) => {
-      const nodeTypeId = cypherTokenTypeToNode[token.tokenType].id;
+      const nodeTypeId = this.cypherTokenTypeToNode[token.tokenType].id;
       const startOffset = token.position.startOffset;
       const endOffset = token.position.startOffset + token.length;
 
@@ -16,7 +30,7 @@ export class ParserAdapter extends Parser {
   }
 
   private addTopNodeToBuffer(buffer: number[][], document: string) {
-    const id = cypherTokenTypeToNode.topNode.id;
+    const id = this.cypherTokenTypeToNode.topNode.id;
     const startOffset = 0;
     const endOffset = document.length;
     const totalBufferLength = buffer.length * DEFAULT_NODE_GROUP_SIZE;
@@ -35,13 +49,13 @@ export class ParserAdapter extends Parser {
     if (tokens.length < 1) {
       return Tree.build({
         buffer: [
-          cypherTokenTypeToNode.topNode.id,
+          this.cypherTokenTypeToNode.topNode.id,
           0,
           document.length,
           DEFAULT_NODE_GROUP_SIZE,
         ],
-        nodeSet: parserAdapterNodeSet,
-        topID: cypherTokenTypeToNode.topNode.id,
+        nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
+        topID: this.cypherTokenTypeToNode.topNode.id,
       });
     }
 
@@ -50,8 +64,8 @@ export class ParserAdapter extends Parser {
 
     return Tree.build({
       buffer: buffer.flat(),
-      nodeSet: parserAdapterNodeSet,
-      topID: cypherTokenTypeToNode.topNode.id,
+      nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
+      topID: this.cypherTokenTypeToNode.topNode.id,
     });
   }
 
