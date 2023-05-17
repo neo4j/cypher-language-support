@@ -1333,6 +1333,205 @@ describe('USE colouring', () => {
   });
 });
 
+describe('FOREACH syntax colouring', () => {
+  test('Correctly colours FOREACH', () => {
+    const query = `
+    FOREACH ( r IN relationships(path) | SET r.marked = true )
+    `;
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 1,
+          startCharacter: 4,
+          startOffset: 5,
+        },
+        length: 7,
+        tokenType: CypherTokenType.keyword,
+        token: 'FOREACH',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 12,
+          startOffset: 13,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 14,
+          startOffset: 15,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'r',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 16,
+          startOffset: 17,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'IN',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 19,
+          startOffset: 20,
+        },
+        length: 13,
+        tokenType: CypherTokenType.function,
+        token: 'relationships',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 32,
+          startOffset: 33,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 33,
+          startOffset: 34,
+        },
+        length: 4,
+        tokenType: CypherTokenType.variable,
+        token: 'path',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 37,
+          startOffset: 38,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 39,
+          startOffset: 40,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '|',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 41,
+          startOffset: 42,
+        },
+        length: 3,
+        tokenType: CypherTokenType.keyword,
+        token: 'SET',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 45,
+          startOffset: 46,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'r',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 46,
+          startOffset: 47,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '.',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 47,
+          startOffset: 48,
+        },
+        length: 6,
+        tokenType: CypherTokenType.property,
+        token: 'marked',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 54,
+          startOffset: 55,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '=',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 56,
+          startOffset: 57,
+        },
+        length: 4,
+        tokenType: CypherTokenType.booleanLiteral,
+        token: 'true',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 61,
+          startOffset: 62,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+    ]);
+  });
+});
+
 describe('UNWIND colouring', () => {
   test('Correctly colours UNWIND', () => {
     const query = `
