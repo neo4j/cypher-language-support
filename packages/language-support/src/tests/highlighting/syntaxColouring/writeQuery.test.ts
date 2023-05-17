@@ -1464,3 +1464,275 @@ describe('REMOVE syntax colouring', () => {
     ]);
   });
 });
+
+describe('MERGE syntax colouring', () => {
+  test('Correctly colours MERGE', () => {
+    const query = `MATCH
+    (a:Person {name: $value1}),
+    (b:Person {name: $value2})
+    MERGE (a)-[r:LOVES]->(b)
+  `;
+
+    testSyntaxColouringContains(query, [
+      {
+        position: {
+          line: 3,
+          startCharacter: 4,
+          startOffset: 73,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'MERGE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 10,
+          startOffset: 79,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 11,
+          startOffset: 80,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'a',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 12,
+          startOffset: 81,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 13,
+          startOffset: 82,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '-',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 14,
+          startOffset: 83,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '[',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.bracket,
+        },
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 15,
+          startOffset: 84,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'r',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 16,
+          startOffset: 85,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ':',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 17,
+          startOffset: 86,
+        },
+        length: 5,
+        tokenType: CypherTokenType.label,
+        token: 'LOVES',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 22,
+          startOffset: 91,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ']',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.bracket,
+        },
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 23,
+          startOffset: 92,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '-',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 24,
+          startOffset: 93,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '>',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 25,
+          startOffset: 94,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 26,
+          startOffset: 95,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'b',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 27,
+          startOffset: 96,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+    ]);
+  });
+});
+
+describe('DELETE syntax colouring', () => {
+  test('Correctly colours DELETE', () => {
+    const query = `MATCH ()-[r]->()
+    DELETE r
+  `;
+
+    testSyntaxColouringContains(query, [
+      {
+        position: {
+          line: 1,
+          startCharacter: 4,
+          startOffset: 21,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'DELETE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 11,
+          startOffset: 28,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'r',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+
+  test('Correctly colours DETACH DELETE', () => {
+    const query = `MATCH (n:Label)
+    WHERE n.id = 123
+    DETACH DELETE n
+  `;
+
+    testSyntaxColouringContains(query, [
+      {
+        position: {
+          line: 2,
+          startCharacter: 4,
+          startOffset: 41,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'DETACH',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 11,
+          startOffset: 48,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'DELETE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 18,
+          startOffset: 55,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'n',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+});
