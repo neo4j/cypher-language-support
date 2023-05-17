@@ -258,71 +258,27 @@ describe('Function syntax colouring', () => {
     ]);
   });
 
-  test('Colours all list predicate as a function', () => {
-    const query = 'RETURN all(x IN coll WHERE x.property IS NOT NULL)';
+  test.each(['all', 'any', 'none', 'single'])(
+    'Colours %s list predicate as a function',
+    (listPredicate) => {
+      const query =
+        'RETURN ' + listPredicate + '(x IN coll WHERE x.property IS NOT NULL)';
 
-    testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 7,
+      testSyntaxColouringContains(query, [
+        {
+          position: {
+            line: 0,
+            startCharacter: 7,
+          },
+          length: listPredicate.length,
+          tokenType: CypherTokenType.predicateFunction,
+          token: listPredicate,
         },
-        length: 3,
-        tokenType: CypherTokenType.predicateFunction,
-        token: 'all',
-      },
-    ]);
-  });
+      ]);
+    },
+  );
 
-  test('Colours any list predicate as a function', () => {
-    const query = 'RETURN any(x IN coll WHERE x.property IS NOT NULL)';
-
-    testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 7,
-        },
-        length: 3,
-        tokenType: CypherTokenType.predicateFunction,
-        token: 'any',
-      },
-    ]);
-  });
-
-  test('Colours none list predicate as a function', () => {
-    const query = 'RETURN none(x IN coll WHERE x.property IS NOT NULL)';
-
-    testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 7,
-        },
-        length: 4,
-        tokenType: CypherTokenType.predicateFunction,
-        token: 'none',
-      },
-    ]);
-  });
-
-  test('Colours single list predicate as a function', () => {
-    const query = 'RETURN single(x IN coll WHERE x.property IS NOT NULL)';
-
-    testSyntaxColouringContains(query, [
-      {
-        position: {
-          line: 0,
-          startCharacter: 7,
-        },
-        length: 6,
-        tokenType: CypherTokenType.predicateFunction,
-        token: 'single',
-      },
-    ]);
-  });
-
-  test('Colours reduce as a function', () => {
+  test('Colours reduce list predicate as a function', () => {
     const query = "RETURN reduce(s = '', x IN list | s + x.prop)";
 
     testSyntaxColouringContains(query, [
