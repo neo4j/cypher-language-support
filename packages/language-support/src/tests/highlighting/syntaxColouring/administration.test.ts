@@ -717,7 +717,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 58,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.numberLiteral,
         token: '1',
       },
       {
@@ -735,7 +735,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 68,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.numberLiteral,
         token: '0',
       },
       {
@@ -874,7 +874,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 47,
         },
         length: 1,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.numberLiteral,
         token: '1',
       },
       {
