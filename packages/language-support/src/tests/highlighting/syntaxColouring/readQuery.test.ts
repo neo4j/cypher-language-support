@@ -614,6 +614,73 @@ describe('MATCH syntax colouring', () => {
       },
     ]);
   });
+
+  test('Correctly colours OPTIONAL', () => {
+    const query = 'OPTIONAL MATCH (n)';
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 8,
+        tokenType: CypherTokenType.keyword,
+        token: 'OPTIONAL',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+          startOffset: 9,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'MATCH',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+          startOffset: 15,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+          startOffset: 16,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'n',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+    ]);
+  });
 });
 
 describe('RETURN syntax colouring', () => {
@@ -1023,6 +1090,57 @@ describe('RETURN syntax colouring', () => {
         length: 4,
         tokenType: CypherTokenType.keyword,
         token: 'DESC',
+      },
+    ]);
+  });
+
+  test('Correctly colours LIMIT', () => {
+    const query = `RETURN n LIMIT 10`;
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'RETURN',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'n',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+          startOffset: 9,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'LIMIT',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 15,
+          startOffset: 15,
+        },
+        length: 2,
+        tokenType: CypherTokenType.numberLiteral,
+        token: '10',
+        bracketInfo: undefined,
       },
     ]);
   });
