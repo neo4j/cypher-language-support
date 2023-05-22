@@ -194,4 +194,94 @@ describe('Comments syntax colouring', () => {
       },
     ]);
   });
+
+  test('Correctly colours comments which include cypher keywords', () => {
+    const query = `MATCH (n) RETURN n // MATCH (n) finds all nodes`;
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'MATCH',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'n',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 8,
+          startOffset: 8,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 10,
+          startOffset: 10,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'RETURN',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'n',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 19,
+          startOffset: 19,
+        },
+        length: 28,
+        tokenType: CypherTokenType.comment,
+        token: '// MATCH (n) finds all nodes',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
 });
