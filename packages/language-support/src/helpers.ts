@@ -1,4 +1,4 @@
-import { ParserRuleContext } from 'antlr4';
+import { CommonTokenStream, ParserRuleContext, Token } from 'antlr4';
 import { StatementsContext } from './generated-parser/CypherParser';
 
 export function findStopNode(root: StatementsContext) {
@@ -36,4 +36,15 @@ export function findParent(
   }
 
   return current;
+}
+
+export function getTokens(tokenStream: CommonTokenStream): Token[] {
+  const numTokens = tokenStream.size;
+  const result: Token[] = [];
+
+  for (let i = 0; i < numTokens; i++) {
+    result.push(tokenStream.get(i));
+  }
+
+  return result;
 }

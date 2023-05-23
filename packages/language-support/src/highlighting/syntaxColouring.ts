@@ -3,6 +3,7 @@ import {
   CommonTokenStream,
   ErrorNode,
   ParserRuleContext,
+  ParseTreeWalker,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -35,6 +36,7 @@ import {
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
 import CypherParserListener from '../generated-parser/CypherParserListener';
+import { getTokens } from '../helpers';
 import { CypherTokenType } from '../lexerSymbols';
 import {
   BracketType,
@@ -93,16 +95,20 @@ class SyntaxHighlighter implements CypherParserListener {
     this.colouredTokens = colouredTokens;
   }
 
-  visitTerminal(node: TerminalNode): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  visitTerminal(_node: TerminalNode): void {
     throw new Error('Method not implemented.');
   }
-  visitErrorNode(node: ErrorNode): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  visitErrorNode(_node: ErrorNode): void {
     throw new Error('Method not implemented.');
   }
-  enterEveryRule(ctx: ParserRuleContext): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  enterEveryRule(_ctx: ParserRuleContext): void {
     throw new Error('Method not implemented.');
   }
-  exitEveryRule(ctx: ParserRuleContext): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  exitEveryRule(_ctx: ParserRuleContext): void {
     throw new Error('Method not implemented.');
   }
 
@@ -227,11 +233,11 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
     [BracketType.parenthesis, -1],
   ]);
 
-  tokenStream.getTokens().forEach((token) => {
+  getTokens(tokenStream).forEach((token) => {
     if (shouldAssignTokenType(token)) {
       const tokenType = getCypherTokenType(token);
       const tokenPosition = getTokenPosition(token);
-      const tokenStr = token.getText() ?? '';
+      const tokenStr = token.text ?? '';
 
       toParsedTokens(
         tokenPosition,
@@ -264,7 +270,7 @@ export function applySyntaxColouring(
 
   const parser = new CypherParser(tokenStream);
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
-  parser.addParseListener(treeSyntaxHighlighter);
+
   /* Get a second pass at the colouring correcting the colours
      using structural information from the parsing tree
   
@@ -272,7 +278,7 @@ export function applySyntaxColouring(
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
-  parser.statements();
+  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parser.statements());
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 

@@ -153,7 +153,7 @@ export function getCypherTokenType(token: Token): CypherTokenType {
 
 export function shouldAssignTokenType(token: Token): boolean {
   const nonEOF = token.type !== Token.EOF;
-  const inMainChannel = token.channel !== Token.HIDDEN_CHANNEL;
+  const inMainChannel = true; // FIXME token.channel !== Token.HIDDEN_CHANNEL;
   const isComment =
     token.type === CypherLexer.SINGLE_LINE_COMMENT ||
     token.type === CypherLexer.MULTI_LINE_COMMENT;
