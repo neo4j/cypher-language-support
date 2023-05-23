@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/language": "^6.6.0",
     "@lezer/common": "^1.0.2",
@@ -17,7 +18,8 @@
     "language-support": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1"
+    "vite-plugin-node-stdlib-browser": "^0.2.1",
+    "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

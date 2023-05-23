@@ -1,11 +1,14 @@
+import { languageDataProp } from '@codemirror/language';
+import type { Facet } from '@codemirror/state';
 import { NodeSet, NodeType } from '@lezer/common';
 import { styleTags, tags } from '@lezer/highlight';
-import { CypherTokenType } from 'language-support';
 
-export const cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
-  topNode: NodeType;
-} = {
-  topNode: NodeType.define({ id: 0, name: 'topNode' }),
+export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
+  topNode: NodeType.define({
+    id: 0,
+    name: 'topNode',
+    props: [languageDataProp.add({ topNode: facet })],
+  }),
   comment: NodeType.define({ id: 1, name: 'comment' }),
   keyword: NodeType.define({ id: 2, name: 'keyword' }),
   label: NodeType.define({ id: 3, name: 'label' }),
@@ -25,28 +28,27 @@ export const cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
   namespace: NodeType.define({ id: 17, name: 'namespace' }),
   bracket: NodeType.define({ id: 18, name: 'bracket' }),
   none: NodeType.define({ id: 19, name: 'none' }),
-};
+});
 
-export const parserAdapterNodeSet = new NodeSet(
-  Object.values(cypherTokenTypeToNode),
-).extend(
-  styleTags({
-    // These aren't very good but it's something
-    comment: tags.comment,
-    keyword: tags.keyword,
-    label: tags.typeName,
-    predicateFunction: tags.function(tags.variableName), //should be like this? tags.function(tags.variableName),
-    function: tags.function(tags.variableName),
-    procedure: tags.function(tags.variableName),
-    variable: tags.variableName,
-    paramDollar: tags.atom,
-    paramValue: tags.atom,
-    symbolicName: tags.variableName,
-    operator: tags.operator,
-    stringLiteral: tags.string,
-    numberLiteral: tags.number,
-    booleanLiteral: tags.bool,
-    keywordLiteral: tags.operatorKeyword,
-    property: tags.propertyName,
-  }),
-);
+export const parserAdapterNodeSet = (nodes: Record<string, NodeType>) =>
+  new NodeSet(Object.values(nodes)).extend(
+    styleTags({
+      // These aren't very good but it's something
+      comment: tags.comment,
+      keyword: tags.keyword,
+      label: tags.typeName,
+      predicateFunction: tags.function(tags.variableName), //should be like this? tags.function(tags.variableName),
+      function: tags.function(tags.variableName),
+      procedure: tags.function(tags.variableName),
+      variable: tags.variableName,
+      paramDollar: tags.atom,
+      paramValue: tags.atom,
+      symbolicName: tags.variableName,
+      operator: tags.operator,
+      stringLiteral: tags.string,
+      numberLiteral: tags.number,
+      booleanLiteral: tags.bool,
+      keywordLiteral: tags.operatorKeyword,
+      property: tags.propertyName,
+    }),
+  );
