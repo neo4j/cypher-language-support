@@ -39,7 +39,7 @@ export function findParent(
 }
 
 export function getTokens(tokenStream: CommonTokenStream): Token[] {
-  const numTokens = tokenStream.size;
+  const numTokens = tokenStream.tokens.length;
   const result: Token[] = [];
 
   for (let i = 0; i < numTokens; i++) {
