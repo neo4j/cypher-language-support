@@ -1,8 +1,6 @@
 import {
   CharStreams,
   CommonTokenStream,
-  ErrorNode,
-  ParserRuleContext,
   ParseTreeWalker,
   TerminalNode,
   Token,
@@ -88,28 +86,12 @@ export function mapCypherToSemanticTokenIndex(
   return undefined;
 }
 
-class SyntaxHighlighter implements CypherParserListener {
+class SyntaxHighlighter extends CypherParserListener {
   colouredTokens: Map<string, ParsedCypherToken> = new Map();
 
   constructor(colouredTokens: Map<string, ParsedCypherToken>) {
+    super();
     this.colouredTokens = colouredTokens;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  visitTerminal(_node: TerminalNode): void {
-    throw new Error('Method not implemented.');
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  visitErrorNode(_node: ErrorNode): void {
-    throw new Error('Method not implemented.');
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  enterEveryRule(_ctx: ParserRuleContext): void {
-    throw new Error('Method not implemented.');
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  exitEveryRule(_ctx: ParserRuleContext): void {
-    throw new Error('Method not implemented.');
   }
 
   private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
@@ -125,17 +107,17 @@ class SyntaxHighlighter implements CypherParserListener {
     }
   }
 
-  exitLabelName(ctx: LabelNameContext) {
+  exitLabelName = (ctx: LabelNameContext) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
-  }
+  };
 
-  exitFunctionName(ctx: FunctionNameContext) {
+  exitFunctionName = (ctx: FunctionNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.function);
-  }
+  };
 
-  exitProcedureName(ctx: ProcedureNameContext) {
+  exitProcedureName = (ctx: ProcedureNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.procedure);
-  }
+  };
 
   private colourMethodName(
     ctx: FunctionNameContext | ProcedureNameContext,
@@ -151,45 +133,45 @@ class SyntaxHighlighter implements CypherParserListener {
     this.addToken(nameOfMethod.start, tokenType, nameOfMethod.getText());
   }
 
-  private colourPredicateFunction(ctx: TerminalNode) {
+  private colourPredicateFunction = (ctx: TerminalNode) => {
     this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.getText());
-  }
+  };
 
-  exitVariable(ctx: VariableContext) {
+  exitVariable = (ctx: VariableContext) => {
     this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
-  }
+  };
 
-  exitProcedureResultItem(ctx: ProcedureResultItemContext) {
+  exitProcedureResultItem = (ctx: ProcedureResultItemContext) => {
     this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
-  }
+  };
 
-  exitPropertyKeyName(ctx: PropertyKeyNameContext) {
+  exitPropertyKeyName = (ctx: PropertyKeyNameContext) => {
     // FIXME Is this correct in this case for all cases, not just simple properties?
     this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
-  }
+  };
 
-  exitStringToken(ctx: StringTokenContext) {
+  exitStringToken = (ctx: StringTokenContext) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
-  }
+  };
 
-  exitStringsLiteral(ctx: StringsLiteralContext) {
+  exitStringsLiteral = (ctx: StringsLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
-  }
+  };
 
-  exitBooleanLiteral(ctx: BooleanLiteralContext) {
+  exitBooleanLiteral = (ctx: BooleanLiteralContext) => {
     // Normally booleans are coloured as numbers in other languages
     this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.getText());
-  }
+  };
 
-  exitNumberLiteral(ctx: NumberLiteralContext) {
+  exitNumberLiteral = (ctx: NumberLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.getText());
-  }
+  };
 
-  exitKeywordLiteral(ctx: KeywordLiteralContext) {
+  exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.getText());
-  }
+  };
 
-  exitParameter(ctx: ParameterContext) {
+  exitParameter = (ctx: ParameterContext) => {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
     this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
@@ -198,31 +180,31 @@ class SyntaxHighlighter implements CypherParserListener {
       CypherTokenType.paramValue,
       parameterName.getText(),
     );
-  }
+  };
 
-  exitAllExpression(ctx: AllExpressionContext) {
+  exitAllExpression = (ctx: AllExpressionContext) => {
     this.colourPredicateFunction(ctx.ALL());
-  }
+  };
 
-  exitAnyExpression(ctx: AnyExpressionContext) {
+  exitAnyExpression = (ctx: AnyExpressionContext) => {
     this.colourPredicateFunction(ctx.ANY());
-  }
+  };
 
-  exitNoneExpression(ctx: NoneExpressionContext) {
+  exitNoneExpression = (ctx: NoneExpressionContext) => {
     this.colourPredicateFunction(ctx.NONE());
-  }
+  };
 
-  exitSingleExpression(ctx: SingleExpressionContext) {
+  exitSingleExpression = (ctx: SingleExpressionContext) => {
     this.colourPredicateFunction(ctx.SINGLE());
-  }
+  };
 
-  exitReduceExpression(ctx: ReduceExpressionContext) {
+  exitReduceExpression = (ctx: ReduceExpressionContext) => {
     this.colourPredicateFunction(ctx.REDUCE());
-  }
+  };
 
-  exitSymbolicNameString(ctx: SymbolicNameStringContext) {
+  exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
     this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
-  }
+  };
 }
 
 function colourLexerTokens(tokenStream: CommonTokenStream) {
