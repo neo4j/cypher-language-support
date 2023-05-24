@@ -7,19 +7,15 @@
   "main": "./out/index.js",
   "types": "./out/index.d.ts",
   "dependencies": {
-    "antlr4-c3": "^2.2.1",
-    "antlr4ts": "^0.5.0-alpha.4",
+    "antlr4": "^4.13.0",
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {
-    "gen-parser": "antlr4ts -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
+    "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
     "postinstall": "npm run gen-parser",
     "build": "npm run gen-parser && tsc -b",
     "clean": "rm -rf out",
     "watch": "tsc -b -w",
     "test": "jest"
-  },
-  "devDependencies": {
-    "antlr4ts-cli": "^0.5.0-alpha.4"
   }
 }

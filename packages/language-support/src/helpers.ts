@@ -1,4 +1,4 @@
-import { ParserRuleContext } from 'antlr4ts';
+import { CommonTokenStream, ParserRuleContext, Token } from 'antlr4';
 import { StatementsContext } from './generated-parser/CypherParser';
 
 export function findStopNode(root: StatementsContext) {
@@ -12,8 +12,8 @@ export function findStopNode(root: StatementsContext) {
     while (
       index > 0 &&
       (child === root.EOF() ||
-        child.text === '' ||
-        child.text.startsWith('<missing'))
+        child.getText() === '' ||
+        child.getText().startsWith('<missing'))
     ) {
       index--;
       child = children[index];
@@ -32,8 +32,14 @@ export function findParent(
   let current: ParserRuleContext | undefined = leaf;
 
   while (current && !condition(current)) {
-    current = current.parent;
+    current = current.parentCtx;
   }
 
   return current;
+}
+
+export function getTokens(tokenStream: CommonTokenStream): Token[] {
+  // FIXME The type of .tokens is string[], it seems wrong in the antlr4 library
+  // Fix this after we've raised an issue and a PR and has been corrected in antlr4
+  return tokenStream.tokens as unknown as Token[];
 }
