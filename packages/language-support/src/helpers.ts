@@ -39,12 +39,7 @@ export function findParent(
 }
 
 export function getTokens(tokenStream: CommonTokenStream): Token[] {
-  const numTokens = tokenStream.tokens.length;
-  const result: Token[] = [];
-
-  for (let i = 0; i < numTokens; i++) {
-    result.push(tokenStream.get(i));
-  }
-
-  return result;
+  // FIXME The type of .tokens is string[], it seems wrong in the antlr4 library
+  // Fix this after we've raised an issue and a PR and has been corrected in antlr4
+  return tokenStream.tokens as unknown as Token[];
 }
