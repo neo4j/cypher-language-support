@@ -1,4 +1,5 @@
 out/
 packages/language-support/src/generated-parser/*
+packages/c3/tests/generated/*
 jest.config.js
 index.html
