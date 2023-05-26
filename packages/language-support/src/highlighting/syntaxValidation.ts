@@ -53,6 +53,7 @@ export function validateSyntax(wholeFileText: string): Diagnostic[] {
   const tokenStream = new CommonTokenStream(lexer);
 
   const parser = new CypherParser(tokenStream);
+  parser.removeErrorListeners();
   const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
   parser.statements();

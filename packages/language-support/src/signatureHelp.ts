@@ -95,6 +95,7 @@ export function signatureHelp(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
+  wholeFileParser.removeErrorListeners();
   const root = wholeFileParser.statements();
 
   const stopNode = findStopNode(root);
