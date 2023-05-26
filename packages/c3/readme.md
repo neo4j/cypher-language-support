@@ -1,11 +1,10 @@
-[![Build & Test](https://github.com/mike-lischke/antlr4-c3/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/mike-lischke/antlr4-c3/actions/workflows/nodejs.yml)[![Downloads](https://img.shields.io/npm/dw/antlr4-c3?color=blue)](https://www.npmjs.com/package/antlr4-c3)
+This is a copy of the code from [antlr4-c3](https://github.com/mike-lischke/antlr4-c3/tree/4cf2e3d3d2305a6ff230987073e4ef6673b742e3) to be able to use the official [Typescript ANTLR runtime](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) until the new [pure Typescript one](https://github.com/mike-lischke/antlr4-c3/issues/75) is ready.
 
+Thanks to [Mike Lischke](https://github.com/mike-lischke) for his excellent library and to [Janusz Sobolewski](https://github.com/sobolewsk) for [his port](https://github.com/sobolewsk/antlr4-c3ts/tree/73affeda1d516b81c7a175a9cb26efb1cb07a694) to the official runtime.
 
 # antlr4-c3 The ANTLR4 Code Completion Core
 
 This project contains a grammar agnostic code completion engine for ANTLR4 based parsers. The c3 engine is able to provide code completion candidates useful for editors with ANTLR generated parsers, independent of the actual language/grammar used for the generation.
-
-The original implementation is provided as a node module (works in both, Node.js and browsers), and is written in TypeScript. A port to Java is available under `ports/java`. Implementations under the `ports` folder might not be up to date compared to the Typescript version.
 
 # Abstract
 
@@ -21,13 +20,13 @@ While the symbol table provides symbols of a given type, we need to find out whi
 
 In order to also get other types like variables or class names you have to do 2 steps:
 
-* Identify entities in your grammar which you are interested in and put them into own rules. More about this below.
-* Tell the engine in which parser rules you are particularly interested. It will then return those to you instead of the lexer tokens they are made of.
+- Identify entities in your grammar which you are interested in and put them into own rules. More about this below.
+- Tell the engine in which parser rules you are particularly interested. It will then return those to you instead of the lexer tokens they are made of.
 
 Let's consider a grammar which can parse simple expressions like:
 
 ```typescript
-var a = b + c()
+var a = b + c();
 ```
 
 Such a grammar could look like:
@@ -86,7 +85,7 @@ With this knowledge we can now look at a simple code example that shows how to u
 > Since this library is made for ANTLR4 based parser, it requires the same [typescript runtime](https://github.com/tunnelvisionlabs/antlr4ts) as your parser (namely antlr4s). You have to make sure you can actually parse input before continuing with antlr4-c3.
 
 ```typescript
-let inputStream = new ANTLRInputStream("var c = a + b()");
+let inputStream = new ANTLRInputStream('var c = a + b()');
 let lexer = new ExprLexer(inputStream);
 let tokenStream = new CommonTokenStream(lexer);
 
@@ -101,9 +100,9 @@ let candidates = core.collectCandidates(0);
 
 This is a pretty standard parser setup here. It's not even necessary to actually parse the input. But the c3 engine needs a few things for its work:
 
-* the ATN of your parser class
-* the tokens from your input stream
-* vocabulary and rule names for debug output
+- the ATN of your parser class
+- the tokens from your input stream
+- vocabulary and rule names for debug output
 
 All these could be passed in individually, but since your parser contains all of that anyway and we need a parser for predicate execution, the API has been designed to take a parser instead (predicates work however only if written for the Javascript/Typescript target). In real world applications you will have a parser anyway (e.g. for error checking), which is perfect as ATN and input provider for the code completion core. But keep in mind: whatever parser you pass in it must have a fully set up token stream. It's not required that it parsed anything before calling the code completion engine and the current stream positions don't matter either.
 
@@ -111,9 +110,9 @@ The returned candidate collection contains fields for lexer tokens (mostly keywo
 
 ```typescript
 class CandidatesCollection {
-    public tokens: Map<number, TokenList>;
-    public rules: Map<number, CandidateRule>;
-};
+  public tokens: Map<number, TokenList>;
+  public rules: Map<number, CandidateRule>;
+}
 ```
 
 where the map keys are the lexer tokens and the rule indices, respectively. Both can come with additional values, which you may or may not use for your implementation.
@@ -177,10 +176,13 @@ As mentioned above in the base setup the engine will only return lexer tokens. T
 ```typescript
 core.ignoredTokens = new Set([
   ExprLexer.ID,
-  ExprLexer.PLUS, ExprLexer.MINUS,
-  ExprLexer.MULTIPLY, ExprLexer.DIVIDE,
+  ExprLexer.PLUS,
+  ExprLexer.MINUS,
+  ExprLexer.MULTIPLY,
+  ExprLexer.DIVIDE,
   ExprLexer.EQUAL,
-  ExprLexer.OPEN_PAR, ExprLexer.CLOSE_PAR,
+  ExprLexer.OPEN_PAR,
+  ExprLexer.CLOSE_PAR,
 ]);
 ```
 
@@ -210,86 +212,9 @@ Things get really tricky however, when your grammar never stores whitespaces (i.
 
 Sometimes you are not getting what you actually expect and you need take a closer look at what the c3 engine is doing. For this situation a few fields have been added which control some debug output dumped to the console:
 
-* `showResult`: Set this field to true to print a summary of what has been processed and collected. It will print the number of visited ATN states as well as all collected tokens and rules (along with their additional info).
-* `showDebugOutput`: This setting enables output of states and symbols (labels) seen for transitions as they are processed by the engine. There will also be lines showing when input is consumed and candidates are added to the result.
-* `debugOutputWithTransitions`: This setting only has an effect if `showDebugOutput` is enabled. It adds all transitions to the output which the engine encountered (not all of them are actually followed, however).
-* `showRuleStack`: Also this setting only has an effect if `showDebugOutput` is enabled. It will make the engine print the current rule stack whenever it enters a new rule during the walk.
+- `showResult`: Set this field to true to print a summary of what has been processed and collected. It will print the number of visited ATN states as well as all collected tokens and rules (along with their additional info).
+- `showDebugOutput`: This setting enables output of states and symbols (labels) seen for transitions as they are processed by the engine. There will also be lines showing when input is consumed and candidates are added to the result.
+- `debugOutputWithTransitions`: This setting only has an effect if `showDebugOutput` is enabled. It adds all transitions to the output which the engine encountered (not all of them are actually followed, however).
+- `showRuleStack`: Also this setting only has an effect if `showDebugOutput` is enabled. It will make the engine print the current rule stack whenever it enters a new rule during the walk.
 
 The last two options potentially create a lot of output which can significantly slow down the collection process.
-
-## Release Notes
-
-### 3.0.0
-
-BREAKING CHANGES: With this major version release the API has been changed to make it more consistent and easier to use. The most important changes are:
-
-- All the classes in the SymbolTable.ts file have been split into separate files.
-- The main Symbol class has been renamed to `BaseSymbol` to avoid confusion and trouble with the Javascript `Symbol` class.
-- The package works now with Typescript 5.0 and above.
-- The tests have been organized into a separate sub project, which is no longer built with the main project. Instead tests files are transpiled on-the-fly (using `ts-jest`) when running the tests. These transpiled files are never written to disk.
-- Symbol creation functions (like `SymbolTable.addNewSymbolOfType`) now allow Typescript to check the given parameters for the class type. You will now have to provide the correct parameter list for the symbol type you want to create. This is a breaking change, because the old version allowed you to pass any parameter list to any symbol creation function.
-
-### 2.2.3
-
-Upgraded dependencies, which includes a new major version of Typescript (5.0). With this version the `main` field in `package.json` apparently became necessary, because of the package organization, and has been set in this release.
-
-### 2.2.2
-- Some improvements in the symbol table implementation.
-- Updated dependencies.
-- PR #76 (fixes bug #23) Account for empty and fully-optional-body rules when collecting tokens, thanks to Aaron Braunstein.
-
-### 2.2.1
-Reverted changes from `any` to `unknown` for `SymbolTable.addNewSymbolOfType`. It works in the tests, but is not accepted by consumers of the node module.
-
-### 2.2.0
-- Added `InterfaceSymbol` to SymbolTable and enhanced `ClassSymbol` for interface implementations.
-- Added a modifier and a visibility field to Symbol, so that's available for all symbols now. Removed the obsolete visibility field from method and field symbols.
-
-### 2.1.0
-- It turned out that synchronous symbol retrieval methods have their value, so I brought them back by adding `...Sync()` variants of all methods with an async behavior.
-- Brought back and extended project tests on Github.
-- Upgraded module dependencies.
-- Cleaned up the code again, now with latest eslint settings.
-
-### 2.0.2
-- `getAllSymbols<T>` now returns symbols of type T (instead of `Symbol`), like all other enumeration methods.
-
-### 2.0.1
-- Breaking change: some of the methods in the symbol table implementation, which may require extra work return now promises (symbol collections and resolver methods). This allows also to override them and return asynchronous results which are constructed from external resources (like database symbols).
-
-### 1.1.16
-- Fixed an issue where wrong tokens were collected for code completion.
-
-### 1.1.15
-- Fixed a problem with seen states in the follow set determination.
-
-### 1.1.13
-- Added a C# port of the library (thanks to Jonathan Philipps)
-- Optionally allow to walk the rule stack on matching a preferred rule either top-down or bottom-up (which changes how preference is given to multiple preferred rules in a single stack).
-- Rule candidates now include the start token index of where they matched.
-
-### 1.1.12
-- Updated modules with known vulnerabilities.
-- Better handling of recursive rules in code completion (via precedence).
-- Updated to latest antlr4ts.
-
-### 1.1.8
-- Renamed a number of methods for improved consistency (`next` -> `nextSibling` etc.) and updated some tests.
-- Also simple symbols can be used to resolve other symbols (by delegating this call to their parents, if there's one).
-- Added a method to find a symbol by it's associated context + added a test for that.
-
-### 1.1.6
-- Added Java port from Nick Stephen.
-- Added contributors.txt file.
-- A symbol can now store a `ParseTree` reference (which allows for terminal symbols in addition to parser rules).
-- Added navigation functions to `Symbol` and `ScopedSymbol` (first/last child, next/previous sibling) and added tests for that.
-- Fixed formatting and spelling in tests + `SymbolTable`.
-- Updated readme.
-
-### 1.1.1
-- Travis-CI integration
-- Implemented completion optimizations
-
-### 1.0.4
-- First public release
-- Added initial tests, `SymbolTable` and `CodeCompletionCore` classes
