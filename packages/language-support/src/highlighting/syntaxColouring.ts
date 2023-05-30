@@ -251,6 +251,7 @@ export function applySyntaxColouring(
     colourLexerTokens(tokenStream);
 
   const parser = new CypherParser(tokenStream);
+  parser.removeErrorListeners();
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
 
   /* Get a second pass at the colouring correcting the colours

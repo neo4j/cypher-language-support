@@ -37,6 +37,7 @@ export function autocomplete(
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
+  wholeFileParser.removeErrorListeners();
   const tree = wholeFileParser.statements();
   const tokens = getTokens(tokenStream);
   const lastToken = tokens[tokens.length - 2];
