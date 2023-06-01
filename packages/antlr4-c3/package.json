@@ -15,8 +15,8 @@
     "grammar",
     "parser"
   ],
-  "type": "module",
-  "main": "./lib/index.js",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
   "scripts": {
     "build": "npm run generate && tsc",
     "prepublishOnly": "npm run generate && npm run test",
@@ -27,7 +27,7 @@
     "eslint": "eslint ."
   },
   "dependencies": {
-    "antlr4": "4.12"
+    "antlr4": "4.13"
   },
   "devDependencies": {
     "@types/jest": "29.5.0",

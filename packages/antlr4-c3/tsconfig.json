@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "ES2022",
     "target": "ES2022",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "lib",
+    "outDir": "out",
     "rootDir": ".",
     "removeComments": false,
     "noImplicitAny": true,
@@ -18,5 +18,5 @@
   },
   "compileOnSave": true,
   "include": ["src/**/*.ts", "index.ts", "tests/**/*"],
-  "exclude": ["node_modules", "lib/**/*"]
+  "exclude": ["node_modules", "out/**/*"]
 }
