@@ -44,7 +44,7 @@ export function testCompletionDoesNotContain(
 }
 
 describe('MATCH auto-completion', () => {
-  test.skip('Correctly completes MATCH', () => {
+  test('Correctly completes MATCH', () => {
     const query = 'M';
     const position = Position.create(0, query.length);
 
@@ -53,7 +53,7 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes OPTIONAL MATCH', () => {
+  test('Correctly completes OPTIONAL MATCH', () => {
     const query = 'OP';
     const position = Position.create(0, query.length);
 
@@ -62,7 +62,7 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes MATCH in OPTIONAL MATCH', () => {
+  test('Correctly completes MATCH in OPTIONAL MATCH', () => {
     const query = 'OPTIONAL M';
     const position = Position.create(0, query.length);
 
@@ -83,7 +83,7 @@ describe('MATCH auto-completion', () => {
     );
   });
 
-  test.skip('Correctly completes WHERE', () => {
+  test('Correctly completes WHERE', () => {
     const query = 'MATCH (n:Person) W';
     const position = Position.create(0, query.length);
 
@@ -92,7 +92,7 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes RETURN', () => {
+  test('Correctly completes RETURN', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" R';
     const position = Position.create(0, query.length);
 
@@ -101,7 +101,7 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes simple RETURN', () => {
+  test('Correctly completes simple RETURN', () => {
     const query = 'MATCH (n) R';
     const position = Position.create(0, query.length);
 
@@ -133,7 +133,7 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes AS', () => {
+  test('Correctly completes AS', () => {
     const query = 'MATCH (n) RETURN n A';
     const position = Position.create(0, query.length);
 
@@ -144,7 +144,7 @@ describe('MATCH auto-completion', () => {
 });
 
 describe('CREATE auto-completion', () => {
-  test.skip('Correctly completes CREATE', () => {
+  test('Correctly completes CREATE', () => {
     const query = 'CR';
     const position = Position.create(0, query.length);
 
@@ -165,7 +165,7 @@ describe('CREATE auto-completion', () => {
     );
   });
 
-  test.skip('Correctly completes RETURN', () => {
+  test('Correctly completes RETURN', () => {
     const query = 'CREATE (n:Person) RET';
     const position = Position.create(0, query.length);
 
@@ -190,7 +190,7 @@ describe('Type relationship auto-completion', () => {
 });
 
 describe('Procedures auto-completion', () => {
-  test.skip('Correctly completes CALL in standalone', () => {
+  test('Correctly completes CALL in standalone', () => {
     const query = 'C';
     const position = Position.create(0, query.length);
 
@@ -199,7 +199,7 @@ describe('Procedures auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes CALL in subquery', () => {
+  test('Correctly completes CALL in subquery', () => {
     const query = 'MATCH (n) C';
     const position = Position.create(0, query.length);
 
@@ -233,7 +233,7 @@ describe('Procedures auto-completion', () => {
     );
   });
 
-  test.skip('Correctly completes YIELD', () => {
+  test('Correctly completes YIELD', () => {
     const query = 'CALL proc() Y';
     const position = Position.create(0, query.length);
 
@@ -313,7 +313,7 @@ describe('Functions auto-completion', () => {
 });
 
 describe('Misc auto-completion', () => {
-  test.skip('Correctly completes RETURN', () => {
+  test('Correctly completes RETURN', () => {
     const query = 'RET';
     const position = Position.create(0, query.length);
 
@@ -322,7 +322,7 @@ describe('Misc auto-completion', () => {
     ]);
   });
 
-  test.skip('Correctly completes MATCH in multiline statement', () => {
+  test('Correctly completes MATCH in multiline statement', () => {
     const query = `CALL dbms.info() YIELD *;
 M`;
     const position = Position.create(1, 1);
