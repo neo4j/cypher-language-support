@@ -1,6 +1,7 @@
 out
 node_modules
 generated-parser
+generated
 .vscode-test
 *.DS_Store
 *.interp
