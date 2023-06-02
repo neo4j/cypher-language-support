@@ -1,12 +1,11 @@
 {
-  "name": "codemirror-playground",
+  "name": "react-codemirror-experimental",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
   "scripts": {
-    "dev": "vite --open",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "build": "tsc"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",
@@ -15,20 +14,13 @@
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
     "@uiw/react-codemirror": "^4.19.9",
-    "react-codemirror-experimental": "*",
+    "language-support": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1",
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.23",
-    "tailwindcss": "^3.3.1",
-    "typescript": "^4.9.3",
-    "vite": "^4.2.0"
+    "typescript": "^4.9.3"
   }
 }

@@ -7,7 +7,7 @@ type EditorProps = {
   setValue(value: string): void;
 };
 
-export function Editor({ value, setValue }: EditorProps) {
+export function CypherEditor({ value, setValue }: EditorProps) {
   const handleOnChange = useCallback((value: string) => setValue(value), []);
 
   return (

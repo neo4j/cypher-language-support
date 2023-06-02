@@ -10,6 +10,8 @@ export default defineConfig({
       // vite wants to build the language-support package itself
       'language-support': 'language-support/src/index.ts',
       'antlr4-c3': 'antlr4-c3/index.ts',
+      'react-codemirror-experimental':
+        'react-codemirror-experimental/src/index.ts',
     },
   },
 });

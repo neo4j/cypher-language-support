@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Editor } from './Editor';
+import { CypherEditor } from 'react-codemirror-experimental';
 import { TokenTable } from './TokenTable';
 
 export function App() {
@@ -14,7 +14,7 @@ LIMIT 12;`,
     <div className="flex justify-center mt-5">
       <div className="auto min-w-[500px] w-3/6 max-w-3xl flex flex-col gap-5 bg-white p-10 rounded-lg shadow-lg">
         <h1 className="text-4xl">Cypher Codemirror Demo</h1>
-        <Editor value={value} setValue={setValue} />
+        <CypherEditor value={value} setValue={setValue} />
         <TokenTable document={value} />
       </div>
     </div>
