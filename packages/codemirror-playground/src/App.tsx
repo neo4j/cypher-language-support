@@ -1,5 +1,5 @@
+import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
 import { useState } from 'react';
-import { CypherEditor } from 'react-codemirror-experimental';
 import { TokenTable } from './TokenTable';
 
 export function App() {

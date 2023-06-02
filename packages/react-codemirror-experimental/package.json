@@ -1,5 +1,5 @@
 {
-  "name": "react-codemirror-experimental",
+  "name": "@neo4j-cypher/react-codemirror-experimental",
   "private": true,
   "version": "0.0.0",
   "main": "./out/index.js",
