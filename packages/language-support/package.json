@@ -8,7 +8,8 @@
   "types": "./out/index.d.ts",
   "dependencies": {
     "antlr4": "^4.13.0",
-    "vscode-languageserver-types": "^3.17.3"
+    "vscode-languageserver-types": "^3.17.3",
+    "antlr4-c3": "*"
   },
   "scripts": {
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",

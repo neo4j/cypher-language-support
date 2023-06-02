@@ -16,6 +16,7 @@ import CypherParser, {
   RelationshipPatternContext,
 } from './generated-parser/CypherParser';
 
+import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
 import { findParent, findStopNode, getTokens } from './helpers';
 
@@ -98,8 +99,55 @@ export function autocomplete(
           };
         });
       } else {
-        // TODO Auto completion for keywords
-        return [];
+        // If we are not completing a label of a procedure name,
+        // we need to use the antlr completion
+        const codeCompletion = new CodeCompletionCore(wholeFileParser);
+
+        // TODO Nacho Why did it have to be -2 here?
+        // Is it because of the end of file?
+        const caretIndex = tokenStream.tokens.length - 2;
+
+        if (caretIndex >= 0) {
+          // TODO Nacho Can this be extracted for more performance?
+          const allPosibleTokens: Map<number | undefined, string> = new Map();
+
+          wholeFileParser.symbolicNames.forEach(function (value, key) {
+            allPosibleTokens.set(key, value);
+          });
+          // We need this to ignore the list of tokens from:
+          // * unescapedSymbolicNameString, because a lot of keywords are allowed there
+          // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
+          //
+          // That way we do not populate tokens that are coming from those rules and those
+          // are collected as rule names instead
+          codeCompletion.preferredRules = new Set<number>()
+            .add(CypherParser.RULE_unescapedSymbolicNameString)
+            .add(CypherParser.RULE_escapedSymbolicNameString);
+
+          // TODO Nacho Exclude minus, plus, comma, arrow_left_head, lparen etc
+          const candidates = codeCompletion.collectCandidates(caretIndex);
+          const tokens = candidates.tokens.entries();
+          const tokenCandidates = Array.from(tokens).map((value) => {
+            const [tokenNumber, followUpList] = value;
+            return [tokenNumber]
+              .concat(followUpList)
+              .map((value) => allPosibleTokens.get(value))
+              .join(' ');
+          });
+
+          const tokenCompletions: CompletionItem[] = tokenCandidates.map(
+            (t) => {
+              return {
+                label: t,
+                kind: CompletionItemKind.Keyword,
+              };
+            },
+          );
+
+          return tokenCompletions;
+        } else {
+          return [];
+        }
       }
     }
   }
