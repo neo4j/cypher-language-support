@@ -1,7 +1,13 @@
 {
   "name": "@neo4j-cypher/react-codemirror-experimental",
   "private": true,
-  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "files": [
+    "out",
+    "package.json",
+    "README.md"
+  ],
+  "version": "0.0.1",
   "main": "./out/index.js",
   "types": "./out/index.d.ts",
   "scripts": {

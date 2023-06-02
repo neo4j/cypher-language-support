@@ -1,3 +1,3 @@
-# Codemirror Playground
+# React Codemirror Experimental
 
-Run `npm install` && `npm run dev-codemirror` in the root folder of the project or use launch the demo from the "Run & Debug" tab.
+This package can be built with `npm run build` and then published to npm with `npm publish`.
