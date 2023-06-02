@@ -1,21 +1,11 @@
 import CodeEditor, { basicSetup } from '@uiw/react-codemirror';
-import { useCallback } from 'react';
+import React from 'react';
 import { cypher } from './lang-cypher/lang-cypher';
 
-type EditorProps = {
-  value: string;
-  setValue(value: string): void;
-};
-
-export function CypherEditor({ value, setValue }: EditorProps) {
-  const handleOnChange = useCallback((value: string) => setValue(value), []);
-
-  return (
-    <CodeEditor
-      value={value}
-      extensions={[basicSetup(), cypher()]}
-      onChange={handleOnChange}
-      indentWithTab={true}
-    />
-  );
-}
+export const CypherEditor: typeof CodeEditor = React.forwardRef((props) => (
+  <CodeEditor
+    extensions={[basicSetup(), cypher()]}
+    indentWithTab={true}
+    {...props}
+  />
+));
