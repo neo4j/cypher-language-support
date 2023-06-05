@@ -38,4 +38,3 @@ export default {
   ],
   plugins: [typescript(), alias({ entries: aliases })],
 };
-// language - support;
