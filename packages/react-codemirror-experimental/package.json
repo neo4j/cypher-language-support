@@ -8,10 +8,17 @@
     "README.md"
   ],
   "version": "0.0.1",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
+  "type": "module",
+  "main": "out/index.cjs",
+  "module": "out/index.js",
+  "exports": {
+    "import": "./out/index.js",
+    "require": "./out/index.cjs"
+  },
+  "types": "out/index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "build": "tsc"
+    "build": "rollup -c --failAfterWarnings"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",
@@ -19,13 +26,18 @@
     "@codemirror/language": "^6.6.0",
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
+    "@rollup/plugin-alias": "^3.1.9",
     "@uiw/react-codemirror": "^4.19.9",
+    "antlr4": "4.13",
     "react": "^18.2.0",
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
+    "rollup": "^2.60.2",
+    "rollup-plugin-dts": "^4.0.1",
+    "rollup-plugin-ts": "^3.0.2",
     "typescript": "^4.9.3"
   }
 }

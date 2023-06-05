@@ -5,10 +5,6 @@
     "jsx": "react-jsx",
     "outDir": "out",
     "declaration": true,
-    "esModuleInterop": true,
-    "paths": {
-      "language-support": ["../language-support/src/index.ts"],
-      "antlr4-c3": ["../antlr4-c3/index.ts"]
-    }
+    "esModuleInterop": true
   }
 }
