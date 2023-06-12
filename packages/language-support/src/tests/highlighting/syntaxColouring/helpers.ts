@@ -7,6 +7,7 @@ export function testSyntaxColouring(
 ) {
   const actualTokens = applySyntaxColouring(fileText);
 
+  console.log(actualTokens);
   expect(actualTokens.length).toBe(expected.length);
 
   expected.forEach((expectedToken, i) => {

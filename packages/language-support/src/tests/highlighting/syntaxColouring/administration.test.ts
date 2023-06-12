@@ -123,7 +123,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
         },
         length: 6,
-        tokenType: CypherTokenType.symbolicName,
+        tokenType: CypherTokenType.label,
         token: 'Person',
       },
       {
@@ -204,8 +204,8 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours CREATE INDEX', () => {
-    const query = 'CREATE INDEX index_name FOR (p:Person) ON (p.name)';
+  test('Correctly colours DROP INDEX', () => {
+    const query = 'DROP INDEX index_name';
 
     testSyntaxColouring(query, [
       {
@@ -213,14 +213,14 @@ describe('Administration commands syntax colouring', () => {
           line: 0,
           startCharacter: 0,
         },
-        length: 6,
+        length: 4,
         tokenType: CypherTokenType.keyword,
-        token: 'CREATE',
+        token: 'DROP',
       },
       {
         position: {
           line: 0,
-          startCharacter: 7,
+          startCharacter: 5,
         },
         length: 5,
         tokenType: CypherTokenType.keyword,
@@ -229,135 +229,11 @@ describe('Administration commands syntax colouring', () => {
       {
         position: {
           line: 0,
-          startCharacter: 13,
+          startCharacter: 11,
         },
         length: 10,
         tokenType: CypherTokenType.symbolicName,
         token: 'index_name',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 24,
-        },
-        length: 3,
-        tokenType: CypherTokenType.keyword,
-        token: 'FOR',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 28,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 29,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 30,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 31,
-        },
-        length: 6,
-        tokenType: CypherTokenType.symbolicName,
-        token: 'Person',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 37,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 39,
-        },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'ON',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 42,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 43,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 44,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: '.',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 45,
-        },
-        length: 4,
-        tokenType: CypherTokenType.property,
-        token: 'name',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 49,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
       },
     ]);
   });
@@ -1790,7 +1666,7 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours DEALLOCATE DATABASES', () => {
+  test('Correctly colours REALLOCATE DATABASES', () => {
     const query = 'REALLOCATE DATABASES';
 
     testSyntaxColouring(query, [
@@ -2350,7 +2226,7 @@ describe('Administration commands syntax colouring', () => {
   });
 
   test('Correctly colours DROP ROLE', () => {
-    const query = 'CREATE ROLE role_name AS COPY OF other_role_name';
+    const query = 'DROP ROLE role_name';
 
     testSyntaxColouring(query, [
       {
@@ -2358,14 +2234,14 @@ describe('Administration commands syntax colouring', () => {
           line: 0,
           startCharacter: 0,
         },
-        length: 6,
+        length: 4,
         tokenType: CypherTokenType.keyword,
-        token: 'CREATE',
+        token: 'DROP',
       },
       {
         position: {
           line: 0,
-          startCharacter: 7,
+          startCharacter: 5,
         },
         length: 4,
         tokenType: CypherTokenType.keyword,
@@ -2374,47 +2250,11 @@ describe('Administration commands syntax colouring', () => {
       {
         position: {
           line: 0,
-          startCharacter: 12,
+          startCharacter: 10,
         },
         length: 9,
         tokenType: CypherTokenType.symbolicName,
         token: 'role_name',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 22,
-        },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'AS',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 25,
-        },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
-        token: 'COPY',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 30,
-        },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'OF',
-      },
-      {
-        position: {
-          line: 0,
-          startCharacter: 33,
-        },
-        length: 15,
-        tokenType: CypherTokenType.symbolicName,
-        token: 'other_role_name',
       },
     ]);
   });

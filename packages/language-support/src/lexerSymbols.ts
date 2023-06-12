@@ -260,7 +260,6 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   // Non keywords
   [CypherLexer.UNSIGNED_DECIMAL_INTEGER]: CypherTokenType.numberLiteral,
   [CypherLexer.UNSIGNED_HEX_INTEGER]: CypherTokenType.numberLiteral,
-  [CypherLexer.UNSIGNED_HEX_INTEGER]: CypherTokenType.numberLiteral,
   [CypherLexer.UNSIGNED_OCTAL_INTEGER]: CypherTokenType.numberLiteral,
   [CypherLexer.DECIMAL_DOUBLE]: CypherTokenType.numberLiteral,
   [CypherLexer.SINGLE_LINE_COMMENT]: CypherTokenType.comment,
