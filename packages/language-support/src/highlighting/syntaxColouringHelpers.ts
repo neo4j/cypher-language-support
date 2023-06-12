@@ -1,8 +1,8 @@
 import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
-import { Token } from 'antlr4ts';
+import { Token } from 'antlr4';
 
-import { CypherLexer } from '../generated-parser/CypherLexer';
+import CypherLexer from '../generated-parser/CypherLexer';
 
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 
@@ -45,8 +45,8 @@ export interface ColouredToken {
 export function getTokenPosition(token: Token): TokenPosition {
   return {
     line: token.line - 1,
-    startCharacter: token.charPositionInLine,
-    startOffset: token.startIndex,
+    startCharacter: token.column,
+    startOffset: token.start,
   };
 }
 
@@ -153,7 +153,7 @@ export function getCypherTokenType(token: Token): CypherTokenType {
 
 export function shouldAssignTokenType(token: Token): boolean {
   const nonEOF = token.type !== Token.EOF;
-  const inMainChannel = token.channel !== Token.HIDDEN_CHANNEL;
+  const inMainChannel = token.channel == 0;
   const isComment =
     token.type === CypherLexer.SINGLE_LINE_COMMENT ||
     token.type === CypherLexer.MULTI_LINE_COMMENT;

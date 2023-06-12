@@ -19,6 +19,8 @@ The Trello board for the project is [here](https://trello.com/b/0MAa3MMW/cypher-
 
 ## Getting started
 
+Install [antlr4-tools](https://github.com/antlr/antlr4-tools). This will install the `antlr4` and auxiliary tools to work with the parser (like `antlr4-parse`).
+
 Run `npm install` in the root folder. This installs all dependencies in each package and generates the parser in the server package. The next steps depend on which project you want to run.
 
 ## Running the codemirror demo
@@ -43,7 +45,7 @@ The parser is generated on install, but if you change the .g4 grammar files you 
 npm run gen-parser
 ```
 
-You also need to install antlr4-tools. The instructions are [here](https://github.com/antlr/antlr4-tools), then you can run a query with:
+Once antlr4-tools is installed, then you can run the parser in standalone mode with:
 
 ```
 antlr4-parse server/src/antlr/Cypher.g4 oC_Cypher -gui

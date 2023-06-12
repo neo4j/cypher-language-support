@@ -5,18 +5,17 @@ import {
 } from 'vscode-languageserver-types';
 
 import {
-  ANTLRErrorListener,
   CharStreams,
   CommonToken,
   CommonTokenStream,
+  ErrorListener as ANTLRErrorListener,
   Recognizer,
   Token,
-} from 'antlr4ts';
+} from 'antlr4';
 
-import { CypherLexer } from '../generated-parser/CypherLexer';
+import CypherLexer from '../generated-parser/CypherLexer';
 
-import { ATNSimulator } from 'antlr4ts/atn/ATNSimulator';
-import { CypherParser } from '../generated-parser/CypherParser';
+import CypherParser from '../generated-parser/CypherParser';
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];
@@ -26,15 +25,15 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   }
 
   public syntaxError<T extends Token>(
-    recognizer: Recognizer<T, ATNSimulator>,
+    _recognizer: Recognizer<T>,
     offendingSymbol: T | undefined,
-    line: number,
-    charPositionInLine: number,
+    _line: number,
+    _charPositionInLine: number,
     msg: string,
   ): void {
     const lineIndex = (offendingSymbol?.line ?? 1) - 1;
-    const start = offendingSymbol?.startIndex ?? 0;
-    const end = (offendingSymbol?.stopIndex ?? 0) + 1;
+    const start = offendingSymbol?.start ?? 0;
+    const end = (offendingSymbol?.stop ?? 0) + 1;
 
     const diagnostic: Diagnostic = {
       severity: DiagnosticSeverity.Warning,
@@ -54,6 +53,7 @@ export function validateSyntax(wholeFileText: string): Diagnostic[] {
   const tokenStream = new CommonTokenStream(lexer);
 
   const parser = new CypherParser(tokenStream);
+  parser.removeErrorListeners();
   const errorListener = new ErrorListener();
   parser.addErrorListener(errorListener);
   parser.statements();

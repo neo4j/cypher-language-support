@@ -1,14 +1,17 @@
-import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
-
-import { ParseTreeListener } from 'antlr4ts/tree/ParseTreeListener';
-
-import { CypherLexer } from '../generated-parser/CypherLexer';
-
 import {
+  CharStreams,
+  CommonTokenStream,
+  ParseTreeWalker,
+  TerminalNode,
+  Token,
+} from 'antlr4';
+
+import CypherLexer from '../generated-parser/CypherLexer';
+
+import CypherParser, {
   AllExpressionContext,
   AnyExpressionContext,
   BooleanLiteralContext,
-  CypherParser,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
@@ -26,12 +29,12 @@ import {
   VariableContext,
 } from '../generated-parser/CypherParser';
 
-import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import { CypherParserListener } from '../generated-parser/CypherParserListener';
+import CypherParserListener from '../generated-parser/CypherParserListener';
+import { getTokens } from '../helpers';
 import { CypherTokenType } from '../lexerSymbols';
 import {
   BracketType,
@@ -83,15 +86,16 @@ export function mapCypherToSemanticTokenIndex(
   return undefined;
 }
 
-class SyntaxHighlighter implements CypherParserListener {
+class SyntaxHighlighter extends CypherParserListener {
   colouredTokens: Map<string, ParsedCypherToken> = new Map();
 
   constructor(colouredTokens: Map<string, ParsedCypherToken>) {
+    super();
     this.colouredTokens = colouredTokens;
   }
 
   private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
-    if (token.startIndex >= 0) {
+    if (token.start >= 0) {
       const tokenPosition = getTokenPosition(token);
 
       toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
@@ -103,17 +107,17 @@ class SyntaxHighlighter implements CypherParserListener {
     }
   }
 
-  exitLabelName(ctx: LabelNameContext) {
-    this.addToken(ctx.start, CypherTokenType.label, ctx.text);
-  }
+  exitLabelName = (ctx: LabelNameContext) => {
+    this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
+  };
 
-  exitFunctionName(ctx: FunctionNameContext) {
+  exitFunctionName = (ctx: FunctionNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.function);
-  }
+  };
 
-  exitProcedureName(ctx: ProcedureNameContext) {
+  exitProcedureName = (ctx: ProcedureNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.procedure);
-  }
+  };
 
   private colourMethodName(
     ctx: FunctionNameContext | ProcedureNameContext,
@@ -121,86 +125,86 @@ class SyntaxHighlighter implements CypherParserListener {
   ) {
     const namespace = ctx.namespace();
 
-    namespace.symbolicNameString().forEach((namespaceName) => {
-      this.addToken(namespaceName.start, tokenType, namespaceName.text);
+    namespace.symbolicNameString_list().forEach((namespaceName) => {
+      this.addToken(namespaceName.start, tokenType, namespaceName.getText());
     });
 
     const nameOfMethod = ctx.symbolicNameString();
-    this.addToken(nameOfMethod.start, tokenType, nameOfMethod.text);
+    this.addToken(nameOfMethod.start, tokenType, nameOfMethod.getText());
   }
 
-  private colourPredicateFunction(ctx: TerminalNode) {
-    this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.text);
-  }
+  private colourPredicateFunction = (ctx: TerminalNode) => {
+    this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.getText());
+  };
 
-  exitVariable(ctx: VariableContext) {
-    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
-  }
+  exitVariable = (ctx: VariableContext) => {
+    this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+  };
 
-  exitProcedureResultItem(ctx: ProcedureResultItemContext) {
-    this.addToken(ctx.start, CypherTokenType.variable, ctx.text);
-  }
+  exitProcedureResultItem = (ctx: ProcedureResultItemContext) => {
+    this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+  };
 
-  exitPropertyKeyName(ctx: PropertyKeyNameContext) {
+  exitPropertyKeyName = (ctx: PropertyKeyNameContext) => {
     // FIXME Is this correct in this case for all cases, not just simple properties?
-    this.addToken(ctx.start, CypherTokenType.property, ctx.text);
-  }
+    this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
+  };
 
-  exitStringToken(ctx: StringTokenContext) {
-    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.text);
-  }
+  exitStringToken = (ctx: StringTokenContext) => {
+    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+  };
 
-  exitStringsLiteral(ctx: StringsLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.text);
-  }
+  exitStringsLiteral = (ctx: StringsLiteralContext) => {
+    this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+  };
 
-  exitBooleanLiteral(ctx: BooleanLiteralContext) {
+  exitBooleanLiteral = (ctx: BooleanLiteralContext) => {
     // Normally booleans are coloured as numbers in other languages
-    this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.text);
-  }
+    this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.getText());
+  };
 
-  exitNumberLiteral(ctx: NumberLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.text);
-  }
+  exitNumberLiteral = (ctx: NumberLiteralContext) => {
+    this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.getText());
+  };
 
-  exitKeywordLiteral(ctx: KeywordLiteralContext) {
-    this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.text);
-  }
+  exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
+    this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.getText());
+  };
 
-  exitParameter(ctx: ParameterContext) {
+  exitParameter = (ctx: ParameterContext) => {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
-    this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.text);
+    this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
     this.addToken(
       parameterName.start,
       CypherTokenType.paramValue,
-      parameterName.text,
+      parameterName.getText(),
     );
-  }
+  };
 
-  exitAllExpression(ctx: AllExpressionContext) {
+  exitAllExpression = (ctx: AllExpressionContext) => {
     this.colourPredicateFunction(ctx.ALL());
-  }
+  };
 
-  exitAnyExpression(ctx: AnyExpressionContext) {
+  exitAnyExpression = (ctx: AnyExpressionContext) => {
     this.colourPredicateFunction(ctx.ANY());
-  }
+  };
 
-  exitNoneExpression(ctx: NoneExpressionContext) {
+  exitNoneExpression = (ctx: NoneExpressionContext) => {
     this.colourPredicateFunction(ctx.NONE());
-  }
+  };
 
-  exitSingleExpression(ctx: SingleExpressionContext) {
+  exitSingleExpression = (ctx: SingleExpressionContext) => {
     this.colourPredicateFunction(ctx.SINGLE());
-  }
+  };
 
-  exitReduceExpression(ctx: ReduceExpressionContext) {
+  exitReduceExpression = (ctx: ReduceExpressionContext) => {
     this.colourPredicateFunction(ctx.REDUCE());
-  }
+  };
 
-  exitSymbolicNameString(ctx: SymbolicNameStringContext) {
-    this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.text);
-  }
+  exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
+    this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
+  };
 }
 
 function colourLexerTokens(tokenStream: CommonTokenStream) {
@@ -211,7 +215,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
     [BracketType.parenthesis, -1],
   ]);
 
-  tokenStream.getTokens().forEach((token) => {
+  getTokens(tokenStream).forEach((token) => {
     if (shouldAssignTokenType(token)) {
       const tokenType = getCypherTokenType(token);
       const tokenPosition = getTokenPosition(token);
@@ -247,8 +251,9 @@ export function applySyntaxColouring(
     colourLexerTokens(tokenStream);
 
   const parser = new CypherParser(tokenStream);
+  parser.removeErrorListeners();
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
-  parser.addParseListener(treeSyntaxHighlighter as ParseTreeListener);
+
   /* Get a second pass at the colouring correcting the colours
      using structural information from the parsing tree
   
@@ -256,7 +261,7 @@ export function applySyntaxColouring(
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
-  parser.statements();
+  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parser.statements());
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 

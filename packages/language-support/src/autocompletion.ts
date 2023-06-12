@@ -1,16 +1,14 @@
-import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
   Position,
 } from 'vscode-languageserver-types';
 
-import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Token } from 'antlr4';
 
-import { CypherLexer } from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherLexer';
 
-import {
-  CypherParser,
+import CypherParser, {
   Expression2Context,
   LabelExpressionNameContext,
   NodePatternContext,
@@ -18,13 +16,14 @@ import {
   RelationshipPatternContext,
 } from './generated-parser/CypherParser';
 
+import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
-import { findParent, findStopNode } from './helpers';
+import { findParent, findStopNode, getTokens } from './helpers';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
   return (
-    lastToken.charPositionInLine + tokenLength === position.character &&
+    lastToken.column + tokenLength === position.character &&
     lastToken.line - 1 === position.line
   );
 }
@@ -35,11 +34,13 @@ export function autocomplete(
   dbInfo: DbInfo,
 ): CompletionItem[] {
   const inputStream = CharStreams.fromString(textUntilPosition);
+
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const wholeFileParser = new CypherParser(tokenStream);
+  wholeFileParser.removeErrorListeners();
   const tree = wholeFileParser.statements();
-  const tokens = tokenStream.getTokens();
+  const tokens = getTokens(tokenStream);
   const lastToken = tokens[tokens.length - 2];
 
   if (!positionIsParsableToken(lastToken, position)) {
@@ -80,7 +81,7 @@ export function autocomplete(
       if (expr) {
         return Array.from(dbInfo.functionSignatures.keys())
           .filter((functionName) => {
-            return functionName.startsWith(expr.text);
+            return functionName.startsWith(expr.getText());
           })
           .map((t) => {
             return {
@@ -104,13 +105,14 @@ export function autocomplete(
 
         // TODO Nacho Why did it have to be -2 here?
         // Is it because of the end of file?
-        const caretIndex = tokenStream.size - 2;
+        const caretIndex = tokenStream.tokens.length - 2;
 
         if (caretIndex >= 0) {
           // TODO Nacho Can this be extracted for more performance?
           const allPosibleTokens: Map<number | undefined, string> = new Map();
-          wholeFileParser.getTokenTypeMap().forEach(function (value, key, map) {
-            allPosibleTokens.set(map.get(key), key);
+
+          wholeFileParser.symbolicNames.forEach(function (value, key) {
+            allPosibleTokens.set(key, value);
           });
           // We need this to ignore the list of tokens from:
           // * unescapedSymbolicNameString, because a lot of keywords are allowed there

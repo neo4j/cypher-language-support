@@ -8,5 +8,8 @@
   "editor.formatOnSave": true,
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "jest.autoRun": "off",
+  "jest.jestCommandLine": "npm test -- --",
+  "jest.rootPath": "./"
 }

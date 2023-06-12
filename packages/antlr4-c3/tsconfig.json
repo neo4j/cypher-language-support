@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "out",
+    "rootDir": ".",
+    "removeComments": false,
+    "noImplicitAny": true,
+    "noImplicitOverride": false,
+    "sourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": false,
+    "allowSyntheticDefaultImports": false,
+    "strictNullChecks": false,
+    "useDefineForClassFields": false
+  },
+  "compileOnSave": true,
+  "include": ["src/**/*.ts", "index.ts", "tests/**/*"],
+  "exclude": ["node_modules", "out/**/*"]
+}

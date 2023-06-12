@@ -1,0 +1,18 @@
+{
+    "version": "0.2",
+    "words": [
+        "ANTLR",
+        "Struct",
+        "structs",
+        "whitespaces"
+    ],
+    "ignoreWords": [
+        "Xexact",
+        "philipps",
+        "unmocked"
+    ],
+    "ignorePaths": [
+        ".eslintrc.json",
+        "package.json"
+    ]
+}

@@ -1,4 +1,4 @@
-import { CypherLexer } from '../generated-parser/CypherLexer';
+import CypherLexer from '../generated-parser/CypherLexer';
 import { lexerSymbols } from '../lexerSymbols';
 
 function removeSpecialCharacters(array: (string | undefined)[]) {
@@ -26,7 +26,7 @@ function removeSpecialCharacters(array: (string | undefined)[]) {
     'MORE10',
     'MORE11',
     'MORE24',
-    undefined,
+    null,
   ];
   return array.filter((x) => !specialCharacters.includes(x));
 }
@@ -34,7 +34,7 @@ function removeSpecialCharacters(array: (string | undefined)[]) {
 describe('Keywords', () => {
   test('Lexer keywords should match parser keywords', () => {
     // Read in auto-generated symbolic names from the parser and remove special characters
-    const symbolicNames = CypherLexer['_SYMBOLIC_NAMES'];
+    const symbolicNames = CypherLexer.symbolicNames;
     const parserKeywords = removeSpecialCharacters(symbolicNames);
 
     // Lexer keyword list which we want to keep up-to-date
