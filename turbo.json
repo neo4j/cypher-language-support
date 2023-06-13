@@ -1,0 +1,15 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "outputs": ["out/**"],
+      "dependsOn": ["^build"]
+    },
+    "clean": {},
+    "watch": {},
+    "test": {},
+    "codemirror-playground#dev": {
+      "dependsOn": ["language-support#build"]
+    }
+  }
+}

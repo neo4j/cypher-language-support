@@ -3,12 +3,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "command": "npm run dev-codemirror",
+      "name": "Codemirror Playground",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "type": "extensionHost",
       "request": "launch",
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
-      "outFiles": ["${workspaceRoot}/vscode-playground/out/**/*.js"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-playground"
+      ],
+      "outFiles": ["${workspaceRoot}/packages/vscode-playground/out/**/*.js"],
       "autoAttachChildProcesses": true,
       "preLaunchTask": {
         "type": "npm",

@@ -11,13 +11,16 @@ jobs:
   lint-and-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install antlr4 tool
+        run: pip install antlr4-tools
 
-      - name: Compile the project
-        run: npm run compile
+      - name: Install dependencies with frozen lock file
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
 
       - name: Check there are no linting errors
         run: npm run lint
@@ -30,12 +33,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Install antlr4 tool
+        run: pip install antlr4-tools
 
       - name: Install dependencies and generate parser
-        run: |
-          npm install
-          npm run gen-parser
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
 
       - name: Run tests
         run: npm test

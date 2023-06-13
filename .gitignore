@@ -1,10 +1,12 @@
 out
 node_modules
-vscode-playground/server
+generated-parser
+generated
 .vscode-test
 *.DS_Store
 *.interp
 *.tokens
-server/src/antlr/*.ts
-server/src/antlr/.antlr/*
 *.vsix
+.turbo
+build/
+dist/

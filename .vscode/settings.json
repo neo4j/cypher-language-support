@@ -1,10 +1,15 @@
 {
-	"editor.insertSpaces": false,
-	"typescript.tsc.autoDetect": "off",
-	"typescript.preferences.quoteStyle": "single",
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
-	},
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"editor.formatOnSave": true
+  "typescript.tsc.autoDetect": "off",
+  "typescript.preferences.quoteStyle": "single",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "jest.autoRun": "off",
+  "jest.jestCommandLine": "npm test -- --",
+  "jest.rootPath": "./"
 }

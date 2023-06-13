@@ -1,0 +1,22 @@
+{
+  "name": "language-support",
+  "description": "Cypher language support",
+  "author": "neo4j",
+  "license": "Apache",
+  "version": "0.0.1",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
+  "dependencies": {
+    "antlr4": "^4.13.0",
+    "vscode-languageserver-types": "^3.17.3",
+    "antlr4-c3": "*"
+  },
+  "scripts": {
+    "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
+    "postinstall": "npm run gen-parser",
+    "build": "npm run gen-parser && tsc -b",
+    "clean": "rm -rf out",
+    "watch": "tsc -b -w",
+    "test": "jest"
+  }
+}
