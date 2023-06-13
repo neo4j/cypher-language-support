@@ -4,11 +4,6 @@ import { lexerSymbols } from '../lexerSymbols';
 function removeSpecialCharacters(array: (string | undefined)[]) {
   const specialCharacters = [
     'SPACE',
-    'SINGLE_LINE_COMMENT',
-    'DECIMAL_DOUBLE',
-    'UNSIGNED_DECIMAL_INTEGER',
-    'UNSIGNED_HEX_INTEGER',
-    'UNSIGNED_OCTAL_INTEGER',
     'IDENTIFIER',
     'ARROW_LINE',
     'ARROW_LEFT_HEAD',
@@ -16,7 +11,6 @@ function removeSpecialCharacters(array: (string | undefined)[]) {
     'FORMAL_COMMENT',
     'STRING_LITERAL1',
     'STRING_LITERAL2',
-    'MULTI_LINE_COMMENT',
     'ESCAPED_SYMBOLIC_NAME',
     'MORE1',
     'STRING1_OPEN',
