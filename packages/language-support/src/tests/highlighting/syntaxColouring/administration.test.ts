@@ -1486,12 +1486,13 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
-  test.skip('Correctly colours CREATE ALIAS', () => {
+  test('Correctly colours CREATE ALIAS', () => {
     const query = `CREATE OR REPLACE ALIAS \`composite-database-name\`.\`alias-in-composite-name\` 
-      FOR DATABASE PROPERTIES { property = $value }
+      FOR DATABASE \`database-name\`
       AT $url
       USER user_name
       PASSWORD $password
+      PROPERTIES { property: $value }
     `;
 
     testSyntaxColouring(query, [
@@ -1499,225 +1500,282 @@ describe('Administration commands syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 0,
+          startOffset: 0,
         },
         length: 6,
         tokenType: CypherTokenType.keyword,
         token: 'CREATE',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 2,
         tokenType: CypherTokenType.keyword,
         token: 'OR',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 10,
+          startOffset: 10,
         },
         length: 7,
         tokenType: CypherTokenType.keyword,
         token: 'REPLACE',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 18,
+          startOffset: 18,
         },
         length: 5,
         tokenType: CypherTokenType.keyword,
         token: 'ALIAS',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 24,
+          startOffset: 24,
         },
         length: 25,
         tokenType: CypherTokenType.symbolicName,
         token: '`composite-database-name`',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 49,
+          startOffset: 49,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
         token: '.',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
           startCharacter: 50,
+          startOffset: 50,
         },
         length: 25,
         tokenType: CypherTokenType.symbolicName,
         token: '`alias-in-composite-name`',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 83,
         },
         length: 3,
         tokenType: CypherTokenType.keyword,
         token: 'FOR',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 1,
           startCharacter: 10,
+          startOffset: 87,
         },
         length: 8,
         tokenType: CypherTokenType.keyword,
         token: 'DATABASE',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 1,
           startCharacter: 19,
+          startOffset: 96,
         },
-        length: 10,
+        length: 15,
         tokenType: CypherTokenType.symbolicName,
-        token: 'PROPERTIES',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 30,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 32,
-        },
-        length: 8,
-        tokenType: CypherTokenType.property,
-        token: 'property',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 41,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: '=',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 43,
-        },
-        length: 1,
-        tokenType: CypherTokenType.paramDollar,
-        token: '$',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 44,
-        },
-        length: 5,
-        tokenType: CypherTokenType.paramValue,
-        token: 'value',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 50,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
+        token: '`database-name`',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 118,
         },
         length: 2,
         tokenType: CypherTokenType.keyword,
         token: 'AT',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 2,
           startCharacter: 9,
+          startOffset: 121,
         },
         length: 1,
         tokenType: CypherTokenType.paramDollar,
         token: '$',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 2,
           startCharacter: 10,
+          startOffset: 122,
         },
         length: 3,
         tokenType: CypherTokenType.paramValue,
         token: 'url',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 3,
           startCharacter: 6,
+          startOffset: 132,
         },
         length: 4,
         tokenType: CypherTokenType.keyword,
         token: 'USER',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 3,
           startCharacter: 11,
+          startOffset: 137,
         },
         length: 9,
         tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 4,
           startCharacter: 6,
+          startOffset: 153,
         },
         length: 8,
         tokenType: CypherTokenType.keyword,
         token: 'PASSWORD',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 4,
           startCharacter: 15,
+          startOffset: 162,
         },
         length: 1,
         tokenType: CypherTokenType.paramDollar,
         token: '$',
+        bracketInfo: undefined,
       },
       {
         position: {
           line: 4,
           startCharacter: 16,
+          startOffset: 163,
         },
         length: 8,
         tokenType: CypherTokenType.paramValue,
         token: 'password',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 6,
+          startOffset: 178,
+        },
+        length: 10,
+        tokenType: CypherTokenType.keyword,
+        token: 'PROPERTIES',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 17,
+          startOffset: 189,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '{',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.curly,
+        },
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 19,
+          startOffset: 191,
+        },
+        length: 8,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'property',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 27,
+          startOffset: 199,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ':',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 29,
+          startOffset: 201,
+        },
+        length: 1,
+        tokenType: CypherTokenType.paramDollar,
+        token: '$',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 30,
+          startOffset: 202,
+        },
+        length: 5,
+        tokenType: CypherTokenType.paramValue,
+        token: 'value',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 36,
+          startOffset: 208,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '}',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.curly,
+        },
       },
     ]);
   });
@@ -3329,8 +3387,8 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
-  test.skip('Correctly colours REVOKE PRIVILEGE', () => {
-    const query = 'REVOKE IMPERSONATE (*) ON DBMS TO role_name';
+  test('Correctly colours REVOKE PRIVILEGE', () => {
+    const query = 'REVOKE IMPERSONATE (*) ON DBMS FROM role_name';
 
     testSyntaxColouring(query, [
       {
@@ -3422,16 +3480,16 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 31,
           startOffset: 31,
         },
-        length: 2,
+        length: 4,
         tokenType: CypherTokenType.keyword,
-        token: 'TO',
+        token: 'FROM',
         bracketInfo: undefined,
       },
       {
         position: {
           line: 0,
-          startCharacter: 34,
-          startOffset: 34,
+          startCharacter: 36,
+          startOffset: 36,
         },
         length: 9,
         tokenType: CypherTokenType.symbolicName,
