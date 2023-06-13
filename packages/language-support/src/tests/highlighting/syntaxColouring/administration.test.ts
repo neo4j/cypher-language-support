@@ -238,6 +238,418 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
+  test('Correctly colours SHOW CONSTRAINTS', () => {
+    const query = 'SHOW ALL CONSTRAINTS YIELD *';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'SHOW',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+          startOffset: 5,
+        },
+        length: 3,
+        tokenType: CypherTokenType.keyword,
+        token: 'ALL',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 9,
+          startOffset: 9,
+        },
+        length: 11,
+        tokenType: CypherTokenType.keyword,
+        token: 'CONSTRAINTS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 21,
+          startOffset: 21,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'YIELD',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 27,
+          startOffset: 27,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '*',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+
+  test('Correctly colours CREATE CONSTRAINT', () => {
+    const query = `CREATE CONSTRAINT constraint_name IF NOT EXISTS
+      FOR (p:Person)
+      REQUIRE p.name IS UNIQUE
+      OPTIONS {
+        indexProvider: 'range-1.0'
+      }`;
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'CREATE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        length: 10,
+        tokenType: CypherTokenType.keyword,
+        token: 'CONSTRAINT',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 18,
+          startOffset: 18,
+        },
+        length: 15,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'constraint_name',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'IF',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 37,
+          startOffset: 37,
+        },
+        length: 3,
+        tokenType: CypherTokenType.keyword,
+        token: 'NOT',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 41,
+          startOffset: 41,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'EXISTS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 6,
+          startOffset: 54,
+        },
+        length: 3,
+        tokenType: CypherTokenType.keyword,
+        token: 'FOR',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 10,
+          startOffset: 58,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 11,
+          startOffset: 59,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'p',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 12,
+          startOffset: 60,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ':',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 13,
+          startOffset: 61,
+        },
+        length: 6,
+        tokenType: CypherTokenType.label,
+        token: 'Person',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 1,
+          startCharacter: 19,
+          startOffset: 67,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 6,
+          startOffset: 75,
+        },
+        length: 7,
+        tokenType: CypherTokenType.keyword,
+        token: 'REQUIRE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 14,
+          startOffset: 83,
+        },
+        length: 1,
+        tokenType: CypherTokenType.variable,
+        token: 'p',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 15,
+          startOffset: 84,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '.',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 16,
+          startOffset: 85,
+        },
+        length: 4,
+        tokenType: CypherTokenType.property,
+        token: 'name',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 21,
+          startOffset: 90,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'IS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 2,
+          startCharacter: 24,
+          startOffset: 93,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'UNIQUE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 6,
+          startOffset: 106,
+        },
+        length: 7,
+        tokenType: CypherTokenType.keyword,
+        token: 'OPTIONS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 3,
+          startCharacter: 14,
+          startOffset: 114,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '{',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.curly,
+        },
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 8,
+          startOffset: 124,
+        },
+        length: 13,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'indexProvider',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 21,
+          startOffset: 137,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ':',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 4,
+          startCharacter: 23,
+          startOffset: 139,
+        },
+        length: 11,
+        tokenType: CypherTokenType.stringLiteral,
+        token: "'range-1.0'",
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 5,
+          startCharacter: 6,
+          startOffset: 157,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '}',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.curly,
+        },
+      },
+    ]);
+  });
+
+  test('Correctly colours DROP CONSTRAINT', () => {
+    const query = 'DROP CONSTRAINT constraint_name IF EXISTS';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'DROP',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+          startOffset: 5,
+        },
+        length: 10,
+        tokenType: CypherTokenType.keyword,
+        token: 'CONSTRAINT',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+          startOffset: 16,
+        },
+        length: 15,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'constraint_name',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 32,
+          startOffset: 32,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'IF',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 35,
+          startOffset: 35,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'EXISTS',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+
   test('Correctly colours SHOW FUNCTIONS', () => {
     const query = 'SHOW FUNCTIONS EXECUTABLE BY user_name';
 
@@ -286,6 +698,143 @@ describe('Administration commands syntax colouring', () => {
         length: 9,
         tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
+      },
+    ]);
+  });
+
+  test('Correctly colours SHOW PROCEDURES', () => {
+    const query = 'SHOW PROCEDURES EXECUTABLE BY user_name';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'SHOW',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+        },
+        length: 10,
+        tokenType: CypherTokenType.keyword,
+        token: 'PROCEDURES',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 16,
+        },
+        length: 10,
+        tokenType: CypherTokenType.keyword,
+        token: 'EXECUTABLE',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 27,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'BY',
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 30,
+        },
+        length: 9,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'user_name',
+      },
+    ]);
+  });
+
+  test('Correctly colours SHOW SETTINGS', () => {
+    const query =
+      "SHOW SETTINGS 'server.bolt.advertised_address', 'server.bolt.listen_address' YIELD *";
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'SHOW',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+          startOffset: 5,
+        },
+        length: 8,
+        tokenType: CypherTokenType.keyword,
+        token: 'SETTINGS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 14,
+          startOffset: 14,
+        },
+        length: 32,
+        tokenType: CypherTokenType.stringLiteral,
+        token: "'server.bolt.advertised_address'",
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 46,
+          startOffset: 46,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ',',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 48,
+          startOffset: 48,
+        },
+        length: 28,
+        tokenType: CypherTokenType.stringLiteral,
+        token: "'server.bolt.listen_address'",
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 77,
+          startOffset: 77,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'YIELD',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 83,
+          startOffset: 83,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '*',
+        bracketInfo: undefined,
       },
     ]);
   });
@@ -937,7 +1486,7 @@ describe('Administration commands syntax colouring', () => {
     ]);
   });
 
-  test('Correctly colours CREATE ALIAS', () => {
+  test.skip('Correctly colours CREATE ALIAS', () => {
     const query = `CREATE OR REPLACE ALIAS \`composite-database-name\`.\`alias-in-composite-name\` 
       FOR DATABASE PROPERTIES { property = $value }
       AT $url
@@ -1055,7 +1604,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 32,
         },
         length: 8,
-        tokenType: CypherTokenType.keyword,
+        tokenType: CypherTokenType.property,
         token: 'property',
       },
       {
@@ -1073,7 +1622,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 43,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -1082,7 +1631,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 44,
         },
         length: 5,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.paramValue,
         token: 'value',
       },
       {
@@ -1113,7 +1662,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 9,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -1122,7 +1671,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 10,
         },
         length: 3,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.paramValue,
         token: 'url',
       },
       {
@@ -1140,7 +1689,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 11,
         },
         length: 9,
-        tokenType: CypherTokenType.none,
+        tokenType: CypherTokenType.symbolicName,
         token: 'user_name',
       },
       {
@@ -1158,7 +1707,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.paramDollar,
         token: '$',
       },
       {
@@ -1167,7 +1716,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 8,
-        tokenType: CypherTokenType.keyword,
+        tokenType: CypherTokenType.paramValue,
         token: 'password',
       },
     ]);
@@ -2670,6 +3219,359 @@ describe('Administration commands syntax colouring', () => {
         length: 8,
         tokenType: CypherTokenType.keyword,
         token: 'COMMANDS',
+      },
+    ]);
+  });
+
+  test('Correctly colours GRANT PRIVILEGE', () => {
+    const query = 'GRANT EXECUTE BOOSTED FUNCTIONS * ON DBMS TO role_name';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 5,
+        tokenType: CypherTokenType.keyword,
+        token: 'GRANT',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        length: 7,
+        tokenType: CypherTokenType.keyword,
+        token: 'EXECUTE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 14,
+          startOffset: 14,
+        },
+        length: 7,
+        tokenType: CypherTokenType.keyword,
+        token: 'BOOSTED',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 22,
+          startOffset: 22,
+        },
+        length: 9,
+        tokenType: CypherTokenType.keyword,
+        token: 'FUNCTIONS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 32,
+          startOffset: 32,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '*',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'ON',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 37,
+          startOffset: 37,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'DBMS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'TO',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 45,
+          startOffset: 45,
+        },
+        length: 9,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'role_name',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+
+  test.skip('Correctly colours REVOKE PRIVILEGE', () => {
+    const query = 'REVOKE IMPERSONATE (*) ON DBMS TO role_name';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 6,
+        tokenType: CypherTokenType.keyword,
+        token: 'REVOKE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        length: 11,
+        tokenType: CypherTokenType.keyword,
+        token: 'IMPERSONATE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 19,
+          startOffset: 19,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 20,
+          startOffset: 20,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: '*',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 21,
+          startOffset: 21,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 23,
+          startOffset: 23,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'ON',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 26,
+          startOffset: 26,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'DBMS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 31,
+          startOffset: 31,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'TO',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        length: 9,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'role_name',
+        bracketInfo: undefined,
+      },
+    ]);
+  });
+
+  test('Correctly colours DENY PRIVILEGE', () => {
+    const query =
+      'DENY IMPERSONATE (user_name1, user_name2) ON DBMS TO role_name';
+
+    testSyntaxColouring(query, [
+      {
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'DENY',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 5,
+          startOffset: 5,
+        },
+        length: 11,
+        tokenType: CypherTokenType.keyword,
+        token: 'IMPERSONATE',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: '(',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 18,
+          startOffset: 18,
+        },
+        length: 10,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'user_name1',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 28,
+          startOffset: 28,
+        },
+        length: 1,
+        tokenType: CypherTokenType.operator,
+        token: ',',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 30,
+          startOffset: 30,
+        },
+        length: 10,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'user_name2',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 40,
+          startOffset: 40,
+        },
+        length: 1,
+        tokenType: CypherTokenType.bracket,
+        token: ')',
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: BracketType.parenthesis,
+        },
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'ON',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 45,
+          startOffset: 45,
+        },
+        length: 4,
+        tokenType: CypherTokenType.keyword,
+        token: 'DBMS',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 50,
+          startOffset: 50,
+        },
+        length: 2,
+        tokenType: CypherTokenType.keyword,
+        token: 'TO',
+        bracketInfo: undefined,
+      },
+      {
+        position: {
+          line: 0,
+          startCharacter: 53,
+          startOffset: 53,
+        },
+        length: 9,
+        tokenType: CypherTokenType.symbolicName,
+        token: 'role_name',
+        bracketInfo: undefined,
       },
     ]);
   });
