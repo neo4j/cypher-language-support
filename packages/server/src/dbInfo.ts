@@ -40,19 +40,16 @@ export class DbInfoImpl implements DbInfo {
 
     if (!this.neo4j) return;
     // We do not need to update procedures and functions because they are cached
-    const updateLabelsAndTypes = async () => {
+    const updateAllDbInfo = async () => {
       await this.updateLabels();
       await this.updateRelationshipTypes();
+      await this.updateMethodsCache(this.procedureSignatures);
+      await this.updateMethodsCache(this.functionSignatures);
     };
 
-    await this.updateMethodsCache(this.procedureSignatures);
-    await this.updateMethodsCache(this.functionSignatures);
-    await updateLabelsAndTypes();
+    await updateAllDbInfo();
 
-    this.dbPollingInterval = setInterval(
-      () => void updateLabelsAndTypes(),
-      20000,
-    );
+    this.dbPollingInterval = setInterval(() => void updateAllDbInfo(), 20000);
     return;
   }
 
@@ -105,7 +102,9 @@ export class DbInfoImpl implements DbInfo {
 
     try {
       const result = await s.run(
-        'SHOW ' + updateTarget + ' yield name, signature, description;',
+        'SHOW ' +
+          updateTarget +
+          ' EXECUTABLE BY CURRENT USER yield name, signature, description;',
       );
 
       result.records.map((record) => {
