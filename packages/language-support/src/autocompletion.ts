@@ -25,6 +25,7 @@ import CypherParser, {
 import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
 import { findParent, findStopNode, getTokens } from './helpers';
+import { CypherTokenType, lexerSymbols } from './lexerSymbols';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
@@ -137,9 +138,16 @@ export function autocomplete(
             .add(CypherParser.RULE_unescapedSymbolicNameString)
             .add(CypherParser.RULE_escapedSymbolicNameString);
 
-          // TODO Nacho Exclude minus, plus, comma, arrow_left_head, lparen etc
+          // Keep only keywords as suggestions
+          codeCompletion.ignoredTokens = new Set<number>(
+            Array.from(allPosibleTokens.keys()).filter(
+              (key) => lexerSymbols[key] !== CypherTokenType.keyword,
+            ),
+          );
+
           const candidates = codeCompletion.collectCandidates(caretIndex);
           const tokens = candidates.tokens.entries();
+
           const tokenCandidates = Array.from(tokens).map((value) => {
             const [tokenNumber, followUpList] = value;
             return [tokenNumber]
