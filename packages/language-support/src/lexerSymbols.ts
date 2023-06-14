@@ -294,3 +294,21 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.SINGLE_LINE_COMMENT]: CypherTokenType.comment,
   [CypherLexer.MULTI_LINE_COMMENT]: CypherTokenType.comment,
 };
+
+export const hasIncorrectSymbolicName: Record<number, string> = {
+  [CypherLexer.ALL_SHORTEST_PATH]: 'allShortestPaths',
+  [CypherLexer.SHORTEST_PATH]: 'shortestPath',
+  [CypherLexer.LIMITROWS]: 'LIMIT',
+};
+
+const { literalNames, symbolicNames } = CypherLexer;
+
+const length = Math.max(literalNames.length, symbolicNames.length);
+
+export const tokenNames: string[] = Array.from({ length }).map(
+  (_, i) =>
+    hasIncorrectSymbolicName[i] ??
+    literalNames[i] ??
+    symbolicNames[i] ??
+    '<INVALID',
+);
