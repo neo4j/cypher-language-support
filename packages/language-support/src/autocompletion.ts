@@ -4,13 +4,19 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { CharStreams, CommonTokenStream, Token } from 'antlr4';
+import {
+  CharStreams,
+  CommonTokenStream,
+  ParserRuleContext,
+  Token,
+} from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
 
 import CypherParser, {
   Expression2Context,
-  LabelExpressionNameContext,
+  LabelExpression4Context,
+  LabelExpression4IsContext,
   NodePatternContext,
   ProcedureNameContext,
   RelationshipPatternContext,
@@ -25,6 +31,13 @@ export function positionIsParsableToken(lastToken: Token, position: Position) {
   return (
     lastToken.column + tokenLength === position.character &&
     lastToken.line - 1 === position.line
+  );
+}
+
+function isLabel(p: ParserRuleContext) {
+  return (
+    p instanceof LabelExpression4Context ||
+    p instanceof LabelExpression4IsContext
   );
 }
 
@@ -50,7 +63,7 @@ export function autocomplete(
 
     if (
       findParent(
-        findParent(stopNode, (p) => p instanceof LabelExpressionNameContext),
+        findParent(stopNode, isLabel),
         (p) => p instanceof NodePatternContext,
       )
     ) {
@@ -62,7 +75,7 @@ export function autocomplete(
       });
     } else if (
       findParent(
-        findParent(stopNode, (p) => p instanceof LabelExpressionNameContext),
+        findParent(stopNode, isLabel),
         (p) => p instanceof RelationshipPatternContext,
       )
     ) {
