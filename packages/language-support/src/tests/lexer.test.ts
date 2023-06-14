@@ -3,6 +3,7 @@ import { lexerSymbols } from '../lexerSymbols';
 
 function removeSpecialCharacters(array: (string | undefined)[]) {
   const specialCharacters = [
+    'ErrorChar',
     'SPACE',
     'IDENTIFIER',
     'ARROW_LINE',

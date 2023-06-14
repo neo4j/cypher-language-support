@@ -15,6 +15,7 @@ import CypherParser, {
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
+  LabelNameIsContext,
   LabelOrRelTypeContext,
   NoneExpressionContext,
   NumberLiteralContext,
@@ -109,6 +110,10 @@ class SyntaxHighlighter extends CypherParserListener {
   }
 
   exitLabelName = (ctx: LabelNameContext) => {
+    this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
+  };
+
+  exitLabelNameIs = (ctx: LabelNameIsContext) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
   };
 

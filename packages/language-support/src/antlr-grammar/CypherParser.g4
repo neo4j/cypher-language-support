@@ -227,10 +227,16 @@ labelExpression2Is:
    (EXCLAMATION_MARK labelExpression2Is | labelExpression1Is);
 
 labelExpression1:
-   (LPAREN labelExpression4 RPAREN | PERCENT | symbolicNameString);
+   LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
+   | PERCENT                      #AnyLabel
+   | symbolicNameString           #LabelName
+   ;
 
 labelExpression1Is:
-   (LPAREN labelExpression4Is RPAREN | PERCENT | symbolicLabelNameString);
+   LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
+   | PERCENT                        #AnyLabelIs
+   | symbolicLabelNameString        #LabelNameIs
+   ;
 
 expression:
    expression12;
