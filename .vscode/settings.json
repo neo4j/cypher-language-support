@@ -10,6 +10,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "jest.autoRun": "off",
-  "jest.jestCommandLine": "npm test -- --",
+  "jest.jestCommandLine": "npm test -- -- --passWithNoTests",
   "jest.rootPath": "./"
 }

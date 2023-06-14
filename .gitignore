@@ -10,3 +10,5 @@ generated
 .turbo
 build/
 dist/
+*.antlr
+*.jar

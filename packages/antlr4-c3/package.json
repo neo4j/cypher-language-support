@@ -24,7 +24,8 @@
     "test-ci": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --silent",
     "test-coverage": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --coverage --silent",
     "generate": "tests/generate.sh",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "clean": "rm -rf out"
   },
   "dependencies": {
     "antlr4": "4.13"
