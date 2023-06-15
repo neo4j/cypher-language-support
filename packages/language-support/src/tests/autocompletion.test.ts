@@ -43,19 +43,6 @@ export function testCompletionDoesNotContain(
   });
 }
 
-export function testCompletionDoesNotContainKind(
-  fileText: string,
-  position: Position,
-  dbInfo: DbInfo,
-  unwantedKinds: CompletionItemKind[],
-) {
-  const actualCompletionList = autocomplete(fileText, position, dbInfo);
-
-  actualCompletionList.forEach((item) => {
-    expect(unwantedKinds).not.toContain(item.kind);
-  });
-}
-
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
     const query = 'M';
@@ -135,16 +122,16 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test('Does not offer operators for pattern expression auto-completion', () => {
+  test('Does not offer left paren for pattern expression auto-completion', () => {
     const query = 'MATCH ';
     const position = Position.create(0, query.length);
 
-    testCompletionDoesNotContainKind(query, position, new MockDbInfo(), [
-      CompletionItemKind.Operator,
+    testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'LPAREN', kind: CompletionItemKind.Keyword },
     ]);
   });
 
-  test('Does not offer keywords for variable autocompletion', () => {
+  test('Does not offer keywords/symbols for variable autocompletion', () => {
     const query = 'MATCH (n';
     const position = Position.create(0, query.length);
 
@@ -152,6 +139,9 @@ describe('MATCH auto-completion', () => {
       { label: 'NONE', kind: CompletionItemKind.Keyword },
       { label: 'UnescapedSymbolicName', kind: CompletionItemKind.Keyword },
       { label: 'EscapedSymbolicName', kind: CompletionItemKind.Keyword },
+      { label: 'LPAREN', kind: CompletionItemKind.Keyword },
+      { label: 'LCURLY', kind: CompletionItemKind.Keyword },
+      { label: 'COLON', kind: CompletionItemKind.Keyword },
     ]);
   });
 
