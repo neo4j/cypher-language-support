@@ -16,6 +16,7 @@ export function testAutoCompletionContains(
 ) {
   const actualCompletionList = autocomplete(fileText, position, dbInfo);
 
+  console.log(actualCompletionList);
   expected.forEach((expectedItem) => {
     const elementFound = actualCompletionList.find(
       (value) =>
@@ -341,6 +342,26 @@ M`;
 
     testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});
+
+describe('inserts correct text when symbolic name is not display name', () => {
+  test('inserts correct text for LIMIT', () => {
+    const query = 'RETURN 1 L';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'LIMIT', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('inserts correct text for all shortest path', () => {
+    const query = 'RETURN a';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'allShortestPath', kind: CompletionItemKind.Keyword },
     ]);
   });
 });
