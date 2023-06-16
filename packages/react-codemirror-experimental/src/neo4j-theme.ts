@@ -58,7 +58,7 @@ export const createTheme = ({
     '& .cm-selectionMatch': {
       backgroundColor: settings.textMatchingSelection,
     },
-    // tehere are more things to style
+    // there are more things to style (autocomplete panel etc)
     // inspriation here: https://github.com/codemirror/theme-one-dark/blob/main/src/one-dark.ts
   };
 

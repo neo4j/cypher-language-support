@@ -2,6 +2,7 @@ import {
   autocompletion,
   closeBrackets,
   closeBracketsKeymap,
+  Completion,
   completionKeymap,
 } from '@codemirror/autocomplete';
 import {
@@ -17,7 +18,11 @@ import {
   indentOnInput,
   syntaxHighlighting,
 } from '@codemirror/language';
-import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import {
+  highlightSelectionMatches,
+  search,
+  searchKeymap,
+} from '@codemirror/search';
 import { EditorState, Extension } from '@codemirror/state';
 import {
   crosshairCursor,
@@ -30,6 +35,31 @@ import {
 } from '@codemirror/view';
 
 import { lintKeymap } from '@codemirror/lint';
+
+/*
+Can be used to override the way the search panel is implemented.
+Should create a [Panel](https://codemirror.net/6/docs/ref/#view.Panel) that contains a form
+which lets the user:
+
+- See the [current](https://codemirror.net/6/docs/ref/#search.getSearchQuery) search query.
+- Manipulate the [query](https://codemirror.net/6/docs/ref/#search.SearchQuery) and
+  [update](https://codemirror.net/6/docs/ref/#search.setSearchQuery) the search state with a new
+  query.
+- Notice external changes to the query by reacting to the
+  appropriate [state effect](https://codemirror.net/6/docs/ref/#search.setSearchQuery).
+- Run some of the search commands.
+
+The field that should be focused when opening the panel must be
+tagged with a `main-field=true` DOM attribute.
+*/
+
+const createNeo4jSearchPanel = () => {
+  const div = document.createElement('div');
+  div.innerText = 'Custom search panel yet to be implemented';
+
+  const neo4jPanel = { dom: div, update: () => undefined };
+  return neo4jPanel;
+};
 
 export const basicNeo4jSetup = (): Extension[] => {
   const keymaps = [
@@ -60,7 +90,26 @@ export const basicNeo4jSetup = (): Extension[] => {
 
   extensions.push(bracketMatching());
   extensions.push(closeBrackets());
-  extensions.push(autocompletion());
+  extensions.push(search({ createPanel: createNeo4jSearchPanel }));
+  extensions.push(
+    autocompletion({
+      icons: false,
+      addToOptions: [
+        {
+          render: (comp: Completion) => {
+            // TODO get icons
+            if (comp.type === 'keyword') {
+              return document.createTextNode('keyword-icon ');
+            }
+
+            return document.createElement('svg');
+          },
+          // from docs this is the default "icon" position
+          position: 20,
+        },
+      ],
+    }),
+  );
 
   extensions.push(rectangularSelection());
   extensions.push(crosshairCursor());

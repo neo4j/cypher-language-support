@@ -1,7 +1,6 @@
 import { applySyntaxColouring } from 'language-support';
 import React from 'react';
 
-// TODO show parse tree
 export function TokenTable({ document }: { document: string }) {
   const tokens = applySyntaxColouring(document);
 
