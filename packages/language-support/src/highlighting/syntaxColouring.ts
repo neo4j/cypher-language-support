@@ -1,14 +1,11 @@
 import {
-  CharStreams,
   CommonTokenStream,
   ParseTreeWalker,
   TerminalNode,
   Token,
 } from 'antlr4';
 
-import CypherLexer from '../generated-parser/CypherLexer';
-
-import CypherParser, {
+import {
   AllExpressionContext,
   AnyExpressionContext,
   BooleanLiteralContext,
@@ -38,6 +35,7 @@ import {
 import CypherParserListener from '../generated-parser/CypherParserListener';
 import { getTokens } from '../helpers';
 import { CypherTokenType } from '../lexerSymbols';
+import { parserCache } from '../parserCache';
 import {
   BracketType,
   getCypherTokenType,
@@ -253,17 +251,13 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
 export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
-  const inputStream = CharStreams.fromString(wholeFileText);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  tokenStream.fill();
+  const parserResult = parserCache.parse(wholeFileText);
+  const tokenStream = parserResult.tokenStream;
 
   // Get a first pass at the colouring using only the lexer
   const lexerTokens: Map<string, ParsedCypherToken> =
     colourLexerTokens(tokenStream);
 
-  const parser = new CypherParser(tokenStream);
-  parser.removeErrorListeners();
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
 
   /* Get a second pass at the colouring correcting the colours
@@ -273,7 +267,7 @@ export function applySyntaxColouring(
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
-  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parser.statements());
+  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parserResult.result);
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 

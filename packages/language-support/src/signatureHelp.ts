@@ -3,15 +3,15 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { CharStreams, CommonTokenStream, ParserRuleContext } from 'antlr4';
-import CypherLexer from './generated-parser/CypherLexer';
-import CypherParser, {
+import { ParserRuleContext } from 'antlr4';
+import {
   CallClauseContext,
   FunctionInvocationContext,
 } from './generated-parser/CypherParser';
 
 import { DbInfo } from './dbInfo';
-import { findParent, findStopNode } from './helpers';
+import { findParent } from './helpers';
+import { parserCache } from './parserCache';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -91,14 +91,8 @@ export function signatureHelp(
   textUntilPosition: string,
   dbInfo: DbInfo,
 ): SignatureHelp {
-  const inputStream = CharStreams.fromString(textUntilPosition);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const wholeFileParser = new CypherParser(tokenStream);
-  wholeFileParser.removeErrorListeners();
-  const root = wholeFileParser.statements();
-
-  const stopNode = findStopNode(root);
+  const parserResult = parserCache.parse(textUntilPosition);
+  const stopNode = parserResult.stopNode;
   let result: SignatureHelp = emptyResult;
 
   const parsedProc = tryParseProcedure(stopNode);

@@ -4,14 +4,7 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import {
-  CharStreams,
-  CommonTokenStream,
-  ParserRuleContext,
-  Token,
-} from 'antlr4';
-
-import CypherLexer from './generated-parser/CypherLexer';
+import { ParserRuleContext, Token } from 'antlr4';
 
 import CypherParser, {
   Expression2Context,
@@ -26,6 +19,7 @@ import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
 import { findParent, findStopNode, getTokens } from './helpers';
 import { CypherTokenType, lexerSymbols } from './lexerSymbols';
+import { parserCache } from './parserCache';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
@@ -47,14 +41,10 @@ export function autocomplete(
   position: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] {
-  const inputStream = CharStreams.fromString(textUntilPosition);
-
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const wholeFileParser = new CypherParser(tokenStream);
-  wholeFileParser.removeErrorListeners();
-  const tree = wholeFileParser.statements();
-  const tokens = getTokens(tokenStream);
+  const parseResult = parserCache.parse(textUntilPosition);
+  const tokens = getTokens(parseResult.tokenStream);
+  const parser = parseResult.parser;
+  const tree = parseResult.result;
   const lastToken = tokens[tokens.length - 2];
 
   if (!positionIsParsableToken(lastToken, position)) {
@@ -115,17 +105,17 @@ export function autocomplete(
       } else {
         // If we are not completing a label of a procedure name,
         // we need to use the antlr completion
-        const codeCompletion = new CodeCompletionCore(wholeFileParser);
+        const codeCompletion = new CodeCompletionCore(parser);
 
         // TODO Nacho Why did it have to be -2 here?
         // Is it because of the end of file?
-        const caretIndex = tokenStream.tokens.length - 2;
+        const caretIndex = tokens.length - 2;
 
         if (caretIndex >= 0) {
           // TODO Nacho Can this be extracted for more performance?
           const allPosibleTokens: Map<number | undefined, string> = new Map();
 
-          wholeFileParser.symbolicNames.forEach(function (value, key) {
+          parser.symbolicNames.forEach(function (value, key) {
             allPosibleTokens.set(key, value);
           });
           // We need this to ignore the list of tokens from:
