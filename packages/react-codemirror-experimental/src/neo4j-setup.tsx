@@ -2,7 +2,6 @@ import {
   autocompletion,
   closeBrackets,
   closeBracketsKeymap,
-  Completion,
   completionKeymap,
 } from '@codemirror/autocomplete';
 import {
@@ -91,25 +90,7 @@ export const basicNeo4jSetup = (): Extension[] => {
   extensions.push(bracketMatching());
   extensions.push(closeBrackets());
   extensions.push(search({ createPanel: createNeo4jSearchPanel }));
-  extensions.push(
-    autocompletion({
-      icons: false,
-      addToOptions: [
-        {
-          render: (comp: Completion) => {
-            // TODO get icons
-            if (comp.type === 'keyword') {
-              return document.createTextNode('keyword-icon ');
-            }
-
-            return document.createElement('svg');
-          },
-          // from docs this is the default "icon" position
-          position: 20,
-        },
-      ],
-    }),
-  );
+  extensions.push(autocompletion());
 
   extensions.push(rectangularSelection());
   extensions.push(crosshairCursor());
