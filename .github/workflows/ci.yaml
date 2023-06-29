@@ -13,10 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install antlr4 tool
-        run: pip install antlr4-tools
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
 
-      - name: Install dependencies with frozen lock file
+      - name: Install dependencies with frozen lock file and generate parser
         run: npm ci
 
       - name: Build project
@@ -35,10 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install antlr4 tool
-        run: pip install antlr4-tools
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
 
-      - name: Install dependencies and generate parser
+      - name: Install dependencies with frozen lock file and generate parser
         run: npm ci
 
       - name: Build project
