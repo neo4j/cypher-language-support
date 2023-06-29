@@ -110,6 +110,6 @@ export const neo4jLightTheme = () =>
       booleanLiteral: '#2aa198',
       keywordLiteral: '#859900',
       property: '#586e75',
-      bracket: '#d3d3d3',
+      bracket: '#333333',
     },
   });
