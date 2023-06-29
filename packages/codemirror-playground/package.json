@@ -16,7 +16,6 @@
     "@lezer/highlight": "^1.1.3",
     "@neo4j-cypher/react-codemirror-experimental": "*",
     "@uiw/react-codemirror": "^4.19.9",
-    "ayu": "^8.0.1",
     "language-support": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

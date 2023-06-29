@@ -2,17 +2,18 @@ import { createCypherTheme } from './lang-cypher/create-cypher-theme';
 
 import { light } from 'ayu';
 
+console.log(light.editor.findMatch.inactive.hex());
 export const ayuLightTheme = () => {
   const { syntax } = light;
   return createCypherTheme({
     dark: false,
     editorSettings: {
-      background: '#ffffff',
-      foreground: '#444444',
-      gutterForeground: '#6c6c6c',
+      background: light.editor.bg.hex(),
+      foreground: light.editor.fg.hex(),
+      gutterForeground: light.editor.gutter.normal.hex(),
+      selection: light.editor.selection.active.hex(),
+      textMatchingSelection: light.editor.findMatch.active.hex(),
       cursor: '#000',
-      selection: '#d7d4f0',
-      textMatchingSelection: '#72a1ff59',
     },
     highlightStyles: {
       comment: syntax.comment.hex(),

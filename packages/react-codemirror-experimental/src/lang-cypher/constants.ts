@@ -34,6 +34,8 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
 // TODO functions/procedures done correctly?
 // TODO should we separate parens from square brackets
+// TODO different color for semi?
+// TODO operatior is too broad, commas don't feel like operators. same goes for arrows in MATCH
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   comment: tags.comment,
   keyword: tags.keyword,
