@@ -18,7 +18,7 @@ export interface ThemeOptions {
     selection: string;
     textMatchingSelection: string;
   };
-  highlightStyles: Record<HighlightedCypherTokenTypes, string>;
+  highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
 }
 
 export const createCypherTheme = ({
