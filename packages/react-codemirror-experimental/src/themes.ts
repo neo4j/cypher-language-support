@@ -2,7 +2,6 @@ import { createCypherTheme } from './lang-cypher/create-cypher-theme';
 
 import { light } from 'ayu';
 
-console.log(light.editor.findMatch.inactive.hex());
 export const ayuLightTheme = () => {
   const { syntax } = light;
   return createCypherTheme({
