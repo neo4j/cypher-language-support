@@ -75,4 +75,4 @@ type AntlrDefaultExport = {
     };
   };
 };
-export const antlrUtils = antlrDefaultExport as AntlrDefaultExport;
+export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
