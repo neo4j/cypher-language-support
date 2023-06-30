@@ -79,14 +79,14 @@ describe('Keywords', () => {
       // If the test fails, it is useful to see the token that was parsed
       if (tokens[0].type !== token) {
         console.error(
-          'unparsed token',
+          'unexpected token',
           tokenName,
           token,
           'symbolic name',
           CypherLexer.symbolicNames[token],
         );
         console.error(
-          'parsed token',
+          'expected token',
           tokenNames[tokens[0].type],
           tokens[0].type,
           'symbolic name',
