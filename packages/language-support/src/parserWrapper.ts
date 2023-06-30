@@ -31,7 +31,7 @@ export interface ParsingResult {
   stopNode: ParserRuleContext;
 }
 
-class ParserCache {
+class ParserWrapper {
   parsingResult: ParsingResult;
 
   parse(query: string): ParsingResult {
@@ -68,7 +68,7 @@ class ParserCache {
   }
 }
 
-export const parserCache = new ParserCache();
+export const parserWrapper = new ParserWrapper();
 
 export class ErrorListener implements ANTLRErrorListener<CommonToken> {
   diagnostics: Diagnostic[];

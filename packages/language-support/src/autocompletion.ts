@@ -19,7 +19,7 @@ import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
 import { findParent, findStopNode, getTokens } from './helpers';
 import { CypherTokenType, lexerSymbols } from './lexerSymbols';
-import { parserCache } from './parserCache';
+import { parserWrapper } from './parserWrapper';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
@@ -41,7 +41,7 @@ export function autocomplete(
   position: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] {
-  const parseResult = parserCache.parse(textUntilPosition);
+  const parseResult = parserWrapper.parse(textUntilPosition);
   const tokens = getTokens(parseResult.tokenStream);
   const parser = parseResult.parser;
   const tree = parseResult.result;

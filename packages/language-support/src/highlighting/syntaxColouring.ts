@@ -35,7 +35,7 @@ import {
 import CypherParserListener from '../generated-parser/CypherParserListener';
 import { getTokens } from '../helpers';
 import { CypherTokenType } from '../lexerSymbols';
-import { parserCache } from '../parserCache';
+import { parserWrapper } from '../parserWrapper';
 import {
   BracketType,
   getCypherTokenType,
@@ -251,7 +251,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
 export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
-  const parserResult = parserCache.parse(wholeFileText);
+  const parserResult = parserWrapper.parse(wholeFileText);
   const tokenStream = parserResult.tokenStream;
 
   // Get a first pass at the colouring using only the lexer

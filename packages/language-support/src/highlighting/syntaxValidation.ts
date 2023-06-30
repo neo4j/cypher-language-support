@@ -1,8 +1,8 @@
 import { Diagnostic } from 'vscode-languageserver-types';
 
-import { parserCache } from '../parserCache';
+import { parserWrapper } from '../parserWrapper';
 
 export function validateSyntax(wholeFileText: string): Diagnostic[] {
-  const result = parserCache.parse(wholeFileText);
+  const result = parserWrapper.parse(wholeFileText);
   return result.diagnostics;
 }

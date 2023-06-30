@@ -11,7 +11,7 @@ import {
 
 import { DbInfo } from './dbInfo';
 import { findParent } from './helpers';
-import { parserCache } from './parserCache';
+import { parserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -91,7 +91,7 @@ export function signatureHelp(
   textUntilPosition: string,
   dbInfo: DbInfo,
 ): SignatureHelp {
-  const parserResult = parserCache.parse(textUntilPosition);
+  const parserResult = parserWrapper.parse(textUntilPosition);
   const stopNode = parserResult.stopNode;
   let result: SignatureHelp = emptyResult;
 
