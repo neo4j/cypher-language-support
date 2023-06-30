@@ -247,6 +247,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.STARTS]: CypherTokenType.keyword,
   [CypherLexer.STATUS]: CypherTokenType.keyword,
   [CypherLexer.STOP]: CypherTokenType.keyword,
+  [CypherLexer.STRING]: CypherTokenType.keyword,
   [CypherLexer.SUPPORTED]: CypherTokenType.keyword,
   [CypherLexer.SUSPENDED]: CypherTokenType.keyword,
   [CypherLexer.TARGET]: CypherTokenType.keyword,
@@ -292,7 +293,6 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.DECIMAL_DOUBLE]: CypherTokenType.numberLiteral,
   [CypherLexer.SINGLE_LINE_COMMENT]: CypherTokenType.comment,
   [CypherLexer.MULTI_LINE_COMMENT]: CypherTokenType.comment,
-  [CypherLexer.STRING]: CypherTokenType.stringLiteral,
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {
