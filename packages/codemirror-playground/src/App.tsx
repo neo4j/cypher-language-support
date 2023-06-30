@@ -2,7 +2,7 @@ import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
 import { useState } from 'react';
 import { TokenTable } from './TokenTable';
 
-const demoQueries = {
+const demos = {
   allTokenTypes: `MATCH (variable: Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 
     OR namespaced.function() = false
@@ -26,10 +26,10 @@ RETURN count(*)`,
   createDatabase: `CREATE DATABASE testdb OPTIONS {existingData: 'use', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar'};`,
 } as const;
 
-type Demo = keyof typeof demoQueries;
+type DemoName = keyof typeof demos;
 export function App() {
-  const [selectedDemo, setSelectedDemo] = useState<Demo>('basic');
-  const [value, setValue] = useState<string>(demoQueries[selectedDemo]);
+  const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
+  const [value, setValue] = useState<string>(demos[selectedDemoName]);
 
   return (
     <div className="flex justify-center mt-5">
@@ -38,16 +38,16 @@ export function App() {
         <div className="flex">
           <span> cypher snippets</span>
           <select
-            value={selectedDemo}
+            value={selectedDemoName}
             onChange={(e) => {
-              const demo = e.target.value as Demo;
-              setSelectedDemo(demo);
-              setValue(demoQueries[demo]);
+              const demoName = e.target.value as DemoName;
+              setSelectedDemoName(demoName);
+              setValue(demos[demoName]);
             }}
           >
-            {Object.keys(demoQueries).map((demo) => (
-              <option key={demo} value={demo}>
-                {demo}
+            {Object.keys(demos).map((demoName) => (
+              <option key={demoName} value={demoName}>
+                {demoName}
               </option>
             ))}
           </select>
