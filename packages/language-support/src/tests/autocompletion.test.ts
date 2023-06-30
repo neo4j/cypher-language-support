@@ -371,11 +371,11 @@ describe('Inserts correct text when symbolic name is not display name', () => {
     ]);
   });
   test('Inserts correct text for allShortestPath', () => {
-    const query = 'RETURN 1 a';
+    const query = 'MATCH a';
     const position = Position.create(0, query.length);
 
     testAutoCompletionContains(query, position, new MockDbInfo(), [
-      { label: 'allShortestPath', kind: CompletionItemKind.Keyword },
+      { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
     ]);
   });
 });

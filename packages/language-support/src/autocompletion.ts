@@ -134,9 +134,9 @@ export function autocomplete(
 
           // Keep only keywords as suggestions
           codeCompletion.ignoredTokens = new Set<number>(
-            Array.from(allPosibleTokens.keys()).filter(
-              (key) => lexerSymbols[key] !== CypherTokenType.keyword,
-            ),
+            Object.entries(lexerSymbols)
+              .filter(([, type]) => type !== CypherTokenType.keyword)
+              .map(([token]) => Number(token)),
           );
 
           const candidates = codeCompletion.collectCandidates(caretIndex);
