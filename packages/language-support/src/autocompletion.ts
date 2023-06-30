@@ -18,7 +18,7 @@ import CypherParser, {
 import { CodeCompletionCore } from 'antlr4-c3';
 import { DbInfo } from './dbInfo';
 import { findParent, findStopNode, getTokens } from './helpers';
-import { CypherTokenType, lexerSymbols } from './lexerSymbols';
+import { CypherTokenType, lexerSymbols, tokenNames } from './lexerSymbols';
 import { parserWrapper } from './parserWrapper';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
@@ -112,12 +112,6 @@ export function autocomplete(
         const caretIndex = tokens.length - 2;
 
         if (caretIndex >= 0) {
-          // TODO Nacho Can this be extracted for more performance?
-          const allPosibleTokens: Map<number | undefined, string> = new Map();
-
-          parser.symbolicNames.forEach(function (value, key) {
-            allPosibleTokens.set(key, value);
-          });
           // We need this to ignore the list of tokens from:
           // * unescapedSymbolicNameString, because a lot of keywords are allowed there
           // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
@@ -130,9 +124,9 @@ export function autocomplete(
 
           // Keep only keywords as suggestions
           codeCompletion.ignoredTokens = new Set<number>(
-            Array.from(allPosibleTokens.keys()).filter(
-              (key) => lexerSymbols[key] !== CypherTokenType.keyword,
-            ),
+            Object.entries(lexerSymbols)
+              .filter(([, type]) => type !== CypherTokenType.keyword)
+              .map(([token]) => Number(token)),
           );
 
           const candidates = codeCompletion.collectCandidates(caretIndex);
@@ -142,7 +136,7 @@ export function autocomplete(
             const [tokenNumber, followUpList] = value;
             return [tokenNumber]
               .concat(followUpList)
-              .map((value) => allPosibleTokens.get(value))
+              .map((value) => tokenNames[value])
               .join(' ');
           });
 

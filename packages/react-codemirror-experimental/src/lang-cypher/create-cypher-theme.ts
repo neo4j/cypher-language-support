@@ -5,11 +5,11 @@ import {
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { tags } from '@lezer/highlight';
 import { StyleSpec } from 'style-mod';
+import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 
 export interface ThemeOptions {
-  theme: 'light' | 'dark';
+  dark: boolean;
   editorSettings: {
     background: string;
     foreground: string;
@@ -18,13 +18,13 @@ export interface ThemeOptions {
     selection: string;
     textMatchingSelection: string;
   };
-  highlightStyles: TagStyle[];
+  highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
 }
 
-export const createTheme = ({
-  theme,
+export const createCypherTheme = ({
+  dark,
   editorSettings: settings,
-  highlightStyles: styles = [],
+  highlightStyles,
 }: ThemeOptions): Extension => {
   const themeOptions: Record<string, StyleSpec> = {
     '&': {
@@ -62,40 +62,16 @@ export const createTheme = ({
     // inspriation here: https://github.com/codemirror/theme-one-dark/blob/main/src/one-dark.ts
   };
 
-  const themeExtension = EditorView.theme(themeOptions, {
-    dark: theme === 'dark',
-  });
+  const themeExtension = EditorView.theme(themeOptions, { dark });
 
+  const styles = Object.entries(highlightStyles).map(
+    ([token, color]: [HighlightedCypherTokenTypes, string]): TagStyle => ({
+      tag: tokenTypeToStyleTag[token],
+      color,
+    }),
+  );
   const highlightStyle = HighlightStyle.define(styles);
   const extension = [themeExtension, syntaxHighlighting(highlightStyle)];
 
   return extension;
 };
-
-export const neo4jLightTheme = () =>
-  createTheme({
-    theme: 'light',
-    editorSettings: {
-      background: '#ffffff',
-      foreground: '#444444',
-      gutterForeground: '#6c6c6c',
-      cursor: '#000',
-      selection: '#d7d4f0',
-      textMatchingSelection: '#72a1ff59',
-    },
-    highlightStyles: [
-      { tag: tags.comment, color: '#93a1a1;' },
-      { tag: tags.variableName, color: '#0080ff' },
-      { tag: [tags.string, tags.special(tags.brace)], color: '#b58900' },
-      { tag: tags.number, color: '#2aa198' },
-      { tag: tags.bool, color: '#2aa198;' },
-      { tag: tags.keyword, color: '#859900;' },
-      { tag: tags.operatorKeyword, color: '#859900' },
-      { tag: tags.className, color: '##c616' },
-      { tag: tags.function(tags.variableName), color: '#6c71c4' },
-      { tag: tags.typeName, color: '#cb4b16' },
-      { tag: tags.atom, color: '#dc322f;' },
-      { tag: tags.propertyName, color: '#586e75;' },
-      { tag: tags.operator, color: '#555555;' },
-    ],
-  });

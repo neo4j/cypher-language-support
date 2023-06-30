@@ -16,5 +16,6 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/consistent-type-exports': 'error',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
 };
