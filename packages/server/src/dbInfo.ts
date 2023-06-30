@@ -72,7 +72,7 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('label') as string,
       );
     } catch (error) {
-      console.log('could not contact the database to fetch labels');
+      console.warn('could not contact the database to fetch labels');
     } finally {
       await s.close();
     }
@@ -88,7 +88,9 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('relationshipType') as string,
       );
     } catch (error) {
-      console.log('could not contact the database to fetch relationship types');
+      console.warn(
+        'could not contact the database to fetch relationship types',
+      );
     } finally {
       await s.close();
     }
@@ -132,7 +134,7 @@ export class DbInfoImpl implements DbInfo {
         );
       });
     } catch (error) {
-      console.log('could not contact the database to fetch ' + updateTarget);
+      console.warn('could not contact the database to fetch ' + updateTarget);
     } finally {
       await s.close();
     }
