@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
-import def, {
+import antlrDefaultExport, {
   CharStreams,
   CommonTokenStream,
   ParserRuleContext,
@@ -63,12 +63,7 @@ export function parse(cypher: string) {
   return parser.statements();
 }
 
-export interface SimpleTree {
-  name: string;
-  children?: SimpleTree[];
-}
-
-type AntlrTreeUtil = {
+type AntlrDefaultExport = {
   tree: {
     Trees: {
       getNodeText(
@@ -80,27 +75,4 @@ type AntlrTreeUtil = {
     };
   };
 };
-const antlrUtils = def as unknown as AntlrTreeUtil;
-export function getDebugTree(cypher: string): SimpleTree {
-  const inputStream = CharStreams.fromString(cypher);
-
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-
-  const statements = parser.statements();
-  function walk(node: ParserRuleContext): SimpleTree {
-    const name = antlrUtils.tree.Trees.getNodeText(
-      node,
-      CypherParser.ruleNames,
-      CypherParser,
-    );
-
-    return {
-      name: name,
-      children: antlrUtils.tree.Trees.getChildren(node).map(walk),
-    };
-  }
-
-  return walk(statements);
-}
+export const antlrUtils = antlrDefaultExport as AntlrDefaultExport;

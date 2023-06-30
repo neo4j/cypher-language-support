@@ -190,7 +190,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.PLUSEQUAL]: CypherTokenType.operator,
   [CypherLexer.POINT]: CypherTokenType.keyword,
   [CypherLexer.POPULATED]: CypherTokenType.keyword,
-  [CypherLexer.POW]: CypherTokenType.keyword,
+  [CypherLexer.POW]: CypherTokenType.operator,
   [CypherLexer.PRIMARY]: CypherTokenType.keyword,
   [CypherLexer.PRIMARIES]: CypherTokenType.keyword,
   [CypherLexer.PRIVILEGE]: CypherTokenType.keyword,
@@ -294,3 +294,22 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.SINGLE_LINE_COMMENT]: CypherTokenType.comment,
   [CypherLexer.MULTI_LINE_COMMENT]: CypherTokenType.comment,
 };
+
+export const hasIncorrectSymbolicName: Record<number, string> = {
+  [CypherLexer.ALL_SHORTEST_PATH]: 'allShortestPaths',
+  [CypherLexer.SHORTEST_PATH]: 'shortestPath',
+  [CypherLexer.LIMITROWS]: 'LIMIT',
+  [CypherLexer.SKIPROWS]: 'SKIP',
+};
+
+const { literalNames, symbolicNames } = CypherLexer;
+
+const length = Math.max(literalNames.length, symbolicNames.length);
+
+export const tokenNames: string[] = Array.from({ length }).map(
+  (_, i) =>
+    hasIncorrectSymbolicName[i] ??
+    literalNames[i] ??
+    symbolicNames[i] ??
+    '<INVALID',
+);

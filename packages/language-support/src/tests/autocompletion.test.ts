@@ -344,3 +344,38 @@ M`;
     ]);
   });
 });
+
+describe('Inserts correct text when symbolic name is not display name', () => {
+  test('Inserts correct text for LIMIT', () => {
+    const query = 'RETURN 1 L';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'LIMIT', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+  test('Inserts correct text for SKIP', () => {
+    const query = 'RETURN 1 S';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'SKIP', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+  test('Inserts correct text for shortestPath', () => {
+    const query = 'MATCH s';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'shortestPath', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+  test('Inserts correct text for allShortestPath', () => {
+    const query = 'MATCH a';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});

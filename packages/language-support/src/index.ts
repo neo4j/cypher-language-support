@@ -1,6 +1,6 @@
 export { autocomplete } from './autocompletion';
 export type { DbInfo } from './dbInfo';
-export { getDebugTree, parse } from './helpers';
+export { antlrUtils, parse } from './helpers';
 export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
