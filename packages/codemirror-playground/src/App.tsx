@@ -1,6 +1,8 @@
 import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
+import { getDebugTree } from './tree-util';
 
 const demos = {
   allTokenTypes: `MATCH (variable: Label)-[:REL_TYPE]->() 
@@ -30,35 +32,102 @@ type DemoName = keyof typeof demos;
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
+  const [showCodemirrorParse, setShowCodemirrorParse] = useState(false);
+  const [showAntlrParse, setShowAntlrParse] = useState(false);
+  const [showConfigPanel, setShowConfigPanel] = useState(false);
+
+  const treeData = useMemo(() => {
+    return getDebugTree(value);
+  }, [value]);
 
   return (
-    <div className="flex justify-center mt-5">
-      <div className="auto min-w-[500px] w-3/6  flex flex-col gap-5 bg-white p-10 rounded-lg shadow-lg">
-        <h1 className="text-4xl">Cypher Codemirror Demo</h1>
-        <div className="flex">
-          <span> cypher snippets</span>
-          <select
-            value={selectedDemoName}
-            onChange={(e) => {
-              const demoName = e.target.value as DemoName;
-              setSelectedDemoName(demoName);
-              setValue(demos[demoName]);
-            }}
-          >
-            {Object.keys(demos).map((demoName) => (
-              <option key={demoName} value={demoName}>
+    <div>
+      <div className="flex justify-center mt-5 gap-10">
+        <div className="auto min-w-[500px] w-3/6 flex flex-col gap-5 bg-white p-10 rounded-lg shadow-lg">
+          <div className="flex justify-between items-center">
+            <h1 className="text-4xl ">Cypher Codemirror Demo</h1>
+            <button
+              className="w-10 h-10"
+              onClick={() => setShowConfigPanel((s) => !s)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="w-full h-full text-gray-500 self-center"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div className="flex gap-1">
+            {Object.keys(demos).map((demoName: DemoName) => (
+              <button
+                key={demoName}
+                className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded 
+                ${
+                  selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
+                }`}
+                onClick={() => {
+                  setSelectedDemoName(demoName);
+                  setValue(demos[demoName]);
+                }}
+              >
                 {demoName}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
+          <CypherEditor
+            className="border-2 border-gray-100"
+            value={value}
+            onChange={setValue}
+          />
+
+          {!!showCodemirrorParse && <TokenTable document={value} />}
         </div>
-        <CypherEditor
-          className="border-2 border-gray-100"
-          value={value}
-          onChange={setValue}
-        />
-        <TokenTable document={value} />
+        {showConfigPanel && (
+          <div className="auto min-w-[500px] w-2/6 flex flex-col gap-5 bg-white p-10 rounded-lg shadow-lg">
+            <h1 className="text-4xl">Options </h1>
+            <label className="flex gap-1">
+              <input
+                type="checkbox"
+                checked={showCodemirrorParse}
+                onChange={() => setShowCodemirrorParse((s) => !s)}
+              />
+              Show codemirror parsed tokens
+            </label>
+            <label className="flex gap-1">
+              <input
+                type="checkbox"
+                checked={showAntlrParse}
+                onChange={() => setShowAntlrParse((s) => !s)}
+              />
+              Show antlr parse tree
+            </label>
+          </div>
+        )}
       </div>
+      {showAntlrParse && (
+        <div id="treeWrapper" className="w-full h-screen">
+          <Tree
+            data={treeData}
+            orientation="vertical"
+            translate={{ x: document.body.clientWidth / 2, y: 50 }}
+          />
+        </div>
+      )}
     </div>
   );
 }
