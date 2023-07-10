@@ -24,6 +24,12 @@ export function isLabel(p: ParserRuleContext) {
   );
 }
 
+export function inLabel(stopNode: ParserRuleContext) {
+  const labelParent = findParent(stopNode, isLabel);
+
+  return isDefined(labelParent);
+}
+
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const labelParent = findParent(
     findParent(stopNode, isLabel),

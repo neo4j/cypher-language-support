@@ -83,6 +83,45 @@ describe('MATCH auto-completion', () => {
     );
   });
 
+  test('Correctly completes barred label in MATCH', () => {
+    const query = 'MATCH (n:A|';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(['B', 'C']), [
+      { label: 'B', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
+  test('Correctly completes doubly barred label in MATCH', () => {
+    const query = 'MATCH (n:A|B|:';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(['C', 'D']), [
+      { label: 'C', kind: CompletionItemKind.TypeParameter },
+      { label: 'D', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
+  test('Correctly completes barred label in WHERE inside node', () => {
+    const query = 'MATCH (n WHERE n:A|';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(['B', 'C']), [
+      { label: 'B', kind: CompletionItemKind.TypeParameter },
+      { label: 'C', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
+  test('Correctly completes barred label in WHERE', () => {
+    const query = 'MATCH (n) WHERE n:A|';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(['B', 'C']), [
+      { label: 'B', kind: CompletionItemKind.TypeParameter },
+      { label: 'C', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
   test('Correctly completes WHERE', () => {
     const query = 'MATCH (n:Person) W';
     const position = Position.create(0, query.length);
