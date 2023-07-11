@@ -313,9 +313,6 @@ listComprehensionWhereAndBar:
 patternComprehension:
    LBRACKET (variable EQ)? pathPatternNonEmpty (WHERE expression)? BAR expression RBRACKET;
 
-patternComprehensionPrefix:
-   LBRACKET (variable EQ)? pathPatternNonEmpty (WHERE | BAR);
-
 reduceExpression:
    REDUCE LPAREN variable EQ expression COMMA variable IN expression BAR expression RPAREN;
 

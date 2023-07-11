@@ -393,6 +393,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       { label: 'LIMIT', kind: CompletionItemKind.Keyword },
     ]);
   });
+
   test('Inserts correct text for SKIP', () => {
     const query = 'RETURN 1 S';
     const position = Position.create(0, query.length);
@@ -401,6 +402,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       { label: 'SKIP', kind: CompletionItemKind.Keyword },
     ]);
   });
+
   test('Inserts correct text for shortestPath', () => {
     const query = 'MATCH s';
     const position = Position.create(0, query.length);
@@ -409,12 +411,53 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       { label: 'shortestPath', kind: CompletionItemKind.Keyword },
     ]);
   });
+
   test('Inserts correct text for allShortestPath', () => {
     const query = 'MATCH a';
     const position = Position.create(0, query.length);
 
     testAutoCompletionContains(query, position, new MockDbInfo(), [
       { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});
+
+describe('Auto-completion works correctly inside pattern comprehensions', () => {
+  test.skip('Correctly completes keywords inside pattern comprehensions', () => {
+    const query = "MATCH (a:Person {name: 'Andy'}) RETURN [(a)-->(b W";
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});
+
+describe('Auto-completion works correctly inside nodes and relationship patterns', () => {
+  test('Correctly completes keywords inside relationship pattern', () => {
+    const query = 'WITH 2000 AS minYear MATCH (a:Person)-[r:KNOWS ';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes keywords inside relationship pattern with starting hint', () => {
+    const query = 'WITH 2000 AS minYear MATCH (a:Person)-[r:KNOWS W';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes keywords inside a node pattern', () => {
+    const query = 'WITH 2000 AS minYear MATCH (a ';
+    const position = Position.create(0, query.length);
+
+    testAutoCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
     ]);
   });
 });

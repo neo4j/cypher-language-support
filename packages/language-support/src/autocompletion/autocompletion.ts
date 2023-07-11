@@ -3,6 +3,7 @@ import { CompletionItem, Position } from 'vscode-languageserver-types';
 import { Token } from 'antlr4';
 
 import { DbInfo } from '../dbInfo';
+import CypherParser from '../generated-parser/CypherParser';
 import { findStopNode, isDefined } from '../helpers';
 import { parserWrapper, ParsingResult } from '../parserWrapper';
 import {
@@ -37,6 +38,9 @@ export function autoCompleteNonKeywords(
 
   if (!positionIsParsableToken(lastToken, position)) {
     return [];
+  } else if (lastToken.type === CypherParser.SPACE) {
+    // If the last token is a space, we surely cannot auto-complete using parsing tree information
+    return undefined;
   } else {
     const stopNode = findStopNode(tree);
 
@@ -73,6 +77,9 @@ export function autoCompleteAddingChar(
 
   if (!positionIsParsableToken(lastToken, position)) {
     return [];
+  } else if (lastToken.type === CypherParser.SPACE) {
+    // If the last token is a space, we surely cannot auto-complete using parsing tree information
+    return undefined;
   } else {
     const stopNode = findStopNode(tree);
 
