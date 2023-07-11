@@ -27,7 +27,7 @@ export function positionIsParsableToken(lastToken: Token, position: Position) {
   );
 }
 
-export function autoCompleteNonKeywords(
+export function autoCompleteStructurally(
   parsingResult: ParsingResult,
   position: Position,
   dbInfo: DbInfo,
@@ -63,7 +63,7 @@ export function autoCompleteNonKeywords(
   }
 }
 
-export function autoCompleteAddingChar(
+export function autoCompleteStructurallyAddingChar(
   textUntilPosition: string,
   oldPosition: Position,
   dbInfo: DbInfo,
@@ -112,12 +112,14 @@ export function autocomplete(
   dbInfo: DbInfo,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(textUntilPosition);
-  const result = autoCompleteNonKeywords(parsingResult, position, dbInfo);
+  // First try to complete using tree information:
+  // whether we are in a node label, relationship type, function name, procedure name, etc
+  const result = autoCompleteStructurally(parsingResult, position, dbInfo);
 
   if (result !== undefined) {
     return result;
   } else {
-    /* For some queries, we need to add an extra character to 
+    /* For some queries, we need to add an extra character (namelly 'x') to 
        correctly parse the query. For example:
 
        MATCH (n:A|
@@ -125,7 +127,11 @@ export function autocomplete(
       where :A gets correctly parsed as label, but | yields an error token
       :A|x on the contrary gets correctly parsed as label
     */
-    const result = autoCompleteAddingChar(textUntilPosition, position, dbInfo);
+    const result = autoCompleteStructurallyAddingChar(
+      textUntilPosition,
+      position,
+      dbInfo,
+    );
     if (result !== undefined) {
       return result;
     } else {
