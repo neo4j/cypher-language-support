@@ -88,7 +88,7 @@ export function autoCompleteAddingChar(
     } else if (inRelationshipType(stopNode)) {
       return autocompleteRelTypes(dbInfo);
     } else if (inLabel(stopNode)) {
-      // TODO This requires fixing
+      // TODO This requires finer grain polishing
       // Unless we build a symbol table, we cannot distinguish in a
       // WHERE type predicate between a node:
       //
