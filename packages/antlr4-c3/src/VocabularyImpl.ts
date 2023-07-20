@@ -21,12 +21,6 @@ export class VocabularyImpl implements Vocabulary {
    * except {@link Token#EOF}.
    */
 
-  public static readonly EMPTY_VOCABULARY: VocabularyImpl = new VocabularyImpl(
-    [],
-    [],
-    [],
-  );
-
   private readonly literalNames: Array<string | undefined>;
 
   private readonly symbolicNames: Array<string | undefined>;
@@ -113,3 +107,9 @@ export class VocabularyImpl implements Vocabulary {
     return String(tokenType);
   }
 }
+
+export const EMPTY_VOCABULARY: VocabularyImpl = new VocabularyImpl(
+  [],
+  [],
+  [],
+);

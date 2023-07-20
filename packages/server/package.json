@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rm -rf out",
-    "watch": "tsc -b -w"
+    "watch": "tsc -b -w",
+    "assemble": "esbuild ./src/server.ts --bundle --outfile=./out/cypher-language-server.js --format=esm --platform=node"
   }
 }

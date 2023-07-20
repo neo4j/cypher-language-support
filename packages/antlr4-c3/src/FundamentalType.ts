@@ -9,11 +9,6 @@ import { Type, TypeKind, ReferenceKind } from "./types";
 
 /** A single class for all fundamental types. They are distinguished via the kind field. */
 export class FundamentalType implements Type {
-    public static readonly integerType = new FundamentalType("int", TypeKind.Integer, ReferenceKind.Instance);
-    public static readonly floatType = new FundamentalType("float", TypeKind.Float, ReferenceKind.Instance);
-    public static readonly stringType = new FundamentalType("string", TypeKind.String, ReferenceKind.Instance);
-    public static readonly boolType = new FundamentalType("bool", TypeKind.Boolean, ReferenceKind.Instance);
-
     public name: string;
 
     private typeKind: TypeKind;
@@ -36,4 +31,11 @@ export class FundamentalType implements Type {
     public get reference(): ReferenceKind {
         return this.referenceKind;
     }
+}
+
+export class FundamentalTypes {
+    public static readonly integerType = new FundamentalType("int", TypeKind.Integer, ReferenceKind.Instance);
+    public static readonly floatType = new FundamentalType("float", TypeKind.Float, ReferenceKind.Instance);
+    public static readonly stringType = new FundamentalType("string", TypeKind.String, ReferenceKind.Instance);
+    public static readonly boolType = new FundamentalType("bool", TypeKind.Boolean, ReferenceKind.Instance);
 }

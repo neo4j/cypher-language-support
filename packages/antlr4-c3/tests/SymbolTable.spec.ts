@@ -12,7 +12,7 @@ import { BlockSymbol } from "../src/BlockSymbol";
 import { ClassSymbol } from "../src/ClassSymbol";
 import { DuplicateSymbolError } from "../src/DuplicateSymbolError";
 import { FieldSymbol } from "../src/FieldSymbol";
-import { FundamentalType } from "../src/FundamentalType";
+import { FundamentalTypes } from "../src/FundamentalType";
 import { InterfaceSymbol } from "../src/InterfaceSymbol";
 import { LiteralSymbol } from "../src/LiteralSymbol";
 import { MethodSymbol } from "../src/MethodSymbol";
@@ -68,10 +68,10 @@ const createClassSymbolTable = async (name: string, counts: number[],
 
             // Blocks are created and added in an alternative way (only for classes).
             const block1 = symbolTable.addNewSymbolOfType(BlockSymbol, undefined, "block1"); // Block at top level.
-            symbolTable.addNewSymbolOfType(VariableSymbol, block1, "var1", 17, FundamentalType.integerType);
+            symbolTable.addNewSymbolOfType(VariableSymbol, block1, "var1", 17, FundamentalTypes.integerType);
             const block2 = symbolTable.addNewSymbolOfType(BlockSymbol, undefined, "block2");
             const symbol = symbolTable.addNewSymbolOfType(VariableSymbol, block2, "var1", 3.142,
-                FundamentalType.floatType);
+                FundamentalTypes.floatType);
             if (j === counts[1] - 1) {
                 symbol.context = dummyNode;
             }
@@ -89,12 +89,12 @@ const createClassSymbolTable = async (name: string, counts: number[],
 
     for (let i = 0; i < counts[3]; ++i) {
         symbolTable.addNewSymbolOfType(VariableSymbol, undefined, `globalVar${i}`, 42,
-            FundamentalType.integerType);
+            FundamentalTypes.integerType);
     }
 
     for (let i = 0; i < counts[4]; ++i) {
         symbolTable.addNewSymbolOfType(LiteralSymbol, undefined, `globalConst${i}`, "string constant",
-            FundamentalType.stringType);
+            FundamentalTypes.stringType);
     }
 
     return symbolTable;
@@ -193,9 +193,9 @@ describe("Symbol Table Tests", () => {
         const symbolTable = await createClassSymbolTable("main", [1, 1, 1, 1, 1]);
 
         // Now add all the other symbols.
-        symbolTable.addNewSymbolOfType(TypeAlias, undefined, "newBool", FundamentalType.boolType);
-        symbolTable.addNewSymbolOfType(RoutineSymbol, undefined, "routine1", FundamentalType.integerType);
-        symbolTable.addNewSymbolOfType(FieldSymbol, undefined, "field1", FundamentalType.floatType);
+        symbolTable.addNewSymbolOfType(TypeAlias, undefined, "newBool", FundamentalTypes.boolType);
+        symbolTable.addNewSymbolOfType(RoutineSymbol, undefined, "routine1", FundamentalTypes.integerType);
+        symbolTable.addNewSymbolOfType(FieldSymbol, undefined, "field1", FundamentalTypes.floatType);
 
         // TODO: finish this test.
     });
