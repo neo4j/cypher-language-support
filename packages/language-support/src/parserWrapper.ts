@@ -26,40 +26,77 @@ export interface ParsingResult {
   query: string;
   parser: CypherParser;
   tokens: Token[];
-  diagnostics: Diagnostic[];
   result: StatementsContext;
+}
+
+export interface EnrichedParsingResult extends ParsingResult {
+  diagnostics: Diagnostic[];
   stopNode: ParserRuleContext;
 }
 
-class ParserWrapper {
-  parsingResult: ParsingResult;
+export interface ParsingScaffolding {
+  query: string;
+  parser: CypherParser;
+  tokenStream: CommonTokenStream;
+}
 
-  parse(query: string): ParsingResult {
+export function createParsingScaffolding(query: string): ParsingScaffolding {
+  const inputStream = CharStreams.fromString(query);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const parser = new CypherParser(tokenStream);
+  parser.removeErrorListeners();
+
+  return {
+    query: query,
+    parser: parser,
+    tokenStream: tokenStream,
+  };
+}
+
+export function createParsingResult(
+  parsingScaffolding: ParsingScaffolding,
+): ParsingResult {
+  const query = parsingScaffolding.query;
+  const parser = parsingScaffolding.parser;
+  const tokenStream = parsingScaffolding.tokenStream;
+  const result = parser.statements();
+
+  const parsingResult: ParsingResult = {
+    query: query,
+    parser: parser,
+    tokens: getTokens(tokenStream),
+    result: result,
+  };
+
+  return parsingResult;
+}
+
+class ParserWrapper {
+  parsingResult: EnrichedParsingResult;
+
+  parse(query: string): EnrichedParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const inputStream = CharStreams.fromString(query);
-      const lexer = new CypherLexer(inputStream);
-      const tokenStream = new CommonTokenStream(lexer);
-      const parser = new CypherParser(tokenStream);
-
-      parser.removeErrorListeners();
+      const parsingScaffolding = createParsingScaffolding(query);
+      const parser = parsingScaffolding.parser;
+      const tokenStream = parsingScaffolding.tokenStream;
       const errorListener = new ErrorListener();
       parser.addErrorListener(errorListener);
 
-      const result = parser.statements();
-      const stopNode = findStopNode(result);
+      const result = createParsingResult(parsingScaffolding).result;
 
-      const parsingResult: ParsingResult = {
+      const parsingResult: EnrichedParsingResult = {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
         diagnostics: errorListener.diagnostics,
         result: result,
-        stopNode: stopNode,
+        stopNode: findStopNode(result),
       };
 
       this.parsingResult = parsingResult;

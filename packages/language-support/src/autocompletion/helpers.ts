@@ -1,6 +1,5 @@
-import { ParserRuleContext } from 'antlr4';
+import { ParserRuleContext, TerminalNode, Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
-import { Token } from 'antlr4-c3/out/src/antrl4';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -15,9 +14,20 @@ import CypherParser, {
   ProcedureNameContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherParser';
-import { findParent, findStopNode, isDefined } from '../helpers';
+import {
+  findParent,
+  findRightmostStatement,
+  findStopNode,
+  isDefined,
+} from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { parserWrapper, ParsingResult } from '../parserWrapper';
+import {
+  createParsingResult,
+  createParsingScaffolding,
+  EnrichedParsingResult,
+  parserWrapper,
+  ParsingResult,
+} from '../parserWrapper';
 
 export function isLabel(p: ParserRuleContext) {
   return (
@@ -112,7 +122,7 @@ export function positionIsParsableToken(lastToken: Token, position: Position) {
 }
 
 export function autoCompleteStructurally(
-  parsingResult: ParsingResult,
+  parsingResult: EnrichedParsingResult,
   position: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
@@ -190,9 +200,42 @@ export function autoCompleteStructurallyAddingChar(
   }
 }
 
-export function autoCompleteKeywords(parsingResult: ParsingResult) {
+export function autoCompleteKeywords(
+  parsingResult: ParsingResult,
+): CompletionItem[] {
+  let autoCompletions: CompletionItem[] = [];
+  const parsingTree = parsingResult.result;
+  /* If we add an extra character to a query there can be two possibilities:
+      Example:     MATCH (n:A); C
+     - Either it starts a new statement and we can get completions only for it
+     - Or it is part of the rightmost previous statement
+     Since the semicolon is optional to separate statements, for things like
+       MATCH (n:A) W
+     we could be trying to auto-complete W for the MATCH statement or
+     be could be trying to start a new statement, so we need to concatenate 
+     both results
+  */
+
+  // Removing EOF node at the end
+  const lastIndex = parsingTree.getChildCount() - 2;
+  const lastStatement = parsingTree.getChild(lastIndex);
+
+  if (lastStatement instanceof TerminalNode) {
+    const lastStatementResult = createParsingResult(
+      createParsingScaffolding(lastStatement.symbol.text),
+    );
+    autoCompletions = completeKeywordsImpl(lastStatementResult);
+  }
+  const fullCompletions = completeKeywordsImpl(parsingResult);
+  autoCompletions = autoCompletions.concat(fullCompletions);
+
+  return autoCompletions;
+}
+
+function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
+  const parsingTree = parsingResult.result;
 
   const codeCompletion = new CodeCompletionCore(parser);
 
@@ -218,7 +261,15 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
         .map(([token]) => Number(token)),
     );
 
-    const candidates = codeCompletion.collectCandidates(caretIndex);
+    const rightMostStatement = findRightmostStatement(parsingTree);
+    const autoCompleteCtx = rightMostStatement
+      ? rightMostStatement
+      : parsingTree;
+
+    const candidates = codeCompletion.collectCandidates(
+      caretIndex,
+      autoCompleteCtx,
+    );
     const tokens = candidates.tokens.entries();
 
     const tokenCandidates = Array.from(tokens).flatMap((value) => {

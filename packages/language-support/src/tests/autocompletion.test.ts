@@ -465,6 +465,16 @@ M`;
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
     ]);
   });
+
+  test('Correctly completes next line when the first one has some syntactic error', () => {
+    const query = `MATCH (n: Person W);
+C`;
+    const position = Position.create(1, 1);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
 });
 
 describe('Inserts correct text when symbolic name is not display name', () => {
