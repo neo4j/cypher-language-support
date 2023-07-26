@@ -107,9 +107,3 @@ export class VocabularyImpl implements Vocabulary {
     return String(tokenType);
   }
 }
-
-export const EMPTY_VOCABULARY: VocabularyImpl = new VocabularyImpl(
-  [],
-  [],
-  [],
-);

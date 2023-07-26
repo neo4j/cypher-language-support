@@ -1,9 +1,4 @@
-import {
-  CommonTokenStream,
-  ParseTreeWalker,
-  TerminalNode,
-  Token,
-} from 'antlr4';
+import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 
 import {
   AllExpressionContext,
@@ -33,7 +28,6 @@ import {
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
 import CypherParserListener from '../generated-parser/CypherParserListener';
-import { getTokens } from '../helpers';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
@@ -217,7 +211,7 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 }
 
-function colourLexerTokens(tokenStream: CommonTokenStream) {
+function colourLexerTokens(tokens: Token[]) {
   const result = new Map<string, ParsedCypherToken>();
   const bracketsLevel = new Map<BracketType, number>([
     [BracketType.curly, -1],
@@ -225,7 +219,7 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
     [BracketType.parenthesis, -1],
   ]);
 
-  getTokens(tokenStream).forEach((token) => {
+  tokens.forEach((token) => {
     if (shouldAssignTokenType(token)) {
       const tokenType = getCypherTokenType(token);
       const tokenPosition = getTokenPosition(token);
@@ -251,12 +245,11 @@ function colourLexerTokens(tokenStream: CommonTokenStream) {
 export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
-  const parserResult = parserWrapper.parse(wholeFileText);
-  const tokenStream = parserResult.tokenStream;
+  const parsingResult = parserWrapper.parse(wholeFileText);
+  const tokens = parsingResult.tokens;
 
   // Get a first pass at the colouring using only the lexer
-  const lexerTokens: Map<string, ParsedCypherToken> =
-    colourLexerTokens(tokenStream);
+  const lexerTokens: Map<string, ParsedCypherToken> = colourLexerTokens(tokens);
 
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
 
@@ -267,7 +260,7 @@ export function applySyntaxColouring(
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
-  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parserResult.result);
+  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parsingResult.result);
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 

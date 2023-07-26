@@ -4,7 +4,7 @@ import {
   Position,
   SignatureInformation,
 } from 'vscode-languageserver-types';
-import { autocomplete } from '../autocompletion';
+import { autocomplete } from '../autocompletion/autocompletion';
 import { DbInfo } from '../dbInfo';
 import { MockDbInfo } from './testHelpers';
 

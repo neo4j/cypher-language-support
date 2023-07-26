@@ -20,12 +20,12 @@ import {
 import CypherParser, {
   StatementsContext,
 } from './generated-parser/CypherParser';
-import { findStopNode } from './helpers';
+import { findStopNode, getTokens } from './helpers';
 
 export interface ParsingResult {
   query: string;
   parser: CypherParser;
-  tokenStream: CommonTokenStream;
+  tokens: Token[];
   diagnostics: Diagnostic[];
   result: StatementsContext;
   stopNode: ParserRuleContext;
@@ -56,7 +56,7 @@ class ParserWrapper {
       const parsingResult: ParsingResult = {
         query: query,
         parser: parser,
-        tokenStream: tokenStream,
+        tokens: getTokens(tokenStream),
         diagnostics: errorListener.diagnostics,
         result: result,
         stopNode: stopNode,
