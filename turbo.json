@@ -5,6 +5,10 @@
       "outputs": ["out/**"],
       "dependsOn": ["^build"]
     },
+    "assemble": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
     "clean": {},
     "watch": {},
     "test": {
