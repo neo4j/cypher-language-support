@@ -8,6 +8,16 @@ import {
   autoCompleteStructurallyAddingChar,
 } from './helpers';
 
+import { Token } from 'antlr4';
+
+export function positionIsParsableToken(lastToken: Token, position: Position) {
+  const tokenLength = lastToken.text?.length ?? 0;
+  return (
+    lastToken.column + tokenLength === position.character &&
+    lastToken.line - 1 === position.line
+  );
+}
+
 export function autocomplete(
   textUntilPosition: string,
   position: Position,
@@ -21,7 +31,7 @@ export function autocomplete(
   if (result !== undefined) {
     return result;
   } else {
-    /* For some queries, we need to add an extra character (namelly 'x') to 
+    /* For some queries, we need to add an extra character (we chose 'x') to 
        correctly parse the query. For example:
 
        MATCH (n:A|
