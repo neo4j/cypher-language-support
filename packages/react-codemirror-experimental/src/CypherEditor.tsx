@@ -5,12 +5,20 @@ import { basicNeo4jSetup } from './neo4j-setup';
 import { ayuLightTheme } from './themes';
 
 export const CypherEditor: typeof CodeEditor = React.forwardRef(
-  (props, ref) => (
-    <CodeEditor
-      ref={ref}
-      extensions={[basicNeo4jSetup(), ayuLightTheme(), cypher()]}
-      basicSetup={false}
-      {...props}
-    />
-  ),
+  (props, ref) => {
+    const { extensions = [], ...rest } = props;
+    return (
+      <CodeEditor
+        ref={ref}
+        extensions={[
+          basicNeo4jSetup(),
+          ayuLightTheme(),
+          cypher(),
+          ...extensions,
+        ]}
+        basicSetup={false}
+        {...rest}
+      />
+    );
+  },
 );
