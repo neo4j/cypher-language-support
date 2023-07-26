@@ -7,7 +7,10 @@
     },
     "clean": {},
     "watch": {},
-    "test": {},
+    "test": {
+      "cache": false,
+      "persistent": true
+    },
     "codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
     }
