@@ -1,21 +1,14 @@
 import { CompletionItem, Position } from 'vscode-languageserver-types';
 
-import { Token } from 'antlr4';
-
 import { DbInfo } from '../dbInfo';
-import { findStopNode, isDefined } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
 import {
-  autoCompleteFunctions,
   autoCompleteKeywords,
-  autocompleteLabels,
-  autoCompleteProcNames,
-  autocompleteRelTypes,
-  inNodeLabel,
-  inProcedureName,
-  inRelationshipType,
-  parentExpression,
+  autoCompleteStructurally,
+  autoCompleteStructurallyAddingChar,
 } from './helpers';
+
+import { Token } from 'antlr4';
 
 export function positionIsParsableToken(lastToken: Token, position: Position) {
   const tokenLength = lastToken.text?.length ?? 0;
@@ -31,32 +24,32 @@ export function autocomplete(
   dbInfo: DbInfo,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(textUntilPosition);
-  const tokens = parsingResult.tokens;
-  const tree = parsingResult.result;
-  const lastToken = tokens[tokens.length - 2];
+  // First try to complete using tree information:
+  // whether we are in a node label, relationship type, function name, procedure name, etc
+  const result = autoCompleteStructurally(parsingResult, position, dbInfo);
 
-  if (!positionIsParsableToken(lastToken, position)) {
-    return [];
+  if (result !== undefined) {
+    return result;
   } else {
-    const stopNode = findStopNode(tree);
+    /* For some queries, we need to add an extra character (we chose 'x') to 
+       correctly parse the query. For example:
 
-    if (inNodeLabel(stopNode)) {
-      return autocompleteLabels(dbInfo);
-    } else if (inRelationshipType(stopNode)) {
-      return autocompleteRelTypes(dbInfo);
+       MATCH (n:A|
+      
+      where :A gets correctly parsed as label, but | yields an error token
+      :A|x on the contrary gets correctly parsed as label
+    */
+    const result = autoCompleteStructurallyAddingChar(
+      textUntilPosition,
+      position,
+      dbInfo,
+    );
+    if (result !== undefined) {
+      return result;
     } else {
-      // Completes expressions that are prefixes of function names as function names
-      const expr = parentExpression(stopNode);
-
-      if (isDefined(expr)) {
-        return autoCompleteFunctions(dbInfo, expr);
-      } else if (inProcedureName(stopNode)) {
-        return autoCompleteProcNames(dbInfo);
-      } else {
-        // If we are not completing a label of a procedure name,
-        // it means we need to complete keywords
-        return autoCompleteKeywords(parsingResult);
-      }
+      // Keywords completion is expensive, so try to do it when we've exhausted
+      // labels, functions, procedures, etc auto-completion
+      return autoCompleteKeywords(parsingResult);
     }
   }
 }

@@ -1,8 +1,9 @@
-import { ParserRuleContext } from 'antlr4';
+import { ParserRuleContext, Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
+  Position,
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import CypherParser, {
@@ -13,15 +14,21 @@ import CypherParser, {
   ProcedureNameContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherParser';
-import { findParent, isDefined } from '../helpers';
+import { findParent, findStopNode, isDefined } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { ParsingResult } from '../parserWrapper';
+import { parserWrapper, ParsingResult } from '../parserWrapper';
 
 export function isLabel(p: ParserRuleContext) {
   return (
     p instanceof LabelExpression4Context ||
     p instanceof LabelExpression4IsContext
   );
+}
+
+export function inLabel(stopNode: ParserRuleContext) {
+  const labelParent = findParent(stopNode, isLabel);
+
+  return isDefined(labelParent);
 }
 
 export function inNodeLabel(stopNode: ParserRuleContext) {
@@ -93,6 +100,93 @@ export function autoCompleteProcNames(dbInfo: DbInfo) {
       kind: CompletionItemKind.Function,
     };
   });
+}
+
+export function positionIsParsableToken(lastToken: Token, position: Position) {
+  const tokenLength = lastToken.text?.length ?? 0;
+  return (
+    lastToken.column + tokenLength === position.character &&
+    lastToken.line - 1 === position.line
+  );
+}
+
+export function autoCompleteStructurally(
+  parsingResult: ParsingResult,
+  position: Position,
+  dbInfo: DbInfo,
+): CompletionItem[] | undefined {
+  const tokens = parsingResult.tokens;
+  const tree = parsingResult.result;
+  const lastToken = tokens[tokens.length - 2];
+
+  if (!positionIsParsableToken(lastToken, position)) {
+    return [];
+  } else if (lastToken.type === CypherParser.SPACE) {
+    // If the last token is a space, we surely cannot auto-complete using parsing tree information
+    return undefined;
+  } else {
+    const stopNode = findStopNode(tree);
+
+    if (inNodeLabel(stopNode)) {
+      return autocompleteLabels(dbInfo);
+    } else if (inRelationshipType(stopNode)) {
+      return autocompleteRelTypes(dbInfo);
+    } else {
+      // Completes expressions that are prefixes of function names as function names
+      const expr = parentExpression(stopNode);
+
+      if (isDefined(expr)) {
+        return autoCompleteFunctions(dbInfo, expr);
+      } else if (inProcedureName(stopNode)) {
+        return autoCompleteProcNames(dbInfo);
+      } else {
+        return undefined;
+      }
+    }
+  }
+}
+
+export function autoCompleteStructurallyAddingChar(
+  textUntilPosition: string,
+  oldPosition: Position,
+  dbInfo: DbInfo,
+): CompletionItem[] | undefined {
+  // Try adding a filling character, x, at the end
+  const position = Position.create(oldPosition.line, oldPosition.character + 1);
+  const parsingResult = parserWrapper.parse(textUntilPosition + 'x');
+  const tokens = parsingResult.tokens;
+  const tree = parsingResult.result;
+  const lastToken = tokens[tokens.length - 2];
+
+  if (!positionIsParsableToken(lastToken, position)) {
+    return [];
+  } else if (lastToken.type === CypherParser.SPACE) {
+    // If the last token is a space, we surely cannot auto-complete using parsing tree information
+    return undefined;
+  } else {
+    const stopNode = findStopNode(tree);
+
+    if (inNodeLabel(stopNode)) {
+      return autocompleteLabels(dbInfo);
+    } else if (inRelationshipType(stopNode)) {
+      return autocompleteRelTypes(dbInfo);
+    } else if (inLabel(stopNode)) {
+      // TODO This requires finer grain polishing
+      // Unless we build a symbol table, we cannot distinguish in a
+      // WHERE type predicate between a node:
+      //
+      // MATCH (n) WHERE n :A|B
+      // RETURN n
+      //
+      // and a relationship:
+      //
+      // MATCH (n)-[r]-(m) WHERE r :A|B
+      // RETURN n
+      return autocompleteLabels(dbInfo).concat(autocompleteRelTypes(dbInfo));
+    } else {
+      return undefined;
+    }
+  }
 }
 
 export function autoCompleteKeywords(parsingResult: ParsingResult) {
