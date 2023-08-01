@@ -29,13 +29,11 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   namespace: NodeType.define({ id: 17, name: 'namespace' }),
   bracket: NodeType.define({ id: 18, name: 'bracket' }),
   none: NodeType.define({ id: 19, name: 'none' }),
+  separator: NodeType.define({ id: 20, name: 'separator' }),
+  punctuation: NodeType.define({ id: 21, name: 'punctuation' }),
 });
 
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
-// TODO functions/procedures done correctly?
-// TODO should we separate parens from square brackets
-// TODO different color for semi?
-// TODO operatior is too broad, commas don't feel like operators. same goes for arrows in MATCH
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   comment: tags.comment,
   keyword: tags.keyword,
@@ -55,6 +53,8 @@ export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   property: tags.propertyName,
   namespace: tags.namespace,
   bracket: tags.bracket,
+  punctuation: tags.punctuation,
+  separator: tags.separator,
 };
 
 export const parserAdapterNodeSet = (nodes: Record<string, NodeType>) =>
