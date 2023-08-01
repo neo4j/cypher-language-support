@@ -18,7 +18,7 @@ export const ayuLightTheme = () => {
       comment: syntax.comment.hex(),
       keyword: syntax.keyword.hex(),
       keywordLiteral: syntax.keyword.hex(),
-      label: syntax.markup.hex(),
+      label: syntax.entity.hex(),
       predicateFunction: syntax.func.hex(),
       function: syntax.func.hex(),
       procedure: syntax.func.hex(),
