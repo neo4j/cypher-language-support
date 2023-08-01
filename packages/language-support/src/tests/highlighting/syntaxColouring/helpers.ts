@@ -9,10 +9,6 @@ export function testSyntaxColouring(
 
   expect(actualTokens.length).toBe(expected.length);
 
-  expect(actualTokens.map((t) => t.tokenType)).toEqual(
-    expected.map((t) => t.tokenType),
-  );
-
   expected.forEach((expectedToken, i) => {
     const token = actualTokens[i];
 

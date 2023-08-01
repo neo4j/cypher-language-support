@@ -22,8 +22,6 @@ export const ayuLightTheme = () => {
       predicateFunction: syntax.func.hex(),
       function: syntax.func.hex(),
       procedure: syntax.func.hex(),
-      variable: light.editor.fg.hex(),
-      symbolicName: light.editor.fg.hex(),
       stringLiteral: syntax.string.hex(),
       numberLiteral: syntax.constant.hex(),
       booleanLiteral: syntax.constant.hex(),
