@@ -23,7 +23,7 @@ export const ayuLightTheme = () => {
       function: syntax.func.hex(),
       procedure: syntax.func.hex(),
       variable: syntax.entity.hex(),
-      symbolicName: syntax.entity.hex(),
+      symbolicName: light.editor.fg.hex(),
       stringLiteral: syntax.string.hex(),
       numberLiteral: syntax.constant.hex(),
       booleanLiteral: syntax.constant.hex(),
