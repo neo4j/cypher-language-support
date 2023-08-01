@@ -170,7 +170,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -188,7 +188,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -206,7 +206,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -255,7 +255,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 61,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -344,7 +344,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.punctuation,
+        tokenType: CypherTokenType.operator,
         token: ';',
       },
       {
@@ -429,7 +429,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -447,7 +447,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -465,7 +465,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -514,7 +514,7 @@ describe('Multiline syntax colouring', () => {
           startCharacter: 61,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {

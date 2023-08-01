@@ -3,14 +3,12 @@ import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 import {
   AllExpressionContext,
   AnyExpressionContext,
-  ArrowLineContext,
   BooleanLiteralContext,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
-  LeftArrowContext,
   NoneExpressionContext,
   NumberLiteralContext,
   ParameterContext,
@@ -18,7 +16,6 @@ import {
   ProcedureResultItemContext,
   PropertyKeyNameContext,
   ReduceExpressionContext,
-  RightArrowContext,
   SingleExpressionContext,
   StringsLiteralContext,
   StringTokenContext,
@@ -66,8 +63,6 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.numberLiteral]: SemanticTokenTypes.number,
     [CypherTokenType.booleanLiteral]: SemanticTokenTypes.number,
     [CypherTokenType.operator]: SemanticTokenTypes.operator,
-    [CypherTokenType.separator]: SemanticTokenTypes.operator,
-    [CypherTokenType.punctuation]: SemanticTokenTypes.operator,
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
     [CypherTokenType.property]: SemanticTokenTypes.property,
@@ -118,18 +113,6 @@ class SyntaxHighlighter extends CypherParserListener {
     const labelName = ctx.symbolicNameString().start;
 
     this.addToken(labelName, CypherTokenType.label, labelName.text);
-  };
-
-  exitLeftArrow = (ctx: LeftArrowContext) => {
-    this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
-  };
-
-  exitArrowLine = (ctx: ArrowLineContext) => {
-    this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
-  };
-
-  exitRightArrow = (ctx: RightArrowContext) => {
-    this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
 
   exitFunctionName = (ctx: FunctionNameContext) => {

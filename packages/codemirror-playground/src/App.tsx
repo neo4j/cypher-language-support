@@ -5,12 +5,12 @@ import { TokenTable } from './TokenTable';
 import { getDebugTree } from './tree-util';
 
 const demos = {
-  allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 
+  allTokenTypes: `MATCH (variable: Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 
     OR namespaced.function() = false
     // comment
     OR $parameter > 2 
-RETURN variable;`,
+RETURN variable`,
   basic: `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n 

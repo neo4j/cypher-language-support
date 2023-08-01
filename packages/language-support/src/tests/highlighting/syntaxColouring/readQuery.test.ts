@@ -476,7 +476,7 @@ describe('MATCH syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -759,7 +759,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -803,7 +803,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -812,7 +812,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '>',
       },
       {
@@ -910,7 +910,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1007,7 +1007,7 @@ describe('RETURN syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1362,7 +1362,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -1371,7 +1371,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -1380,7 +1380,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '>',
       },
       {
@@ -1523,7 +1523,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 12,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1758,7 +1758,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -1874,7 +1874,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 49,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -1883,7 +1883,7 @@ describe('WHERE syntax colouring', () => {
           startCharacter: 50,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '>',
       },
       {

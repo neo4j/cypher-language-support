@@ -17,8 +17,7 @@
   "types": "out/index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c --failAfterWarnings",
-    "test": "vitest run"
+    "build": "rollup -c --failAfterWarnings"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",
@@ -44,7 +43,6 @@
     "rollup": "^2.60.2",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-ts": "^3.0.2",
-    "typescript": "^4.9.3",
-    "vitest": "^0.33.0"
+    "typescript": "^4.9.3"
   }
 }

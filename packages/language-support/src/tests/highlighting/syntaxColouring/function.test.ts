@@ -140,7 +140,7 @@ describe('Function syntax colouring', () => {
           startCharacter: 30,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {

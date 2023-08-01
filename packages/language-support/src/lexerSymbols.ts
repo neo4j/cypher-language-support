@@ -19,8 +19,6 @@ export enum CypherTokenType {
   property = 'property',
   namespace = 'namespace',
   bracket = 'bracket',
-  separator = 'separator',
-  punctuation = 'punctuation',
   none = 'none',
 }
 
@@ -58,7 +56,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.COLLECT]: CypherTokenType.keyword,
   [CypherLexer.COLON]: CypherTokenType.operator,
   [CypherLexer.COLONCOLON]: CypherTokenType.operator,
-  [CypherLexer.COMMA]: CypherTokenType.separator,
+  [CypherLexer.COMMA]: CypherTokenType.operator,
   [CypherLexer.COMMAND]: CypherTokenType.keyword,
   [CypherLexer.COMMANDS]: CypherTokenType.keyword,
   [CypherLexer.COMMIT]: CypherTokenType.keyword,
@@ -233,7 +231,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   [CypherLexer.SECONDARIES]: CypherTokenType.keyword,
   [CypherLexer.SECONDS]: CypherTokenType.keyword,
   [CypherLexer.SEEK]: CypherTokenType.keyword,
-  [CypherLexer.SEMICOLON]: CypherTokenType.punctuation,
+  [CypherLexer.SEMICOLON]: CypherTokenType.operator,
   [CypherLexer.SERVER]: CypherTokenType.keyword,
   [CypherLexer.SERVERS]: CypherTokenType.keyword,
   [CypherLexer.SET]: CypherTokenType.keyword,

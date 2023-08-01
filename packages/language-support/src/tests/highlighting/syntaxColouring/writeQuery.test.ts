@@ -75,7 +75,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -190,7 +190,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 39,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
       },
       {
@@ -199,7 +199,7 @@ describe('CREATE syntax colouring', () => {
           startCharacter: 40,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '>',
       },
       {
@@ -349,7 +349,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 10,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -385,7 +385,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -421,7 +421,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 13,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -492,7 +492,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -581,7 +581,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -643,7 +643,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -692,7 +692,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 11,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -710,7 +710,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -741,7 +741,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -790,7 +790,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -821,7 +821,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 27,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -870,7 +870,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -888,7 +888,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -919,7 +919,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1003,7 +1003,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1060,7 +1060,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1162,7 +1162,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1224,7 +1224,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1295,7 +1295,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 42,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1370,7 +1370,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 51,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: ',',
       },
       {
@@ -1531,7 +1531,7 @@ describe('MERGE syntax colouring', () => {
           startOffset: 82,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
         bracketInfo: undefined,
       },
@@ -1603,7 +1603,7 @@ describe('MERGE syntax colouring', () => {
           startOffset: 92,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '-',
         bracketInfo: undefined,
       },
@@ -1614,7 +1614,7 @@ describe('MERGE syntax colouring', () => {
           startOffset: 93,
         },
         length: 1,
-        tokenType: CypherTokenType.separator,
+        tokenType: CypherTokenType.operator,
         token: '>',
         bracketInfo: undefined,
       },
