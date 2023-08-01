@@ -1,5 +1,5 @@
 import { SignatureInformation } from 'vscode-languageserver-types';
-import { DbInfo, GraphSchema } from '../dbInfo';
+import { DbInfo } from '../dbInfo';
 
 export class MockDbInfo implements DbInfo {
   public procedureSignatures: Map<string, SignatureInformation>;
@@ -20,8 +20,15 @@ export class MockDbInfo implements DbInfo {
   }
 }
 
-export const mockGraphSchema: GraphSchema = {
+import { model } from '@neo4j/graph-schema-utils';
+
+const { GraphSchemaRepresentation } = model;
+
+export const mockGraphSchema: {
+  graphSchemaRepresentation: model.GraphSchemaRepresentationJsonStruct;
+} = {
   graphSchemaRepresentation: {
+    version: '1.0.0',
     graphSchema: {
       nodeLabels: [
         { $id: 'nl:Movie', token: 'Movie' },
@@ -110,3 +117,8 @@ export const mockGraphSchema: GraphSchema = {
     },
   },
 };
+
+export const graphSchemaModel =
+  GraphSchemaRepresentation.parseJsonStruct(mockGraphSchema);
+
+console.log(graphSchemaModel.graphSchema.nodeLabels);
