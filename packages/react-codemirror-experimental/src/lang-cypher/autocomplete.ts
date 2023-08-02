@@ -41,6 +41,8 @@ export const cypherAutocomplete: CompletionSource = (context) => {
       procedureSignatures: new Map(),
       relationshipTypes: [],
       labels: [],
+      aliasNames: ['myalias'],
+      databaseNames: ['db1', 'db2', 'movese'],
     },
   );
 

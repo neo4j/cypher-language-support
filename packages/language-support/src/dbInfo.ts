@@ -9,4 +9,5 @@ export interface DbInfo {
   labels: string[];
   relationshipTypes: string[];
   databaseNames: string[];
+  aliasNames: string[];
 }

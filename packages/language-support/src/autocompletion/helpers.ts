@@ -189,7 +189,10 @@ export function autoCompleteStructurallyAddingChar(
   }
 }
 
-export function autoCompleteKeywords(parsingResult: ParsingResult) {
+export function completionCoreCompletion(
+  parsingResult: ParsingResult,
+  dbInfo: DbInfo,
+) {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
@@ -208,7 +211,8 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
     codeCompletion.preferredRules = new Set<number>()
       .add(CypherParser.RULE_unescapedSymbolicNameString)
       .add(CypherParser.RULE_escapedSymbolicNameString)
-      .add(CypherParser.RULE_stringLiteral);
+      .add(CypherParser.RULE_stringLiteral)
+      .add(CypherParser.RULE_symbolicAliasName);
 
     // Keep only keywords as suggestions
     codeCompletion.ignoredTokens = new Set<number>(
@@ -218,8 +222,69 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
     );
 
     const candidates = codeCompletion.collectCandidates(caretIndex);
-    const tokens = candidates.tokens.entries();
 
+    const ruleCompletions = Array.from(candidates.rules.entries())
+      .flatMap((candidate) => {
+        const [ruleNumber, candidateRule] = candidate;
+        if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
+          // For some reason we get completions again even though we have already completed
+          // For example "SHOW DATABASE neo4j" would suggest "neo4j" again
+          // it is as though the whitespace isn't respected
+
+          /*
+          const usedRules = candidateRule.ruleList.map(
+
+            (rule) => CypherParser.ruleNames[rule],
+          );
+          console.log(usedRules);
+           console.log(candidateRule.startTokenIndex);
+
+         if(parsingResult.query.endsWith(' ')) {}
+           */
+
+          const rulesCreatingNewAliasOrDb = [
+            CypherParser.RULE_createAlias,
+            CypherParser.RULE_createDatabase,
+            CypherParser.RULE_createCompositeDatabase,
+          ];
+          // avoid suggesting database names when creating a new alias or database
+          if (
+            rulesCreatingNewAliasOrDb.some((rule) =>
+              candidateRule.ruleList.includes(rule),
+            )
+          ) {
+            return null;
+          }
+
+          const rulesThatOnlyAcceptAlias = [
+            CypherParser.RULE_dropAlias,
+            CypherParser.RULE_alterAlias,
+            CypherParser.RULE_showAliases,
+          ];
+          if (
+            rulesThatOnlyAcceptAlias.some((rule) =>
+              candidateRule.ruleList.includes(rule),
+            )
+          ) {
+            return dbInfo.aliasNames.map((aliasName) => ({
+              label: aliasName,
+              kind: CompletionItemKind.Value,
+            }));
+          }
+
+          // Suggest both database and alias names when it's not alias specific or creating new alias or database
+          return dbInfo.databaseNames
+            .concat(dbInfo.aliasNames)
+            .map((databaseName) => ({
+              label: databaseName,
+              kind: CompletionItemKind.Value,
+            }));
+        }
+        return null;
+      })
+      .filter((r) => r !== null);
+
+    const tokens = candidates.tokens.entries();
     const tokenCandidates = Array.from(tokens).flatMap((value) => {
       const [tokenNumber, followUpList] = value;
 
@@ -242,14 +307,12 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
       }
     });
 
-    const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
-      return {
-        label: t,
-        kind: CompletionItemKind.Keyword,
-      };
-    });
+    const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
+      label: t,
+      kind: CompletionItemKind.Keyword,
+    }));
 
-    return tokenCompletions;
+    return [...ruleCompletions, ...tokenCompletions];
   } else {
     return [];
   }

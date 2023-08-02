@@ -3,9 +3,9 @@ import { CompletionItem, Position } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import { parserWrapper } from '../parserWrapper';
 import {
-  autoCompleteKeywords,
   autoCompleteStructurally,
   autoCompleteStructurallyAddingChar,
+  completionCoreCompletion,
 } from './helpers';
 
 export function autocomplete(
@@ -39,7 +39,7 @@ export function autocomplete(
     } else {
       // Keywords completion is expensive, so try to do it when we've exhausted
       // labels, functions, procedures, etc auto-completion
-      return autoCompleteKeywords(parsingResult);
+      return completionCoreCompletion(parsingResult, dbInfo);
     }
   }
 }

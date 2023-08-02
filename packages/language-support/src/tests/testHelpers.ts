@@ -8,5 +8,6 @@ export class MockDbInfo implements DbInfo {
     public procedureSignatures: Map<string, SignatureInformation> = new Map(),
     public functionSignatures: Map<string, SignatureInformation> = new Map(),
     public databaseNames: string[] = [],
+    public aliasNames: string[] = [],
   ) {}
 }
