@@ -5,9 +5,16 @@
       "outputs": ["out/**"],
       "dependsOn": ["^build"]
     },
+    "assemble": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
     "clean": {},
     "watch": {},
-    "test": {},
+    "test": {
+      "cache": false,
+      "persistent": true
+    },
     "codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
     }
