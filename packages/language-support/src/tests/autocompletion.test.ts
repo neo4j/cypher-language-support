@@ -53,15 +53,6 @@ describe('MATCH auto-completion', () => {
     ]);
   });
 
-  test('Correctly completes OPTIONAL MATCH', () => {
-    const query = 'OP';
-    const position = Position.create(0, query.length);
-
-    testCompletionContains(query, position, new MockDbInfo(), [
-      { label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword },
-    ]);
-  });
-
   test('Correctly completes MATCH in OPTIONAL MATCH', () => {
     const query = 'OPTIONAL M';
     const position = Position.create(0, query.length);
@@ -450,6 +441,21 @@ describe('Misc auto-completion', () => {
     ]);
   });
 
+  test('Correctly completes DISTINCT', () => {
+    const query = 'MATCH (n:Person)-[r:KNOWS]-(m:Person) RETURN ';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'DISTINCT', kind: CompletionItemKind.Keyword },
+    ]);
+
+    testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'STRING_LITERAL1', kind: CompletionItemKind.Keyword },
+      { label: 'STRING_LITERAL2', kind: CompletionItemKind.Keyword },
+      { label: 'INF SET', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
   test('Correctly completes MATCH in multiline statement', () => {
     const query = `CALL dbms.info() YIELD *;
 M`;
@@ -535,6 +541,79 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
 
     testCompletionContains(query, position, new MockDbInfo(), [
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+});
+
+describe('Auto completion of back to back keywords', () => {
+  test('Correctly completes OPTIONAL MATCH', () => {
+    const query = 'OP';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes DEFAULT DATABASE and HOME DATABASE', () => {
+    const query = 'SHOW ';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'DATABASE', kind: CompletionItemKind.Keyword },
+      { label: 'DEFAULT DATABASE', kind: CompletionItemKind.Keyword },
+      { label: 'HOME DATABASE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes UNION and UNION ALL', () => {
+    const query =
+      'MATCH (a:Person)-[:KNOWS]->(b:Person) RETURN b.name AS name ';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'UNION', kind: CompletionItemKind.Keyword },
+      { label: 'UNION ALL', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes LOAD CSV', () => {
+    const query = 'L';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'LOAD CSV', kind: CompletionItemKind.Keyword },
+    ]);
+
+    testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'LOAD CSV WITH', kind: CompletionItemKind.Keyword },
+      { label: 'LOAD CSV WITH HEADERS', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes WITH HEADERS in LOAD CSV', () => {
+    const query = 'LOAD CSV ';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WITH HEADERS', kind: CompletionItemKind.Keyword },
+    ]);
+
+    testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'WITH HEADERS FROM', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes WITH HEADERS in LOAD CSV', () => {
+    const query = 'LOAD CSV WITH ';
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'HEADERS', kind: CompletionItemKind.Keyword },
+    ]);
+
+    testCompletionDoesNotContain(query, position, new MockDbInfo(), [
+      { label: 'HEADERS FROM', kind: CompletionItemKind.Keyword },
     ]);
   });
 });

@@ -8,16 +8,6 @@ import {
   autoCompleteStructurallyAddingChar,
 } from './helpers';
 
-import { Token } from 'antlr4';
-
-export function positionIsParsableToken(lastToken: Token, position: Position) {
-  const tokenLength = lastToken.text?.length ?? 0;
-  return (
-    lastToken.column + tokenLength === position.character &&
-    lastToken.line - 1 === position.line
-  );
-}
-
 export function autocomplete(
   textUntilPosition: string,
   position: Position,

@@ -207,7 +207,8 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
     // are collected as rule names instead
     codeCompletion.preferredRules = new Set<number>()
       .add(CypherParser.RULE_unescapedSymbolicNameString)
-      .add(CypherParser.RULE_escapedSymbolicNameString);
+      .add(CypherParser.RULE_escapedSymbolicNameString)
+      .add(CypherParser.RULE_stringLiteral);
 
     // Keep only keywords as suggestions
     codeCompletion.ignoredTokens = new Set<number>(
@@ -219,12 +220,26 @@ export function autoCompleteKeywords(parsingResult: ParsingResult) {
     const candidates = codeCompletion.collectCandidates(caretIndex);
     const tokens = candidates.tokens.entries();
 
-    const tokenCandidates = Array.from(tokens).map((value) => {
+    const tokenCandidates = Array.from(tokens).flatMap((value) => {
       const [tokenNumber, followUpList] = value;
-      return [tokenNumber]
-        .concat(followUpList)
-        .map((value) => tokenNames[value])
+
+      const firstToken = tokenNames[tokenNumber];
+      const followUpString = followUpList.indexes
+        .map((i) => tokenNames[i])
         .join(' ');
+
+      if (firstToken === undefined) {
+        return [];
+      } else if (followUpString === '') {
+        return [firstToken];
+      } else {
+        const followUp = firstToken + ' ' + followUpString;
+        if (followUpList.optional) {
+          return [firstToken, followUp];
+        }
+
+        return [followUp];
+      }
     });
 
     const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
