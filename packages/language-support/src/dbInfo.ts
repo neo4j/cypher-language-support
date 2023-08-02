@@ -8,4 +8,5 @@ export interface DbInfo {
   functionSignatures: Map<string, SignatureInformation>;
   labels: string[];
   relationshipTypes: string[];
+  databaseNames: string[];
 }
