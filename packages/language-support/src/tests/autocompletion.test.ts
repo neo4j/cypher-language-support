@@ -485,6 +485,26 @@ MATCH (n) W`;
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
     ]);
   });
+
+  test('Correctly completes last statement when having three broken statements', () => {
+    const query = `MATCH (n) REUTRN n;
+MATCH (n) REUTRN n;
+MATCH (n) W`;
+    const position = Position.create(2, 11);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+  test('Correctly completes next statement when there is no initiating keyword', () => {
+    const query = `MATCH (n) RETURN n;`;
+    const position = Position.create(0, query.length);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'MATCH', kind: CompletionItemKind.Keyword },
+      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
 });
 
 describe('Inserts correct text when symbolic name is not display name', () => {

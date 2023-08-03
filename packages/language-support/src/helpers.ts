@@ -4,7 +4,6 @@ import antlrDefaultExport, {
   CharStreams,
   CommonTokenStream,
   ParserRuleContext,
-  TerminalNode,
   Token,
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
@@ -86,26 +85,23 @@ export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 export function findLatestStatement(
   parsingResult: ParsingResult,
 ): undefined | string {
-  const parsingTree = parsingResult.result;
   const tokens = parsingResult.tokens;
-  let index = parsingTree.getChildCount() - 2;
-  let node = parsingTree.getChild(index);
-  let found = node.getText() == ';';
-  let lastStatement: undefined | string = undefined;
-
-  while (index > 0 && !found) {
-    index--;
-    node = parsingTree.getChild(index);
-    found = node.getText() == ';';
-  }
-
-  // Ignore EOF
   const lastTokenIndex = tokens.length - 1;
 
+  let tokenIndex = lastTokenIndex;
+  let found = false;
+  let lastStatement: undefined | string = undefined;
+
+  // Last token is always
+  while (tokenIndex > 0 && !found) {
+    tokenIndex--;
+    found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;
+  }
+
   if (found) {
-    let tokenIndex = (node as TerminalNode).symbol.tokenIndex + 1;
     lastStatement = '';
 
+    tokenIndex += 1;
     while (tokenIndex < lastTokenIndex) {
       lastStatement += tokens.at(tokenIndex).text;
       tokenIndex++;

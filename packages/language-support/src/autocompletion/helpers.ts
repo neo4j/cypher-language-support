@@ -257,15 +257,7 @@ function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
         .map(([token]) => Number(token)),
     );
 
-    // const rightMostStatement = findRightmostStatement(parsingTree);
-    // const autoCompleteCtx = rightMostStatement
-    //   ? rightMostStatement
-    //   : parsingTree;
-
-    const candidates = codeCompletion.collectCandidates(
-      caretIndex,
-      //autoCompleteCtx,
-    );
+    const candidates = codeCompletion.collectCandidates(caretIndex);
     const tokens = candidates.tokens.entries();
 
     const tokenCandidates = Array.from(tokens).flatMap((value) => {
