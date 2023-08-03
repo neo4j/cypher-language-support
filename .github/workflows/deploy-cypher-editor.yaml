@@ -34,4 +34,4 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: 'packages/react-codemirror-experimental/package.json'
-          access: 'private'
+          access: 'restricted'
