@@ -10,6 +10,8 @@ export class DbInfoImpl implements DbInfo {
   public functionSignatures: Map<string, SignatureInformation> = new Map();
   public labels: string[] = [];
   public relationshipTypes: string[] = [];
+  public aliasNames: string[] = [];
+  public databaseNames: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
