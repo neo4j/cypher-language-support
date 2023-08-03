@@ -466,13 +466,23 @@ M`;
     ]);
   });
 
-  test('Correctly completes next line when the first one has some syntactic error', () => {
+  test('Correctly completes next statement when the first one has some syntactic error', () => {
     const query = `MATCH (n: Person W);
 C`;
     const position = Position.create(1, 1);
 
     testCompletionContains(query, position, new MockDbInfo(), [
       { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes next statement when the first one has some syntactic error, longer version', () => {
+    const query = `MATCH (n) REUTRN n;
+MATCH (n) W`;
+    const position = Position.create(1, 11);
+
+    testCompletionContains(query, position, new MockDbInfo(), [
+      { label: 'WHERE', kind: CompletionItemKind.Keyword },
     ]);
   });
 });

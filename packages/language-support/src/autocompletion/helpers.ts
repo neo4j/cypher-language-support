@@ -1,4 +1,4 @@
-import { ParserRuleContext, TerminalNode, Token } from 'antlr4';
+import { ParserRuleContext, Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -15,8 +15,8 @@ import CypherParser, {
   RelationshipPatternContext,
 } from '../generated-parser/CypherParser';
 import {
+  findLatestStatement,
   findParent,
-  findRightmostStatement,
   findStopNode,
   isDefined,
 } from '../helpers';
@@ -203,8 +203,6 @@ export function autoCompleteStructurallyAddingChar(
 export function autoCompleteKeywords(
   parsingResult: ParsingResult,
 ): CompletionItem[] {
-  let autoCompletions: CompletionItem[] = [];
-  const parsingTree = parsingResult.result;
   /* If we add an extra character to a query there can be two possibilities:
       Example:     MATCH (n:A); C
      - Either it starts a new statement and we can get completions only for it
@@ -217,17 +215,14 @@ export function autoCompleteKeywords(
   */
 
   // Removing EOF node at the end
-  const lastIndex = parsingTree.getChildCount() - 2;
-  const lastStatement = parsingTree.getChild(lastIndex);
-
-  if (lastStatement instanceof TerminalNode) {
-    const lastStatementResult = createParsingResult(
-      createParsingScaffolding(lastStatement.symbol.text),
+  const lastStatement = findLatestStatement(parsingResult);
+  if (lastStatement != undefined) {
+    parsingResult = createParsingResult(
+      createParsingScaffolding(lastStatement),
     );
-    autoCompletions = completeKeywordsImpl(lastStatementResult);
   }
-  const fullCompletions = completeKeywordsImpl(parsingResult);
-  autoCompletions = autoCompletions.concat(fullCompletions);
+
+  const autoCompletions = completeKeywordsImpl(parsingResult);
 
   return autoCompletions;
 }
@@ -235,7 +230,6 @@ export function autoCompleteKeywords(
 function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
-  const parsingTree = parsingResult.result;
 
   const codeCompletion = new CodeCompletionCore(parser);
 
@@ -261,14 +255,14 @@ function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
         .map(([token]) => Number(token)),
     );
 
-    const rightMostStatement = findRightmostStatement(parsingTree);
-    const autoCompleteCtx = rightMostStatement
-      ? rightMostStatement
-      : parsingTree;
+    // const rightMostStatement = findRightmostStatement(parsingTree);
+    // const autoCompleteCtx = rightMostStatement
+    //   ? rightMostStatement
+    //   : parsingTree;
 
     const candidates = codeCompletion.collectCandidates(
       caretIndex,
-      autoCompleteCtx,
+      //autoCompleteCtx,
     );
     const tokens = candidates.tokens.entries();
 
