@@ -203,18 +203,19 @@ export function autoCompleteStructurallyAddingChar(
 export function autoCompleteKeywords(
   parsingResult: ParsingResult,
 ): CompletionItem[] {
-  /* If we add an extra character to a query there can be two possibilities:
-      Example:     MATCH (n:A); C
-     - Either it starts a new statement and we can get completions only for it
-     - Or it is part of the rightmost previous statement
-     Since the semicolon is optional to separate statements, for things like
-       MATCH (n:A) W
-     we could be trying to auto-complete W for the MATCH statement or
-     be could be trying to start a new statement, so we need to concatenate 
-     both results
+  /* We try to locate the latest statement by finding the latest available `;` 
+     in the query and take from that point to the end of the query
+
+     The reason for doing that is we need a way to "resynchronise" when the 
+     previous statements have errors and the parser fails from them onwards:
+
+     MATCH (m) REUT m; CREATE (n) R
+                                  ^ we should still be getting autocompletions here   
+
+     If there was no ;, we don't want to reparse, so we return undefined 
+     inside findLatestStatement
   */
 
-  // Removing EOF node at the end
   const lastStatement = findLatestStatement(parsingResult);
   if (lastStatement != undefined) {
     parsingResult = createParsingResult(
@@ -240,6 +241,7 @@ function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
     // We need this to ignore the list of tokens from:
     // * unescapedSymbolicNameString, because a lot of keywords are allowed there
     // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
+    // * stringLiteral to avoid getting autocompletions like STRING_LITERAL1, STRING_LITERAL2
     //
     // That way we do not populate tokens that are coming from those rules and those
     // are collected as rule names instead
