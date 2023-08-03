@@ -93,6 +93,7 @@ export function App() {
             className="border-2 border-gray-100"
             value={value}
             onChange={setValue}
+            prompt={'neo4j$'}
           />
 
           {!!showCodemirrorParse && <TokenTable document={value} />}
