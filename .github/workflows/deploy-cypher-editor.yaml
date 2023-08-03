@@ -3,7 +3,7 @@ name: Publish react-editor-experimental package to npm
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
+    branches: ['auto_release_react_editor']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
