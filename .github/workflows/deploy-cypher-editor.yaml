@@ -16,11 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          registry-url: 'https://registry.npmjs.org'
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@neo4j-cypher'
+          node-version: '18'
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
@@ -32,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: Publish on updated version number
-        uses: JS-DevTools/npm-publish@v1
+        uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: 'packages/react-codemirror-experimental/package.json'
