@@ -839,7 +839,9 @@ describe('can complete database names', () => {
     });
   });
 
-  test('only suggests valid items after completed alias', () => {
+  test('handle that the parser allows spaces in symbolicAliasName', () => {
+    // Since the parser allows for spaces in the symbolicAliasName rule but not in created alias (unless quoted)
+    // I've added a test to verify we don't suggest aliases after the space (false positives)
     const query = 'drop alias myMovies ';
 
     testCompletionContains({
@@ -859,7 +861,9 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        // EOF checks
         { label: '', kind: CompletionItemKind.Value },
+        { label: '', kind: CompletionItemKind.Keyword },
       ],
     });
   });

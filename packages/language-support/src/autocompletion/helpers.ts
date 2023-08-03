@@ -6,6 +6,7 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
+import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser, {
   Expression2Context,
   LabelExpression4Context,
@@ -220,6 +221,7 @@ export function completionCoreCompletion(
         .filter(([, type]) => type !== CypherTokenType.keyword)
         .map(([token]) => Number(token)),
     );
+    codeCompletion.ignoredTokens.add(CypherParser.EOF);
 
     const candidates = codeCompletion.collectCandidates(caretIndex);
 
@@ -227,20 +229,21 @@ export function completionCoreCompletion(
       .flatMap((candidate) => {
         const [ruleNumber, candidateRule] = candidate;
         if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
-          // For some reason we get completions again even though we have already completed
-          // For example "SHOW DATABASE neo4j" would suggest "neo4j" again
-          // it is as though the whitespace isn't respected
+          // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
+          // so ALTER ALIAS a . b  FOR DATABASE neo4j is accepted by neo4j. It does however only drop the spaces for the alias
+          // it becomes just a.b
 
-          /*
-          const usedRules = candidateRule.ruleList.map(
+          // The issue for us is that when we complete "ALTER ALIAS a " <- according to the grammar points say we could still be building a name
+          // To handle this we check if the token after the first identifier in the rule is a space (as opposed to a dot)
+          // if so we have a false positive and we return null to ignore the rule
+          // symbolicAliasName: (symbolicNameString (DOT symbolicNameString)* | parameter);
 
-            (rule) => CypherParser.ruleNames[rule],
-          );
-          console.log(usedRules);
-           console.log(candidateRule.startTokenIndex);
-
-         if(parsingResult.query.endsWith(' ')) {}
-           */
+          if (
+            parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
+            CypherLexer.SPACE
+          ) {
+            return null;
+          }
 
           const rulesCreatingNewAliasOrDb = [
             CypherParser.RULE_createAlias,
