@@ -17,6 +17,6 @@
     "useDefineForClassFields": false
   },
   "compileOnSave": true,
-  "include": ["src/**/*.ts", "index.ts", "tests/**/*"],
-  "exclude": ["node_modules", "out/**/*"]
+  "include": ["src", "index.ts", "tests"],
+  "exclude": ["node_modules"]
 }

@@ -21,7 +21,7 @@ export function autocomplete(
   if (result !== undefined) {
     return result;
   } else {
-    /* For some queries, we need to add an extra character (namelly 'x') to 
+    /* For some queries, we need to add an extra character (we chose 'x') to 
        correctly parse the query. For example:
 
        MATCH (n:A|

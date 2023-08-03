@@ -20,9 +20,7 @@
   "scripts": {
     "build": "npm run generate && tsc",
     "prepublishOnly": "npm run generate && npm run test",
-    "test": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --max-worker=1",
-    "test-ci": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --no-coverage --watchAll=false --silent",
-    "test-coverage": "npm run build && NODE_OPTIONS=--experimental-vm-modules jest --coverage --silent",
+    "test": "jest",
     "generate": "tests/generate.sh",
     "eslint": "eslint .",
     "clean": "rm -rf out"
