@@ -376,6 +376,15 @@ describe('Functions auto-completion', () => {
 });
 
 describe('Misc auto-completion', () => {
+  test('Correctly completes empty statement', () => {
+    const query = '';
+
+    testCompletionContains(query, new MockDbInfo(), [
+      { label: 'MATCH', kind: CompletionItemKind.Keyword },
+      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
   test('Correctly completes RETURN', () => {
     const query = 'RET';
 
@@ -444,12 +453,33 @@ MATCH (n) W`;
     ]);
   });
 
-  test('Correctly completes empty statement', () => {
-    const query = '';
+  test('Correctly completes label in a second statement after a broken one', () => {
+    const query = `MATCH (n) REUTRN n;
+MATCH (n:P`;
 
-    testCompletionContains(query, new MockDbInfo(), [
-      { label: 'MATCH', kind: CompletionItemKind.Keyword },
-      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    testCompletionContains(query, new MockDbInfo(['Person', 'Dog']), [
+      { label: 'Person', kind: CompletionItemKind.TypeParameter },
+      { label: 'Dog', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
+  test('Correctly completes label with empty prompt in a second statement after a broken one', () => {
+    const query = `MATCH (n) REUTRN n;
+MATCH (n:`;
+
+    testCompletionContains(query, new MockDbInfo(['A', 'B']), [
+      { label: 'A', kind: CompletionItemKind.TypeParameter },
+      { label: 'B', kind: CompletionItemKind.TypeParameter },
+    ]);
+  });
+
+  test('Correctly completes barred label in a second statement after a broken one', () => {
+    const query = `MATCH (n) REUTRN n;
+MATCH (n:A|`;
+
+    testCompletionContains(query, new MockDbInfo(['A', 'B']), [
+      { label: 'A', kind: CompletionItemKind.TypeParameter },
+      { label: 'B', kind: CompletionItemKind.TypeParameter },
     ]);
   });
 });

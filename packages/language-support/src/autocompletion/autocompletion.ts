@@ -48,7 +48,7 @@ export function autocomplete(
       :A|x on the contrary gets correctly parsed as label
     */
     const result = autoCompleteStructurallyAddingChar(
-      textUntilPosition,
+      parsingResult.query,
       dbInfo,
     );
     if (result !== undefined) {
