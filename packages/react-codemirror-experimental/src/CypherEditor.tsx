@@ -18,11 +18,10 @@ type CypherEditorOwnProps = {
 };
 // playwirgt compontnet tests
 
-type CypherEditor = React.ForwardRefExoticComponent<
-  CypherEditorOwnProps &
-    ReactCodeMirrorProps &
-    React.RefAttributes<ReactCodeMirrorRef>
->;
+export type CypherEditorProps = CypherEditorOwnProps &
+  ReactCodeMirrorProps &
+  React.RefAttributes<ReactCodeMirrorRef>;
+type CypherEditor = React.ForwardRefExoticComponent<CypherEditorProps>;
 export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
   const {
     theme = 'light',
