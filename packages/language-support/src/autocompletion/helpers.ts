@@ -1,9 +1,8 @@
-import { ParserRuleContext, Token } from 'antlr4';
+import { ParserRuleContext } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
-  Position,
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import CypherParser, {
@@ -16,7 +15,11 @@ import CypherParser, {
 } from '../generated-parser/CypherParser';
 import { findParent, findStopNode, isDefined } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { parserWrapper, ParsingResult } from '../parserWrapper';
+import {
+  EnrichedParsingResult,
+  parserWrapper,
+  ParsingResult,
+} from '../parserWrapper';
 
 export function isLabel(p: ParserRuleContext) {
   return (
@@ -102,24 +105,24 @@ export function autoCompleteProcNames(dbInfo: DbInfo) {
   });
 }
 
-export function positionIsParsableToken(lastToken: Token, position: Position) {
-  const tokenLength = lastToken.text?.length ?? 0;
-  return (
-    lastToken.column + tokenLength === position.character &&
-    lastToken.line - 1 === position.line
-  );
-}
-
 export function autoCompleteStructurally(
-  parsingResult: ParsingResult,
-  position: Position,
+  parsingResult: EnrichedParsingResult,
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
   const tokens = parsingResult.tokens;
   const tree = parsingResult.result;
-  const lastToken = tokens[tokens.length - 2];
+  const lastTokenIndex = tokens.length - 2;
+  const lastToken = tokens[lastTokenIndex];
+  const eof = tokens[lastTokenIndex + 1];
 
-  if (!positionIsParsableToken(lastToken, position)) {
+  if (lastTokenIndex <= 0) {
+    return undefined;
+    // When we have EOF with a different text in the token,
+    // it means the parser has failed to parse it.
+    // We give empty completions in that case
+    // because the query is severely broken at the
+    // point of completion (e.g. an unclosed string)
+  } else if (eof.text !== '<EOF>') {
     return [];
   } else if (lastToken.type === CypherParser.SPACE) {
     // If the last token is a space, we surely cannot auto-complete using parsing tree information
@@ -148,18 +151,17 @@ export function autoCompleteStructurally(
 
 export function autoCompleteStructurallyAddingChar(
   textUntilPosition: string,
-  oldPosition: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
   // Try adding a filling character, x, at the end
-  const position = Position.create(oldPosition.line, oldPosition.character + 1);
   const parsingResult = parserWrapper.parse(textUntilPosition + 'x');
   const tokens = parsingResult.tokens;
   const tree = parsingResult.result;
-  const lastToken = tokens[tokens.length - 2];
+  const lastTokenIndex = tokens.length - 2;
+  const lastToken = tokens[lastTokenIndex];
 
-  if (!positionIsParsableToken(lastToken, position)) {
-    return [];
+  if (lastTokenIndex <= 0) {
+    return undefined;
   } else if (lastToken.type === CypherParser.SPACE) {
     // If the last token is a space, we surely cannot auto-complete using parsing tree information
     return undefined;
@@ -189,19 +191,23 @@ export function autoCompleteStructurallyAddingChar(
   }
 }
 
-export function autoCompleteKeywords(parsingResult: ParsingResult) {
+export function autoCompleteKeywords(
+  parsingResult: ParsingResult,
+): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
   const codeCompletion = new CodeCompletionCore(parser);
 
   // We always need to subtract one more for the final EOF
-  const caretIndex = tokens.length - 2;
+  // Except if the query is empty and only contains EOF
+  const caretIndex = tokens.length > 1 ? tokens.length - 2 : 0;
 
   if (caretIndex >= 0) {
     // We need this to ignore the list of tokens from:
     // * unescapedSymbolicNameString, because a lot of keywords are allowed there
     // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
+    // * stringLiteral to avoid getting autocompletions like STRING_LITERAL1, STRING_LITERAL2
     //
     // That way we do not populate tokens that are coming from those rules and those
     // are collected as rule names instead
