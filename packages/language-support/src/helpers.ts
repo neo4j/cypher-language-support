@@ -92,7 +92,7 @@ export function findLatestStatement(
   let found = false;
   let lastStatement: undefined | string = undefined;
 
-  // Last token is always
+  // Last token is always EOF
   while (tokenIndex > 0 && !found) {
     tokenIndex--;
     found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;

@@ -117,6 +117,11 @@ export function autoCompleteStructurally(
 
   if (lastTokenIndex <= 0) {
     return undefined;
+    // When we have EOF with a different text in the token,
+    // it means the parser has failed to parse it.
+    // We give empty completions in that case
+    // because the query is severely broken at the
+    // point of completion (e.g. an unclosed string)
   } else if (eof.text !== '<EOF>') {
     return [];
   } else if (lastToken.type === CypherParser.SPACE) {
