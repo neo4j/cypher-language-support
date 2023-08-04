@@ -14,16 +14,9 @@ import CypherParser, {
   ProcedureNameContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherParser';
-import {
-  findLatestStatement,
-  findParent,
-  findStopNode,
-  isDefined,
-} from '../helpers';
+import { findParent, findStopNode, isDefined } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import {
-  createParsingResult,
-  createParsingScaffolding,
   EnrichedParsingResult,
   parserWrapper,
   ParsingResult,
@@ -123,14 +116,17 @@ export function positionIsParsableToken(lastToken: Token, position: Position) {
 
 export function autoCompleteStructurally(
   parsingResult: EnrichedParsingResult,
-  position: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
   const tokens = parsingResult.tokens;
   const tree = parsingResult.result;
-  const lastToken = tokens[tokens.length - 2];
+  const lastTokenIndex = tokens.length - 2;
+  const lastToken = tokens[lastTokenIndex];
+  const eof = tokens[lastTokenIndex + 1];
 
-  if (!positionIsParsableToken(lastToken, position)) {
+  if (lastTokenIndex <= 0) {
+    return undefined;
+  } else if (eof.text !== '<EOF>') {
     return [];
   } else if (lastToken.type === CypherParser.SPACE) {
     // If the last token is a space, we surely cannot auto-complete using parsing tree information
@@ -163,14 +159,14 @@ export function autoCompleteStructurallyAddingChar(
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
   // Try adding a filling character, x, at the end
-  const position = Position.create(oldPosition.line, oldPosition.character + 1);
   const parsingResult = parserWrapper.parse(textUntilPosition + 'x');
   const tokens = parsingResult.tokens;
   const tree = parsingResult.result;
-  const lastToken = tokens[tokens.length - 2];
+  const lastTokenIndex = tokens.length - 2;
+  const lastToken = tokens[lastTokenIndex];
 
-  if (!positionIsParsableToken(lastToken, position)) {
-    return [];
+  if (lastTokenIndex <= 0) {
+    return undefined;
   } else if (lastToken.type === CypherParser.SPACE) {
     // If the last token is a space, we surely cannot auto-complete using parsing tree information
     return undefined;
@@ -203,39 +199,14 @@ export function autoCompleteStructurallyAddingChar(
 export function autoCompleteKeywords(
   parsingResult: ParsingResult,
 ): CompletionItem[] {
-  /* We try to locate the latest statement by finding the latest available `;` 
-     in the query and take from that point to the end of the query
-
-     The reason for doing that is we need a way to "resynchronise" when the 
-     previous statements have errors and the parser fails from them onwards:
-
-     MATCH (m) REUT m; CREATE (n) R
-                                  ^ we should still be getting autocompletions here   
-
-     If there was no ;, we don't want to reparse, so we return undefined 
-     inside findLatestStatement
-  */
-
-  const lastStatement = findLatestStatement(parsingResult);
-  if (lastStatement != undefined) {
-    parsingResult = createParsingResult(
-      createParsingScaffolding(lastStatement),
-    );
-  }
-
-  const autoCompletions = completeKeywordsImpl(parsingResult);
-
-  return autoCompletions;
-}
-
-function completeKeywordsImpl(parsingResult: ParsingResult): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
   const codeCompletion = new CodeCompletionCore(parser);
 
   // We always need to subtract one more for the final EOF
-  const caretIndex = tokens.length - 2;
+  // Except if the query is empty and only contains EOF
+  const caretIndex = tokens.length > 1 ? tokens.length - 2 : 0;
 
   if (caretIndex >= 0) {
     // We need this to ignore the list of tokens from:
