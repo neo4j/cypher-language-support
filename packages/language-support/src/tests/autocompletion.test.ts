@@ -434,8 +434,18 @@ MATCH (n) W`;
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
     ]);
   });
+
   test('Correctly completes next statement when there is no initiating keyword', () => {
     const query = `MATCH (n) RETURN n;`;
+
+    testCompletionContains(query, new MockDbInfo(), [
+      { label: 'MATCH', kind: CompletionItemKind.Keyword },
+      { label: 'CREATE', kind: CompletionItemKind.Keyword },
+    ]);
+  });
+
+  test('Correctly completes empty statement', () => {
+    const query = '';
 
     testCompletionContains(query, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
