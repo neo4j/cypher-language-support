@@ -1,4 +1,4 @@
-import { CompletionItem, Position } from 'vscode-languageserver-types';
+import { CompletionItem } from 'vscode-languageserver-types';
 
 import { DbInfo } from '../dbInfo';
 import { findLatestStatement } from '../helpers';
@@ -11,7 +11,6 @@ import {
 
 export function autocomplete(
   textUntilPosition: string,
-  position: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] {
   let parsingResult = parserWrapper.parse(textUntilPosition);
@@ -50,7 +49,6 @@ export function autocomplete(
     */
     const result = autoCompleteStructurallyAddingChar(
       textUntilPosition,
-      position,
       dbInfo,
     );
     if (result !== undefined) {

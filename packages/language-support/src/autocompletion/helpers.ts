@@ -1,9 +1,8 @@
-import { ParserRuleContext, Token } from 'antlr4';
+import { ParserRuleContext } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
-  Position,
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import CypherParser, {
@@ -106,14 +105,6 @@ export function autoCompleteProcNames(dbInfo: DbInfo) {
   });
 }
 
-export function positionIsParsableToken(lastToken: Token, position: Position) {
-  const tokenLength = lastToken.text?.length ?? 0;
-  return (
-    lastToken.column + tokenLength === position.character &&
-    lastToken.line - 1 === position.line
-  );
-}
-
 export function autoCompleteStructurally(
   parsingResult: EnrichedParsingResult,
   dbInfo: DbInfo,
@@ -155,7 +146,6 @@ export function autoCompleteStructurally(
 
 export function autoCompleteStructurallyAddingChar(
   textUntilPosition: string,
-  oldPosition: Position,
   dbInfo: DbInfo,
 ): CompletionItem[] | undefined {
   // Try adding a filling character, x, at the end
