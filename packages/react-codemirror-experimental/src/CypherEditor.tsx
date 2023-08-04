@@ -1,5 +1,5 @@
 import { Extension, StateEffect } from '@codemirror/state';
-import { KeyBinding, keymap } from '@codemirror/view';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import CodeEditor, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
@@ -16,72 +16,122 @@ type HistoryNavigation = 'BACK' | 'FORWARDS';
 // TODO make move in history undoaable
 // Todo kolla det issuet grabben hade med sin undostack
 
+// history version for quick compare
+
 const moveInHistory = StateEffect.define<HistoryNavigation>();
 const pushToHistory = StateEffect.define<string>();
+const DRAFT_ENTRY_INDEX = -1;
+const historyInitialState = {
+  history: [],
+  index: DRAFT_ENTRY_INDEX,
+  documentUpdate: null,
+  draft: '',
+};
 const historyState = StateField.define<History>({
   create() {
-    return { history: [''], index: 0 };
+    return historyInitialState;
   },
   toJSON(value) {
     return JSON.stringify(value);
   },
   update(value, transaction) {
-    const DRAFT_ENTRY_INDEX = 0;
     for (const effect of transaction.effects) {
       if (effect.is(moveInHistory)) {
-        const { history, index: currentHistoryIndex } = value;
-
-        if (history.length === 1) {
-          return value;
+        console.log(value);
+        if (value.history.length === 0) {
+          return {
+            ...value,
+            documentUpdate: null,
+          };
         }
 
+        const currentHistoryIndex = value.index;
         if (effect.value === 'BACK') {
+          debugger;
           const newHistoryIndex = currentHistoryIndex + 1;
 
-          if (newHistoryIndex === history.length) {
-            return value;
+          if (newHistoryIndex === value.history.length) {
+            return {
+              ...value,
+              documentUpdate: null,
+            };
           }
 
-          const newHistory = history.slice();
+          let draft = value.draft;
           if (currentHistoryIndex === DRAFT_ENTRY_INDEX) {
-            newHistory[0] = transaction.state.doc.toString();
+            draft = transaction.state.doc.toString();
           }
 
           return {
-            history: newHistory,
+            ...value,
+            draft,
             index: newHistoryIndex,
+            documentUpdate: value.history[newHistoryIndex],
           };
         } else if (effect.value === 'FORWARDS') {
           const newHistoryIndex = currentHistoryIndex - 1;
 
           if (currentHistoryIndex === DRAFT_ENTRY_INDEX) {
-            return value;
+            return { ...value, documentUpdate: null };
           }
 
-          return { ...value, index: newHistoryIndex };
+          if (newHistoryIndex === DRAFT_ENTRY_INDEX) {
+            return {
+              ...value,
+              index: newHistoryIndex,
+              documentUpdate: value.draft,
+            };
+          } else {
+            return {
+              ...value,
+              index: newHistoryIndex,
+              documentUpdate: value.history[newHistoryIndex],
+            };
+          }
         }
       } else if (effect.is(pushToHistory)) {
         return {
           ...value,
-          // draft entry is always first, but history is filled from pos 1
-          history: [value.history[0], effect.value, ...value.history.slice(1)],
+          history: [effect.value, ...value.history],
         };
       }
     }
     return value;
   },
 
-  // command fired -> update history
-  // up arrow fired -> update index
-  // down arrow fired -> update index
   // TODO starting history
 });
 
-type History = { history: string[]; index: number };
+type History = {
+  history: string[];
+  index: number;
+  draft: string;
+  documentUpdate: string | null;
+};
 
+function navigateHistory(view: EditorView, direction: HistoryNavigation) {
+  view.dispatch(
+    view.state.update({
+      effects: moveInHistory.of(direction),
+    }),
+  );
+
+  const updatedHistory = view.state.field<History>(historyState, false);
+  if (updatedHistory.documentUpdate !== null) {
+    view.dispatch(
+      view.state.update({
+        changes: {
+          from: 0,
+          to: view.state.doc.length,
+          insert: updatedHistory.documentUpdate,
+        },
+      }),
+    );
+  }
+}
 export const replBindings = ({
   onExecute,
-  newHistoryEntry,
+  onNewHistoryEntry: newHistoryEntry,
 }: ReplProps = {}): Extension[] => {
   return [
     keymap.of([
@@ -106,26 +156,13 @@ export const replBindings = ({
         key: 'ArrowUp',
         preventDefault: true,
         run: (view) => {
-          // TODO If cursor is att top of document, move in history
+          // If text is selected or cursor is not at top of document, do nothing
+          const { empty, head } = view.state.selection.main;
+          if (!empty || head !== 0) {
+            return false;
+          }
 
-          const transaction = view.state.update({
-            effects: moveInHistory.of('BACK'),
-          });
-
-          console.log(transaction.state);
-          view.dispatch(transaction);
-
-          const updatedHistory = view.state.field<History>(historyState, false);
-
-          view.dispatch(
-            view.state.update({
-              changes: {
-                from: 0,
-                to: view.state.doc.length,
-                insert: updatedHistory.history[updatedHistory.index],
-              },
-            }),
-          );
+          navigateHistory(view, 'BACK');
           return true;
         },
       },
@@ -133,23 +170,12 @@ export const replBindings = ({
         key: 'ArrowDown',
         preventDefault: true,
         run: (view) => {
-          // TODO If cursor is att bottom of document, move in history
-
-          view.dispatch({ effects: moveInHistory.of('FORWARDS') });
-          const updatedHistory = view.state.field<History>(historyState, false);
-
-          // update document to match history entry
-          // TODO gör bara om något ännrdades
-
-          view.dispatch(
-            view.state.update({
-              changes: {
-                from: 0,
-                to: view.state.doc.length,
-                insert: updatedHistory.history[updatedHistory.index],
-              },
-            }),
-          );
+          const { empty, head } = view.state.selection.main;
+          // If text is selected or cursor is not at end of document, do nothing
+          if (!empty || head !== view.state.doc.length) {
+            return false;
+          }
+          navigateHistory(view, 'FORWARDS');
 
           return true;
         },
@@ -224,7 +250,7 @@ function getThemeExtension(
 type ReplProps = {
   onExecute?: (cmd: string) => void;
   initialHistory?: string[];
-  newHistoryEntry?: (historyEntry: string) => void;
+  onNewHistoryEntry?: (historyEntry: string) => void;
 };
 
 type CypherEditorOwnProps = {
@@ -243,8 +269,8 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     extensions = [],
     prompt,
     onExecute,
-    initialHistory = [],
-    newHistoryEntry,
+    initialHistory = ['abc'],
+    onNewHistoryEntry,
     extraKeybindings = [],
     ...rest
   } = props;
@@ -253,7 +279,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     ? replBindings({
         onExecute,
         initialHistory,
-        newHistoryEntry,
+        onNewHistoryEntry,
       })
     : [];
 
@@ -263,7 +289,10 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
       theme={getThemeExtension(theme)}
       extensions={[
         cypher(),
-        historyState,
+        historyState.init(() => ({
+          ...historyInitialState,
+          history: initialHistory,
+        })),
         keymap.of(extraKeybindings),
         replExtension,
         basicNeo4jSetup(prompt),
