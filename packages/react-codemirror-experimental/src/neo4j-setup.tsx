@@ -1,4 +1,5 @@
 import {
+  acceptCompletion,
   autocompletion,
   closeBrackets,
   closeBracketsKeymap,
@@ -69,6 +70,11 @@ export const basicNeo4jSetup = (prompt?: string): Extension[] => {
     foldKeymap,
     completionKeymap,
     lintKeymap,
+    {
+      key: 'Tab',
+      preventDefault: true,
+      run: acceptCompletion,
+    },
     indentWithTab,
   ].flat();
 
