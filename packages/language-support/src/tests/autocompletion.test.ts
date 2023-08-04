@@ -409,7 +409,7 @@ describe('Misc auto-completion', () => {
 
   test('Correctly completes MATCH in multiline statement', () => {
     const query = `CALL dbms.info() YIELD *;
-M`;
+                   M`;
 
     testCompletionContains(query, new MockDbInfo(), [
       { label: 'MATCH', kind: CompletionItemKind.Keyword },
@@ -418,7 +418,7 @@ M`;
 
   test('Correctly completes statement when the first one has some syntactic error', () => {
     const query = `MATCH (n: Person W);
-C`;
+                   C`;
 
     testCompletionContains(query, new MockDbInfo(), [
       { label: 'CREATE', kind: CompletionItemKind.Keyword },
@@ -427,7 +427,7 @@ C`;
 
   test('Correctly completes longer statement when the first one has some syntactic error', () => {
     const query = `MATCH (n) REUTRN n;
-MATCH (n) W`;
+                   MATCH (n) W`;
 
     testCompletionContains(query, new MockDbInfo(), [
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
@@ -436,8 +436,8 @@ MATCH (n) W`;
 
   test('Correctly completes last statement when having three broken statements', () => {
     const query = `MATCH (n) REUTRN n;
-MATCH (n) REUTRN n;
-MATCH (n) W`;
+                   MATCH (n) REUTRN n;
+                   MATCH (n) W`;
 
     testCompletionContains(query, new MockDbInfo(), [
       { label: 'WHERE', kind: CompletionItemKind.Keyword },
@@ -455,7 +455,7 @@ MATCH (n) W`;
 
   test('Correctly completes label in a second statement after a broken one', () => {
     const query = `MATCH (n) REUTRN n;
-MATCH (n:P`;
+                   MATCH (n:P`;
 
     testCompletionContains(query, new MockDbInfo(['Person', 'Dog']), [
       { label: 'Person', kind: CompletionItemKind.TypeParameter },
@@ -465,7 +465,7 @@ MATCH (n:P`;
 
   test('Correctly completes label with empty prompt in a second statement after a broken one', () => {
     const query = `MATCH (n) REUTRN n;
-MATCH (n:`;
+                   MATCH (n:`;
 
     testCompletionContains(query, new MockDbInfo(['A', 'B']), [
       { label: 'A', kind: CompletionItemKind.TypeParameter },
@@ -475,7 +475,7 @@ MATCH (n:`;
 
   test('Correctly completes barred label in a second statement after a broken one', () => {
     const query = `MATCH (n) REUTRN n;
-MATCH (n:A|`;
+                   MATCH (n:A|`;
 
     testCompletionContains(query, new MockDbInfo(['A', 'B']), [
       { label: 'A', kind: CompletionItemKind.TypeParameter },
