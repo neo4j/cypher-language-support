@@ -1,4 +1,4 @@
-import { KeyBinding, keymap } from '@codemirror/view';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import CodeEditor, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
@@ -15,6 +15,7 @@ type CypherEditorOwnProps = {
   onExecute?: (cmd: string) => void;
   initialHistory?: string[];
   onNewHistoryEntry?: (historyEntry: string) => void;
+  lineWrap?: boolean;
 };
 
 export type CypherEditorProps = CypherEditorOwnProps &
@@ -30,6 +31,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     initialHistory = [],
     onNewHistoryEntry,
     extraKeybindings = [],
+    lineWrap = false,
     ...rest
   } = props;
 
@@ -50,6 +52,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
         keymap.of(extraKeybindings),
         maybeReplMode,
         basicNeo4jSetup(prompt),
+        lineWrap ? EditorView.lineWrapping : [],
         ...extensions,
       ]}
       basicSetup={false}
