@@ -41,7 +41,7 @@ RETURN n;`;
   // Ensure query execution doesn't fire if the query is only whitespace
   await editorPage.getEditor().type('     ');
   await editorPage.getEditor().press('Enter');
-  expect(await page.getByText('query-executed').count()).toBe(1);
+  await expect(page.getByText('query-executed')).toHaveCount(1);
 
   // Ensure shift enter doesn't execute query
   await editorPage.getEditor().type('multiline');
@@ -50,9 +50,9 @@ RETURN n;`;
   await editorPage.getEditor().press('Shift+Enter');
   await editorPage.getEditor().press('Shift+Enter');
   await editorPage.getEditor().type('entry');
-  expect(await page.getByText('query-executed').count()).toBe(1);
+  await expect(page.getByText('query-executed')).toHaveCount(1);
   await editorPage.getEditor().press('Enter');
-  expect(await page.getByText('query-executed').count()).toBe(2);
+  await expect(page.getByText('query-executed')).toHaveCount(2);
 
   // type a new query and make sure it's not lost when navigating history
   await editorPage.getEditor().type('draft');
