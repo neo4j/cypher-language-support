@@ -15,6 +15,10 @@
       "cache": false,
       "persistent": true
     },
+    "test:e2e": {
+      "cache": false,
+      "persistent": true
+    },
     "codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
     }

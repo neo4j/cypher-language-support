@@ -18,9 +18,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "rollup -c --failAfterWarnings",
-    "test": "test-unit && test-e2e",
-    "test-unit": "vitest run",
-    "test-e2e": "playwright test",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
     "e2e-http-server": "vite dev"
   },
   "dependencies": {
@@ -45,6 +44,7 @@
     "@playwright/test": "^1.36.2",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
+    "playwright": "^1.36.2",
     "rollup": "^2.60.2",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-ts": "^3.0.2",
