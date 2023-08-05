@@ -5,9 +5,6 @@ test.beforeEach(async ({ page }) => {
   await page.goto('localhost:5173');
 });
 
-// test extra keybindings.
-// test schema completions
-
 test('respects preloaded history', async ({ page }) => {
   const editorPage = new CypherEditorPage(page);
 

@@ -93,7 +93,7 @@ export function App() {
               ))}
             </div>
             <CypherEditor
-              className="border-2 border-gray-100"
+              className="border-2 border-gray-100 dark:border-gray-400"
               value={value}
               onChange={setValue}
               prompt="neo4j$"
