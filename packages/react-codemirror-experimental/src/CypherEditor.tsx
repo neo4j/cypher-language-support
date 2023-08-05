@@ -16,7 +16,6 @@ type CypherEditorOwnProps = {
   initialHistory?: string[];
   onNewHistoryEntry?: (historyEntry: string) => void;
 };
-// playwirgt compontnet tests
 
 export type CypherEditorProps = CypherEditorOwnProps &
   ReactCodeMirrorProps &

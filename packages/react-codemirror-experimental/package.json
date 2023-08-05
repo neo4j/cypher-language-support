@@ -21,7 +21,7 @@
     "test": "test-unit && test-e2e",
     "test-unit": "vitest run",
     "test-e2e": "playwright test",
-    "test-server": "vite dev"
+    "e2e-http-server": "vite dev"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",

@@ -43,7 +43,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run test-server',
+    command: 'npm run e2e-http-server',
     url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
   },
