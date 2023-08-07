@@ -177,7 +177,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -195,7 +195,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -213,7 +213,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -262,7 +262,7 @@ describe('CALL syntax colouring', () => {
           startCharacter: 55,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -341,7 +341,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 15,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -385,7 +385,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 19,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -394,7 +394,7 @@ describe('CASE syntax colouring', () => {
           startCharacter: 20,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {
@@ -891,7 +891,7 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 40,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1157,7 +1157,7 @@ describe('USE colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -1210,7 +1210,7 @@ describe('USE colouring', () => {
           startCharacter: 31,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -1219,7 +1219,7 @@ describe('USE colouring', () => {
           startCharacter: 32,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {
@@ -1592,7 +1592,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 14,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1623,7 +1623,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1654,7 +1654,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 22,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1685,7 +1685,7 @@ describe('UNWIND colouring', () => {
           startCharacter: 26,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1943,7 +1943,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 24,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -1996,7 +1996,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 37,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2005,7 +2005,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 38,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {
@@ -2085,7 +2085,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -2174,7 +2174,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2227,7 +2227,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2236,7 +2236,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 36,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {
@@ -2316,7 +2316,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -2498,7 +2498,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 17,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2551,7 +2551,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2560,7 +2560,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 29,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {
@@ -2900,7 +2900,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 23,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2953,7 +2953,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 34,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '-',
       },
       {
@@ -2962,7 +2962,7 @@ describe('Subqueries colouring', () => {
           startCharacter: 35,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: '>',
       },
       {

@@ -10,6 +10,7 @@ import CypherLexer from './generated-parser/CypherLexer';
 import CypherParser, {
   StatementsContext,
 } from './generated-parser/CypherParser';
+import { ParsingResult } from './parserWrapper';
 
 export function findStopNode(root: StatementsContext) {
   let children = root.children;
@@ -80,3 +81,32 @@ type AntlrDefaultExport = {
   };
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
+
+export function findLatestStatement(
+  parsingResult: ParsingResult,
+): undefined | string {
+  const tokens = parsingResult.tokens;
+  const lastTokenIndex = tokens.length - 1;
+
+  let tokenIndex = lastTokenIndex;
+  let found = false;
+  let lastStatement: undefined | string = undefined;
+
+  // Last token is always EOF
+  while (tokenIndex > 0 && !found) {
+    tokenIndex--;
+    found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;
+  }
+
+  if (found) {
+    lastStatement = '';
+
+    tokenIndex += 1;
+    while (tokenIndex < lastTokenIndex) {
+      lastStatement += tokens.at(tokenIndex).text;
+      tokenIndex++;
+    }
+  }
+
+  return lastStatement;
+}

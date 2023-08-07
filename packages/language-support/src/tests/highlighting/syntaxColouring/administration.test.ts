@@ -799,7 +799,7 @@ describe('Administration commands syntax colouring', () => {
           startOffset: 46,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
         bracketInfo: undefined,
       },
@@ -909,7 +909,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 33,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -1399,7 +1399,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 16,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -2934,7 +2934,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 18,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -3083,7 +3083,7 @@ describe('Administration commands syntax colouring', () => {
           startCharacter: 21,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
       },
       {
@@ -3558,7 +3558,7 @@ describe('Administration commands syntax colouring', () => {
           startOffset: 28,
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
+        tokenType: CypherTokenType.separator,
         token: ',',
         bracketInfo: undefined,
       },
