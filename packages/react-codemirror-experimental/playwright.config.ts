@@ -40,7 +40,7 @@ export default defineConfig({
   webServer: {
     command:
       'npm run e2e-http-server -w @neo4j-cypher/react-codemirror-experimental',
-    url: 'http://127.0.0.1:5173',
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
   },
 });
