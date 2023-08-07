@@ -52,10 +52,12 @@ RETURN n;`;
   await editorPage.getEditor().type('entry');
   await expect(page.getByText('query-executed')).toHaveCount(1);
   await editorPage.getEditor().press('Enter');
-  await expect(page.getByText('query-executed')).toHaveCount(2);
 
   // type a new query and make sure it's not lost when navigating history
   await editorPage.getEditor().type('draft');
+  await expect(page.getByText('draft')).toBeVisible();
+  await expect(page.getByText('query-executed')).toHaveCount(2);
+
   // Navigate to the top of the editor before navigating history
   await editorPage.getEditor().press('ArrowLeft');
   await editorPage.getEditor().press('ArrowLeft');
