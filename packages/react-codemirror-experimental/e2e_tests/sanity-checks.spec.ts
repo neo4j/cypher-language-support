@@ -21,12 +21,7 @@ test('can complete RETURN', async ({ page }) => {
   await expect(editorPage.getEditor()).toHaveText('RETURN');
 });
 
-test('can complete CALL/CREATE', async ({ page, browserName }) => {
-  // This test is timing dependent and a little flaky in firefox
-  if (browserName === 'firefox') {
-    test.skip();
-  }
-
+test('can complete CALL/CREATE', async ({ page }) => {
   const editorPage = new CypherEditorPage(page);
   await editorPage.createEditor({ value: '' });
 
