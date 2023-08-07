@@ -9,6 +9,7 @@ on:
 
 jobs:
   lint-and-format:
+    name: Run eslint and check formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,6 +32,7 @@ jobs:
           (git diff-index --name-status HEAD | grep ".*\.ts" && exit 1) || echo "\n\nAll Typescript files are correctly formatted"
 
   unit-test:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -48,6 +50,7 @@ jobs:
         run: npm test
 
   e2e-test:
+    name: E2E tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
