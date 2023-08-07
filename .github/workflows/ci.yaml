@@ -65,7 +65,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run e2e tets
+      - name: Run e2e test
         run: npm run test:e2e
 
       - uses: actions/upload-artifact@v3
