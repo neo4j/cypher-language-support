@@ -56,6 +56,8 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
         ...extensions,
       ]}
       basicSetup={false}
+      // we set this via completionKeymap
+      indentWithTab={false}
       {...rest}
     />
   );

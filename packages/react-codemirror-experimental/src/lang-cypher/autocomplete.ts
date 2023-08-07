@@ -33,7 +33,8 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
 };
 
 export const cypherAutocomplete: CompletionSource = (context) => {
-  const options = autocomplete(context.state.doc.toString(), {
+  const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
+  const options = autocomplete(textUntilCursor, {
     functionSignatures: new Map(),
     procedureSignatures: new Map(),
     relationshipTypes: [],
