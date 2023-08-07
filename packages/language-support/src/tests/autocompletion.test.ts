@@ -706,7 +706,7 @@ describe('can complete database names', () => {
     undefined,
     undefined,
     ['db1', 'db2', 'movies'],
-    ['myMovies'],
+    ['myMovies', 'scoped.alias', 'a.b.c.d'],
   );
 
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
@@ -722,6 +722,8 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
   });
@@ -739,6 +741,8 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
 
@@ -761,6 +765,8 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
     testCompletionsEmpty({ query });
@@ -777,6 +783,8 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
     testCompletionsEmpty({ query });
@@ -787,7 +795,11 @@ describe('can complete database names', () => {
     testCompletionContains({
       query,
       dbInfo,
-      expected: [{ label: 'myMovies', kind: CompletionItemKind.Value }],
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
     });
 
     testCompletionDoesNotContain({
@@ -825,7 +837,34 @@ describe('can complete database names', () => {
     testCompletionContains({
       query,
       dbInfo,
-      expected: [{ label: 'myMovies', kind: CompletionItemKind.Value }],
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('can complete when typing scoped alias', () => {
+    const query = 'ALTER ALIAS a.b.c.';
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
     });
 
     testCompletionDoesNotContain({
@@ -861,6 +900,8 @@ describe('can complete database names', () => {
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         // EOF checks
         { label: '', kind: CompletionItemKind.Value },
         { label: '', kind: CompletionItemKind.Keyword },
