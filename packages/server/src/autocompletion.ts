@@ -25,6 +25,6 @@ export function doAutoCompletion(
       end: position,
     };
 
-    return autocomplete(textDocument.getText(range), position, dbInfo);
+    return autocomplete(textDocument.getText(range), dbInfo);
   };
 }

@@ -82,7 +82,7 @@ deleteClause:
    DETACH? DELETE expression (COMMA expression)*;
 
 matchClause:
-   ((OPTIONAL MATCH) | MATCH) matchMode? patternList hints* whereClause?;
+   OPTIONAL? MATCH matchMode? patternList hints* whereClause?;
 
 matchMode:
     REPEATABLE (ELEMENT BINDINGS | ELEMENTS | ELEMENT) | DIFFERENT (RELATIONSHIP BINDINGS? | RELATIONSHIPS);

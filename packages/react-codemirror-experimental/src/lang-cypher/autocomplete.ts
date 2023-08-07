@@ -33,16 +33,12 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
 };
 
 export const cypherAutocomplete: CompletionSource = (context) => {
-  const options = autocomplete(
-    context.state.doc.toString(),
-    { line: 0, character: context.pos },
-    {
-      functionSignatures: new Map(),
-      procedureSignatures: new Map(),
-      relationshipTypes: [],
-      labels: [],
-    },
-  );
+  const options = autocomplete(context.state.doc.toString(), {
+    functionSignatures: new Map(),
+    procedureSignatures: new Map(),
+    relationshipTypes: [],
+    labels: [],
+  });
 
   return {
     from: context.matchBefore(/\w*$/).from,

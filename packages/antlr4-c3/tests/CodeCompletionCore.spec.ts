@@ -557,15 +557,15 @@ describe('Code Completion Tests', () => {
       expect(candidates.tokens.has(ExprLexer.LET)).toEqual(true);
       expect(candidates.tokens.has(ExprLexer.ID)).toEqual(true);
 
-      expect(candidates.tokens.get(ExprLexer.VAR)).toEqual([
+      expect(candidates.tokens.get(ExprLexer.VAR)?.indexes).toEqual([
         ExprLexer.ID,
         ExprLexer.EQUAL,
       ]);
-      expect(candidates.tokens.get(ExprLexer.LET)).toEqual([
+      expect(candidates.tokens.get(ExprLexer.LET)?.indexes).toEqual([
         ExprLexer.ID,
         ExprLexer.EQUAL,
       ]);
-      expect(candidates.tokens.get(ExprLexer.ID)).toEqual([]);
+      expect(candidates.tokens.get(ExprLexer.ID)?.indexes).toEqual([]);
 
       // 2) On the first whitespace. In real implementations you would do some additional checks where in the
       //    whitespace the caret is, as the outcome is different depending on that position.
@@ -636,11 +636,11 @@ describe('Code Completion Tests', () => {
       expect(candidates.tokens.has(ExprLexer.VAR)).toEqual(true);
       expect(candidates.tokens.has(ExprLexer.LET)).toEqual(true);
 
-      expect(candidates.tokens.get(ExprLexer.VAR)).toEqual([
+      expect(candidates.tokens.get(ExprLexer.VAR)?.indexes).toEqual([
         ExprLexer.ID,
         ExprLexer.EQUAL,
       ]);
-      expect(candidates.tokens.get(ExprLexer.LET)).toEqual([
+      expect(candidates.tokens.get(ExprLexer.LET)?.indexes).toEqual([
         ExprLexer.ID,
         ExprLexer.EQUAL,
       ]);

@@ -12,9 +12,15 @@ import { Vocabulary } from './Vocabulary';
 import { VocabularyImpl } from './VocabularyImpl';
 import { ATNState, ParserRuleContext, IntervalSet, Token, Parser, PrecedencePredicateTransition,
     PredicateTransition, RuleStartState, RuleTransition, Transition, ATN, intervalSetOf, intervalSetToArray } from './antrl4';
+import { advanceToNonEpsilon } from './CodeCompletionHelpers'
 
 export type TokenList = number[];
 export type RuleList = number[];
+
+export interface FollowingTokens {
+    optional?: boolean
+    indexes: TokenList
+}
 
 export interface CandidateRule {
     startTokenIndex: number;
@@ -34,7 +40,7 @@ export type RuleWithStartTokenList = RuleWithStartToken[];
 // Rule entries include the index of the starting token within the evaluated rule, along with a call stack of rules
 // found during evaluation.
 export class CandidatesCollection {
-    public tokens: Map<number, TokenList> = new Map();
+    public tokens: Map<number, FollowingTokens> = new Map();
     public rules: Map<number, CandidateRule> = new Map();
 }
 
@@ -46,7 +52,7 @@ export class CandidatesCollection {
 class FollowSetWithPath {
     public intervals: IntervalSet;
     public path: RuleList = [];
-    public following: TokenList = [];
+    public following: FollowingTokens;
 }
 
 // A list of follow sets (for a given state number) + all of them combined for quick hit tests + whether they are
@@ -199,7 +205,7 @@ export class CodeCompletionCore {
             const sortedTokens: Set<string> = new Set();
             for (const token of this.candidates.tokens) {
                 let value = this.vocabulary.getDisplayName(token[0]);
-                for (const following of token[1]) {
+                for (const following of token[1].indexes) {
                     value += " " + this.vocabulary.getDisplayName(following);
                 }
                 sortedTokens.add(value);
@@ -309,10 +315,13 @@ export class CodeCompletionCore {
      * @param transition The transition from which to start.
      * @returns A list of toke types.
      */
-    private getFollowingTokens(transition: Transition): number[] {
+    private getFollowingTokens(transition: Transition): FollowingTokens {
         const result: number[] = [];
 
-        const pipeline: ATNState[] = [transition.target];
+        const advanceResult = advanceToNonEpsilon(transition.target);
+        const nextState = advanceResult.state;
+        const optional = advanceResult.optional;
+        const pipeline: ATNState[] = [nextState];
 
         while (pipeline.length > 0) {
             const state = pipeline.pop();
@@ -334,7 +343,10 @@ export class CodeCompletionCore {
             }
         }
 
-        return result;
+        return {
+            indexes: result,
+            optional: optional
+        }
     }
 
     /**
@@ -531,7 +543,7 @@ export class CodeCompletionCore {
                                 } else {
                                     // More than one following list for the same symbol.
                                     if (this.candidates.tokens.get(symbol) !== set.following) {
-                                        this.candidates.tokens.set(symbol, []);
+                                        this.candidates.tokens.set(symbol, {indexes: []});
                                     }
                                 }
                             }
@@ -641,7 +653,7 @@ export class CodeCompletionCore {
                             if (!this.translateStackToRuleIndex(callStack)) {
                                 for (const token of intervalSetToArray(intervalSetOf(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType))) {
                                     if (!this.ignoredTokens.has(token)) {
-                                        this.candidates.tokens.set(token, []);
+                                        this.candidates.tokens.set(token, {indexes: []});
                                     }
                                 }
                             }
@@ -683,7 +695,7 @@ export class CodeCompletionCore {
                                             if (addFollowing) {
                                                 this.candidates.tokens.set(symbol, this.getFollowingTokens(transition));
                                             } else {
-                                                this.candidates.tokens.set(symbol, []);
+                                                this.candidates.tokens.set(symbol, {indexes: []});
                                             }
                                         }
                                     }
