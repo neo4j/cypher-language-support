@@ -1,9 +1,11 @@
+/// <reference types="vitest" />
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import nodePolyfills from 'vite-plugin-node-stdlib-browser';
 
 export default defineConfig({
+  test: { exclude: ['e2e_tests'] },
   // antlr4 build reference some node features that are not available in the browser
   plugins: [react(), nodePolyfills()],
   resolve: {
