@@ -287,17 +287,13 @@ describe('Procedures auto-completion', () => {
 
     testCompletionContains(
       query,
-      new MockDbInfo(
-        [],
-        [],
-        new Map([
-          ['foo.bar', SignatureInformation.create('')],
-          ['dbms.info', SignatureInformation.create('')],
-          ['somethingElse', SignatureInformation.create('')],
-          ['xx.yy', SignatureInformation.create('')],
-          ['db.info', SignatureInformation.create('')],
-        ]),
-      ),
+      new MockDbInfo([], [], {
+        'foo.bar': SignatureInformation.create(''),
+        'dbms.info': SignatureInformation.create(''),
+        somethingElse: SignatureInformation.create(''),
+        'xx.yy': SignatureInformation.create(''),
+        'db.info': SignatureInformation.create(''),
+      }),
       [
         { label: 'dbms.info', kind: CompletionItemKind.Function },
         { label: 'db.info', kind: CompletionItemKind.Function },
@@ -315,19 +311,19 @@ describe('Procedures auto-completion', () => {
 });
 
 describe('Functions auto-completion', () => {
-  const functionSignatures: [string, SignatureInformation][] = [
-    ['a.b', SignatureInformation.create('')],
-    ['xx.yy.proc', SignatureInformation.create('')],
-    ['xx.yy.procedure', SignatureInformation.create('')],
-    ['db.info', SignatureInformation.create('')],
-  ];
+  const functionSignatures = {
+    'a.b': SignatureInformation.create(''),
+    'xx.yy.proc': SignatureInformation.create(''),
+    'xx.yy.procedure': SignatureInformation.create(''),
+    'db.info': SignatureInformation.create(''),
+  };
 
   test('Correctly completes function name in left hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE xx.yy';
 
     testCompletionContains(
       query,
-      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      new MockDbInfo([], [], {}, functionSignatures),
       [
         { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
         { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -340,7 +336,7 @@ describe('Functions auto-completion', () => {
 
     testCompletionContains(
       query,
-      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      new MockDbInfo([], [], {}, functionSignatures),
       [
         { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
         { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -353,7 +349,7 @@ describe('Functions auto-completion', () => {
 
     testCompletionContains(
       query,
-      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      new MockDbInfo([], [], {}, functionSignatures),
       [
         { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
         { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -366,7 +362,7 @@ describe('Functions auto-completion', () => {
 
     testCompletionContains(
       query,
-      new MockDbInfo([], [], new Map(), new Map(functionSignatures)),
+      new MockDbInfo([], [], {}, functionSignatures),
       [
         { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
         { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },

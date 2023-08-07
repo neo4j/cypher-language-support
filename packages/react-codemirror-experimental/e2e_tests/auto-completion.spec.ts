@@ -36,9 +36,7 @@ test('get completions when typing and can accept compltion with tab', async ({
 }) => {
   const editorPage = new CypherEditorPage(page);
 
-  await editorPage.createEditor({
-    value: '',
-  });
+  await editorPage.createEditor({ value: '' });
 
   await editorPage.getEditor().type('RETU');
 
@@ -53,4 +51,25 @@ test('get completions when typing and can accept compltion with tab', async ({
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   expect(await editorPage.getEditor().textContent()).toContain('RETURN');
+});
+
+test('can complete labels', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: 'MATCH (n :P',
+    schema: {
+      labels: ['Pokemon'],
+      relationshipTypes: [],
+      functionSignatures: {},
+      procedureSignatures: {},
+    },
+  });
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('Pokemon').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toContain(
+    'MATCH (n :Pokemon',
+  );
 });

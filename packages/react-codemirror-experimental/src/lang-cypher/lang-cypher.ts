@@ -3,6 +3,7 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
+import { DbInfo } from '../../../language-support/src/dbInfo';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
 
@@ -15,9 +16,9 @@ const parserAdapter = new ParserAdapter(facet);
 
 export const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
-export function cypher() {
+export function cypher(schema?: DbInfo) {
   return new LanguageSupport(
     cypherLanguage,
-    cypherLanguage.data.of({ autocomplete: cypherAutocomplete }),
+    cypherLanguage.data.of({ autocomplete: cypherAutocomplete(schema) }),
   );
 }
