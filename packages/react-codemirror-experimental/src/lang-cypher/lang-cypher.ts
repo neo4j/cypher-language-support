@@ -3,9 +3,8 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import { Extension } from '@codemirror/state';
 import { DbInfo } from '../../../language-support/src/dbInfo';
-import { cypherAutocomplete, SchemaState, schemaState } from './autocomplete';
+import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
 
 const facet = defineLanguageFacet({
@@ -15,15 +14,11 @@ const facet = defineLanguageFacet({
 
 const parserAdapter = new ParserAdapter(facet);
 
-export const cypherLanguage = (extraExtensions: Extension[] = []) =>
-  new Language(facet, parserAdapter, extraExtensions, 'cypher');
+const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
 export function cypher(schema?: DbInfo) {
-  const schemaStateExtension = schemaState.init(() => new SchemaState(schema));
-  const langExtension = cypherLanguage([schemaStateExtension]);
-
   return new LanguageSupport(
-    langExtension,
-    langExtension.data.of({ autocomplete: cypherAutocomplete }),
+    cypherLanguage,
+    cypherLanguage.data.of({ autocomplete: cypherAutocomplete(schema) }),
   );
 }
