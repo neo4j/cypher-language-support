@@ -57,7 +57,7 @@ test('can complete labels', async ({ page }) => {
   const editorPage = new CypherEditorPage(page);
 
   await editorPage.createEditor({
-    value: 'MATCH (n :P',
+    value: '',
     schema: {
       labels: ['Pokemon'],
       relationshipTypes: [],
@@ -65,6 +65,7 @@ test('can complete labels', async ({ page }) => {
       procedureSignatures: {},
     },
   });
+  await editorPage.getEditor().type('MATCH (n :P');
 
   await page.locator('.cm-tooltip-autocomplete').getByText('Pokemon').click();
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
@@ -72,4 +73,77 @@ test('can complete labels', async ({ page }) => {
   expect(await editorPage.getEditor().textContent()).toContain(
     'MATCH (n :Pokemon',
   );
+});
+
+test('can complete rel types', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: '',
+    schema: {
+      labels: [],
+      relationshipTypes: ['KNOWS'],
+      functionSignatures: {},
+      procedureSignatures: {},
+    },
+  });
+  await editorPage.getEditor().type('MATCH (n)-[:');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('KNOWS').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toContain(
+    'MATCH (n)-[:KNOWS',
+  );
+});
+
+test('can complete functions', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: '',
+    schema: {
+      labels: [],
+      relationshipTypes: [],
+      functionSignatures: {
+        function123: { label: 'function123', documentation: 'no docs' },
+      },
+      procedureSignatures: {},
+    },
+  });
+
+  await editorPage.getEditor().type('RETURN func');
+
+  await page
+    .locator('.cm-tooltip-autocomplete')
+    .getByText('function123')
+    .click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toContain(
+    'RETURN function123',
+  );
+});
+
+test('can complete procedures', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: '',
+    schema: {
+      labels: [],
+      relationshipTypes: [],
+      functionSignatures: {},
+      procedureSignatures: {
+        'db.ping': { label: 'db.ping', documentation: 'no docs' },
+      },
+    },
+  });
+
+  await editorPage.getEditor().type('CALL d');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('db.ping').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toContain('CALL db.ping');
 });

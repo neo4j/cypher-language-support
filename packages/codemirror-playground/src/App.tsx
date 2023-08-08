@@ -30,11 +30,17 @@ RETURN count(*)`,
 } as const;
 
 type DemoName = keyof typeof demos;
-const dummyDbInfo = {
-  functionSignatures: {},
-  procedureSignatures: {},
-  labels: ['Person'],
-  relationshipTypes: [],
+const dummyDbInfo: DbInfo = {
+  functionSignatures: {
+    function123: { label: 'function123', documentation: 'no docs' },
+    generatepassword: { label: 'generatepassword', documentation: 'no docs' },
+  },
+  procedureSignatures: {
+    'db.ping': { label: 'db.ping', documentation: 'no docs' },
+    'apoc.util.fake': { label: 'apoc.util.fake', documentation: 'no docs' },
+  },
+  labels: ['Person', 'Movie'],
+  relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
 };
 
 export function App() {
