@@ -3,7 +3,7 @@ import CodeEditor, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
 } from '@uiw/react-codemirror';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DbInfo } from '../../language-support/src/dbInfo';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
@@ -46,11 +46,28 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
       })
     : [];
 
+  const cmRef = useRef<ReactCodeMirrorRef>(null);
+  useEffect(() => {
+    /*cmRef?.current?.view?.dispatch({
+      effects: updateSchema.of(schema),
+    });*/
+  }, [schema]);
+
   return (
     <CodeEditor
-      ref={ref}
+      ref={(r) => {
+        cmRef.current = r;
+        if (ref) {
+          if (typeof ref === 'function') {
+            ref(r);
+          } else {
+            ref.current = r;
+          }
+        }
+      }}
       theme={getThemeExtension(theme)}
       extensions={[
+        // schemaState.init(() => schema),
         cypher(schema),
         keymap.of(extraKeybindings),
         maybeReplMode,

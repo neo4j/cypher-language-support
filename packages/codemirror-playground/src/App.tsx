@@ -33,7 +33,7 @@ type DemoName = keyof typeof demos;
 const dummyDbInfo = {
   functionSignatures: {},
   procedureSignatures: {},
-  labels: [],
+  labels: ['Person'],
   relationshipTypes: [],
 };
 
