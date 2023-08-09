@@ -38,7 +38,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.A)).toEqual({
       optional: false, 
       indexes: [OptionalsLexer.B]
@@ -57,7 +57,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.C)).toEqual({
       optional: false, 
       indexes: [OptionalsLexer.D]
@@ -88,7 +88,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     // Becuase we have UNION ALL? in the grammar and we want to be offering both UNION and UNION ALL
     expect(candidates.tokens.get(OptionalsLexer.E)).toEqual({
       optional: true,
@@ -113,7 +113,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.K)).toEqual({
       optional: false, 
       indexes: []
@@ -155,7 +155,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.M)).toEqual({
       optional: false, 
       indexes: []
@@ -186,7 +186,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.M)).toEqual({
       optional: false, 
       indexes: []
@@ -217,7 +217,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.BB)).toEqual({
       optional: true, 
       indexes: [OptionalsLexer.A, OptionalsLexer.B]
@@ -229,7 +229,7 @@ describe('Code Completion Tests for optionals', () => {
   });
 
   it('Compound optional followed by non optional', () => {
-    const query = 'DD A';
+    const query = 'DD A ';
     const inputStream = CharStreams.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
@@ -240,7 +240,7 @@ describe('Code Completion Tests for optionals', () => {
 
     const core = new CodeCompletionCore(parser);
 
-    const candidates= core.collectCandidates(query.length);
+    const candidates= core.collectCandidates(tokenStream.size);
     expect(candidates.tokens.get(OptionalsLexer.B)).toEqual({
       optional: false, 
       indexes: []
