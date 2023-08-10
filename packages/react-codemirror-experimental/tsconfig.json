@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src"],
+  "include": ["src", "e2e_tests"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "outDir": "out",
