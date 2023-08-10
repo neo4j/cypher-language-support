@@ -34,7 +34,8 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
 
 // hmm space räcker för att fatta rätt regel
 export const cypherAutocomplete: CompletionSource = (context) => {
-  const options = autocomplete(context.state.doc.toString(), {
+  const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
+  const options = autocomplete(textUntilCursor, {
     functionSignatures: new Map([
       ['a.b', { label: '' }],
       ['xx.yy.proc', { label: '' }],

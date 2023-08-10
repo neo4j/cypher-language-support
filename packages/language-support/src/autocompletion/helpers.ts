@@ -5,6 +5,7 @@ import {
   CompletionItemKind,
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
+import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser, {
   Expression2Context,
   LabelExpression4Context,
@@ -188,129 +189,165 @@ export function completionCoreCompletion(
 
   // We always need to subtract one more for the final EOF
   // Except if the query is empty and only contains EOF
-  const caretIndex = tokens.length > 1 ? tokens.length - 2 : 0;
 
-  if (caretIndex >= 0) {
-    // We need this to ignore the list of tokens from:
-    // * unescapedSymbolicNameString, because a lot of keywords are allowed there
-    // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
-    // * stringLiteral to avoid getting autocompletions like STRING_LITERAL1, STRING_LITERAL2
-    //
-    // That way we do not populate tokens that are coming from those rules and those
-    // are collected as rule names instead
-    codeCompletion.preferredRules = new Set<number>()
-      .add(CypherParser.RULE_unescapedSymbolicNameString)
-      .add(CypherParser.RULE_escapedSymbolicNameString)
-      .add(CypherParser.RULE_stringLiteral)
-      .add(CypherParser.RULE_symbolicLabelNameString)
-      .add(CypherParser.RULE_symbolicAliasName);
+  // const caretIndex = tokens.length;
 
-    // Keep only keywords as suggestions
-    codeCompletion.ignoredTokens = new Set<number>(
-      Object.entries(lexerSymbols)
-        .filter(([, type]) => type !== CypherTokenType.keyword)
-        .map(([token]) => Number(token)),
-    );
+  // Caret index should be at the end, so the caret that is after the last token
+  let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
+  //   const precedingToken = tokens[caretIndex - 1];
+  //if (precedingToken && precedingToken.type === CypherLexer.IDENTIFIER) {
+  //}
 
-    codeCompletion.ignoredTokens.add(CypherParser.EOF);
+  if (tokens[caretIndex - 1]?.type === CypherLexer.IDENTIFIER) {
+    caretIndex--;
+  }
 
-    const candidates = codeCompletion.collectCandidates(caretIndex);
+  // From the antrl-c3 docs:
+  // That means in order to find the correct candidates you have to change the token index based on the type of the token that immediately precedes the caret token.
+  // const caretToken = tokens[caretIndex];
 
-    const labelCompletions = dbInfo.labels.map((labelName) => ({
-      label: labelName,
-      kind: CompletionItemKind.TypeParameter,
-    }));
-    const reltypeCompletions = dbInfo.relationshipTypes.map((relType) => ({
-      label: relType,
-      kind: CompletionItemKind.TypeParameter,
-    }));
-    const proceduresCompletions = Array.from(
-      dbInfo.procedureSignatures.keys(),
-    ).map((procedureName) => ({
-      label: procedureName,
-      kind: CompletionItemKind.Function,
-    }));
+  // We need this to ignore the list of tokens from:
+  // * unescapedSymbolicNameString, because a lot of keywords are allowed there
+  // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
+  // * stringLiteral to avoid getting autocompletions like STRING_LITERAL1, STRING_LITERAL2
+  //
+  // That way we do not populate tokens that are coming from those rules and those
+  // are collected as rule names instead
+  codeCompletion.preferredRules = new Set<number>()
+    .add(CypherParser.RULE_unescapedSymbolicNameString)
+    .add(CypherParser.RULE_escapedSymbolicNameString)
+    .add(CypherParser.RULE_stringLiteral)
+    .add(CypherParser.RULE_symbolicLabelNameString)
+    .add(CypherParser.RULE_symbolicAliasName);
 
-    const functionCompletions = Array.from(
-      dbInfo.functionSignatures.keys(),
-    ).map((functionName) => ({
+  // Keep only keywords as suggestions
+  codeCompletion.ignoredTokens = new Set<number>(
+    Object.entries(lexerSymbols)
+      .filter(([, type]) => type !== CypherTokenType.keyword)
+      .map(([token]) => Number(token)),
+  );
+
+  codeCompletion.ignoredTokens.add(CypherParser.EOF);
+  /*
+  GIVET [IDENTFIER, EOF] => index => 0
+  consume => nothing
+
+  GIVET [KEYWORD, EOF] => index => 0
+  consume => nothing
+
+  GIVET [KEYWORD, SPACE, EOF] => index => 1
+  consume => KEYWORD // TODO Also space?
+
+  GIVET [KEYWORD, SPACE, IDENTFIER, EOF] => index => 1
+  consume => KEYWORD, SPACE
+
+  GIVET [KEYWORD, SPACE, IDENTFIER, SPACE, EOF] => index => 1
+  consume => KEYWORD, SPACE, IDENTIFIER => give error
+
+  GIVET [KEYWORD, SPACE, LPAR, COLON, EOF] => index => 1
+  consume => KEYWORD, SPACE, LPAR, COLON  => 
+
+  */
+
+  const candidates = codeCompletion.collectCandidates(caretIndex);
+
+  const labelCompletions = dbInfo.labels.map((labelName) => ({
+    label: labelName,
+    kind: CompletionItemKind.TypeParameter,
+  }));
+  const reltypeCompletions = dbInfo.relationshipTypes.map((relType) => ({
+    label: relType,
+    kind: CompletionItemKind.TypeParameter,
+  }));
+  const proceduresCompletions = Array.from(
+    dbInfo.procedureSignatures.keys(),
+  ).map((procedureName) => ({
+    label: procedureName,
+    kind: CompletionItemKind.Function,
+  }));
+
+  const functionCompletions = Array.from(dbInfo.functionSignatures.keys()).map(
+    (functionName) => ({
       label: functionName,
       kind: CompletionItemKind.Function,
-    }));
-    functionCompletions;
+    }),
+  );
+  functionCompletions;
 
-    const ruleCompletions = Array.from(candidates.rules.entries())
-      .flatMap((candidate): CompletionItem[] => {
-        const [ruleNumber, candidateRule] = candidate;
+  const ruleCompletions = Array.from(candidates.rules.entries())
+    .flatMap((candidate): CompletionItem[] => {
+      const [ruleNumber, candidateRule] = candidate;
+      if (
+        ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
+        ruleNumber === CypherParser.RULE_symbolicLabelNameString
+      ) {
+        if (candidateRule.ruleList.includes(CypherParser.RULE_procedureName)) {
+          return proceduresCompletions;
+        }
+
+        if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
+          return proceduresCompletions;
+        }
+
         if (
-          ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
-          ruleNumber === CypherParser.RULE_symbolicLabelNameString
+          candidateRule.ruleList.includes(CypherParser.RULE_relationshipPattern)
         ) {
-          if (
-            candidateRule.ruleList.includes(CypherParser.RULE_procedureName)
-          ) {
-            return proceduresCompletions;
-          }
-
-          if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
-            return proceduresCompletions;
-          }
-
-          if (
-            candidateRule.ruleList.includes(
-              CypherParser.RULE_relationshipPattern,
-            )
-          ) {
-            return reltypeCompletions;
-          }
-
-          if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
-            return labelCompletions;
-          }
-
-          if (
-            candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
-          ) {
-            return reltypeCompletions.concat(labelCompletions);
-          }
-        }
-        return null;
-      })
-      .filter((r) => r !== null);
-
-    const tokens = candidates.tokens.entries();
-
-    const tokenCandidates = Array.from(tokens).flatMap((value) => {
-      const [tokenNumber, followUpList] = value;
-
-      const firstToken = tokenNames[tokenNumber];
-      const followUpString = followUpList.indexes
-        .map((i) => tokenNames[i])
-        .join(' ');
-
-      if (firstToken === undefined) {
-        return [];
-      } else if (followUpString === '') {
-        return [firstToken];
-      } else {
-        const followUp = firstToken + ' ' + followUpString;
-        if (followUpList.optional) {
-          return [firstToken, followUp];
+          return reltypeCompletions;
         }
 
-        return [followUp];
+        if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
+          return labelCompletions;
+        }
+
+        if (
+          candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
+        ) {
+          return reltypeCompletions.concat(labelCompletions);
+        }
       }
-    });
+      return null;
+    })
+    .filter((r) => r !== null);
 
-    const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => {
-      return {
-        label: t,
-        kind: CompletionItemKind.Keyword,
-      };
-    });
+  const tokenEntries = candidates.tokens.entries();
+  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
+    const [tokenNumber, followUpList] = value;
 
-    return tokenCompletions;
-  } else {
-    return [];
-  }
+    const firstToken = tokenNames[tokenNumber];
+    const followUpString = followUpList.indexes
+      .map((i) => tokenNames[i])
+      .join(' ');
+
+    if (firstToken === undefined) {
+      return [];
+    } else if (followUpString === '') {
+      return [firstToken];
+    } else {
+      const followUp = firstToken + ' ' + followUpString;
+      if (followUpList.optional) {
+        return [firstToken, followUp];
+      }
+
+      return [followUp];
+    }
+  });
+
+  const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
+    label: t,
+    kind: CompletionItemKind.Keyword,
+  }));
+  const res = [...ruleCompletions, ...tokenCompletions];
+  // codeCompletion.showDebugOutput = true;
+  /*console.log(
+    tokens.length,
+    tokens.map((t) => t.text),
+    caretIndex,
+  );
+  console.log(
+    'returned',
+    res.map((r) => r.label),
+  );
+  */
+
+  return res;
 }
