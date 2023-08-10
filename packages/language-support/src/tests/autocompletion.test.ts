@@ -333,20 +333,6 @@ describe('MATCH auto-completion', () => {
     });
   });
 
-  test.skip('Does not offer keywords for expression auto-completion', () => {
-    const query = 'MATCH (n:Person) WHERE n.name = "N';
-
-    testCompletionDoesNotContain({
-      query,
-      excluded: [
-        { label: 'NONE', kind: CompletionItemKind.Keyword },
-        { label: 'NULL', kind: CompletionItemKind.Keyword },
-        { label: 'UnescapedSymbolicName', kind: CompletionItemKind.Keyword },
-        { label: 'EscapedSymbolicName', kind: CompletionItemKind.Keyword },
-      ],
-    });
-  });
-
   test('Does not offer left paren for pattern expression auto-completion', () => {
     const query = 'MATCH ';
 
@@ -356,7 +342,7 @@ describe('MATCH auto-completion', () => {
     });
   });
 
-  test.skip('Does not offer keywords/symbols for variable autocompletion', () => {
+  test('Does not offer keywords/symbols for variable autocompletion', () => {
     const query = 'MATCH (n';
 
     testCompletionDoesNotContain({
@@ -479,68 +465,86 @@ describe('Procedures auto-completion', () => {
   });
 });
 
-describe('Functions auto-completion', () => {
-  const dbInfo = new MockDbInfo(
-    [],
-    [],
-    new Map(),
-    new Map([
-      ['a.b', SignatureInformation.create('')],
-      ['xx.yy.proc', SignatureInformation.create('')],
-      ['xx.yy.procedure', SignatureInformation.create('')],
-      ['db.info', SignatureInformation.create('')],
-    ]),
-  );
+describe('expression completions', () => {
+  describe('general expression', () => {
+    test('Does not offer keywords for expression auto-completion', () => {
+      const query = 'MATCH (n:Person) WHERE n.name = "N';
 
-  test('Correctly completes function name in left hand side of WHERE', () => {
-    const query = 'MATCH (n) WHERE xx.yy';
-
-    testCompletionContains({
-      query,
-      dbInfo,
-      expected: [
-        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-      ],
+      testCompletionDoesNotContain({
+        query,
+        excluded: [
+          { label: 'NONE', kind: CompletionItemKind.Keyword },
+          { label: 'NULL', kind: CompletionItemKind.Keyword },
+          { label: 'UnescapedSymbolicName', kind: CompletionItemKind.Keyword },
+          { label: 'EscapedSymbolicName', kind: CompletionItemKind.Keyword },
+        ],
+      });
     });
   });
 
-  test('Correctly completes function name in right hand side of WHERE', () => {
-    const query = 'MATCH (n) WHERE n.name = xx.yy';
+  describe('functions', () => {
+    const dbInfo = new MockDbInfo(
+      [],
+      [],
+      new Map(),
+      new Map([
+        ['a.b', SignatureInformation.create('')],
+        ['xx.yy.proc', SignatureInformation.create('')],
+        ['xx.yy.procedure', SignatureInformation.create('')],
+        ['db.info', SignatureInformation.create('')],
+      ]),
+    );
 
-    testCompletionContains({
-      query,
-      dbInfo,
-      expected: [
-        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-      ],
+    test('Correctly completes function name in left hand side of WHERE', () => {
+      const query = 'MATCH (n) WHERE xx.yy';
+
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+        ],
+      });
     });
-  });
 
-  test('Correctly completes function name in RETURN', () => {
-    const query = 'RETURN xx.yy';
+    test('Correctly completes function name in right hand side of WHERE', () => {
+      const query = 'MATCH (n) WHERE n.name = xx.yy';
 
-    testCompletionContains({
-      query,
-      dbInfo,
-      expected: [
-        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-      ],
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+        ],
+      });
     });
-  });
 
-  test('Correctly completes function name in an AND', () => {
-    const query = 'RETURN true AND xx.yy';
+    test('Correctly completes function name in RETURN', () => {
+      const query = 'RETURN xx.yy';
 
-    testCompletionContains({
-      query,
-      dbInfo,
-      expected: [
-        { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-        { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-      ],
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+        ],
+      });
+    });
+
+    test('Correctly completes function name in an AND', () => {
+      const query = 'RETURN true AND xx.yy';
+
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+        ],
+      });
     });
   });
 });
