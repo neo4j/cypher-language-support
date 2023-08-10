@@ -70,14 +70,6 @@ export function completionCoreCompletion(
     kind: CompletionItemKind.Function,
   }));
 
-  const functionCompletions = Array.from(dbInfo.functionSignatures.keys()).map(
-    (functionName) => ({
-      label: functionName,
-      kind: CompletionItemKind.Function,
-    }),
-  );
-  functionCompletions;
-
   const ruleCompletions = Array.from(candidates.rules.entries())
     .flatMap((candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
