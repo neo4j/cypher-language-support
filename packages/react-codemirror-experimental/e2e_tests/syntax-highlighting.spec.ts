@@ -3,7 +3,7 @@ import { darkThemeConstants, lightThemeConstants } from '../src/themes';
 import { CypherEditorPage } from './cypher-editor';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('localhost:5173');
+  await page.goto('localhost:3000');
 });
 
 test('light theme highlighting', async ({ page }) => {

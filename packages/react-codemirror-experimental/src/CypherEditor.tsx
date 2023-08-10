@@ -4,6 +4,7 @@ import CodeEditor, {
   ReactCodeMirrorRef,
 } from '@uiw/react-codemirror';
 import React from 'react';
+import { DbInfo } from '../../language-support/src/dbInfo';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';
@@ -16,6 +17,7 @@ type CypherEditorOwnProps = {
   initialHistory?: string[];
   onNewHistoryEntry?: (historyEntry: string) => void;
   lineWrap?: boolean;
+  schema?: DbInfo;
 };
 
 export type CypherEditorProps = CypherEditorOwnProps &
@@ -32,6 +34,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     onNewHistoryEntry,
     extraKeybindings = [],
     lineWrap = false,
+    schema,
     ...rest
   } = props;
 
@@ -48,7 +51,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
       ref={ref}
       theme={getThemeExtension(theme)}
       extensions={[
-        cypher(),
+        cypher(schema),
         keymap.of(extraKeybindings),
         maybeReplMode,
         basicNeo4jSetup(prompt),
@@ -56,6 +59,8 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
         ...extensions,
       ]}
       basicSetup={false}
+      // reset to codemirror default and handle via completionKeymap extension
+      indentWithTab={false}
       {...rest}
     />
   );

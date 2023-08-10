@@ -8,6 +8,7 @@ export default defineConfig({
   test: { exclude: ['e2e_tests'] },
   // antlr4 build reference some node features that are not available in the browser
   plugins: [react(), nodePolyfills()],
+  server: { port: 3000 },
   resolve: {
     // vite wants to build the language-support package itself
     alias: [

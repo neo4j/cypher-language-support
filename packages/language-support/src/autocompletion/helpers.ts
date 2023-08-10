@@ -84,7 +84,7 @@ export function autocompleteRelTypes(dbInfo: DbInfo) {
 }
 
 export function autoCompleteFunctions(dbInfo: DbInfo, expr: ParserRuleContext) {
-  return Array.from(dbInfo.functionSignatures.keys())
+  return Object.keys(dbInfo.functionSignatures)
     .filter((functionName) => {
       return functionName.startsWith(expr.getText());
     })
@@ -97,7 +97,7 @@ export function autoCompleteFunctions(dbInfo: DbInfo, expr: ParserRuleContext) {
 }
 
 export function autoCompleteProcNames(dbInfo: DbInfo) {
-  return Array.from(dbInfo.procedureSignatures.keys()).map((t) => {
+  return Object.keys(dbInfo.procedureSignatures).map((t) => {
     return {
       label: t,
       kind: CompletionItemKind.Function,

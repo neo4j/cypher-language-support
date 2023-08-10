@@ -6,7 +6,7 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "main": "out/index.cjs",
   "module": "out/index.js",
@@ -20,7 +20,7 @@
     "build": "rollup -c --failAfterWarnings",
     "test": "jest",
     "test:e2e": "playwright test",
-    "e2e-http-server": "vite build && vite preview --port 5173"
+    "e2e-http-server": "vite dev"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",

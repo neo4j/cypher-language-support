@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { CypherEditorPage } from './cypher-editor';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('localhost:5173');
+  await page.goto('localhost:3000');
 });
 
 test('respects preloaded history', async ({ page }) => {
