@@ -45,4 +45,5 @@ jobs:
         run: npm run build
 
       - name: Run tests
-        run: npm test
+        # Tests with the same flags that VSCode does
+        run: npm test -- -- --passWithNoTests --testLocationInResults
