@@ -131,9 +131,7 @@ export function autoCompleteStructurally(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (inNodeLabel(stopNode)) {
-      return autocompleteLabels(dbInfo);
-    } else if (inRelationshipType(stopNode)) {
+    if (inRelationshipType(stopNode)) {
       return autocompleteRelTypes(dbInfo);
     } else {
       // Completes expressions that are prefixes of function names as function names
@@ -169,29 +167,17 @@ export function autoCompleteStructurallyAddingChar(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (inNodeLabel(stopNode)) {
-      return autocompleteLabels(dbInfo);
-    } else if (inRelationshipType(stopNode)) {
+    if (inRelationshipType(stopNode)) {
       return autocompleteRelTypes(dbInfo);
-    } else if (inLabel(stopNode)) {
-      // TODO This requires finer grain polishing
-      // Unless we build a symbol table, we cannot distinguish in a
-      // WHERE type predicate between a node:
-      //
-      // MATCH (n) WHERE n :A|B
-      // RETURN n
-      //
-      // and a relationship:
-      //
-      // MATCH (n)-[r]-(m) WHERE r :A|B
-      // RETURN n
-      return autocompleteLabels(dbInfo).concat(autocompleteRelTypes(dbInfo));
     } else {
       return undefined;
     }
   }
 }
 
+// labelExpression
+// parent relationshipPattern
+// prefered rules symbolicLabelNameString
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
   dbInfo: DbInfo,
@@ -217,6 +203,7 @@ export function completionCoreCompletion(
       .add(CypherParser.RULE_unescapedSymbolicNameString)
       .add(CypherParser.RULE_escapedSymbolicNameString)
       .add(CypherParser.RULE_stringLiteral)
+      .add(CypherParser.RULE_symbolicLabelNameString)
       .add(CypherParser.RULE_symbolicAliasName);
 
     // Keep only keywords as suggestions
@@ -225,14 +212,69 @@ export function completionCoreCompletion(
         .filter(([, type]) => type !== CypherTokenType.keyword)
         .map(([token]) => Number(token)),
     );
+
     codeCompletion.ignoredTokens.add(CypherParser.EOF);
 
     const candidates = codeCompletion.collectCandidates(caretIndex);
 
+    const labelCompletions = dbInfo.labels.map((labelName) => ({
+      label: labelName,
+      kind: CompletionItemKind.TypeParameter,
+    }));
+    const reltypeCompletions = dbInfo.relationshipTypes.map((relType) => ({
+      label: relType,
+      kind: CompletionItemKind.TypeParameter,
+    }));
+    const proceduresCompletions = Array.from(
+      dbInfo.procedureSignatures.keys(),
+    ).map((procedureName) => ({
+      label: procedureName,
+      kind: CompletionItemKind.Function,
+    }));
+
+    const functionCompletions = Array.from(
+      dbInfo.functionSignatures.keys(),
+    ).map((functionName) => ({
+      label: functionName,
+      kind: CompletionItemKind.Function,
+    }));
+    functionCompletions;
+
     const ruleCompletions = Array.from(candidates.rules.entries())
-      .flatMap((candidate) => {
+      .flatMap((candidate): CompletionItem[] => {
         const [ruleNumber, candidateRule] = candidate;
-        if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
+        if (
+          ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
+          ruleNumber === CypherParser.RULE_symbolicLabelNameString
+        ) {
+          if (
+            candidateRule.ruleList.includes(CypherParser.RULE_procedureName)
+          ) {
+            return proceduresCompletions;
+          }
+
+          if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
+            return proceduresCompletions;
+          }
+
+          if (
+            candidateRule.ruleList.includes(
+              CypherParser.RULE_relationshipPattern,
+            )
+          ) {
+            return reltypeCompletions;
+          }
+
+          if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
+            return labelCompletions;
+          }
+
+          if (
+            candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
+          ) {
+            return reltypeCompletions.concat(labelCompletions);
+          }
+        } else if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
           // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
           // so ALTER ALIAS a . b  FOR DATABASE neo4j is accepted by neo4j. It does however only drop the spaces for the alias
           // it becomes just a.b

@@ -32,6 +32,7 @@ export function autocomplete(
     parsingResult = parserWrapper.parse(lastStatement);
   }
 
+  return completionCoreCompletion(parsingResult, dbInfo);
   // First try to complete using tree information:
   // whether we are in a node label, relationship type, function name, procedure name, etc
   const result = autoCompleteStructurally(parsingResult, dbInfo);

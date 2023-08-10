@@ -32,12 +32,18 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c] ?? 'text';
 };
 
+// hmm space räcker för att fatta rätt regel
 export const cypherAutocomplete: CompletionSource = (context) => {
   const options = autocomplete(context.state.doc.toString(), {
-    functionSignatures: new Map(),
+    functionSignatures: new Map([
+      ['a.b', { label: '' }],
+      ['xx.yy.proc', { label: '' }],
+      ['xx.yy.procedure', { label: '' }],
+      ['db.info', { label: '' }],
+    ]),
     procedureSignatures: new Map(),
-    relationshipTypes: [],
-    labels: [],
+    relationshipTypes: ['Rel', 'KNOWS'],
+    labels: ['Label', 'Person'],
     aliasNames: ['myalias'],
     databaseNames: ['db1', 'db2', 'movese'],
   });
