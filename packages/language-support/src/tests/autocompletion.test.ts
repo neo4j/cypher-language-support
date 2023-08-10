@@ -722,7 +722,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
 });
 
 describe('Auto-completion works correctly inside pattern comprehensions', () => {
-  test.skip('Correctly completes keywords inside pattern comprehensions', () => {
+  test('Correctly completes keywords inside pattern comprehensions', () => {
     const query = "MATCH (a:Person {name: 'Andy'}) RETURN [(a)-->(b W";
 
     testCompletionContains({
