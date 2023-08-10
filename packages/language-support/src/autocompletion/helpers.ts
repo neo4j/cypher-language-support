@@ -130,9 +130,7 @@ export function autoCompleteStructurally(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (inNodeLabel(stopNode)) {
-      return autocompleteLabels(dbInfo);
-    } else if (inRelationshipType(stopNode)) {
+    if (inRelationshipType(stopNode)) {
       return autocompleteRelTypes(dbInfo);
     } else {
       // Completes expressions that are prefixes of function names as function names
@@ -168,31 +166,20 @@ export function autoCompleteStructurallyAddingChar(
   } else {
     const stopNode = findStopNode(tree);
 
-    if (inNodeLabel(stopNode)) {
-      return autocompleteLabels(dbInfo);
-    } else if (inRelationshipType(stopNode)) {
+    if (inRelationshipType(stopNode)) {
       return autocompleteRelTypes(dbInfo);
-    } else if (inLabel(stopNode)) {
-      // TODO This requires finer grain polishing
-      // Unless we build a symbol table, we cannot distinguish in a
-      // WHERE type predicate between a node:
-      //
-      // MATCH (n) WHERE n :A|B
-      // RETURN n
-      //
-      // and a relationship:
-      //
-      // MATCH (n)-[r]-(m) WHERE r :A|B
-      // RETURN n
-      return autocompleteLabels(dbInfo).concat(autocompleteRelTypes(dbInfo));
     } else {
       return undefined;
     }
   }
 }
 
-export function autoCompleteKeywords(
+// labelExpression
+// parent relationshipPattern
+// prefered rules symbolicLabelNameString
+export function completionCoreCompletion(
   parsingResult: ParsingResult,
+  dbInfo: DbInfo,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -214,7 +201,9 @@ export function autoCompleteKeywords(
     codeCompletion.preferredRules = new Set<number>()
       .add(CypherParser.RULE_unescapedSymbolicNameString)
       .add(CypherParser.RULE_escapedSymbolicNameString)
-      .add(CypherParser.RULE_stringLiteral);
+      .add(CypherParser.RULE_stringLiteral)
+      .add(CypherParser.RULE_symbolicLabelNameString)
+      .add(CypherParser.RULE_symbolicAliasName);
 
     // Keep only keywords as suggestions
     codeCompletion.ignoredTokens = new Set<number>(
@@ -223,7 +212,72 @@ export function autoCompleteKeywords(
         .map(([token]) => Number(token)),
     );
 
+    codeCompletion.ignoredTokens.add(CypherParser.EOF);
+
     const candidates = codeCompletion.collectCandidates(caretIndex);
+
+    const labelCompletions = dbInfo.labels.map((labelName) => ({
+      label: labelName,
+      kind: CompletionItemKind.TypeParameter,
+    }));
+    const reltypeCompletions = dbInfo.relationshipTypes.map((relType) => ({
+      label: relType,
+      kind: CompletionItemKind.TypeParameter,
+    }));
+    const proceduresCompletions = Array.from(
+      dbInfo.procedureSignatures.keys(),
+    ).map((procedureName) => ({
+      label: procedureName,
+      kind: CompletionItemKind.Function,
+    }));
+
+    const functionCompletions = Array.from(
+      dbInfo.functionSignatures.keys(),
+    ).map((functionName) => ({
+      label: functionName,
+      kind: CompletionItemKind.Function,
+    }));
+    functionCompletions;
+
+    const ruleCompletions = Array.from(candidates.rules.entries())
+      .flatMap((candidate): CompletionItem[] => {
+        const [ruleNumber, candidateRule] = candidate;
+        if (
+          ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
+          ruleNumber === CypherParser.RULE_symbolicLabelNameString
+        ) {
+          if (
+            candidateRule.ruleList.includes(CypherParser.RULE_procedureName)
+          ) {
+            return proceduresCompletions;
+          }
+
+          if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
+            return proceduresCompletions;
+          }
+
+          if (
+            candidateRule.ruleList.includes(
+              CypherParser.RULE_relationshipPattern,
+            )
+          ) {
+            return reltypeCompletions;
+          }
+
+          if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
+            return labelCompletions;
+          }
+
+          if (
+            candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
+          ) {
+            return reltypeCompletions.concat(labelCompletions);
+          }
+        }
+        return null;
+      })
+      .filter((r) => r !== null);
+
     const tokens = candidates.tokens.entries();
 
     const tokenCandidates = Array.from(tokens).flatMap((value) => {
