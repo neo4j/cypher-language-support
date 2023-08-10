@@ -450,8 +450,20 @@ describe('Procedures auto-completion', () => {
 });
 
 describe('expression completions', () => {
-  describe('general expression', () => {
-    test('Does not offer keywords for expression auto-completion', () => {
+  describe('misc expression tests', () => {
+    test('Does offer keywords when approiate', () => {
+      const query = 'MATCH (n:Person) WHERE n.name = N';
+
+      testCompletionContains({
+        query,
+        expected: [
+          { label: 'NAN', kind: CompletionItemKind.Keyword },
+          { label: 'NULL', kind: CompletionItemKind.Keyword },
+        ],
+      });
+    });
+
+    test('Does not incorrectly offer keywords when building string', () => {
       const query = 'MATCH (n:Person) WHERE n.name = "N';
 
       testCompletionDoesNotContain({
@@ -466,7 +478,7 @@ describe('expression completions', () => {
     });
   });
 
-  describe('functions', () => {
+  describe('function invocations', () => {
     const dbInfo = new MockDbInfo(
       [],
       [],
