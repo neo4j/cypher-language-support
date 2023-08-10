@@ -3,10 +3,7 @@ import { CompletionItem } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import { findLatestStatement } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
-import {
-  autoCompleteExpressionStructurally,
-  completionCoreCompletion,
-} from './helpers';
+import { completionCoreCompletion } from './helpers';
 
 export function autocomplete(
   textUntilPosition: string,
@@ -29,13 +26,6 @@ export function autocomplete(
   const lastStatement = findLatestStatement(parsingResult);
   if (lastStatement != undefined) {
     parsingResult = parserWrapper.parse(lastStatement);
-  }
-
-  // Function invocation and unfinished strings are not yet completed via antlr4-c3 so still use
-  // structural completion for those
-  const completion = autoCompleteExpressionStructurally(parsingResult, dbInfo);
-  if (completion) {
-    return completion;
   }
 
   return completionCoreCompletion(parsingResult, dbInfo);

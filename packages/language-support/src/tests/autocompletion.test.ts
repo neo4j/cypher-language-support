@@ -19,13 +19,14 @@ export function testCompletionContains({
 }: InclusionTestArgs) {
   const actualCompletionList = autocomplete(query, dbInfo);
 
-  expected.forEach((expectedItem) => {
-    const elementFound = actualCompletionList.find(
+  const actual = expected.map((expectedItem) =>
+    actualCompletionList.find(
       (value) =>
         value.kind === expectedItem.kind && value.label === expectedItem.label,
-    );
-    expect(elementFound).toBeDefined();
-  });
+    ),
+  );
+
+  expect(expected).toEqual(actual);
 }
 
 type ExclusionTestArgs = {
@@ -40,14 +41,15 @@ export function testCompletionDoesNotContain({
 }: ExclusionTestArgs) {
   const actualCompletionList = autocomplete(query, dbInfo);
 
-  excluded.forEach((notExpectedItem) => {
-    const elementFound = actualCompletionList.find(
+  const actual = excluded.map((notExpectedItem) =>
+    actualCompletionList.find(
       (value) =>
         value.kind === notExpectedItem.kind &&
         value.label === notExpectedItem.label,
-    );
-    expect(elementFound).toBeUndefined();
-  });
+    ),
+  );
+
+  expect(actual).toEqual([]);
 }
 
 describe('MATCH auto-completion', () => {
@@ -447,8 +449,7 @@ describe('Procedures auto-completion', () => {
 
 describe('expression completions', () => {
   describe('misc expression tests', () => {
-    // FIXME Skipped until we can handle expressions via antlr4-c3
-    test.skip('Can offer keyword literals in expressions when appropriate', () => {
+    test('Can offer keyword literals in expressions when appropriate', () => {
       const query = 'MATCH (n:Person) WHERE n.name = N';
 
       testCompletionContains({
@@ -487,6 +488,19 @@ describe('expression completions', () => {
         'db.info': SignatureInformation.create(''),
       },
     );
+
+    test('Correctly completes unstarted function name in left hand side of WHERE', () => {
+      const query = 'MATCH (n) WHERE ';
+
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
+          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
+        ],
+      });
+    });
 
     test('Correctly completes function name in left hand side of WHERE', () => {
       const query = 'MATCH (n) WHERE xx.yy';
@@ -719,8 +733,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
 });
 
 describe('Auto-completion works correctly inside pattern comprehensions', () => {
-  // FIXME Skipped until we can handle expressions via antlr4-c3
-  test.skip('Correctly completes keywords inside pattern comprehensions', () => {
+  test('Correctly completes keywords inside pattern comprehensions', () => {
     const query = "MATCH (a:Person {name: 'Andy'}) RETURN [(a)-->(b W";
 
     testCompletionContains({

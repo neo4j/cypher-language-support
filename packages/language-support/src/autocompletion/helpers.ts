@@ -1,4 +1,3 @@
-import { ParserRuleContext } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -6,63 +5,9 @@ import {
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
-import CypherParser, {
-  Expression2Context,
-} from '../generated-parser/CypherParser';
-import { findParent, findStopNode, isDefined } from '../helpers';
+import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
-
-export function parentExpression(stopNode: ParserRuleContext) {
-  return findParent(stopNode, (p) => p instanceof Expression2Context);
-}
-
-export function autoCompleteFunctions(dbInfo: DbInfo, expr: ParserRuleContext) {
-  return Object.keys(dbInfo.functionSignatures)
-    .filter((functionName) => {
-      return functionName.startsWith(expr.getText());
-    })
-    .map((t) => {
-      return {
-        label: t,
-        kind: CompletionItemKind.Function,
-      };
-    });
-}
-
-export function autoCompleteExpressionStructurally(
-  parsingResult: EnrichedParsingResult,
-  dbInfo: DbInfo,
-): CompletionItem[] | undefined {
-  const tokens = parsingResult.tokens;
-  const tree = parsingResult.result;
-  const lastTokenIndex = tokens.length - 2;
-  const lastToken = tokens[lastTokenIndex];
-  const eof = tokens[lastTokenIndex + 1];
-
-  if (lastTokenIndex <= 0) {
-    return undefined;
-    // When we have EOF with a different text in the token,
-    // it means the parser has failed to parse it.
-    // We give empty completions in that case
-    // because the query is severely broken at the
-    // point of completion (e.g. an unclosed string)
-  } else if (eof.text !== '<EOF>') {
-    return [];
-  } else if (lastToken.type === CypherParser.SPACE) {
-    // If the last token is a space, we surely cannot auto-complete using parsing tree information
-    return undefined;
-  } else {
-    const stopNode = findStopNode(tree);
-
-    // Completes expressions that are prefixes of function names as function names
-    const expr = parentExpression(stopNode);
-
-    if (isDefined(expr)) {
-      return autoCompleteFunctions(dbInfo, expr);
-    }
-  }
-}
+import { ParsingResult } from '../parserWrapper';
 
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
@@ -76,6 +21,15 @@ export function completionCoreCompletion(
   // We always need to subtract one for the EOF
   // Except if the query is empty and only contains EOF
   let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
+
+  const eof = tokens[caretIndex];
+
+  // When we have EOF with a different text in the token, it means the parser has failed to parse it.
+  // We give empty completions in that case because the query is severely broken at the
+  // point of completion (e.g. an unclosed string)
+  if (eof.text !== '<EOF>') {
+    return [];
+  }
 
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
   // The identfier is finished when the last token is a SPACE or dot etc. etc.
@@ -108,6 +62,8 @@ export function completionCoreCompletion(
 
   codeCompletion.ignoredTokens.add(CypherParser.EOF);
 
+  // codeCompletion.showDebugOutput = true;
+
   const candidates = codeCompletion.collectCandidates(caretIndex);
 
   const labelCompletions = dbInfo.labels.map((labelName) => ({
@@ -125,13 +81,51 @@ export function completionCoreCompletion(
     }),
   );
 
+  const functionCompletions = Object.keys(dbInfo.functionSignatures).map(
+    (fnName) => ({
+      label: fnName,
+      kind: CompletionItemKind.Function,
+    }),
+  );
+
   const ruleCompletions = Array.from(candidates.rules.entries())
     .flatMap((candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
+
       if (
         ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
         ruleNumber === CypherParser.RULE_symbolicLabelNameString
       ) {
+        // TODO check so that there is no symbolic name string in a place such that
+        // it cannot be a function invocation
+        // TODO check that completion result starts from right position (including . and such)
+        const completingUserInputInExpression = candidateRule.ruleList.includes(
+          CypherParser.RULE_expression2,
+        );
+        if (completingUserInputInExpression) {
+          const expressionCompletions: CompletionItem[] = [
+            ...functionCompletions,
+          ];
+          if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
+            expressionCompletions.push(...labelCompletions);
+          } else if (
+            candidateRule.ruleList.includes(
+              CypherParser.RULE_relationshipPattern,
+            )
+          ) {
+            expressionCompletions.push(...reltypeCompletions);
+          } else if (
+            candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
+          ) {
+            expressionCompletions.push(
+              ...reltypeCompletions,
+              ...labelCompletions,
+            );
+          }
+
+          return expressionCompletions;
+        }
+
         if (candidateRule.ruleList.includes(CypherParser.RULE_procedureName)) {
           return proceduresCompletions;
         }
@@ -148,12 +142,6 @@ export function completionCoreCompletion(
 
         if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
           return labelCompletions;
-        }
-
-        if (
-          candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
-        ) {
-          return reltypeCompletions.concat(labelCompletions);
         }
       }
       return null;
