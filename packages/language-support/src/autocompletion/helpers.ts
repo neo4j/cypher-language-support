@@ -187,24 +187,17 @@ export function completionCoreCompletion(
 
   const codeCompletion = new CodeCompletionCore(parser);
 
-  // We always need to subtract one more for the final EOF
+  // We always need to subtract one for the EOF
   // Except if the query is empty and only contains EOF
-
-  // const caretIndex = tokens.length;
-
-  // Caret index should be at the end, so the caret that is after the last token
   let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
-  //   const precedingToken = tokens[caretIndex - 1];
-  //if (precedingToken && precedingToken.type === CypherLexer.IDENTIFIER) {
-  //}
 
+  // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
+  // The identfier is finished when the last token is a SPACE or dot etc. etc.
+  // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
+  // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
   if (tokens[caretIndex - 1]?.type === CypherLexer.IDENTIFIER) {
     caretIndex--;
   }
-
-  // From the antrl-c3 docs:
-  // That means in order to find the correct candidates you have to change the token index based on the type of the token that immediately precedes the caret token.
-  // const caretToken = tokens[caretIndex];
 
   // We need this to ignore the list of tokens from:
   // * unescapedSymbolicNameString, because a lot of keywords are allowed there
@@ -228,26 +221,6 @@ export function completionCoreCompletion(
   );
 
   codeCompletion.ignoredTokens.add(CypherParser.EOF);
-  /*
-  GIVET [IDENTFIER, EOF] => index => 0
-  consume => nothing
-
-  GIVET [KEYWORD, EOF] => index => 0
-  consume => nothing
-
-  GIVET [KEYWORD, SPACE, EOF] => index => 1
-  consume => KEYWORD // TODO Also space?
-
-  GIVET [KEYWORD, SPACE, IDENTFIER, EOF] => index => 1
-  consume => KEYWORD, SPACE
-
-  GIVET [KEYWORD, SPACE, IDENTFIER, SPACE, EOF] => index => 1
-  consume => KEYWORD, SPACE, IDENTIFIER => give error
-
-  GIVET [KEYWORD, SPACE, LPAR, COLON, EOF] => index => 1
-  consume => KEYWORD, SPACE, LPAR, COLON  => 
-
-  */
 
   const candidates = codeCompletion.collectCandidates(caretIndex);
 
@@ -336,18 +309,6 @@ export function completionCoreCompletion(
     label: t,
     kind: CompletionItemKind.Keyword,
   }));
-  const res = [...ruleCompletions, ...tokenCompletions];
-  // codeCompletion.showDebugOutput = true;
-  /*console.log(
-    tokens.length,
-    tokens.map((t) => t.text),
-    caretIndex,
-  );
-  console.log(
-    'returned',
-    res.map((r) => r.label),
-  );
-  */
 
-  return res;
+  return [...ruleCompletions, ...tokenCompletions];
 }
