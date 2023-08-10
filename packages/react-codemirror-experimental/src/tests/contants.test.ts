@@ -1,7 +1,6 @@
 import { tags } from '@lezer/highlight';
 import { applySyntaxColouring } from 'language-support';
-import { expect, test } from 'vitest';
-import { tokenTypeToStyleTag } from './constants';
+import { tokenTypeToStyleTag } from '../lang-cypher/constants';
 
 const cypherQueryWithAllTokenTypes = `MATCH (variable :Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 
