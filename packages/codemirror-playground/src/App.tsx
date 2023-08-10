@@ -1,4 +1,5 @@
 import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
+import { DbInfo } from 'language-support';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
@@ -29,6 +30,19 @@ RETURN count(*)`,
 } as const;
 
 type DemoName = keyof typeof demos;
+const dummyDbInfo: DbInfo = {
+  functionSignatures: {
+    function123: { label: 'function123', documentation: 'no docs' },
+    generatepassword: { label: 'generatepassword', documentation: 'no docs' },
+  },
+  procedureSignatures: {
+    'db.ping': { label: 'db.ping', documentation: 'no docs' },
+    'apoc.util.fake': { label: 'apoc.util.fake', documentation: 'no docs' },
+  },
+  labels: ['Person', 'Movie'],
+  relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
+};
+
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
@@ -37,6 +51,12 @@ export function App() {
   const [showConfigPanel, setShowConfigPanel] = useState(false);
   const [commandRanCount, setCommandRanCount] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
+
+  const [schema, setSchema] = useState<DbInfo>(dummyDbInfo);
+  const [schemaText, setSchemaText] = useState<string>(
+    JSON.stringify(dummyDbInfo, undefined, 2),
+  );
+  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   const treeData = useMemo(() => {
     return getDebugTree(value);
@@ -100,6 +120,7 @@ export function App() {
               onExecute={() => setCommandRanCount((c) => c + 1)}
               theme={darkMode ? 'dark' : 'light'}
               initialHistory={Object.values(demos)}
+              schema={schema}
             />
 
             {commandRanCount > 0 && (
@@ -136,6 +157,22 @@ export function App() {
                 />
                 Show antlr parse tree
               </label>
+              {schemaError && <div className="text-red-500">{schemaError}</div>}
+              <textarea
+                value={schemaText}
+                className="min-h-[200px]"
+                onChange={(v) => {
+                  const value = v.target.value;
+                  setSchemaText(value);
+                  try {
+                    const schema = JSON.parse(value) as DbInfo;
+                    setSchema(schema);
+                    setSchemaError(null);
+                  } catch (e) {
+                    setSchemaError(String(e));
+                  }
+                }}
+              />
             </div>
           )}
         </div>

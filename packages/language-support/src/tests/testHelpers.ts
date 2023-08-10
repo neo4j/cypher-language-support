@@ -5,8 +5,8 @@ export class MockDbInfo implements DbInfo {
   constructor(
     public labels: string[] = [],
     public relationshipTypes: string[] = [],
-    public procedureSignatures: Map<string, SignatureInformation> = new Map(),
-    public functionSignatures: Map<string, SignatureInformation> = new Map(),
+    public procedureSignatures: Record<string, SignatureInformation> = {},
+    public functionSignatures: Record<string, SignatureInformation> = {},
     public databaseNames: string[] = [],
   ) {}
 }

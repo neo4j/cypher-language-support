@@ -30,11 +30,7 @@ describe('Procedures signature help', () => {
       ParameterInformation.create('params', 'params = {} :: MAP?'),
     ],
   );
-  const dbWithProcedure = new MockDbInfo(
-    [],
-    [],
-    new Map([['apoc.do.when', signature]]),
-  );
+  const dbWithProcedure = new MockDbInfo([], [], { 'apoc.do.when': signature });
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -149,8 +145,8 @@ describe('Functions signature help', () => {
   const dbWithFunction = new MockDbInfo(
     [],
     [],
-    new Map(),
-    new Map([['apoc.do.when', signature]]),
+    {},
+    { 'apoc.do.when': signature },
   );
 
   function expectedArgIndex(i: number): SignatureHelp {

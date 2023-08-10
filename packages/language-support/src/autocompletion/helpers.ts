@@ -1,3 +1,4 @@
+import { ParserRuleContext } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -5,9 +6,63 @@ import {
 } from 'vscode-languageserver-types';
 import { DbInfo } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
-import CypherParser from '../generated-parser/CypherParser';
+import CypherParser, {
+  Expression2Context,
+} from '../generated-parser/CypherParser';
+import { findParent, findStopNode, isDefined } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { ParsingResult } from '../parserWrapper';
+import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
+
+export function parentExpression(stopNode: ParserRuleContext) {
+  return findParent(stopNode, (p) => p instanceof Expression2Context);
+}
+
+export function autoCompleteFunctions(dbInfo: DbInfo, expr: ParserRuleContext) {
+  return Object.keys(dbInfo.functionSignatures)
+    .filter((functionName) => {
+      return functionName.startsWith(expr.getText());
+    })
+    .map((t) => {
+      return {
+        label: t,
+        kind: CompletionItemKind.Function,
+      };
+    });
+}
+
+export function autoCompleteExpressionStructurally(
+  parsingResult: EnrichedParsingResult,
+  dbInfo: DbInfo,
+): CompletionItem[] | undefined {
+  const tokens = parsingResult.tokens;
+  const tree = parsingResult.result;
+  const lastTokenIndex = tokens.length - 2;
+  const lastToken = tokens[lastTokenIndex];
+  const eof = tokens[lastTokenIndex + 1];
+
+  if (lastTokenIndex <= 0) {
+    return undefined;
+    // When we have EOF with a different text in the token,
+    // it means the parser has failed to parse it.
+    // We give empty completions in that case
+    // because the query is severely broken at the
+    // point of completion (e.g. an unclosed string)
+  } else if (eof.text !== '<EOF>') {
+    return [];
+  } else if (lastToken.type === CypherParser.SPACE) {
+    // If the last token is a space, we surely cannot auto-complete using parsing tree information
+    return undefined;
+  } else {
+    const stopNode = findStopNode(tree);
+
+    // Completes expressions that are prefixes of function names as function names
+    const expr = parentExpression(stopNode);
+
+    if (isDefined(expr)) {
+      return autoCompleteFunctions(dbInfo, expr);
+    }
+  }
+}
 
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
@@ -63,12 +118,12 @@ export function completionCoreCompletion(
     label: relType,
     kind: CompletionItemKind.TypeParameter,
   }));
-  const proceduresCompletions = Array.from(
-    dbInfo.procedureSignatures.keys(),
-  ).map((procedureName) => ({
-    label: procedureName,
-    kind: CompletionItemKind.Function,
-  }));
+  const proceduresCompletions = Object.keys(dbInfo.procedureSignatures).map(
+    (procedureName) => ({
+      label: procedureName,
+      kind: CompletionItemKind.Function,
+    }),
+  );
 
   const ruleCompletions = Array.from(candidates.rules.entries())
     .flatMap((candidate): CompletionItem[] => {

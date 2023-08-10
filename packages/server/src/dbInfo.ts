@@ -6,8 +6,8 @@ import {
 import { DbInfo } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
 export class DbInfoImpl implements DbInfo {
-  public procedureSignatures: Map<string, SignatureInformation> = new Map();
-  public functionSignatures: Map<string, SignatureInformation> = new Map();
+  public procedureSignatures: Record<string, SignatureInformation> = {};
+  public functionSignatures: Record<string, SignatureInformation> = {};
   public labels: string[] = [];
   public relationshipTypes: string[] = [];
 
@@ -96,7 +96,9 @@ export class DbInfoImpl implements DbInfo {
     }
   }
 
-  private async updateMethodsCache(cache: Map<string, SignatureInformation>) {
+  private async updateMethodsCache(
+    cache: Record<string, SignatureInformation>,
+  ) {
     if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
     const updateTarget =
@@ -124,13 +126,10 @@ export class DbInfoImpl implements DbInfo {
         const params: string[] =
           paramsString.length > 0 ? paramsString.split(', ') : [];
 
-        cache.set(
+        cache[methodName] = SignatureInformation.create(
           methodName,
-          SignatureInformation.create(
-            methodName,
-            description,
-            ...params.map(this.getParamsInfo),
-          ),
+          description,
+          ...params.map(this.getParamsInfo),
         );
       });
     } catch (error) {

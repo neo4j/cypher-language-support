@@ -69,12 +69,12 @@ function tryParseFunction(
 }
 
 function toSignatureHelp(
-  methodSignatures: Map<string, SignatureInformation>,
+  methodSignatures: Record<string, SignatureInformation>,
   parsedMethod: ParsedMethod,
 ) {
   const methodName = parsedMethod.methodName;
   const numMethodArgs = parsedMethod.numProcedureArgs;
-  const method = methodSignatures.get(methodName);
+  const method = methodSignatures[methodName];
   const signatures = method ? [method] : [];
   const argPosition =
     numMethodArgs !== undefined ? Math.max(numMethodArgs - 1, 0) : undefined;
