@@ -1,4 +1,5 @@
 import {
+  acceptCompletion,
   autocompletion,
   closeBrackets,
   closeBracketsKeymap,
@@ -60,7 +61,7 @@ const createNeo4jSearchPanel = () => {
   return neo4jPanel;
 };
 
-export const basicNeo4jSetup = (): Extension[] => {
+export const basicNeo4jSetup = (prompt?: string): Extension[] => {
   const keymaps = [
     closeBracketsKeymap,
     defaultKeymap,
@@ -69,12 +70,27 @@ export const basicNeo4jSetup = (): Extension[] => {
     foldKeymap,
     completionKeymap,
     lintKeymap,
+    {
+      key: 'Tab',
+      preventDefault: true,
+      run: acceptCompletion,
+    },
     indentWithTab,
   ].flat();
 
   const extensions: Extension[] = [];
 
-  extensions.push(lineNumbers());
+  extensions.push(
+    lineNumbers({
+      formatNumber(a, state) {
+        if (state.doc.lines === 1 && prompt !== undefined) {
+          return prompt;
+        }
+
+        return a.toString();
+      },
+    }),
+  );
 
   extensions.push(highlightSpecialChars());
   extensions.push(history());

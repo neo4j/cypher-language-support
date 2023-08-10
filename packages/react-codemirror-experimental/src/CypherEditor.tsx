@@ -1,24 +1,62 @@
-import CodeEditor from '@uiw/react-codemirror';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
+import CodeEditor, {
+  ReactCodeMirrorProps,
+  ReactCodeMirrorRef,
+} from '@uiw/react-codemirror';
 import React from 'react';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
-import { ayuLightTheme } from './themes';
+import { replMode } from './repl-mode';
+import { getThemeExtension } from './themes';
 
-export const CypherEditor: typeof CodeEditor = React.forwardRef(
-  (props, ref) => {
-    const { extensions = [], ...rest } = props;
-    return (
-      <CodeEditor
-        ref={ref}
-        extensions={[
-          basicNeo4jSetup(),
-          ayuLightTheme(),
-          cypher(),
-          ...extensions,
-        ]}
-        basicSetup={false}
-        {...rest}
-      />
-    );
-  },
-);
+type CypherEditorOwnProps = {
+  prompt?: string;
+  extraKeybindings?: KeyBinding[];
+  onExecute?: (cmd: string) => void;
+  initialHistory?: string[];
+  onNewHistoryEntry?: (historyEntry: string) => void;
+  lineWrap?: boolean;
+};
+
+export type CypherEditorProps = CypherEditorOwnProps &
+  ReactCodeMirrorProps &
+  React.RefAttributes<ReactCodeMirrorRef>;
+type CypherEditor = React.ForwardRefExoticComponent<CypherEditorProps>;
+export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
+  const {
+    theme = 'light',
+    extensions = [],
+    prompt,
+    onExecute,
+    initialHistory = [],
+    onNewHistoryEntry,
+    extraKeybindings = [],
+    lineWrap = false,
+    ...rest
+  } = props;
+
+  const maybeReplMode = onExecute
+    ? replMode({
+        onExecute,
+        initialHistory,
+        onNewHistoryEntry,
+      })
+    : [];
+
+  return (
+    <CodeEditor
+      ref={ref}
+      theme={getThemeExtension(theme)}
+      extensions={[
+        cypher(),
+        keymap.of(extraKeybindings),
+        maybeReplMode,
+        basicNeo4jSetup(prompt),
+        lineWrap ? EditorView.lineWrapping : [],
+        ...extensions,
+      ]}
+      basicSetup={false}
+      {...rest}
+    />
+  );
+});
