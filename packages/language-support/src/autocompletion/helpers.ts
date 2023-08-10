@@ -1,4 +1,4 @@
-import { CodeCompletionCore } from 'antlr4-c3';
+import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -8,6 +8,28 @@ import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { ParsingResult } from '../parserWrapper';
+
+const labelCompletions = (dbInfo: DbInfo) =>
+  dbInfo.labels.map((labelName) => ({
+    label: labelName,
+    kind: CompletionItemKind.TypeParameter,
+  }));
+
+const reltypeCompletions = (dbInfo: DbInfo) =>
+  dbInfo.relationshipTypes.map((relType) => ({
+    label: relType,
+    kind: CompletionItemKind.TypeParameter,
+  }));
+const proceduresCompletions = (dbInfo: DbInfo) =>
+  Object.keys(dbInfo.procedureSignatures).map((procedureName) => ({
+    label: procedureName,
+    kind: CompletionItemKind.Function,
+  }));
+const functionCompletions = (dbInfo: DbInfo) =>
+  Object.keys(dbInfo.functionSignatures).map((fnName) => ({
+    label: fnName,
+    kind: CompletionItemKind.Function,
+  }));
 
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
@@ -62,31 +84,7 @@ export function completionCoreCompletion(
 
   codeCompletion.ignoredTokens.add(CypherParser.EOF);
 
-  // codeCompletion.showDebugOutput = true;
-
   const candidates = codeCompletion.collectCandidates(caretIndex);
-
-  const labelCompletions = dbInfo.labels.map((labelName) => ({
-    label: labelName,
-    kind: CompletionItemKind.TypeParameter,
-  }));
-  const reltypeCompletions = dbInfo.relationshipTypes.map((relType) => ({
-    label: relType,
-    kind: CompletionItemKind.TypeParameter,
-  }));
-  const proceduresCompletions = Object.keys(dbInfo.procedureSignatures).map(
-    (procedureName) => ({
-      label: procedureName,
-      kind: CompletionItemKind.Function,
-    }),
-  );
-
-  const functionCompletions = Object.keys(dbInfo.functionSignatures).map(
-    (fnName) => ({
-      label: fnName,
-      kind: CompletionItemKind.Function,
-    }),
-  );
 
   const ruleCompletions = Array.from(candidates.rules.entries())
     .flatMap((candidate): CompletionItem[] => {
@@ -96,52 +94,29 @@ export function completionCoreCompletion(
         ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
         ruleNumber === CypherParser.RULE_symbolicLabelNameString
       ) {
-        // TODO check so that there is no symbolic name string in a place such that
-        // it cannot be a function invocation
-        // TODO check that completion result starts from right position (including . and such)
         const completingUserInputInExpression = candidateRule.ruleList.includes(
           CypherParser.RULE_expression2,
         );
         if (completingUserInputInExpression) {
-          const expressionCompletions: CompletionItem[] = [
-            ...functionCompletions,
-          ];
-          if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
-            expressionCompletions.push(...labelCompletions);
-          } else if (
-            candidateRule.ruleList.includes(
-              CypherParser.RULE_relationshipPattern,
-            )
-          ) {
-            expressionCompletions.push(...reltypeCompletions);
-          } else if (
-            candidateRule.ruleList.includes(CypherParser.RULE_labelExpression)
-          ) {
-            expressionCompletions.push(
-              ...reltypeCompletions,
-              ...labelCompletions,
-            );
-          }
-
-          return expressionCompletions;
+          return completeInExpression(candidateRule, dbInfo);
         }
 
         if (candidateRule.ruleList.includes(CypherParser.RULE_procedureName)) {
-          return proceduresCompletions;
+          return proceduresCompletions(dbInfo);
         }
 
         if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
-          return proceduresCompletions;
+          return proceduresCompletions(dbInfo);
         }
 
         if (
           candidateRule.ruleList.includes(CypherParser.RULE_relationshipPattern)
         ) {
-          return reltypeCompletions;
+          return reltypeCompletions(dbInfo);
         }
 
         if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
-          return labelCompletions;
+          return labelCompletions(dbInfo);
         }
       }
       return null;
@@ -177,4 +152,38 @@ export function completionCoreCompletion(
   }));
 
   return [...ruleCompletions, ...tokenCompletions];
+}
+
+function completeInExpression(candidateRule: CandidateRule, dbInfo: DbInfo) {
+  const expressionCompletions: CompletionItem[] = [
+    // all symbolic name strings in an expression can be a function (?)
+    // TODO check so that there is no symbolic name string in a place such that
+    // it cannot be a function invocation
+    // TODO check that completion result starts from right position (including . and such)
+    ...functionCompletions(dbInfo),
+  ];
+
+  // nodes, reltypes or both
+  const partOfLabelPattern = candidateRule.ruleList.includes(
+    CypherParser.RULE_nodePattern,
+  );
+  const partOfReltypepattern = candidateRule.ruleList.includes(
+    CypherParser.RULE_relationshipPattern,
+  );
+  const partOfNonSpecific = candidateRule.ruleList.includes(
+    CypherParser.RULE_labelExpression,
+  );
+
+  if (partOfLabelPattern) {
+    expressionCompletions.push(...labelCompletions(dbInfo));
+  } else if (partOfReltypepattern) {
+    expressionCompletions.push(...reltypeCompletions(dbInfo));
+  } else if (partOfNonSpecific) {
+    expressionCompletions.push(
+      ...reltypeCompletions(dbInfo),
+      ...labelCompletions(dbInfo),
+    );
+  }
+
+  return expressionCompletions;
 }
