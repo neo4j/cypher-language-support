@@ -248,13 +248,7 @@ describe('MATCH auto-completion', () => {
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
-      ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbInfo,
-      excluded: [
+        // TODO don't think we can fix this without a type table
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
       ],

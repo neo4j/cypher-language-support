@@ -1,4 +1,4 @@
-import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
+import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -61,18 +61,12 @@ export function completionCoreCompletion(
     caretIndex--;
   }
 
-  // For tokens that consist of generic user input (variables/functions, etc as opposed to keywords, symbols etc.)
-  // we don't want to suggest the names of the tokens themselves as completions
-  // instead we want to build suggestions from what we know of the database/query so far.
-  // For some rules we've not implemented the proper suggestions yet, but having them in
-  // the preferredRules list early is still useful as it prevents the basic
-  // token completions such as STRING_LITERAL1 from being suggested in the meantime
-  codeCompletion.preferredRules = new Set<number>()
-    .add(CypherParser.RULE_unescapedSymbolicNameString)
-    .add(CypherParser.RULE_escapedSymbolicNameString)
-    .add(CypherParser.RULE_stringLiteral)
-    .add(CypherParser.RULE_symbolicLabelNameString)
-    .add(CypherParser.RULE_symbolicAliasName);
+  codeCompletion.preferredRules = new Set<number>([
+    CypherParser.RULE_functionName,
+    CypherParser.RULE_procedureName,
+    CypherParser.RULE_labelExpression,
+    CypherParser.RULE_variable,
+  ]);
 
   // Keep only keywords as suggestions
   codeCompletion.ignoredTokens = new Set<number>(
@@ -82,40 +76,36 @@ export function completionCoreCompletion(
   );
 
   codeCompletion.ignoredTokens.add(CypherParser.EOF);
+  codeCompletion.ignoredTokens.add(CypherLexer.STRING_LITERAL1);
+  codeCompletion.ignoredTokens.add(CypherLexer.STRING_LITERAL2);
 
   const candidates = codeCompletion.collectCandidates(caretIndex);
 
   const ruleCompletions = Array.from(candidates.rules.entries())
     .flatMap((candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
+      if (ruleNumber === CypherParser.RULE_functionName) {
+        return functionCompletions(dbInfo);
+      }
 
-      if (
-        ruleNumber === CypherParser.RULE_unescapedSymbolicNameString ||
-        ruleNumber === CypherParser.RULE_symbolicLabelNameString
-      ) {
-        const completingUserInputInExpression = candidateRule.ruleList.includes(
-          CypherParser.RULE_expression2,
-        );
-        if (completingUserInputInExpression) {
-          return completeInExpression(candidateRule, dbInfo);
+      if (ruleNumber === CypherParser.RULE_procedureName) {
+        return proceduresCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_labelExpression) {
+        const parentRuleOfLabelExpr = candidateRule.ruleList.at(-1);
+        if (parentRuleOfLabelExpr === CypherParser.RULE_nodePattern) {
+          return labelCompletions(dbInfo);
         }
 
-        if (candidateRule.ruleList.includes(CypherParser.RULE_procedureName)) {
-          return proceduresCompletions(dbInfo);
-        }
-
-        if (candidateRule.ruleList.includes(CypherParser.RULE_functionName)) {
-          return proceduresCompletions(dbInfo);
-        }
-
-        if (
-          candidateRule.ruleList.includes(CypherParser.RULE_relationshipPattern)
-        ) {
+        if (parentRuleOfLabelExpr === CypherParser.RULE_relationshipPattern) {
           return reltypeCompletions(dbInfo);
         }
 
-        if (candidateRule.ruleList.includes(CypherParser.RULE_nodePattern)) {
-          return labelCompletions(dbInfo);
+        if (
+          parentRuleOfLabelExpr === CypherParser.RULE_labelExpressionPredicate
+        ) {
+          return [...labelCompletions(dbInfo), ...reltypeCompletions(dbInfo)];
         }
       }
       return null;
@@ -151,38 +141,4 @@ export function completionCoreCompletion(
   }));
 
   return [...ruleCompletions, ...tokenCompletions];
-}
-
-function completeInExpression(candidateRule: CandidateRule, dbInfo: DbInfo) {
-  const expressionCompletions: CompletionItem[] = [
-    // all symbolic name strings in an expression can be a function (?)
-    // TODO check so that there is no symbolic name string in a place such that
-    // it cannot be a function invocation
-    // TODO check that completion result starts from right position (including . and such)
-    ...functionCompletions(dbInfo),
-  ];
-
-  // nodes, reltypes or both
-  const partOfLabelPattern = candidateRule.ruleList.includes(
-    CypherParser.RULE_nodePattern,
-  );
-  const partOfReltypepattern = candidateRule.ruleList.includes(
-    CypherParser.RULE_relationshipPattern,
-  );
-  const partOfNonSpecific = candidateRule.ruleList.includes(
-    CypherParser.RULE_labelExpression,
-  );
-
-  if (partOfLabelPattern) {
-    expressionCompletions.push(...labelCompletions(dbInfo));
-  } else if (partOfReltypepattern) {
-    expressionCompletions.push(...reltypeCompletions(dbInfo));
-  } else if (partOfNonSpecific) {
-    expressionCompletions.push(
-      ...reltypeCompletions(dbInfo),
-      ...labelCompletions(dbInfo),
-    );
-  }
-
-  return expressionCompletions;
 }
