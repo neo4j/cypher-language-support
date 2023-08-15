@@ -61,13 +61,12 @@ export function completionCoreCompletion(
     caretIndex--;
   }
 
-  // We need this to ignore the list of tokens from:
-  // * unescapedSymbolicNameString, because a lot of keywords are allowed there
-  // * escapedSymbolicNameString, to avoid showing ESCAPED_SYMBOLIC_NAME
-  // * stringLiteral to avoid getting autocompletions like STRING_LITERAL1, STRING_LITERAL2
-  //
-  // That way we do not populate tokens that are coming from those rules and those
-  // are collected as rule names instead
+  // For tokens that consist of generic user input (variables/functions, etc as opposed to keywords, symbols etc.)
+  // we don't want to suggest the names of the tokens themselves as completions
+  // instead we want to build suggestions from what we know of the database/query so far.
+  // For some rules we've not implemented the proper suggestions yet, but having them in
+  // the preferredRules list early is still useful as it prevents the basic
+  // token completions such as STRING_LITERAL1 from being suggested in the meantime
   codeCompletion.preferredRules = new Set<number>()
     .add(CypherParser.RULE_unescapedSymbolicNameString)
     .add(CypherParser.RULE_escapedSymbolicNameString)
