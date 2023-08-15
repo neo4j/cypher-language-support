@@ -64,8 +64,14 @@ export function completionCoreCompletion(
   codeCompletion.preferredRules = new Set<number>([
     CypherParser.RULE_functionName,
     CypherParser.RULE_procedureName,
-    CypherParser.RULE_labelExpression,
-    CypherParser.RULE_variable,
+    CypherParser.RULE_labelExpression1,
+
+    // Because of the overlap of keywords and identifiers in cypher
+    // We will suggest keywords when users type identifiers as well
+    // To avoid this we want custom completion for identifiers
+    // Until we've covered all the ways we can reach symbolic name string we'll keep this here
+    // Ideally we'd find another way to get around this issue
+    CypherParser.RULE_symbolicNameString,
   ]);
 
   // Keep only keywords as suggestions
@@ -75,14 +81,10 @@ export function completionCoreCompletion(
       .map(([token]) => Number(token)),
   );
 
-  codeCompletion.ignoredTokens.add(CypherParser.EOF);
-  codeCompletion.ignoredTokens.add(CypherLexer.STRING_LITERAL1);
-  codeCompletion.ignoredTokens.add(CypherLexer.STRING_LITERAL2);
-
   const candidates = codeCompletion.collectCandidates(caretIndex);
 
-  const ruleCompletions = Array.from(candidates.rules.entries())
-    .flatMap((candidate): CompletionItem[] => {
+  const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
+    (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
         return functionCompletions(dbInfo);
@@ -92,25 +94,32 @@ export function completionCoreCompletion(
         return proceduresCompletions(dbInfo);
       }
 
-      if (ruleNumber === CypherParser.RULE_labelExpression) {
-        const parentRuleOfLabelExpr = candidateRule.ruleList.at(-1);
-        if (parentRuleOfLabelExpr === CypherParser.RULE_nodePattern) {
+      if (ruleNumber === CypherParser.RULE_labelExpression1) {
+        const topExprIndex = candidateRule.ruleList.indexOf(
+          CypherParser.RULE_labelExpression,
+        );
+
+        const topExprParent = candidateRule.ruleList[topExprIndex - 1];
+
+        if (topExprParent === undefined) {
+          return [];
+        }
+
+        if (topExprParent === CypherParser.RULE_nodePattern) {
           return labelCompletions(dbInfo);
         }
 
-        if (parentRuleOfLabelExpr === CypherParser.RULE_relationshipPattern) {
+        if (topExprParent === CypherParser.RULE_relationshipPattern) {
           return reltypeCompletions(dbInfo);
         }
 
-        if (
-          parentRuleOfLabelExpr === CypherParser.RULE_labelExpressionPredicate
-        ) {
+        if (topExprParent === CypherParser.RULE_labelExpressionPredicate) {
           return [...labelCompletions(dbInfo), ...reltypeCompletions(dbInfo)];
         }
       }
-      return null;
-    })
-    .filter((r) => r !== null);
+      return [];
+    },
+  );
 
   const tokenEntries = candidates.tokens.entries();
   const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {

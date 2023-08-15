@@ -60,7 +60,12 @@ export const lexerBrackets = [
   CypherLexer.RPAREN,
 ];
 export const lexerPunctuation = [CypherLexer.SEMICOLON];
-export const lexerSeparators = [CypherLexer.COMMA];
+export const lexerSeparators = [
+  CypherLexer.COMMA,
+  CypherLexer.ARROW_LINE,
+  CypherLexer.ARROW_LEFT_HEAD,
+  CypherLexer.ARROW_RIGHT_HEAD,
+];
 export const lexerNumberLiterals = [
   CypherLexer.DECIMAL_DOUBLE,
   CypherLexer.UNSIGNED_DECIMAL_INTEGER,
@@ -68,9 +73,40 @@ export const lexerNumberLiterals = [
   CypherLexer.UNSIGNED_OCTAL_INTEGER,
 ];
 
+export const lexerStringLiteral = [
+  CypherLexer.STRING_LITERAL1,
+  CypherLexer.STRING_LITERAL2,
+];
+
+export const lexerGarbage = [
+  CypherLexer.ErrorChar,
+  CypherLexer.EOF,
+  CypherLexer.MORE1,
+  CypherLexer.MORE3,
+  CypherLexer.MORE4,
+  CypherLexer.MORE5,
+  CypherLexer.MORE6,
+  CypherLexer.MORE7,
+  CypherLexer.MORE8,
+  CypherLexer.MORE9,
+  CypherLexer.MORE10,
+  CypherLexer.MORE11,
+  CypherLexer.MORE24,
+  CypherLexer.SPACE,
+  CypherLexer.ESCAPED_SYMBOLIC_NAME_OPEN,
+  CypherLexer.STRING1_OPEN,
+  CypherLexer.STRING2_OPEN,
+];
+
+export const identifier = [
+  CypherLexer.IDENTIFIER,
+  CypherLexer.ESCAPED_SYMBOLIC_NAME,
+];
+
 export const lexerComment = [
   CypherLexer.MULTI_LINE_COMMENT,
   CypherLexer.SINGLE_LINE_COMMENT,
+  CypherLexer.FORMAL_COMMENT,
 ];
 
 export const lexerKeywords = [
@@ -307,35 +343,24 @@ export const lexerKeywords = [
   CypherLexer.ZONED,
 ];
 
+function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
+  return arr.reduce<Record<number, CypherTokenType>>(
+    (acc, curr) => ({ ...acc, [curr]: tokenType }),
+    {},
+  );
+}
+
 export const lexerSymbols: Record<number, CypherTokenType> = {
-  ...lexerOperators.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.operator }),
-    {},
-  ),
-  ...lexerKeywords.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.keyword }),
-    {},
-  ),
-  ...lexerBrackets.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.bracket }),
-    {},
-  ),
-  ...lexerPunctuation.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.punctuation }),
-    {},
-  ),
-  ...lexerSeparators.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.separator }),
-    {},
-  ),
-  ...lexerComment.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.comment }),
-    {},
-  ),
-  ...lexerNumberLiterals.reduce(
-    (acc, curr) => ({ ...acc, [curr]: CypherTokenType.numberLiteral }),
-    {},
-  ),
+  ...toTokentypeObject(lexerOperators, CypherTokenType.operator),
+  ...toTokentypeObject(lexerKeywords, CypherTokenType.keyword),
+  ...toTokentypeObject(lexerBrackets, CypherTokenType.bracket),
+  ...toTokentypeObject(lexerComment, CypherTokenType.comment),
+  ...toTokentypeObject(lexerGarbage, CypherTokenType.none),
+  ...toTokentypeObject(lexerNumberLiterals, CypherTokenType.numberLiteral),
+  ...toTokentypeObject(lexerPunctuation, CypherTokenType.punctuation),
+  ...toTokentypeObject(lexerSeparators, CypherTokenType.separator),
+  ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
+  ...toTokentypeObject(identifier, CypherTokenType.variable),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {

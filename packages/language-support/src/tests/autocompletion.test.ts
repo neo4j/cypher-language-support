@@ -19,6 +19,9 @@ export function testCompletionContains({
 }: InclusionTestArgs) {
   const actualCompletionList = autocomplete(query, dbInfo);
 
+  expect(actualCompletionList).not.toContain(null);
+  expect(actualCompletionList).not.toContain(undefined);
+
   const actual = expected.map((expectedItem) =>
     actualCompletionList.find(
       (value) =>
@@ -87,6 +90,20 @@ describe('MATCH auto-completion', () => {
       query,
       dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test("Doesn't complete label before : is entered", () => {
+    const query = 'MATCH (n';
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
+      excluded: [
+        { label: 'Person', kind: CompletionItemKind.TypeParameter },
+        { label: 'Cat', kind: CompletionItemKind.TypeParameter },
+        { label: 'Dog', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -209,6 +226,22 @@ describe('MATCH auto-completion', () => {
       query,
       dbInfo,
       excluded: [
+        { label: 'B', kind: CompletionItemKind.TypeParameter },
+        { label: 'C', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Does not complete relationship type before : is entered', () => {
+    const query = 'MATCH (n)-[r';
+    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'D', kind: CompletionItemKind.TypeParameter },
+        { label: 'E', kind: CompletionItemKind.TypeParameter },
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
       ],
