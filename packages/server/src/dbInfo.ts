@@ -10,6 +10,8 @@ export class DbInfoImpl implements DbInfo {
   public functionSignatures: Record<string, SignatureInformation> = {};
   public labels: string[] = [];
   public relationshipTypes: string[] = [];
+  public aliasNames: string[] = [];
+  public databaseNames: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -61,6 +63,8 @@ export class DbInfoImpl implements DbInfo {
 
     return ParameterInformation.create(paramName, param);
   };
+
+  // TODO uppdatera denna fixa polling i bnytt kort
 
   private async updateLabels() {
     if (!this.neo4j) return;
