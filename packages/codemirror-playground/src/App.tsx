@@ -41,6 +41,8 @@ const dummyDbInfo: DbInfo = {
   },
   labels: ['Person', 'Movie'],
   relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
+  aliasNames: ['myalias', 'my.alias.with.dots'],
+  databaseNames: ['neo4j', 'system', 'movies'],
 };
 
 export function App() {

@@ -45,7 +45,9 @@ export class DbInfoImpl implements DbInfo {
     const updateAllDbInfo = async () => {
       await this.updateLabels();
       await this.updateRelationshipTypes();
+      await this.updateDatabasesAndAliases();
       await this.updateMethodsCache(this.procedureSignatures);
+      await this.updateMethodsCache(this.functionSignatures);
       await this.updateMethodsCache(this.functionSignatures);
     };
 
@@ -64,7 +66,25 @@ export class DbInfoImpl implements DbInfo {
     return ParameterInformation.create(paramName, param);
   };
 
-  // TODO uppdatera denna fixa polling i bnytt kort
+  private async updateDatabasesAndAliases() {
+    if (!this.neo4j) return;
+
+    try {
+      const result = await this.neo4j.executeQuery('SHOW DATABASES', {
+        session: session.READ,
+      });
+
+      this.databaseNames = result.records.flatMap(
+        (record) => (record.toObject()['name'] as string[]) ?? [],
+      );
+
+      this.aliasNames = result.records.flatMap(
+        (record) => (record.toObject()['aliases'] as string[]) ?? [],
+      );
+    } catch (error) {
+      console.warn('failed to fetch databases: ' + String(error));
+    }
+  }
 
   private async updateLabels() {
     if (!this.neo4j) return;
