@@ -119,3 +119,16 @@ RETURN variable;`;
     ),
   ).toEqual(darkThemeConstants.highlightStyles.numberLiteral);
 });
+
+test('highlights multiline string literal correctly', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `
+RETURN "
+multilinestring";`;
+
+  await editorPage.createEditor({ value: query, theme: 'light' });
+
+  expect(
+    await editorPage.getHexColorOfLocator(page.getByText('multilinestring')),
+  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral);
+});

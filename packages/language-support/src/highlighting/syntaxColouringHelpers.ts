@@ -9,7 +9,7 @@ import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 interface TokenPosition {
   line: number;
   startCharacter: number;
-  startOffset?: number;
+  startOffset: number;
 }
 
 export function tokenPositionToString(tokenPosition: TokenPosition): string {
@@ -114,28 +114,38 @@ export function toParsedTokens(
   token: Token,
   bracketsLevel?: Map<BracketType, number>,
 ): ParsedCypherToken[] {
-  return tokenStr
-    .split('\n')
-    .filter((tokenChunk) => tokenChunk.length > 0)
-    .map((tokenChunk, i) => {
-      const position =
-        i == 0
-          ? tokenPosition
-          : { line: tokenPosition.line + i, startCharacter: 0 };
+  let prevLen = 0;
+  return tokenStr.split('\n').flatMap((tokenChunk, i) => {
+    const position =
+      i == 0
+        ? tokenPosition
+        : {
+            line: tokenPosition.line + i,
+            startCharacter: 0,
+            startOffset: token.start + prevLen,
+          };
+    prevLen += tokenChunk.length + '\n'.length;
 
-      const bracketInfo: BracketInfo | undefined = computeBracketInfo(
-        token,
-        bracketsLevel,
-      );
+    // If the token is empty no need to create a token
+    if (tokenChunk.length === 0) {
+      return [];
+    }
 
-      return {
+    const bracketInfo: BracketInfo | undefined = computeBracketInfo(
+      token,
+      bracketsLevel,
+    );
+
+    return [
+      {
         position: position,
         length: tokenChunk.length,
         tokenType: tokenType,
         token: tokenChunk,
         bracketInfo: bracketInfo,
-      };
-    });
+      },
+    ];
+  });
 }
 
 export function getCypherTokenType(token: Token): CypherTokenType {
@@ -173,7 +183,7 @@ export function sortTokens(tokens: ParsedCypherToken[]) {
 // Assumes the tokens are already sorted
 export function removeOverlappingTokens(tokens: ParsedCypherToken[]) {
   const result: ParsedCypherToken[] = [];
-  let prev: TokenPosition = { line: -1, startCharacter: -1 };
+  let prev: TokenPosition = { line: -1, startCharacter: -1, startOffset: -1 };
   let prevEndCharacter = 0;
 
   tokens.forEach((token) => {
