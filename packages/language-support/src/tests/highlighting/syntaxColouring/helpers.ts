@@ -17,6 +17,7 @@ export function testSyntaxColouring(
     expect(token.position.startCharacter).toBe(
       expectedToken.position.startCharacter,
     );
+    expect(token.position.startOffset).toBe(expectedToken.position.startOffset);
     expect(token.token).toBe(expectedToken.token);
     expect(token.tokenType).toBe(expectedToken.tokenType);
 

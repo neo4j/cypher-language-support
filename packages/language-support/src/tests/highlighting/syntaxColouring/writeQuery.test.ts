@@ -11,6 +11,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 0,
+          startOffset: 0,
         },
         length: 6,
         tokenType: CypherTokenType.keyword,
@@ -20,6 +21,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -33,6 +35,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 8,
+          startOffset: 8,
         },
         length: 1,
         tokenType: CypherTokenType.variable,
@@ -42,6 +45,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -51,6 +55,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 10,
+          startOffset: 10,
         },
         length: 5,
         tokenType: CypherTokenType.label,
@@ -60,6 +65,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 15,
+          startOffset: 15,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -73,6 +79,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 16,
+          startOffset: 16,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -82,6 +89,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 17,
+          startOffset: 17,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -95,6 +103,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 18,
+          startOffset: 18,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -104,6 +113,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 19,
+          startOffset: 19,
         },
         length: 4,
         tokenType: CypherTokenType.label,
@@ -113,6 +123,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 24,
+          startOffset: 24,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -126,6 +137,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 25,
+          startOffset: 25,
         },
         length: 4,
         tokenType: CypherTokenType.property,
@@ -135,6 +147,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 29,
+          startOffset: 29,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -144,6 +157,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 31,
+          startOffset: 31,
         },
         length: 1,
         tokenType: CypherTokenType.paramDollar,
@@ -153,6 +167,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 32,
+          startOffset: 32,
         },
         length: 5,
         tokenType: CypherTokenType.paramValue,
@@ -162,6 +177,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 37,
+          startOffset: 37,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -175,6 +191,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 38,
+          startOffset: 38,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -188,6 +205,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 39,
+          startOffset: 39,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -197,6 +215,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 40,
+          startOffset: 40,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -206,6 +225,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 41,
+          startOffset: 41,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -219,6 +239,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 42,
+          startOffset: 42,
         },
         length: 1,
         tokenType: CypherTokenType.variable,
@@ -228,6 +249,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 43,
+          startOffset: 43,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -237,6 +259,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 44,
+          startOffset: 44,
         },
         length: 5,
         tokenType: CypherTokenType.label,
@@ -246,6 +269,7 @@ describe('CREATE syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 49,
+          startOffset: 49,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -280,6 +304,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 0,
+          startOffset: 0,
         },
         length: 3,
         tokenType: CypherTokenType.keyword,
@@ -289,6 +314,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 4,
+          startOffset: 4,
         },
         length: 1,
         tokenType: CypherTokenType.variable,
@@ -298,6 +324,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 6,
+          startOffset: 6,
         },
         length: 2,
         tokenType: CypherTokenType.operator,
@@ -307,6 +334,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 0,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -320,6 +348,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 17,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -329,6 +358,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 1,
           startCharacter: 7,
+          startOffset: 18,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -338,6 +368,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 1,
           startCharacter: 9,
+          startOffset: 20,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -347,6 +378,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 1,
           startCharacter: 10,
+          startOffset: 21,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -356,6 +388,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 29,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -365,6 +398,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 7,
+          startOffset: 30,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -374,6 +408,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 9,
+          startOffset: 32,
         },
         length: 9,
         tokenType: CypherTokenType.stringLiteral,
@@ -383,6 +418,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 18,
+          startOffset: 41,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -392,6 +428,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 3,
           startCharacter: 6,
+          startOffset: 49,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -401,6 +438,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 3,
           startCharacter: 7,
+          startOffset: 50,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -410,6 +448,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 3,
           startCharacter: 9,
+          startOffset: 52,
         },
         length: 4,
         tokenType: CypherTokenType.booleanLiteral,
@@ -419,6 +458,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 3,
           startCharacter: 13,
+          startOffset: 56,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -428,6 +468,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 6,
+          startOffset: 64,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -437,6 +478,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 7,
+          startOffset: 65,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -446,6 +488,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 9,
+          startOffset: 67,
         },
         length: 4,
         tokenType: CypherTokenType.function,
@@ -455,6 +498,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 13,
+          startOffset: 71,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -468,6 +512,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 14,
+          startOffset: 72,
         },
         length: 12,
         tokenType: CypherTokenType.stringLiteral,
@@ -477,6 +522,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 26,
+          startOffset: 84,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -490,6 +536,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 4,
           startCharacter: 27,
+          startOffset: 85,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -499,6 +546,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 6,
+          startOffset: 93,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -508,6 +556,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 7,
+          startOffset: 94,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -517,6 +566,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 9,
+          startOffset: 96,
         },
         length: 5,
         tokenType: CypherTokenType.function,
@@ -526,6 +576,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 14,
+          startOffset: 101,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -539,6 +590,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 15,
+          startOffset: 102,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -552,6 +604,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 16,
+          startOffset: 103,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -561,6 +614,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 17,
+          startOffset: 104,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -570,6 +624,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 19,
+          startOffset: 106,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -579,6 +634,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 20,
+          startOffset: 107,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -588,6 +644,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 22,
+          startOffset: 109,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -597,6 +654,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 23,
+          startOffset: 110,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -606,6 +664,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 25,
+          startOffset: 112,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -615,6 +674,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 26,
+          startOffset: 113,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -628,6 +688,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 27,
+          startOffset: 114,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -641,6 +702,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 5,
           startCharacter: 28,
+          startOffset: 115,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -650,6 +712,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 6,
+          startOffset: 123,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -659,6 +722,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 7,
+          startOffset: 124,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -668,6 +732,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 9,
+          startOffset: 126,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -681,6 +746,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 10,
+          startOffset: 127,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -690,6 +756,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 11,
+          startOffset: 128,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -699,6 +766,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 13,
+          startOffset: 130,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -708,6 +776,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 14,
+          startOffset: 131,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -717,6 +786,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 16,
+          startOffset: 133,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -726,6 +796,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 17,
+          startOffset: 134,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -739,6 +810,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 6,
           startCharacter: 18,
+          startOffset: 135,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -748,6 +820,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 6,
+          startOffset: 143,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -757,6 +830,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 7,
+          startOffset: 144,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -766,6 +840,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 9,
+          startOffset: 146,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -779,6 +854,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 10,
+          startOffset: 147,
         },
         length: 5,
         tokenType: CypherTokenType.stringLiteral,
@@ -788,6 +864,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 15,
+          startOffset: 152,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -797,6 +874,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 17,
+          startOffset: 154,
         },
         length: 9,
         tokenType: CypherTokenType.stringLiteral,
@@ -806,6 +884,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 26,
+          startOffset: 163,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -819,6 +898,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 7,
           startCharacter: 27,
+          startOffset: 164,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -828,6 +908,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 6,
+          startOffset: 6,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -837,6 +918,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -846,6 +928,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -859,6 +942,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 10,
+          startOffset: 10,
         },
         length: 4,
         tokenType: CypherTokenType.booleanLiteral,
@@ -868,6 +952,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 14,
+          startOffset: 14,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -877,6 +962,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 16,
+          startOffset: 16,
         },
         length: 5,
         tokenType: CypherTokenType.booleanLiteral,
@@ -886,6 +972,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 21,
+          startOffset: 21,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -895,6 +982,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 23,
+          startOffset: 23,
         },
         length: 5,
         tokenType: CypherTokenType.booleanLiteral,
@@ -904,6 +992,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 28,
+          startOffset: 28,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -917,6 +1006,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 8,
           startCharacter: 29,
+          startOffset: 29,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -926,6 +1016,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 6,
+          startOffset: 6,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -935,6 +1026,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -944,6 +1036,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -957,6 +1050,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 10,
+          startOffset: 10,
         },
         length: 4,
         tokenType: CypherTokenType.function,
@@ -966,6 +1060,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 14,
+          startOffset: 14,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -979,6 +1074,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 15,
+          startOffset: 15,
         },
         length: 12,
         tokenType: CypherTokenType.stringLiteral,
@@ -988,6 +1084,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 27,
+          startOffset: 27,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1001,6 +1098,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 28,
+          startOffset: 28,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1010,6 +1108,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 30,
+          startOffset: 30,
         },
         length: 4,
         tokenType: CypherTokenType.function,
@@ -1019,6 +1118,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 34,
+          startOffset: 34,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1032,6 +1132,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 35,
+          startOffset: 35,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1045,6 +1146,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 36,
+          startOffset: 36,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1058,6 +1160,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 9,
           startCharacter: 37,
+          startOffset: 37,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1067,6 +1170,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 6,
+          startOffset: 6,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1076,6 +1180,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1085,6 +1190,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1098,6 +1204,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 10,
+          startOffset: 10,
         },
         length: 5,
         tokenType: CypherTokenType.function,
@@ -1107,6 +1214,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 15,
+          startOffset: 15,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1120,6 +1228,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 16,
+          startOffset: 16,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1133,6 +1242,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 17,
+          startOffset: 17,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1142,6 +1252,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 18,
+          startOffset: 18,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1151,6 +1262,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 20,
+          startOffset: 20,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -1160,6 +1272,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 21,
+          startOffset: 21,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1169,6 +1282,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 23,
+          startOffset: 23,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1178,6 +1292,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 24,
+          startOffset: 24,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1187,6 +1302,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 26,
+          startOffset: 26,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -1196,6 +1312,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 27,
+          startOffset: 27,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1209,6 +1326,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 28,
+          startOffset: 28,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1222,6 +1340,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 29,
+          startOffset: 29,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1231,6 +1350,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 31,
+          startOffset: 31,
         },
         length: 5,
         tokenType: CypherTokenType.function,
@@ -1240,6 +1360,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 36,
+          startOffset: 36,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1253,6 +1374,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 37,
+          startOffset: 37,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1266,6 +1388,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 38,
+          startOffset: 38,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1275,6 +1398,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 39,
+          startOffset: 39,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1284,6 +1408,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 41,
+          startOffset: 41,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -1293,6 +1418,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 42,
+          startOffset: 42,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1302,6 +1428,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 44,
+          startOffset: 44,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1311,6 +1438,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 45,
+          startOffset: 45,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1320,6 +1448,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 47,
+          startOffset: 47,
         },
         length: 1,
         tokenType: CypherTokenType.numberLiteral,
@@ -1329,6 +1458,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 48,
+          startOffset: 48,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1342,6 +1472,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 49,
+          startOffset: 49,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1355,6 +1486,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 50,
+          startOffset: 50,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1368,6 +1500,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 10,
           startCharacter: 51,
+          startOffset: 51,
         },
         length: 1,
         tokenType: CypherTokenType.separator,
@@ -1377,6 +1510,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 11,
           startCharacter: 6,
+          startOffset: 6,
         },
         length: 1,
         tokenType: CypherTokenType.property,
@@ -1386,6 +1520,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 11,
           startCharacter: 7,
+          startOffset: 7,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1395,6 +1530,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 11,
           startCharacter: 9,
+          startOffset: 9,
         },
         length: 4,
         tokenType: CypherTokenType.keywordLiteral,
@@ -1404,6 +1540,7 @@ describe('SET syntax colouring', () => {
         position: {
           line: 12,
           startCharacter: 4,
+          startOffset: 4,
         },
         length: 1,
         tokenType: CypherTokenType.bracket,
@@ -1429,6 +1566,7 @@ describe('REMOVE syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 4,
+          startOffset: 4,
         },
         length: 6,
         tokenType: CypherTokenType.keyword,
@@ -1438,6 +1576,7 @@ describe('REMOVE syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 11,
+          startOffset: 11,
         },
         length: 1,
         tokenType: CypherTokenType.variable,
@@ -1447,6 +1586,7 @@ describe('REMOVE syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 12,
+          startOffset: 12,
         },
         length: 1,
         tokenType: CypherTokenType.operator,
@@ -1456,6 +1596,7 @@ describe('REMOVE syntax colouring', () => {
         position: {
           line: 2,
           startCharacter: 13,
+          startOffset: 13,
         },
         length: 5,
         tokenType: CypherTokenType.property,
