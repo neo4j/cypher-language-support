@@ -1400,3 +1400,30 @@ RETURN movie {
     });
   });
 });
+
+describe('unscoped variable completions', () => {
+  test('correctly completes variables in WHERE clause that have been defined in a simple match', () => {
+    const basequery = (varName: string) => `MATCH (${varName}) WHERE `;
+    const varNames = ['n', 'person', 'MATCH'];
+
+    varNames.forEach((varName) => {
+      testCompletionContains({
+        query: basequery(varName),
+        expected: [{ label: varName, kind: CompletionItemKind.Variable }],
+      });
+    });
+  });
+
+  test('correctly completes variables from pattern in match', () => {
+    const query =
+      'MATCH (n:Person {n: 23})-[r:KNOWS {since: 213, g: rand()}]->(m:Person) WHERE ';
+
+    testCompletionContains({
+      query,
+      expected: [
+        { label: 'n', kind: CompletionItemKind.Variable },
+        { label: 'r', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+});

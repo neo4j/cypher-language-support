@@ -7,7 +7,7 @@ import { DbInfo } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { ParsingResult } from '../parserWrapper';
+import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
 const labelCompletions = (dbInfo: DbInfo) =>
   dbInfo.labels.map((labelName) => ({
@@ -43,7 +43,7 @@ const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   }));
 
 export function completionCoreCompletion(
-  parsingResult: ParsingResult,
+  parsingResult: EnrichedParsingResult,
   dbInfo: DbInfo,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -79,6 +79,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_symbolicAliasName,
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
+    CypherParser.RULE_variable,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -114,6 +115,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
         return propertyKeyCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_variable) {
+        return parsingResult.collectedVariables.map((variableNames) => ({
+          label: variableNames,
+          kind: CompletionItemKind.Variable,
+        }));
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {

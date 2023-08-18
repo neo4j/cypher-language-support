@@ -5,6 +5,7 @@ import {
   CommonTokenStream,
   ErrorListener as ANTLRErrorListener,
   ParserRuleContext,
+  ParseTreeListener,
   Recognizer,
   Token,
 } from 'antlr4';
@@ -19,6 +20,7 @@ import {
 
 import CypherParser, {
   StatementsContext,
+  VariableContext,
 } from './generated-parser/CypherParser';
 import { findStopNode, getTokens } from './helpers';
 
@@ -32,6 +34,7 @@ export interface ParsingResult {
 export interface EnrichedParsingResult extends ParsingResult {
   diagnostics: Diagnostic[];
   stopNode: ParserRuleContext;
+  collectedVariables: string[];
 }
 
 export interface ParsingScaffolding {
@@ -72,6 +75,27 @@ export function createParsingResult(
   return parsingResult;
 }
 
+// If a semantic analysis result is available, we it's data to get all the defined variables in scope
+// if it's not available (or implemented) we fallback to a simple search for all variables
+// in this initial version we don't check if the variables are used before define
+class VariableCollector implements ParseTreeListener {
+  variables: string[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof VariableContext) {
+      this.variables.push(ctx.symbolicNameString().getText());
+    }
+  }
+}
+
 class ParserWrapper {
   parsingResult: EnrichedParsingResult;
 
@@ -88,6 +112,9 @@ class ParserWrapper {
       const errorListener = new ErrorListener();
       parser.addErrorListener(errorListener);
 
+      const variableFinder = new VariableCollector();
+      parser._parseListeners = [variableFinder];
+
       const result = createParsingResult(parsingScaffolding).result;
 
       const parsingResult: EnrichedParsingResult = {
@@ -97,6 +124,7 @@ class ParserWrapper {
         diagnostics: errorListener.diagnostics,
         result: result,
         stopNode: findStopNode(result),
+        collectedVariables: variableFinder.variables,
       };
 
       this.parsingResult = parsingResult;
