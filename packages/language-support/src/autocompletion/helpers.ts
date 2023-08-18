@@ -118,6 +118,16 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
+        const parentRule = candidateRule.ruleList.at(-1);
+        // some rules only define, never use variables
+        const rulesDefiningVariables = [
+          CypherParser.RULE_returnItem,
+          CypherParser.RULE_unwindClause,
+        ];
+        if (rulesDefiningVariables.includes(parentRule)) {
+          return [];
+        }
+
         return parsingResult.collectedVariables.map((variableNames) => ({
           label: variableNames,
           kind: CompletionItemKind.Variable,

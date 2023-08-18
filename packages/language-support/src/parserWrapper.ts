@@ -91,7 +91,10 @@ class VariableCollector implements ParseTreeListener {
   }
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof VariableContext) {
-      this.variables.push(ctx.symbolicNameString().getText());
+      const variable = ctx.symbolicNameString().getText();
+      if (variable) {
+        this.variables.push(variable);
+      }
     }
   }
 }
