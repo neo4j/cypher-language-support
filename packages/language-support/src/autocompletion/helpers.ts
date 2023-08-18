@@ -30,6 +30,11 @@ const functionCompletions = (dbInfo: DbInfo) =>
     label: fnName,
     kind: CompletionItemKind.Function,
   }));
+const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
+  dbInfo.parameterNames.map((paramName) => ({
+    label: `$${paramName}`,
+    kind: CompletionItemKind.Variable,
+  }));
 
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
@@ -66,6 +71,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_procedureName,
     CypherParser.RULE_labelExpression1,
     CypherParser.RULE_symbolicAliasName,
+    CypherParser.RULE_parameter,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -93,6 +99,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
         return proceduresCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_parameter) {
+        return parameterCompletions(dbInfo);
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
@@ -166,7 +176,7 @@ function completeAliasName({
   candidateRule,
   dbInfo,
   parsingResult,
-}: CompletionHelperArgs) {
+}: CompletionHelperArgs): CompletionItem[] {
   // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
   // so ALTER ALIAS a . b  FOR DATABASE neo4j is accepted by neo4j. It does however only drop the spaces for the alias
   // it becomes just a.b
@@ -182,18 +192,20 @@ function completeAliasName({
     return [];
   }
 
+  // parameters are valid values in all cases of symbolicAliasName
+  const baseSuggestions = parameterCompletions(dbInfo);
   const rulesCreatingNewAliasOrDb = [
     CypherParser.RULE_createAlias,
     CypherParser.RULE_createDatabase,
     CypherParser.RULE_createCompositeDatabase,
   ];
-  // avoid suggesting database names when creating a new alias or database
+  // avoid suggesting existing database names when creating a new alias or database
   if (
     rulesCreatingNewAliasOrDb.some((rule) =>
       candidateRule.ruleList.includes(rule),
     )
   ) {
-    return [];
+    return baseSuggestions;
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -206,15 +218,21 @@ function completeAliasName({
       candidateRule.ruleList.includes(rule),
     )
   ) {
-    return dbInfo.aliasNames.map((aliasName) => ({
-      label: aliasName,
-      kind: CompletionItemKind.Value,
-    }));
+    return [
+      ...baseSuggestions,
+      ...dbInfo.aliasNames.map((aliasName) => ({
+        label: aliasName,
+        kind: CompletionItemKind.Value,
+      })),
+    ];
   }
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
-  return dbInfo.databaseNames.concat(dbInfo.aliasNames).map((databaseName) => ({
-    label: databaseName,
-    kind: CompletionItemKind.Value,
-  }));
+  return [
+    ...baseSuggestions,
+    ...dbInfo.databaseNames.concat(dbInfo.aliasNames).map((databaseName) => ({
+      label: databaseName,
+      kind: CompletionItemKind.Value,
+    })),
+  ];
 }
