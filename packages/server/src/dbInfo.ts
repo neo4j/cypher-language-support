@@ -13,6 +13,7 @@ export class DbInfoImpl implements DbInfo {
   public aliasNames: string[] = [];
   public databaseNames: string[] = [];
   public parameterNames: string[] = [];
+  public propertyKeys: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -44,12 +45,15 @@ export class DbInfoImpl implements DbInfo {
     if (!this.neo4j) return;
     // We do not need to update procedures and functions because they are cached
     const updateAllDbInfo = async () => {
-      await this.updateLabels();
-      await this.updateRelationshipTypes();
-      await this.updateDatabasesAndAliases();
-      await this.updateMethodsCache(this.procedureSignatures);
-      await this.updateMethodsCache(this.functionSignatures);
-      await this.updateMethodsCache(this.functionSignatures);
+      await Promise.allSettled([
+        this.updateLabels(),
+        this.updateRelationshipTypes(),
+        this.updateDatabasesAndAliases(),
+        this.updatePropertyKeys(),
+        this.updateMethodsCache(this.procedureSignatures),
+        this.updateMethodsCache(this.functionSignatures),
+        this.updateMethodsCache(this.functionSignatures),
+      ]);
     };
 
     await updateAllDbInfo();
@@ -87,6 +91,22 @@ export class DbInfoImpl implements DbInfo {
     }
   }
 
+  private async updatePropertyKeys() {
+    if (!this.neo4j) return;
+
+    try {
+      const result = await this.neo4j.executeQuery('call db.propertyKeys()', {
+        session: session.READ,
+      });
+
+      this.databaseNames = result.records.map(
+        (record) => record.get('propertyKey') as string,
+      );
+    } catch (error) {
+      console.warn('failed to fetch propertyKeys: ' + String(error));
+    }
+  }
+
   private async updateLabels() {
     if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
@@ -102,7 +122,6 @@ export class DbInfoImpl implements DbInfo {
       await s.close();
     }
   }
-
   private async updateRelationshipTypes() {
     if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });

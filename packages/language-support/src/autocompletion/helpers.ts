@@ -36,6 +36,12 @@ const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
     kind: CompletionItemKind.Variable,
   }));
 
+const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
+  dbInfo.propertyKeys.map((propertyKey) => ({
+    label: propertyKey,
+    kind: CompletionItemKind.Property,
+  }));
+
 export function completionCoreCompletion(
   parsingResult: ParsingResult,
   dbInfo: DbInfo,
@@ -72,6 +78,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_labelExpression1,
     CypherParser.RULE_symbolicAliasName,
     CypherParser.RULE_parameter,
+    CypherParser.RULE_propertyKeyName,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -103,6 +110,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_parameter) {
         return parameterCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_propertyKeyName) {
+        return propertyKeyCompletions(dbInfo);
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
