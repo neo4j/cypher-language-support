@@ -1,91 +1,103 @@
-import { BracketType } from '../../../highlighting/syntaxColouringHelpers';
-import { CypherTokenType } from '../../../lexerSymbols';
-import { testSyntaxColouring } from './helpers';
+import { applySyntaxColouring } from '../../../highlighting/syntaxColouring';
 
 describe('CALL syntax colouring', () => {
   test('Correctly colours standalone procedure CALL', () => {
     const query = 'CALL dbms.info() YIELD *';
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 0,
+          startOffset: 0,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 5,
+          startOffset: 5,
         },
-        length: 4,
-        tokenType: CypherTokenType.procedure,
         token: 'dbms',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 9,
+          startOffset: 9,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 10,
+          startOffset: 10,
         },
-        length: 4,
-        tokenType: CypherTokenType.procedure,
         token: 'info',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 14,
+          startOffset: 14,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 15,
+          startOffset: 15,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 17,
+          startOffset: 17,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 23,
+          startOffset: 23,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '*',
+        tokenType: 'operator',
       },
     ]);
   });
@@ -94,185 +106,221 @@ describe('CALL syntax colouring', () => {
     const query =
       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 0,
+          startOffset: 0,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 5,
+          startOffset: 5,
         },
-        length: 4,
-        tokenType: CypherTokenType.procedure,
         token: 'apoc',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 9,
+          startOffset: 9,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
           line: 0,
           startCharacter: 10,
+          startOffset: 10,
         },
-        length: 2,
-        tokenType: CypherTokenType.procedure,
         token: 'do',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 12,
+          startOffset: 12,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 13,
+          startOffset: 13,
         },
-        length: 4,
-        tokenType: CypherTokenType.procedure,
         token: 'when',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 17,
+          startOffset: 17,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 18,
+          startOffset: 18,
         },
-        length: 4,
-        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
+        tokenType: 'booleanLiteral',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 22,
+          startOffset: 22,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 24,
+          startOffset: 24,
         },
-        length: 5,
-        tokenType: CypherTokenType.stringLiteral,
         token: '"foo"',
+        tokenType: 'stringLiteral',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 29,
+          startOffset: 29,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 31,
+          startOffset: 31,
         },
-        length: 5,
-        tokenType: CypherTokenType.booleanLiteral,
         token: 'false',
+        tokenType: 'booleanLiteral',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 36,
+          startOffset: 36,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 38,
+          startOffset: 38,
         },
-        length: 5,
-        tokenType: CypherTokenType.stringLiteral,
         token: '"bar"',
+        tokenType: 'stringLiteral',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 43,
+          startOffset: 43,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 45,
+          startOffset: 45,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'YIELD',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 0,
           startCharacter: 51,
+          startOffset: 51,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'name',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 55,
+          startOffset: 55,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 0,
           startCharacter: 57,
+          startOffset: 57,
         },
-        length: 6,
-        tokenType: CypherTokenType.variable,
         token: 'result',
+        tokenType: 'variable',
       },
     ]);
   });
@@ -281,7 +329,6 @@ describe('CALL syntax colouring', () => {
 describe('CASE syntax colouring', () => {
   test('Correctly colours CASE', () => {
     const query = `
-      MATCH (n)-[r]->(m)
       RETURN
       CASE
         WHEN n:A&B THEN 1
@@ -290,372 +337,281 @@ describe('CASE syntax colouring', () => {
       END AS result
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'MATCH',
+        token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 1,
-          startCharacter: 12,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 13,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'n',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 15,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 17,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'r',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 18,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 19,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 20,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 21,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 22,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'm',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 23,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 20,
         },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
-        token: 'RETURN',
+        token: 'CASE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 3,
-          startCharacter: 6,
-        },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
-        token: 'CASE',
-      },
-      {
-        position: {
-          line: 4,
           startCharacter: 8,
+          startOffset: 33,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'WHEN',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 13,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 3,
+          startCharacter: 13,
+          startOffset: 38,
+        },
         token: 'n',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 14,
+          startOffset: 39,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 15,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.label,
+        position: {
+          line: 3,
+          startCharacter: 15,
+          startOffset: 40,
+        },
         token: 'A',
+        tokenType: 'label',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 16,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.operator,
+        position: {
+          line: 3,
+          startCharacter: 16,
+          startOffset: 41,
+        },
         token: '&',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 17,
+          startOffset: 42,
         },
-        length: 1,
-        tokenType: CypherTokenType.label,
         token: 'B',
+        tokenType: 'label',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 19,
-        },
+        bracketInfo: undefined,
         length: 4,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 3,
+          startCharacter: 19,
+          startOffset: 44,
+        },
         token: 'THEN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 24,
+          startOffset: 49,
         },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
         token: '1',
+        tokenType: 'numberLiteral',
       },
       {
-        position: {
-          line: 5,
-          startCharacter: 8,
-        },
+        bracketInfo: undefined,
         length: 4,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 4,
+          startCharacter: 8,
+          startOffset: 59,
+        },
         token: 'WHEN',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 5,
-          startCharacter: 13,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 4,
+          startCharacter: 13,
+          startOffset: 64,
+        },
         token: 'r',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 14,
+          startOffset: 65,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 15,
+          startOffset: 66,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '!',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 16,
+          startOffset: 67,
         },
-        length: 2,
-        tokenType: CypherTokenType.label,
         token: 'R1',
+        tokenType: 'label',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 18,
+          startOffset: 69,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '&',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 19,
+          startOffset: 70,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '!',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 20,
+          startOffset: 71,
         },
-        length: 2,
-        tokenType: CypherTokenType.label,
         token: 'R2',
+        tokenType: 'label',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
-          line: 5,
+          line: 4,
           startCharacter: 23,
+          startOffset: 74,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'THEN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 4,
+          startCharacter: 28,
+          startOffset: 79,
+        },
+        token: '2',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 5,
-          startCharacter: 28,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '2',
-      },
-      {
-        position: {
-          line: 6,
           startCharacter: 8,
+          startOffset: 89,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'ELSE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 5,
+          startCharacter: 13,
+          startOffset: 94,
+        },
+        token: '-1',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 3,
+        position: {
+          line: 6,
+          startCharacter: 6,
+          startOffset: 103,
+        },
+        token: 'END',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 6,
+          startCharacter: 10,
+          startOffset: 107,
+        },
+        token: 'AS',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 6,
           startCharacter: 13,
+          startOffset: 110,
         },
-        length: 2,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '-1',
-      },
-      {
-        position: {
-          line: 7,
-          startCharacter: 6,
-        },
-        length: 3,
-        tokenType: CypherTokenType.keyword,
-        token: 'END',
-      },
-      {
-        position: {
-          line: 7,
-          startCharacter: 10,
-        },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'AS',
-      },
-      {
-        position: {
-          line: 7,
-          startCharacter: 13,
-        },
-        length: 6,
-        tokenType: CypherTokenType.variable,
         token: 'result',
+        tokenType: 'variable',
       },
     ]);
   });
@@ -673,390 +629,460 @@ describe('LOAD CSV colouring', () => {
       } IN TRANSACTIONS OF 500 ROWS
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'LOAD',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 1,
           startCharacter: 11,
+          startOffset: 12,
         },
-        length: 3,
-        tokenType: CypherTokenType.keyword,
         token: 'CSV',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 15,
+          startOffset: 16,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'WITH',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 7,
         position: {
           line: 1,
           startCharacter: 20,
+          startOffset: 21,
         },
-        length: 7,
-        tokenType: CypherTokenType.keyword,
         token: 'HEADERS',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 28,
+          startOffset: 29,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'FROM',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 74,
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 40,
         },
-        length: 74,
-        tokenType: CypherTokenType.stringLiteral,
         token:
           "'https://neo4j.com/docs/cypher-cheat-sheet/5/csv/artists-with-headers.csv'",
+        tokenType: 'stringLiteral',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
           line: 3,
           startCharacter: 6,
+          startOffset: 121,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
         token: 'AS',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 3,
           startCharacter: 9,
+          startOffset: 124,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'line',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 4,
           startCharacter: 6,
+          startOffset: 135,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 4,
           startCharacter: 11,
+          startOffset: 140,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 5,
           startCharacter: 8,
+          startOffset: 150,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'WITH',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 5,
           startCharacter: 13,
+          startOffset: 155,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'line',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 6,
           startCharacter: 8,
+          startOffset: 168,
         },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'CREATE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 15,
+          startOffset: 175,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 16,
+          startOffset: 176,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 6,
           startCharacter: 17,
+          startOffset: 177,
         },
-        length: 6,
-        tokenType: CypherTokenType.label,
         token: 'Artist',
+        tokenType: 'label',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 24,
+          startOffset: 184,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 1,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 25,
+          startOffset: 185,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'name',
+        tokenType: 'property',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 29,
+          startOffset: 189,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 31,
+          startOffset: 191,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'line',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 35,
+          startOffset: 195,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 36,
+          startOffset: 196,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'Name',
+        tokenType: 'property',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 40,
+          startOffset: 200,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 42,
+          startOffset: 202,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'year',
+        tokenType: 'property',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 46,
+          startOffset: 206,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 9,
         position: {
           line: 6,
           startCharacter: 48,
+          startOffset: 208,
         },
-        length: 9,
-        tokenType: CypherTokenType.function,
         token: 'toInteger',
+        tokenType: 'function',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 57,
+          startOffset: 217,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 1,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 58,
+          startOffset: 218,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'line',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 6,
           startCharacter: 62,
+          startOffset: 222,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 6,
           startCharacter: 63,
+          startOffset: 223,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'Year',
+        tokenType: 'property',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 67,
+          startOffset: 227,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 1,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 68,
+          startOffset: 228,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 1,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 6,
           startCharacter: 69,
+          startOffset: 229,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 7,
           startCharacter: 6,
+          startOffset: 237,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
           line: 7,
           startCharacter: 8,
+          startOffset: 239,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
         token: 'IN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 12,
         position: {
           line: 7,
           startCharacter: 11,
+          startOffset: 242,
         },
-        length: 12,
-        tokenType: CypherTokenType.keyword,
         token: 'TRANSACTIONS',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
           line: 7,
           startCharacter: 24,
+          startOffset: 255,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
         token: 'OF',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 7,
           startCharacter: 27,
+          startOffset: 258,
         },
-        length: 3,
-        tokenType: CypherTokenType.numberLiteral,
         token: '500',
+        tokenType: 'numberLiteral',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 7,
           startCharacter: 31,
+          startOffset: 262,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'ROWS',
+        tokenType: 'keyword',
       },
     ]);
   });
@@ -1066,268 +1092,97 @@ describe('USE colouring', () => {
   test('Correctly colours USE', () => {
     const query = `
       USE neo4j
-      MATCH (n:Person)-[:KNOWS]->(m:Person)
       WHERE n.name = 'Alice'
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 3,
-        tokenType: CypherTokenType.keyword,
         token: 'USE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 1,
           startCharacter: 10,
+          startOffset: 11,
         },
-        length: 5,
-        tokenType: CypherTokenType.variable,
         token: 'neo4j',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 23,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'MATCH',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 12,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 13,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'n',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 15,
-        },
-        length: 6,
-        tokenType: CypherTokenType.label,
-        token: 'Person',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 21,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 22,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 23,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 24,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 25,
-        },
-        length: 5,
-        tokenType: CypherTokenType.label,
-        token: 'KNOWS',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 30,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 31,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 32,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 33,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 34,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'm',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 35,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 36,
-        },
-        length: 6,
-        tokenType: CypherTokenType.label,
-        token: 'Person',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 42,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 6,
-        },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 12,
+          startOffset: 29,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'n',
+        tokenType: 'none',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 13,
+          startOffset: 30,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 14,
-        },
+        bracketInfo: undefined,
         length: 4,
-        tokenType: CypherTokenType.property,
+        position: {
+          line: 2,
+          startCharacter: 14,
+          startOffset: 31,
+        },
         token: 'name',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 19,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.operator,
+        position: {
+          line: 2,
+          startCharacter: 19,
+          startOffset: 36,
+        },
         token: '=',
+        tokenType: 'operator',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 21,
-        },
+        bracketInfo: undefined,
         length: 7,
-        tokenType: CypherTokenType.stringLiteral,
+        position: {
+          line: 2,
+          startCharacter: 21,
+          startOffset: 38,
+        },
         token: "'Alice'",
+        tokenType: 'none',
       },
     ]);
   });
@@ -1339,194 +1194,194 @@ describe('FOREACH syntax colouring', () => {
     FOREACH ( r IN relationships(path) | SET r.marked = true )
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 7,
         position: {
           line: 1,
           startCharacter: 4,
           startOffset: 5,
         },
-        length: 7,
-        tokenType: CypherTokenType.keyword,
         token: 'FOREACH',
-        bracketInfo: undefined,
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 12,
           startOffset: 13,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 14,
           startOffset: 15,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'r',
-        bracketInfo: undefined,
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
           line: 1,
           startCharacter: 16,
           startOffset: 17,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
         token: 'IN',
-        bracketInfo: undefined,
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 13,
         position: {
           line: 1,
           startCharacter: 19,
           startOffset: 20,
         },
-        length: 13,
-        tokenType: CypherTokenType.function,
         token: 'relationships',
-        bracketInfo: undefined,
+        tokenType: 'function',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 32,
           startOffset: 33,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 33,
           startOffset: 34,
         },
-        length: 4,
-        tokenType: CypherTokenType.variable,
         token: 'path',
-        bracketInfo: undefined,
+        tokenType: 'variable',
       },
       {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 37,
           startOffset: 38,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 39,
           startOffset: 40,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '|',
-        bracketInfo: undefined,
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 1,
           startCharacter: 41,
           startOffset: 42,
         },
-        length: 3,
-        tokenType: CypherTokenType.keyword,
         token: 'SET',
-        bracketInfo: undefined,
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 45,
           startOffset: 46,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'r',
-        bracketInfo: undefined,
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 46,
           startOffset: 47,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
-        bracketInfo: undefined,
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 1,
           startCharacter: 47,
           startOffset: 48,
         },
-        length: 6,
-        tokenType: CypherTokenType.property,
         token: 'marked',
-        bracketInfo: undefined,
+        tokenType: 'property',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 54,
           startOffset: 55,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '=',
-        bracketInfo: undefined,
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 56,
           startOffset: 57,
         },
-        length: 4,
-        tokenType: CypherTokenType.booleanLiteral,
         token: 'true',
-        bracketInfo: undefined,
+        tokenType: 'booleanLiteral',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 61,
           startOffset: 62,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
     ]);
   });
@@ -1535,306 +1390,143 @@ describe('FOREACH syntax colouring', () => {
 describe('UNWIND colouring', () => {
   test('Correctly colours UNWIND', () => {
     const query = `
-      WITH [[1, 2], [3, 4], 5] AS nested
       UNWIND nested AS ix
       UNWIND ix AS iy
       RETURN iy AS number
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
-        token: 'WITH',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 11,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 12,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 1,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 13,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '1',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: ',',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '2',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 17,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 1,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 18,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: ',',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 20,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 1,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 21,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '3',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 22,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: ',',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 24,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '4',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 25,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 1,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 26,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: ',',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 28,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '5',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 29,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 31,
-        },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'AS',
-      },
-      {
-        position: {
-          line: 1,
-          startCharacter: 34,
-        },
-        length: 6,
-        tokenType: CypherTokenType.variable,
-        token: 'nested',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 6,
-        },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'UNWIND',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 2,
-          startCharacter: 13,
-        },
+        bracketInfo: undefined,
         length: 6,
-        tokenType: CypherTokenType.variable,
-        token: 'nested',
-      },
-      {
         position: {
-          line: 2,
-          startCharacter: 20,
+          line: 1,
+          startCharacter: 13,
+          startOffset: 14,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
-        token: 'AS',
+        token: 'nested',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
-          line: 2,
+          line: 1,
+          startCharacter: 20,
+          startOffset: 21,
+        },
+        token: 'AS',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 1,
           startCharacter: 23,
+          startOffset: 24,
         },
-        length: 2,
-        tokenType: CypherTokenType.variable,
         token: 'ix',
+        tokenType: 'variable',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 6,
-        },
+        bracketInfo: undefined,
         length: 6,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 2,
+          startCharacter: 6,
+          startOffset: 33,
+        },
         token: 'UNWIND',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 13,
-        },
+        bracketInfo: undefined,
         length: 2,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 2,
+          startCharacter: 13,
+          startOffset: 40,
+        },
         token: 'ix',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 16,
+          startOffset: 43,
         },
-        length: 2,
-        tokenType: CypherTokenType.keyword,
         token: 'AS',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 2,
+          startCharacter: 19,
+          startOffset: 46,
+        },
+        token: 'iy',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 3,
-          startCharacter: 19,
-        },
-        length: 2,
-        tokenType: CypherTokenType.variable,
-        token: 'iy',
-      },
-      {
-        position: {
-          line: 4,
           startCharacter: 6,
+          startOffset: 55,
         },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 2,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 13,
+          startOffset: 62,
         },
-        length: 2,
-        tokenType: CypherTokenType.variable,
         token: 'iy',
+        tokenType: 'variable',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 16,
-        },
+        bracketInfo: undefined,
         length: 2,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 3,
+          startCharacter: 16,
+          startOffset: 65,
+        },
         token: 'AS',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 19,
-        },
+        bracketInfo: undefined,
         length: 6,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 3,
+          startCharacter: 19,
+          startOffset: 68,
+        },
         token: 'number',
+        tokenType: 'variable',
       },
     ]);
   });
@@ -1844,502 +1536,150 @@ describe('Subqueries colouring', () => {
   test('Correctly colours subquery with two union parts', () => {
     const query = `
       CALL {
-        MATCH (p:Person)-[:FRIEND_OF]->(other:Person)
         RETURN p, other
         UNION
-        MATCH (p:Child)-[:CHILD_OF]->(other:Parent)
         RETURN p, other
       }
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 11,
+          startOffset: 12,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 2,
           startCharacter: 8,
+          startOffset: 22,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'MATCH',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 15,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 17,
-        },
-        length: 6,
-        tokenType: CypherTokenType.label,
-        token: 'Person',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 23,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 24,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 25,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 26,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 27,
-        },
-        length: 9,
-        tokenType: CypherTokenType.label,
-        token: 'FRIEND_OF',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 36,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 37,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 38,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 39,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 40,
-        },
-        length: 5,
-        tokenType: CypherTokenType.variable,
-        token: 'other',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 45,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 46,
-        },
-        length: 6,
-        tokenType: CypherTokenType.label,
-        token: 'Person',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 52,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 8,
-        },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 15,
+          startOffset: 29,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'variable',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 16,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.separator,
+        position: {
+          line: 2,
+          startCharacter: 16,
+          startOffset: 30,
+        },
         token: ',',
+        tokenType: 'separator',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
+        position: {
+          line: 2,
+          startCharacter: 18,
+          startOffset: 32,
+        },
+        token: 'other',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 3,
-          startCharacter: 18,
+          startCharacter: 8,
+          startOffset: 46,
         },
-        length: 5,
-        tokenType: CypherTokenType.variable,
-        token: 'other',
+        token: 'UNION',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 4,
           startCharacter: 8,
+          startOffset: 60,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'UNION',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 8,
-        },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'MATCH',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 15,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 17,
-        },
-        length: 5,
-        tokenType: CypherTokenType.label,
-        token: 'Child',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 22,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 23,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 24,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 25,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 26,
-        },
-        length: 8,
-        tokenType: CypherTokenType.label,
-        token: 'CHILD_OF',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 34,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 35,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 36,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 37,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 38,
-        },
-        length: 5,
-        tokenType: CypherTokenType.variable,
-        token: 'other',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 43,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 44,
-        },
-        length: 6,
-        tokenType: CypherTokenType.label,
-        token: 'Parent',
-      },
-      {
-        position: {
-          line: 5,
-          startCharacter: 50,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 6,
-          startCharacter: 8,
-        },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 6,
+          line: 4,
           startCharacter: 15,
+          startOffset: 67,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 6,
+          line: 4,
           startCharacter: 16,
+          startOffset: 68,
         },
-        length: 1,
-        tokenType: CypherTokenType.separator,
         token: ',',
+        tokenType: 'separator',
       },
       {
-        position: {
-          line: 6,
-          startCharacter: 18,
-        },
+        bracketInfo: undefined,
         length: 5,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 4,
+          startCharacter: 18,
+          startOffset: 70,
+        },
         token: 'other',
+        tokenType: 'variable',
       },
       {
-        position: {
-          line: 7,
-          startCharacter: 6,
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
         },
         length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
+        position: {
+          line: 5,
+          startCharacter: 6,
+          startOffset: 82,
         },
+        token: '}',
+        tokenType: 'bracket',
       },
     ]);
   });
@@ -2348,412 +1688,287 @@ describe('Subqueries colouring', () => {
     const query = `
       MATCH (p:Person)
       WHERE EXISTS {
-        MATCH (p)-[:HAS_DOG]->(dog:Dog)
         WHERE p.name = dog.name
       }
       RETURN person.name AS name
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 12,
+          startOffset: 13,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 13,
+          startOffset: 14,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 14,
+          startOffset: 15,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 1,
           startCharacter: 15,
+          startOffset: 16,
         },
-        length: 6,
-        tokenType: CypherTokenType.label,
         token: 'Person',
+        tokenType: 'label',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 21,
+          startOffset: 22,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 2,
           startCharacter: 6,
+          startOffset: 30,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 2,
           startCharacter: 12,
+          startOffset: 36,
         },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'EXISTS',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
         position: {
           line: 2,
           startCharacter: 19,
+          startOffset: 43,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 3,
           startCharacter: 8,
+          startOffset: 53,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'MATCH',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 14,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 15,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 16,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 17,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 18,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 19,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 20,
-        },
-        length: 7,
-        tokenType: CypherTokenType.label,
-        token: 'HAS_DOG',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 27,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 28,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 29,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 30,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 31,
-        },
-        length: 3,
-        tokenType: CypherTokenType.variable,
-        token: 'dog',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 34,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 35,
-        },
-        length: 3,
-        tokenType: CypherTokenType.label,
-        token: 'Dog',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 38,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 4,
-          startCharacter: 8,
-        },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'WHERE',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 14,
+          startOffset: 59,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'none',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 15,
+          startOffset: 60,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 16,
+          startOffset: 61,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'name',
+        tokenType: 'property',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 21,
+          startOffset: 66,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '=',
+        tokenType: 'operator',
       },
       {
-        position: {
-          line: 4,
-          startCharacter: 23,
-        },
+        bracketInfo: undefined,
         length: 3,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 3,
+          startCharacter: 23,
+          startOffset: 68,
+        },
         token: 'dog',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 4,
+          line: 3,
           startCharacter: 26,
+          startOffset: 71,
+        },
+        token: '.',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 3,
+          startCharacter: 27,
+          startOffset: 72,
+        },
+        token: 'name',
+        tokenType: 'property',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
         },
         length: 1,
-        tokenType: CypherTokenType.operator,
-        token: '.',
-      },
-      {
         position: {
           line: 4,
-          startCharacter: 27,
+          startCharacter: 6,
+          startOffset: 83,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
-        token: 'name',
+        token: '}',
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 5,
           startCharacter: 6,
+          startOffset: 91,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 6,
-          startCharacter: 6,
-        },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 6,
-          startCharacter: 13,
-        },
+        bracketInfo: undefined,
         length: 6,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 5,
+          startCharacter: 13,
+          startOffset: 98,
+        },
         token: 'person',
+        tokenType: 'none',
       },
       {
-        position: {
-          line: 6,
-          startCharacter: 19,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.operator,
+        position: {
+          line: 5,
+          startCharacter: 19,
+          startOffset: 104,
+        },
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
-          line: 6,
+          line: 5,
           startCharacter: 20,
+          startOffset: 105,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'name',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 6,
-          startCharacter: 25,
-        },
+        bracketInfo: undefined,
         length: 2,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 5,
+          startCharacter: 25,
+          startOffset: 110,
+        },
         token: 'AS',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 6,
-          startCharacter: 28,
-        },
+        bracketInfo: undefined,
         length: 4,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 5,
+          startCharacter: 28,
+          startOffset: 113,
+        },
         token: 'name',
+        tokenType: 'keyword',
       },
     ]);
   });
@@ -2761,347 +1976,147 @@ describe('Subqueries colouring', () => {
   test('Correctly colours COUNT', () => {
     const query = `
       MATCH (p:Person)
-      WHERE COUNT { (p)-[:HAS_DOG]->(d:Dog) } > 1
       RETURN p.name AS name
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 1,
           startCharacter: 6,
+          startOffset: 7,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 12,
+          startOffset: 13,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 13,
+          startOffset: 14,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 1,
           startCharacter: 14,
+          startOffset: 15,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: ':',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 1,
           startCharacter: 15,
+          startOffset: 16,
         },
-        length: 6,
-        tokenType: CypherTokenType.label,
         token: 'Person',
+        tokenType: 'label',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 1,
           startCharacter: 21,
+          startOffset: 22,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
-        position: {
-          line: 2,
-          startCharacter: 6,
-        },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'WHERE',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 12,
-        },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
-        token: 'COUNT',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 18,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '{',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 20,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 21,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'p',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 22,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 23,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 24,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '[',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 25,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 26,
-        },
-        length: 7,
-        tokenType: CypherTokenType.label,
-        token: 'HAS_DOG',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 33,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ']',
-        bracketInfo: {
-          bracketType: BracketType.bracket,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 34,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '-',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 35,
-        },
-        length: 1,
-        tokenType: CypherTokenType.separator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 36,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 37,
-        },
-        length: 1,
-        tokenType: CypherTokenType.variable,
-        token: 'd',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 38,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: ':',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 39,
-        },
-        length: 3,
-        tokenType: CypherTokenType.label,
-        token: 'Dog',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 42,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 44,
-        },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
-        token: '}',
-        bracketInfo: {
-          bracketType: BracketType.curly,
-          bracketLevel: 0,
-        },
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 46,
-        },
-        length: 1,
-        tokenType: CypherTokenType.operator,
-        token: '>',
-      },
-      {
-        position: {
-          line: 2,
-          startCharacter: 48,
-        },
-        length: 1,
-        tokenType: CypherTokenType.numberLiteral,
-        token: '1',
-      },
-      {
-        position: {
-          line: 3,
-          startCharacter: 6,
-        },
+        bracketInfo: undefined,
         length: 6,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 2,
+          startCharacter: 6,
+          startOffset: 30,
+        },
         token: 'RETURN',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 13,
+          startOffset: 37,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'p',
+        tokenType: 'variable',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 14,
-        },
+        bracketInfo: undefined,
         length: 1,
-        tokenType: CypherTokenType.operator,
+        position: {
+          line: 2,
+          startCharacter: 14,
+          startOffset: 38,
+        },
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
-          line: 3,
+          line: 2,
           startCharacter: 15,
+          startOffset: 39,
         },
-        length: 4,
-        tokenType: CypherTokenType.property,
         token: 'name',
+        tokenType: 'property',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 20,
-        },
+        bracketInfo: undefined,
         length: 2,
-        tokenType: CypherTokenType.keyword,
+        position: {
+          line: 2,
+          startCharacter: 20,
+          startOffset: 44,
+        },
         token: 'AS',
+        tokenType: 'keyword',
       },
       {
-        position: {
-          line: 3,
-          startCharacter: 23,
-        },
+        bracketInfo: undefined,
         length: 4,
-        tokenType: CypherTokenType.variable,
+        position: {
+          line: 2,
+          startCharacter: 23,
+          startOffset: 47,
+        },
         token: 'name',
+        tokenType: 'variable',
       },
     ]);
   });
