@@ -92,7 +92,14 @@ class VariableCollector implements ParseTreeListener {
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof VariableContext) {
       const variable = ctx.symbolicNameString().getText();
-      if (variable) {
+      // To avoid suggesting the variable that is currently being typed
+      // For example RETURN a| <- we don't want to suggest "a" as a variable
+      // We check if the variable is in the end of the statement
+      const nextTokenIsEOF =
+        ctx.parser.getTokenStream().get(ctx.stop.tokenIndex + 1)?.type ===
+        CypherParser.EOF;
+
+      if (variable && !nextTokenIsEOF) {
         this.variables.push(variable);
       }
     }

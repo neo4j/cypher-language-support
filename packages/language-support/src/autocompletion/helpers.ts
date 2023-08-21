@@ -114,6 +114,19 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
+        // Map literal keys are also parsed as "propertyKey"s even though
+        // they are not considered propertyKeys by the database
+        // We check if the parent mapLiteral is used as a literal
+        // to avoid suggesting property keys when defining a map literal
+        const parentRule = candidateRule.ruleList.at(-1);
+        const grandParentRule = candidateRule.ruleList.at(-2);
+        if (
+          parentRule === CypherParser.RULE_mapLiteral &&
+          grandParentRule === CypherParser.RULE_literal
+        ) {
+          return [];
+        }
+
         return propertyKeyCompletions(dbInfo);
       }
 
@@ -123,6 +136,15 @@ export function completionCoreCompletion(
         const rulesDefiningVariables = [
           CypherParser.RULE_returnItem,
           CypherParser.RULE_unwindClause,
+          CypherParser.RULE_subqueryInTransactionsReportParameters,
+          CypherParser.RULE_procedureResultItem,
+          CypherParser.RULE_foreachClause,
+          CypherParser.RULE_loadCSVClause,
+          CypherParser.RULE_reduceExpression,
+          CypherParser.RULE_allExpression,
+          CypherParser.RULE_anyExpression,
+          CypherParser.RULE_noneExpression,
+          CypherParser.RULE_singleExpression,
         ];
         if (rulesDefiningVariables.includes(parentRule)) {
           return [];

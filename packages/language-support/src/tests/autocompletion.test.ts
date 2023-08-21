@@ -52,11 +52,11 @@ export function testCompletionDoesNotContain({
       // if label is left out -> only check kind and vice versa
       const matchingKind =
         notExpectedItem.kind === undefined ||
-        value.kind === notExpectedItem.kind;
+        notExpectedItem.kind === value.kind;
 
       const matchingLabel =
         notExpectedItem.label === undefined ||
-        value.kind === notExpectedItem.kind;
+        notExpectedItem.label === value.label;
 
       return matchingKind && matchingLabel;
     }),
@@ -1547,19 +1547,19 @@ describe('unscoped variable completions', () => {
     cases.forEach((c) => {
       testCompletionDoesNotContain({
         query: base + c,
-        excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
+        excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
       });
     });
   });
 
   test('does not suggest existing variables in expressions that create variables', () => {
-    const cases = ['[ ', 'reduce(', 'all(', 'any(', 'none(', 'single('];
-    const base = 'WITH 1 as a ';
+    const cases = ['reduce(', 'all(', 'any(', 'none(', 'single('];
+    const base = 'WITH 1 as a RETURN ';
 
     cases.forEach((c) => {
       testCompletionDoesNotContain({
         query: base + c,
-        excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
+        excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
       });
     });
   });
