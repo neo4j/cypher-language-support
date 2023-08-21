@@ -19,23 +19,25 @@ export interface ThemeOptions {
     textMatchingSelection: string;
   };
   highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
+  inheritBgColor?: boolean;
 }
 
 export const createCypherTheme = ({
   dark,
   editorSettings: settings,
   highlightStyles,
+  inheritBgColor,
 }: ThemeOptions): Extension => {
   const themeOptions: Record<string, StyleSpec> = {
     '&': {
-      backgroundColor: settings.background,
+      backgroundColor: inheritBgColor ? 'inherit' : settings.background,
       color: settings.foreground,
     },
     '&.cm-focused': {
       outline: 'none',
     },
     '.cm-gutters': {
-      backgroundColor: settings.background,
+      backgroundColor: inheritBgColor ? 'inherit' : settings.background,
       color: settings.gutterForeground,
       border: 'none',
     },
