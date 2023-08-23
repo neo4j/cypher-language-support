@@ -1,6 +1,4 @@
-import { BracketType } from '../../../highlighting/syntaxColouringHelpers';
-import { CypherTokenType } from '../../../lexerSymbols';
-import { testSyntaxColouring } from './helpers';
+import { applySyntaxColouring } from '../../../highlighting/syntaxColouring';
 
 describe('Comments syntax colouring', () => {
   test('Correctly colours one line comments', () => {
@@ -10,86 +8,100 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 15,
         position: {
           line: 1,
           startCharacter: 4,
+          startOffset: 5,
         },
-        length: 15,
-        tokenType: CypherTokenType.comment,
         token: '// Some comment',
+        tokenType: 'comment',
       },
       {
+        bracketInfo: undefined,
+        length: 18,
         position: {
           line: 2,
           startCharacter: 4,
+          startOffset: 25,
         },
-        length: 18,
-        tokenType: CypherTokenType.comment,
         token: '// Another comment',
+        tokenType: 'comment',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 3,
           startCharacter: 4,
+          startOffset: 48,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 3,
           startCharacter: 9,
+          startOffset: 53,
         },
-        length: 3,
-        tokenType: CypherTokenType.procedure,
         token: 'foo',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 3,
           startCharacter: 12,
+          startOffset: 56,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 3,
           startCharacter: 13,
+          startOffset: 57,
         },
-        length: 3,
-        tokenType: CypherTokenType.procedure,
         token: 'bar',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 3,
           startCharacter: 16,
+          startOffset: 60,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 3,
           startCharacter: 17,
+          startOffset: 61,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
     ]);
   });
@@ -102,95 +114,111 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 17,
         position: {
           line: 1,
           startCharacter: 4,
+          startOffset: 5,
         },
-        length: 17,
-        tokenType: CypherTokenType.comment,
         token: '/* Some multiline',
+        tokenType: 'comment',
       },
       {
+        bracketInfo: undefined,
+        length: 11,
         position: {
           line: 2,
           startCharacter: 0,
+          startOffset: 23,
         },
-        length: 11,
-        tokenType: CypherTokenType.comment,
         token: '    comment',
+        tokenType: 'comment',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 3,
           startCharacter: 0,
+          startOffset: 35,
         },
-        length: 6,
-        tokenType: CypherTokenType.comment,
         token: '    */',
+        tokenType: 'comment',
       },
       {
+        bracketInfo: undefined,
+        length: 4,
         position: {
           line: 4,
           startCharacter: 4,
+          startOffset: 48,
         },
-        length: 4,
-        tokenType: CypherTokenType.keyword,
         token: 'CALL',
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 4,
           startCharacter: 9,
+          startOffset: 53,
         },
-        length: 3,
-        tokenType: CypherTokenType.procedure,
         token: 'foo',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 4,
           startCharacter: 12,
+          startOffset: 56,
         },
-        length: 1,
-        tokenType: CypherTokenType.operator,
         token: '.',
+        tokenType: 'operator',
       },
       {
+        bracketInfo: undefined,
+        length: 3,
         position: {
           line: 4,
           startCharacter: 13,
+          startOffset: 57,
         },
-        length: 3,
-        tokenType: CypherTokenType.procedure,
         token: 'bar',
+        tokenType: 'procedure',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 4,
           startCharacter: 16,
+          startOffset: 60,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 4,
           startCharacter: 17,
+          startOffset: 61,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketType: BracketType.parenthesis,
-          bracketLevel: 0,
-        },
+        tokenType: 'bracket',
       },
     ]);
   });
@@ -198,89 +226,89 @@ describe('Comments syntax colouring', () => {
   test('Correctly colours comments which include cypher keywords', () => {
     const query = `MATCH (n) RETURN n // MATCH (n) finds all nodes`;
 
-    testSyntaxColouring(query, [
+    expect(applySyntaxColouring(query)).toEqual([
       {
+        bracketInfo: undefined,
+        length: 5,
         position: {
           line: 0,
           startCharacter: 0,
           startOffset: 0,
         },
-        length: 5,
-        tokenType: CypherTokenType.keyword,
         token: 'MATCH',
-        bracketInfo: undefined,
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 6,
           startOffset: 6,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: '(',
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 7,
           startOffset: 7,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'n',
-        bracketInfo: undefined,
+        tokenType: 'variable',
       },
       {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
         position: {
           line: 0,
           startCharacter: 8,
           startOffset: 8,
         },
-        length: 1,
-        tokenType: CypherTokenType.bracket,
         token: ')',
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: BracketType.parenthesis,
-        },
+        tokenType: 'bracket',
       },
       {
+        bracketInfo: undefined,
+        length: 6,
         position: {
           line: 0,
           startCharacter: 10,
           startOffset: 10,
         },
-        length: 6,
-        tokenType: CypherTokenType.keyword,
         token: 'RETURN',
-        bracketInfo: undefined,
+        tokenType: 'keyword',
       },
       {
+        bracketInfo: undefined,
+        length: 1,
         position: {
           line: 0,
           startCharacter: 17,
           startOffset: 17,
         },
-        length: 1,
-        tokenType: CypherTokenType.variable,
         token: 'n',
-        bracketInfo: undefined,
+        tokenType: 'variable',
       },
       {
+        bracketInfo: undefined,
+        length: 28,
         position: {
           line: 0,
           startCharacter: 19,
           startOffset: 19,
         },
-        length: 28,
-        tokenType: CypherTokenType.comment,
         token: '// MATCH (n) finds all nodes',
-        bracketInfo: undefined,
+        tokenType: 'comment',
       },
     ]);
   });
