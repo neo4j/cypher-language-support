@@ -119,3 +119,46 @@ RETURN variable;`;
     ),
   ).toEqual(darkThemeConstants.highlightStyles.numberLiteral);
 });
+
+test('highlights multiline string literal correctly', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `
+RETURN "
+multilinestring";`;
+
+  await editorPage.createEditor({ value: query, theme: 'light' });
+
+  expect(
+    await editorPage.getHexColorOfLocator(page.getByText('multilinestring')),
+  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral);
+});
+
+test('highlights multiline label correctly', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `
+MATCH (v:\`
+
+Label\`)
+`;
+
+  await editorPage.createEditor({ value: query, theme: 'light' });
+
+  expect(
+    await editorPage.getHexColorOfLocator(page.getByText('Label')),
+  ).toEqual(lightThemeConstants.highlightStyles.label);
+});
+
+test('highlights multiline comment correctly', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `
+/*
+
+comment
+*/";`;
+
+  await editorPage.createEditor({ value: query, theme: 'light' });
+
+  expect(
+    await editorPage.getHexColorOfLocator(page.getByText('comment')),
+  ).toEqual(lightThemeConstants.highlightStyles.comment);
+});
