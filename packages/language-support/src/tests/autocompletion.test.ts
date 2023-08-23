@@ -1142,7 +1142,7 @@ describe('can complete database names', () => {
     });
 
     test('correctly completes unstarted parameter in return body', () => {
-      const query = 'RETURN $';
+      const query = 'RETURN ';
       testCompletionContains({
         query,
         dbInfo,
@@ -1154,7 +1154,7 @@ describe('can complete database names', () => {
       });
     });
 
-    test('correctly completes started parameter in where clause', () => {
+    test('correctly completes unstarted parameter in where clause', () => {
       const query = 'MATCH (n) WHERE ';
       testCompletionContains({
         query,
@@ -1168,7 +1168,7 @@ describe('can complete database names', () => {
     });
 
     test('correctly completes started parameter in expression', () => {
-      const query = 'RETURN 1 + ';
+      const query = 'RETURN 1 + $';
       testCompletionContains({
         query,
         dbInfo,
