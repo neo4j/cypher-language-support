@@ -1503,13 +1503,22 @@ describe('unscoped variable completions', () => {
     });
   });
 
-  test('completes variables that used but not defined when semantic analysis is not available', () => {
-    const query =
-      'MATCH (:Person) WHERE n.name = "foo" RETURN n.name, n.age, n';
+  test('completes unstarted variables that used but not defined when semantic analysis is not available', () => {
+    const query = 'MATCH (:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
 
     testCompletionContains({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('completes variables that used but not defined when semantic analysis is not available', () => {
+    const query =
+      'MATCH (:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
+
+    testCompletionContains({
+      query,
+      expected: [{ label: 'movie', kind: CompletionItemKind.Variable }],
     });
   });
 

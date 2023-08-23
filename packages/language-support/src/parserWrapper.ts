@@ -75,9 +75,9 @@ export function createParsingResult(
   return parsingResult;
 }
 
-// If a semantic analysis result is available, we it's data to get all the defined variables in scope
-// if it's not available (or implemented) we fallback to a simple search for all variables
-// in this initial version we don't check if the variables are used before define
+// This class is collects all variables detected by the parser which means
+// it does include variable scope nor differentiate between variable use and definition
+// we use it when the semantic anaylsis result is not available
 class VariableCollector implements ParseTreeListener {
   variables: string[] = [];
   enterEveryRule() {
