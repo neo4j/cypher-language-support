@@ -52,7 +52,6 @@ export class DbInfoImpl implements DbInfo {
         this.updatePropertyKeys(),
         this.updateMethodsCache(this.procedureSignatures),
         this.updateMethodsCache(this.functionSignatures),
-        this.updateMethodsCache(this.functionSignatures),
       ]);
     };
 
