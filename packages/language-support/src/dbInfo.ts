@@ -5,4 +5,6 @@ export interface DbInfo {
   functionSignatures: Record<string, SignatureInformation>;
   labels: string[];
   relationshipTypes: string[];
+  databaseNames: string[];
+  aliasNames: string[];
 }

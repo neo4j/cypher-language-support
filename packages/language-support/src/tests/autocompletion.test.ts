@@ -44,6 +44,9 @@ export function testCompletionDoesNotContain({
 }: ExclusionTestArgs) {
   const actualCompletionList = autocomplete(query, dbInfo);
 
+  expect(actualCompletionList).not.toContain(null);
+  expect(actualCompletionList).not.toContain(undefined);
+
   const actual = excluded.map((notExpectedItem) =>
     actualCompletionList.find(
       (value) =>
@@ -53,6 +56,18 @@ export function testCompletionDoesNotContain({
   );
 
   expect(actual).toEqual([]);
+}
+
+type EmptyTestArgs = {
+  query: string;
+  dbInfo?: DbInfo;
+};
+function testCompletionsEmpty({
+  query,
+  dbInfo = new MockDbInfo(),
+}: EmptyTestArgs) {
+  const actualCompletionList = autocomplete(query, dbInfo);
+  expect(actualCompletionList).toEqual([]);
 }
 
 describe('MATCH auto-completion', () => {
@@ -879,6 +894,217 @@ describe('Auto completion of back to back keywords', () => {
     testCompletionDoesNotContain({
       query,
       excluded: [{ label: 'HEADERS FROM', kind: CompletionItemKind.Keyword }],
+    });
+  });
+});
+
+describe('can complete database names', () => {
+  const dbInfo = new MockDbInfo(
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    ['db1', 'db2', 'movies'],
+    ['myMovies', 'scoped.alias', 'a.b.c.d'],
+  );
+
+  test('Correctly completes database names and aliases in SHOW DATABASE', () => {
+    const query = 'SHOW DATABASE ';
+
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'WHERE', kind: CompletionItemKind.Keyword },
+        { label: 'YIELD', kind: CompletionItemKind.Keyword },
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('Correctly completes database names and aliases in SHOW DATABASE with started db name', () => {
+    const query = 'SHOW DATABASE m';
+
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'WHERE', kind: CompletionItemKind.Keyword },
+        { label: 'YIELD', kind: CompletionItemKind.Keyword },
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    // validate invalid keyword bug isn't present
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [{ label: '', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test("Doesn't suggest existing database names or aliases when createing database", () => {
+    const query = 'CREATE DATABASE ';
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+    testCompletionsEmpty({ query });
+  });
+
+  test("Doesn't suggest existing database names or aliases when createing alias", () => {
+    const query = 'CREATE ALIAS ';
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+    testCompletionsEmpty({ query });
+  });
+
+  test('suggest only aliases when dropping alias', () => {
+    const query = 'DROP ALIAS ';
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('suggest only aliases when showing alias', () => {
+    const query = 'SHOW ALIAS ';
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [{ label: 'myMovies', kind: CompletionItemKind.Value }],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('suggest only aliases when altering alias', () => {
+    const query = 'ALTER ALIAS a';
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('can complete when typing scoped alias', () => {
+    const query = 'ALTER ALIAS a.b.c.';
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+  });
+
+  test('handle that the parser allows spaces in symbolicAliasName', () => {
+    // Since the parser allows for spaces in the symbolicAliasName rule but not in created alias (unless quoted)
+    // I've added a test to verify we don't suggest aliases after the space (false positives)
+    const query = 'drop alias myMovies ';
+
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [
+        { label: 'FOR DATABASE', kind: CompletionItemKind.Keyword },
+        { label: 'IF EXISTS', kind: CompletionItemKind.Keyword },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbInfo,
+      excluded: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        // EOF checks
+        { label: '', kind: CompletionItemKind.Value },
+        { label: '', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 });

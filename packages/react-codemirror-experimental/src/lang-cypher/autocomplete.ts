@@ -37,6 +37,8 @@ const emptySchema: DbInfo = {
   labels: [],
   procedureSignatures: {},
   relationshipTypes: [],
+  aliasNames: [],
+  databaseNames: [],
 };
 export const cypherAutocomplete: (schema?: DbInfo) => CompletionSource =
   (schema) => (context) => {

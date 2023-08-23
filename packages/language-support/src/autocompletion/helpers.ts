@@ -1,4 +1,4 @@
-import { CodeCompletionCore } from 'antlr4-c3';
+import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -65,6 +65,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_functionName,
     CypherParser.RULE_procedureName,
     CypherParser.RULE_labelExpression1,
+    CypherParser.RULE_symbolicAliasName,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -92,6 +93,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
         return proceduresCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
+        return completeAliasName({ candidateRule, dbInfo, parsingResult });
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
@@ -150,4 +155,66 @@ export function completionCoreCompletion(
   }));
 
   return [...ruleCompletions, ...tokenCompletions];
+}
+
+type CompletionHelperArgs = {
+  parsingResult: ParsingResult;
+  dbInfo: DbInfo;
+  candidateRule: CandidateRule;
+};
+function completeAliasName({
+  candidateRule,
+  dbInfo,
+  parsingResult,
+}: CompletionHelperArgs) {
+  // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
+  // so ALTER ALIAS a . b  FOR DATABASE neo4j is accepted by neo4j. It does however only drop the spaces for the alias
+  // it becomes just a.b
+
+  // The issue for us is that when we complete "ALTER ALIAS a " <- according to the grammar points say we could still be building a name
+  // To handle this we check if the token after the first identifier in the rule is a space (as opposed to a dot)
+  // if so we have a false positive and we return null to ignore the rule
+  // symbolicAliasName: (symbolicNameString (DOT symbolicNameString)* | parameter);
+  if (
+    parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
+    CypherLexer.SPACE
+  ) {
+    return [];
+  }
+
+  const rulesCreatingNewAliasOrDb = [
+    CypherParser.RULE_createAlias,
+    CypherParser.RULE_createDatabase,
+    CypherParser.RULE_createCompositeDatabase,
+  ];
+  // avoid suggesting database names when creating a new alias or database
+  if (
+    rulesCreatingNewAliasOrDb.some((rule) =>
+      candidateRule.ruleList.includes(rule),
+    )
+  ) {
+    return [];
+  }
+
+  const rulesThatOnlyAcceptAlias = [
+    CypherParser.RULE_dropAlias,
+    CypherParser.RULE_alterAlias,
+    CypherParser.RULE_showAliases,
+  ];
+  if (
+    rulesThatOnlyAcceptAlias.some((rule) =>
+      candidateRule.ruleList.includes(rule),
+    )
+  ) {
+    return dbInfo.aliasNames.map((aliasName) => ({
+      label: aliasName,
+      kind: CompletionItemKind.Value,
+    }));
+  }
+
+  // Suggest both database and alias names when it's not alias specific or creating new alias or database
+  return dbInfo.databaseNames.concat(dbInfo.aliasNames).map((databaseName) => ({
+    label: databaseName,
+    kind: CompletionItemKind.Value,
+  }));
 }
