@@ -33,6 +33,16 @@ export class CypherEditorPage {
     await this.getEditor().focus();
   }
 
+  editorBackgroundIsUnset() {
+    return this.page.locator('.cm-editor').evaluate((e: Element) => {
+      const browserDefaultBackgroundColor = 'rgba(0, 0, 0, 0)';
+      return (
+        window.getComputedStyle(e).getPropertyValue('background-color') ===
+        browserDefaultBackgroundColor
+      );
+    });
+  }
+
   getHexColorOfLocator(locator: Locator) {
     return locator.evaluate((e: Element) => {
       // https://stackoverflow.com/questions/49974145/how-to-convert-rgba-to-hex-color-code-using-javascript

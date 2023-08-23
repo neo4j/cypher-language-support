@@ -44,6 +44,19 @@ export const cypherAutocomplete: (schema?: DbInfo) => CompletionSource =
   (schema) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
 
+    const triggerCharacters = ['.', ':', '[', '(', '{', '$', ' ', '\n'];
+    const lastCharacter = textUntilCursor.slice(-1);
+
+    const lastWord = context.matchBefore(/\w*/);
+    const inWord = lastWord.from !== lastWord.to;
+
+    const shouldTriggerCompletion =
+      inWord || context.explicit || triggerCharacters.includes(lastCharacter);
+
+    if (!shouldTriggerCompletion) {
+      return null;
+    }
+
     const options = autocomplete(textUntilCursor, schema ?? emptySchema);
 
     return {

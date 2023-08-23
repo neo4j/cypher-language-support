@@ -61,6 +61,8 @@ RETURN variable;`;
       page.getByText('1234', { exact: true }),
     ),
   ).toEqual(lightThemeConstants.highlightStyles.numberLiteral);
+
+  expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
 });
 
 test('dark theme highlighting', async ({ page }) => {
@@ -118,6 +120,18 @@ RETURN variable;`;
       page.getByText('1234', { exact: true }),
     ),
   ).toEqual(darkThemeConstants.highlightStyles.numberLiteral);
+
+  expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
+});
+
+test('respects prop to allow overriding bkg color', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  await editorPage.createEditor({
+    value: 'text',
+    theme: 'light',
+    overrideThemeBackgroundColor: true,
+  });
+  expect(await editorPage.editorBackgroundIsUnset()).toEqual(true);
 });
 
 test('highlights multiline string literal correctly', async ({ page }) => {

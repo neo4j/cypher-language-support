@@ -15,11 +15,11 @@ test('respects preloaded history', async ({ page }) => {
   });
   await editorPage.getEditor().press('ArrowUp');
   await expect(page.getByText('first')).toBeVisible();
+  // First arrow up is to get to start of line
+  await editorPage.getEditor().press('ArrowUp');
   await editorPage.getEditor().press('ArrowUp');
   await expect(page.getByText('second')).toBeVisible();
 
-  // once to get the end of the line again to move to the next
-  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('first')).toBeVisible();
   await editorPage.getEditor().press('ArrowDown');
@@ -69,10 +69,9 @@ RETURN n;`;
   // Ensure moving down in the editor doesn't navigate history
   await expect(page.getByText('multiline')).toBeVisible();
 
-  // arrow down only moves in text until bottom is hit
-  await editorPage.getEditor().press('ArrowDown');
-  await editorPage.getEditor().press('ArrowDown');
-  await editorPage.getEditor().press('ArrowDown');
+  // arrow movements don't matter until bottom is hit
+  await editorPage.getEditor().press('ArrowUp');
+  await editorPage.getEditor().press('ArrowUp');
   await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
 
