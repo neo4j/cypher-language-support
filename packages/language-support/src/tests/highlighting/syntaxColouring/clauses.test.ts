@@ -1138,7 +1138,7 @@ describe('USE colouring', () => {
           startOffset: 29,
         },
         token: 'n',
-        tokenType: 'none',
+        tokenType: 'variable',
       },
       {
         bracketInfo: undefined,
@@ -1182,7 +1182,7 @@ describe('USE colouring', () => {
           startOffset: 38,
         },
         token: "'Alice'",
-        tokenType: 'none',
+        tokenType: 'stringLiteral',
       },
     ]);
   });
@@ -1822,7 +1822,7 @@ describe('Subqueries colouring', () => {
           startOffset: 59,
         },
         token: 'p',
-        tokenType: 'none',
+        tokenType: 'variable',
       },
       {
         bracketInfo: undefined,
@@ -1924,7 +1924,7 @@ describe('Subqueries colouring', () => {
           startOffset: 98,
         },
         token: 'person',
-        tokenType: 'none',
+        tokenType: 'variable',
       },
       {
         bracketInfo: undefined,
