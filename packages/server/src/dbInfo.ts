@@ -19,6 +19,7 @@ export class DbInfoImpl implements DbInfo {
   public relationshipTypes: string[] | undefined = [];
   public aliasNames: string[] | undefined = [];
   public databaseNames: string[] | undefined = [];
+  public parameterNames: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 

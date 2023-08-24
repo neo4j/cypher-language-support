@@ -43,6 +43,7 @@ const dummyDbInfo: DbInfo = {
   relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
+  parameterNames: ['param1', 'favColor', 'myParam'],
 };
 
 export function App() {

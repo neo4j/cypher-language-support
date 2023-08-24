@@ -58,18 +58,6 @@ export function testCompletionDoesNotContain({
   expect(actual).toEqual([]);
 }
 
-type EmptyTestArgs = {
-  query: string;
-  dbInfo?: DbInfo;
-};
-function testCompletionsEmpty({
-  query,
-  dbInfo = new MockDbInfo(),
-}: EmptyTestArgs) {
-  const actualCompletionList = autocomplete(query, dbInfo);
-  expect(actualCompletionList).toEqual([]);
-}
-
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
     const query = 'M';
@@ -906,6 +894,7 @@ describe('can complete database names', () => {
     undefined,
     ['db1', 'db2', 'movies'],
     ['myMovies', 'scoped.alias', 'a.b.c.d'],
+    ['param'],
   );
 
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
@@ -923,6 +912,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -942,6 +932,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -968,7 +959,13 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
-    testCompletionsEmpty({ query });
+
+    // can create new database name using parameter
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
+    });
   });
 
   test("Doesn't suggest existing database names or aliases when createing alias", () => {
@@ -986,7 +983,13 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
       ],
     });
-    testCompletionsEmpty({ query });
+
+    // can create new alias name using parameter
+    testCompletionContains({
+      query,
+      dbInfo,
+      expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
+    });
   });
 
   test('suggest only aliases when dropping alias', () => {
@@ -998,6 +1001,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1017,7 +1021,10 @@ describe('can complete database names', () => {
     testCompletionContains({
       query,
       dbInfo,
-      expected: [{ label: 'myMovies', kind: CompletionItemKind.Value }],
+      expected: [
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
+      ],
     });
 
     testCompletionDoesNotContain({
@@ -1040,6 +1047,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1063,6 +1071,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1105,6 +1114,208 @@ describe('can complete database names', () => {
         { label: '', kind: CompletionItemKind.Value },
         { label: '', kind: CompletionItemKind.Keyword },
       ],
+    });
+  });
+
+  describe('can complete parameters outside of database names', () => {
+    const dbInfo = new MockDbInfo(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ['param1', 'param2', 'param3'],
+    );
+
+    test('correctly completes started parameter in return body', () => {
+      const query = 'RETURN $';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('correctly completes unstarted parameter in return body', () => {
+      const query = 'RETURN ';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('correctly completes unstarted parameter in where clause', () => {
+      const query = 'MATCH (n) WHERE ';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('correctly completes started parameter in expression', () => {
+      const query = 'RETURN 1 + $';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('correctly suggests parameter in ENABLE SERVER', () => {
+      const query = 'ENABLE SERVER ';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('suggests parameter as map properties', () => {
+      const query = 'match (v :Movie ';
+
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('suggests parameter in options field of create constraint', () => {
+      const query =
+        'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('suggests parameter in options field of create index', () => {
+      const query = 'CREATE INDEX abc FOR (n:person) ON (n.name) OPTIONS ';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('suggests parameter in options field of create composite database', () => {
+      const query = 'CREATE COMPOSITE DATABASE name IF NOT EXISTS OPTIONS ';
+      testCompletionContains({
+        query,
+        dbInfo,
+        expected: [
+          { label: '$param1', kind: CompletionItemKind.Variable },
+          { label: '$param2', kind: CompletionItemKind.Variable },
+          { label: '$param3', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+
+    test('suggests parameters for user management', () => {
+      const cases = [
+        'CREATE USER',
+        'DROP USER',
+        'ALTER USER',
+        'RENAME USER',
+        'SHOW USER',
+        'ALTER CURRENT USER SET PASSWORD FROM',
+        'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
+        'ALTER USER',
+        'ALTER USER foo IF EXISTS SET PASSWORD ',
+      ];
+      cases.forEach((query) => {
+        testCompletionContains({
+          query,
+          dbInfo,
+          expected: [
+            { label: '$param1', kind: CompletionItemKind.Variable },
+            { label: '$param2', kind: CompletionItemKind.Variable },
+            { label: '$param3', kind: CompletionItemKind.Variable },
+          ],
+        });
+      });
+    });
+
+    test('suggests parameters for role management', () => {
+      const cases = [
+        'CREATE ROLE',
+        'DROP ROLE',
+        'RENAME ROLE',
+        'GRANT ROLE',
+        'GRANT ROLE abc TO',
+      ];
+      cases.forEach((query) => {
+        testCompletionContains({
+          query,
+          dbInfo,
+          expected: [
+            { label: '$param1', kind: CompletionItemKind.Variable },
+            { label: '$param2', kind: CompletionItemKind.Variable },
+            { label: '$param3', kind: CompletionItemKind.Variable },
+          ],
+        });
+      });
+    });
+
+    test('suggests parameters for server management', () => {
+      const cases = [
+        'ENABLE SERVER ',
+        'ENABLE SERVER "abc" OPTIONS',
+        'ALTER SERVER ',
+        'ALTER SERVER "abc" SET OPTIONS',
+        'RENAME SERVER ',
+        'RENAME SERVER $adb TO ',
+        'DROP SERVER ',
+        'DEALLOCATE DATABASES FROM SERVERS ',
+        'DEALLOCATE DATABASES FROM SERVERS "ab", ',
+      ];
+      cases.forEach((query) => {
+        testCompletionContains({
+          query,
+          dbInfo,
+          expected: [
+            { label: '$param1', kind: CompletionItemKind.Variable },
+            { label: '$param2', kind: CompletionItemKind.Variable },
+            { label: '$param3', kind: CompletionItemKind.Variable },
+          ],
+        });
+      });
     });
   });
 });

@@ -63,6 +63,9 @@ test('can complete labels', async ({ page }) => {
       relationshipTypes: [],
       functionSignatures: {},
       procedureSignatures: {},
+      aliasNames: [],
+      databaseNames: [],
+      parameterNames: [],
     },
   });
   await editorPage.getEditor().type('MATCH (n :P');
@@ -85,6 +88,9 @@ test('can complete rel types', async ({ page }) => {
       relationshipTypes: ['KNOWS'],
       functionSignatures: {},
       procedureSignatures: {},
+      aliasNames: [],
+      databaseNames: [],
+      parameterNames: [],
     },
   });
   await editorPage.getEditor().type('MATCH (n)-[:');
@@ -109,6 +115,9 @@ test('can complete functions', async ({ page }) => {
         function123: { label: 'function123', documentation: 'no docs' },
       },
       procedureSignatures: {},
+      aliasNames: [],
+      databaseNames: [],
+      parameterNames: [],
     },
   });
 
@@ -137,6 +146,9 @@ test('can complete procedures', async ({ page }) => {
       procedureSignatures: {
         'db.ping': { label: 'db.ping', documentation: 'no docs' },
       },
+      aliasNames: [],
+      databaseNames: [],
+      parameterNames: [],
     },
   });
 
