@@ -10,122 +10,107 @@ import {
   ClauseContext,
   CreateClauseContext,
   ExpressionContext,
-  LabelNameContext,
-  LabelNameIsContext,
-  LabelOrRelTypeContext,
   MergeClauseContext,
 } from '../generated-parser/CypherParser';
-import CypherParserVisitor from '../generated-parser/CypherParserVisitor';
 import {
   findParent,
   inLabelExpressionPredicate,
   inNodeLabel,
   inRelationshipType,
 } from '../helpers';
-import { parserWrapper, ParsingResult } from '../parserWrapper';
+import { EnrichedParsingResult, parserWrapper } from '../parserWrapper';
 
-class SyntaxValidationVisitor extends CypherParserVisitor<void> {
-  warnings: Diagnostic[];
-  dbLabels: Set<string>;
-  dbRelationshipTypes: Set<string>;
+function detectNonDeclaredLabel(
+  ctx: ParserRuleContext,
+  labelName: string,
+  dbLabels: Set<string>,
+  dbRelationshipTypes: Set<string>,
+): Diagnostic | undefined {
+  const nodeLabel = inNodeLabel(ctx);
+  const relType = inRelationshipType(ctx);
+  const labelExpressionPred = inLabelExpressionPredicate(ctx);
 
-  constructor(labels: string[] | undefined, relTypes: string[] | undefined) {
-    super();
-    this.warnings = [];
-    this.dbLabels = new Set<string>();
-    this.dbRelationshipTypes = new Set<string>();
-    labels.forEach((label) => this.dbLabels.add(label));
-    relTypes.forEach((type) => this.dbRelationshipTypes.add(type));
-  }
+  if (
+    (nodeLabel && !dbLabels.has(labelName)) ||
+    (relType && !dbRelationshipTypes.has(labelName)) ||
+    (labelExpressionPred &&
+      !dbLabels.has(labelName) &&
+      !dbRelationshipTypes.has(labelName))
+  ) {
+    let typeStr: string;
+    if (nodeLabel) typeStr = 'Label';
+    else if (relType) typeStr = 'Relationship type';
+    else typeStr = 'Label or relationship type';
 
-  private detectNonDeclaredLabel(ctx: ParserRuleContext, labelName: string) {
-    const nodeLabel = inNodeLabel(ctx);
-    const relType = inRelationshipType(ctx);
-    const labelExpressionPred = inLabelExpressionPredicate(ctx);
+    const parent = findParent(
+      ctx,
+      (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
+    );
 
     if (
-      (nodeLabel && !this.dbLabels.has(labelName)) ||
-      (relType && !this.dbRelationshipTypes.has(labelName)) ||
-      (labelExpressionPred &&
-        !this.dbLabels.has(labelName) &&
-        !this.dbRelationshipTypes.has(labelName))
+      !(
+        parent instanceof CreateClauseContext ||
+        parent instanceof MergeClauseContext
+      )
     ) {
-      let typeStr: string;
-      if (nodeLabel) typeStr = 'Label';
-      else if (relType) typeStr = 'Relationship type';
-      else typeStr = 'Label or relationship type';
+      const start = ctx.start;
+      const labelChunks = labelName.split('\n');
+      const linesOffset = labelChunks.length - 1;
+      const lineIndex = start.line - 1;
+      const startColumn = start.column;
+      const endColumn =
+        linesOffset == 0
+          ? startColumn + labelName.length
+          : labelChunks.at(-1).length;
 
-      const parent = findParent(
-        ctx,
-        (ctx) =>
-          ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
-      );
+      const warning: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range: {
+          start: Position.create(lineIndex, startColumn),
+          end: Position.create(lineIndex + linesOffset, endColumn),
+        },
+        message:
+          typeStr +
+          ' ' +
+          labelName +
+          " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+      };
 
-      if (
-        !(
-          parent instanceof CreateClauseContext ||
-          parent instanceof MergeClauseContext
-        )
-      ) {
-        const start = ctx.start;
-        const labelChunks = labelName.split('\n');
-        const linesOffset = labelChunks.length - 1;
-        const lineIndex = start.line - 1;
-        const startColumn = start.column;
-        const endColumn =
-          linesOffset == 0
-            ? startColumn + labelName.length
-            : labelChunks.at(-1).length;
-
-        const warning: Diagnostic = {
-          severity: DiagnosticSeverity.Warning,
-          range: {
-            start: Position.create(lineIndex, startColumn),
-            end: Position.create(lineIndex + linesOffset, endColumn),
-          },
-          message:
-            typeStr +
-            ' ' +
-            labelName +
-            " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-        };
-
-        this.warnings.push(warning);
-      }
+      return warning;
     }
   }
 
-  visitLabelName: (ctx: LabelNameContext) => void = (ctx) => {
-    this.detectNonDeclaredLabel(ctx, ctx.getText());
-  };
-
-  visitLabelNameIs: (ctx: LabelNameIsContext) => void = (ctx) => {
-    this.detectNonDeclaredLabel(ctx, ctx.getText());
-  };
-
-  visitLabelOrRelType: (ctx: LabelOrRelTypeContext) => void = (ctx) => {
-    this.detectNonDeclaredLabel(ctx, ctx.symbolicNameString().start.text);
-  };
+  return undefined;
 }
 
 function warnOnUndeclaredLabels(
-  parsingResult: ParsingResult,
+  parsingResult: EnrichedParsingResult,
   dbInfo: DbInfo,
 ): Diagnostic[] {
-  const tree = parsingResult.result;
-  let result: Diagnostic[] = [];
+  const warnings: Diagnostic[] = [];
 
   if (dbInfo.labels && dbInfo.relationshipTypes) {
-    const visitor = new SyntaxValidationVisitor(
-      dbInfo.labels,
-      dbInfo.relationshipTypes,
-    );
+    const dbLabels = new Set<string>();
+    const dbRelationshipTypes = new Set<string>();
 
-    tree.accept(visitor);
+    dbInfo.labels.forEach((label) => dbLabels.add(label));
+    dbInfo.relationshipTypes.forEach((type) => dbRelationshipTypes.add(type));
 
-    result = visitor.warnings;
+    if (dbInfo.labels && dbInfo.relationshipTypes) {
+      parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
+        const warning = detectNonDeclaredLabel(
+          labelOrRelType.ctx,
+          labelOrRelType.text,
+          dbLabels,
+          dbRelationshipTypes,
+        );
+
+        if (warning) warnings.push(warning);
+      });
+    }
   }
-  return result;
+
+  return warnings;
 }
 
 export function validateSyntax(

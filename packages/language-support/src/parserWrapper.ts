@@ -3,6 +3,7 @@ import {
   CharStreams,
   CommonTokenStream,
   ParserRuleContext,
+  ParseTreeListener,
   Token,
 } from 'antlr4';
 
@@ -11,6 +12,9 @@ import CypherLexer from './generated-parser/CypherLexer';
 import { Diagnostic } from 'vscode-languageserver-types';
 
 import CypherParser, {
+  LabelNameContext,
+  LabelNameIsContext,
+  LabelOrRelTypeContext,
   StatementsContext,
 } from './generated-parser/CypherParser';
 import { findStopNode, getTokens } from './helpers';
@@ -23,9 +27,15 @@ export interface ParsingResult {
   result: StatementsContext;
 }
 
+type LabelOrRelType = {
+  text: string;
+  ctx: ParserRuleContext;
+};
+
 export interface EnrichedParsingResult extends ParsingResult {
   errors: Diagnostic[];
   stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
 }
 
 export interface ParsingScaffolding {
@@ -66,6 +76,40 @@ export function createParsingResult(
   return parsingResult;
 }
 
+// This listener is collects all labels and relationship types
+class LabelAndRelTypesCollector extends ParseTreeListener {
+  labelOrRelTypes: LabelOrRelType[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof LabelNameContext) {
+      this.labelOrRelTypes.push({
+        text: ctx.getText(),
+        ctx: ctx,
+      });
+    } else if (ctx instanceof LabelNameIsContext) {
+      this.labelOrRelTypes.push({
+        text: ctx.getText(),
+        ctx: ctx,
+      });
+    } else if (ctx instanceof LabelOrRelTypeContext) {
+      this.labelOrRelTypes.push({
+        text: ctx.symbolicNameString().start.text,
+        ctx: ctx,
+      });
+    }
+  }
+}
+
 class ParserWrapper {
   parsingResult: EnrichedParsingResult;
 
@@ -82,6 +126,9 @@ class ParserWrapper {
       const errorListener = new SyntaxErrorsListener();
       parser.addErrorListener(errorListener);
 
+      const labelsCollector = new LabelAndRelTypesCollector();
+      parser._parseListeners = [labelsCollector];
+
       const result = createParsingResult(parsingScaffolding).result;
 
       const parsingResult: EnrichedParsingResult = {
@@ -91,6 +138,7 @@ class ParserWrapper {
         errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
       };
 
       this.parsingResult = parsingResult;
