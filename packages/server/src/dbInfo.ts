@@ -5,9 +5,16 @@ import {
 
 import { DbInfo } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
+
+type UpdateMethodsArgs = {
+  updateFunctions: boolean;
+};
+
 export class DbInfoImpl implements DbInfo {
-  public procedureSignatures: Record<string, SignatureInformation> = {};
-  public functionSignatures: Record<string, SignatureInformation> = {};
+  public procedureSignatures: Record<string, SignatureInformation> | undefined =
+    {};
+  public functionSignatures: Record<string, SignatureInformation> | undefined =
+    {};
   public labels: string[] | undefined = [];
   public relationshipTypes: string[] | undefined = [];
   public aliasNames: string[] | undefined = [];
@@ -46,9 +53,8 @@ export class DbInfoImpl implements DbInfo {
       await this.updateLabels();
       await this.updateRelationshipTypes();
       await this.updateDatabasesAndAliases();
-      await this.updateMethodsCache(this.procedureSignatures);
-      await this.updateMethodsCache(this.functionSignatures);
-      await this.updateMethodsCache(this.functionSignatures);
+      await this.updateMethodsCache({ updateFunctions: true });
+      await this.updateMethodsCache({ updateFunctions: false });
     };
 
     await updateAllDbInfo();
@@ -124,13 +130,11 @@ export class DbInfoImpl implements DbInfo {
     }
   }
 
-  private async updateMethodsCache(
-    cache: Record<string, SignatureInformation>,
-  ) {
+  private async updateMethodsCache({ updateFunctions }: UpdateMethodsArgs) {
     if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
-    const updateTarget =
-      cache === this.functionSignatures ? 'functions' : 'procedures';
+    const updateTarget = updateFunctions ? 'functions' : 'procedures';
+    const cache: Record<string, SignatureInformation> = {};
 
     try {
       const result = await s.run(
@@ -160,7 +164,18 @@ export class DbInfoImpl implements DbInfo {
           ...params.map(this.getParamsInfo),
         );
       });
+
+      if (updateFunctions) {
+        this.functionSignatures = cache;
+      } else {
+        this.procedureSignatures = cache;
+      }
     } catch (error) {
+      if (updateFunctions) {
+        this.functionSignatures = undefined;
+      } else {
+        this.procedureSignatures = undefined;
+      }
       console.warn('could not contact the database to fetch ' + updateTarget);
     } finally {
       await s.close();

@@ -97,12 +97,12 @@ export function signatureHelp(
 
   const parsedProc = tryParseProcedure(stopNode);
   if (parsedProc) {
-    result = toSignatureHelp(dbInfo.procedureSignatures, parsedProc);
+    result = toSignatureHelp(dbInfo.procedureSignatures ?? {}, parsedProc);
   } else {
     const parsedFunc = tryParseFunction(stopNode);
 
     if (parsedFunc) {
-      result = toSignatureHelp(dbInfo.functionSignatures, parsedFunc);
+      result = toSignatureHelp(dbInfo.functionSignatures ?? {}, parsedFunc);
     }
   }
 

@@ -1,8 +1,8 @@
 import { SignatureInformation } from 'vscode-languageserver-types';
 
 export interface DbInfo {
-  procedureSignatures: Record<string, SignatureInformation>;
-  functionSignatures: Record<string, SignatureInformation>;
+  procedureSignatures?: Record<string, SignatureInformation>;
+  functionSignatures?: Record<string, SignatureInformation>;
   labels?: string[];
   relationshipTypes?: string[];
   databaseNames?: string[];

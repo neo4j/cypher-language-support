@@ -10,31 +10,31 @@ import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { ParsingResult } from '../parserWrapper';
 
 const labelCompletions = (dbInfo: DbInfo) => {
-  if (!dbInfo.labels) return [];
-
-  return dbInfo.labels.map((labelName) => ({
-    label: labelName,
-    kind: CompletionItemKind.TypeParameter,
-  }));
+  return (
+    dbInfo.labels.map((labelName) => ({
+      label: labelName,
+      kind: CompletionItemKind.TypeParameter,
+    })) ?? []
+  );
 };
 
 const reltypeCompletions = (dbInfo: DbInfo) => {
-  if (!dbInfo.relationshipTypes) return [];
-
-  return dbInfo.relationshipTypes.map((relType) => ({
-    label: relType,
-    kind: CompletionItemKind.TypeParameter,
-  }));
+  return (
+    dbInfo.relationshipTypes?.map((relType) => ({
+      label: relType,
+      kind: CompletionItemKind.TypeParameter,
+    })) ?? []
+  );
 };
 
 const proceduresCompletions = (dbInfo: DbInfo) =>
-  Object.keys(dbInfo.procedureSignatures).map((procedureName) => ({
+  Object.keys(dbInfo.procedureSignatures ?? {}).map((procedureName) => ({
     label: procedureName,
     kind: CompletionItemKind.Function,
   }));
 
 const functionCompletions = (dbInfo: DbInfo) =>
-  Object.keys(dbInfo.functionSignatures).map((fnName) => ({
+  Object.keys(dbInfo.functionSignatures ?? {}).map((fnName) => ({
     label: fnName,
     kind: CompletionItemKind.Function,
   }));

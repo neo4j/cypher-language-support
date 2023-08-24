@@ -1,10 +1,7 @@
-import { tokenNames } from '../lexerSymbols';
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CommonToken,
   ErrorListener as ANTLRErrorListener,
   IntervalSet,
-  RecognitionException,
   Recognizer,
   Token,
 } from 'antlr4';
@@ -16,6 +13,13 @@ import {
 } from 'vscode-languageserver-types';
 import CypherParser from '../generated-parser/CypherParser';
 import { isDefined } from '../helpers';
+import { tokenNames } from '../lexerSymbols';
+
+/*
+We ask for 0.7 similarity (number between 0 and 1) for 
+considering the user has made a typo when writing a symbol
+*/
+const similarityForSuggestions = 0.7;
 
 function normalizedLevenshteinDistance(s1: string, s2: string): number {
   const numEdits: number = distance(s1.toUpperCase(), s2.toUpperCase());
@@ -27,7 +31,10 @@ function normalizedLevenshteinDistance(s1: string, s2: string): number {
 
 function filterSuggestions(mispeltKeyword: string, suggestions: string[]) {
   return suggestions.filter((suggestion) => {
-    return normalizedLevenshteinDistance(mispeltKeyword, suggestion) > 0.7;
+    return (
+      normalizedLevenshteinDistance(mispeltKeyword, suggestion) >
+      similarityForSuggestions
+    );
   });
 }
 
@@ -99,8 +106,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     offendingSymbol: T | undefined,
     line: number,
     charPositionInLine: number,
-    msg: string,
-    exception: RecognitionException,
   ): void {
     if (isDefined(offendingSymbol)) {
       const lineIndex = line - 1;
@@ -133,33 +138,19 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   }
 
   public reportAttemptingFullContext(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _conflictingAlts,
-    _configs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    recognizer,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ) {}
 
   public reportAmbiguity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _exact,
-    _ambigAlts,
-    _configs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    recognizer,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ) {}
-
   public reportContextSensitivity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _prediction,
-    _configs,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    recognizer,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ) {}
 }
