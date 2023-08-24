@@ -1,26 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CharStreams,
-  CommonToken,
   CommonTokenStream,
-  ErrorListener as ANTLRErrorListener,
   ParserRuleContext,
-  Recognizer,
   Token,
 } from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
 
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
-} from 'vscode-languageserver-types';
+import { Diagnostic } from 'vscode-languageserver-types';
 
 import CypherParser, {
   StatementsContext,
 } from './generated-parser/CypherParser';
 import { findStopNode, getTokens } from './helpers';
+import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
 
 export interface ParsingResult {
   query: string;
@@ -30,7 +24,7 @@ export interface ParsingResult {
 }
 
 export interface EnrichedParsingResult extends ParsingResult {
-  diagnostics: Diagnostic[];
+  errors: Diagnostic[];
   stopNode: ParserRuleContext;
 }
 
@@ -85,7 +79,7 @@ class ParserWrapper {
       const parsingScaffolding = createParsingScaffolding(query);
       const parser = parsingScaffolding.parser;
       const tokenStream = parsingScaffolding.tokenStream;
-      const errorListener = new ErrorListener();
+      const errorListener = new SyntaxErrorsListener();
       parser.addErrorListener(errorListener);
 
       const result = createParsingResult(parsingScaffolding).result;
@@ -94,7 +88,7 @@ class ParserWrapper {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
-        diagnostics: errorListener.diagnostics,
+        errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
       };
@@ -106,64 +100,3 @@ class ParserWrapper {
 }
 
 export const parserWrapper = new ParserWrapper();
-
-export class ErrorListener implements ANTLRErrorListener<CommonToken> {
-  diagnostics: Diagnostic[];
-
-  constructor() {
-    this.diagnostics = [];
-  }
-
-  public syntaxError<T extends Token>(
-    _recognizer: Recognizer<T>,
-    offendingSymbol: T | undefined,
-    _line: number,
-    _charPositionInLine: number,
-    msg: string,
-  ): void {
-    const lineIndex = (offendingSymbol?.line ?? 1) - 1;
-    const start = offendingSymbol?.start ?? 0;
-    const end = (offendingSymbol?.stop ?? 0) + 1;
-
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, start),
-        end: Position.create(lineIndex, end),
-      },
-      message: msg,
-    };
-    this.diagnostics.push(diagnostic);
-  }
-
-  public reportAttemptingFullContext(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _conflictingAlts,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
-
-  public reportAmbiguity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _exact,
-    _ambigAlts,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
-
-  public reportContextSensitivity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _prediction,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
-}
