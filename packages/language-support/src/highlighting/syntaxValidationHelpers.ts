@@ -31,11 +31,11 @@ function filterSuggestions(mispeltKeyword: string, suggestions: string[]) {
   });
 }
 
-export function getMostLikelyCandidates(
+export function getHelpfulErrorMessage(
   offendingSymbol: Token,
   possibleTokenNumbers: number[],
-): string {
-  let result = '';
+): undefined | string {
+  const msgs: string[] = [];
   const mispeltKeyword = offendingSymbol.text;
   const parserSuggestedTokens = possibleTokenNumbers
     .filter((t) => t !== CypherParser.EOF && t !== CypherParser.SEMICOLON)
@@ -50,28 +50,30 @@ export function getMostLikelyCandidates(
     mostLikelyCandidates = parserSuggestedTokens;
 
     if (possibleTokenNumbers.find((t) => t === CypherParser.EOF)) {
-      result += 'Did you intend to finish the query?';
+      msgs.push('Did you intend to finish the query?');
     }
     if (possibleTokenNumbers.find((t) => t === CypherParser.SEMICOLON)) {
-      if (result.length !== 0) result += ' ';
-      result += 'Did you intend to open a new statement?';
+      msgs.push('Did you intend to open a new statement?');
     }
   }
 
   if (mostLikelyCandidates.length === 1) {
-    if (result.length !== 0) result += ' ';
-    result += 'Did you mean ' + mostLikelyCandidates[0] + '?';
+    msgs.push('Did you mean ' + mostLikelyCandidates[0] + '?');
   } else if (mostLikelyCandidates.length >= 1) {
-    if (result.length !== 0) result += ' ';
-    result +=
+    msgs.push(
       'Did you mean any of ' +
-      mostLikelyCandidates.slice(0, -1).join(', ') +
-      ' or ' +
-      mostLikelyCandidates.at(-1) +
-      '?';
+        mostLikelyCandidates.slice(0, -1).join(', ') +
+        ' or ' +
+        mostLikelyCandidates.at(-1) +
+        '?',
+    );
   }
 
-  return result;
+  if (msgs.length > 0) {
+    return msgs.join(' ');
+  } else {
+    return undefined;
+  }
 }
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
@@ -109,21 +111,24 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const tokenIntervals = parser.getExpectedTokens();
       const parserSuggestedTokens = this.toTokenList(tokenIntervals);
 
-      const errorMessage = getMostLikelyCandidates(
+      const errorMessage = getHelpfulErrorMessage(
         offendingSymbol,
         parserSuggestedTokens,
       );
 
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: Position.create(lineIndex, start),
-          end: Position.create(lineIndex, end),
-        },
-        message: errorMessage,
-      };
+      // If we could not compute a helpful error message, do not surface it to the user
+      if (errorMessage !== undefined) {
+        const diagnostic: Diagnostic = {
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: Position.create(lineIndex, start),
+            end: Position.create(lineIndex, end),
+          },
+          message: errorMessage,
+        };
 
-      this.errors.push(diagnostic);
+        this.errors.push(diagnostic);
+      }
     }
   }
 
