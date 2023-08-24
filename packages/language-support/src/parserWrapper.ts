@@ -5,6 +5,7 @@ import {
   CommonTokenStream,
   ErrorListener as ANTLRErrorListener,
   ParserRuleContext,
+  ParseTreeListener,
   Recognizer,
   Token,
 } from 'antlr4';
@@ -19,6 +20,7 @@ import {
 
 import CypherParser, {
   StatementsContext,
+  VariableContext,
 } from './generated-parser/CypherParser';
 import { findStopNode, getTokens } from './helpers';
 
@@ -32,6 +34,7 @@ export interface ParsingResult {
 export interface EnrichedParsingResult extends ParsingResult {
   diagnostics: Diagnostic[];
   stopNode: ParserRuleContext;
+  collectedVariables: string[];
 }
 
 export interface ParsingScaffolding {
@@ -72,6 +75,37 @@ export function createParsingResult(
   return parsingResult;
 }
 
+// This class is collects all variables detected by the parser which means
+// it does include variable scope nor differentiate between variable use and definition
+// we use it when the semantic anaylsis result is not available
+class VariableCollector implements ParseTreeListener {
+  variables: string[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof VariableContext) {
+      const variable = ctx.symbolicNameString().getText();
+      // To avoid suggesting the variable that is currently being typed
+      // For example RETURN a| <- we don't want to suggest "a" as a variable
+      // We check if the variable is in the end of the statement
+      const nextTokenIsEOF =
+        ctx.parser.getTokenStream().get(ctx.stop.tokenIndex + 1)?.type ===
+        CypherParser.EOF;
+
+      if (variable && !nextTokenIsEOF) {
+        this.variables.push(variable);
+      }
+    }
+  }
+}
+
 class ParserWrapper {
   parsingResult: EnrichedParsingResult;
 
@@ -88,6 +122,9 @@ class ParserWrapper {
       const errorListener = new ErrorListener();
       parser.addErrorListener(errorListener);
 
+      const variableFinder = new VariableCollector();
+      parser._parseListeners = [variableFinder];
+
       const result = createParsingResult(parsingScaffolding).result;
 
       const parsingResult: EnrichedParsingResult = {
@@ -97,6 +134,7 @@ class ParserWrapper {
         diagnostics: errorListener.diagnostics,
         result: result,
         stopNode: findStopNode(result),
+        collectedVariables: variableFinder.variables,
       };
 
       this.parsingResult = parsingResult;
