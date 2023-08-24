@@ -10,7 +10,14 @@ type InclusionTestArgs = {
   expected: Diagnostic[];
 };
 
-export function testSyntaxValidation({
+type ExclusionTestArgs = {
+  query: string;
+  dbInfo?: DbInfo;
+  filterPredicate?: (Diagnostic) => boolean;
+  excluded: Diagnostic[];
+};
+
+export function testSyntaxValidationContains({
   query,
   dbInfo = new MockDbInfo(),
   filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
@@ -27,4 +34,24 @@ export function testSyntaxValidation({
     expect(diagnostic.message).toBe(expectedDiagnostic.message);
     expect(diagnostic.severity).toBe(expectedDiagnostic.severity);
   });
+}
+
+export function testSyntaxValidationNotContains({
+  query,
+  dbInfo = new MockDbInfo(),
+  filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
+  excluded,
+}: ExclusionTestArgs) {
+  const diagnostics = validateSyntax(query, dbInfo).filter(filterPredicate);
+
+  const actual = excluded.map((notExpectedItem) =>
+    diagnostics.find(
+      (value) =>
+        value.message === notExpectedItem.message &&
+        value.severity === notExpectedItem.severity &&
+        value.range === notExpectedItem.range,
+    ),
+  );
+
+  expect(actual).toEqual([]);
 }

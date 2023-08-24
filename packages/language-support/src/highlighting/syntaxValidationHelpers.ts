@@ -18,7 +18,6 @@ import CypherParser from '../generated-parser/CypherParser';
 import { isDefined } from '../helpers';
 
 function normalizedLevenshteinDistance(s1: string, s2: string): number {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const numEdits: number = distance(s1.toUpperCase(), s2.toUpperCase());
 
   // normalize by length of longest string

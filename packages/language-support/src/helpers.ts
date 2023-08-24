@@ -8,6 +8,7 @@ import antlrDefaultExport, {
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
 import CypherParser, {
+  LabelExpressionPredicateContext,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsContext,
@@ -114,19 +115,28 @@ export function findLatestStatement(
 }
 
 export function inNodeLabel(stopNode: ParserRuleContext) {
-  const labelParent = findParent(
+  const nodePattern = findParent(
     stopNode,
     (p) => p instanceof NodePatternContext,
   );
 
-  return isDefined(labelParent);
+  return isDefined(nodePattern);
 }
 
 export function inRelationshipType(stopNode: ParserRuleContext) {
-  const relTypeParent = findParent(
+  const relPattern = findParent(
     stopNode,
     (p) => p instanceof RelationshipPatternContext,
   );
 
-  return isDefined(relTypeParent);
+  return isDefined(relPattern);
+}
+
+export function inLabelExpressionPredicate(stopNode: ParserRuleContext) {
+  const labelExpressionPredicate = findParent(
+    stopNode,
+    (p) => p instanceof LabelExpressionPredicateContext,
+  );
+
+  return isDefined(labelExpressionPredicate);
 }

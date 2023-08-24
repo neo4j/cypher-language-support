@@ -16,7 +16,12 @@ import {
   MergeClauseContext,
 } from '../generated-parser/CypherParser';
 import CypherParserVisitor from '../generated-parser/CypherParserVisitor';
-import { findParent, inNodeLabel, inRelationshipType } from '../helpers';
+import {
+  findParent,
+  inLabelExpressionPredicate,
+  inNodeLabel,
+  inRelationshipType,
+} from '../helpers';
 import { parserWrapper, ParsingResult } from '../parserWrapper';
 
 class SyntaxValidationVisitor extends CypherParserVisitor<void> {
@@ -24,7 +29,7 @@ class SyntaxValidationVisitor extends CypherParserVisitor<void> {
   dbLabels: Set<string>;
   dbRelationshipTypes: Set<string>;
 
-  constructor(labels: string[], relTypes: string[]) {
+  constructor(labels: string[] | undefined, relTypes: string[] | undefined) {
     super();
     this.warnings = [];
     this.dbLabels = new Set<string>();
@@ -36,12 +41,20 @@ class SyntaxValidationVisitor extends CypherParserVisitor<void> {
   private detectNonDeclaredLabel(ctx: ParserRuleContext, labelName: string) {
     const nodeLabel = inNodeLabel(ctx);
     const relType = inRelationshipType(ctx);
+    const labelExpressionPred = inLabelExpressionPredicate(ctx);
 
     if (
-      !(nodeLabel && this.dbLabels.has(labelName)) ||
-      !(relType && this.dbRelationshipTypes.has(labelName))
+      (nodeLabel && !this.dbLabels.has(labelName)) ||
+      (relType && !this.dbRelationshipTypes.has(labelName)) ||
+      (labelExpressionPred &&
+        !this.dbLabels.has(labelName) &&
+        !this.dbRelationshipTypes.has(labelName))
     ) {
-      const typeStr = nodeLabel ? 'Label' : 'Relationship type';
+      let typeStr: string;
+      if (nodeLabel) typeStr = 'Label';
+      else if (relType) typeStr = 'Relationship type';
+      else typeStr = 'Label or relationship type';
+
       const parent = findParent(
         ctx,
         (ctx) =>
@@ -100,14 +113,18 @@ function warnOnUndeclaredLabels(
   dbInfo: DbInfo,
 ): Diagnostic[] {
   const tree = parsingResult.result;
-  const visitor = new SyntaxValidationVisitor(
-    dbInfo.labels,
-    dbInfo.relationshipTypes,
-  );
+  let result: Diagnostic[] = [];
 
-  tree.accept(visitor);
+  if (dbInfo.labels && dbInfo.relationshipTypes) {
+    const visitor = new SyntaxValidationVisitor(
+      dbInfo.labels,
+      dbInfo.relationshipTypes,
+    );
 
-  const result = visitor.warnings;
+    tree.accept(visitor);
+
+    result = visitor.warnings;
+  }
   return result;
 }
 

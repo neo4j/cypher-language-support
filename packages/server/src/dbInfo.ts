@@ -8,10 +8,10 @@ import { auth, driver, Driver, Session, session } from 'neo4j-driver';
 export class DbInfoImpl implements DbInfo {
   public procedureSignatures: Record<string, SignatureInformation> = {};
   public functionSignatures: Record<string, SignatureInformation> = {};
-  public labels: string[] = [];
-  public relationshipTypes: string[] = [];
-  public aliasNames: string[] = [];
-  public databaseNames: string[] = [];
+  public labels: string[] | undefined = [];
+  public relationshipTypes: string[] | undefined = [];
+  public aliasNames: string[] | undefined = [];
+  public databaseNames: string[] | undefined = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -82,6 +82,8 @@ export class DbInfoImpl implements DbInfo {
         (record) => (record.toObject()['aliases'] as string[]) ?? [],
       );
     } catch (error) {
+      this.aliasNames = undefined;
+      this.databaseNames = undefined;
       console.warn('failed to fetch databases: ' + String(error));
     }
   }
@@ -96,6 +98,7 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('label') as string,
       );
     } catch (error) {
+      this.labels = undefined;
       console.warn('could not contact the database to fetch labels');
     } finally {
       await s.close();
@@ -112,6 +115,7 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('relationshipType') as string,
       );
     } catch (error) {
+      this.relationshipTypes = undefined;
       console.warn(
         'could not contact the database to fetch relationship types',
       );
