@@ -32,7 +32,6 @@ export const lightThemeConstants = {
   },
 };
 
-export const ayuLightTheme = () => createCypherTheme(lightThemeConstants);
 export const darkThemeConstants = {
   dark: true,
   editorSettings: {
@@ -62,18 +61,24 @@ export const darkThemeConstants = {
   },
 };
 
-export const ayuDarkTheme = () => {
-  return createCypherTheme(darkThemeConstants);
+type ThemeOptions = { inheritBgColor?: boolean };
+export const ayuLightTheme = ({ inheritBgColor }: ThemeOptions) => {
+  return createCypherTheme({ ...lightThemeConstants, inheritBgColor });
+};
+
+export const ayuDarkTheme = ({ inheritBgColor }: ThemeOptions) => {
+  return createCypherTheme({ ...darkThemeConstants, inheritBgColor });
 };
 
 export function getThemeExtension(
   theme: 'light' | 'dark' | 'none' | Extension,
+  inheritBgColor?: boolean,
 ): Extension | Extension[] {
   switch (theme) {
     case 'light':
-      return ayuLightTheme();
+      return ayuLightTheme({ inheritBgColor });
     case 'dark':
-      return ayuDarkTheme();
+      return ayuDarkTheme({ inheritBgColor });
     case 'none':
       return [];
     default:

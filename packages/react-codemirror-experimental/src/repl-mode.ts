@@ -97,6 +97,7 @@ function navigateHistory(view: EditorView, direction: HistoryNavigation) {
   view.dispatch(
     view.state.update({
       effects: moveInHistory.of(direction),
+      selection: { anchor: view.state.doc.length },
     }),
   );
 

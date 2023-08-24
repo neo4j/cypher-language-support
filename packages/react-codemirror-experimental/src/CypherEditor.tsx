@@ -18,6 +18,7 @@ type CypherEditorOwnProps = {
   onNewHistoryEntry?: (historyEntry: string) => void;
   lineWrap?: boolean;
   schema?: DbInfo;
+  overrideThemeBackgroundColor?: boolean;
 };
 
 export type CypherEditorProps = CypherEditorOwnProps &
@@ -34,6 +35,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     onNewHistoryEntry,
     extraKeybindings = [],
     lineWrap = false,
+    overrideThemeBackgroundColor = false,
     schema,
     ...rest
   } = props;
@@ -49,7 +51,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
   return (
     <CodeEditor
       ref={ref}
-      theme={getThemeExtension(theme)}
+      theme={getThemeExtension(theme, overrideThemeBackgroundColor)}
       extensions={[
         cypher(schema),
         keymap.of(extraKeybindings),
