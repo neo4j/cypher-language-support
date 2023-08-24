@@ -7,4 +7,5 @@ export interface DbInfo {
   relationshipTypes: string[];
   databaseNames: string[];
   aliasNames: string[];
+  parameterNames: string[];
 }
