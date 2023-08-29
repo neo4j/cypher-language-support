@@ -10,5 +10,6 @@ export class MockDbInfo implements DbInfo {
     public databaseNames: string[] = [],
     public aliasNames: string[] = [],
     public parameterNames: string[] = [],
+    public propertyKeys: string[] = [],
   ) {}
 }
