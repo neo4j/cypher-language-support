@@ -1,7 +1,26 @@
 import { Extension } from '@codemirror/state';
+import { tokens } from '@neo4j-ndl/base';
 import { createCypherTheme } from './lang-cypher/create-cypher-theme';
 
 import { light, mirage } from 'ayu';
+
+/* ndl exports most tokens as hex colors but some tokens are exported as rgb colors, in the form of "10, 20, 30"
+   This should be fixed in version 2 of ndl.
+   Meanwhile we can use this function */
+const convertToHex = (color: string) => {
+  if (color.startsWith('#')) {
+    return color;
+  }
+
+  const rgb = color.match(/\d+/g);
+  if (!rgb) {
+    return color;
+  }
+  const [r, g, b] = rgb;
+  return `#${Number(r).toString(16)}${Number(g).toString(16)}${Number(
+    b,
+  ).toString(16)}`;
+};
 
 export const lightThemeConstants = {
   dark: false,
@@ -12,6 +31,17 @@ export const lightThemeConstants = {
     selection: light.editor.selection.active.hex(),
     textMatchingSelection: light.editor.findMatch.active.hex(),
     cursor: light.common.accent.hex(),
+    searchPanel: {
+      background: tokens.palette.light.neutral.bg.default,
+      text: tokens.palette.light.neutral.text.default,
+      buttonBackground: tokens.palette.light.neutral.bg.weak,
+      buttonHoverBackground: tokens.palette.light.neutral.bg.strong,
+      buttonText: tokens.palette.light.neutral.text.default,
+      checkboxBackground: tokens.palette.light.neutral.bg.weak,
+      checkboxBorder: tokens.palette.light.neutral.bg.strongest,
+      checkboxCheckedBackground: tokens.palette.light.primary.bg.strong,
+      checkboxCheckMark: tokens.palette.light.neutral.text.inverse,
+    },
   },
   highlightStyles: {
     comment: light.syntax.comment.hex(),
@@ -41,6 +71,21 @@ export const darkThemeConstants = {
     selection: mirage.editor.selection.active.hex(),
     textMatchingSelection: mirage.editor.findMatch.active.hex(),
     cursor: mirage.common.accent.hex(),
+    searchPanel: {
+      background: convertToHex(tokens.palette.dark.neutral.bg.default),
+      text: convertToHex(tokens.palette.dark.neutral.text.default),
+      buttonBackground: convertToHex(tokens.palette.dark.neutral.bg.weak),
+      buttonHoverBackground: convertToHex(
+        tokens.palette.dark.neutral.bg.strong,
+      ),
+      buttonText: convertToHex(tokens.palette.dark.neutral.text.default),
+      checkboxBackground: convertToHex(tokens.palette.dark.neutral.bg.weak),
+      checkboxBorder: convertToHex(tokens.palette.dark.neutral.bg.strongest),
+      checkboxCheckedBackground: convertToHex(
+        tokens.palette.dark.primary.bg.strong,
+      ),
+      checkboxCheckMark: convertToHex(tokens.palette.dark.neutral.text.inverse),
+    },
   },
   highlightStyles: {
     comment: mirage.syntax.comment.hex(),
