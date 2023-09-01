@@ -1,5 +1,5 @@
 import { Extension } from '@codemirror/state';
-import { tokens } from '@neo4j-ndl/base';
+import ndlBase from '@neo4j-ndl/base';
 import { createCypherTheme } from './lang-cypher/create-cypher-theme';
 
 import { light, mirage } from 'ayu';
@@ -21,7 +21,7 @@ const convertToHex = (color: string) => {
     b,
   ).toString(16)}`;
 };
-
+const { tokens } = ndlBase;
 export const lightThemeConstants = {
   dark: false,
   editorSettings: {
