@@ -31,7 +31,7 @@ RETURN n;`,
   expect(await editorPage.getEditor().textContent()).toContain('WHERE true');
 });
 
-test('get completions when typing and can accept compltion with tab', async ({
+test('get completions when typing and can accept completions with tab', async ({
   page,
 }) => {
   const editorPage = new CypherEditorPage(page);
@@ -66,6 +66,7 @@ test('can complete labels', async ({ page }) => {
       aliasNames: [],
       databaseNames: [],
       parameterNames: [],
+      propertyKeys: [],
     },
   });
   await editorPage.getEditor().type('MATCH (n :P');
@@ -91,6 +92,7 @@ test('can complete rel types', async ({ page }) => {
       aliasNames: [],
       databaseNames: [],
       parameterNames: [],
+      propertyKeys: [],
     },
   });
   await editorPage.getEditor().type('MATCH (n)-[:');
@@ -118,6 +120,7 @@ test('can complete functions', async ({ page }) => {
       aliasNames: [],
       databaseNames: [],
       parameterNames: [],
+      propertyKeys: [],
     },
   });
 
@@ -149,6 +152,7 @@ test('can complete procedures', async ({ page }) => {
       aliasNames: [],
       databaseNames: [],
       parameterNames: [],
+      propertyKeys: [],
     },
   });
 

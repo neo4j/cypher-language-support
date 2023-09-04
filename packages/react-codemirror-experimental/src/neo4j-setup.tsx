@@ -9,7 +9,8 @@ import {
   defaultKeymap,
   history,
   historyKeymap,
-  indentWithTab,
+  indentLess,
+  indentMore,
 } from '@codemirror/commands';
 import {
   bracketMatching,
@@ -19,7 +20,7 @@ import {
   syntaxHighlighting,
 } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { EditorState, Extension } from '@codemirror/state';
+import { EditorState, Extension, StateCommand } from '@codemirror/state';
 import {
   crosshairCursor,
   drawSelection,
@@ -31,6 +32,26 @@ import {
 } from '@codemirror/view';
 
 import { lintKeymap } from '@codemirror/lint';
+
+const insertTab: StateCommand = (cmd) => {
+  // if there is a selection we should indent the selected text, but if not insert
+  // two spaces as per the cypher style guide
+  if (cmd.state.selection.main.from === cmd.state.selection.main.to) {
+    cmd.dispatch(
+      cmd.state.update({
+        changes: {
+          from: cmd.state.selection.main.to,
+          to: cmd.state.selection.main.to,
+          insert: '  ',
+        },
+        selection: { anchor: cmd.state.selection.main.to + 2 },
+      }),
+    );
+  } else {
+    indentMore(cmd);
+  }
+  return true;
+};
 
 export const basicNeo4jSetup = (prompt?: string): Extension[] => {
   const keymaps = [
@@ -46,7 +67,16 @@ export const basicNeo4jSetup = (prompt?: string): Extension[] => {
       preventDefault: true,
       run: acceptCompletion,
     },
-    indentWithTab,
+    {
+      key: 'Tab',
+      preventDefault: true,
+      run: insertTab,
+    },
+    {
+      key: 'Shift-Tab',
+      preventDefault: true,
+      run: indentLess,
+    },
   ].flat();
 
   const extensions: Extension[] = [];

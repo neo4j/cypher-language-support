@@ -133,7 +133,8 @@ export const replMode = ({
     })),
     keymap.of([
       {
-        key: 'Enter',
+        key: 'Ctrl-Enter',
+        mac: 'Mod-Enter',
         preventDefault: true,
         run: (view) => {
           const doc = view.state.doc.toString();
