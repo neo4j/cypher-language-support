@@ -35,14 +35,14 @@ RETURN n;`;
   await editorPage.createEditor({ value: initialValue });
 
   // Execute initial query
-  await editorPage.getEditor().press('Ctrl-Enter');
-  await editorPage.getEditor().press('Meta-Enter');
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
   await expect(page.getByText('query-executed')).toBeVisible();
 
   // Ensure query execution doesn't fire if the query is only whitespace
   await editorPage.getEditor().type('     ');
-  await editorPage.getEditor().press('Ctrl-Enter');
-  await editorPage.getEditor().press('Meta-Enter');
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
   await expect(page.getByText('query-executed')).toHaveCount(1);
 
   // Ensure shift enter doesn't execute query
@@ -53,8 +53,8 @@ RETURN n;`;
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().type('entry');
   await expect(page.getByText('query-executed')).toHaveCount(1);
-  await editorPage.getEditor().press('Ctrl-Enter');
-  await editorPage.getEditor().press('Meta-Enter');
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
 
   // type a new query and make sure it's not lost when navigating history
   await editorPage.getEditor().type('draft');
