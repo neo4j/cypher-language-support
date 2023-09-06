@@ -3,7 +3,7 @@ import {
   CompletionItem,
   CompletionItemKind,
 } from 'vscode-languageserver-types';
-import { DbInfo } from '../dbInfo';
+import { DbInfo, ParameterType, parameterTypeIsStorable } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
@@ -30,17 +30,48 @@ const functionCompletions = (dbInfo: DbInfo) =>
     label: fnName,
     kind: CompletionItemKind.Function,
   }));
-const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
-  dbInfo.parameterNames.map((paramName) => ({
-    label: `$${paramName}`,
-    kind: CompletionItemKind.Variable,
-  }));
+const parameterCompletions = (
+  dbInfo: DbInfo,
+  expectedType: ExpectedParameterType,
+): CompletionItem[] =>
+  Object.entries(dbInfo.parameterTypes)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .filter(([_, paramType]) =>
+      isExpectedParameterType(expectedType, paramType),
+    )
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(([paramName, _]) => ({
+      label: `$${paramName}`,
+      kind: CompletionItemKind.Variable,
+    }));
 
 const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   dbInfo.propertyKeys.map((propertyKey) => ({
     label: propertyKey,
     kind: CompletionItemKind.Property,
   }));
+
+enum ExpectedParameterType {
+  String,
+  Map,
+  Storable,
+  Any,
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const inferExpectedParameterTypeFromContext = (context: CandidateRule) =>
+  ExpectedParameterType.Any;
+
+const isExpectedParameterType = (
+  expected: ExpectedParameterType,
+  actual: ParameterType,
+) =>
+  expected === ExpectedParameterType.Any ||
+  (expected === ExpectedParameterType.Storable &&
+    parameterTypeIsStorable(actual)) ||
+  (expected === ExpectedParameterType.String &&
+    actual === ParameterType.String) ||
+  (expected === ExpectedParameterType.Map && actual === ParameterType.Map);
 
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
@@ -110,7 +141,10 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
-        return parameterCompletions(dbInfo);
+        return parameterCompletions(
+          dbInfo,
+          inferExpectedParameterTypeFromContext(candidateRule),
+        );
       }
 
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
@@ -244,7 +278,10 @@ function completeAliasName({
   }
 
   // parameters are valid values in all cases of symbolicAliasName
-  const baseSuggestions = parameterCompletions(dbInfo);
+  const baseSuggestions = parameterCompletions(
+    dbInfo,
+    ExpectedParameterType.String,
+  );
   const rulesCreatingNewAliasOrDb = [
     CypherParser.RULE_createAlias,
     CypherParser.RULE_createDatabase,
