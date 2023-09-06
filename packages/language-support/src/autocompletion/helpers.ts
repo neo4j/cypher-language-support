@@ -1,4 +1,4 @@
-import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
+import { CandidateRule, CodeCompletionCore, RuleList } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -45,6 +45,11 @@ const parameterCompletions = (
       kind: CompletionItemKind.Variable,
     }));
 
+const ancestorsAre = (rules: RuleList, context: CandidateRule): boolean =>
+  rules.every(
+    (value, index) => context.ruleList.at(-(rules.length - index)) === value,
+  );
+
 const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   dbInfo.propertyKeys.map((propertyKey) => ({
     label: propertyKey,
@@ -58,9 +63,22 @@ enum ExpectedParameterType {
   Any,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const inferExpectedParameterTypeFromContext = (context: CandidateRule) =>
-  ExpectedParameterType.Any;
+const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
+  if (
+    ancestorsAre([CypherParser.RULE_stringOrParameter], context) ||
+    ancestorsAre([CypherParser.RULE_symbolicNameOrStringParameter], context) ||
+    ancestorsAre([CypherParser.RULE_passwordExpression], context)
+  ) {
+    return ExpectedParameterType.String;
+  } else if (
+    ancestorsAre([CypherParser.RULE_properties], context) ||
+    ancestorsAre([CypherParser.RULE_mapOrParameter], context)
+  ) {
+    return ExpectedParameterType.Map;
+  } else {
+    return ExpectedParameterType.Any;
+  }
+};
 
 const isExpectedParameterType = (
   expected: ExpectedParameterType,
