@@ -3,7 +3,7 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 
-import { DbInfo } from 'language-support';
+import { DbInfo, ParameterType } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
 export class DbInfoImpl implements DbInfo {
   public procedureSignatures: Record<string, SignatureInformation> = {};
@@ -12,7 +12,7 @@ export class DbInfoImpl implements DbInfo {
   public relationshipTypes: string[] = [];
   public aliasNames: string[] = [];
   public databaseNames: string[] = [];
-  public parameterNames: string[] = [];
+  public parameterTypes: Record<string, ParameterType> = {};
   public propertyKeys: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;

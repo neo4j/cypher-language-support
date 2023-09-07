@@ -1,5 +1,5 @@
 import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
-import { DbInfo } from 'language-support';
+import { DbInfo, ParameterType } from 'language-support';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
@@ -43,7 +43,11 @@ const dummyDbInfo: DbInfo = {
   relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
-  parameterNames: ['param1', 'favColor', 'myParam'],
+  parameterTypes: {
+    'param1': ParameterType.Map,
+    'favColor': ParameterType.String,
+    'myParam': ParameterType.Integer,
+  },
   propertyKeys: ['name', 'age', 'title', 'released', 'tagline'],
 };
 
