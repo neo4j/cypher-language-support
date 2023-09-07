@@ -46,6 +46,7 @@ const parameterCompletions = (
     }));
 
 const ancestorsAre = (rules: RuleList, context: CandidateRule): boolean =>
+  context.ruleList.length >= rules.length &&
   rules.every(
     (value, index) => context.ruleList.at(-(rules.length - index)) === value,
   );
