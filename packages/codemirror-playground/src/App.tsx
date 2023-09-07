@@ -164,7 +164,7 @@ export function App() {
               {schemaError && <div className="text-red-500">{schemaError}</div>}
               <textarea
                 value={schemaText}
-                className="min-h-[200px]"
+                className="min-h-[200px] dark:text-black"
                 onChange={(v) => {
                   const value = v.target.value;
                   setSchemaText(value);
