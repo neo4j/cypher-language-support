@@ -42,6 +42,7 @@ export const createCypherTheme = ({
     '&': {
       backgroundColor: inheritBgColor ? 'inherit' : settings.background,
       color: settings.foreground,
+      fontVariantLigatures: 'none',
     },
     '&.cm-focused': {
       outline: 'none',
@@ -72,6 +73,7 @@ export const createCypherTheme = ({
     },
     '& .cm-panels': {
       backgroundColor: settings.searchPanel.background,
+      fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
     },
     '& .cm-search.cm-panel': {
       backgroundColor: settings.searchPanel.background,

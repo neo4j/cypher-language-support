@@ -1,6 +1,9 @@
 import { Extension } from '@codemirror/state';
 import { light, mirage } from 'ayu';
-import { createCypherTheme } from './lang-cypher/create-cypher-theme';
+import {
+  createCypherTheme,
+  ThemeOptions,
+} from './lang-cypher/create-cypher-theme';
 import { tokens } from './ndl-tokens-copy';
 
 /* ndl exports most tokens as hex colors but some tokens are exported as rgb colors, in the form of "10, 20, 30"
@@ -21,7 +24,7 @@ const convertToHex = (color: string) => {
   ).toString(16)}`;
 };
 
-export const lightThemeConstants = {
+export const lightThemeConstants: ThemeOptions = {
   dark: false,
   editorSettings: {
     background: light.editor.bg.hex(),
@@ -29,13 +32,12 @@ export const lightThemeConstants = {
     gutterForeground: light.editor.gutter.normal.hex(),
     selection: light.editor.selection.active.hex(),
     textMatchingSelection: light.editor.findMatch.active.hex(),
-    cursor: light.common.accent.hex(),
+    cursor: '#000000',
     searchPanel: {
       background: tokens.palette.light.neutral.bg.default,
       text: tokens.palette.light.neutral.text.default,
       buttonBackground: tokens.palette.light.neutral.bg.weak,
       buttonHoverBackground: tokens.palette.light.neutral.bg.strong,
-      buttonText: tokens.palette.light.neutral.text.default,
       checkboxBackground: tokens.palette.light.neutral.bg.weak,
       checkboxBorder: tokens.palette.light.neutral.bg.strongest,
       checkboxCheckedBackground: tokens.palette.light.primary.bg.strong,
@@ -61,7 +63,7 @@ export const lightThemeConstants = {
   },
 };
 
-export const darkThemeConstants = {
+export const darkThemeConstants: ThemeOptions = {
   dark: true,
   editorSettings: {
     background: mirage.editor.bg.hex(),
@@ -69,7 +71,7 @@ export const darkThemeConstants = {
     gutterForeground: mirage.editor.gutter.normal.hex(),
     selection: mirage.editor.selection.active.hex(),
     textMatchingSelection: mirage.editor.findMatch.active.hex(),
-    cursor: mirage.common.accent.hex(),
+    cursor: '#ffffff',
     searchPanel: {
       background: convertToHex(tokens.palette.dark.neutral.bg.default),
       text: convertToHex(tokens.palette.dark.neutral.text.default),
@@ -77,7 +79,6 @@ export const darkThemeConstants = {
       buttonHoverBackground: convertToHex(
         tokens.palette.dark.neutral.bg.strong,
       ),
-      buttonText: convertToHex(tokens.palette.dark.neutral.text.default),
       checkboxBackground: convertToHex(tokens.palette.dark.neutral.bg.weak),
       checkboxBorder: convertToHex(tokens.palette.dark.neutral.bg.strongest),
       checkboxCheckedBackground: convertToHex(
@@ -105,12 +106,12 @@ export const darkThemeConstants = {
   },
 };
 
-type ThemeOptions = { inheritBgColor?: boolean };
-export const ayuLightTheme = ({ inheritBgColor }: ThemeOptions) => {
+type ExtraThemeOptions = { inheritBgColor?: boolean };
+export const ayuLightTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
   return createCypherTheme({ ...lightThemeConstants, inheritBgColor });
 };
 
-export const ayuDarkTheme = ({ inheritBgColor }: ThemeOptions) => {
+export const ayuDarkTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
   return createCypherTheme({ ...darkThemeConstants, inheritBgColor });
 };
 
