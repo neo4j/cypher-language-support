@@ -106,35 +106,41 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     offendingSymbol: T | undefined,
     line: number,
     charPositionInLine: number,
+    msg: string,
   ): void {
+    let errorMessage = msg;
+    const lineIndex = line - 1;
+    const start = charPositionInLine;
+    let end = charPositionInLine;
+
     if (isDefined(offendingSymbol)) {
-      const lineIndex = line - 1;
-      const start = charPositionInLine;
-      const end = start + offendingSymbol.text.length;
+      end = start + offendingSymbol.text.length;
 
       const parser = recognizer as CypherParser;
       const tokenIntervals = parser.getExpectedTokens();
       const parserSuggestedTokens = this.toTokenList(tokenIntervals);
 
-      const errorMessage = getHelpfulErrorMessage(
+      errorMessage = getHelpfulErrorMessage(
         offendingSymbol,
         parserSuggestedTokens,
       );
 
-      // If we could not compute a helpful error message, do not surface it to the user
-      if (errorMessage !== undefined) {
-        const diagnostic: Diagnostic = {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(lineIndex, start),
-            end: Position.create(lineIndex, end),
-          },
-          message: errorMessage,
-        };
-
-        this.errors.push(diagnostic);
+      // If we couldn't find a more helpful error message, keep the original one
+      if (!isDefined(errorMessage)) {
+        errorMessage = msg;
       }
     }
+
+    const diagnostic: Diagnostic = {
+      severity: DiagnosticSeverity.Error,
+      range: {
+        start: Position.create(lineIndex, charPositionInLine),
+        end: Position.create(lineIndex, end),
+      },
+      message: errorMessage,
+    };
+
+    this.errors.push(diagnostic);
   }
 
   public reportAttemptingFullContext(
