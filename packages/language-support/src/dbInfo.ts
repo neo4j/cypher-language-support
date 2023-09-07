@@ -8,4 +8,5 @@ export interface DbInfo {
   databaseNames?: string[];
   aliasNames?: string[];
   parameterNames: string[];
+  propertyKeys: string[];
 }

@@ -7,7 +7,7 @@ import { DbInfo } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { ParsingResult } from '../parserWrapper';
+import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
 const labelCompletions = (dbInfo: DbInfo) => {
   return (
@@ -44,8 +44,14 @@ const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
     kind: CompletionItemKind.Variable,
   }));
 
+const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
+  dbInfo.propertyKeys.map((propertyKey) => ({
+    label: propertyKey,
+    kind: CompletionItemKind.Property,
+  }));
+
 export function completionCoreCompletion(
-  parsingResult: ParsingResult,
+  parsingResult: EnrichedParsingResult,
   dbInfo: DbInfo,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -80,6 +86,8 @@ export function completionCoreCompletion(
     CypherParser.RULE_labelExpression1,
     CypherParser.RULE_symbolicAliasName,
     CypherParser.RULE_parameter,
+    CypherParser.RULE_propertyKeyName,
+    CypherParser.RULE_variable,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -111,6 +119,49 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_parameter) {
         return parameterCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_propertyKeyName) {
+        // Map literal keys are also parsed as "propertyKey"s even though
+        // they are not considered propertyKeys by the database
+        // We check if the parent mapLiteral is used as a literal
+        // to avoid suggesting property keys when defining a map literal
+        const parentRule = candidateRule.ruleList.at(-1);
+        const grandParentRule = candidateRule.ruleList.at(-2);
+        if (
+          parentRule === CypherParser.RULE_mapLiteral &&
+          grandParentRule === CypherParser.RULE_literal
+        ) {
+          return [];
+        }
+
+        return propertyKeyCompletions(dbInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_variable) {
+        const parentRule = candidateRule.ruleList.at(-1);
+        // some rules only define, never use variables
+        const rulesDefiningVariables = [
+          CypherParser.RULE_returnItem,
+          CypherParser.RULE_unwindClause,
+          CypherParser.RULE_subqueryInTransactionsReportParameters,
+          CypherParser.RULE_procedureResultItem,
+          CypherParser.RULE_foreachClause,
+          CypherParser.RULE_loadCSVClause,
+          CypherParser.RULE_reduceExpression,
+          CypherParser.RULE_allExpression,
+          CypherParser.RULE_anyExpression,
+          CypherParser.RULE_noneExpression,
+          CypherParser.RULE_singleExpression,
+        ];
+        if (rulesDefiningVariables.includes(parentRule)) {
+          return [];
+        }
+
+        return parsingResult.collectedVariables.map((variableNames) => ({
+          label: variableNames,
+          kind: CompletionItemKind.Variable,
+        }));
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {

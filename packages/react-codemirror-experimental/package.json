@@ -6,7 +6,7 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.5",
+  "version": "0.0.7",
   "type": "module",
   "main": "out/index.cjs",
   "module": "out/index.js",
@@ -42,9 +42,11 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
+    "@neo4j-ndl/base": "^1.10.1",
     "@playwright/test": "^1.36.2",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
+    "lodash": "^4.17.21",
     "playwright": "^1.36.2",
     "rollup": "^2.60.2",
     "rollup-plugin-dts": "^4.0.1",

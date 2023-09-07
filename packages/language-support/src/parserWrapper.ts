@@ -16,8 +16,9 @@ import CypherParser, {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   StatementsContext,
+  VariableContext,
 } from './generated-parser/CypherParser';
-import { findStopNode, getTokens } from './helpers';
+import { findStopNode, getTokens, isDefined } from './helpers';
 import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
 
 export interface ParsingResult {
@@ -36,6 +37,7 @@ export interface EnrichedParsingResult extends ParsingResult {
   errors: Diagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
+  collectedVariables: string[];
 }
 
 export interface ParsingScaffolding {
@@ -102,10 +104,45 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         ctx: ctx,
       });
     } else if (ctx instanceof LabelOrRelTypeContext) {
-      this.labelOrRelTypes.push({
-        text: ctx.symbolicNameString().start.text,
-        ctx: ctx,
-      });
+      const symbolicName = ctx.symbolicNameString();
+      if (isDefined(symbolicName)) {
+        this.labelOrRelTypes.push({
+          text: symbolicName.start.text,
+          ctx: ctx,
+        });
+      }
+    }
+  }
+}
+
+// This class is collects all variables detected by the parser which means
+// it does include variable scope nor differentiate between variable use and definition
+// we use it when the semantic anaylsis result is not available
+class VariableCollector implements ParseTreeListener {
+  variables: string[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof VariableContext) {
+      const variable = ctx.symbolicNameString().getText();
+      // To avoid suggesting the variable that is currently being typed
+      // For example RETURN a| <- we don't want to suggest "a" as a variable
+      // We check if the variable is in the end of the statement
+      const nextTokenIsEOF =
+        ctx.parser.getTokenStream().get(ctx.stop.tokenIndex + 1)?.type ===
+        CypherParser.EOF;
+
+      if (variable && !nextTokenIsEOF) {
+        this.variables.push(variable);
+      }
     }
   }
 }
@@ -127,7 +164,8 @@ class ParserWrapper {
       parser.addErrorListener(errorListener);
 
       const labelsCollector = new LabelAndRelTypesCollector();
-      parser._parseListeners = [labelsCollector];
+      const variableFinder = new VariableCollector();
+      parser._parseListeners = [labelsCollector, variableFinder];
 
       const result = createParsingResult(parsingScaffolding).result;
 
@@ -139,6 +177,7 @@ class ParserWrapper {
         result: result,
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+        collectedVariables: variableFinder.variables,
       };
 
       this.parsingResult = parsingResult;

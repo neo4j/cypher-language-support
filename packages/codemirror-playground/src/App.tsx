@@ -44,6 +44,7 @@ const dummyDbInfo: DbInfo = {
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
   parameterNames: ['param1', 'favColor', 'myParam'],
+  propertyKeys: ['name', 'age', 'title', 'released', 'tagline'],
 };
 
 export function App() {
