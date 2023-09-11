@@ -468,8 +468,8 @@ describe('Procedures auto-completion', () => {
         'db.info': SignatureInformation.create(''),
       }),
       expected: [
-        { label: 'dbms.info', kind: CompletionItemKind.Function },
-        { label: 'db.info', kind: CompletionItemKind.Function },
+        { label: 'dbms.info', kind: CompletionItemKind.Method },
+        { label: 'db.info', kind: CompletionItemKind.Method },
       ],
     });
   });
