@@ -4,7 +4,7 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 import { autocomplete } from '../autocompletion/autocompletion';
-import { DbInfo, ParameterType } from '../dbInfo';
+import { DbInfo } from '../dbInfo';
 import { MockDbInfo } from './testHelpers';
 
 type InclusionTestArgs = {
@@ -902,9 +902,11 @@ describe('can complete database names', () => {
     ['db1', 'db2', 'movies'],
     ['myMovies', 'scoped.alias', 'a.b.c.d'],
     {
-      param1: ParameterType.String,
-      param2: ParameterType.Integer,
-      param3: ParameterType.Map,
+      param1: 'something',
+      param2: 1337,
+      param3: {
+        property: 'value',
+      },
     },
   );
 
@@ -1217,9 +1219,11 @@ describe('can complete database names', () => {
       undefined,
       undefined,
       {
-        stringParam: ParameterType.String,
-        intParam: ParameterType.Integer,
-        mapParam: ParameterType.Map,
+        stringParam: 'something',
+        intParam: 1337,
+        mapParam: {
+          property: 'value',
+        },
       },
     );
 

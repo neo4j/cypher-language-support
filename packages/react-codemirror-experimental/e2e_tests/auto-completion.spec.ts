@@ -65,7 +65,7 @@ test('can complete labels', async ({ page }) => {
       procedureSignatures: {},
       aliasNames: [],
       databaseNames: [],
-      parameterNames: [],
+      parameterValues: {},
       propertyKeys: [],
     },
   });
@@ -91,7 +91,7 @@ test('can complete rel types', async ({ page }) => {
       procedureSignatures: {},
       aliasNames: [],
       databaseNames: [],
-      parameterNames: [],
+      parameterValues: {},
       propertyKeys: [],
     },
   });
@@ -119,7 +119,7 @@ test('can complete functions', async ({ page }) => {
       procedureSignatures: {},
       aliasNames: [],
       databaseNames: [],
-      parameterNames: [],
+      parameterValues: {},
       propertyKeys: [],
     },
   });
@@ -151,7 +151,7 @@ test('can complete procedures', async ({ page }) => {
       },
       aliasNames: [],
       databaseNames: [],
-      parameterNames: [],
+      parameterValues: {},
       propertyKeys: [],
     },
   });

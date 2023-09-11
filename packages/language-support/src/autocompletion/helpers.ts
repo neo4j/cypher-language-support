@@ -3,7 +3,7 @@ import {
   CompletionItem,
   CompletionItemKind,
 } from 'vscode-languageserver-types';
-import { DbInfo, ParameterType, parameterTypeIsStorable } from '../dbInfo';
+import { DbInfo } from '../dbInfo';
 import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
@@ -34,7 +34,7 @@ const parameterCompletions = (
   dbInfo: DbInfo,
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
-  Object.entries(dbInfo.parameterTypes)
+  Object.entries(dbInfo.parameterValues)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
@@ -60,7 +60,6 @@ const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
 enum ExpectedParameterType {
   String,
   Map,
-  Storable,
   Any,
 }
 
@@ -82,15 +81,19 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
 };
 
 const isExpectedParameterType = (
-  expected: ExpectedParameterType,
-  actual: ParameterType,
-) =>
-  expected === ExpectedParameterType.Any ||
-  (expected === ExpectedParameterType.Storable &&
-    parameterTypeIsStorable(actual)) ||
-  (expected === ExpectedParameterType.String &&
-    actual === ParameterType.String) ||
-  (expected === ExpectedParameterType.Map && actual === ParameterType.Map);
+  expectedType: ExpectedParameterType,
+  value: unknown,
+) => {
+  const typeName = typeof value;
+  switch (expectedType) {
+    case ExpectedParameterType.String:
+      return typeName === 'string';
+    case ExpectedParameterType.Map:
+      return typeName === 'object';
+    case ExpectedParameterType.Any:
+      return true;
+  }
+};
 
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,

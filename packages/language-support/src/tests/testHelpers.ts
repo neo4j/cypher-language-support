@@ -1,5 +1,5 @@
 import { SignatureInformation } from 'vscode-languageserver-types';
-import { DbInfo, ParameterType } from '../dbInfo';
+import { DbInfo } from '../dbInfo';
 
 export class MockDbInfo implements DbInfo {
   constructor(
@@ -9,7 +9,7 @@ export class MockDbInfo implements DbInfo {
     public functionSignatures: Record<string, SignatureInformation> = {},
     public databaseNames: string[] = [],
     public aliasNames: string[] = [],
-    public parameterTypes: Record<string, ParameterType> = {},
+    public parameterValues: Record<string, unknown> = {},
     public propertyKeys: string[] = [],
   ) {}
 }
