@@ -1353,7 +1353,7 @@ describe('can complete database names', () => {
 });
 
 describe('property key completions', () => {
-  const dbSchema = { parameterNames: ['name', 'type', 'level'] };
+  const dbSchema: DbSchema = { propertyKeys: ['name', 'type', 'level'] };
 
   test('correctly completes property keys in WHERE', () => {
     const query = 'MATCH (n) WHERE n.';

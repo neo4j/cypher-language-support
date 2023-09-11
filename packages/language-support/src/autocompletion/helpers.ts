@@ -10,37 +10,37 @@ import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
 const labelCompletions = (dbSchema: DbSchema) =>
-  dbSchema.labels.map((labelName) => ({
+  dbSchema.labels?.map((labelName) => ({
     label: labelName,
     kind: CompletionItemKind.TypeParameter,
-  }));
+  })) ?? [];
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
-  dbSchema.relationshipTypes.map((relType) => ({
+  dbSchema.relationshipTypes?.map((relType) => ({
     label: relType,
     kind: CompletionItemKind.TypeParameter,
-  }));
+  })) ?? [];
 const proceduresCompletions = (dbSchema: DbSchema) =>
-  Object.keys(dbSchema.procedureSignatures).map((procedureName) => ({
+  Object.keys(dbSchema.procedureSignatures ?? {}).map((procedureName) => ({
     label: procedureName,
     kind: CompletionItemKind.Function,
   }));
 const functionCompletions = (dbSchema: DbSchema) =>
-  Object.keys(dbSchema.functionSignatures).map((fnName) => ({
+  Object.keys(dbSchema.functionSignatures ?? {}).map((fnName) => ({
     label: fnName,
     kind: CompletionItemKind.Function,
   }));
 const parameterCompletions = (dbSchema: DbSchema): CompletionItem[] =>
-  dbSchema.parameterNames.map((paramName) => ({
+  dbSchema.parameterNames?.map((paramName) => ({
     label: `$${paramName}`,
     kind: CompletionItemKind.Variable,
-  }));
+  })) ?? [];
 
 const propertyKeyCompletions = (dbSchema: DbSchema): CompletionItem[] =>
-  dbSchema.propertyKeys.map((propertyKey) => ({
+  dbSchema.propertyKeys?.map((propertyKey) => ({
     label: propertyKey,
     kind: CompletionItemKind.Property,
-  }));
+  })) ?? [];
 
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
