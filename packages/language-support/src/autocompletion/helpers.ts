@@ -146,7 +146,10 @@ export function completionCoreCompletion(
           CypherParser.RULE_noneExpression,
           CypherParser.RULE_singleExpression,
         ];
-        if (rulesDefiningVariables.includes(parentRule)) {
+        if (
+          typeof parentRule === 'number' &&
+          rulesDefiningVariables.includes(parentRule)
+        ) {
           return [];
         }
 
@@ -274,7 +277,7 @@ function completeAliasName({
   ) {
     return [
       ...baseSuggestions,
-      ...dbSchema.aliasNames.map((aliasName) => ({
+      ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
       })),
@@ -284,8 +287,8 @@ function completeAliasName({
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
     ...baseSuggestions,
-    ...dbSchema.databaseNames
-      .concat(dbSchema.aliasNames)
+    ...(dbSchema.databaseNames ?? [])
+      .concat(dbSchema.aliasNames ?? [])
       .map((databaseName) => ({
         label: databaseName,
         kind: CompletionItemKind.Value,

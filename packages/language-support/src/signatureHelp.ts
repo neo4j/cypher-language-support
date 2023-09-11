@@ -96,12 +96,12 @@ export function signatureHelp(
   let result: SignatureHelp = emptyResult;
 
   const parsedProc = tryParseProcedure(stopNode);
-  if (parsedProc) {
+  if (parsedProc && dbSchema.procedureSignatures) {
     result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
   } else {
     const parsedFunc = tryParseFunction(stopNode);
 
-    if (parsedFunc) {
+    if (parsedFunc && dbSchema.functionSignatures) {
       result = toSignatureHelp(dbSchema.functionSignatures, parsedFunc);
     }
   }

@@ -103,7 +103,7 @@ export function findLatestStatement(
 
     tokenIndex += 1;
     while (tokenIndex < lastTokenIndex) {
-      lastStatement += tokens.at(tokenIndex).text;
+      lastStatement += tokens.at(tokenIndex)?.text ?? '';
       tokenIndex++;
     }
   }
