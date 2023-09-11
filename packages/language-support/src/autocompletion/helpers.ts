@@ -1,4 +1,4 @@
-import { CandidateRule, CodeCompletionCore, RuleList } from 'antlr4-c3';
+import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -44,13 +44,6 @@ const parameterCompletions = (
       label: `$${paramName}`,
       kind: CompletionItemKind.Variable,
     }));
-
-const ancestorsAre = (rules: RuleList, context: CandidateRule): boolean =>
-  context.ruleList.length >= rules.length &&
-  rules.every(
-    (value, index) => context.ruleList.at(-(rules.length - index)) === value,
-  );
-
 const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   dbInfo.propertyKeys.map((propertyKey) => ({
     label: propertyKey,
@@ -64,15 +57,19 @@ enum ExpectedParameterType {
 }
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
+  const parentRule = context.ruleList.at(-1);
   if (
-    ancestorsAre([CypherParser.RULE_stringOrParameter], context) ||
-    ancestorsAre([CypherParser.RULE_symbolicNameOrStringParameter], context) ||
-    ancestorsAre([CypherParser.RULE_passwordExpression], context)
+    [
+      CypherParser.RULE_stringOrParameter,
+      CypherParser.RULE_symbolicNameOrStringParameter,
+      CypherParser.RULE_passwordExpression,
+    ].includes(parentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (
-    ancestorsAre([CypherParser.RULE_properties], context) ||
-    ancestorsAre([CypherParser.RULE_mapOrParameter], context)
+    [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(
+      parentRule,
+    )
   ) {
     return ExpectedParameterType.Map;
   } else {
