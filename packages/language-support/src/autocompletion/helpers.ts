@@ -3,48 +3,48 @@ import {
   CompletionItem,
   CompletionItemKind,
 } from 'vscode-languageserver-types';
-import { DbInfo } from '../dbInfo';
+import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherLexer';
 import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
-const labelCompletions = (dbInfo: DbInfo) =>
-  dbInfo.labels.map((labelName) => ({
+const labelCompletions = (dbSchema: DbSchema) =>
+  dbSchema.labels.map((labelName) => ({
     label: labelName,
     kind: CompletionItemKind.TypeParameter,
   }));
 
-const reltypeCompletions = (dbInfo: DbInfo) =>
-  dbInfo.relationshipTypes.map((relType) => ({
+const reltypeCompletions = (dbSchema: DbSchema) =>
+  dbSchema.relationshipTypes.map((relType) => ({
     label: relType,
     kind: CompletionItemKind.TypeParameter,
   }));
-const proceduresCompletions = (dbInfo: DbInfo) =>
-  Object.keys(dbInfo.procedureSignatures).map((procedureName) => ({
+const proceduresCompletions = (dbSchema: DbSchema) =>
+  Object.keys(dbSchema.procedureSignatures).map((procedureName) => ({
     label: procedureName,
     kind: CompletionItemKind.Function,
   }));
-const functionCompletions = (dbInfo: DbInfo) =>
-  Object.keys(dbInfo.functionSignatures).map((fnName) => ({
+const functionCompletions = (dbSchema: DbSchema) =>
+  Object.keys(dbSchema.functionSignatures).map((fnName) => ({
     label: fnName,
     kind: CompletionItemKind.Function,
   }));
-const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
-  dbInfo.parameterNames.map((paramName) => ({
+const parameterCompletions = (dbSchema: DbSchema): CompletionItem[] =>
+  dbSchema.parameterNames.map((paramName) => ({
     label: `$${paramName}`,
     kind: CompletionItemKind.Variable,
   }));
 
-const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
-  dbInfo.propertyKeys.map((propertyKey) => ({
+const propertyKeyCompletions = (dbSchema: DbSchema): CompletionItem[] =>
+  dbSchema.propertyKeys.map((propertyKey) => ({
     label: propertyKey,
     kind: CompletionItemKind.Property,
   }));
 
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -102,15 +102,15 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        return functionCompletions(dbInfo);
+        return functionCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return proceduresCompletions(dbInfo);
+        return proceduresCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
-        return parameterCompletions(dbInfo);
+        return parameterCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
@@ -127,7 +127,7 @@ export function completionCoreCompletion(
           return [];
         }
 
-        return propertyKeyCompletions(dbInfo);
+        return propertyKeyCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
@@ -157,7 +157,7 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
-        return completeAliasName({ candidateRule, dbInfo, parsingResult });
+        return completeAliasName({ candidateRule, dbSchema, parsingResult });
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
@@ -172,15 +172,18 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return labelCompletions(dbInfo);
+          return labelCompletions(dbSchema);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
-          return reltypeCompletions(dbInfo);
+          return reltypeCompletions(dbSchema);
         }
 
         if (topExprParent === CypherParser.RULE_labelExpressionPredicate) {
-          return [...labelCompletions(dbInfo), ...reltypeCompletions(dbInfo)];
+          return [
+            ...labelCompletions(dbSchema),
+            ...reltypeCompletions(dbSchema),
+          ];
         }
       }
       return [];
@@ -220,12 +223,12 @@ export function completionCoreCompletion(
 
 type CompletionHelperArgs = {
   parsingResult: ParsingResult;
-  dbInfo: DbInfo;
+  dbSchema: DbSchema;
   candidateRule: CandidateRule;
 };
 function completeAliasName({
   candidateRule,
-  dbInfo,
+  dbSchema,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
@@ -244,7 +247,7 @@ function completeAliasName({
   }
 
   // parameters are valid values in all cases of symbolicAliasName
-  const baseSuggestions = parameterCompletions(dbInfo);
+  const baseSuggestions = parameterCompletions(dbSchema);
   const rulesCreatingNewAliasOrDb = [
     CypherParser.RULE_createAlias,
     CypherParser.RULE_createDatabase,
@@ -271,7 +274,7 @@ function completeAliasName({
   ) {
     return [
       ...baseSuggestions,
-      ...dbInfo.aliasNames.map((aliasName) => ({
+      ...dbSchema.aliasNames.map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
       })),
@@ -281,9 +284,11 @@ function completeAliasName({
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
     ...baseSuggestions,
-    ...dbInfo.databaseNames.concat(dbInfo.aliasNames).map((databaseName) => ({
-      label: databaseName,
-      kind: CompletionItemKind.Value,
-    })),
+    ...dbSchema.databaseNames
+      .concat(dbSchema.aliasNames)
+      .map((databaseName) => ({
+        label: databaseName,
+        kind: CompletionItemKind.Value,
+      })),
   ];
 }

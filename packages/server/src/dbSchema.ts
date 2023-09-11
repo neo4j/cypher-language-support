@@ -3,9 +3,9 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 
-import { DbInfo } from 'language-support';
+import { DbSchema } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
-export class DbInfoImpl implements DbInfo {
+export class DbSchemaImpl implements DbSchema {
   public procedureSignatures: Record<string, SignatureInformation> = {};
   public functionSignatures: Record<string, SignatureInformation> = {};
   public labels: string[] = [];
@@ -44,7 +44,7 @@ export class DbInfoImpl implements DbInfo {
 
     if (!this.neo4j) return;
     // We do not need to update procedures and functions because they are cached
-    const updateAllDbInfo = async () => {
+    const updateAllDbSchema = async () => {
       await Promise.allSettled([
         this.updateLabels(),
         this.updateRelationshipTypes(),
@@ -55,9 +55,9 @@ export class DbInfoImpl implements DbInfo {
       ]);
     };
 
-    await updateAllDbInfo();
+    await updateAllDbSchema();
 
-    this.dbPollingInterval = setInterval(() => void updateAllDbInfo(), 20000);
+    this.dbPollingInterval = setInterval(() => void updateAllDbSchema(), 20000);
     return;
   }
 

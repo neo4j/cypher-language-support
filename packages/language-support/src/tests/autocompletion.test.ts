@@ -4,20 +4,19 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 import { autocomplete } from '../autocompletion/autocompletion';
-import { DbInfo } from '../dbInfo';
-import { MockDbInfo } from './testHelpers';
+import { DbSchema } from '../dbSchema';
 
 type InclusionTestArgs = {
   query: string;
-  dbInfo?: DbInfo;
+  dbSchema?: DbSchema;
   expected: CompletionItem[];
 };
 export function testCompletionContains({
   query,
-  dbInfo = new MockDbInfo(),
+  dbSchema = {},
   expected,
 }: InclusionTestArgs) {
-  const actualCompletionList = autocomplete(query, dbInfo);
+  const actualCompletionList = autocomplete(query, dbSchema);
 
   expect(actualCompletionList).not.toContain(null);
   expect(actualCompletionList).not.toContain(undefined);
@@ -34,15 +33,15 @@ export function testCompletionContains({
 
 type ExclusionTestArgs = {
   query: string;
-  dbInfo?: DbInfo;
+  dbSchema?: DbSchema;
   excluded: Partial<CompletionItem>[];
 };
 export function testCompletionDoesNotContain({
   query,
-  dbInfo = new MockDbInfo(),
+  dbSchema = {},
   excluded,
 }: ExclusionTestArgs) {
-  const actualCompletionList = autocomplete(query, dbInfo);
+  const actualCompletionList = autocomplete(query, dbSchema);
 
   expect(actualCompletionList).not.toContain(null);
   expect(actualCompletionList).not.toContain(undefined);
@@ -98,7 +97,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
     });
   });
@@ -108,7 +107,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       excluded: [
         { label: 'Person', kind: CompletionItemKind.TypeParameter },
         { label: 'Cat', kind: CompletionItemKind.TypeParameter },
@@ -122,18 +121,21 @@ describe('MATCH auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
     });
   });
 
   test('Correctly completes started barred label inside a node pattern', () => {
     const query = 'MATCH (n:A|B';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -142,7 +144,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -152,11 +154,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes unstarted barred label inside a node pattern', () => {
     const query = 'MATCH (n:A|';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -165,7 +170,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -175,11 +180,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes doubly barred label inside a node pattern', () => {
     const query = 'MATCH (n:A|B|:';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -188,7 +196,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -198,11 +206,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes started barred label inside a relationship pattern', () => {
     const query = 'MATCH (n)-[r:A|a';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -211,7 +222,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -221,11 +232,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes barred label inside a relationship pattern', () => {
     const query = 'MATCH (n)-[r:A|';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -234,7 +248,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -244,11 +258,14 @@ describe('MATCH auto-completion', () => {
 
   test('Does not complete relationship type before : is entered', () => {
     const query = 'MATCH (n)-[r';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -260,11 +277,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes doubly barred label inside a relationship pattern', () => {
     const query = 'MATCH (n)-[r:A|B|:';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -273,7 +293,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -283,11 +303,14 @@ describe('MATCH auto-completion', () => {
 
   test('Correctly completes barred label in WHERE inside node', () => {
     const query = 'MATCH (n WHERE n:A|';
-    const dbInfo = new MockDbInfo(['B', 'C'], ['D', 'E']);
+    const dbSchema = {
+      labels: ['B', 'C'],
+      relationshipTypes: ['D', 'E'],
+    };
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -303,7 +326,10 @@ describe('MATCH auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['B', 'C'], ['D', 'E']),
+      dbSchema: {
+        labels: ['B', 'C'],
+        relationshipTypes: ['D', 'E'],
+      },
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -319,7 +345,10 @@ describe('MATCH auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['B', 'C'], ['D', 'E']),
+      dbSchema: {
+        labels: ['B', 'C'],
+        relationshipTypes: ['D', 'E'],
+      },
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -407,7 +436,7 @@ describe('CREATE auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['Cat', 'Person', 'Dog']),
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
     });
   });
@@ -428,7 +457,7 @@ describe('Type relationship auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo([], ['RelationshipType']),
+      dbSchema: { relationshipTypes: ['RelationshipType'] },
       expected: [
         { label: 'RelationshipType', kind: CompletionItemKind.TypeParameter },
       ],
@@ -460,13 +489,15 @@ describe('Procedures auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo([], [], {
-        'foo.bar': SignatureInformation.create(''),
-        'dbms.info': SignatureInformation.create(''),
-        somethingElse: SignatureInformation.create(''),
-        'xx.yy': SignatureInformation.create(''),
-        'db.info': SignatureInformation.create(''),
-      }),
+      dbSchema: {
+        procedureSignatures: {
+          'foo.bar': SignatureInformation.create(''),
+          'dbms.info': SignatureInformation.create(''),
+          somethingElse: SignatureInformation.create(''),
+          'xx.yy': SignatureInformation.create(''),
+          'db.info': SignatureInformation.create(''),
+        },
+      },
       expected: [
         { label: 'dbms.info', kind: CompletionItemKind.Function },
         { label: 'db.info', kind: CompletionItemKind.Function },
@@ -514,24 +545,21 @@ describe('expression completions', () => {
   });
 
   describe('function invocations', () => {
-    const dbInfo = new MockDbInfo(
-      [],
-      [],
-      {},
-      {
+    const dbSchema: DbSchema = {
+      functionSignatures: {
         'a.b': SignatureInformation.create(''),
         'xx.yy.proc': SignatureInformation.create(''),
         'xx.yy.procedure': SignatureInformation.create(''),
         'db.info': SignatureInformation.create(''),
       },
-    );
+    };
 
     test('Correctly completes unstarted function name in left hand side of WHERE', () => {
       const query = 'MATCH (n) WHERE ';
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
           { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -544,7 +572,7 @@ describe('expression completions', () => {
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
           { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -557,7 +585,7 @@ describe('expression completions', () => {
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
           { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -570,7 +598,7 @@ describe('expression completions', () => {
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
           { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -583,7 +611,7 @@ describe('expression completions', () => {
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
           { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
@@ -692,7 +720,7 @@ describe('Misc auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['Person', 'Dog']),
+      dbSchema: { labels: ['Person', 'Dog'] },
       expected: [
         { label: 'Person', kind: CompletionItemKind.TypeParameter },
         { label: 'Dog', kind: CompletionItemKind.TypeParameter },
@@ -706,7 +734,7 @@ describe('Misc auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['A', 'B']),
+      dbSchema: { labels: ['A', 'B'] },
       expected: [
         { label: 'A', kind: CompletionItemKind.TypeParameter },
         { label: 'B', kind: CompletionItemKind.TypeParameter },
@@ -720,7 +748,7 @@ describe('Misc auto-completion', () => {
 
     testCompletionContains({
       query,
-      dbInfo: new MockDbInfo(['A', 'B']),
+      dbSchema: { labels: ['A', 'B'] },
       expected: [
         { label: 'A', kind: CompletionItemKind.TypeParameter },
         { label: 'B', kind: CompletionItemKind.TypeParameter },
@@ -894,22 +922,18 @@ describe('Auto completion of back to back keywords', () => {
 });
 
 describe('can complete database names', () => {
-  const dbInfo = new MockDbInfo(
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    ['db1', 'db2', 'movies'],
-    ['myMovies', 'scoped.alias', 'a.b.c.d'],
-    ['param'],
-  );
+  const dbSchema: DbSchema = {
+    databaseNames: ['db1', 'db2', 'movies'],
+    aliasNames: ['myMovies', 'scoped.alias', 'a.b.c.d'],
+    parameterNames: ['param'],
+  };
 
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
     const query = 'SHOW DATABASE ';
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'WHERE', kind: CompletionItemKind.Keyword },
         { label: 'YIELD', kind: CompletionItemKind.Keyword },
@@ -929,7 +953,7 @@ describe('can complete database names', () => {
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'WHERE', kind: CompletionItemKind.Keyword },
         { label: 'YIELD', kind: CompletionItemKind.Keyword },
@@ -946,7 +970,7 @@ describe('can complete database names', () => {
     // validate invalid keyword bug isn't present
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [{ label: '', kind: CompletionItemKind.Keyword }],
     });
   });
@@ -956,7 +980,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -970,7 +994,7 @@ describe('can complete database names', () => {
     // can create new database name using parameter
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
     });
   });
@@ -980,7 +1004,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -994,7 +1018,7 @@ describe('can complete database names', () => {
     // can create new alias name using parameter
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
     });
   });
@@ -1003,7 +1027,7 @@ describe('can complete database names', () => {
     const query = 'DROP ALIAS ';
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
@@ -1014,7 +1038,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -1027,7 +1051,7 @@ describe('can complete database names', () => {
     const query = 'SHOW ALIAS ';
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: '$param', kind: CompletionItemKind.Variable },
@@ -1036,7 +1060,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -1049,7 +1073,7 @@ describe('can complete database names', () => {
     const query = 'ALTER ALIAS a';
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
@@ -1060,7 +1084,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -1073,7 +1097,7 @@ describe('can complete database names', () => {
     const query = 'ALTER ALIAS a.b.c.';
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
@@ -1084,7 +1108,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -1100,7 +1124,7 @@ describe('can complete database names', () => {
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'FOR DATABASE', kind: CompletionItemKind.Keyword },
         { label: 'IF EXISTS', kind: CompletionItemKind.Keyword },
@@ -1109,7 +1133,7 @@ describe('can complete database names', () => {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -1125,21 +1149,15 @@ describe('can complete database names', () => {
   });
 
   describe('can complete parameters outside of database names', () => {
-    const dbInfo = new MockDbInfo(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      ['param1', 'param2', 'param3'],
-    );
+    const dbSchema = {
+      parameterNames: ['param1', 'param2', 'param3'],
+    };
 
     test('correctly completes started parameter in return body', () => {
       const query = 'RETURN $';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1152,7 +1170,7 @@ describe('can complete database names', () => {
       const query = 'RETURN $';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1165,7 +1183,7 @@ describe('can complete database names', () => {
       const query = 'MATCH (n) WHERE ';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1178,7 +1196,7 @@ describe('can complete database names', () => {
       const query = 'RETURN 1 + ';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1191,7 +1209,7 @@ describe('can complete database names', () => {
       const query = 'ENABLE SERVER ';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1205,7 +1223,7 @@ describe('can complete database names', () => {
 
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1216,7 +1234,7 @@ describe('can complete database names', () => {
       // ensure variables are not suggested in place of parameters (parameters reuse the variable rule)
       testCompletionDoesNotContain({
         query,
-        dbInfo,
+        dbSchema,
         excluded: [{ label: 'v', kind: CompletionItemKind.Variable }],
       });
     });
@@ -1226,7 +1244,7 @@ describe('can complete database names', () => {
         'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1239,7 +1257,7 @@ describe('can complete database names', () => {
       const query = 'CREATE INDEX abc FOR (n:person) ON (n.name) OPTIONS ';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1252,7 +1270,7 @@ describe('can complete database names', () => {
       const query = 'CREATE COMPOSITE DATABASE name IF NOT EXISTS OPTIONS ';
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: '$param1', kind: CompletionItemKind.Variable },
           { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1276,7 +1294,7 @@ describe('can complete database names', () => {
       cases.forEach((query) => {
         testCompletionContains({
           query,
-          dbInfo,
+          dbSchema,
           expected: [
             { label: '$param1', kind: CompletionItemKind.Variable },
             { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1297,7 +1315,7 @@ describe('can complete database names', () => {
       cases.forEach((query) => {
         testCompletionContains({
           query,
-          dbInfo,
+          dbSchema,
           expected: [
             { label: '$param1', kind: CompletionItemKind.Variable },
             { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1322,7 +1340,7 @@ describe('can complete database names', () => {
       cases.forEach((query) => {
         testCompletionContains({
           query,
-          dbInfo,
+          dbSchema,
           expected: [
             { label: '$param1', kind: CompletionItemKind.Variable },
             { label: '$param2', kind: CompletionItemKind.Variable },
@@ -1335,22 +1353,13 @@ describe('can complete database names', () => {
 });
 
 describe('property key completions', () => {
-  const dbInfo = new MockDbInfo(
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    ['name', 'type', 'level'],
-  );
+  const dbSchema = { parameterNames: ['name', 'type', 'level'] };
 
   test('correctly completes property keys in WHERE', () => {
     const query = 'MATCH (n) WHERE n.';
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'type', kind: CompletionItemKind.Property },
@@ -1369,7 +1378,7 @@ describe('property key completions', () => {
     cases.forEach((query) =>
       testCompletionContains({
         query,
-        dbInfo,
+        dbSchema,
         expected: [
           { label: 'name', kind: CompletionItemKind.Property },
           { label: 'type', kind: CompletionItemKind.Property },
@@ -1387,7 +1396,7 @@ RETURN movie {
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'type', kind: CompletionItemKind.Property },
@@ -1405,7 +1414,7 @@ RETURN movie {
 
     testCompletionContains({
       query,
-      dbInfo,
+      dbSchema,
       expected: [
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'type', kind: CompletionItemKind.Property },
@@ -1419,7 +1428,7 @@ RETURN movie {
 
     testCompletionDoesNotContain({
       query,
-      dbInfo,
+      dbSchema,
       excluded: [
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'type', kind: CompletionItemKind.Property },

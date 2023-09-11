@@ -1,5 +1,5 @@
 import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
-import { DbInfo } from 'language-support';
+import { DbSchema } from 'language-support';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
@@ -30,7 +30,7 @@ RETURN count(*)`,
 } as const;
 
 type DemoName = keyof typeof demos;
-const dummyDbInfo: DbInfo = {
+const dummyDbSchema: DbSchema = {
   functionSignatures: {
     function123: { label: 'function123', documentation: 'no docs' },
     generatepassword: { label: 'generatepassword', documentation: 'no docs' },
@@ -56,9 +56,9 @@ export function App() {
   const [commandRanCount, setCommandRanCount] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
-  const [schema, setSchema] = useState<DbInfo>(dummyDbInfo);
+  const [schema, setSchema] = useState<DbSchema>(dummyDbSchema);
   const [schemaText, setSchemaText] = useState<string>(
-    JSON.stringify(dummyDbInfo, undefined, 2),
+    JSON.stringify(dummyDbSchema, undefined, 2),
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
@@ -169,7 +169,7 @@ export function App() {
                   const value = v.target.value;
                   setSchemaText(value);
                   try {
-                    const schema = JSON.parse(value) as DbInfo;
+                    const schema = JSON.parse(value) as DbSchema;
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {

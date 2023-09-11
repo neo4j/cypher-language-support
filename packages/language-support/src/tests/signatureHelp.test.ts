@@ -3,16 +3,15 @@ import {
   SignatureHelp,
   SignatureInformation,
 } from 'vscode-languageserver-types';
-import { DbInfo } from '../dbInfo';
+import { DbSchema } from '../dbSchema';
 import { emptyResult, signatureHelp } from '../signatureHelp';
-import { MockDbInfo } from './testHelpers';
 
 export function testSignatureHelp(
   fileText: string,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
   expected: SignatureHelp,
 ) {
-  const actualSignatureHelp = signatureHelp(fileText, dbInfo);
+  const actualSignatureHelp = signatureHelp(fileText, dbSchema);
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);
@@ -30,7 +29,11 @@ describe('Procedures signature help', () => {
       ParameterInformation.create('params', 'params = {} :: MAP?'),
     ],
   );
-  const dbWithProcedure = new MockDbInfo([], [], { 'apoc.do.when': signature });
+  const dbWithProcedure: DbSchema = {
+    procedureSignatures: {
+      'apoc.do.when': signature,
+    },
+  };
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -142,12 +145,11 @@ describe('Functions signature help', () => {
       ParameterInformation.create('elseQuery', 'condition :: STRING?'),
     ],
   );
-  const dbWithFunction = new MockDbInfo(
-    [],
-    [],
-    {},
-    { 'apoc.do.when': signature },
-  );
+  const dbWithFunction: DbSchema = {
+    functionSignatures: {
+      'apoc.do.when': signature,
+    },
+  };
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {

@@ -1,5 +1,5 @@
 import { CompletionSource } from '@codemirror/autocomplete';
-import { autocomplete, DbInfo } from 'language-support';
+import { autocomplete, DbSchema } from 'language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 
 // From codemirror docs, the base built in icons in autocomplete list are:
@@ -32,17 +32,8 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c] ?? 'text';
 };
 
-const emptySchema: DbInfo = {
-  functionSignatures: {},
-  labels: [],
-  procedureSignatures: {},
-  relationshipTypes: [],
-  aliasNames: [],
-  databaseNames: [],
-  parameterNames: [],
-  propertyKeys: [],
-};
-export const cypherAutocomplete: (schema?: DbInfo) => CompletionSource =
+const emptySchema: DbSchema = {};
+export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
   (schema) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
 

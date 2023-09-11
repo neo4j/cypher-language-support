@@ -4,7 +4,7 @@ import CodeEditor, {
   ReactCodeMirrorRef,
 } from '@uiw/react-codemirror';
 import React from 'react';
-import { DbInfo } from '../../language-support/src/dbInfo';
+import { DbSchema } from '../../language-support/src/dbSchema';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';
@@ -17,7 +17,7 @@ type CypherEditorOwnProps = {
   initialHistory?: string[];
   onNewHistoryEntry?: (historyEntry: string) => void;
   lineWrap?: boolean;
-  schema?: DbInfo;
+  schema?: DbSchema;
   overrideThemeBackgroundColor?: boolean;
 };
 
