@@ -30,17 +30,66 @@ const functionCompletions = (dbInfo: DbInfo) =>
     label: fnName,
     kind: CompletionItemKind.Function,
   }));
-const parameterCompletions = (dbInfo: DbInfo): CompletionItem[] =>
-  dbInfo.parameterNames.map((paramName) => ({
-    label: `$${paramName}`,
-    kind: CompletionItemKind.Variable,
-  }));
-
+const parameterCompletions = (
+  dbInfo: DbInfo,
+  expectedType: ExpectedParameterType,
+): CompletionItem[] =>
+  Object.entries(dbInfo.parameters)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .filter(([_, paramType]) =>
+      isExpectedParameterType(expectedType, paramType),
+    )
+    .map(([paramName]) => ({
+      label: `$${paramName}`,
+      kind: CompletionItemKind.Variable,
+    }));
 const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   dbInfo.propertyKeys.map((propertyKey) => ({
     label: propertyKey,
     kind: CompletionItemKind.Property,
   }));
+
+enum ExpectedParameterType {
+  String = 'STRING',
+  Map = 'MAP',
+  Any = 'ANY',
+}
+
+const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
+  const parentRule = context.ruleList.at(-1);
+  if (
+    [
+      CypherParser.RULE_stringOrParameter,
+      CypherParser.RULE_symbolicNameOrStringParameter,
+      CypherParser.RULE_passwordExpression,
+    ].includes(parentRule)
+  ) {
+    return ExpectedParameterType.String;
+  } else if (
+    [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(
+      parentRule,
+    )
+  ) {
+    return ExpectedParameterType.Map;
+  } else {
+    return ExpectedParameterType.Any;
+  }
+};
+
+const isExpectedParameterType = (
+  expectedType: ExpectedParameterType,
+  value: unknown,
+) => {
+  const typeName = typeof value;
+  switch (expectedType) {
+    case ExpectedParameterType.String:
+      return typeName === 'string';
+    case ExpectedParameterType.Map:
+      return typeName === 'object';
+    case ExpectedParameterType.Any:
+      return true;
+  }
+};
 
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
@@ -110,7 +159,10 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
-        return parameterCompletions(dbInfo);
+        return parameterCompletions(
+          dbInfo,
+          inferExpectedParameterTypeFromContext(candidateRule),
+        );
       }
 
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
@@ -244,7 +296,10 @@ function completeAliasName({
   }
 
   // parameters are valid values in all cases of symbolicAliasName
-  const baseSuggestions = parameterCompletions(dbInfo);
+  const baseSuggestions = parameterCompletions(
+    dbInfo,
+    ExpectedParameterType.String,
+  );
   const rulesCreatingNewAliasOrDb = [
     CypherParser.RULE_createAlias,
     CypherParser.RULE_createDatabase,

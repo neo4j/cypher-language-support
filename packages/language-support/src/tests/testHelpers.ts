@@ -9,7 +9,7 @@ export class MockDbInfo implements DbInfo {
     public functionSignatures: Record<string, SignatureInformation> = {},
     public databaseNames: string[] = [],
     public aliasNames: string[] = [],
-    public parameterNames: string[] = [],
+    public parameters: Record<string, unknown> = {},
     public propertyKeys: string[] = [],
   ) {}
 }
