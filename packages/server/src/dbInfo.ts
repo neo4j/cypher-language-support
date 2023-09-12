@@ -12,7 +12,7 @@ export class DbInfoImpl implements DbInfo {
   public relationshipTypes: string[] = [];
   public aliasNames: string[] = [];
   public databaseNames: string[] = [];
-  public parameterValues: Record<string, unknown> = {};
+  public parameters: Record<string, unknown> = {};
   public propertyKeys: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;

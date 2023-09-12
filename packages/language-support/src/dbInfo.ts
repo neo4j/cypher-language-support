@@ -7,6 +7,6 @@ export interface DbInfo {
   relationshipTypes: string[];
   databaseNames: string[];
   aliasNames: string[];
-  parameterValues: Record<string, unknown>;
+  parameters: Record<string, unknown>;
   propertyKeys: string[];
 }

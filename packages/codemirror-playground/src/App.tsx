@@ -43,7 +43,7 @@ const dummyDbInfo: DbInfo = {
   relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
-  parameterValues: {
+  parameters: {
     'param1': {
       'property': 'value',
       'speed': 123.4,

@@ -34,13 +34,12 @@ const parameterCompletions = (
   dbInfo: DbInfo,
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
-  Object.entries(dbInfo.parameterValues)
+  Object.entries(dbInfo.parameters)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
     )
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .map(([paramName, _]) => ({
+    .map(([paramName]) => ({
       label: `$${paramName}`,
       kind: CompletionItemKind.Variable,
     }));
@@ -51,9 +50,9 @@ const propertyKeyCompletions = (dbInfo: DbInfo): CompletionItem[] =>
   }));
 
 enum ExpectedParameterType {
-  String,
-  Map,
-  Any,
+  String = 'STRING',
+  Map = 'MAP',
+  Any = 'ANY',
 }
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
