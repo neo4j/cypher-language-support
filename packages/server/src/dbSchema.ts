@@ -12,7 +12,7 @@ export class DbSchemaImpl implements DbSchema {
   public relationshipTypes: string[] = [];
   public aliasNames: string[] = [];
   public databaseNames: string[] = [];
-  public parameterNames: string[] = [];
+  public parameters: Record<string, unknown> = {};
   public propertyKeys: string[] = [];
 
   private dbPollingInterval: NodeJS.Timer | undefined;

@@ -7,6 +7,6 @@ export interface DbSchema {
   relationshipTypes?: string[];
   databaseNames?: string[];
   aliasNames?: string[];
-  parameterNames?: string[];
+  parameters?: Record<string, unknown>;
   propertyKeys?: string[];
 }

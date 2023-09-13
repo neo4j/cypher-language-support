@@ -925,7 +925,13 @@ describe('can complete database names', () => {
   const dbSchema: DbSchema = {
     databaseNames: ['db1', 'db2', 'movies'],
     aliasNames: ['myMovies', 'scoped.alias', 'a.b.c.d'],
-    parameterNames: ['param'],
+    parameters: {
+      param1: 'something',
+      param2: 1337,
+      param3: {
+        property: 'value',
+      },
+    },
   };
 
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
@@ -943,7 +949,17 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
+      ],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -963,7 +979,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -972,6 +988,16 @@ describe('can complete database names', () => {
       query,
       dbSchema,
       excluded: [{ label: '', kind: CompletionItemKind.Keyword }],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
+      ],
     });
   });
 
@@ -995,7 +1021,17 @@ describe('can complete database names', () => {
     testCompletionContains({
       query,
       dbSchema,
-      expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
+      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
+      ],
     });
   });
 
@@ -1019,7 +1055,17 @@ describe('can complete database names', () => {
     testCompletionContains({
       query,
       dbSchema,
-      expected: [{ label: '$param', kind: CompletionItemKind.Variable }],
+      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
+      ],
     });
   });
 
@@ -1032,7 +1078,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1043,6 +1089,16 @@ describe('can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -1054,7 +1110,7 @@ describe('can complete database names', () => {
       dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1065,6 +1121,16 @@ describe('can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -1078,7 +1144,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1089,6 +1155,16 @@ describe('can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -1102,7 +1178,7 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
 
@@ -1113,6 +1189,16 @@ describe('can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
+      ],
+    });
+
+    // do not suggest non-string parameters
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
       ],
     });
   });
@@ -1149,8 +1235,14 @@ describe('can complete database names', () => {
   });
 
   describe('can complete parameters outside of database names', () => {
-    const dbSchema = {
-      parameterNames: ['param1', 'param2', 'param3'],
+    const dbSchema: DbSchema = {
+      parameters: {
+        stringParam: 'something',
+        intParam: 1337,
+        mapParam: {
+          property: 'value',
+        },
+      },
     };
 
     test('correctly completes started parameter in return body', () => {
@@ -1159,22 +1251,22 @@ describe('can complete database names', () => {
         query,
         dbSchema,
         expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
 
     test('correctly completes unstarted parameter in return body', () => {
-      const query = 'RETURN $';
+      const query = 'RETURN ';
       testCompletionContains({
         query,
         dbSchema,
         expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1185,9 +1277,9 @@ describe('can complete database names', () => {
         query,
         dbSchema,
         expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1198,9 +1290,9 @@ describe('can complete database names', () => {
         query,
         dbSchema,
         expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1211,9 +1303,15 @@ describe('can complete database names', () => {
         query,
         dbSchema,
         expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+        ],
+      });
+      testCompletionDoesNotContain({
+        query,
+        dbSchema,
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1224,10 +1322,15 @@ describe('can complete database names', () => {
       testCompletionContains({
         query,
         dbSchema,
-        expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+        expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
+      });
+
+      testCompletionDoesNotContain({
+        query,
+        dbSchema,
+        excluded: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
         ],
       });
 
@@ -1245,10 +1348,14 @@ describe('can complete database names', () => {
       testCompletionContains({
         query,
         dbSchema,
-        expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+        expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
+      });
+      testCompletionDoesNotContain({
+        query,
+        dbSchema,
+        excluded: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1258,10 +1365,14 @@ describe('can complete database names', () => {
       testCompletionContains({
         query,
         dbSchema,
-        expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+        expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
+      });
+      testCompletionDoesNotContain({
+        query,
+        dbSchema,
+        excluded: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1271,10 +1382,14 @@ describe('can complete database names', () => {
       testCompletionContains({
         query,
         dbSchema,
-        expected: [
-          { label: '$param1', kind: CompletionItemKind.Variable },
-          { label: '$param2', kind: CompletionItemKind.Variable },
-          { label: '$param3', kind: CompletionItemKind.Variable },
+        expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
+      });
+      testCompletionDoesNotContain({
+        query,
+        dbSchema,
+        excluded: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
         ],
       });
     });
@@ -1296,9 +1411,15 @@ describe('can complete database names', () => {
           query,
           dbSchema,
           expected: [
-            { label: '$param1', kind: CompletionItemKind.Variable },
-            { label: '$param2', kind: CompletionItemKind.Variable },
-            { label: '$param3', kind: CompletionItemKind.Variable },
+            { label: '$stringParam', kind: CompletionItemKind.Variable },
+          ],
+        });
+        testCompletionDoesNotContain({
+          query,
+          dbSchema,
+          excluded: [
+            { label: '$intParam', kind: CompletionItemKind.Variable },
+            { label: '$mapParam', kind: CompletionItemKind.Variable },
           ],
         });
       });
@@ -1317,34 +1438,65 @@ describe('can complete database names', () => {
           query,
           dbSchema,
           expected: [
-            { label: '$param1', kind: CompletionItemKind.Variable },
-            { label: '$param2', kind: CompletionItemKind.Variable },
-            { label: '$param3', kind: CompletionItemKind.Variable },
+            { label: '$stringParam', kind: CompletionItemKind.Variable },
+          ],
+        });
+        testCompletionDoesNotContain({
+          query,
+          dbSchema,
+          excluded: [
+            { label: '$intParam', kind: CompletionItemKind.Variable },
+            { label: '$mapParam', kind: CompletionItemKind.Variable },
           ],
         });
       });
     });
 
     test('suggests parameters for server management', () => {
-      const cases = [
+      const nameCases = [
         'ENABLE SERVER ',
-        'ENABLE SERVER "abc" OPTIONS',
         'ALTER SERVER ',
-        'ALTER SERVER "abc" SET OPTIONS',
         'RENAME SERVER ',
         'RENAME SERVER $adb TO ',
         'DROP SERVER ',
         'DEALLOCATE DATABASES FROM SERVERS ',
         'DEALLOCATE DATABASES FROM SERVERS "ab", ',
       ];
-      cases.forEach((query) => {
+      const optionsCases = [
+        'ENABLE SERVER "abc" OPTIONS',
+        'ALTER SERVER "abc" SET OPTIONS',
+      ];
+
+      nameCases.forEach((query) => {
         testCompletionContains({
           query,
           dbSchema,
           expected: [
-            { label: '$param1', kind: CompletionItemKind.Variable },
-            { label: '$param2', kind: CompletionItemKind.Variable },
-            { label: '$param3', kind: CompletionItemKind.Variable },
+            { label: '$stringParam', kind: CompletionItemKind.Variable },
+          ],
+        });
+        testCompletionDoesNotContain({
+          query,
+          dbSchema,
+          excluded: [
+            { label: '$intParam', kind: CompletionItemKind.Variable },
+            { label: '$mapParam', kind: CompletionItemKind.Variable },
+          ],
+        });
+      });
+
+      optionsCases.forEach((query) => {
+        testCompletionContains({
+          query,
+          dbSchema,
+          expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
+        });
+        testCompletionDoesNotContain({
+          query,
+          dbSchema,
+          excluded: [
+            { label: '$intParam', kind: CompletionItemKind.Variable },
+            { label: '$stringParam', kind: CompletionItemKind.Variable },
           ],
         });
       });
