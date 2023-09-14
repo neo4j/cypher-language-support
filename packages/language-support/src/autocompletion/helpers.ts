@@ -34,7 +34,7 @@ const parameterCompletions = (
   dbInfo: DbSchema,
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
-  Object.entries(dbInfo.parameters)
+  Object.entries(dbInfo.parameters ?? {})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
@@ -44,7 +44,7 @@ const parameterCompletions = (
       kind: CompletionItemKind.Variable,
     }));
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
-  dbInfo.propertyKeys.map((propertyKey) => ({
+  dbInfo.propertyKeys?.map((propertyKey) => ({
     label: propertyKey,
     kind: CompletionItemKind.Property,
   })) ?? [];
