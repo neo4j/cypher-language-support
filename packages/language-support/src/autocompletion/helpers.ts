@@ -23,7 +23,7 @@ const reltypeCompletions = (dbSchema: DbSchema) =>
 const proceduresCompletions = (dbSchema: DbSchema) =>
   Object.keys(dbSchema.procedureSignatures ?? {}).map((procedureName) => ({
     label: procedureName,
-    kind: CompletionItemKind.Function,
+    kind: CompletionItemKind.Method,
   }));
 const functionCompletions = (dbSchema: DbSchema) =>
   Object.keys(dbSchema.functionSignatures ?? {}).map((fnName) => ({

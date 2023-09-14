@@ -499,8 +499,8 @@ describe('Procedures auto-completion', () => {
         },
       },
       expected: [
-        { label: 'dbms.info', kind: CompletionItemKind.Function },
-        { label: 'db.info', kind: CompletionItemKind.Function },
+        { label: 'dbms.info', kind: CompletionItemKind.Method },
+        { label: 'db.info', kind: CompletionItemKind.Method },
       ],
     });
   });
