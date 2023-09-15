@@ -1,0 +1,22 @@
+{
+  "name": "neo4j-sdk",
+  "description": "",
+  "author": "neo4j",
+  "license": "Apache",
+  "version": "0.0.1",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
+  "dependencies": {
+    "neo4j-driver": "^5.12.0",
+    "semver": "^7.5.4"
+  },
+  "scripts": {
+    "build": "&& tsc -b",
+    "clean": "rm -rf out",
+    "watch": "tsc -b -w",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0"
+  }
+}
