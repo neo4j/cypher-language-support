@@ -1,6 +1,6 @@
+import { QueryResult } from 'neo4j-driver';
 import type {
   ArgumentDescription,
-  BaseArguments,
   ReturnDescription,
 } from '../neo4j-sdk/types/sdk-types.js';
 
@@ -24,16 +24,16 @@ export type Procedure = {
  * Gets available procedures on your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
-export async function listProcedures({ queryCypher }: BaseArguments) {
-  // Syntax holds for v4.3+
+export function listProcedures() {
   const query = `SHOW PROCEDURES
 YIELD name, description, mode, worksOnSystem, argumentDescription, signature, returnDescription, admin, option`;
 
-  const res = await queryCypher(query);
-
-  return res.records.map((rec) => {
-    // Type is verified in integration tests
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return rec.toObject() as Procedure;
-  });
+  function parseResult(result: QueryResult) {
+    return result.records.map((rec) => {
+      // Type is verified in integration tests
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      return rec.toObject() as Procedure;
+    });
+  }
+  return { query, parseResult };
 }

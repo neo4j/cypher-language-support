@@ -1,7 +1,5 @@
-import type {
-  ArgumentDescription,
-  BaseArguments,
-} from '../neo4j-sdk/types/sdk-types.js';
+import { QueryResult } from 'neo4j-driver';
+import type { ArgumentDescription } from '../neo4j-sdk/types/sdk-types.js';
 
 export type Neo4jFunction = {
   name: string;
@@ -18,16 +16,15 @@ export type Neo4jFunction = {
  * Gets available functions in your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-functions/
  */
-export async function listFunctions({ queryCypher }: BaseArguments) {
-  // Syntax holds for v4.3+
+export function listFunctions() {
   const query = `SHOW FUNCTIONS
 YIELD name, category, description, isBuiltIn, argumentDescription, signature, returnDescription, aggregating`;
 
-  const res = await queryCypher(query);
-
-  return res.records.map((rec) => {
+  function parseResult(result: QueryResult) {
     // Type is verified in integration tests
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return rec.toObject() as Neo4jFunction;
-  });
+    return result.records.map((rec) => rec.toObject() as Neo4jFunction);
+  }
+
+  return { query, parseResult };
 }
