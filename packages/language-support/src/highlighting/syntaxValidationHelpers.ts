@@ -108,7 +108,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     charPositionInLine: number,
     msg: string,
   ): void {
-    let errorMessage = msg;
+    let errorMessage: string | undefined;
     const lineIndex = line - 1;
     const start = charPositionInLine;
     let end = charPositionInLine;
@@ -124,11 +124,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         offendingSymbol,
         parserSuggestedTokens,
       );
-
-      // If we couldn't find a more helpful error message, keep the original one
-      if (!isDefined(errorMessage)) {
-        errorMessage = msg;
-      }
     }
 
     const diagnostic: Diagnostic = {
@@ -137,7 +132,8 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         start: Position.create(lineIndex, charPositionInLine),
         end: Position.create(lineIndex, end),
       },
-      message: errorMessage,
+      // If we couldn't find a more helpful error message, keep the original one
+      message: errorMessage ?? msg,
     };
 
     this.errors.push(diagnostic);

@@ -12,13 +12,24 @@ import CypherLexer from './generated-parser/CypherLexer';
 import { Diagnostic } from 'vscode-languageserver-types';
 
 import CypherParser, {
+  ClauseContext,
+  CreateClauseContext,
+  ExpressionContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  MergeClauseContext,
   StatementsContext,
   VariableContext,
 } from './generated-parser/CypherParser';
-import { findStopNode, getTokens, isDefined } from './helpers';
+import {
+  findParent,
+  findStopNode,
+  getTokens,
+  inNodeLabel,
+  inRelationshipType,
+  isDefined,
+} from './helpers';
 import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
 
 export interface ParsingResult {
@@ -28,9 +39,36 @@ export interface ParsingResult {
   result: StatementsContext;
 }
 
-type LabelOrRelType = {
-  text: string;
-  ctx: ParserRuleContext;
+export enum LabelType {
+  nodeLabelType = 'Label',
+  relLabelType = 'Relationship type',
+  unknown = 'Label or relationship type',
+}
+
+function getLabelType(ctx: ParserRuleContext): LabelType {
+  if (inNodeLabel(ctx)) return LabelType.nodeLabelType;
+  else if (inRelationshipType(ctx)) return LabelType.relLabelType;
+  else return LabelType.unknown;
+}
+
+function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
+  const parent = findParent(
+    ctx,
+    (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
+  );
+
+  return (
+    parent instanceof CreateClauseContext ||
+    parent instanceof MergeClauseContext
+  );
+}
+
+export type LabelOrRelType = {
+  labeltype: LabelType;
+  labelText: string;
+  couldCreateNewLabel: boolean;
+  line: number;
+  column: number;
 };
 
 export interface EnrichedParsingResult extends ParsingResult {
@@ -93,22 +131,23 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext) {
+    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
       this.labelOrRelTypes.push({
-        text: ctx.getText(),
-        ctx: ctx,
-      });
-    } else if (ctx instanceof LabelNameIsContext) {
-      this.labelOrRelTypes.push({
-        text: ctx.getText(),
-        ctx: ctx,
+        labeltype: getLabelType(ctx),
+        labelText: ctx.getText(),
+        couldCreateNewLabel: couldCreateNewLabel(ctx),
+        line: ctx.start.line,
+        column: ctx.start.column,
       });
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
       if (isDefined(symbolicName)) {
         this.labelOrRelTypes.push({
-          text: symbolicName.start.text,
-          ctx: ctx,
+          labeltype: getLabelType(ctx),
+          labelText: symbolicName.start.text,
+          couldCreateNewLabel: couldCreateNewLabel(ctx),
+          line: ctx.start.line,
+          column: ctx.start.column,
         });
       }
     }

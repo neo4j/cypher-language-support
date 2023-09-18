@@ -4,80 +4,51 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { ParserRuleContext } from 'antlr4';
 import { DbInfo } from '../dbInfo';
 import {
-  ClauseContext,
-  CreateClauseContext,
-  ExpressionContext,
-  MergeClauseContext,
-} from '../generated-parser/CypherParser';
-import {
-  findParent,
-  inLabelExpressionPredicate,
-  inNodeLabel,
-  inRelationshipType,
-} from '../helpers';
-import { EnrichedParsingResult, parserWrapper } from '../parserWrapper';
+  EnrichedParsingResult,
+  LabelOrRelType,
+  LabelType,
+  parserWrapper,
+} from '../parserWrapper';
 
 function detectNonDeclaredLabel(
-  ctx: ParserRuleContext,
-  labelName: string,
+  labelOrRelType: LabelOrRelType,
   dbLabels: Set<string>,
   dbRelationshipTypes: Set<string>,
 ): Diagnostic | undefined {
-  const nodeLabel = inNodeLabel(ctx);
-  const relType = inRelationshipType(ctx);
-  const labelExpressionPred = inLabelExpressionPredicate(ctx);
+  const labelName = labelOrRelType.labelText;
+  const notInDatabase =
+    (labelOrRelType.labeltype === LabelType.nodeLabelType &&
+      !dbLabels.has(labelName)) ||
+    (labelOrRelType.labeltype === LabelType.relLabelType &&
+      !dbRelationshipTypes.has(labelName)) ||
+    (!dbLabels.has(labelName) && !dbRelationshipTypes.has(labelName));
 
-  if (
-    (nodeLabel && !dbLabels.has(labelName)) ||
-    (relType && !dbRelationshipTypes.has(labelName)) ||
-    (labelExpressionPred &&
-      !dbLabels.has(labelName) &&
-      !dbRelationshipTypes.has(labelName))
-  ) {
-    let typeStr: string;
-    if (nodeLabel) typeStr = 'Label';
-    else if (relType) typeStr = 'Relationship type';
-    else typeStr = 'Label or relationship type';
+  if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
+    const labelChunks = labelName.split('\n');
+    const linesOffset = labelChunks.length - 1;
+    const lineIndex = labelOrRelType.line - 1;
+    const startColumn = labelOrRelType.column;
+    const endColumn =
+      linesOffset == 0
+        ? startColumn + labelName.length
+        : labelChunks.at(-1)?.length ?? 0;
 
-    const parent = findParent(
-      ctx,
-      (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
-    );
+    const warning: Diagnostic = {
+      severity: DiagnosticSeverity.Warning,
+      range: {
+        start: Position.create(lineIndex, startColumn),
+        end: Position.create(lineIndex + linesOffset, endColumn),
+      },
+      message:
+        labelOrRelType.labeltype +
+        ' ' +
+        labelName +
+        " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+    };
 
-    if (
-      !(
-        parent instanceof CreateClauseContext ||
-        parent instanceof MergeClauseContext
-      )
-    ) {
-      const start = ctx.start;
-      const labelChunks = labelName.split('\n');
-      const linesOffset = labelChunks.length - 1;
-      const lineIndex = start.line - 1;
-      const startColumn = start.column;
-      const endColumn =
-        linesOffset == 0
-          ? startColumn + labelName.length
-          : labelChunks.at(-1).length;
-
-      const warning: Diagnostic = {
-        severity: DiagnosticSeverity.Warning,
-        range: {
-          start: Position.create(lineIndex, startColumn),
-          end: Position.create(lineIndex + linesOffset, endColumn),
-        },
-        message:
-          typeStr +
-          ' ' +
-          labelName +
-          " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-      };
-
-      return warning;
-    }
+    return warning;
   }
 
   return undefined;
@@ -90,17 +61,13 @@ function warnOnUndeclaredLabels(
   const warnings: Diagnostic[] = [];
 
   if (dbInfo.labels && dbInfo.relationshipTypes) {
-    const dbLabels = new Set<string>();
-    const dbRelationshipTypes = new Set<string>();
-
-    dbInfo.labels.forEach((label) => dbLabels.add(label));
-    dbInfo.relationshipTypes.forEach((type) => dbRelationshipTypes.add(type));
+    const dbLabels = new Set(dbInfo.labels);
+    const dbRelationshipTypes = new Set(dbInfo.relationshipTypes);
 
     if (dbInfo.labels && dbInfo.relationshipTypes) {
       parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
         const warning = detectNonDeclaredLabel(
-          labelOrRelType.ctx,
-          labelOrRelType.text,
+          labelOrRelType,
           dbLabels,
           dbRelationshipTypes,
         );
