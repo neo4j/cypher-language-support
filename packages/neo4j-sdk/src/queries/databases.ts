@@ -1,5 +1,5 @@
-import { QueryResult } from 'neo4j-driver';
-import { SdkQuery } from '../types/sdk-types';
+import { resultTransformers } from 'neo4j-driver';
+import { ExecuteQueryArgs } from '../types/sdk-types';
 
 export type DatabaseStatus =
   | 'online'
@@ -36,16 +36,22 @@ export type Database = {
  * List available databases in your dbms
  * https://neo4j.com/docs/cypher-manual/current/administration/databases/#administration-databases-show-databases
  */
-export function listDatabases(): SdkQuery<Database[]> {
-  // Syntax holds for v4.3+
+export function listDatabases(): ExecuteQueryArgs<{
+  databases: Database[];
+}> {
+  const query = 'SHOW DATABASES';
+
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      return record.toObject() as Database;
+    },
+    collect(databases, summary) {
+      return { databases, summary };
+    },
+  });
+
   return {
-    cypher: 'SHOW DATABASES',
-    parseResult: (res: QueryResult) =>
-      res.records.map(
-        (rec) =>
-          // Type is verified in integration tests
-          rec.toObject() as Database,
-      ),
-    dbType: 'system',
+    query,
+    queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
   };
 }

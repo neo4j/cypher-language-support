@@ -1,8 +1,8 @@
-import { QueryResult } from 'neo4j-driver';
+import { resultTransformers } from 'neo4j-driver';
 import type {
   ArgumentDescription,
+  ExecuteQueryArgs,
   ReturnDescription,
-  SdkQuery,
 } from '../types/sdk-types.js';
 
 type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE';
@@ -25,16 +25,27 @@ export type Procedure = {
  * Gets available procedures on your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
-export function listProcedures(): SdkQuery<Procedure[]> {
-  const cypher = `SHOW PROCEDURES
+export function listProcedures(): ExecuteQueryArgs<{
+  procedures: Procedure[];
+}> {
+  const query = `SHOW PROCEDURES
 YIELD name, description, mode, worksOnSystem, argumentDescription, signature, returnDescription, admin, option`;
 
-  function parseResult(result: QueryResult) {
-    return result.records.map((rec) => {
-      // Type is verified in integration tests
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      return rec.toObject() as Procedure;
-    });
-  }
-  return { cypher, parseResult, dbType: 'system' };
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      return record.toObject() as Procedure;
+    },
+    collect(procedures, summary) {
+      return { procedures, summary };
+    },
+  });
+
+  return {
+    query,
+    queryConfig: {
+      routing: 'READ',
+      database: 'system',
+      resultTransformer,
+    },
+  };
 }

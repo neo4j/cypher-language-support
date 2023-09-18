@@ -1,5 +1,8 @@
-import { QueryResult } from 'neo4j-driver';
-import type { ArgumentDescription, SdkQuery } from '../types/sdk-types.js';
+import { resultTransformers } from 'neo4j-driver';
+import type {
+  ArgumentDescription,
+  ExecuteQueryArgs,
+} from '../types/sdk-types.js';
 
 export type Neo4jFunction = {
   name: string;
@@ -16,15 +19,23 @@ export type Neo4jFunction = {
  * Gets available functions in your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-functions/
  */
-export function listFunctions(): SdkQuery<Neo4jFunction[]> {
-  const cypher = `SHOW FUNCTIONS
+export function listFunctions(): ExecuteQueryArgs<{
+  functions: Neo4jFunction[];
+}> {
+  const query = `SHOW FUNCTIONS
 YIELD name, category, description, isBuiltIn, argumentDescription, signature, returnDescription, aggregating`;
 
-  function parseResult(result: QueryResult) {
-    // Type is verified in integration tests
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return result.records.map((rec) => rec.toObject() as Neo4jFunction);
-  }
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      return record.toObject() as Neo4jFunction;
+    },
+    collect(functions, summary) {
+      return { functions, summary };
+    },
+  });
 
-  return { cypher, parseResult, dbType: 'system' };
+  return {
+    query,
+    queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
+  };
 }

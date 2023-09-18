@@ -11,11 +11,11 @@ export class Neo4jSDK {
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
-  ): Promise<true> {
+  ) {
     const driver = neo4j.driver(
       url,
       neo4j.auth.basic(credentials.username, credentials.password),
-      config.driverConfig,
+      { userAgent: config.appName, ...config.driverConfig },
     );
 
     await driver.verifyConnectivity();
@@ -23,21 +23,20 @@ export class Neo4jSDK {
     if (await driver.supportsSessionAuth()) {
       if (!(await driver.verifyAuthentication())) {
         // @oskar TODO check how this works with first time login for both 4 and 5
-        // TODO structured errors
+        // TODO more structured errors
         throw new Error('Invalid credentials');
       }
     }
 
-    const { cypher, parseResult } = listDatabases();
-    const result = await driver.executeQuery(
-      cypher,
+    const { query, queryConfig } = listDatabases();
+    const { databases, summary } = await driver.executeQuery(
+      query,
       {},
-      { database: 'system' },
+      queryConfig,
     );
-    const databases = parseResult(result);
 
     const protocolVersion =
-      result.summary.server.protocolVersion?.toString() ?? 'unknown';
+      summary.server.protocolVersion?.toString() ?? 'unknown';
 
     this.connection = new Neo4jConnection(
       credentials.username,
@@ -47,8 +46,7 @@ export class Neo4jSDK {
     );
 
     this.metadata = new MetadataPoller(databases, this.connection);
-
-    return true;
+    this.metadata.startBackgroundPolling();
   }
 
   disconnect() {

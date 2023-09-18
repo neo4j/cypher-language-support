@@ -1,5 +1,5 @@
-import { QueryResult } from 'neo4j-driver';
-import { SdkQuery } from '../types/sdk-types';
+import { resultTransformers } from 'neo4j-driver';
+import { ExecuteQueryArgs } from '../types/sdk-types';
 
 export type DataSummary = {
   labels: string[];
@@ -9,8 +9,8 @@ export type DataSummary = {
 
 const ITEM_LIMIT = 1000;
 
-export function getDataSummary(): SdkQuery<DataSummary> {
-  const cypher = `CALL db.labels() YIELD label
+export function getDataSummary(): ExecuteQueryArgs<DataSummary> {
+  const query = `CALL db.labels() YIELD label
 RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
 UNION ALL
 CALL db.relationshipTypes() YIELD relationshipType
@@ -19,19 +19,22 @@ UNION ALL
 CALL db.propertyKeys() YIELD propertyKey
 RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
 
-  function parseResult(res: QueryResult): DataSummary {
-    // Types to be validated in e2e tests
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      return record.toObject().result as string[];
+    },
+    collect(results, summary) {
+      return {
+        labels: results[0],
+        relationshipTypes: results[1],
+        propertyKeys: results[2],
+        summary,
+      };
+    },
+  });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const [labels, relationshipTypes, propertyKeys] = res.records.map(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      (r) => r.toObject().result,
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const result: DataSummary = { labels, relationshipTypes, propertyKeys };
-    return result;
-  }
-
-  return { cypher, parseResult, dbType: 'standard' };
+  return {
+    query,
+    queryConfig: { resultTransformer, routing: 'READ' },
+  };
 }

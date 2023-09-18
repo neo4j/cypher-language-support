@@ -1,10 +1,11 @@
 import { Driver } from 'neo4j-driver';
+import { version } from '../package.json';
 import { Database } from './queries/databases.js';
+import { ExecuteQueryArgs, QueryType } from './types/sdk-types';
 
-// TODO user agent and proper metadata on background queries
-// TODO hold and eval parameters?
-export const metadata = {
-  metadata: { app: 'neo4j-language-server', type: 'system' },
+const METADATA_BASE = {
+  app: 'neo4j-sdk',
+  version: version,
 };
 
 function resolveInitialDatabase(databases: Database[]): string {
@@ -14,6 +15,10 @@ function resolveInitialDatabase(databases: Database[]): string {
   return home?.name ?? def?.name ?? system?.name ?? databases[0]?.name;
 }
 
+type SdkQueryArgs = {
+  queryType: QueryType;
+  abortSignal?: AbortSignal;
+};
 export class Neo4jConnection {
   public currentDb: string;
 
@@ -26,13 +31,37 @@ export class Neo4jConnection {
     this.currentDb = resolveInitialDatabase(databases);
   }
 
-  async runQuery(query: string, databaseTarget?: string) {
-    const result = await this.driver.executeQuery(
-      query,
-      {},
-      { database: databaseTarget ?? this.currentDb },
-    );
-    return result;
+  async runSdkQuery<T>(
+    { query, queryConfig }: ExecuteQueryArgs<T>,
+    { queryType, abortSignal }: SdkQueryArgs,
+  ) {
+    // we'd like to use the drivers `executeQuery` method, but it doesn't support transaction metadata or cancelations yet
+    const session = this.driver.session({
+      database: queryConfig?.database ?? this.currentDb,
+    });
+
+    if (abortSignal !== undefined) {
+      abortSignal.addEventListener('abort', () => {
+        void session.close();
+      });
+    }
+
+    try {
+      const executeInTransaction =
+        queryConfig.routing === 'READ'
+          ? session.executeRead.bind(session)
+          : session.executeWrite.bind(session);
+
+      return await executeInTransaction(
+        async (tx) => {
+          const result = tx.run(query, {});
+          return await queryConfig.resultTransformer(result);
+        },
+        { metadata: { ...METADATA_BASE, type: queryType } },
+      );
+    } finally {
+      await session.close();
+    }
   }
 
   async healthcheck() {

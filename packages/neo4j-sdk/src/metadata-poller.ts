@@ -8,7 +8,7 @@ import { DataSummary, getDataSummary } from './queries/data-summary.js';
 import { Database, listDatabases } from './queries/databases.js';
 import { listFunctions, Neo4jFunction } from './queries/functions.js';
 import { listProcedures, Procedure } from './queries/procedures.js';
-import { SdkQuery } from './types/sdk-types.js';
+import { ExecuteQueryArgs } from './types/sdk-types.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -17,7 +17,7 @@ type FetchCallback<T> = (
 ) => void;
 
 type PollerConfig<T> = {
-  queryConfig: SdkQuery<T>;
+  queryArgs: ExecuteQueryArgs<T>;
   connection: Neo4jConnection;
   prefetchedData?: T;
   onRefetchDone?: FetchCallback<T>;
@@ -31,16 +31,16 @@ class QueryPoller<T> {
   public errorMessage?: string;
   private connection: Neo4jConnection;
   private onRefetchDone?: FetchCallback<T>;
-  private queryConfig: SdkQuery<T>;
+  private queryArgs: ExecuteQueryArgs<T>;
 
   constructor({
     prefetchedData,
-    queryConfig,
+    queryArgs,
     connection,
     onRefetchDone,
   }: PollerConfig<T>) {
     this.connection = connection;
-    this.queryConfig = queryConfig;
+    this.queryArgs = queryArgs;
     this.onRefetchDone = onRefetchDone;
 
     if (prefetchedData) {
@@ -58,11 +58,9 @@ class QueryPoller<T> {
     delete this.errorMessage;
 
     try {
-      const result = await this.connection.runQuery(
-        this.queryConfig.cypher,
-        this.queryConfig.dbType === 'system' ? 'system' : undefined,
-      );
-      const data = this.queryConfig.parseResult(result);
+      const data = await this.connection.runSdkQuery(this.queryArgs, {
+        queryType: 'system',
+      });
       this.data = data;
       this.status = 'fetched';
       this.onRefetchDone?.({ success: true, data });
@@ -77,10 +75,10 @@ class QueryPoller<T> {
 }
 
 export class MetadataPoller {
-  private databases: QueryPoller<Database[]>;
+  private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
-  private functions: QueryPoller<Neo4jFunction[]>;
-  private procedures: QueryPoller<Procedure[]>;
+  private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
+  private procedures: QueryPoller<{ procedures: Procedure[] }>;
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -89,12 +87,14 @@ export class MetadataPoller {
   constructor(databases: Database[], connection: Neo4jConnection) {
     this.databases = new QueryPoller({
       connection,
-      queryConfig: listDatabases(),
-      prefetchedData: databases,
+      queryArgs: listDatabases(),
+      prefetchedData: { databases },
       onRefetchDone: (result) => {
         if (result.success) {
-          this.dbSchema.databaseNames = result.data.flatMap((db) => db.name);
-          this.dbSchema.aliasNames = result.data.flatMap(
+          this.dbSchema.databaseNames = result.data.databases.flatMap(
+            (db) => db.name,
+          );
+          this.dbSchema.aliasNames = result.data.databases.flatMap(
             (db) => db.aliases ?? [],
           );
         }
@@ -103,9 +103,7 @@ export class MetadataPoller {
 
     this.dataSummary = new QueryPoller({
       connection,
-      // TODO way to properly find right database
-      database: 'neo4j',
-      queryConfig: getDataSummary(),
+      queryArgs: getDataSummary(),
       onRefetchDone: (result) => {
         if (result.success) {
           const { labels, propertyKeys, relationshipTypes } = result.data;
@@ -118,11 +116,11 @@ export class MetadataPoller {
 
     this.functions = new QueryPoller({
       connection,
-      queryConfig: listFunctions(),
+      queryArgs: listFunctions(),
       onRefetchDone: (result) => {
         if (result.success) {
           // todo better parsing
-          const signatures = result.data.reduce<
+          const signatures = result.data.functions.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
             const { name, signature, description } = curr;
@@ -153,10 +151,10 @@ export class MetadataPoller {
     // TODO parsing
     this.procedures = new QueryPoller({
       connection,
-      queryConfig: listProcedures(),
+      queryArgs: listProcedures(),
       onRefetchDone: (result) => {
         if (result.success) {
-          const signatures = result.data.reduce<
+          const signatures = result.data.procedures.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
             const { name, signature, description } = curr;
