@@ -43,7 +43,14 @@ const dummyDbInfo: DbInfo = {
   relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
-  parameterNames: ['param1', 'favColor', 'myParam'],
+  parameters: {
+    'param1': {
+      'property': 'value',
+      'speed': 123.4,
+    },
+    'favColor': 'green',
+    'myParam': 1337,
+  },
   propertyKeys: ['name', 'age', 'title', 'released', 'tagline'],
 };
 
@@ -164,7 +171,7 @@ export function App() {
               {schemaError && <div className="text-red-500">{schemaError}</div>}
               <textarea
                 value={schemaText}
-                className="min-h-[200px]"
+                className="min-h-[200px] dark:text-black"
                 onChange={(v) => {
                   const value = v.target.value;
                   setSchemaText(value);

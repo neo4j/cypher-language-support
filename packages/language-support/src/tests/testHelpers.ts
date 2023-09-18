@@ -7,9 +7,9 @@ export class MockDbInfo implements DbInfo {
     public relationshipTypes: string[] | undefined = undefined,
     public procedureSignatures: Record<string, SignatureInformation> = {},
     public functionSignatures: Record<string, SignatureInformation> = {},
-    public databaseNames: string[] | undefined = undefined,
-    public aliasNames: string[] | undefined = undefined,
-    public parameterNames: string[] = [],
+    public databaseNames: string[] = [],
+    public aliasNames: string[] = [],
+    public parameters: Record<string, unknown> = {},
     public propertyKeys: string[] = [],
   ) {}
 }
