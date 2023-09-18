@@ -3,7 +3,6 @@ import {
   DiagnosticSeverity,
   Position,
 } from 'vscode-languageserver-types';
-import { MockDbInfo } from '../../testHelpers';
 import { testSyntaxValidationContains } from './helpers';
 
 describe('Syntax validation errors spec', () => {
@@ -111,7 +110,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(['Dog', 'Cat'], ['Person']),
+      dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [
@@ -133,7 +132,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(['Rel3'], ['Rel1', 'Rel2']),
+      dbSchema: { labels: ['Rel3'], relationshipTypes: ['Rel1', 'Rel2'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [
@@ -155,7 +154,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(['Person'], ['Rel1', 'Rel2']),
+      dbSchema: { labels: ['Person'], relationshipTypes: ['Rel1', 'Rel2'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [],
@@ -167,7 +166,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(['Person'], ['Rel1', 'Rel2']),
+      dbSchema: { labels: ['Person'], relationshipTypes: ['Rel1', 'Rel2'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [
@@ -189,7 +188,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(undefined, ['Rel1', 'Rel2']),
+      dbSchema: { relationshipTypes: ['Rel1', 'Rel2'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [],
@@ -201,7 +200,7 @@ describe('Syntax validation errors spec', () => {
 
     testSyntaxValidationContains({
       query,
-      dbInfo: new MockDbInfo(['Dog', 'Cat'], undefined),
+      dbSchema: { labels: ['Dog', 'Cat'] },
       filterPredicate: (d: Diagnostic) =>
         d.severity === DiagnosticSeverity.Warning,
       expected: [],

@@ -13,7 +13,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend, validateSyntax } from 'language-support';
 import { doAutoCompletion } from './autocompletion';
-import { DbInfoImpl } from './dbInfo';
+import { DbSchemaImpl } from './dbSchema';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { CypherLSPSettings } from './types';
@@ -22,7 +22,7 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-const dbInfo = new DbInfoImpl();
+const dbSchema = new DbSchemaImpl();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -71,7 +71,7 @@ connection.onInitialized(() => {
 // Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
   const document = change.document;
-  const diagnostics = validateSyntax(document.getText(), dbInfo);
+  const diagnostics = validateSyntax(document.getText(), dbSchema);
   void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
@@ -82,9 +82,9 @@ connection.languages.semanticTokens.on(
   applySyntaxColouringForDocument(documents),
 );
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents, dbInfo));
+connection.onSignatureHelp(doSignatureHelp(documents, dbSchema));
 // Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents, dbInfo));
+connection.onCompletion(doAutoCompletion(documents, dbSchema));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
@@ -96,14 +96,14 @@ connection.onDidChangeConfiguration(
       neo4jConfig.URL &&
       neo4jConfig.user
     ) {
-      dbInfo.setConfig({
+      dbSchema.setConfig({
         url: neo4jConfig.URL,
         user: neo4jConfig.user,
         password: neo4jConfig.password,
       });
-      void dbInfo.startSignaturesPolling();
+      void dbSchema.startSignaturesPolling();
     } else {
-      dbInfo.stopPolling();
+      dbSchema.stopPolling();
     }
   },
 );

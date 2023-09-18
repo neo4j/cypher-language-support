@@ -175,9 +175,12 @@ class VariableCollector implements ParseTreeListener {
       // To avoid suggesting the variable that is currently being typed
       // For example RETURN a| <- we don't want to suggest "a" as a variable
       // We check if the variable is in the end of the statement
+      const nextTokenIndex = ctx.stop?.tokenIndex;
+
       const nextTokenIsEOF =
-        ctx.parser.getTokenStream().get(ctx.stop.tokenIndex + 1)?.type ===
-        CypherParser.EOF;
+        nextTokenIndex !== undefined &&
+        ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
+          CypherParser.EOF;
 
       if (variable && !nextTokenIsEOF) {
         this.variables.push(variable);
@@ -187,7 +190,7 @@ class VariableCollector implements ParseTreeListener {
 }
 
 class ParserWrapper {
-  parsingResult: EnrichedParsingResult;
+  parsingResult?: EnrichedParsingResult;
 
   parse(query: string): EnrichedParsingResult {
     if (

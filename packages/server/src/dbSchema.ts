@@ -3,22 +3,15 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver/node';
 
-import { DbInfo } from 'language-support';
+import { DbSchema } from 'language-support';
 import { auth, driver, Driver, Session, session } from 'neo4j-driver';
-
-type UpdateMethodsArgs = {
-  updateFunctions: boolean;
-};
-
-export class DbInfoImpl implements DbInfo {
-  public procedureSignatures: Record<string, SignatureInformation> | undefined =
-    {};
-  public functionSignatures: Record<string, SignatureInformation> | undefined =
-    {};
-  public labels: string[] | undefined = [];
-  public relationshipTypes: string[] | undefined = [];
-  public aliasNames: string[] | undefined = [];
-  public databaseNames: string[] | undefined = [];
+export class DbSchemaImpl implements DbSchema {
+  public procedureSignatures: Record<string, SignatureInformation> = {};
+  public functionSignatures: Record<string, SignatureInformation> = {};
+  public labels: string[] = [];
+  public relationshipTypes: string[] = [];
+  public aliasNames: string[] = [];
+  public databaseNames: string[] = [];
   public parameters: Record<string, unknown> = {};
   public propertyKeys: string[] = [];
 
@@ -51,20 +44,20 @@ export class DbInfoImpl implements DbInfo {
 
     if (!this.neo4j) return;
     // We do not need to update procedures and functions because they are cached
-    const updateAllDbInfo = async () => {
+    const updateAllDbSchema = async () => {
       await Promise.allSettled([
         this.updateLabels(),
         this.updateRelationshipTypes(),
         this.updateDatabasesAndAliases(),
         this.updatePropertyKeys(),
-        this.updateMethodsCache({ updateFunctions: true }),
-        this.updateMethodsCache({ updateFunctions: false }),
+        this.updateMethodsCache(this.procedureSignatures),
+        this.updateMethodsCache(this.functionSignatures),
       ]);
     };
 
-    await updateAllDbInfo();
+    await updateAllDbSchema();
 
-    this.dbPollingInterval = setInterval(() => void updateAllDbInfo(), 20000);
+    this.dbPollingInterval = setInterval(() => void updateAllDbSchema(), 20000);
     return;
   }
 
@@ -93,8 +86,6 @@ export class DbInfoImpl implements DbInfo {
         (record) => (record.toObject()['aliases'] as string[]) ?? [],
       );
     } catch (error) {
-      this.aliasNames = undefined;
-      this.databaseNames = undefined;
       console.warn('failed to fetch databases: ' + String(error));
     }
   }
@@ -125,7 +116,6 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('label') as string,
       );
     } catch (error) {
-      this.labels = undefined;
       console.warn('could not contact the database to fetch labels');
     } finally {
       await s.close();
@@ -141,7 +131,6 @@ export class DbInfoImpl implements DbInfo {
         (record) => record.get('relationshipType') as string,
       );
     } catch (error) {
-      this.relationshipTypes = undefined;
       console.warn(
         'could not contact the database to fetch relationship types',
       );
@@ -150,11 +139,13 @@ export class DbInfoImpl implements DbInfo {
     }
   }
 
-  private async updateMethodsCache({ updateFunctions }: UpdateMethodsArgs) {
+  private async updateMethodsCache(
+    cache: Record<string, SignatureInformation>,
+  ) {
     if (!this.neo4j) return;
     const s: Session = this.neo4j.session({ defaultAccessMode: session.WRITE });
-    const updateTarget = updateFunctions ? 'functions' : 'procedures';
-    const cache: Record<string, SignatureInformation> = {};
+    const updateTarget =
+      cache === this.functionSignatures ? 'functions' : 'procedures';
 
     try {
       const result = await s.run(
@@ -184,18 +175,7 @@ export class DbInfoImpl implements DbInfo {
           ...params.map(this.getParamsInfo),
         );
       });
-
-      if (updateFunctions) {
-        this.functionSignatures = cache;
-      } else {
-        this.procedureSignatures = cache;
-      }
     } catch (error) {
-      if (updateFunctions) {
-        this.functionSignatures = undefined;
-      } else {
-        this.procedureSignatures = undefined;
-      }
       console.warn('could not contact the database to fetch ' + updateTarget);
     } finally {
       await s.close();

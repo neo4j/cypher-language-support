@@ -139,20 +139,12 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     this.errors.push(diagnostic);
   }
 
-  public reportAttemptingFullContext(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    recognizer,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportAttemptingFullContext() {}
 
-  public reportAmbiguity(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    recognizer,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
-  public reportContextSensitivity(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    recognizer,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportAmbiguity() {}
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportContextSensitivity() {}
 }

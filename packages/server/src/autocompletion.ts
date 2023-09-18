@@ -6,12 +6,12 @@ import {
 
 import { Range } from 'vscode-languageserver-types';
 
-import { autocomplete, DbInfo } from 'language-support';
+import { autocomplete, DbSchema } from 'language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ) {
   return (textDocumentPosition: TextDocumentPositionParams) => {
     const textDocument = documents.get(textDocumentPosition.textDocument.uri);
@@ -25,6 +25,6 @@ export function doAutoCompletion(
       end: position,
     };
 
-    return autocomplete(textDocument.getText(range), dbInfo);
+    return autocomplete(textDocument.getText(range), dbSchema);
   };
 }

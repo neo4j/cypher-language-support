@@ -1,29 +1,28 @@
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
-import { DbInfo } from '../../../dbInfo';
+import { DbSchema } from '../../../dbSchema';
 import { validateSyntax } from '../../../highlighting/syntaxValidation';
-import { MockDbInfo } from '../../testHelpers';
 
 type InclusionTestArgs = {
   query: string;
-  dbInfo?: DbInfo;
+  dbSchema?: DbSchema;
   filterPredicate?: (Diagnostic) => boolean;
   expected: Diagnostic[];
 };
 
 type ExclusionTestArgs = {
   query: string;
-  dbInfo?: DbInfo;
+  dbSchema?: DbSchema;
   filterPredicate?: (Diagnostic) => boolean;
   excluded: Diagnostic[];
 };
 
 export function testSyntaxValidationContains({
   query,
-  dbInfo = new MockDbInfo(),
+  dbSchema = {},
   filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
   expected,
 }: InclusionTestArgs) {
-  const diagnostics = validateSyntax(query, dbInfo).filter(filterPredicate);
+  const diagnostics = validateSyntax(query, dbSchema).filter(filterPredicate);
 
   expect(diagnostics.length).toBe(expected.length);
 
@@ -38,11 +37,11 @@ export function testSyntaxValidationContains({
 
 export function testSyntaxValidationNotContains({
   query,
-  dbInfo = new MockDbInfo(),
+  dbSchema = {},
   filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
   excluded,
 }: ExclusionTestArgs) {
-  const diagnostics = validateSyntax(query, dbInfo).filter(filterPredicate);
+  const diagnostics = validateSyntax(query, dbSchema).filter(filterPredicate);
 
   const actual = excluded.map((notExpectedItem) =>
     diagnostics.find(

@@ -7,7 +7,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import type { DbInfo } from 'language-support';
+import type { DbSchema } from 'language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {
@@ -18,7 +18,7 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
@@ -31,6 +31,6 @@ export function doSignatureHelp(
       end: position,
     };
 
-    return signatureHelp(textDocument.getText(range), dbInfo);
+    return signatureHelp(textDocument.getText(range), dbSchema);
   };
 }

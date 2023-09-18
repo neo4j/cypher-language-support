@@ -4,7 +4,7 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { DbInfo } from '../dbInfo';
+import { DbSchema } from '../dbSchema';
 import {
   EnrichedParsingResult,
   LabelOrRelType,
@@ -56,15 +56,15 @@ function detectNonDeclaredLabel(
 
 function warnOnUndeclaredLabels(
   parsingResult: EnrichedParsingResult,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ): Diagnostic[] {
   const warnings: Diagnostic[] = [];
 
-  if (dbInfo.labels && dbInfo.relationshipTypes) {
-    const dbLabels = new Set(dbInfo.labels);
-    const dbRelationshipTypes = new Set(dbInfo.relationshipTypes);
+  if (dbSchema.labels && dbSchema.relationshipTypes) {
+    const dbLabels = new Set(dbSchema.labels);
+    const dbRelationshipTypes = new Set(dbSchema.relationshipTypes);
 
-    if (dbInfo.labels && dbInfo.relationshipTypes) {
+    if (dbSchema.labels && dbSchema.relationshipTypes) {
       parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
         const warning = detectNonDeclaredLabel(
           labelOrRelType,
@@ -82,11 +82,11 @@ function warnOnUndeclaredLabels(
 
 export function validateSyntax(
   wholeFileText: string,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ): Diagnostic[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
   const errors = parsingResult.errors;
-  const warnings = warnOnUndeclaredLabels(parsingResult, dbInfo);
+  const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
   const diagnostics = errors.concat(warnings);
 
   return diagnostics;
