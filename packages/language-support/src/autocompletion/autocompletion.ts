@@ -1,13 +1,13 @@
 import { CompletionItem } from 'vscode-languageserver-types';
 
-import { DbInfo } from '../dbInfo';
+import { DbSchema } from '../dbSchema';
 import { findLatestStatement } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
 import { completionCoreCompletion } from './helpers';
 
 export function autocomplete(
   textUntilPosition: string,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ): CompletionItem[] {
   let parsingResult = parserWrapper.parse(textUntilPosition);
   /* We try to locate the latest statement by finding the latest available `;` 
@@ -28,5 +28,5 @@ export function autocomplete(
     parsingResult = parserWrapper.parse(lastStatement);
   }
 
-  return completionCoreCompletion(parsingResult, dbInfo);
+  return completionCoreCompletion(parsingResult, dbSchema);
 }

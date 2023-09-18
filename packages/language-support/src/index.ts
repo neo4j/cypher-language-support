@@ -1,6 +1,6 @@
 export type { ParserRuleContext } from 'antlr4';
 export { autocomplete } from './autocompletion/autocompletion';
-export type { DbInfo } from './dbInfo';
+export type { DbSchema } from './dbSchema';
 export { antlrUtils, parse } from './helpers';
 export {
   applySyntaxColouring,

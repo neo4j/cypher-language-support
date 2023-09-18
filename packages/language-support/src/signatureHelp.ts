@@ -9,7 +9,7 @@ import {
   FunctionInvocationContext,
 } from './generated-parser/CypherParser';
 
-import { DbInfo } from './dbInfo';
+import { DbSchema } from './dbSchema';
 import { findParent } from './helpers';
 import { parserWrapper } from './parserWrapper';
 
@@ -89,20 +89,20 @@ function toSignatureHelp(
 
 export function signatureHelp(
   textUntilPosition: string,
-  dbInfo: DbInfo,
+  dbSchema: DbSchema,
 ): SignatureHelp {
   const parserResult = parserWrapper.parse(textUntilPosition);
   const stopNode = parserResult.stopNode;
   let result: SignatureHelp = emptyResult;
 
   const parsedProc = tryParseProcedure(stopNode);
-  if (parsedProc) {
-    result = toSignatureHelp(dbInfo.procedureSignatures, parsedProc);
+  if (parsedProc && dbSchema.procedureSignatures) {
+    result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
   } else {
     const parsedFunc = tryParseFunction(stopNode);
 
-    if (parsedFunc) {
-      result = toSignatureHelp(dbInfo.functionSignatures, parsedFunc);
+    if (parsedFunc && dbSchema.functionSignatures) {
+      result = toSignatureHelp(dbSchema.functionSignatures, parsedFunc);
     }
   }
 

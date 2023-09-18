@@ -95,9 +95,12 @@ class VariableCollector implements ParseTreeListener {
       // To avoid suggesting the variable that is currently being typed
       // For example RETURN a| <- we don't want to suggest "a" as a variable
       // We check if the variable is in the end of the statement
+      const nextTokenIndex = ctx.stop?.tokenIndex;
+
       const nextTokenIsEOF =
-        ctx.parser.getTokenStream().get(ctx.stop.tokenIndex + 1)?.type ===
-        CypherParser.EOF;
+        nextTokenIndex !== undefined &&
+        ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
+          CypherParser.EOF;
 
       if (variable && !nextTokenIsEOF) {
         this.variables.push(variable);
@@ -107,7 +110,7 @@ class VariableCollector implements ParseTreeListener {
 }
 
 class ParserWrapper {
-  parsingResult: EnrichedParsingResult;
+  parsingResult?: EnrichedParsingResult;
 
   parse(query: string): EnrichedParsingResult {
     if (
@@ -173,35 +176,12 @@ export class ErrorListener implements ANTLRErrorListener<CommonToken> {
     };
     this.diagnostics.push(diagnostic);
   }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportAttemptingFullContext() {}
 
-  public reportAttemptingFullContext(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _conflictingAlts,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportAmbiguity() {}
 
-  public reportAmbiguity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _exact,
-    _ambigAlts,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
-
-  public reportContextSensitivity(
-    _recognizer,
-    _dfa,
-    _startIndex,
-    _stopIndex,
-    _prediction,
-    _configs,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public reportContextSensitivity() {}
 }
