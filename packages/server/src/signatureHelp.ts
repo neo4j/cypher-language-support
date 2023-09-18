@@ -7,8 +7,8 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
+import { Neo4jSDK } from 'neo4j-sdk';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { getSchema } from './server';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -16,7 +16,10 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
-export function doSignatureHelp(documents: TextDocuments<TextDocument>) {
+export function doSignatureHelp(
+  documents: TextDocuments<TextDocument>,
+  neo4j: Neo4jSDK,
+) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     const endOfTriggerHelp = params.context?.triggerCharacter === ')';
@@ -28,6 +31,9 @@ export function doSignatureHelp(documents: TextDocuments<TextDocument>) {
       end: position,
     };
 
-    return signatureHelp(textDocument.getText(range), getSchema());
+    return signatureHelp(
+      textDocument.getText(range),
+      neo4j.metadata.dbSchema ?? {},
+    );
   };
 }

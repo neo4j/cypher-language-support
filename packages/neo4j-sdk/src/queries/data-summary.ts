@@ -1,4 +1,5 @@
 import { QueryResult } from 'neo4j-driver';
+import { SdkQuery } from '../types/sdk-types';
 
 export type DataSummary = {
   labels: string[];
@@ -8,8 +9,8 @@ export type DataSummary = {
 
 const ITEM_LIMIT = 1000;
 
-export function getDataSummary() {
-  const query = `CALL db.labels() YIELD label
+export function getDataSummary(): SdkQuery<DataSummary> {
+  const cypher = `CALL db.labels() YIELD label
 RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
 UNION ALL
 CALL db.relationshipTypes() YIELD relationshipType
@@ -32,5 +33,5 @@ RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
     return result;
   }
 
-  return { query, parseResult };
+  return { cypher, parseResult, dbType: 'standard' };
 }

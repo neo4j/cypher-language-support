@@ -1,5 +1,5 @@
 import { QueryResult } from 'neo4j-driver';
-import type { ArgumentDescription } from '../neo4j-sdk/types/sdk-types.js';
+import type { ArgumentDescription, SdkQuery } from '../types/sdk-types.js';
 
 export type Neo4jFunction = {
   name: string;
@@ -16,8 +16,8 @@ export type Neo4jFunction = {
  * Gets available functions in your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-functions/
  */
-export function listFunctions() {
-  const query = `SHOW FUNCTIONS
+export function listFunctions(): SdkQuery<Neo4jFunction[]> {
+  const cypher = `SHOW FUNCTIONS
 YIELD name, category, description, isBuiltIn, argumentDescription, signature, returnDescription, aggregating`;
 
   function parseResult(result: QueryResult) {
@@ -26,5 +26,5 @@ YIELD name, category, description, isBuiltIn, argumentDescription, signature, re
     return result.records.map((rec) => rec.toObject() as Neo4jFunction);
   }
 
-  return { query, parseResult };
+  return { cypher, parseResult, dbType: 'system' };
 }

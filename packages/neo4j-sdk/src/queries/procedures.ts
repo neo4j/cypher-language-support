@@ -2,7 +2,8 @@ import { QueryResult } from 'neo4j-driver';
 import type {
   ArgumentDescription,
   ReturnDescription,
-} from '../neo4j-sdk/types/sdk-types.js';
+  SdkQuery,
+} from '../types/sdk-types.js';
 
 type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE';
 
@@ -24,8 +25,8 @@ export type Procedure = {
  * Gets available procedures on your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
-export function listProcedures() {
-  const query = `SHOW PROCEDURES
+export function listProcedures(): SdkQuery<Procedure[]> {
+  const cypher = `SHOW PROCEDURES
 YIELD name, description, mode, worksOnSystem, argumentDescription, signature, returnDescription, admin, option`;
 
   function parseResult(result: QueryResult) {
@@ -35,5 +36,5 @@ YIELD name, description, mode, worksOnSystem, argumentDescription, signature, re
       return rec.toObject() as Procedure;
     });
   }
-  return { query, parseResult };
+  return { cypher, parseResult, dbType: 'system' };
 }

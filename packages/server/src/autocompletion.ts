@@ -7,10 +7,13 @@ import {
 import { Range } from 'vscode-languageserver-types';
 
 import { autocomplete } from 'language-support';
+import { Neo4jSDK } from 'neo4j-sdk';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { getSchema } from './server';
 
-export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
+export function doAutoCompletion(
+  documents: TextDocuments<TextDocument>,
+  neo4jSdk: Neo4jSDK,
+) {
   return (textDocumentPosition: TextDocumentPositionParams) => {
     const textDocument = documents.get(textDocumentPosition.textDocument.uri);
     if (textDocument === undefined) return [];
@@ -23,6 +26,9 @@ export function doAutoCompletion(documents: TextDocuments<TextDocument>) {
       end: position,
     };
 
-    return autocomplete(textDocument.getText(range), getSchema());
+    return autocomplete(
+      textDocument.getText(range),
+      neo4jSdk.metadata.dbSchema ?? {},
+    );
   };
 }

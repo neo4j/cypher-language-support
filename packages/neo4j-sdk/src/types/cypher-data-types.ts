@@ -10,7 +10,7 @@ import type {
   Point,
   Relationship,
   Time,
-} from "neo4j-driver";
+} from 'neo4j-driver';
 import {
   isDate,
   isDateTime,
@@ -20,7 +20,7 @@ import {
   isLocalTime,
   isPoint,
   isTime,
-} from "neo4j-driver";
+} from 'neo4j-driver';
 
 /** 
       The neo4j driver type mapping - https://neo4j.com/docs/javascript-manual/current/cypher-workflow/#js-driver-type-mapping
@@ -99,9 +99,9 @@ export type CypherDataType =
   | CypherList;
 
 export const isCypherTemporalType = (
-  anything: unknown
+  anything: unknown,
 ): anything is CypherTemporalType => {
-  if (typeof anything === "object" && anything !== null) {
+  if (typeof anything === 'object' && anything !== null) {
     return [
       isDate,
       isTime,
@@ -115,16 +115,16 @@ export const isCypherTemporalType = (
 };
 
 export const isCypherBasicPropertyType = (
-  value: unknown
+  value: unknown,
 ): value is CypherBasicPropertyType => {
   const valType = typeof value;
 
   return (
     value === null ||
-    valType === "boolean" ||
-    valType === "string" ||
-    valType === "number" ||
-    valType === "bigint" ||
+    valType === 'boolean' ||
+    valType === 'string' ||
+    valType === 'number' ||
+    valType === 'bigint' ||
     value?.constructor === Int8Array ||
     isInt(value) ||
     isCypherTemporalType(value) ||
@@ -133,7 +133,7 @@ export const isCypherBasicPropertyType = (
 };
 
 export const isCypherPropertyType = (
-  value: unknown
+  value: unknown,
 ): value is CypherProperty => {
   if (Array.isArray(value)) {
     if (value.length === 0) {
@@ -147,6 +147,6 @@ export const isCypherPropertyType = (
 
 export function isInt8Array(val: unknown): val is Int8Array {
   return (
-    typeof val === "object" && val !== null && val.constructor === Int8Array
+    typeof val === 'object' && val !== null && val.constructor === Int8Array
   );
 }

@@ -1,13 +1,14 @@
 import { DbSchema } from 'language-support';
-import { Driver, QueryResult } from 'neo4j-driver';
 import {
   ParameterInformation,
   SignatureInformation,
 } from 'vscode-languageserver/node';
+import { Neo4jConnection } from './neo4j-connection.js';
 import { DataSummary, getDataSummary } from './queries/data-summary.js';
 import { Database, listDatabases } from './queries/databases.js';
 import { listFunctions, Neo4jFunction } from './queries/functions.js';
 import { listProcedures, Procedure } from './queries/procedures.js';
+import { SdkQuery } from './types/sdk-types.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -16,8 +17,8 @@ type FetchCallback<T> = (
 ) => void;
 
 type PollerConfig<T> = {
-  queryConfig: { query: string; parseResult: (result: QueryResult) => T };
-  driver: Driver;
+  queryConfig: SdkQuery<T>;
+  connection: Neo4jConnection;
   prefetchedData?: T;
   onRefetchDone?: FetchCallback<T>;
   database?: string;
@@ -28,25 +29,19 @@ class QueryPoller<T> {
   public data?: T;
   public lastFetchStart?: number;
   public errorMessage?: string;
-  // behåll som objekt
-  private query: string;
-  private parseResult: (result: QueryResult) => T;
-  private driver: Driver;
+  private connection: Neo4jConnection;
   private onRefetchDone?: FetchCallback<T>;
-  private database?: string;
+  private queryConfig: SdkQuery<T>;
 
   constructor({
     prefetchedData,
     queryConfig,
-    driver,
+    connection,
     onRefetchDone,
-    database,
   }: PollerConfig<T>) {
-    this.driver = driver;
-    this.query = queryConfig.query;
-    this.parseResult = queryConfig.parseResult;
+    this.connection = connection;
+    this.queryConfig = queryConfig;
     this.onRefetchDone = onRefetchDone;
-    this.database = database;
 
     if (prefetchedData) {
       this.data = prefetchedData;
@@ -63,13 +58,11 @@ class QueryPoller<T> {
     delete this.errorMessage;
 
     try {
-      const result = await this.driver.executeQuery(
-        this.query,
-        {},
-        { database: this.database ?? 'system' },
+      const result = await this.connection.runQuery(
+        this.queryConfig.cypher,
+        this.queryConfig.dbType === 'system' ? 'system' : undefined,
       );
-
-      const data = this.parseResult(result);
+      const data = this.queryConfig.parseResult(result);
       this.data = data;
       this.status = 'fetched';
       this.onRefetchDone?.({ success: true, data });
@@ -93,9 +86,9 @@ export class MetadataPoller {
 
   public dbSchema: DbSchema = {};
 
-  constructor(databases: Database[], driver: Driver) {
+  constructor(databases: Database[], connection: Neo4jConnection) {
     this.databases = new QueryPoller({
-      driver,
+      connection,
       queryConfig: listDatabases(),
       prefetchedData: databases,
       onRefetchDone: (result) => {
@@ -109,7 +102,7 @@ export class MetadataPoller {
     });
 
     this.dataSummary = new QueryPoller({
-      driver,
+      connection,
       // TODO way to properly find right database
       database: 'neo4j',
       queryConfig: getDataSummary(),
@@ -124,7 +117,7 @@ export class MetadataPoller {
     });
 
     this.functions = new QueryPoller({
-      driver,
+      connection,
       queryConfig: listFunctions(),
       onRefetchDone: (result) => {
         if (result.success) {
@@ -159,7 +152,7 @@ export class MetadataPoller {
     // TODO executbale by me only
     // TODO parsing
     this.procedures = new QueryPoller({
-      driver,
+      connection,
       queryConfig: listProcedures(),
       onRefetchDone: (result) => {
         if (result.success) {

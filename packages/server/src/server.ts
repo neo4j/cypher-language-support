@@ -11,12 +11,8 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  DbSchema,
-  syntaxColouringLegend,
-  validateSyntax,
-} from 'language-support';
-import { Neo4jConnection } from 'neo4j-sdk';
+import { syntaxColouringLegend, validateSyntax } from 'language-support';
+import { Neo4jSDK } from 'neo4j-sdk';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
@@ -27,10 +23,7 @@ const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-let neo4j: Neo4jConnection | undefined;
-export function getSchema(): DbSchema {
-  return neo4j?.metadata.dbSchema ?? {};
-}
+const neo4jSdk = new Neo4jSDK();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -92,38 +85,36 @@ connection.languages.semanticTokens.on(
 );
 
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents));
+connection.onSignatureHelp(doSignatureHelp(documents, neo4jSdk));
 // Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents));
+connection.onCompletion(doAutoCompletion(documents, neo4jSdk));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
     const neo4jConfig = params.settings.cypherLSP.neo4j;
 
+    neo4jSdk.disconnect();
     if (
       neo4jConfig.connect &&
       neo4jConfig.password &&
       neo4jConfig.URL &&
       neo4jConfig.user
     ) {
-      Neo4jConnection.initialize(
-        neo4jConfig.URL,
-        {
-          username: neo4jConfig.user,
-          password: neo4jConfig.password,
-        },
-        { appName: 'cypher-language-server' },
-      )
-        .then((connection) => {
-          neo4j = connection;
-          neo4j.metadata.startBackgroundPolling();
+      neo4jSdk
+        .connect(
+          neo4jConfig.URL,
+          {
+            username: neo4jConfig.user,
+            password: neo4jConfig.password,
+          },
+          { appName: 'cypher-language-server' },
+        )
+        .then(() => {
+          neo4jSdk.metadata.startBackgroundPolling();
         })
         .catch((error) => {
           console.error(`Unable to connect to Neo4j: ${String(error)}`);
         });
-    } else {
-      neo4j?.metadata.stopBackgroundPolling();
-      neo4j = undefined;
     }
   },
 );

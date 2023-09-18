@@ -14,8 +14,16 @@ export const basicNodeSchema = {
   properties: {
     id: { type: 'string' },
     labels: { type: 'array', items: { type: 'string' } },
-    properties: { type: 'object', required: [], additionalProperties: { type: 'string' } },
-    propertyTypes: { type: 'object', required: [], additionalProperties: { type: 'string' } },
+    properties: {
+      type: 'object',
+      required: [],
+      additionalProperties: { type: 'string' },
+    },
+    propertyTypes: {
+      type: 'object',
+      required: [],
+      additionalProperties: { type: 'string' },
+    },
   },
   required: ['id', 'labels', 'properties', 'propertyTypes'],
 } as const;
@@ -36,10 +44,25 @@ export const basicRelationshipSchema = {
     startNodeId: { type: 'string' },
     endNodeId: { type: 'string' },
     type: { type: 'string' },
-    properties: { type: 'object', required: [], additionalProperties: { type: 'string' } },
-    propertyTypes: { type: 'object', required: [], additionalProperties: { type: 'string' } },
+    properties: {
+      type: 'object',
+      required: [],
+      additionalProperties: { type: 'string' },
+    },
+    propertyTypes: {
+      type: 'object',
+      required: [],
+      additionalProperties: { type: 'string' },
+    },
   },
-  required: ['id', 'startNodeId', 'endNodeId', 'type', 'properties', 'propertyTypes'],
+  required: [
+    'id',
+    'startNodeId',
+    'endNodeId',
+    'type',
+    'properties',
+    'propertyTypes',
+  ],
 } as const;
 
 export type BasicNodesAndRels = {
@@ -72,7 +95,10 @@ export type DeduplicatedBasicNodesAndRels = {
   limitHit?: boolean;
 };
 
-export type BaseArguments = { queryCypher: (query: string) => Promise<QueryResult>; neo4jVersion: string };
+export type BaseArguments = {
+  queryCypher: (query: string) => Promise<QueryResult>;
+  neo4jVersion: string;
+};
 
 export type ReturnDescription = {
   name: string;
@@ -83,3 +109,11 @@ export type ReturnDescription = {
 // we could parse this string for better types in the future
 export type Neo4jStringType = string;
 export type ArgumentDescription = ReturnDescription & { default?: string };
+
+export type DbType = 'system' | 'standard' | 'composite';
+
+export type SdkQuery<T> = {
+  cypher: string;
+  parseResult: (result: QueryResult) => T;
+  dbType: DbType;
+};

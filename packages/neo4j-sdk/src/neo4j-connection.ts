@@ -1,6 +1,5 @@
-import neo4j, { Config, Driver } from 'neo4j-driver';
-import { MetadataPoller } from './metadata-poller.js';
-import { Database, listDatabases } from './queries/databases.js';
+import { Driver } from 'neo4j-driver';
+import { Database } from './queries/databases.js';
 
 // TODO user agent and proper metadata on background queries
 // TODO hold and eval parameters?
@@ -16,61 +15,24 @@ function resolveInitialDatabase(databases: Database[]): string {
 }
 
 export class Neo4jConnection {
-  public metadata: MetadataPoller;
+  public currentDb: string;
 
   constructor(
     public connectedUser: string,
     public protocolVersion: string,
     databases: Database[],
-    public currentDb: string,
     public driver: Driver,
   ) {
-    // todo give function to query not driver to poller
-    // todo validate connection before repolling?
-    // tredje som äger båda
-    this.metadata = new MetadataPoller(databases, driver);
+    this.currentDb = resolveInitialDatabase(databases);
   }
 
-  static async initialize(
-    url: string,
-    credentials: { username: string; password: string },
-    config: { driverConfig?: Config; appName: string },
-  ): Promise<Neo4jConnection> {
-    const driver = neo4j.driver(
-      url,
-      neo4j.auth.basic(credentials.username, credentials.password),
-      config.driverConfig,
+  async runQuery(query: string, databaseTarget?: string) {
+    const result = await this.driver.executeQuery(
+      query,
+      {},
+      { database: databaseTarget ?? this.currentDb },
     );
-
-    await driver.verifyConnectivity();
-
-    if (await driver.supportsSessionAuth()) {
-      if (!(await driver.verifyAuthentication())) {
-        // @oskar TODO check how this works with first time login for both 4 and 5
-        // TODO structured errors
-        throw new Error('Invalid credentials');
-      }
-    }
-
-    const { query, parseResult } = listDatabases();
-    const result = await driver.executeQuery(query, {}, { database: 'system' });
-    const databases = parseResult(result);
-
-    const protocolVersion =
-      result.summary.server.protocolVersion?.toString() ?? 'unknown';
-
-    const currentDb = resolveInitialDatabase(databases);
-    if (!currentDb) {
-      throw new Error('Connected user has no database access');
-    }
-
-    return new Neo4jConnection(
-      credentials.username,
-      protocolVersion,
-      databases,
-      currentDb,
-      driver,
-    );
+    return result;
   }
 
   async healthcheck() {

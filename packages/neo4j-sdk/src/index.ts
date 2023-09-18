@@ -1,1 +1,1 @@
-export { Neo4jConnection } from './neo4j-connection';
+export { Neo4jSDK } from './neo4j-sdk';
