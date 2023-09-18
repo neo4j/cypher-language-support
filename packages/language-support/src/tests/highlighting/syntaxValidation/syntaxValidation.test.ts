@@ -1,16 +1,12 @@
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
-} from 'vscode-languageserver-types';
-import { testSyntaxValidationContains } from './helpers';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { getDiagnosticsForQuery } from './helpers';
 
 describe('Syntax validation errors spec', () => {
   test('Misspelt keyword at the beginning of the statement', () => {
     const query = 'METCH (n:Person)';
 
     {
-      testSyntaxValidationContains({
+      getDiagnosticsForQuery({
         query,
         expected: [
           {
@@ -26,10 +22,31 @@ describe('Syntax validation errors spec', () => {
     }
   });
 
+  test('Misspelt keyword too different from the ones we know about does not trigger an error rewording', () => {
+    const query = 'CAT (n:Person)';
+
+    {
+      getDiagnosticsForQuery({
+        query,
+        expected: [
+          {
+            range: {
+              start: Position.create(0, 0),
+              end: Position.create(0, 3),
+            },
+            message:
+              'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH?',
+            severity: DiagnosticSeverity.Error,
+          },
+        ],
+      });
+    }
+  });
+
   test('Misspelt keyword at the end of the statement', () => {
     const query = 'MATCH (n:Person) WERE';
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       expected: [
         {
@@ -48,7 +65,7 @@ describe('Syntax validation errors spec', () => {
   test('Misspelt keyword in the middle of the statement', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       expected: [
         {
@@ -71,7 +88,7 @@ describe('Syntax validation errors spec', () => {
                    }
     `;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       expected: [
         {
@@ -89,7 +106,7 @@ describe('Syntax validation errors spec', () => {
   test('Misspelt keyword in the middle of the statement', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       expected: [
         {
@@ -108,11 +125,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation warns on missing label when database can be contacted', () => {
     const query = `MATCH (n: Person)`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [
         {
           range: {
@@ -130,11 +145,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation warns on missing relationship type when database can be contacted', () => {
     const query = `MATCH (n)-[r:Rel3]->(m)`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { labels: ['Rel3'], relationshipTypes: ['Rel1', 'Rel2'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [
         {
           range: {
@@ -152,11 +165,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation does not warn when it cannot distinguish between label and relationship type', () => {
     const query = `MATCH (n) WHERE n:Rel1`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { labels: ['Person'], relationshipTypes: ['Rel1', 'Rel2'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [],
     });
   });
@@ -164,11 +175,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation warns when it cannot distinguish between label and relationship type and both missing', () => {
     const query = `MATCH (n) WHERE n:Rel3`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { labels: ['Person'], relationshipTypes: ['Rel1', 'Rel2'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [
         {
           range: {
@@ -186,11 +195,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation does not warn on missing label when labels could not be fetched from database', () => {
     const query = `MATCH (n: Person)`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { relationshipTypes: ['Rel1', 'Rel2'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [],
     });
   });
@@ -198,11 +205,9 @@ describe('Syntax validation errors spec', () => {
   test('Syntax validation does not warn on missing label when relationship types could not be fetched from database', () => {
     const query = `MATCH (n: Person)`;
 
-    testSyntaxValidationContains({
+    getDiagnosticsForQuery({
       query,
       dbSchema: { labels: ['Dog', 'Cat'] },
-      filterPredicate: (d: Diagnostic) =>
-        d.severity === DiagnosticSeverity.Warning,
       expected: [],
     });
   });

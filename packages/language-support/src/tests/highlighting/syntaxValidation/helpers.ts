@@ -1,28 +1,20 @@
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
+import { Diagnostic } from 'vscode-languageserver-types';
 import { DbSchema } from '../../../dbSchema';
 import { validateSyntax } from '../../../highlighting/syntaxValidation';
 
-type InclusionTestArgs = {
+type SyntaxValidationTestArgs = {
   query: string;
   dbSchema?: DbSchema;
   filterPredicate?: (Diagnostic) => boolean;
   expected: Diagnostic[];
 };
 
-type ExclusionTestArgs = {
-  query: string;
-  dbSchema?: DbSchema;
-  filterPredicate?: (Diagnostic) => boolean;
-  excluded: Diagnostic[];
-};
-
-export function testSyntaxValidationContains({
+export function getDiagnosticsForQuery({
   query,
   dbSchema = {},
-  filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
   expected,
-}: InclusionTestArgs) {
-  const diagnostics = validateSyntax(query, dbSchema).filter(filterPredicate);
+}: SyntaxValidationTestArgs) {
+  const diagnostics = validateSyntax(query, dbSchema);
 
   expect(diagnostics.length).toBe(expected.length);
 
@@ -33,24 +25,4 @@ export function testSyntaxValidationContains({
     expect(diagnostic.message).toBe(expectedDiagnostic.message);
     expect(diagnostic.severity).toBe(expectedDiagnostic.severity);
   });
-}
-
-export function testSyntaxValidationNotContains({
-  query,
-  dbSchema = {},
-  filterPredicate = (d: Diagnostic) => d.severity === DiagnosticSeverity.Error,
-  excluded,
-}: ExclusionTestArgs) {
-  const diagnostics = validateSyntax(query, dbSchema).filter(filterPredicate);
-
-  const actual = excluded.map((notExpectedItem) =>
-    diagnostics.find(
-      (value) =>
-        value.message === notExpectedItem.message &&
-        value.severity === notExpectedItem.severity &&
-        value.range === notExpectedItem.range,
-    ),
-  );
-
-  expect(actual).toEqual([]);
 }

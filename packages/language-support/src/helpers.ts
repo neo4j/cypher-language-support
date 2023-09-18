@@ -8,7 +8,6 @@ import antlrDefaultExport, {
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
 import CypherParser, {
-  LabelExpressionPredicateContext,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsContext,
@@ -130,13 +129,4 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
   );
 
   return isDefined(relPattern);
-}
-
-export function inLabelExpressionPredicate(stopNode: ParserRuleContext) {
-  const labelExpressionPredicate = findParent(
-    stopNode,
-    (p) => p instanceof LabelExpressionPredicateContext,
-  );
-
-  return isDefined(labelExpressionPredicate);
 }

@@ -64,17 +64,15 @@ function warnOnUndeclaredLabels(
     const dbLabels = new Set(dbSchema.labels);
     const dbRelationshipTypes = new Set(dbSchema.relationshipTypes);
 
-    if (dbSchema.labels && dbSchema.relationshipTypes) {
-      parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
-        const warning = detectNonDeclaredLabel(
-          labelOrRelType,
-          dbLabels,
-          dbRelationshipTypes,
-        );
+    parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
+      const warning = detectNonDeclaredLabel(
+        labelOrRelType,
+        dbLabels,
+        dbRelationshipTypes,
+      );
 
-        if (warning) warnings.push(warning);
-      });
-    }
+      if (warning) warnings.push(warning);
+    });
   }
 
   return warnings;
