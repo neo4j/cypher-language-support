@@ -11,7 +11,7 @@
     "semver": "^7.5.4"
   },
   "scripts": {
-    "build": "&& tsc -b",
+    "build": "tsc -b",
     "clean": "rm -rf out",
     "watch": "tsc -b -w",
     "test": "jest"

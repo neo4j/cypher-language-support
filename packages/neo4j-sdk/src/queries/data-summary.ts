@@ -7,19 +7,16 @@ export type DataSummary = {
 };
 
 const ITEM_LIMIT = 1000;
-const labelList = `CALL db.labels() YIELD label`;
-const relationshipTypeList = `CALL db.relationshipTypes() YIELD relationshipType`;
-const propertyKeyList = `CALL db.propertyKeys() YIELD propertyKey`;
 
 export function getDataSummary() {
-  const query = `${labelList}
+  const query = `CALL db.labels() YIELD label
 RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
 UNION ALL
-${relationshipTypeList}
-RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
+CALL db.relationshipTypes() YIELD relationshipType
+RETURN COLLECT(relationshipType)[..${ITEM_LIMIT}] AS result
 UNION ALL
-${propertyKeyList}
-RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result`;
+CALL db.propertyKeys() YIELD propertyKey
+RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
 
   function parseResult(res: QueryResult): DataSummary {
     // Types to be validated in e2e tests

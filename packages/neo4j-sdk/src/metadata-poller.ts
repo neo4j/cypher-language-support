@@ -20,6 +20,7 @@ type PollerConfig<T> = {
   driver: Driver;
   prefetchedData?: T;
   onRefetchDone?: FetchCallback<T>;
+  database?: string;
 };
 
 class QueryPoller<T> {
@@ -27,24 +28,25 @@ class QueryPoller<T> {
   public data?: T;
   public lastFetchStart?: number;
   public errorMessage?: string;
+  // behåll som objekt
   private query: string;
   private parseResult: (result: QueryResult) => T;
   private driver: Driver;
   private onRefetchDone?: FetchCallback<T>;
+  private database?: string;
 
   constructor({
     prefetchedData,
     queryConfig,
     driver,
     onRefetchDone,
+    database,
   }: PollerConfig<T>) {
     this.driver = driver;
     this.query = queryConfig.query;
     this.parseResult = queryConfig.parseResult;
-
-    if (onRefetchDone) {
-      this.onRefetchDone = onRefetchDone;
-    }
+    this.onRefetchDone = onRefetchDone;
+    this.database = database;
 
     if (prefetchedData) {
       this.data = prefetchedData;
@@ -64,7 +66,7 @@ class QueryPoller<T> {
       const result = await this.driver.executeQuery(
         this.query,
         {},
-        { database: 'system' },
+        { database: this.database ?? 'system' },
       );
 
       const data = this.parseResult(result);
@@ -75,6 +77,7 @@ class QueryPoller<T> {
       const errorMessage = String(e);
       this.errorMessage = errorMessage;
       this.status = 'error';
+      console.error(e);
       this.onRefetchDone?.({ success: false, errorMessage });
     }
   }
@@ -107,6 +110,8 @@ export class MetadataPoller {
 
     this.dataSummary = new QueryPoller({
       driver,
+      // TODO way to properly find right database
+      database: 'neo4j',
       queryConfig: getDataSummary(),
       onRefetchDone: (result) => {
         if (result.success) {
@@ -209,8 +214,9 @@ export class MetadataPoller {
     this.dbPollingInterval = undefined;
   }
 
-  startBackgroundPolling(intervalSeconds = 20) {
+  startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
+    void this.fetchDbSchema();
     this.dbPollingInterval = setInterval(
       () => void this.fetchDbSchema(),
       intervalSeconds * 1000,

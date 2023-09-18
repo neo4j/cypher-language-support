@@ -7,8 +7,8 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import type { DbSchema } from 'language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { getSchema } from './server';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -16,10 +16,7 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
-export function doSignatureHelp(
-  documents: TextDocuments<TextDocument>,
-  dbSchema: DbSchema,
-) {
+export function doSignatureHelp(documents: TextDocuments<TextDocument>) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     const endOfTriggerHelp = params.context?.triggerCharacter === ')';
@@ -31,6 +28,6 @@ export function doSignatureHelp(
       end: position,
     };
 
-    return signatureHelp(textDocument.getText(range), dbSchema);
+    return signatureHelp(textDocument.getText(range), getSchema());
   };
 }

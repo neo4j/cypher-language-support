@@ -15,7 +15,7 @@ function resolveInitialDatabase(databases: Database[]): string {
   return home?.name ?? def?.name ?? system?.name ?? databases[0]?.name;
 }
 
-export class Neo4jConnectionManager {
+export class Neo4jConnection {
   public metadata: MetadataPoller;
 
   constructor(
@@ -25,15 +25,17 @@ export class Neo4jConnectionManager {
     public currentDb: string,
     public driver: Driver,
   ) {
+    // todo give function to query not driver to poller
+    // todo validate connection before repolling?
+    // tredje som äger båda
     this.metadata = new MetadataPoller(databases, driver);
-    this.metadata.startBackgroundPolling();
   }
 
   static async initialize(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
-  ): Promise<Neo4jConnectionManager> {
+  ): Promise<Neo4jConnection> {
     const driver = neo4j.driver(
       url,
       neo4j.auth.basic(credentials.username, credentials.password),
@@ -62,7 +64,7 @@ export class Neo4jConnectionManager {
       throw new Error('Connected user has no database access');
     }
 
-    return new Neo4jConnectionManager(
+    return new Neo4jConnection(
       credentials.username,
       protocolVersion,
       databases,
