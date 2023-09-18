@@ -40,7 +40,7 @@ export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
     const triggerCharacters = ['.', ':', '{', '$'];
     const lastCharacter = textUntilCursor.slice(-1);
 
-    const lastWord = context.matchBefore(/\w*/);
+    const lastWord = context.matchBefore(/(\$|\w)*$/);
     const inWord = lastWord.from !== lastWord.to;
 
     const shouldTriggerCompletion =
@@ -51,9 +51,11 @@ export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
     }
 
     const options = autocomplete(textUntilCursor, schema ?? emptySchema);
+    // display only the last part if property but return full?
+    console.log(options);
 
     return {
-      from: context.matchBefore(/\w*$/).from,
+      from: lastWord.from,
       options: options.map((o) => ({
         label: o.label,
         type: completionKindToCodemirrorIcon(o.kind),

@@ -25,11 +25,52 @@ const proceduresCompletions = (dbSchema: DbSchema) =>
     label: procedureName,
     kind: CompletionItemKind.Method,
   }));
-const functionCompletions = (dbSchema: DbSchema) =>
-  Object.keys(dbSchema.functionSignatures ?? {}).map((fnName) => ({
-    label: fnName,
-    kind: CompletionItemKind.Function,
-  }));
+
+const functionCompletions = (
+  dbSchema: DbSchema,
+  namespacePrefix: string,
+): CompletionItem[] => {
+  const fnNames = Object.keys(dbSchema.functionSignatures ?? {});
+  const prefixes = Array.from(
+    new Set(
+      fnNames
+        .filter((fn) => fn.includes('.'))
+        .map((fnName) => fnName.split('.')[0]),
+    ),
+  );
+  // If we have no namespace prefix, show all whole function signatures, including their namespace
+  // example:
+  // sleep => show `apoc.util.sleep`
+
+  // if we have a namespace already typed, complete on the namespace level:
+  // example:
+  // apoc. => show `util` | `load` | `date` etc.
+
+  // this way we have convience and sleep for people who know what they are looking for
+  // but at the same time we let users explore the namespace if they don't know what they are looking for
+  // TODO fix this for vscode
+  if (namespacePrefix === '') {
+    return fnNames
+      .map((fnName) => ({
+        label: fnName,
+        kind: CompletionItemKind.Function,
+      }))
+      .concat(
+        prefixes.map((prefix) => ({
+          label: prefix,
+          kind: CompletionItemKind.Function,
+        })),
+      );
+  } else {
+    return fnNames
+      .filter((fnName) => fnName.startsWith(namespacePrefix))
+      .map((fnName) => ({
+        label: fnName.slice(namespacePrefix.length).split('.')[0],
+        kind: CompletionItemKind.Function,
+      }));
+  }
+};
+
 const parameterCompletions = (
   dbInfo: DbSchema,
   expectedType: ExpectedParameterType,
@@ -151,7 +192,27 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        return functionCompletions(dbSchema);
+        if (
+          parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
+          CypherLexer.SPACE
+        ) {
+          return [];
+        }
+
+        const namespacePrefix = tokens
+          .slice(candidateRule.startTokenIndex)
+          .filter((token, index, array) => {
+            if (token.type === CypherLexer.DOT) {
+              return true;
+            }
+            if (token.type === CypherLexer.IDENTIFIER) {
+              return array.length - 2 !== index;
+            }
+          })
+          .map((token) => token.text)
+          .join('');
+
+        return functionCompletions(dbSchema, namespacePrefix);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
@@ -178,6 +239,12 @@ export function completionCoreCompletion(
         ) {
           return [];
         }
+        // check that the accessed thing is a variable
+
+        // TODO check that is variable and not namespace for function false positive see
+        // RETURN apoc.a
+        // vs
+        // Match (apoc) RETURN apoc.a
 
         return propertyKeyCompletions(dbSchema);
       }
