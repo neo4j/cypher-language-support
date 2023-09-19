@@ -3,6 +3,7 @@
   "include": ["src"],
   "compilerOptions": {
     "outDir": "out",
-    "declaration": true
+    "declaration": true,
+    "allowJs": true
   }
 }

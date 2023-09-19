@@ -4,6 +4,7 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
+import { ParserRuleContext, ParseTree } from 'antlr4';
 import { DbSchema } from '../dbSchema';
 import {
   EnrichedParsingResult,
@@ -11,6 +12,7 @@ import {
   LabelType,
   parserWrapper,
 } from '../parserWrapper';
+import { doSemanticAnalysis } from './semanticAnalysisWrapper';
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -78,12 +80,60 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
+function findEndPosition(
+  parsingResult: EnrichedParsingResult,
+  start: Position,
+): Position {
+  let result: Position | undefined = undefined;
+  const line = start.line + 1;
+  const column = start.character;
+  const toExplore: ParseTree[] = [parsingResult.result];
+
+  while (toExplore.length > 0) {
+    const current: ParseTree = toExplore.pop();
+
+    if (current instanceof ParserRuleContext) {
+      const startToken = current.start;
+      if (startToken.line === line && startToken.column === column) {
+        const stopToken = current.stop;
+        result = Position.create(
+          stopToken.line - 1,
+          stopToken.column + stopToken.text.length,
+        );
+      }
+      current.children.forEach((child) => toExplore.push(child));
+    }
+  }
+
+  if (result === undefined) {
+    result = start;
+  }
+
+  return result;
+}
+
 export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): Diagnostic[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
   const errors = parsingResult.errors;
+
+  if (errors.length === 0) {
+    const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
+    semanticAnalysisErrors.forEach((e) => {
+      const start = Position.create(e.line - 1, e.column - 1);
+
+      errors.push({
+        severity: DiagnosticSeverity.Error,
+        range: {
+          start: start,
+          end: findEndPosition(parsingResult, start),
+        },
+        message: e.msg,
+      });
+    });
+  }
   const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
   const diagnostics = errors.concat(warnings);
 
