@@ -53,7 +53,7 @@ export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
     const options = autocomplete(textUntilCursor, schema ?? emptySchema);
 
     return {
-      from: context.matchBefore(/\w*$/).from,
+      from: context.matchBefore(/(\w|\$)*$/).from,
       options: options.map((o) => ({
         label: o.label,
         type: completionKindToCodemirrorIcon(o.kind),
