@@ -55,12 +55,14 @@ export function getHelpfulErrorMessage(
 
   if (mostLikelyCandidates.length === 0) {
     mostLikelyCandidates = parserSuggestedTokens;
+    const eof = possibleTokenNumbers.find((t) => t === CypherParser.EOF);
+    const semicolon = possibleTokenNumbers.find(
+      (t) => t === CypherParser.SEMICOLON,
+    );
 
-    if (possibleTokenNumbers.find((t) => t === CypherParser.EOF)) {
-      msgs.push('Did you intend to finish the query?');
-    }
-    if (possibleTokenNumbers.find((t) => t === CypherParser.SEMICOLON)) {
-      msgs.push('Did you intend to open a new statement?');
+    // It should not happen we have one but not the other
+    if (eof && semicolon) {
+      msgs.push('Did you mean to finish the statement or open a new one?');
     }
   }
 

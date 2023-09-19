@@ -54,8 +54,7 @@ describe('Syntax validation errors spec', () => {
             start: Position.create(0, 17),
             end: Position.create(0, 21),
           },
-          message:
-            'Did you intend to finish the query? Did you intend to open a new statement?',
+          message: 'Did you mean to finish the statement or open a new one?',
           severity: DiagnosticSeverity.Error,
         },
       ],
@@ -73,8 +72,7 @@ describe('Syntax validation errors spec', () => {
             start: Position.create(0, 17),
             end: Position.create(0, 21),
           },
-          message:
-            'Did you intend to finish the query? Did you intend to open a new statement?',
+          message: 'Did you mean to finish the statement or open a new one?',
           severity: DiagnosticSeverity.Error,
         },
       ],
@@ -114,8 +112,7 @@ describe('Syntax validation errors spec', () => {
             start: Position.create(0, 17),
             end: Position.create(0, 21),
           },
-          message:
-            'Did you intend to finish the query? Did you intend to open a new statement?',
+          message: 'Did you mean to finish the statement or open a new one?',
           severity: DiagnosticSeverity.Error,
         },
       ],
