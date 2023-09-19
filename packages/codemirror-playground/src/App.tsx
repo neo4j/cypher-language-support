@@ -2,6 +2,7 @@ import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
 import { DbSchema } from 'language-support';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
+import { dummyDbSchema } from './mock-schema.js';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './tree-util';
 
@@ -30,29 +31,6 @@ RETURN count(*)`,
 } as const;
 
 type DemoName = keyof typeof demos;
-const dummyDbSchema: DbSchema = {
-  functionSignatures: {
-    function123: { label: 'function123', documentation: 'no docs' },
-    generatepassword: { label: 'generatepassword', documentation: 'no docs' },
-  },
-  procedureSignatures: {
-    'db.ping': { label: 'db.ping', documentation: 'no docs' },
-    'apoc.util.fake': { label: 'apoc.util.fake', documentation: 'no docs' },
-  },
-  labels: ['Person', 'Movie'],
-  relationshipTypes: ['ACTED_IN', 'DIRECTED', 'PRODUCED'],
-  aliasNames: ['myalias', 'my.alias.with.dots'],
-  databaseNames: ['neo4j', 'system', 'movies'],
-  parameters: {
-    'param1': {
-      'property': 'value',
-      'speed': 123.4,
-    },
-    'favColor': 'green',
-    'myParam': 1337,
-  },
-  propertyKeys: ['name', 'age', 'title', 'released', 'tagline'],
-};
 
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');

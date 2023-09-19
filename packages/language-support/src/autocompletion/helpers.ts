@@ -9,6 +9,8 @@ import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
+const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
+
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => ({
     label: labelName,
@@ -50,24 +52,19 @@ const functionCompletions = (
   // but at the same time we let users explore the namespace if they don't know what they are looking for
   // TODO fix this for vscode
   if (namespacePrefix === '') {
-    return fnNames
-      .map((fnName) => ({
-        label: fnName,
-        kind: CompletionItemKind.Function,
-      }))
-      .concat(
-        prefixes.map((prefix) => ({
-          label: prefix,
-          kind: CompletionItemKind.Function,
-        })),
-      );
+    return uniq(fnNames.concat(prefixes)).map((label) => ({
+      label,
+      kind: CompletionItemKind.Function,
+    }));
   } else {
-    return fnNames
+    const nextNamespaceOption = fnNames
       .filter((fnName) => fnName.startsWith(namespacePrefix))
-      .map((fnName) => ({
-        label: fnName.slice(namespacePrefix.length).split('.')[0],
-        kind: CompletionItemKind.Function,
-      }));
+      .map((fnName) => fnName.slice(namespacePrefix.length).split('.')[0]);
+
+    return Array.from(new Set(nextNamespaceOption)).map((label) => ({
+      label,
+      kind: CompletionItemKind.Function,
+    }));
   }
 };
 
@@ -192,23 +189,33 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        if (
-          parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
-          CypherLexer.SPACE
-        ) {
-          return [];
+        // todo fixa att gör konstigt förslag MATCH (n) RETURN <- funktion
+        /*
+        Writing a function allows whitepsace like
+        call apoc . util . sleep
+        call apoc
+               .util
+               .sleep 
+        After a space only a dot is valid and we don't want to suggest symbols, so we wait for the dot
+        */
+        // TODO rensa ut koden här så den blir läsbar & correkt
+
+        const relevantTokens = tokens
+          .slice(candidateRule.startTokenIndex)
+          .filter(
+            (token) =>
+              token.type !== CypherLexer.SPACE &&
+              token.type !== CypherLexer.EOF,
+          );
+
+        const lastIsDot =
+          relevantTokens[relevantTokens.length - 1]?.type === CypherLexer.DOT;
+
+        if (!lastIsDot) {
+          relevantTokens.pop();
         }
 
-        const namespacePrefix = tokens
-          .slice(candidateRule.startTokenIndex)
-          .filter((token, index, array) => {
-            if (token.type === CypherLexer.DOT) {
-              return true;
-            }
-            if (token.type === CypherLexer.IDENTIFIER) {
-              return array.length - 2 !== index;
-            }
-          })
+        const namespacePrefix = relevantTokens
           .map((token) => token.text)
           .join('');
 
@@ -239,12 +246,6 @@ export function completionCoreCompletion(
         ) {
           return [];
         }
-        // check that the accessed thing is a variable
-
-        // TODO check that is variable and not namespace for function false positive see
-        // RETURN apoc.a
-        // vs
-        // Match (apoc) RETURN apoc.a
 
         return propertyKeyCompletions(dbSchema);
       }
