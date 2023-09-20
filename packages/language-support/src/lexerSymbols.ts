@@ -49,6 +49,9 @@ export const lexerOperators = [
   CypherLexer.QUESTION,
   CypherLexer.REGEQ,
   CypherLexer.TIMES,
+  // Preparser tokens
+  CypherLexer.EXPLAIN,
+  CypherLexer.PROFILE,
 ];
 
 export const lexerBrackets = [

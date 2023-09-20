@@ -64,6 +64,35 @@ export function testCompletionDoesNotContain({
   expect(actual).toEqual([]);
 }
 
+describe('Preparser auto-completions', () => {
+  test('Correctly completes EXPLAIN', () => {
+    const query = 'E';
+
+    testCompletionContains({
+      query,
+      expected: [{ label: 'EXPLAIN', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test('Correctly completes PROFILE', () => {
+    const query = 'P';
+
+    testCompletionContains({
+      query,
+      expected: [{ label: 'PROFILE', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test('Correctly suggests normal completions after preparser ones', () => {
+    const query = 'PROFILE M';
+
+    testCompletionContains({
+      query,
+      expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
+    });
+  });
+});
+
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
     const query = 'M';
