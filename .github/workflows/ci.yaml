@@ -21,7 +21,9 @@ jobs:
         run: npm ci
 
       - name: Build project
-        run: npm run build
+        run: |
+          export NODE_OPTIONS=--max_old_space_size=6000
+          npm run build
 
       - name: Check there are no linting errors
         run: npm run lint
