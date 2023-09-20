@@ -1,7 +1,7 @@
 parser grammar CypherParser;
 
-options { tokenVocab = CypherLexer; }
 
+options { tokenVocab = CypherLexer; }
 
 statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
