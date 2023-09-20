@@ -63,7 +63,7 @@ export function parse(cypher: string) {
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const parser = new CypherParser(tokenStream);
-  return parser.parse();
+  return parser.statements();
 }
 
 export function isDefined(x: unknown) {

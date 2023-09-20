@@ -83,7 +83,16 @@ describe('Preparser auto-completions', () => {
     });
   });
 
-  test('Correctly suggests normal completions after preparser ones', () => {
+  test('Correctly suggests normal completions after EXPLAIN', () => {
+    const query = 'EXPLAIN M';
+
+    testCompletionContains({
+      query,
+      expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test('Correctly suggests normal completions after PROFILE', () => {
     const query = 'PROFILE M';
 
     testCompletionContains({

@@ -49,9 +49,6 @@ export const lexerOperators = [
   CypherLexer.QUESTION,
   CypherLexer.REGEQ,
   CypherLexer.TIMES,
-  // Preparser tokens
-  CypherLexer.EXPLAIN,
-  CypherLexer.PROFILE,
 ];
 
 export const lexerBrackets = [
@@ -344,6 +341,9 @@ export const lexerKeywords = [
   CypherLexer.XOR,
   CypherLexer.YIELD,
   CypherLexer.ZONED,
+  // Preparser tokens
+  CypherLexer.EXPLAIN,
+  CypherLexer.PROFILE,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {

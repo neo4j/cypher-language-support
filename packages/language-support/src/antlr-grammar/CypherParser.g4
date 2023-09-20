@@ -2,17 +2,15 @@ parser grammar CypherParser;
 
 options { tokenVocab = CypherLexer; }
 
-parse:
-   preparserOption statements;
-
-preparserOption:
-   EXPLAIN | PROFILE;
 
 statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
 
 statement:
-   periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+   preparserOption? periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+
+preparserOption:
+   EXPLAIN | PROFILE;
 
 singleQueryOrCommand:
    (createCommand | command | singleQuery union*);
