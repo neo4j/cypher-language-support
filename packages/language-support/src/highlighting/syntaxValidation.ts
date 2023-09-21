@@ -89,7 +89,7 @@ function findEndPosition(
   const column = start.character;
   const toExplore: ParseTree[] = [parsingResult.result];
 
-  while (toExplore.length > 0) {
+  while (toExplore.length > 0 && !result) {
     const current: ParseTree = toExplore.pop();
 
     if (current instanceof ParserRuleContext) {
@@ -101,7 +101,8 @@ function findEndPosition(
           stopToken.column + stopToken.text.length,
         );
       }
-      current.children.forEach((child) => toExplore.push(child));
+      if (current.children)
+        current.children.forEach((child) => toExplore.push(child));
     }
   }
 
