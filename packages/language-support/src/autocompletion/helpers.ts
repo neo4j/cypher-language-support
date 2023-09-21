@@ -1,3 +1,4 @@
+import { Token } from 'antlr4';
 import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -33,35 +34,29 @@ const functionCompletions = (
   namespacePrefix: string,
 ): CompletionItem[] => {
   const fnNames = Object.keys(dbSchema.functionSignatures ?? {});
-  const prefixes = Array.from(
-    new Set(
-      fnNames
-        .filter((fn) => fn.includes('.'))
-        .map((fnName) => fnName.split('.')[0]),
-    ),
-  );
-  // If we have no namespace prefix, show all whole function signatures, including their namespace
-  // example:
-  // sleep => show `apoc.util.sleep`
 
-  // if we have a namespace already typed, complete on the namespace level:
-  // example:
-  // apoc. => show `util` | `load` | `date` etc.
-
-  // this way we have convience and sleep for people who know what they are looking for
-  // but at the same time we let users explore the namespace if they don't know what they are looking for
-  // TODO fix this for vscode
   if (namespacePrefix === '') {
-    return uniq(fnNames.concat(prefixes)).map((label) => ({
+    // If we don't have any prefix show full functions and top level namespaces
+    const topLevelPrefixes = fnNames
+      .filter((fn) => fn.includes('.'))
+      .map((fnName) => fnName.split('.')[0]);
+
+    return uniq(fnNames.concat(topLevelPrefixes)).map((label) => ({
       label,
       kind: CompletionItemKind.Function,
     }));
   } else {
+    // if we have a namespace prefix, complete on the namespace level:
+    // apoc. => show `util` | `load` | `date` etc.
+
     const nextNamespaceOption = fnNames
       .filter((fnName) => fnName.startsWith(namespacePrefix))
-      .map((fnName) => fnName.slice(namespacePrefix.length).split('.')[0]);
+      // given prefix `apoc.` turn `apoc.util.sleep` => `util`
+      .map((fnName) => fnName.slice(namespacePrefix.length).split('.')[0])
+      // handle prefix `db.ping.` turning `db.ping` => ``
+      .filter((fnName) => fnName !== '');
 
-    return Array.from(new Set(nextNamespaceOption)).map((label) => ({
+    return uniq(nextNamespaceOption).map((label) => ({
       label,
       kind: CompletionItemKind.Function,
     }));
@@ -129,6 +124,23 @@ const isExpectedParameterType = (
   }
 };
 
+function calculatePrefix(ruleTokens: Token[]) {
+  const relevantTokens = ruleTokens.filter(
+    (token) =>
+      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+  );
+
+  // only keep finished namespaces both second level `db.pi` => `db.`
+  // and first level make `dbm` => ''
+  const lastIsDot = relevantTokens.at(-1)?.type === CypherLexer.DOT;
+
+  if (!lastIsDot) {
+    relevantTokens.pop();
+  }
+
+  return relevantTokens.map((token) => token.text).join('');
+}
+
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
@@ -189,35 +201,17 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        // todo fixa att gör konstigt förslag MATCH (n) RETURN <- funktion
-        /*
-        Writing a function allows whitepsace like
-        call apoc . util . sleep
-        call apoc
-               .util
-               .sleep 
-        After a space only a dot is valid and we don't want to suggest symbols, so we wait for the dot
-        */
-        // TODO rensa ut koden här så den blir läsbar & correkt
+        // `db ping` is invalid but `db .ping` is valid
+        // so if we see a space after an identifier a dot must follow
+        // We don't suggest symbols, so return empty completions
 
-        const relevantTokens = tokens
-          .slice(candidateRule.startTokenIndex)
-          .filter(
-            (token) =>
-              token.type !== CypherLexer.SPACE &&
-              token.type !== CypherLexer.EOF,
-          );
-
-        const lastIsDot =
-          relevantTokens[relevantTokens.length - 1]?.type === CypherLexer.DOT;
-
-        if (!lastIsDot) {
-          relevantTokens.pop();
+        const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
+        const lastNonEOFToken = ruleTokens.at(-2);
+        if (lastNonEOFToken?.type === CypherLexer.SPACE) {
+          return [];
         }
 
-        const namespacePrefix = relevantTokens
-          .map((token) => token.text)
-          .join('');
+        const namespacePrefix = calculatePrefix(ruleTokens);
 
         return functionCompletions(dbSchema, namespacePrefix);
       }
