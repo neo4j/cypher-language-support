@@ -71,7 +71,7 @@ connection.onInitialized(() => {
 // Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
   const document = change.document;
-  const diagnostics = validateSyntax(document.getText());
+  const diagnostics = validateSyntax(document.getText(), dbSchema);
   void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,

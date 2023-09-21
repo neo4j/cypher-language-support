@@ -163,3 +163,30 @@ test('can complete procedures', async ({ page }) => {
 
   expect(await editorPage.getEditor().textContent()).toContain('CALL db.ping');
 });
+
+test('can complete parameters', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: '',
+    schema: {
+      labels: [],
+      relationshipTypes: [],
+      functionSignatures: {},
+      procedureSignatures: {},
+      aliasNames: [],
+      databaseNames: [],
+      parameterNames: ['parameter'],
+      propertyKeys: [],
+    },
+  });
+
+  await editorPage.getEditor().type('RETURN $');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('parameter').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toEqual(
+    'RETURN $parameter',
+  );
+});
