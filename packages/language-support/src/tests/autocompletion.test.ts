@@ -65,21 +65,15 @@ export function testCompletionDoesNotContain({
 }
 
 describe('Preparser auto-completions', () => {
-  test('Correctly completes EXPLAIN', () => {
+  test('Correctly completes EXPLAIN and PROFILE', () => {
     const query = 'E';
 
     testCompletionContains({
       query,
-      expected: [{ label: 'EXPLAIN', kind: CompletionItemKind.Keyword }],
-    });
-  });
-
-  test('Correctly completes PROFILE', () => {
-    const query = 'P';
-
-    testCompletionContains({
-      query,
-      expected: [{ label: 'PROFILE', kind: CompletionItemKind.Keyword }],
+      expected: [
+        { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
+        { label: 'PROFILE', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 
@@ -98,6 +92,18 @@ describe('Preparser auto-completions', () => {
     testCompletionContains({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test('Correctly suggests EXPLAIN and PROFILE at the begining of a new statement', () => {
+    const query = 'PROFILE MATCH (n) RETURN n; ';
+
+    testCompletionContains({
+      query,
+      expected: [
+        { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
+        { label: 'PROFILE', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 });
