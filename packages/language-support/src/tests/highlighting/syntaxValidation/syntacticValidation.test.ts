@@ -35,7 +35,7 @@ describe('Syntactic validation spec', () => {
               end: Position.create(0, 3),
             },
             message:
-              'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH?',
+              'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING, WITH, EXPLAIN or PROFILE?',
             severity: DiagnosticSeverity.Error,
           },
         ],

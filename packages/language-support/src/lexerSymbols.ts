@@ -341,6 +341,9 @@ export const lexerKeywords = [
   CypherLexer.XOR,
   CypherLexer.YIELD,
   CypherLexer.ZONED,
+  // Preparser tokens
+  CypherLexer.EXPLAIN,
+  CypherLexer.PROFILE,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {

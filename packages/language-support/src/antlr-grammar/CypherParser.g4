@@ -7,7 +7,10 @@ statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
 
 statement:
-   periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+   preparserOption? periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+
+preparserOption:
+   EXPLAIN | PROFILE;
 
 singleQueryOrCommand:
    (createCommand | command | singleQuery union*);
