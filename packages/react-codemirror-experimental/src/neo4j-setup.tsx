@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   acceptCompletion,
   autocompletion,
@@ -32,6 +33,7 @@ import {
 } from '@codemirror/view';
 
 import { lintKeymap } from '@codemirror/lint';
+import { getIconForType } from './icons';
 
 const insertTab: StateCommand = (cmd) => {
   // if there is a selection we should indent the selected text, but if not insert
@@ -106,7 +108,27 @@ export const basicNeo4jSetup = (prompt?: string): Extension[] => {
 
   extensions.push(bracketMatching());
   extensions.push(closeBrackets());
-  extensions.push(autocompletion());
+  extensions.push(
+    autocompletion({
+      icons: false,
+      addToOptions: [
+        {
+          render(completion) {
+            const icon = document.createElement('span');
+            // @ts-ignore asdf
+            icon.innerHTML = getIconForType(completion.type);
+
+            const svgElement = icon.children[0] as SVGElement;
+
+            svgElement.style.display = 'inline';
+            svgElement.style.marginRight = '5px';
+            return icon;
+          },
+          position: 20,
+        },
+      ],
+    }),
+  );
 
   extensions.push(rectangularSelection());
   extensions.push(crosshairCursor());
