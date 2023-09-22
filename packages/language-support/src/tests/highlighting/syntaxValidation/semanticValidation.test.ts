@@ -2,7 +2,7 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
-  test('Semantic errors are not triggered when there are syntactic errors', () => {
+  test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 
     getDiagnosticsForQuery({
@@ -20,7 +20,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Undefined variables', () => {
+  test('Shows errors for undefined variables', () => {
     const query = 'MATCH (n) RETURN m';
 
     getDiagnosticsForQuery({
@@ -38,7 +38,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Semantic errors are accumulated correctly', () => {
+  test('Accumulates several semantic errors', () => {
     const query = `CALL { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
 
     getDiagnosticsForQuery({
@@ -74,7 +74,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Errors on CALL IN TXs used in UNION', () => {
+  test('Shows errors for CALL IN TXs used in UNION', () => {
     const query = `CALL { CREATE (x) } IN TRANSACTIONS
     RETURN 1 AS result
     UNION
@@ -104,7 +104,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Errors inside CALL when return variable already bound', () => {
+  test('Shows errors for CALL when return variable already bound', () => {
     const query = `WITH 1 AS i
     CALL {
       WITH 2 AS i
@@ -138,7 +138,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Subquery with only WITH', () => {
+  test('Shows errors for subquery with only WITH', () => {
     const query = 'WITH 1 AS a CALL { WITH a } RETURN a';
 
     getDiagnosticsForQuery({
@@ -157,7 +157,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test.skip('Should allow using multiple USE', () => {
+  test('Does not show errors for multiple USE with the same database', () => {
     const query = `USE x
       WITH 1 AS a
       CALL {
@@ -172,7 +172,32 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Shadowing of variables', () => {
+  test('Shows errors for using multiple USE with different databases', () => {
+    const query = `USE neo4j
+      WITH 1 AS a
+      CALL {
+        USE other
+        RETURN 2 AS b
+      }
+      RETURN *`;
+
+    getDiagnosticsForQuery({
+      query,
+      expected: [
+        {
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: Position.create(3, 8),
+            end: Position.create(4, 21),
+          },
+          message:
+            'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+        },
+      ],
+    });
+  });
+
+  test('Shows errors for simple shadowing of variables', () => {
     const query = `MATCH (a)
     RETURN COUNT {
       MATCH (a)-->(b)
@@ -197,7 +222,8 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Correctly gives semantic errors for queries with WHERE', () => {
+  // This test avoids a regression in the transpilation Java -> Javascript that we found at some point
+  test('Shows errors for queries with WHERE', () => {
     const query = `MATCH (person:Person)
     WHERE COUNT {
         MATCH (n)
@@ -223,7 +249,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('COLLECT must end with a single RETURN', () => {
+  test('Shows errors for COLLECT without a single RETURN', () => {
     const query = `RETURN COLLECT { MATCH (a) }`;
 
     getDiagnosticsForQuery({
@@ -250,7 +276,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Does not produce errors for a correct COLLECT', () => {
+  test('Does not show errors for a correct COLLECT', () => {
     const query = `MATCH (a)
       WHERE COLLECT {
         MATCH (a)
@@ -265,7 +291,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('COLLECT cannot have updating subqueries', () => {
+  test('Shows errors for COLLECT with updating subqueries', () => {
     const query = `MATCH (a)
     RETURN COLLECT { SET a.name = 1 }
     `;
@@ -293,7 +319,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Shadowing inside COLLECT subqueries', () => {
+  test('Shows errors for shadowing inside COLLECT subqueries', () => {
     const query = `WITH 5 as aNum
     MATCH (a)
     RETURN COLLECT {
@@ -318,7 +344,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Shadowing inside CALL inside COLLECT subqueries', () => {
+  test('Shows errors for nested CALL inside COLLECT subqueries', () => {
     const query = `WITH 5 AS y
     RETURN COLLECT {
         UNWIND [0, 1, 2] AS x
@@ -345,7 +371,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('EXISTS cannot have updating subqueries', () => {
+  test('Shows errors for EXISTS with updating subqueries', () => {
     const query = `MATCH (a)
     RETURN EXISTS { MATCH (b) MERGE (b)-[:FOLLOWS]->(:Person) }`;
 
@@ -364,7 +390,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Does not produce errors for a correct EXISTS', () => {
+  test('Does not show errors for a correct EXISTS', () => {
     const query = `MATCH (a)
       RETURN EXISTS {
         MATCH (a)-[:KNOWS]->(b)
@@ -380,7 +406,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Warns about semantic features not enabled yet in the product', () => {
+  test('Shows errors about semantic features not enabled yet in the product', () => {
     const query = 'MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
 
     getDiagnosticsForQuery({
@@ -429,7 +455,7 @@ describe('Semantic validation spec', () => {
     });
   });
 
-  test('Errors for variables not bound in Graph Pattern Matching', () => {
+  test('Shows errors for variables not bound in Graph Pattern Matching', () => {
     const query = `MATCH (a) (()--(x {prop: a.prop}))+ (b) (()--())+ (c) RETURN *`;
 
     getDiagnosticsForQuery({
@@ -448,7 +474,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Multiple errors in Graph Pattern Matching', () => {
+  test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
     getDiagnosticsForQuery({
@@ -493,7 +519,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Type mismatch and subpath assignment errors in Graph Pattern Matching', () => {
+  test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
 
     getDiagnosticsForQuery({
@@ -530,7 +556,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Nesting of quantified path patterns', () => {
+  test('Shows errors for nesting of quantified path patterns', () => {
     const query = 'MATCH ((a)-->(b)-[r]->*(c))+ RETURN count(*)';
 
     getDiagnosticsForQuery({
@@ -548,7 +574,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('shortestPath in quantified path patterns', () => {
+  test('Shows errors when using shortestPath in quantified path patterns', () => {
     const query = 'MATCH (p = shortestPath((a)-[]->(b)))+ RETURN p';
 
     getDiagnosticsForQuery({
@@ -585,7 +611,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Errors on quantified path patterns without relationship', () => {
+  test('Shows errors on quantified path patterns without relationship', () => {
     const query = 'MATCH ((n) (m)){1, 5} RETURN count(*)';
 
     getDiagnosticsForQuery({
@@ -613,7 +639,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Errors on quantified path patterns with variables not bound in a previous MATCH', () => {
+  test('Shows errors on quantified path patterns with variables not bound in a previous MATCH', () => {
     const query =
       'MATCH p=(x)-->(y), ((a)-[e]->(b {h: nodes(p)[0].prop}))* (s)-->(u) RETURN count(*)';
 
@@ -633,7 +659,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Errors on variable length relationships in quantified patterns', () => {
+  test('Shows errors on variable length relationships in quantified patterns', () => {
     const query = 'MATCH ()-[r:A*1..2]->{1,2}() RETURN r';
 
     getDiagnosticsForQuery({
@@ -661,7 +687,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Does not produce errors for correct Graph Pattern Matching queries', () => {
+  test('Does not show errors for correct Graph Pattern Matching queries', () => {
     const query =
       'MATCH ((a)-[r]-(b WHERE r.prop = COUNT { MATCH ALL ((c)-[q]-(d))+ RETURN q } ))+ RETURN 1';
 
@@ -671,7 +697,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Errors on pattern expression when used wherever we do not expect a boolean value', () => {
+  test('Shows errors on pattern expression when used wherever we do not expect a boolean value', () => {
     const query = 'MATCH (a) RETURN (a)--()';
 
     getDiagnosticsForQuery({
@@ -690,7 +716,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Pattern expressions give an error when used inside size()', () => {
+  test('Shows errors for pattern expressions used inside size()', () => {
     const query = 'MATCH (a) RETURN size((a)--())';
 
     getDiagnosticsForQuery({
@@ -709,7 +735,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Does not error on pattern expression used as a boolean value', () => {
+  test('Does not show errors for pattern expression used as a boolean value', () => {
     const query = 'RETURN NOT ()--()';
 
     getDiagnosticsForQuery({
@@ -718,7 +744,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Label expressions are not allowed to contain |', () => {
+  test('Shows errors for label expressions containing |:', () => {
     const query = 'MATCH (n:A|:B) RETURN n';
 
     getDiagnosticsForQuery({
@@ -736,7 +762,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Label expressions are not allowed in a CREATE', () => {
+  test('Shows errors for label expressions when used in a CREATE', () => {
     const query = 'CREATE (n IS A&B) RETURN n';
 
     getDiagnosticsForQuery({
@@ -764,7 +790,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Label expressions are not allowed to mix IS with semicolon', () => {
+  test('Shows errors for label expressions mixing IS with semicolon', () => {
     const query = 'MATCH (n IS A:B) RETURN n';
 
     getDiagnosticsForQuery({
@@ -783,7 +809,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     });
   });
 
-  test('Label expressions are not allowed in MERGE', () => {
+  test('Shows errors for label expressions when used in MERGE', () => {
     const query = 'MERGE (n IS %) RETURN n';
 
     getDiagnosticsForQuery({

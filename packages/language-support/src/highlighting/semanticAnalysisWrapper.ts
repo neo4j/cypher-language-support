@@ -18,7 +18,7 @@ export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
 
     if (error !== null) {
       const errorMsg = error['$msg'];
-      const position = error['$position71'];
+      const position = error['$position66'];
       result.push({
         msg: errorMsg.toString(),
         line: position['$line0'],
