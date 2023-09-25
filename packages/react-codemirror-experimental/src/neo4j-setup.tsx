@@ -26,6 +26,7 @@ import {
   crosshairCursor,
   drawSelection,
   dropCursor,
+  EditorView,
   highlightSpecialChars,
   keymap,
   lineNumbers,
@@ -113,10 +114,11 @@ export const basicNeo4jSetup = (prompt?: string): Extension[] => {
       icons: false,
       addToOptions: [
         {
-          render(completion) {
+          render(completion, state) {
+            const isDarkTheme = state.facet(EditorView.darkTheme);
             const icon = document.createElement('span');
-            // @ts-ignore asdf
-            icon.innerHTML = getIconForType(completion.type);
+
+            icon.innerHTML = getIconForType(completion.type, isDarkTheme);
 
             const svgElement = icon.children[0] as SVGElement;
 
