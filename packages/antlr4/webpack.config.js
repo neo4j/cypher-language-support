@@ -1,5 +1,4 @@
 import path from 'path';
-import ESLintPlugin from 'eslint-webpack-plugin';
 import {fileURLToPath} from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,6 +35,9 @@ const buildConfig = ( platform, extensions ) => ({
                 fs: false
             }
         },
+        optimization: {
+            minimize: false,
+        },
     }),
 
     ...(platform === 'node' && {
@@ -49,9 +51,12 @@ const buildConfig = ( platform, extensions ) => ({
         resolve: {
             extensions: [ '.js'],
         },
+        optimization: {
+            minimize: false,
+        },
     }),
     target: platform,
-    plugins: [ new ESLintPlugin() ],
+    plugins: [],
     devtool: "source-map",
     experiments: {
         outputModule: extensions === "mjs"
