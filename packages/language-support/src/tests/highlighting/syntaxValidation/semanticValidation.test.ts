@@ -1,77 +1,97 @@
-import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
   test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          range: {
-            start: Position.create(0, 0),
-            end: Position.create(0, 5),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Did you mean MATCH?',
+        range: {
+          end: {
+            character: 5,
+            line: 0,
           },
-          message: 'Did you mean MATCH?',
-          severity: DiagnosticSeverity.Error,
+          start: {
+            character: 0,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for undefined variables', () => {
     const query = 'MATCH (n) RETURN m';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 17),
-            end: Position.create(0, 18),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `m` not defined',
+        range: {
+          end: {
+            character: 18,
+            line: 0,
           },
-          message: 'Variable `m` not defined',
+          start: {
+            character: 17,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Accumulates several semantic errors', () => {
     const query = `CALL { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 24),
-            end: Position.create(0, 25),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `m` not defined',
+        range: {
+          end: {
+            character: 25,
+            line: 0,
           },
-          message: 'Variable `m` not defined',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 46),
-            end: Position.create(0, 48),
+          start: {
+            character: 24,
+            line: 0,
           },
-          message:
-            "Invalid input. '-1' is not a valid value. Must be a positive integer.",
         },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 0),
-            end: Position.create(0, 53),
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input. '-1' is not a valid value. Must be a positive integer.",
+        range: {
+          end: {
+            character: 48,
+            line: 0,
           },
-          message:
-            'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          start: {
+            character: 46,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+        range: {
+          end: {
+            character: 53,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for CALL IN TXs used in UNION', () => {
@@ -81,27 +101,36 @@ describe('Semantic validation spec', () => {
     CALL { CREATE (x) } IN TRANSACTIONS
     RETURN 2 AS result`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: 1,
-          range: {
-            start: Position.create(0, 0),
-            end: Position.create(4, 22),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
+        range: {
+          end: {
+            character: 22,
+            line: 4,
           },
-          message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
-        },
-        {
-          severity: 1,
-          range: {
-            start: Position.create(3, 4),
-            end: Position.create(4, 22),
+          start: {
+            character: 0,
+            line: 0,
           },
-          message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
+        range: {
+          end: {
+            character: 22,
+            line: 4,
+          },
+          start: {
+            character: 4,
+            line: 3,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for CALL when return variable already bound', () => {
@@ -115,46 +144,58 @@ describe('Semantic validation spec', () => {
     }
     RETURN i`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(3, 13),
-            end: Position.create(3, 14),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `i` already declared in outer scope',
+        range: {
+          end: {
+            character: 14,
+            line: 3,
           },
-          message: 'Variable `i` already declared in outer scope',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(6, 13),
-            end: Position.create(6, 14),
+          start: {
+            character: 13,
+            line: 3,
           },
-          message: 'Variable `i` already declared in outer scope',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        range: {
+          end: {
+            character: 14,
+            line: 6,
+          },
+          start: {
+            character: 13,
+            line: 6,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for subquery with only WITH', () => {
     const query = 'WITH 1 AS a CALL { WITH a } RETURN a';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 19),
-            end: Position.create(0, 25),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
+        range: {
+          end: {
+            character: 25,
+            line: 0,
           },
-          message:
-            'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
+          start: {
+            character: 19,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Does not show errors for multiple USE with the same database', () => {
@@ -166,10 +207,7 @@ describe('Semantic validation spec', () => {
       }
       RETURN *`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [],
-    });
+    expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors for using multiple USE with different databases', () => {
@@ -181,20 +219,23 @@ describe('Semantic validation spec', () => {
       }
       RETURN *`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(3, 8),
-            end: Position.create(4, 21),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+        range: {
+          end: {
+            character: 21,
+            line: 4,
           },
-          message:
-            'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+          start: {
+            character: 8,
+            line: 3,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for simple shadowing of variables', () => {
@@ -206,20 +247,23 @@ describe('Semantic validation spec', () => {
       RETURN a
     }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: 1,
-          range: {
-            start: Position.create(3, 16),
-            end: Position.create(3, 17),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'The variable `a` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        range: {
+          end: {
+            character: 17,
+            line: 3,
           },
-          message:
-            'The variable `a` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+          start: {
+            character: 16,
+            line: 3,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   // This test avoids a regression in the transpilation Java -> Javascript that we found at some point
@@ -233,47 +277,59 @@ describe('Semantic validation spec', () => {
     } > 1
     RETURN person.name`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(4, 8),
-            end: Position.create(5, 17),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'All sub queries in an UNION must have the same return column names',
+        range: {
+          end: {
+            character: 17,
+            line: 5,
           },
-          message:
-            'All sub queries in an UNION must have the same return column names',
+          start: {
+            character: 8,
+            line: 4,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for COLLECT without a single RETURN', () => {
     const query = `RETURN COLLECT { MATCH (a) }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 17),
-            end: Position.create(0, 26),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+        range: {
+          end: {
+            character: 26,
+            line: 0,
           },
-          message:
-            'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 7),
-            end: Position.create(0, 28),
+          start: {
+            character: 17,
+            line: 0,
           },
-          message: 'A Collect Expression must end with a single return column.',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message: 'A Collect Expression must end with a single return column.',
+        range: {
+          end: {
+            character: 28,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Does not show errors for a correct COLLECT', () => {
@@ -285,10 +341,7 @@ describe('Semantic validation spec', () => {
       RETURN a
       `;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [],
-    });
+    expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors for COLLECT with updating subqueries', () => {
@@ -296,27 +349,36 @@ describe('Semantic validation spec', () => {
     RETURN COLLECT { SET a.name = 1 }
     `;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(1, 11),
-            end: Position.create(1, 37),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'A Collect Expression cannot contain any updates',
+        range: {
+          end: {
+            character: 37,
+            line: 1,
           },
-          message: 'A Collect Expression cannot contain any updates',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(1, 11),
-            end: Position.create(1, 37),
+          start: {
+            character: 11,
+            line: 1,
           },
-          message: 'A Collect Expression must end with a single return column.',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message: 'A Collect Expression must end with a single return column.',
+        range: {
+          end: {
+            character: 37,
+            line: 1,
+          },
+          start: {
+            character: 11,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for shadowing inside COLLECT subqueries', () => {
@@ -328,20 +390,23 @@ describe('Semantic validation spec', () => {
       RETURN a
     }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(3, 16),
-            end: Position.create(3, 20),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        range: {
+          end: {
+            character: 20,
+            line: 3,
           },
-          message:
-            'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+          start: {
+            character: 16,
+            line: 3,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for nested CALL inside COLLECT subqueries', () => {
@@ -355,39 +420,45 @@ describe('Semantic validation spec', () => {
         RETURN y
     }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(5, 29),
-            end: Position.create(5, 30),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        range: {
+          end: {
+            character: 30,
+            line: 5,
           },
-          message:
-            'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+          start: {
+            character: 29,
+            line: 5,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for EXISTS with updating subqueries', () => {
     const query = `MATCH (a)
     RETURN EXISTS { MATCH (b) MERGE (b)-[:FOLLOWS]->(:Person) }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(1, 11),
-            end: Position.create(1, 63),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'An Exists Expression cannot contain any updates',
+        range: {
+          end: {
+            character: 63,
+            line: 1,
           },
-          message: 'An Exists Expression cannot contain any updates',
+          start: {
+            character: 11,
+            line: 1,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Does not show errors for a correct EXISTS', () => {
@@ -400,29 +471,29 @@ describe('Semantic validation spec', () => {
         RETURN b.name as name
       }`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [],
-    });
+    expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors about semantic features not enabled yet in the product', () => {
     const query = 'MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 6),
-            end: Position.create(0, 28),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
+        range: {
+          end: {
+            character: 28,
+            line: 0,
           },
-          message:
-            'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
+          start: {
+            character: 6,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for pattern selectors', () => {
@@ -431,409 +502,521 @@ describe('Semantic validation spec', () => {
         p2 = (x)-->*(c)-->(z)
       RETURN count(*)`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(1, 13),
-            end: Position.create(1, 24),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
+        range: {
+          end: {
+            character: 24,
+            line: 1,
           },
-          message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(1, 8),
-            end: Position.create(2, 29),
+          start: {
+            character: 13,
+            line: 1,
           },
-          message:
-            'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
+        range: {
+          end: {
+            character: 29,
+            line: 2,
+          },
+          start: {
+            character: 8,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for variables not bound in Graph Pattern Matching', () => {
     const query = `MATCH (a) (()--(x {prop: a.prop}))+ (b) (()--())+ (c) RETURN *`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 7),
-            end: Position.create(0, 8),
-          },
-          message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`: \`a\`.\`prop\`}))+.`,
+        range: {
+          end: {
+            character: 8,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 6),
-            end: Position.create(0, 37),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+        range: {
+          end: {
+            character: 37,
+            line: 0,
           },
-          message:
-            'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 7),
-            end: Position.create(0, 19),
+          start: {
+            character: 6,
+            line: 0,
           },
-          message:
-            'Assigning a path in a quantified path pattern is not yet supported.',
         },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 23),
-            end: Position.create(0, 35),
+        severity: 1,
+      },
+      {
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
+        range: {
+          end: {
+            character: 19,
+            line: 0,
           },
-          message:
-            'Assigning a path in a quantified path pattern is not yet supported.',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 22),
-            end: Position.create(0, 37),
+          start: {
+            character: 7,
+            line: 0,
           },
-          message: 'Variable `p` already declared',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `p` already declared',
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 22,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 7),
-            end: Position.create(0, 19),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
+        range: {
+          end: {
+            character: 19,
+            line: 0,
           },
-          message:
-            'Assigning a path in a quantified path pattern is not yet supported.',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 23),
-            end: Position.create(0, 35),
+          start: {
+            character: 7,
+            line: 0,
           },
-          message:
-            'Type mismatch: p defined with conflicting type List<T> (expected Path)',
         },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 23),
-            end: Position.create(0, 35),
+        severity: 1,
+      },
+      {
+        message:
+          'Type mismatch: p defined with conflicting type List<T> (expected Path)',
+        range: {
+          end: {
+            character: 35,
+            line: 0,
           },
-          message:
-            'Sub-path assignment is currently not supported outside quantified path patterns.',
+          start: {
+            character: 23,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'Sub-path assignment is currently not supported outside quantified path patterns.',
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for nesting of quantified path patterns', () => {
     const query = 'MATCH ((a)-->(b)-[r]->*(c))+ RETURN count(*)';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 16),
-            end: Position.create(0, 23),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Quantified path patterns are not allowed to be nested.',
+        range: {
+          end: {
+            character: 23,
+            line: 0,
           },
-          message: 'Quantified path patterns are not allowed to be nested.',
+          start: {
+            character: 16,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors when using shortestPath in quantified path patterns', () => {
     const query = 'MATCH (p = shortestPath((a)-[]->(b)))+ RETURN p';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 7),
-            end: Position.create(0, 36),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
+        range: {
+          end: {
+            character: 36,
+            line: 0,
           },
-          message:
-            'Assigning a path in a quantified path pattern is not yet supported.',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 11),
-            end: Position.create(0, 36),
+          start: {
+            character: 7,
+            line: 0,
           },
-          message:
-            'shortestPath(...) is only allowed as a top-level element and not inside a quantified path pattern',
         },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 27),
-            end: Position.create(0, 32),
+        severity: 1,
+      },
+      {
+        message:
+          'shortestPath(...) is only allowed as a top-level element and not inside a quantified path pattern',
+        range: {
+          end: {
+            character: 36,
+            line: 0,
           },
-          message:
-            "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          start: {
+            character: 11,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 27,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors on quantified path patterns without relationship', () => {
     const query = 'MATCH ((n) (m)){1, 5} RETURN count(*)';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 6),
-            end: Position.create(0, 21),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: `A quantified path pattern needs to have at least one relationship.
+In this case, the quantified path pattern ((\`n\`) (\`m\`)){1, 5} consists of only nodes.`,
+        range: {
+          end: {
+            character: 21,
+            line: 0,
           },
-          message:
-            'A quantified path pattern needs to have at least one relationship.\nIn this case, the quantified path pattern ((`n`) (`m`)){1, 5} consists of only nodes.',
-        },
-        {
-          severity: 1,
-          range: {
-            start: Position.create(0, 11),
-            end: Position.create(0, 14),
+          start: {
+            character: 6,
+            line: 0,
           },
-          message:
-            'Juxtaposition is currently only supported for quantified path patterns.\nIn this case, both (`n`) and (`m`) are single nodes.\nThat is, neither of these is a quantified path pattern.',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message: `Juxtaposition is currently only supported for quantified path patterns.
+In this case, both (\`n\`) and (\`m\`) are single nodes.
+That is, neither of these is a quantified path pattern.`,
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 11,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors on quantified path patterns with variables not bound in a previous MATCH', () => {
     const query =
       'MATCH p=(x)-->(y), ((a)-[e]->(b {h: nodes(p)[0].prop}))* (s)-->(u) RETURN count(*)';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 6),
-            end: Position.create(0, 66),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
+In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`b\` {\`h\`: (\`nodes\`(\`p\`)[0]).\`prop\`}))*.`,
+        range: {
+          end: {
+            character: 66,
+            line: 0,
           },
-          message:
-            'From within a quantified path pattern, one may only reference variables, that are already bound in a previous `MATCH` clause.\nIn this case, p is defined in the same `MATCH` clause as ((`a`)-[`e`]->(`b` {`h`: (`nodes`(`p`)[0]).`prop`}))*.',
+          start: {
+            character: 6,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors on variable length relationships in quantified patterns', () => {
     const query = 'MATCH ()-[r:A*1..2]->{1,2}() RETURN r';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 8),
-            end: Position.create(0, 26),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Variable length relationships cannot be part of a quantified path pattern.',
+        range: {
+          end: {
+            character: 26,
+            line: 0,
           },
-          message:
-            'Variable length relationships cannot be part of a quantified path pattern.',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 8),
-            end: Position.create(0, 26),
+          start: {
+            character: 8,
+            line: 0,
           },
-          message:
-            "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+        range: {
+          end: {
+            character: 26,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Does not show errors for correct Graph Pattern Matching queries', () => {
     const query =
       'MATCH ((a)-[r]-(b WHERE r.prop = COUNT { MATCH ALL ((c)-[q]-(d))+ RETURN q } ))+ RETURN 1';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [],
-    });
+    expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors on pattern expression when used wherever we do not expect a boolean value', () => {
     const query = 'MATCH (a) RETURN (a)--()';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 17),
-            end: Position.create(0, 24),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
+        range: {
+          end: {
+            character: 24,
+            line: 0,
           },
-          message:
-            'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
+          start: {
+            character: 17,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for pattern expressions used inside size()', () => {
     const query = 'MATCH (a) RETURN size((a)--())';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 22),
-            end: Position.create(0, 29),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
+        range: {
+          end: {
+            character: 29,
+            line: 0,
           },
-          message:
-            'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
+          start: {
+            character: 22,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Does not show errors for pattern expression used as a boolean value', () => {
     const query = 'RETURN NOT ()--()';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [],
-    });
+    expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors for label expressions containing |:', () => {
     const query = 'MATCH (n:A|:B) RETURN n';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 10),
-            end: Position.create(0, 10),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: "Label expressions are not allowed to contain '|:'.",
+        range: {
+          end: {
+            character: 10,
+            line: 0,
           },
-          message: "Label expressions are not allowed to contain '|:'.",
+          start: {
+            character: 10,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for label expressions when used in a CREATE', () => {
     const query = 'CREATE (n IS A&B) RETURN n';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 14),
-            end: Position.create(0, 14),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Label expressions in patterns are not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
           },
-          message:
-            'Label expressions in patterns are not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 14),
-            end: Position.create(0, 14),
+          start: {
+            character: 14,
+            line: 0,
           },
-          message:
-            'The IS keyword in patterns is not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'The IS keyword in patterns is not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for label expressions mixing IS with semicolon', () => {
     const query = 'MATCH (n IS A:B) RETURN n';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 13),
-            end: Position.create(0, 13),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS `A`&`B`.",
+        range: {
+          end: {
+            character: 13,
+            line: 0,
           },
-          message:
-            "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS `A`&`B`.",
+          start: {
+            character: 13,
+            line: 0,
+          },
         },
-      ],
-    });
+        severity: 1,
+      },
+    ]);
   });
 
   test('Shows errors for label expressions when used in MERGE', () => {
     const query = 'MERGE (n IS %) RETURN n';
 
-    getDiagnosticsForQuery({
-      query,
-      expected: [
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 12),
-            end: Position.create(0, 13),
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Label expressions in patterns are not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
+        range: {
+          end: {
+            character: 13,
+            line: 0,
           },
-          message:
-            'Label expressions in patterns are not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
-        },
-        {
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: Position.create(0, 12),
-            end: Position.create(0, 13),
+          start: {
+            character: 12,
+            line: 0,
           },
-          message:
-            'The IS keyword in patterns is not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
         },
-      ],
-    });
+        severity: 1,
+      },
+      {
+        message:
+          'The IS keyword in patterns is not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
+        range: {
+          end: {
+            character: 13,
+            line: 0,
+          },
+          start: {
+            character: 12,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });
