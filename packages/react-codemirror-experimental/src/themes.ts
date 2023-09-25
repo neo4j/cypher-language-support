@@ -33,6 +33,10 @@ export const lightThemeConstants: ThemeOptions = {
     selection: light.editor.selection.active.hex(),
     textMatchingSelection: light.editor.findMatch.active.hex(),
     cursor: '#000000',
+    autoCompletionPanel: {
+      selectedColor: '#E1E6E9',
+      backgroundColor: '#F3F4F5',
+    },
     searchPanel: {
       background: tokens.palette.light.neutral.bg.default,
       text: tokens.palette.light.neutral.text.default,
@@ -72,6 +76,10 @@ export const darkThemeConstants: ThemeOptions = {
     selection: mirage.editor.selection.active.hex(),
     textMatchingSelection: mirage.editor.findMatch.active.hex(),
     cursor: '#ffffff',
+    autoCompletionPanel: {
+      selectedColor: '#272F3D',
+      backgroundColor: '#1C212B',
+    },
     searchPanel: {
       background: convertToHex(tokens.palette.dark.neutral.bg.default),
       text: convertToHex(tokens.palette.dark.neutral.text.default),

@@ -27,6 +27,10 @@ export interface ThemeOptions {
       checkboxCheckedBackground: string;
       checkboxCheckMark: string;
     };
+    autoCompletionPanel: {
+      selectedColor: string;
+      backgroundColor: string;
+    };
   };
   highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
   inheritBgColor?: boolean;
@@ -74,6 +78,18 @@ export const createCypherTheme = ({
     '& .cm-panels': {
       backgroundColor: settings.searchPanel.background,
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+    },
+    '.cm-tooltip-autocomplete': {
+      fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+      borderRadius: '3px',
+      '& > ul > li[aria-selected]': {
+        backgroundColor: settings.autoCompletionPanel.selectedColor,
+        color: settings.foreground,
+      },
+      '& > ul': {
+        backgroundColor: settings.autoCompletionPanel.backgroundColor,
+        color: settings.foreground,
+      },
     },
     '& .cm-search.cm-panel': {
       backgroundColor: settings.searchPanel.background,
