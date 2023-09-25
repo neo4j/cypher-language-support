@@ -4,7 +4,7 @@ import alias from '@rollup/plugin-alias';
 import { resolve } from 'path';
 import pkg from './package.json';
 
-const depsToBundle = ['language-support', 'antlr4-c3'];
+const depsToBundle = ['language-support', 'antlr4-c3', 'antlr4'];
 const dependenciesNotToBundle = Object.keys({
   ...pkg.dependencies,
   ...pkg.peerDependencies,

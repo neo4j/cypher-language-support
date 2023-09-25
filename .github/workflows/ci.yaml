@@ -48,7 +48,9 @@ jobs:
 
       - name: Run tests
         # Tests with the same flags that VSCode does
-        run: npm test -- -- --passWithNoTests --testLocationInResults
+        run: |
+          npm test -- --filter=!antlr4 -- --passWithNoTests --testLocationInResults
+          npm test -- --filter=antlr4
 
   e2e-test:
     name: E2E tests
@@ -62,6 +64,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build project
+        run: npm run build
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
