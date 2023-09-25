@@ -44,7 +44,8 @@
     "build": "webpack",
     "test": "jasmine",
     "coverage": "c8 jasmine",
-    "lint": "eslint src/antlr4/"
+    "lint": "eslint src/antlr4/",
+    "clean": "rm -rf dist"
   },
   "engines": {
     "node": ">=16"
