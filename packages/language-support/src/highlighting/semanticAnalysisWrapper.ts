@@ -1,4 +1,6 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { semanticAnalysis } from './semanticAnalysis';
 
 interface SemanticAnalysisError {
@@ -12,7 +14,7 @@ export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
     const errors = semanticAnalysis(query).$array.data;
     let i = 0;
     let keepLooping = true;
-    let result: SemanticAnalysisError[] = [];
+    const result: SemanticAnalysisError[] = [];
 
     while (i < errors.length && keepLooping) {
       const error = errors[i];
