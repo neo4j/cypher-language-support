@@ -21,6 +21,10 @@ const aliases = [
     replacement: resolve(__dirname, '../antlr4-c3/index.ts'),
   },
   {
+    find: 'antlr4',
+    replacement: resolve(__dirname, '../antlr4/dist/antlr4.web.mjs'),
+  },
+  {
     find: '@neo4j-cypher/react-codemirror-experimental',
     replacement: resolve(
       __dirname,
