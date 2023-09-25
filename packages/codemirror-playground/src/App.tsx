@@ -44,12 +44,12 @@ const dummyDbSchema: DbSchema = {
   aliasNames: ['myalias', 'my.alias.with.dots'],
   databaseNames: ['neo4j', 'system', 'movies'],
   parameters: {
-    'param1': {
-      'property': 'value',
-      'speed': 123.4,
+    param1: {
+      property: 'value',
+      speed: 123.4,
     },
-    'favColor': 'green',
-    'myParam': 1337,
+    favColor: 'green',
+    myParam: 1337,
   },
   propertyKeys: ['name', 'age', 'title', 'released', 'tagline'],
 };
@@ -124,7 +124,7 @@ export function App() {
               ))}
             </div>
             <CypherEditor
-              className="border-2 border-gray-100 dark:border-gray-400"
+              className="border-2 border-gray-100 dark:border-gray-400 text-sm"
               value={value}
               onChange={setValue}
               prompt="neo4j$"

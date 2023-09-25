@@ -30,6 +30,7 @@ export interface ThemeOptions {
     autoCompletionPanel: {
       selectedColor: string;
       backgroundColor: string;
+      matchingTextColor: string;
     };
   };
   highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
@@ -79,9 +80,16 @@ export const createCypherTheme = ({
       backgroundColor: settings.searchPanel.background,
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
     },
-    '.cm-tooltip-autocomplete': {
+    '& .cm-completionLabel': {
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
-      borderRadius: '3px',
+      verticalAlign: 'middle',
+    },
+    '& .cm-completionMatchedText': {
+      fontWeight: 'bold',
+      color: settings.autoCompletionPanel.matchingTextColor,
+      textDecoration: 'none',
+    },
+    '.cm-tooltip-autocomplete': {
       '& > ul > li[aria-selected]': {
         backgroundColor: settings.autoCompletionPanel.selectedColor,
         color: settings.foreground,
@@ -163,9 +171,6 @@ export const createCypherTheme = ({
         },
       },
     },
-
-    // there are more things to style (autocomplete panel etc)
-    // inspriation here: https://github.com/codemirror/theme-one-dark/blob/main/src/one-dark.ts
   };
 
   const themeExtension = EditorView.theme(themeOptions, { dark });

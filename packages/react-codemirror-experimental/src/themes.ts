@@ -34,7 +34,8 @@ export const lightThemeConstants: ThemeOptions = {
     textMatchingSelection: light.editor.findMatch.active.hex(),
     cursor: '#000000',
     autoCompletionPanel: {
-      selectedColor: '#E1E6E9',
+      selectedColor: '#cce2ff',
+      matchingTextColor: '#0066bf',
       backgroundColor: '#F3F4F5',
     },
     searchPanel: {
@@ -77,7 +78,8 @@ export const darkThemeConstants: ThemeOptions = {
     textMatchingSelection: mirage.editor.findMatch.active.hex(),
     cursor: '#ffffff',
     autoCompletionPanel: {
-      selectedColor: '#272F3D',
+      selectedColor: '#062f4a',
+      matchingTextColor: '#0097fb',
       backgroundColor: '#1C212B',
     },
     searchPanel: {
