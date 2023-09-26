@@ -176,12 +176,12 @@ test('can complete parameters', async ({ page }) => {
       procedureSignatures: {},
       aliasNames: [],
       databaseNames: [],
-      parameterNames: ['parameter'],
+      parameters: { parameter: { type: 'string' } },
       propertyKeys: [],
     },
   });
 
-  await editorPage.getEditor().type('RETURN $');
+  await editorPage.getEditor().type('RETURN $p');
 
   await page.locator('.cm-tooltip-autocomplete').getByText('parameter').click();
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
