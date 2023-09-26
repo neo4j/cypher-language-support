@@ -14,7 +14,8 @@
     "isolatedModules": false,
     "allowSyntheticDefaultImports": false,
     "strictNullChecks": false,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": ["src", "index.ts", "tests"],
