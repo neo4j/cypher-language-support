@@ -3,7 +3,7 @@ import { DbSchema } from '../../dbSchema';
 import {
   testCompletionContains,
   testCompletionDoesNotContain,
-} from './completion-assertion-utils';
+} from './completion-assertion-helpers';
 
 describe('function invocations', () => {
   const dbSchema: DbSchema = {
@@ -60,6 +60,7 @@ describe('function invocations', () => {
       dbSchema,
       expected: [
         { label: 'acos', kind: CompletionItemKind.Function },
+        { label: 'apoc', kind: CompletionItemKind.Function },
         { label: 'apoc.agg.graph', kind: CompletionItemKind.Function },
         { label: 'apoc.coll.pairs', kind: CompletionItemKind.Function },
       ],
@@ -115,6 +116,9 @@ describe('function invocations', () => {
 
       dbSchema,
       excluded: [
+        { label: 'apoc.agg.slice', kind: CompletionItemKind.Function },
+        { label: 'apoc.agg.last', kind: CompletionItemKind.Function },
+        { label: 'apoc.agg.first', kind: CompletionItemKind.Function },
         { label: 'acos', kind: CompletionItemKind.Function },
         { label: 'apoc.coll.min', kind: CompletionItemKind.Function },
         { label: 'coll.min', kind: CompletionItemKind.Function },
@@ -148,6 +152,9 @@ describe('function invocations', () => {
 
       dbSchema,
       excluded: [
+        { label: 'apoc.agg.slice', kind: CompletionItemKind.Function },
+        { label: 'apoc.agg.last', kind: CompletionItemKind.Function },
+        { label: 'apoc.agg.first', kind: CompletionItemKind.Function },
         { label: 'acos', kind: CompletionItemKind.Function },
         { label: 'apoc.coll.min', kind: CompletionItemKind.Function },
         { label: 'coll.min', kind: CompletionItemKind.Function },

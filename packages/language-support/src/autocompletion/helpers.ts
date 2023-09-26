@@ -53,7 +53,7 @@ const functionCompletions = (
       .filter((fnName) => fnName.startsWith(namespacePrefix))
       // given prefix `apoc.` turn `apoc.util.sleep` => `util`
       .map((fnName) => fnName.slice(namespacePrefix.length).split('.')[0])
-      // handle prefix `db.ping.` turning `db.ping` => ``
+      // handle prefix `time.truncate.` turning `time.truncate` => ``
       .filter((fnName) => fnName !== '');
 
     return uniq(nextNamespaceOption).map((label) => ({

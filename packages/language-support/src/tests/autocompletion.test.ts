@@ -6,7 +6,7 @@ import { DbSchema } from '../dbSchema';
 import {
   testCompletionContains,
   testCompletionDoesNotContain,
-} from './autocompletion/completion-assertion-utils';
+} from './autocompletion/completion-assertion-helpers';
 
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
