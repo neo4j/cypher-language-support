@@ -31,6 +31,7 @@ connection.onInitialize(() => {
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
+        triggerCharacters: ['.'],
       },
       semanticTokensProvider: {
         documentSelector: null,

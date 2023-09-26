@@ -1,4 +1,3 @@
-import { Token } from 'antlr4';
 import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -124,23 +123,6 @@ const isExpectedParameterType = (
   }
 };
 
-function calculatePrefix(ruleTokens: Token[]) {
-  const relevantTokens = ruleTokens.filter(
-    (token) =>
-      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
-  );
-
-  // only keep finished namespaces both second level `db.pi` => `db.`
-  // and first level make `dbm` => ''
-  const lastIsDot = relevantTokens.at(-1)?.type === CypherLexer.DOT;
-
-  if (!lastIsDot) {
-    relevantTokens.pop();
-  }
-
-  return relevantTokens.map((token) => token.text).join('');
-}
-
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
@@ -201,17 +183,35 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        // `db ping` is invalid but `db .ping` is valid
-        // so if we see a space after an identifier a dot must follow
-        // We don't suggest symbols, so return empty completions
-
         const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
         const lastNonEOFToken = ruleTokens.at(-2);
-        if (lastNonEOFToken?.type === CypherLexer.SPACE) {
+
+        const nonSpaceTokens = ruleTokens.filter(
+          (token) =>
+            token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+        );
+
+        const lastNonSpaceIsDot =
+          nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
+
+        // `gds version` is invalid but `gds .version` and `gds. version` are valid
+        // so if the last token is a space and the last non-space token
+        // is anything but a dot return empty completions to avoid
+        // creating invalid suggestions (db ping)
+        if (lastNonEOFToken?.type === CypherLexer.SPACE && !lastNonSpaceIsDot) {
           return [];
         }
 
-        const namespacePrefix = calculatePrefix(ruleTokens);
+        // calculate the current namespace prefix
+        // only keep finished namespaces both second level `gds.ver` => `gds.`
+        // and first level make `gds` => ''
+        if (!lastNonSpaceIsDot) {
+          nonSpaceTokens.pop();
+        }
+
+        const namespacePrefix = nonSpaceTokens
+          .map((token) => token.text)
+          .join('');
 
         return functionCompletions(dbSchema, namespacePrefix);
       }

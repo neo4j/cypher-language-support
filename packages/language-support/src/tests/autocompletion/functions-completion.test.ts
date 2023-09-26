@@ -190,7 +190,6 @@ describe('function invocations', () => {
   });
 
   test('Does not suggest functions when only valid character is dot', () => {
-    // `apoc util` is invalid but `apoc . util` is valid so if we see a space, the only thing that can follow is a dot
     const query = 'RETURN apoc    ';
 
     testCompletionDoesNotContain({
@@ -201,13 +200,31 @@ describe('function invocations', () => {
   });
 
   test('Does not suggest functions when only valid character is dot - namespaced edition', () => {
-    // `apoc util` is invalid but `apoc . util` is valid so if we see a space, the only thing that can follow is a dot
     const query = 'RETURN apoc . coll ';
 
     testCompletionDoesNotContain({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Function }],
+    });
+  });
+
+  test('Allows space after dot in function functions', () => {
+    const query = 'RETURN apoc  .  ';
+
+    testCompletionContains({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'agg', kind: CompletionItemKind.Function },
+        { label: 'coll', kind: CompletionItemKind.Function },
+      ],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [{ label: 'acos', kind: CompletionItemKind.Function }],
     });
   });
 
