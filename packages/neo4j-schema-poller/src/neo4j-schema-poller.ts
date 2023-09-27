@@ -22,8 +22,6 @@ export class Neo4jSchemaPoller {
 
     if (await driver.supportsSessionAuth()) {
       if (!(await driver.verifyAuthentication())) {
-        // @oskar TODO check how this works with first time login for both 4 and 5
-        // TODO more structured errors
         throw new Error('Invalid credentials');
       }
     }

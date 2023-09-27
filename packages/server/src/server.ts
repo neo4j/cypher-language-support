@@ -75,7 +75,7 @@ documents.onDidChangeContent((change) => {
   const document = change.document;
   const diagnostics = validateSyntax(
     document.getText(),
-    neo4jSdk.metadata.dbSchema ?? {},
+    neo4jSdk.metadata?.dbSchema ?? {},
   );
   void connection.sendDiagnostics({
     uri: document.uri,
