@@ -6,7 +6,7 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.8",
+  "version": "0.0.10",
   "type": "module",
   "main": "out/index.cjs",
   "module": "out/index.js",
@@ -36,6 +36,7 @@
     "@uiw/react-codemirror": "^4.19.9",
     "antlr4": "4.13",
     "ayu": "^8.0.1",
+    "fastest-levenshtein": "^1.0.16",
     "react": "^18.2.0",
     "react-d3-tree": "^3.6.1",
     "vscode-languageserver-types": "^3.17.3"

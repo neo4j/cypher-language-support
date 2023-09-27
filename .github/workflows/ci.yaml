@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
 jobs:
   lint-and-format:
     name: Run eslint and check formatting
@@ -21,6 +24,8 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build
 
       - name: Check there are no linting errors

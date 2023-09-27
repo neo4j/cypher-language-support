@@ -856,6 +856,12 @@ YIELD:
 ZONED:
    Z O N E D;
 
+EXPLAIN:
+   E X P L A I N;
+
+PROFILE:
+   P R O F I L E;
+
 IDENTIFIER:
    LETTER (PART_LETTER)*;
 

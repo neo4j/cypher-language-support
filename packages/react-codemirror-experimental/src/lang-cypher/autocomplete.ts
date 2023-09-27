@@ -1,35 +1,38 @@
 import { CompletionSource } from '@codemirror/autocomplete';
 import { autocomplete, DbSchema } from 'language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
-
-// From codemirror docs, the base built in icons in autocomplete list are:
-type CodemirrorBuiltinIcons =
-  | `class`
-  | `constant`
-  | `enum`
-  | `function`
-  | `interface`
-  | `keyword`
-  | `method`
-  | `namespace`
-  | `property`
-  | `text`
-  | `type`
-  | `variable`;
+import { CompletionItemIcons } from '../icons';
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
-  const map: Partial<Record<CompletionItemKind, CodemirrorBuiltinIcons>> = {
-    [CompletionItemKind.Constant]: 'constant',
-    [CompletionItemKind.Function]: 'function',
-    [CompletionItemKind.Keyword]: 'keyword',
-    [CompletionItemKind.Method]: 'method',
-    [CompletionItemKind.Property]: 'property',
-    [CompletionItemKind.Text]: 'text',
-    [CompletionItemKind.TypeParameter]: 'type',
-    [CompletionItemKind.Variable]: 'variable',
+  const map: Record<CompletionItemKind, CompletionItemIcons> = {
+    [CompletionItemKind.Text]: 'Text',
+    [CompletionItemKind.Method]: 'Method',
+    [CompletionItemKind.Function]: 'Function',
+    [CompletionItemKind.Constructor]: 'Constructor',
+    [CompletionItemKind.Field]: 'Field',
+    [CompletionItemKind.Variable]: 'Variable',
+    [CompletionItemKind.Class]: 'Class',
+    [CompletionItemKind.Interface]: 'Interface',
+    [CompletionItemKind.Module]: 'Module',
+    [CompletionItemKind.Property]: 'Property',
+    [CompletionItemKind.Unit]: 'Unit',
+    [CompletionItemKind.Value]: 'Value',
+    [CompletionItemKind.Enum]: 'Enum',
+    [CompletionItemKind.Keyword]: 'Keyword',
+    [CompletionItemKind.Snippet]: 'Snippet',
+    [CompletionItemKind.Color]: 'Color',
+    [CompletionItemKind.File]: 'File',
+    [CompletionItemKind.Reference]: 'Reference',
+    [CompletionItemKind.Folder]: 'Folder',
+    [CompletionItemKind.EnumMember]: 'EnumMember',
+    [CompletionItemKind.Constant]: 'Constant',
+    [CompletionItemKind.Struct]: 'Struct',
+    [CompletionItemKind.Event]: 'Event',
+    [CompletionItemKind.Operator]: 'Operator',
+    [CompletionItemKind.TypeParameter]: 'TypeParameter',
   };
 
-  return map[c] ?? 'text';
+  return map[c];
 };
 
 const emptySchema: DbSchema = {};
@@ -53,7 +56,7 @@ export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
     const options = autocomplete(textUntilCursor, schema ?? emptySchema);
 
     return {
-      from: context.matchBefore(/\w*$/).from,
+      from: context.matchBefore(/(\w|\$)*$/).from,
       options: options.map((o) => ({
         label: o.label,
         type: completionKindToCodemirrorIcon(o.kind),

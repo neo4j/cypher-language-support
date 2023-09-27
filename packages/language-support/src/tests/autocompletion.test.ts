@@ -1,68 +1,56 @@
 import {
-  CompletionItem,
   CompletionItemKind,
   SignatureInformation,
 } from 'vscode-languageserver-types';
-import { autocomplete } from '../autocompletion/autocompletion';
 import { DbSchema } from '../dbSchema';
+import {
+  testCompletionContains,
+  testCompletionDoesNotContain,
+} from './autocompletion/completion-assertion-helpers';
 
-type InclusionTestArgs = {
-  query: string;
-  dbSchema?: DbSchema;
-  expected: CompletionItem[];
-};
-export function testCompletionContains({
-  query,
-  dbSchema = {},
-  expected,
-}: InclusionTestArgs) {
-  const actualCompletionList = autocomplete(query, dbSchema);
+describe('Preparser auto-completions', () => {
+  test('Correctly completes EXPLAIN and PROFILE', () => {
+    const query = 'E';
 
-  expect(actualCompletionList).not.toContain(null);
-  expect(actualCompletionList).not.toContain(undefined);
+    testCompletionContains({
+      query,
+      expected: [
+        { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
+        { label: 'PROFILE', kind: CompletionItemKind.Keyword },
+      ],
+    });
+  });
 
-  const actual = expected.map((expectedItem) =>
-    actualCompletionList.find(
-      (value) =>
-        value.kind === expectedItem.kind && value.label === expectedItem.label,
-    ),
-  );
+  test('Correctly suggests normal completions after EXPLAIN', () => {
+    const query = 'EXPLAIN M';
 
-  expect(expected).toEqual(actual);
-}
+    testCompletionContains({
+      query,
+      expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
+    });
+  });
 
-type ExclusionTestArgs = {
-  query: string;
-  dbSchema?: DbSchema;
-  excluded: Partial<CompletionItem>[];
-};
-export function testCompletionDoesNotContain({
-  query,
-  dbSchema = {},
-  excluded,
-}: ExclusionTestArgs) {
-  const actualCompletionList = autocomplete(query, dbSchema);
+  test('Correctly suggests normal completions after PROFILE', () => {
+    const query = 'PROFILE M';
 
-  expect(actualCompletionList).not.toContain(null);
-  expect(actualCompletionList).not.toContain(undefined);
+    testCompletionContains({
+      query,
+      expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
+    });
+  });
 
-  const actual = excluded.map((notExpectedItem) =>
-    actualCompletionList.find((value) => {
-      // if label is left out -> only check kind and vice versa
-      const matchingKind =
-        notExpectedItem.kind === undefined ||
-        notExpectedItem.kind === value.kind;
+  test('Correctly suggests EXPLAIN and PROFILE at the begining of a new statement', () => {
+    const query = 'PROFILE MATCH (n) RETURN n; ';
 
-      const matchingLabel =
-        notExpectedItem.label === undefined ||
-        notExpectedItem.label === value.label;
-
-      return matchingKind && matchingLabel;
-    }),
-  );
-
-  expect(actual).toEqual([]);
-}
+    testCompletionContains({
+      query,
+      expected: [
+        { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
+        { label: 'PROFILE', kind: CompletionItemKind.Keyword },
+      ],
+    });
+  });
+});
 
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
@@ -499,8 +487,16 @@ describe('Procedures auto-completion', () => {
         },
       },
       expected: [
-        { label: 'dbms.info', kind: CompletionItemKind.Method },
-        { label: 'db.info', kind: CompletionItemKind.Method },
+        {
+          label: 'dbms.info',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+        },
+        {
+          label: 'db.info',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+        },
       ],
     });
   });
@@ -539,82 +535,6 @@ describe('expression completions', () => {
           { label: 'NULL', kind: CompletionItemKind.Keyword },
           { label: 'UnescapedSymbolicName', kind: CompletionItemKind.Keyword },
           { label: 'EscapedSymbolicName', kind: CompletionItemKind.Keyword },
-        ],
-      });
-    });
-  });
-
-  describe('function invocations', () => {
-    const dbSchema: DbSchema = {
-      functionSignatures: {
-        'a.b': SignatureInformation.create(''),
-        'xx.yy.proc': SignatureInformation.create(''),
-        'xx.yy.procedure': SignatureInformation.create(''),
-        'db.info': SignatureInformation.create(''),
-      },
-    };
-
-    test('Correctly completes unstarted function name in left hand side of WHERE', () => {
-      const query = 'MATCH (n) WHERE ';
-
-      testCompletionContains({
-        query,
-        dbSchema,
-        expected: [
-          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-        ],
-      });
-    });
-
-    test('Correctly completes function name in left hand side of WHERE', () => {
-      const query = 'MATCH (n) WHERE xx.yy';
-
-      testCompletionContains({
-        query,
-        dbSchema,
-        expected: [
-          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-        ],
-      });
-    });
-
-    test('Correctly completes function name in right hand side of WHERE', () => {
-      const query = 'MATCH (n) WHERE n.name = xx.yy';
-
-      testCompletionContains({
-        query,
-        dbSchema,
-        expected: [
-          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-        ],
-      });
-    });
-
-    test('Correctly completes function name in RETURN', () => {
-      const query = 'RETURN xx.yy';
-
-      testCompletionContains({
-        query,
-        dbSchema,
-        expected: [
-          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
-        ],
-      });
-    });
-
-    test('Correctly completes function name in an AND', () => {
-      const query = 'RETURN true AND xx.yy';
-
-      testCompletionContains({
-        query,
-        dbSchema,
-        expected: [
-          { label: 'xx.yy.proc', kind: CompletionItemKind.Function },
-          { label: 'xx.yy.procedure', kind: CompletionItemKind.Function },
         ],
       });
     });

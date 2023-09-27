@@ -9,6 +9,8 @@ import CypherParser from '../generated-parser/CypherParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
+const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
+
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => ({
     label: labelName,
@@ -24,12 +26,76 @@ const proceduresCompletions = (dbSchema: DbSchema) =>
   Object.keys(dbSchema.procedureSignatures ?? {}).map((procedureName) => ({
     label: procedureName,
     kind: CompletionItemKind.Method,
+    detail: '(procedure)',
   }));
-const functionCompletions = (dbSchema: DbSchema) =>
-  Object.keys(dbSchema.functionSignatures ?? {}).map((fnName) => ({
-    label: fnName,
-    kind: CompletionItemKind.Function,
-  }));
+
+const functionCompletions = (
+  dbSchema: DbSchema,
+  namespacePrefix: string,
+): CompletionItem[] => {
+  const fnNames = Object.keys(dbSchema.functionSignatures ?? {});
+
+  if (namespacePrefix === '') {
+    // If we don't have any prefix show full functions and top level namespaces
+    const topLevelPrefixes = fnNames
+      .filter((fn) => fn.includes('.'))
+      .map((fnName) => fnName.split('.')[0]);
+
+    return uniq(topLevelPrefixes)
+      .map((label) => ({
+        label,
+        kind: CompletionItemKind.Function,
+        detail: '(namespace)',
+      }))
+      .concat(
+        fnNames.map((label) => ({
+          label,
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        })),
+      );
+  } else {
+    // if we have a namespace prefix, complete on the namespace level:
+    // apoc. => show `util` | `load` | `date` etc.
+
+    const funcOptions = new Set<string>();
+    const namespaceOptions = new Set<string>();
+
+    for (const name of fnNames) {
+      if (name.startsWith(namespacePrefix)) {
+        // given prefix `apoc.` turn `apoc.util.sleep` => `util`
+        const splitByDot = name.slice(namespacePrefix.length).split('.');
+        const option = splitByDot[0];
+        const isFunctionName = splitByDot.length === 1;
+
+        // handle prefix `time.truncate.` turning `time.truncate` => ``
+        if (option !== '') {
+          if (isFunctionName) {
+            funcOptions.add(option);
+          } else {
+            namespaceOptions.add(option);
+          }
+        }
+      }
+    }
+
+    // test handle namespace with same name as function
+    const functionNameCompletions = Array.from(funcOptions).map((label) => ({
+      label,
+      kind: CompletionItemKind.Function,
+      detail: '(function)',
+    }));
+
+    const namespaceCompletions = Array.from(namespaceOptions).map((label) => ({
+      label,
+      kind: CompletionItemKind.Function,
+      detail: '(namespace)',
+    }));
+
+    return functionNameCompletions.concat(namespaceCompletions);
+  }
+};
+
 const parameterCompletions = (
   dbInfo: DbSchema,
   expectedType: ExpectedParameterType,
@@ -151,7 +217,37 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        return functionCompletions(dbSchema);
+        const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
+        const lastNonEOFToken = ruleTokens.at(-2);
+
+        const nonSpaceTokens = ruleTokens.filter(
+          (token) =>
+            token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+        );
+
+        const lastNonSpaceIsDot =
+          nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
+
+        // `gds version` is invalid but `gds .version` and `gds. version` are valid
+        // so if the last token is a space and the last non-space token
+        // is anything but a dot return empty completions to avoid
+        // creating invalid suggestions (db ping)
+        if (lastNonEOFToken?.type === CypherLexer.SPACE && !lastNonSpaceIsDot) {
+          return [];
+        }
+
+        // calculate the current namespace prefix
+        // only keep finished namespaces both second level `gds.ver` => `gds.`
+        // and first level make `gds` => ''
+        if (!lastNonSpaceIsDot) {
+          nonSpaceTokens.pop();
+        }
+
+        const namespacePrefix = nonSpaceTokens
+          .map((token) => token.text)
+          .join('');
+
+        return functionCompletions(dbSchema, namespacePrefix);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {

@@ -1,28 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CharStreams,
-  CommonToken,
   CommonTokenStream,
-  ErrorListener as ANTLRErrorListener,
   ParserRuleContext,
   ParseTreeListener,
-  Recognizer,
   Token,
 } from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
 
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
-} from 'vscode-languageserver-types';
+import { Diagnostic } from 'vscode-languageserver-types';
 
 import CypherParser, {
+  ClauseContext,
+  CreateClauseContext,
+  ExpressionContext,
+  LabelNameContext,
+  LabelNameIsContext,
+  LabelOrRelTypeContext,
+  MergeClauseContext,
   StatementsContext,
   VariableContext,
 } from './generated-parser/CypherParser';
-import { findStopNode, getTokens } from './helpers';
+import {
+  findParent,
+  findStopNode,
+  getTokens,
+  inNodeLabel,
+  inRelationshipType,
+  isDefined,
+} from './helpers';
+import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
 
 export interface ParsingResult {
   query: string;
@@ -31,9 +39,42 @@ export interface ParsingResult {
   result: StatementsContext;
 }
 
+export enum LabelType {
+  nodeLabelType = 'Label',
+  relLabelType = 'Relationship type',
+  unknown = 'Label or relationship type',
+}
+
+function getLabelType(ctx: ParserRuleContext): LabelType {
+  if (inNodeLabel(ctx)) return LabelType.nodeLabelType;
+  else if (inRelationshipType(ctx)) return LabelType.relLabelType;
+  else return LabelType.unknown;
+}
+
+function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
+  const parent = findParent(
+    ctx,
+    (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
+  );
+
+  return (
+    parent instanceof CreateClauseContext ||
+    parent instanceof MergeClauseContext
+  );
+}
+
+export type LabelOrRelType = {
+  labeltype: LabelType;
+  labelText: string;
+  couldCreateNewLabel: boolean;
+  line: number;
+  column: number;
+};
+
 export interface EnrichedParsingResult extends ParsingResult {
-  diagnostics: Diagnostic[];
+  errors: Diagnostic[];
   stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
 }
 
@@ -75,6 +116,44 @@ export function createParsingResult(
   return parsingResult;
 }
 
+// This listener is collects all labels and relationship types
+class LabelAndRelTypesCollector extends ParseTreeListener {
+  labelOrRelTypes: LabelOrRelType[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
+      this.labelOrRelTypes.push({
+        labeltype: getLabelType(ctx),
+        labelText: ctx.getText(),
+        couldCreateNewLabel: couldCreateNewLabel(ctx),
+        line: ctx.start.line,
+        column: ctx.start.column,
+      });
+    } else if (ctx instanceof LabelOrRelTypeContext) {
+      const symbolicName = ctx.symbolicNameString();
+      if (isDefined(symbolicName)) {
+        this.labelOrRelTypes.push({
+          labeltype: getLabelType(ctx),
+          labelText: symbolicName.start.text,
+          couldCreateNewLabel: couldCreateNewLabel(ctx),
+          line: ctx.start.line,
+          column: ctx.start.column,
+        });
+      }
+    }
+  }
+}
+
 // This class is collects all variables detected by the parser which means
 // it does include variable scope nor differentiate between variable use and definition
 // we use it when the semantic anaylsis result is not available
@@ -89,6 +168,7 @@ class VariableCollector implements ParseTreeListener {
   visitErrorNode() {
     /* no-op */
   }
+
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof VariableContext) {
       const variable = ctx.symbolicNameString().getText();
@@ -122,11 +202,12 @@ class ParserWrapper {
       const parsingScaffolding = createParsingScaffolding(query);
       const parser = parsingScaffolding.parser;
       const tokenStream = parsingScaffolding.tokenStream;
-      const errorListener = new ErrorListener();
+      const errorListener = new SyntaxErrorsListener();
       parser.addErrorListener(errorListener);
 
+      const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      parser._parseListeners = [variableFinder];
+      parser._parseListeners = [labelsCollector, variableFinder];
 
       const result = createParsingResult(parsingScaffolding).result;
 
@@ -134,9 +215,10 @@ class ParserWrapper {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
-        diagnostics: errorListener.diagnostics,
+        errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
       };
 
@@ -147,41 +229,3 @@ class ParserWrapper {
 }
 
 export const parserWrapper = new ParserWrapper();
-
-export class ErrorListener implements ANTLRErrorListener<CommonToken> {
-  diagnostics: Diagnostic[];
-
-  constructor() {
-    this.diagnostics = [];
-  }
-
-  public syntaxError<T extends Token>(
-    _recognizer: Recognizer<T>,
-    offendingSymbol: T | undefined,
-    _line: number,
-    _charPositionInLine: number,
-    msg: string,
-  ): void {
-    const lineIndex = (offendingSymbol?.line ?? 1) - 1;
-    const start = offendingSymbol?.start ?? 0;
-    const end = (offendingSymbol?.stop ?? 0) + 1;
-
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, start),
-        end: Position.create(lineIndex, end),
-      },
-      message: msg,
-    };
-    this.diagnostics.push(diagnostic);
-  }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public reportAttemptingFullContext() {}
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public reportAmbiguity() {}
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public reportContextSensitivity() {}
-}
