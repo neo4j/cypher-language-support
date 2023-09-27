@@ -20,7 +20,9 @@ export function testCompletionContains({
   const actual = expected.map((expectedItem) =>
     actualCompletionList.find(
       (value) =>
-        value.kind === expectedItem.kind && value.label === expectedItem.label,
+        value.kind === expectedItem.kind &&
+        value.label === expectedItem.label &&
+        value.detail === expectedItem.detail,
     ),
   );
 

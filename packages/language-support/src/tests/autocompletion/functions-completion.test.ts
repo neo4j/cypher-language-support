@@ -59,10 +59,26 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'acos', kind: CompletionItemKind.Function },
-        { label: 'apoc', kind: CompletionItemKind.Function },
-        { label: 'apoc.agg.graph', kind: CompletionItemKind.Function },
-        { label: 'apoc.coll.pairs', kind: CompletionItemKind.Function },
+        {
+          label: 'acos',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'apoc',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'apoc.agg.graph',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'apoc.coll.pairs',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
   });
@@ -73,9 +89,21 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'acos', kind: CompletionItemKind.Function },
-        { label: 'apoc.agg.graph', kind: CompletionItemKind.Function },
-        { label: 'apoc.coll.pairs', kind: CompletionItemKind.Function },
+        {
+          label: 'acos',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'apoc.agg.graph',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'apoc.coll.pairs',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
   });
@@ -86,8 +114,16 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'agg', kind: CompletionItemKind.Function },
-        { label: 'coll', kind: CompletionItemKind.Function },
+        {
+          label: 'agg',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'coll',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
       ],
     });
 
@@ -105,15 +141,26 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'first', kind: CompletionItemKind.Function },
-        { label: 'last', kind: CompletionItemKind.Function },
-        { label: 'slice', kind: CompletionItemKind.Function },
+        {
+          label: 'first',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'last',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'slice',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
 
     testCompletionDoesNotContain({
       query,
-
       dbSchema,
       excluded: [
         { label: 'apoc.agg.slice', kind: CompletionItemKind.Function },
@@ -141,9 +188,21 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'first', kind: CompletionItemKind.Function },
-        { label: 'last', kind: CompletionItemKind.Function },
-        { label: 'slice', kind: CompletionItemKind.Function },
+        {
+          label: 'first',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'first',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'first',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
 
@@ -216,8 +275,16 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'agg', kind: CompletionItemKind.Function },
-        { label: 'coll', kind: CompletionItemKind.Function },
+        {
+          label: 'agg',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'coll',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
       ],
     });
 
@@ -234,8 +301,16 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'agg', kind: CompletionItemKind.Function },
-        { label: 'coll', kind: CompletionItemKind.Function },
+        {
+          label: 'agg',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'coll',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
       ],
     });
   });
@@ -246,8 +321,16 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'apoc.agg.percentiles', kind: CompletionItemKind.Function },
-        { label: 'acos', kind: CompletionItemKind.Function },
+        {
+          label: 'apoc.agg.percentiles',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'acos',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
   });
@@ -258,8 +341,46 @@ describe('function invocations', () => {
       query,
       dbSchema,
       expected: [
-        { label: 'apoc.agg.percentiles', kind: CompletionItemKind.Function },
-        { label: 'acos', kind: CompletionItemKind.Function },
+        {
+          label: 'apoc.agg.percentiles',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+        {
+          label: 'apoc',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'acos',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
+      ],
+    });
+  });
+
+  test('Handles function with same name as namespace', () => {
+    const query = 'RETURN ';
+    testCompletionContains({
+      query,
+      dbSchema: {
+        functionSignatures: {
+          math: { label: 'math' },
+          'math.max': { label: 'math.max' },
+        },
+      },
+      expected: [
+        {
+          label: 'math',
+          kind: CompletionItemKind.Function,
+          detail: '(namespace)',
+        },
+        {
+          label: 'math',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        },
       ],
     });
   });

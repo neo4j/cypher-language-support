@@ -26,6 +26,7 @@ const proceduresCompletions = (dbSchema: DbSchema) =>
   Object.keys(dbSchema.procedureSignatures ?? {}).map((procedureName) => ({
     label: procedureName,
     kind: CompletionItemKind.Method,
+    detail: '(procedure)',
   }));
 
 const functionCompletions = (
@@ -40,25 +41,58 @@ const functionCompletions = (
       .filter((fn) => fn.includes('.'))
       .map((fnName) => fnName.split('.')[0]);
 
-    return uniq(fnNames.concat(topLevelPrefixes)).map((label) => ({
-      label,
-      kind: CompletionItemKind.Function,
-    }));
+    return uniq(topLevelPrefixes)
+      .map((label) => ({
+        label,
+        kind: CompletionItemKind.Function,
+        detail: '(namespace)',
+      }))
+      .concat(
+        fnNames.map((label) => ({
+          label,
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+        })),
+      );
   } else {
     // if we have a namespace prefix, complete on the namespace level:
     // apoc. => show `util` | `load` | `date` etc.
 
-    const nextNamespaceOption = fnNames
-      .filter((fnName) => fnName.startsWith(namespacePrefix))
-      // given prefix `apoc.` turn `apoc.util.sleep` => `util`
-      .map((fnName) => fnName.slice(namespacePrefix.length).split('.')[0])
-      // handle prefix `time.truncate.` turning `time.truncate` => ``
-      .filter((fnName) => fnName !== '');
+    const funcOptions = new Set<string>();
+    const namespaceOptions = new Set<string>();
 
-    return uniq(nextNamespaceOption).map((label) => ({
+    for (const name of fnNames) {
+      if (name.startsWith(namespacePrefix)) {
+        // given prefix `apoc.` turn `apoc.util.sleep` => `util`
+        const splitByDot = name.slice(namespacePrefix.length).split('.');
+        const option = splitByDot[0];
+        const isFunctionName = splitByDot.length === 1;
+
+        // handle prefix `time.truncate.` turning `time.truncate` => ``
+        if (option !== '') {
+          if (isFunctionName) {
+            funcOptions.add(option);
+          } else {
+            namespaceOptions.add(option);
+          }
+        }
+      }
+    }
+
+    // test handle namespace with same name as function
+    const functionNameCompletions = Array.from(funcOptions).map((label) => ({
       label,
       kind: CompletionItemKind.Function,
+      detail: '(function)',
     }));
+
+    const namespaceCompletions = Array.from(namespaceOptions).map((label) => ({
+      label,
+      kind: CompletionItemKind.Function,
+      detail: '(namespace)',
+    }));
+
+    return functionNameCompletions.concat(namespaceCompletions);
   }
 };
 
