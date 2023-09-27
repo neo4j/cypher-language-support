@@ -1,7 +1,6 @@
 /* eslint-disable */
 import * as vscode from 'vscode';
-import { getDocumentUri, openDocument } from './helpers';
-import assert = require('assert');
+import { getDocumentUri, openDocument } from '../helpers';
 
 type InclusionTestArgs = {
   textFile: string;
@@ -31,11 +30,10 @@ export async function testCompletionContains({
         value.kind === expectedItem.kind && value.label === expectedItem.label,
     );
 
-    assert.equal(found !== undefined, true);
+    expect(found).toBeDefined();
   });
 }
-
-suite('Auto completion spec', () => {
+describe('Auto completion spec', () => {
   test('Completes empty statement with MATCH, CREATE, etc', async () => {
     const position = new vscode.Position(0, 0);
 

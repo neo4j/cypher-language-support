@@ -1,45 +1,34 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-import * as glob from 'glob';
-import * as Mocha from 'mocha';
+import { Config } from '@jest/types';
+import { runCLI } from 'jest';
 import * as path from 'path';
 
 export function run(): Promise<void> {
-  // Create the mocha test
-  const mocha = new Mocha({
-    ui: 'tdd',
-    color: true,
-  });
-  mocha.timeout(100000);
+  const projectRootPath = path.join(process.cwd(), './');
+  const config = path.join(projectRootPath, 'jest.config.js');
 
-  const testsRoot = __dirname;
+  return runCLI({ config } as unknown as Config.Argv, [projectRootPath])
+    .then((jestCliCallResult) => {
+      jestCliCallResult.results.testResults.forEach((testResult) => {
+        testResult.testResults
+          .filter((assertionResult) => assertionResult.status === 'passed')
+          .forEach(({ ancestorTitles, title, status }) => {
+            // eslint-disable-next-line no-console
+            console.log(
+              `  ● ${ancestorTitles.join('›')} › ${title} (${status})`,
+            );
+          });
+      });
 
-  return new Promise((resolve, reject) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    glob('**.spec.js', { cwd: testsRoot }, (err, files) => {
-      if (err) {
-        return reject(err);
-      }
-
-      // Add files to the test suite
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
-      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
-
-      try {
-        // Run the mocha test
-        mocha.run((failures) => {
-          if (failures > 0) {
-            reject(new Error(`${failures} tests failed.`));
-          } else {
-            resolve();
-          }
-        });
-      } catch (err) {
-        console.error(err);
-        reject(err);
-      }
+      jestCliCallResult.results.testResults.forEach((testResult) => {
+        if (testResult.failureMessage) {
+          console.error(testResult.failureMessage);
+        }
+      });
+    })
+    .catch((errorCaughtByJestRunner) => {
+      console.error(
+        'An error happened when executing the integration tests: ' +
+          (errorCaughtByJestRunner as Error).message,
+      );
     });
-  });
 }

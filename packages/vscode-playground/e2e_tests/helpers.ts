@@ -6,7 +6,7 @@ export async function openDocument(docUri: Uri) {
     // The language server should be activated automatically when opening a file with Cypher extension
     const document = await workspace.openTextDocument(docUri);
     await window.showTextDocument(document);
-    // Wait 5 seconds for the language server to activate
+    // Wait 2 seconds for the language server to activate
     await sleep(5000);
   } catch (e) {
     console.error(e);

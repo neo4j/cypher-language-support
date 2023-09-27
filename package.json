@@ -25,6 +25,7 @@
     "format": "prettier --config .prettierrc.json '**/*.ts' --write"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.5",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
