@@ -1,8 +1,5 @@
 import { DbSchema } from 'language-support';
-import {
-  ParameterInformation,
-  SignatureInformation,
-} from 'vscode-languageserver/node';
+import { SignatureInformation } from 'vscode-languageserver/node';
 import { Neo4jConnection } from './neo4j-connection.js';
 import { DataSummary, getDataSummary } from './queries/data-summary.js';
 import { Database, listDatabases } from './queries/databases.js';
@@ -119,27 +116,20 @@ export class MetadataPoller {
       queryArgs: listFunctions({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          // todo better parsing
           const signatures = result.data.functions.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
-            const { name, signature, description } = curr;
-
-            const [header] = signature.split(') :: ');
-            const paramsString = header
-              .replace(name, '')
-              .replace('(', '')
-              .replace(')', '')
-              .trim();
-
-            const params: string[] =
-              paramsString.length > 0 ? paramsString.split(', ') : [];
+            const { name, argumentDescription, description } = curr;
 
             acc[name] = SignatureInformation.create(
               name,
               description,
-              ...params.map(this.getParamsInfo),
+              ...argumentDescription.map((arg) => ({
+                label: arg.name,
+                documentation: arg.description,
+              })),
             );
+
             return acc;
           }, {});
           this.dbSchema.functionSignatures = signatures;
@@ -147,8 +137,6 @@ export class MetadataPoller {
       },
     });
 
-    // TODO executbale by me only
-    // TODO parsing
     this.procedures = new QueryPoller({
       connection,
       queryArgs: listProcedures({ executableByMe: true }),
@@ -157,22 +145,15 @@ export class MetadataPoller {
           const signatures = result.data.procedures.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
-            const { name, signature, description } = curr;
-
-            const [header] = signature.split(') :: ');
-            const paramsString = header
-              .replace(name, '')
-              .replace('(', '')
-              .replace(')', '')
-              .trim();
-
-            const params: string[] =
-              paramsString.length > 0 ? paramsString.split(', ') : [];
+            const { name, argumentDescription, description } = curr;
 
             acc[name] = SignatureInformation.create(
               name,
               description,
-              ...params.map(this.getParamsInfo),
+              ...argumentDescription.map((arg) => ({
+                label: arg.name,
+                documentation: arg.description,
+              })),
             );
             return acc;
           }, {});
@@ -190,15 +171,6 @@ export class MetadataPoller {
       this.functions.refetch(),
     ]);
   }
-
-  private getParamsInfo = (param: string) => {
-    // FIXME: There are cases where this doesn't work:
-    // paramslabels :: LIST? OF STRING?,groupByProperties :: LIST? OF STRING?,aggregations = [{*=count},{*=count}] :: LIST? OF MAP?,config = {} :: MAP?
-    const [headerInfo] = param.split(' :: ');
-    const [paramName] = headerInfo.split(' = ');
-
-    return ParameterInformation.create(paramName, param);
-  };
 
   stopBackgroundPolling() {
     clearInterval(this.dbPollingInterval);
