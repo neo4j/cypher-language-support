@@ -7,7 +7,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSDK } from 'neo4j-sdk';
+import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {
@@ -18,7 +18,7 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSDK,
+  neo4j: Neo4jSchemaPoller,
 ) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);

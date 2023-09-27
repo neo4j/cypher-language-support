@@ -116,7 +116,7 @@ export class MetadataPoller {
 
     this.functions = new QueryPoller({
       connection,
-      queryArgs: listFunctions(),
+      queryArgs: listFunctions({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
           // todo better parsing
@@ -151,7 +151,7 @@ export class MetadataPoller {
     // TODO parsing
     this.procedures = new QueryPoller({
       connection,
-      queryArgs: listProcedures(),
+      queryArgs: listProcedures({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
           const signatures = result.data.procedures.reduce<

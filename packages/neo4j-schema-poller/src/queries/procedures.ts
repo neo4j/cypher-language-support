@@ -21,14 +21,19 @@ export type Procedure = {
   option: { deprecated: boolean } & Record<string, unknown>;
 };
 
+type ListFunctionArgs = { executableByMe: boolean };
 /**
  * Gets available procedures on your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
-export function listProcedures(): ExecuteQueryArgs<{
+export function listProcedures(
+  { executableByMe }: ListFunctionArgs = { executableByMe: false },
+): ExecuteQueryArgs<{
   procedures: Procedure[];
 }> {
-  const query = `SHOW PROCEDURES
+  const query = `SHOW PROCEDURES ${
+    executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
+  }
 YIELD name, description, mode, worksOnSystem, argumentDescription, signature, returnDescription, admin, option`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({

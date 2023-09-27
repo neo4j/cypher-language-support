@@ -3,7 +3,7 @@ import { MetadataPoller } from './metadata-poller';
 import { Neo4jConnection } from './neo4j-connection';
 import { listDatabases } from './queries/databases.js';
 
-export class Neo4jSDK {
+export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
 

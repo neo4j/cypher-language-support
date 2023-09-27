@@ -15,14 +15,19 @@ export type Neo4jFunction = {
   aggregating: boolean;
 };
 
+type ListFunctionArgs = { executableByMe: boolean };
 /**
  * Gets available functions in your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-functions/
  */
-export function listFunctions(): ExecuteQueryArgs<{
+export function listFunctions(
+  { executableByMe }: ListFunctionArgs = { executableByMe: false },
+): ExecuteQueryArgs<{
   functions: Neo4jFunction[];
 }> {
-  const query = `SHOW FUNCTIONS
+  const query = `SHOW FUNCTIONS ${
+    executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
+  }
 YIELD name, category, description, isBuiltIn, argumentDescription, signature, returnDescription, aggregating`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({

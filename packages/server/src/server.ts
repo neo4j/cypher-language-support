@@ -12,7 +12,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend, validateSyntax } from 'language-support';
-import { Neo4jSDK } from 'neo4j-sdk';
+import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
@@ -23,7 +23,7 @@ const connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-const neo4jSdk = new Neo4jSDK();
+const neo4jSdk = new Neo4jSchemaPoller();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -73,7 +73,10 @@ connection.onInitialized(() => {
 // Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
   const document = change.document;
-  const diagnostics = validateSyntax(document.getText(), dbSchema);
+  const diagnostics = validateSyntax(
+    document.getText(),
+    neo4jSdk.metadata.dbSchema ?? {},
+  );
   void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
