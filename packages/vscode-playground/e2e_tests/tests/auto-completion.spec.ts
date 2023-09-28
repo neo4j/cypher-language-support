@@ -33,6 +33,7 @@ export async function testCompletionContains({
     expect(found).toBeDefined();
   });
 }
+
 describe('Auto completion spec', () => {
   test('Completes empty statement with MATCH, CREATE, etc', async () => {
     const position = new vscode.Position(0, 0);

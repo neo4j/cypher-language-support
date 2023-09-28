@@ -7,5 +7,6 @@ module.exports = {
   moduleNameMapper: {
     vscode: path.join(__dirname, 'e2e_tests', 'setup', 'vscode.js'),
   },
-  setupFilesAfterEnv: ['./e2e_tests/setup/jest.setup.js'],
+  setupFiles: ['./e2e_tests/setup/jest.setup.js'],
+  maxWorkers: 1,
 };
