@@ -7,7 +7,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import type { DbSchema } from 'language-support';
+import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {
@@ -18,7 +18,7 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  dbSchema: DbSchema,
+  neo4j: Neo4jSchemaPoller,
 ) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
@@ -31,6 +31,9 @@ export function doSignatureHelp(
       end: position,
     };
 
-    return signatureHelp(textDocument.getText(range), dbSchema);
+    return signatureHelp(
+      textDocument.getText(range),
+      neo4j.metadata.dbSchema ?? {},
+    );
   };
 }
