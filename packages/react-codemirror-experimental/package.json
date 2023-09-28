@@ -6,7 +6,7 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.10",
+  "version": "0.0.11",
   "type": "module",
   "main": "out/index.cjs",
   "module": "out/index.js",
