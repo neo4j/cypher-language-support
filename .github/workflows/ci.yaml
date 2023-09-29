@@ -75,6 +75,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run e2e test
+        # We need a graphics server to run integration tests with VSCode
+        # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
         run: xvfb-run -a npm run test:e2e
 
       - uses: actions/upload-artifact@v3
