@@ -19,5 +19,8 @@
     "clean": "rm -rf out",
     "watch": "tsc -b -w",
     "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5"
   }
 }
