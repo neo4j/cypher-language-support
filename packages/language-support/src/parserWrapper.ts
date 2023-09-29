@@ -98,6 +98,11 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
   };
 }
 
+export function parse(cypher: string) {
+  const parser = createParsingScaffolding(cypher).parser;
+  return parser.statements();
+}
+
 export function createParsingResult(
   parsingScaffolding: ParsingScaffolding,
 ): ParsingResult {

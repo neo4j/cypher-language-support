@@ -115,7 +115,10 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     const start = charPositionInLine;
     let end = charPositionInLine;
 
-    if (isDefined(offendingSymbol)) {
+    if (
+      isDefined(offendingSymbol) &&
+      offendingSymbol.type !== CypherParser.EOF
+    ) {
       end = start + offendingSymbol.text.length;
 
       const parser = recognizer as CypherParser;
