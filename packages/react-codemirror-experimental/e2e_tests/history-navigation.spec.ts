@@ -91,6 +91,8 @@ test('can navigate with cmd+up as well', async ({ page }) => {
   const isMac = process.platform === 'darwin';
   const metaUp = isMac ? 'Meta+ArrowUp' : 'Control+ArrowUp';
   const metaDown = isMac ? 'Meta+ArrowDown' : 'Control+ArrowDown';
+  // eslint-disable-next-line no-console
+  console.log(isMac);
 
   const initialValue = 'MATCH (n) RETURN n;';
   await editorPage.createEditor({
