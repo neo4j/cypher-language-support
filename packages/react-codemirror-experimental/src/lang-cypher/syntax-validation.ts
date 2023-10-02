@@ -1,7 +1,7 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
 import { DbSchema, validateSyntax } from 'language-support';
-import { Position } from 'vscode-languageserver-types';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 function toBufferPosition(pos: Position, eofPositions: number[]): number {
   const column = pos.character;
@@ -29,7 +29,10 @@ export const cypherLinter: (schema?: DbSchema) => Extension = (schema) =>
       diagnostics.push({
         from: from,
         to: to,
-        severity: 'warning',
+        severity:
+          diagnostic.severity === DiagnosticSeverity.Error
+            ? 'error'
+            : 'warning',
         message: diagnostic.message,
       });
     });

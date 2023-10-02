@@ -1,4 +1,4 @@
-import { Locator, type Page } from '@playwright/test';
+import { expect, Locator, type Page } from '@playwright/test';
 
 import type { CypherEditorProps } from '../src/CypherEditor.js';
 
@@ -66,5 +66,31 @@ export class CypherEditorPage {
       const color = window.getComputedStyle(e).getPropertyValue('color');
       return RGBAToHexA(color);
     });
+  }
+
+  async checkErrorMessage(queryChunk: string, expectedMsg: string) {
+    return this.checkNotificationMessage('error', queryChunk, expectedMsg);
+  }
+
+  async checkWarningMessage(queryChunk: string, expectedMsg: string) {
+    return this.checkNotificationMessage('warning', queryChunk, expectedMsg);
+  }
+
+  private async checkNotificationMessage(
+    type: 'error' | 'warning',
+    queryChunk: string,
+    expectedMsg: string,
+  ) {
+    const locator = this.page.getByText(queryChunk, { exact: true });
+    await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
+      {
+        timeout: 2000,
+      },
+    );
+
+    await locator.hover();
+    const hoverMessage = this.page.locator('.cm-tooltip-hover');
+    await expect(hoverMessage).toBeVisible();
+    await expect(hoverMessage.getByText(expectedMsg)).toBeVisible();
   }
 }
