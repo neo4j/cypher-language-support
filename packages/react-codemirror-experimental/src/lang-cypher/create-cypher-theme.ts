@@ -7,6 +7,15 @@ import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { StyleSpec } from 'style-mod';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
+import {
+  byWordSvg,
+  caseSensitiveSvg,
+  downArrowSvg,
+  regexSvg,
+  replaceAllSvg,
+  replaceSvg,
+  upArrowSvg,
+} from './theme-icons';
 
 export interface ThemeOptions {
   dark: boolean;
@@ -20,12 +29,7 @@ export interface ThemeOptions {
     searchPanel: {
       background: string;
       text: string;
-      buttonBackground: string;
       buttonHoverBackground: string;
-      checkboxBackground: string;
-      checkboxBorder: string;
-      checkboxCheckedBackground: string;
-      checkboxCheckMark: string;
     };
     autoCompletionPanel: {
       selectedColor: string;
@@ -100,73 +104,88 @@ export const createCypherTheme = ({
       },
     },
     '& .cm-search.cm-panel': {
+      '& input': {
+        fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+      },
       backgroundColor: settings.searchPanel.background,
       color: settings.searchPanel.text,
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 0fr',
-      gridTemplateRows: '1.5em 1.5em',
-      maxWidth: '45rem',
-      position: 'revert',
-      gap: '0.5rem',
 
+      '& .cm-button[name=select]': { display: 'none' },
       '& .cm-button': {
         backgroundImage: 'none',
-        backgroundColor: settings.searchPanel.buttonBackground,
         color: settings.searchPanel.text,
+        fontSize: 0,
         border: 'none',
-        fontSize: '0.75rem',
-        borderRadius: '0.25rem',
-        margin: 0,
+        verticalAlign: 'middle',
+        '&[name=next]::before': {
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            downArrowSvg,
+          )}")`,
+        },
+        '&[name=prev]::before': {
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            upArrowSvg,
+          )}")`,
+        },
+        '&[name=replace]::before': {
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            replaceSvg,
+          )}")`,
+        },
+        '&[name=replaceAll]::before': {
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            replaceAllSvg,
+          )}")`,
+        },
+        width: '20px',
+        height: '20px',
 
+        marginRight: '1px',
+        marginLeft: '1px',
+        borderRadius: '4px',
+        padding: '2px',
         '&:hover': {
           backgroundColor: settings.searchPanel.buttonHoverBackground,
         },
       },
 
       '& label': {
-        display: 'inline-flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: '0.25rem',
+        fontSize: '0',
+        height: '20px',
+        width: '20px',
+        verticalAlign: 'middle',
         "& input[type='checkbox']": {
+          cursor: 'pointer',
           appearance: 'none',
-          margin: 0,
-          padding: 0,
+          marginRight: '1px',
+          marginLeft: '1px',
+          padding: '2px',
+          height: '20px',
+          width: '20px',
+          verticalAlign: 'middle',
           display: 'inline-flex',
-          alignItems: 'center',
-          position: 'relative',
+          borderRadius: '4px',
 
-          '&::before': {
-            content: '""',
-            display: 'inline-block',
-            height: '1rem',
-            width: '1rem',
-            border: `1px solid ${settings.searchPanel.checkboxBorder}`,
-            backgroundColor: settings.searchPanel.checkboxBackground,
-            borderRadius: '0.25rem',
+          '&[name=case]::before': {
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              caseSensitiveSvg,
+            )}")`,
           },
-
-          '&::after': {
-            content: '""',
-            transform: 'scale(0) rotate(-45deg)',
-            background: 'none',
-            borderBottom: `2px solid ${settings.searchPanel.checkboxCheckMark}`,
-            borderLeft: `2px solid ${settings.searchPanel.checkboxCheckMark}`,
-            marginTop: '-0.1875rem',
-            position: 'absolute',
-            top: '0.46875rem',
-            width: '0.6rem',
-            left: '3px',
-            height: '0.4rem',
+          '&[name=re]::before': {
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              regexSvg,
+            )}")`,
           },
-
-          '&:checked::before': {
-            backgroundColor: settings.searchPanel.checkboxCheckedBackground,
-            borderColor: settings.searchPanel.checkboxCheckedBackground,
+          '&[name=word]::before': {
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              byWordSvg,
+            )}")`,
           },
-
-          '&:checked::after': {
-            transform: 'scale(1) rotate(-45deg)',
+          '&:hover': {
+            backgroundColor: settings.searchPanel.buttonHoverBackground,
+          },
+          '&:checked': {
+            backgroundColor: settings.searchPanel.buttonHoverBackground,
           },
         },
       },
