@@ -109,7 +109,6 @@ export const createCypherTheme = ({
       },
       backgroundColor: settings.searchPanel.background,
       color: settings.searchPanel.text,
-      maxWidth: '45rem',
 
       '& .cm-button[name=select]': { display: 'none' },
       '& .cm-button': {
@@ -143,7 +142,7 @@ export const createCypherTheme = ({
 
         marginRight: '1px',
         marginLeft: '1px',
-        borderRadius: '0.25rem',
+        borderRadius: '4px',
         padding: '2px',
         '&:hover': {
           backgroundColor: settings.searchPanel.buttonHoverBackground,
@@ -165,7 +164,7 @@ export const createCypherTheme = ({
           width: '20px',
           verticalAlign: 'middle',
           display: 'inline-flex',
-          borderRadius: '0.25rem',
+          borderRadius: '4px',
 
           '&[name=case]::before': {
             content: `url("data:image/svg+xml;base64,${window.btoa(
