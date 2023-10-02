@@ -8,13 +8,13 @@ import { EditorView } from '@codemirror/view';
 import { StyleSpec } from 'style-mod';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 import {
-  byWordBase64,
-  caseSensitiveBase64,
-  downArrowBase64,
-  regexBase64,
-  replaceAllBase64,
-  replaceBase64,
-  upArrowBase64,
+  byWordSvg,
+  caseSensitiveSvg,
+  downArrowSvg,
+  regexSvg,
+  replaceAllSvg,
+  replaceSvg,
+  upArrowSvg,
 } from './theme-icons';
 
 export interface ThemeOptions {
@@ -119,16 +119,24 @@ export const createCypherTheme = ({
         border: 'none',
         verticalAlign: 'middle',
         '&[name=next]::before': {
-          content: `url("data:image/svg+xml;base64,${downArrowBase64}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            downArrowSvg,
+          )}")`,
         },
         '&[name=prev]::before': {
-          content: `url("data:image/svg+xml;base64,${upArrowBase64}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            upArrowSvg,
+          )}")`,
         },
         '&[name=replace]::before': {
-          content: `url("data:image/svg+xml;base64,${replaceBase64}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            replaceSvg,
+          )}")`,
         },
         '&[name=replaceAll]::before': {
-          content: `url("data:image/svg+xml;base64,${replaceAllBase64}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(
+            replaceAllSvg,
+          )}")`,
         },
         width: '20px',
         height: '20px',
@@ -160,13 +168,19 @@ export const createCypherTheme = ({
           borderRadius: '0.25rem',
 
           '&[name=case]::before': {
-            content: `url("data:image/svg+xml;base64,${caseSensitiveBase64}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              caseSensitiveSvg,
+            )}")`,
           },
           '&[name=re]::before': {
-            content: `url("data:image/svg+xml;base64,${regexBase64}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              regexSvg,
+            )}")`,
           },
           '&[name=word]::before': {
-            content: `url("data:image/svg+xml;base64,${byWordBase64}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(
+              byWordSvg,
+            )}")`,
           },
           '&:hover': {
             backgroundColor: settings.searchPanel.buttonHoverBackground,
