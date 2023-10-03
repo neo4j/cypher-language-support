@@ -83,5 +83,5 @@ jobs:
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: packages/react-codemirror-experimental/playwright-report/
           retention-days: 30
