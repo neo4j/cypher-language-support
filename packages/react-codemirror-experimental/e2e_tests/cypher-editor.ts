@@ -81,16 +81,14 @@ export class CypherEditorPage {
     queryChunk: string,
     expectedMsg: string,
   ) {
-    const locator = this.page.getByText(queryChunk, { exact: true });
     await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
       {
         timeout: 2000,
       },
     );
 
-    await locator.hover();
-    const hoverMessage = this.page.locator('.cm-tooltip-hover');
-    await expect(hoverMessage).toBeVisible();
-    await expect(hoverMessage.getByText(expectedMsg)).toBeVisible();
+    await this.page.getByText(queryChunk, { exact: true }).hover();
+    await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible();
+    await expect(this.page.getByText(expectedMsg)).toBeVisible();
   }
 }
