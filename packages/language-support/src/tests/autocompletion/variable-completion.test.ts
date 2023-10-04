@@ -1,8 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('unscoped variable completions', () => {
   test('correctly completes variables in WHERE clause that have been defined in a simple match', () => {
@@ -10,7 +7,7 @@ describe('unscoped variable completions', () => {
     const varNames = ['n', 'person', 'MATCH'];
 
     varNames.forEach((varName) => {
-      testCompletionContains({
+      testCompletions({
         query: basequery(varName),
         expected: [{ label: varName, kind: CompletionItemKind.Variable }],
       });
@@ -21,7 +18,7 @@ describe('unscoped variable completions', () => {
     const query =
       'MATCH p=(n:Person {n: 23})-[r:KNOWS {since: 213, g: rand()}]->(m:Person) WHERE ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'p', kind: CompletionItemKind.Variable },
@@ -34,7 +31,7 @@ describe('unscoped variable completions', () => {
   test('suggests variable in WITH', () => {
     const query = 'MATCH (n:Person) WITH ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -42,7 +39,7 @@ describe('unscoped variable completions', () => {
 
   test('suggests both variables after renaming variable', () => {
     const query = 'MATCH (n:Person) WITH n as m RETURN';
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'n', kind: CompletionItemKind.Variable },
@@ -54,7 +51,7 @@ describe('unscoped variable completions', () => {
   test('does not suggest variable when renaming variable', () => {
     const query = 'MATCH (n:Person) WITH n as';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -63,7 +60,7 @@ describe('unscoped variable completions', () => {
   test('does not suggest variables when unwinding ', () => {
     const query = 'MATCH (n:Person) UNWIND [] as';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -72,7 +69,7 @@ describe('unscoped variable completions', () => {
   test('suggests variable in expression', () => {
     const query = 'WITH 1 as n RETURN db.function(';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -82,13 +79,9 @@ describe('unscoped variable completions', () => {
     const query =
       'MATCH (m:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'm', kind: CompletionItemKind.Variable }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
   });
@@ -97,13 +90,9 @@ describe('unscoped variable completions', () => {
     const query =
       'MATCH (abc:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'abc', kind: CompletionItemKind.Variable }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [{ label: 'movie', kind: CompletionItemKind.Variable }],
     });
   });
@@ -111,7 +100,7 @@ describe('unscoped variable completions', () => {
   test('suggests variable for set', () => {
     const query = 'MATCH (n:Person) SET ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -120,7 +109,7 @@ describe('unscoped variable completions', () => {
   test('suggests variable for remove', () => {
     const query = 'MATCH (n:Person) REMOVE ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -129,7 +118,7 @@ describe('unscoped variable completions', () => {
   test('suggests variables for index hint rule', () => {
     const query = 'match (n) USING BTREE INDEX ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -140,7 +129,7 @@ describe('unscoped variable completions', () => {
     const base = 'WITH 1 as a ';
 
     cases.forEach((c) => {
-      testCompletionDoesNotContain({
+      testCompletions({
         query: base + c,
         excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
       });
@@ -152,7 +141,7 @@ describe('unscoped variable completions', () => {
     const base = 'WITH 1 as a RETURN ';
 
     cases.forEach((c) => {
-      testCompletionDoesNotContain({
+      testCompletions({
         query: base + c,
         excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
       });
@@ -162,7 +151,7 @@ describe('unscoped variable completions', () => {
   test('should not suggest variable when creating on in procedureResultItem', () => {
     const query = 'WITH 1 as n CALL apoc.super.thing() YIELD header as ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
@@ -171,7 +160,7 @@ describe('unscoped variable completions', () => {
   test('should not take self into account for suggestions', () => {
     const query = 'RETURN variable';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'variable', kind: CompletionItemKind.Variable }],
     });
@@ -186,7 +175,7 @@ describe('unscoped variable completions', () => {
     const propertyList = 'DROP CONSTRAINT ON (:Person) ASSERT EXISTS ';
 
     [nodeConstraint, relConstraint, propertyList].forEach((query) => {
-      testCompletionDoesNotContain({
+      testCompletions({
         query,
         excluded: [{ kind: CompletionItemKind.Variable }],
       });
@@ -198,7 +187,7 @@ describe('unscoped variable completions', () => {
     RETURN movie { .
     `;
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'movie', kind: CompletionItemKind.Variable }],
     });
@@ -207,7 +196,7 @@ describe('unscoped variable completions', () => {
   test('handle binding variables in subqueryInTransactionsReportParameters properly', () => {
     const query = `CALL { WITH 1 as a } IN TRANSACTIONS REPORT STATUS AS `;
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
     });
