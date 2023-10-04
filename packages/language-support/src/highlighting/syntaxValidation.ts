@@ -1,7 +1,6 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTree } from 'antlr4';
-import { Token } from 'antlr4-c3/out/src/antrl4';
+import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
 import {
   EnrichedParsingResult,
