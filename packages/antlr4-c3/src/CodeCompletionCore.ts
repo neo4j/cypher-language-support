@@ -187,6 +187,7 @@ export class CodeCompletionCore {
             }
         }
 
+
         const callStack: RuleWithStartTokenList = [];
         const startRule = context ? context.ruleIndex : 0;
         this.processRule(this.atn.ruleToStartState[startRule], 0, callStack, 0, 0);

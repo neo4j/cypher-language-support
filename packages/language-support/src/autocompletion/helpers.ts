@@ -5,7 +5,10 @@ import {
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherLexer';
-import CypherParser from '../generated-parser/CypherParser';
+import CypherParser, {
+  Expression2Context,
+} from '../generated-parser/CypherParser';
+import { rulesDefiningVariables } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
@@ -275,25 +278,54 @@ export function completionCoreCompletion(
           return [];
         }
 
+        const greatGrandParentRule = candidateRule.ruleList.at(-3);
+        // When propertyKey is used as postfix to an expr there are many false positives as exprs
+        // are very flexible. For this case we only suggest property keys if the expr is a simple
+        // variable that is defined
+        if (
+          parentRule === CypherParser.RULE_property &&
+          grandParentRule == CypherParser.RULE_postFix1 &&
+          greatGrandParentRule === CypherParser.RULE_expression2
+        ) {
+          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx;
+          if (expr2 instanceof Expression2Context) {
+            // TODO Gå igenom gregs grejer
+            // om man tror att något är korrekt så kan man få se förslaget ändå så att man kan få felet
+
+            // We actually don't know the type of the variable we're completing
+            // it could in theory be a literal
+            // with 1 as abc
+            // RETURN abc. <--
+            // should we build a symbol table and collect all types?
+            const variableName = currentNode
+              .expression1()
+              .variable()
+              ?.getText();
+            if (!parsingResult.collectedVariables.includes(variableName)) {
+              return [];
+            }
+          }
+
+          // RETURN $P.
+
+          // handle LPAREN expression RPAREN?
+          // createFulltextIndex => hitta variabeln
+          // propertyList => hitta variabeln
+          // tester
+          // TODO test clash med definerade funktioner
+          // test REUTRN (1+21).
+          // test REUTRN 1.
+          // testa andra saker som är expressions
+
+          // test with 1 as a RETURN a. <--- can't fix without sematnic
+        }
+
         return propertyKeyCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
         const parentRule = candidateRule.ruleList.at(-1);
         // some rules only define, never use variables
-        const rulesDefiningVariables = [
-          CypherParser.RULE_returnItem,
-          CypherParser.RULE_unwindClause,
-          CypherParser.RULE_subqueryInTransactionsReportParameters,
-          CypherParser.RULE_procedureResultItem,
-          CypherParser.RULE_foreachClause,
-          CypherParser.RULE_loadCSVClause,
-          CypherParser.RULE_reduceExpression,
-          CypherParser.RULE_allExpression,
-          CypherParser.RULE_anyExpression,
-          CypherParser.RULE_noneExpression,
-          CypherParser.RULE_singleExpression,
-        ];
         if (
           typeof parentRule === 'number' &&
           rulesDefiningVariables.includes(parentRule)

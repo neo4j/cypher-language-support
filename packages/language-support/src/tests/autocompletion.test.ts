@@ -1508,6 +1508,48 @@ RETURN movie {
       ],
     });
   });
+
+  test('does not complete property keys for undefined variables', () => {
+    const query = `RETURN abc.`;
+
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: 'name', kind: CompletionItemKind.Property },
+        { label: 'type', kind: CompletionItemKind.Property },
+        { label: 'level', kind: CompletionItemKind.Property },
+      ],
+    });
+  });
+
+  test('does not try to complete property keys for non variable expressions', () => {
+    const query = `RETURN $parameter.`;
+
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: 'name', kind: CompletionItemKind.Property },
+        { label: 'type', kind: CompletionItemKind.Property },
+        { label: 'level', kind: CompletionItemKind.Property },
+      ],
+    });
+  });
+
+  test('does not yet support completing property keys for variables in parentesis', () => {
+    const query = `WITH 1 as node RETURN (node).`;
+
+    testCompletionDoesNotContain({
+      query,
+      dbSchema,
+      excluded: [
+        { label: 'name', kind: CompletionItemKind.Property },
+        { label: 'type', kind: CompletionItemKind.Property },
+        { label: 'level', kind: CompletionItemKind.Property },
+      ],
+    });
+  });
 });
 
 describe('unscoped variable completions', () => {
@@ -1584,22 +1626,33 @@ describe('unscoped variable completions', () => {
     });
   });
 
-  test('completes unstarted variables that used but not defined when semantic analysis is not available', () => {
-    const query = 'MATCH (:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
+  test('does not completes unstarted variables that used but not defined', () => {
+    const query =
+      'MATCH (m:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
 
     testCompletionContains({
       query,
-      expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
+      expected: [{ label: 'm', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
   });
 
-  test('completes variables that used but not defined when semantic analysis is not available', () => {
+  test('does not completes variables that used but not defined ', () => {
     const query =
-      'MATCH (:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
+      'MATCH (abc:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
 
     testCompletionContains({
       query,
-      expected: [{ label: 'movie', kind: CompletionItemKind.Variable }],
+      expected: [{ label: 'abc', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      excluded: [{ label: 'movie', kind: CompletionItemKind.Variable }],
     });
   });
 

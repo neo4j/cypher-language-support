@@ -130,3 +130,24 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
 
   return isDefined(relPattern);
 }
+
+export const rulesDefiningVariables = [
+  CypherParser.RULE_returnItem,
+  CypherParser.RULE_unwindClause,
+  CypherParser.RULE_subqueryInTransactionsReportParameters,
+  CypherParser.RULE_procedureResultItem,
+  CypherParser.RULE_foreachClause,
+  CypherParser.RULE_loadCSVClause,
+  CypherParser.RULE_reduceExpression,
+  CypherParser.RULE_allExpression,
+  CypherParser.RULE_anyExpression,
+  CypherParser.RULE_noneExpression,
+  CypherParser.RULE_singleExpression,
+];
+
+export const rulesDefiningOrUsingVariables = [
+  ...rulesDefiningVariables,
+  CypherParser.RULE_pattern,
+  CypherParser.RULE_nodePattern,
+  CypherParser.RULE_relationshipPattern,
+];

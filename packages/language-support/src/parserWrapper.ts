@@ -29,6 +29,7 @@ import {
   inNodeLabel,
   inRelationshipType,
   isDefined,
+  rulesDefiningOrUsingVariables,
 } from './helpers';
 import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
 
@@ -182,7 +183,12 @@ class VariableCollector implements ParseTreeListener {
         ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
           CypherParser.EOF;
 
-      if (variable && !nextTokenIsEOF) {
+      const definesVariable = rulesDefiningOrUsingVariables.includes(
+        // @ts-ignore types are wrong
+        ctx.parentCtx?.ruleIndex as number,
+      );
+
+      if (variable && !nextTokenIsEOF && definesVariable) {
         this.variables.push(variable);
       }
     }
