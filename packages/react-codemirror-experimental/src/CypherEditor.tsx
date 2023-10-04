@@ -19,6 +19,7 @@ type CypherEditorOwnProps = {
   lineWrap?: boolean;
   schema?: DbSchema;
   overrideThemeBackgroundColor?: boolean;
+  lint?: boolean;
 };
 
 export type CypherEditorProps = CypherEditorOwnProps &
@@ -36,7 +37,8 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     extraKeybindings = [],
     lineWrap = false,
     overrideThemeBackgroundColor = false,
-    schema,
+    schema = {},
+    lint = true,
     ...rest
   } = props;
 
@@ -53,7 +55,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
       ref={ref}
       theme={getThemeExtension(theme, overrideThemeBackgroundColor)}
       extensions={[
-        cypher(schema),
+        cypher({ lint: lint, schema: schema }),
         keymap.of(extraKeybindings),
         maybeReplMode,
         basicNeo4jSetup(prompt),

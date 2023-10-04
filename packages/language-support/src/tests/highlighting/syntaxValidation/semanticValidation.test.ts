@@ -7,6 +7,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Did you mean MATCH?',
+        offsets: {
+          end: 5,
+          start: 0,
+        },
         range: {
           end: {
             character: 5,
@@ -28,6 +32,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Variable `m` not defined',
+        offsets: {
+          end: 18,
+          start: 17,
+        },
         range: {
           end: {
             character: 18,
@@ -49,6 +57,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Variable `m` not defined',
+        offsets: {
+          end: 25,
+          start: 24,
+        },
         range: {
           end: {
             character: 25,
@@ -64,6 +76,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           "Invalid input. '-1' is not a valid value. Must be a positive integer.",
+        offsets: {
+          end: 48,
+          start: 46,
+        },
         range: {
           end: {
             character: 48,
@@ -79,6 +95,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+        offsets: {
+          end: 50,
+          start: 0,
+        },
         range: {
           end: {
             character: 53,
@@ -104,6 +124,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
+        offsets: {
+          end: 126,
+          start: 0,
+        },
         range: {
           end: {
             character: 22,
@@ -118,6 +142,10 @@ describe('Semantic validation spec', () => {
       },
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
+        offsets: {
+          end: 126,
+          start: 73,
+        },
         range: {
           end: {
             character: 22,
@@ -147,6 +175,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 55,
+          start: 54,
+        },
         range: {
           end: {
             character: 14,
@@ -161,6 +193,10 @@ describe('Semantic validation spec', () => {
       },
       {
         message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 102,
+          start: 101,
+        },
         range: {
           end: {
             character: 14,
@@ -183,6 +219,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
+        offsets: {
+          end: 25,
+          start: 19,
+        },
         range: {
           end: {
             character: 25,
@@ -223,6 +263,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+        offsets: {
+          end: 80,
+          start: 49,
+        },
         range: {
           end: {
             character: 21,
@@ -251,6 +295,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'The variable `a` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        offsets: {
+          end: 68,
+          start: 67,
+        },
         range: {
           end: {
             character: 17,
@@ -281,6 +329,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'All sub queries in an UNION must have the same return column names',
+        offsets: {
+          end: 115,
+          start: 88,
+        },
         range: {
           end: {
             character: 17,
@@ -303,6 +355,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+        offsets: {
+          end: 26,
+          start: 17,
+        },
         range: {
           end: {
             character: 26,
@@ -317,6 +373,10 @@ describe('Semantic validation spec', () => {
       },
       {
         message: 'A Collect Expression must end with a single return column.',
+        offsets: {
+          end: 28,
+          start: 7,
+        },
         range: {
           end: {
             character: 28,
@@ -352,6 +412,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'A Collect Expression cannot contain any updates',
+        offsets: {
+          end: 47,
+          start: 21,
+        },
         range: {
           end: {
             character: 37,
@@ -366,6 +430,10 @@ describe('Semantic validation spec', () => {
       },
       {
         message: 'A Collect Expression must end with a single return column.',
+        offsets: {
+          end: 47,
+          start: 21,
+        },
         range: {
           end: {
             character: 37,
@@ -394,6 +462,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        offsets: {
+          end: 67,
+          start: 66,
+        },
         range: {
           end: {
             character: 20,
@@ -424,6 +496,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        offsets: {
+          end: 127,
+          start: 126,
+        },
         range: {
           end: {
             character: 30,
@@ -446,6 +522,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'An Exists Expression cannot contain any updates',
+        offsets: {
+          end: 73,
+          start: 21,
+        },
         range: {
           end: {
             character: 63,
@@ -481,6 +561,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
+        offsets: {
+          end: 17,
+          start: 6,
+        },
         range: {
           end: {
             character: 28,
@@ -505,6 +589,10 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
+        offsets: {
+          end: 26,
+          start: 19,
+        },
         range: {
           end: {
             character: 24,
@@ -520,6 +608,10 @@ describe('Semantic validation spec', () => {
       {
         message:
           'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
+        offsets: {
+          end: 78,
+          start: 14,
+        },
         range: {
           end: {
             character: 29,
@@ -542,6 +634,10 @@ describe('Semantic validation spec', () => {
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`: \`a\`.\`prop\`}))+.`,
+        offsets: {
+          end: 8,
+          start: 7,
+        },
         range: {
           end: {
             character: 8,
@@ -564,6 +660,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+        offsets: {
+          end: 37,
+          start: 6,
+        },
         range: {
           end: {
             character: 37,
@@ -579,6 +679,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
+        offsets: {
+          end: 19,
+          start: 7,
+        },
         range: {
           end: {
             character: 19,
@@ -594,6 +698,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
+        offsets: {
+          end: 35,
+          start: 23,
+        },
         range: {
           end: {
             character: 35,
@@ -608,6 +716,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       },
       {
         message: 'Variable `p` already declared',
+        offsets: {
+          end: 37,
+          start: 22,
+        },
         range: {
           end: {
             character: 37,
@@ -630,6 +742,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
+        offsets: {
+          end: 19,
+          start: 7,
+        },
         range: {
           end: {
             character: 19,
@@ -645,6 +761,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Type mismatch: p defined with conflicting type List<T> (expected Path)',
+        offsets: {
+          end: 35,
+          start: 23,
+        },
         range: {
           end: {
             character: 35,
@@ -660,6 +780,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Sub-path assignment is currently not supported outside quantified path patterns.',
+        offsets: {
+          end: 35,
+          start: 23,
+        },
         range: {
           end: {
             character: 35,
@@ -681,6 +805,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'Quantified path patterns are not allowed to be nested.',
+        offsets: {
+          end: 23,
+          start: 16,
+        },
         range: {
           end: {
             character: 23,
@@ -703,6 +831,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
+        offsets: {
+          end: 36,
+          start: 7,
+        },
         range: {
           end: {
             character: 36,
@@ -718,6 +850,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           'shortestPath(...) is only allowed as a top-level element and not inside a quantified path pattern',
+        offsets: {
+          end: 36,
+          start: 11,
+        },
         range: {
           end: {
             character: 36,
@@ -733,6 +869,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message:
           "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+        offsets: {
+          end: 32,
+          start: 27,
+        },
         range: {
           end: {
             character: 32,
@@ -755,6 +895,10 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
       {
         message: `A quantified path pattern needs to have at least one relationship.
 In this case, the quantified path pattern ((\`n\`) (\`m\`)){1, 5} consists of only nodes.`,
+        offsets: {
+          end: 21,
+          start: 6,
+        },
         range: {
           end: {
             character: 21,
@@ -771,6 +915,10 @@ In this case, the quantified path pattern ((\`n\`) (\`m\`)){1, 5} consists of on
         message: `Juxtaposition is currently only supported for quantified path patterns.
 In this case, both (\`n\`) and (\`m\`) are single nodes.
 That is, neither of these is a quantified path pattern.`,
+        offsets: {
+          end: 14,
+          start: 11,
+        },
         range: {
           end: {
             character: 14,
@@ -794,6 +942,10 @@ That is, neither of these is a quantified path pattern.`,
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`b\` {\`h\`: (\`nodes\`(\`p\`)[0]).\`prop\`}))*.`,
+        offsets: {
+          end: 66,
+          start: 6,
+        },
         range: {
           end: {
             character: 66,
@@ -816,6 +968,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'Variable length relationships cannot be part of a quantified path pattern.',
+        offsets: {
+          end: 26,
+          start: 8,
+        },
         range: {
           end: {
             character: 26,
@@ -831,6 +987,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+        offsets: {
+          end: 26,
+          start: 8,
+        },
         range: {
           end: {
             character: 26,
@@ -860,6 +1020,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
+        offsets: {
+          end: 24,
+          start: 17,
+        },
         range: {
           end: {
             character: 24,
@@ -882,6 +1046,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
+        offsets: {
+          end: 29,
+          start: 22,
+        },
         range: {
           end: {
             character: 29,
@@ -909,6 +1077,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: "Label expressions are not allowed to contain '|:'.",
+        offsets: {
+          end: 10,
+          start: 10,
+        },
         range: {
           end: {
             character: 10,
@@ -931,6 +1103,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'Label expressions in patterns are not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
+        offsets: {
+          end: 14,
+          start: 14,
+        },
         range: {
           end: {
             character: 14,
@@ -946,6 +1122,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'The IS keyword in patterns is not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
+        offsets: {
+          end: 14,
+          start: 14,
+        },
         range: {
           end: {
             character: 14,
@@ -968,6 +1148,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS `A`&`B`.",
+        offsets: {
+          end: 13,
+          start: 13,
+        },
         range: {
           end: {
             character: 13,
@@ -990,6 +1174,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'Label expressions in patterns are not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
+        offsets: {
+          end: 13,
+          start: 12,
+        },
         range: {
           end: {
             character: 13,
@@ -1005,6 +1193,10 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
       {
         message:
           'The IS keyword in patterns is not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
+        offsets: {
+          end: 13,
+          start: 12,
+        },
         range: {
           end: {
             character: 13,
