@@ -282,6 +282,25 @@ export function completionCoreCompletion(
         // When propertyKey is used as postfix to an expr there are many false positives as exprs
         // are very flexible. For this case we only suggest property keys if the expr is a simple
         // variable that is defined
+        // We actually don't know the type of the variable we're completing
+        // it could in theory be a literal
+        // with 1 as abc
+        // RETURN abc. <--
+        // should we build a symbol table and collect all types?
+
+        // RETURN $P.
+
+        // handle LPAREN expression RPAREN?
+        // createFulltextIndex => hitta variabeln
+        // propertyList => hitta variabeln
+        // tester
+        // TODO test clash med definerade funktioner
+        // test REUTRN (1+21).
+        // test REUTRN 1.
+        // testa andra saker som är expressions
+        // testa med apocsaker
+
+        // test with 1 as a RETURN a. <--- can't fix without sematnic
         if (
           parentRule === CypherParser.RULE_property &&
           grandParentRule == CypherParser.RULE_postFix1 &&
@@ -289,35 +308,14 @@ export function completionCoreCompletion(
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx;
           if (expr2 instanceof Expression2Context) {
-            // TODO Gå igenom gregs grejer
-            // om man tror att något är korrekt så kan man få se förslaget ändå så att man kan få felet
-
-            // We actually don't know the type of the variable we're completing
-            // it could in theory be a literal
-            // with 1 as abc
-            // RETURN abc. <--
-            // should we build a symbol table and collect all types?
-            const variableName = currentNode
-              .expression1()
-              .variable()
-              ?.getText();
-            if (!parsingResult.collectedVariables.includes(variableName)) {
+            const variableName = expr2.expression1().variable()?.getText();
+            if (
+              !variableName ||
+              !parsingResult.collectedVariables.includes(variableName)
+            ) {
               return [];
             }
           }
-
-          // RETURN $P.
-
-          // handle LPAREN expression RPAREN?
-          // createFulltextIndex => hitta variabeln
-          // propertyList => hitta variabeln
-          // tester
-          // TODO test clash med definerade funktioner
-          // test REUTRN (1+21).
-          // test REUTRN 1.
-          // testa andra saker som är expressions
-
-          // test with 1 as a RETURN a. <--- can't fix without sematnic
         }
 
         return propertyKeyCompletions(dbSchema);
