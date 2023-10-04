@@ -1,10 +1,7 @@
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
-} from 'vscode-languageserver-types';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree } from 'antlr4';
+import { Token } from 'antlr4-c3/out/src/antrl4';
 import { DbSchema } from '../dbSchema';
 import {
   EnrichedParsingResult,
@@ -13,12 +10,13 @@ import {
   parserWrapper,
 } from '../parserWrapper';
 import { doSemanticAnalysis } from './semanticAnalysisWrapper';
+import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
   dbLabels: Set<string>,
   dbRelationshipTypes: Set<string>,
-): Diagnostic | undefined {
+): SyntaxDiagnostic | undefined {
   const labelName = labelOrRelType.labelText;
   const notInDatabase =
     (labelOrRelType.labeltype === LabelType.nodeLabelType &&
@@ -37,12 +35,13 @@ function detectNonDeclaredLabel(
         ? startColumn + labelName.length
         : labelChunks.at(-1)?.length ?? 0;
 
-    const warning: Diagnostic = {
+    const warning: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Warning,
       range: {
         start: Position.create(lineIndex, startColumn),
         end: Position.create(lineIndex + linesOffset, endColumn),
       },
+      offsets: labelOrRelType.offsets,
       message:
         labelOrRelType.labeltype +
         ' ' +
@@ -59,8 +58,8 @@ function detectNonDeclaredLabel(
 function warnOnUndeclaredLabels(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
-): Diagnostic[] {
-  const warnings: Diagnostic[] = [];
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
 
   if (dbSchema.labels && dbSchema.relationshipTypes) {
     const dbLabels = new Set(dbSchema.labels);
@@ -83,40 +82,52 @@ function warnOnUndeclaredLabels(
 function findEndPosition(
   parsingResult: EnrichedParsingResult,
   start: Position,
-): Position {
-  let result: Position | undefined = undefined;
+  startOffset: number,
+): PositionWithOffset {
+  let token: Token | undefined = undefined;
   const line = start.line + 1;
   const column = start.character;
   const toExplore: ParseTree[] = [parsingResult.result];
 
-  while (toExplore.length > 0 && !result) {
+  while (toExplore.length > 0 && !token) {
     const current: ParseTree = toExplore.pop();
 
     if (current instanceof ParserRuleContext) {
       const startToken = current.start;
       if (startToken.line === line && startToken.column === column) {
-        const stopToken = current.stop;
-        result = Position.create(
-          stopToken.line - 1,
-          stopToken.column + stopToken.text.length,
-        );
+        token = current.stop;
       }
-      if (current.children)
+      if (current.children) {
         current.children.forEach((child) => toExplore.push(child));
+      }
     }
   }
 
-  if (result === undefined) {
-    result = start;
+  if (token === undefined) {
+    return {
+      offset: startOffset,
+      relative: start,
+    };
+  } else {
+    return {
+      offset: token.start + 1,
+      relative: Position.create(
+        token.line - 1,
+        token.column + token.text.length,
+      ),
+    };
   }
-
-  return result;
 }
+
+type PositionWithOffset = {
+  relative: Position;
+  offset: number;
+};
 
 export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
-): Diagnostic[] {
+): SyntaxDiagnostic[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
   const errors = parsingResult.errors;
 
@@ -124,12 +135,18 @@ export function validateSyntax(
     const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
     semanticAnalysisErrors.forEach((e) => {
       const start = Position.create(e.line - 1, e.column - 1);
+      const startOffset = e.offset;
+      const end = findEndPosition(parsingResult, start, startOffset);
 
       errors.push({
         severity: DiagnosticSeverity.Error,
         range: {
           start: start,
-          end: findEndPosition(parsingResult, start),
+          end: end.relative,
+        },
+        offsets: {
+          start: startOffset,
+          end: end.offset,
         },
         message: e.msg,
       });

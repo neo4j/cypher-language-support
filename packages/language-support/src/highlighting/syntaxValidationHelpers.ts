@@ -15,6 +15,10 @@ import CypherParser from '../generated-parser/CypherParser';
 import { isDefined } from '../helpers';
 import { tokenNames } from '../lexerSymbols';
 
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
+
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
 considering the user has made a typo when writing a symbol
@@ -86,7 +90,7 @@ export function getHelpfulErrorMessage(
 }
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
-  errors: Diagnostic[];
+  errors: SyntaxDiagnostic[];
 
   constructor() {
     this.errors = [];
@@ -105,7 +109,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
   public syntaxError<T extends Token>(
     recognizer: Recognizer<T>,
-    offendingSymbol: T | undefined,
+    offendingSymbol: T,
     line: number,
     charPositionInLine: number,
     msg: string,
@@ -131,11 +135,15 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       );
     }
 
-    const diagnostic: Diagnostic = {
+    const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {
         start: Position.create(lineIndex, charPositionInLine),
         end: Position.create(lineIndex, end),
+      },
+      offsets: {
+        start: offendingSymbol.start,
+        end: offendingSymbol.stop + 1,
       },
       // If we couldn't find a more helpful error message, keep the original one
       message: errorMessage ?? msg,

@@ -4,48 +4,52 @@ describe('Syntactic validation spec', () => {
   test('Misspelt keyword at the beginning of the statement', () => {
     const query = 'METCH (n:Person)';
 
-    {
-      expect(getDiagnosticsForQuery({ query })).toEqual([
-        {
-          message: 'Did you mean MATCH?',
-          range: {
-            end: {
-              character: 5,
-              line: 0,
-            },
-            start: {
-              character: 0,
-              line: 0,
-            },
-          },
-          severity: 1,
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        offsets: {
+          end: 5,
+          start: 0,
         },
-      ]);
-    }
+        message: 'Did you mean MATCH?',
+        range: {
+          end: {
+            character: 5,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Misspelt keyword too different from the ones we know about does not trigger an error rewording', () => {
     const query = 'CAT (n:Person)';
 
-    {
-      expect(getDiagnosticsForQuery({ query })).toEqual([
-        {
-          message:
-            'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING, WITH, EXPLAIN or PROFILE?',
-          range: {
-            end: {
-              character: 3,
-              line: 0,
-            },
-            start: {
-              character: 0,
-              line: 0,
-            },
-          },
-          severity: 1,
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        offsets: {
+          end: 3,
+          start: 0,
         },
-      ]);
-    }
+        message:
+          'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING, WITH, EXPLAIN or PROFILE?',
+        range: {
+          end: {
+            character: 3,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Misspelt keyword at the end of the statement', () => {
@@ -53,6 +57,10 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        offsets: {
+          end: 21,
+          start: 17,
+        },
         message: 'Did you mean to finish the statement or open a new one?',
         range: {
           end: {
@@ -74,6 +82,10 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        offsets: {
+          end: 21,
+          start: 17,
+        },
         message: 'Did you mean to finish the statement or open a new one?',
         range: {
           end: {
@@ -99,6 +111,10 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        offsets: {
+          end: 114,
+          start: 113,
+        },
         message: "Did you mean '}'?",
         range: {
           end: {
@@ -120,6 +136,10 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        offsets: {
+          end: 21,
+          start: 17,
+        },
         message: 'Did you mean to finish the statement or open a new one?',
         range: {
           end: {
@@ -146,6 +166,10 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        offsets: {
+          end: 16,
+          start: 10,
+        },
         message:
           "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         range: {
@@ -173,6 +197,10 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        offsets: {
+          end: 17,
+          start: 13,
+        },
         message:
           "Relationship type Rel3 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         range: {
@@ -211,6 +239,10 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        offsets: {
+          end: 22,
+          start: 18,
+        },
         message:
           "Label or relationship type Rel3 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         range: {

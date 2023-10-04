@@ -7,6 +7,7 @@ interface SemanticAnalysisError {
   msg: string;
   line: number;
   column: number;
+  offset: number;
 }
 
 export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
@@ -26,6 +27,8 @@ export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
           msg: errorMsg.toString(),
           line: position['$line0'],
           column: position['$column0'],
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+          offset: position['$offset0'],
         });
       } else {
         keepLooping = false;

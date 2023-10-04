@@ -9,8 +9,6 @@ import {
 
 import CypherLexer from './generated-parser/CypherLexer';
 
-import { Diagnostic } from 'vscode-languageserver-types';
-
 import CypherParser, {
   ClauseContext,
   CreateClauseContext,
@@ -30,7 +28,10 @@ import {
   inRelationshipType,
   isDefined,
 } from './helpers';
-import { SyntaxErrorsListener } from './highlighting/syntaxValidationHelpers';
+import {
+  SyntaxDiagnostic,
+  SyntaxErrorsListener,
+} from './highlighting/syntaxValidationHelpers';
 
 export interface ParsingResult {
   query: string;
@@ -69,10 +70,14 @@ export type LabelOrRelType = {
   couldCreateNewLabel: boolean;
   line: number;
   column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
 };
 
 export interface EnrichedParsingResult extends ParsingResult {
-  errors: Diagnostic[];
+  errors: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -143,6 +148,10 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         couldCreateNewLabel: couldCreateNewLabel(ctx),
         line: ctx.start.line,
         column: ctx.start.column,
+        offsets: {
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
+        },
       });
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
@@ -153,6 +162,10 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
           couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
           column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
         });
       }
     }

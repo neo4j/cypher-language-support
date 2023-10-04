@@ -17,13 +17,16 @@ const parserAdapter = new ParserAdapter(facet);
 
 const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
-export function cypher(withLinting: boolean, schema?: DbSchema) {
-  return new LanguageSupport(
-    cypherLanguage,
-    [
-      cypherLanguage.data.of({
-        autocomplete: cypherAutocomplete(schema),
-      }),
-    ].concat(withLinting ? [cypherLinter(schema)] : []),
-  );
+type CypherLanguageArgs = {
+  lint: boolean;
+  schema?: DbSchema;
+};
+
+export function cypher({ lint, schema = {} }: CypherLanguageArgs) {
+  return new LanguageSupport(cypherLanguage, [
+    cypherLanguage.data.of({
+      autocomplete: cypherAutocomplete(schema),
+    }),
+    ...(lint ? [cypherLinter(schema)] : []),
+  ]);
 }

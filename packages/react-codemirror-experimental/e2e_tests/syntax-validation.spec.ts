@@ -5,13 +5,11 @@ test.beforeEach(async ({ page }) => {
   await page.goto('localhost:3000');
 });
 
-test('Prop withLinting set to false disables syntax validation', async ({
-  page,
-}) => {
+test('Prop lint set to false disables syntax validation', async ({ page }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
-  await editorPage.createEditor({ value: query, withLinting: false });
+  await editorPage.createEditor({ value: query, lint: false });
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
     timeout: 2000,
