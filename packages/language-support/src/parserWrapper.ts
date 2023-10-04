@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CharStreams,
   CommonTokenStream,
@@ -184,8 +183,8 @@ class VariableCollector implements ParseTreeListener {
           CypherParser.EOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
-        // @ts-ignore types are wrong
-        ctx.parentCtx?.ruleIndex as number,
+        // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
+        ctx.parentCtx?.ruleIndex as unknown as number,
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {
