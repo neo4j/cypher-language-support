@@ -3,7 +3,7 @@ import { CompletionItem } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { findLatestStatement } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
-import { completionCoreCompletion } from './helpers';
+import { completionCoreCompletion } from './completionCoreCompletions';
 
 export function autocomplete(
   textUntilPosition: string,
