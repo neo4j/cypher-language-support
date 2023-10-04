@@ -78,22 +78,33 @@ describe('unscoped variable completions', () => {
     });
   });
 
-  test('completes unstarted variables that used but not defined when semantic analysis is not available', () => {
-    const query = 'MATCH (:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
+  test('does not complete unstarted variables that are used but not defined', () => {
+    const query =
+      'MATCH (m:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
 
     testCompletionContains({
       query,
-      expected: [{ label: 'n', kind: CompletionItemKind.Variable }],
+      expected: [{ label: 'm', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
     });
   });
 
-  test('completes variables that used but not defined when semantic analysis is not available', () => {
+  test('does not complete variables that are used but not defined', () => {
     const query =
-      'MATCH (:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
+      'MATCH (abc:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
 
     testCompletionContains({
       query,
-      expected: [{ label: 'movie', kind: CompletionItemKind.Variable }],
+      expected: [{ label: 'abc', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletionDoesNotContain({
+      query,
+      excluded: [{ label: 'movie', kind: CompletionItemKind.Variable }],
     });
   });
 
