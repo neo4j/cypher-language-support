@@ -12,6 +12,7 @@ import {
   LabelType,
   parserWrapper,
 } from '../parserWrapper';
+import { completionCoreErrormessage } from './completionCoreErrors';
 import { doSemanticAnalysis } from './semanticAnalysisWrapper';
 
 function detectNonDeclaredLabel(
@@ -136,7 +137,9 @@ export function validateSyntax(
     });
   }
   const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-  const diagnostics = errors.concat(warnings);
+  const diagnostics = errors
+    .map((diag) => completionCoreErrormessage(parsingResult, diag, dbSchema))
+    .concat(warnings);
 
   return diagnostics;
 }

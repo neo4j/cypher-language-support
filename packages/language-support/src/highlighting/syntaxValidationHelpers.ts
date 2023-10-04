@@ -19,9 +19,9 @@ import { tokenNames } from '../lexerSymbols';
 We ask for 0.7 similarity (number between 0 and 1) for 
 considering the user has made a typo when writing a symbol
 */
-const similarityForSuggestions = 0.7;
+export const similarityForSuggestions = 0.7;
 
-function normalizedLevenshteinDistance(s1: string, s2: string): number {
+export function normalizedLevenshteinDistance(s1: string, s2: string): number {
   const numEdits: number = distance(s1.toUpperCase(), s2.toUpperCase());
 
   // normalize by length of longest string
