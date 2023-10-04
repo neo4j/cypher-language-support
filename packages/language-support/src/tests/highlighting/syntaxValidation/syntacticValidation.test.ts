@@ -281,4 +281,33 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([]);
   });
+
+  test('Syntax validation errors on unexpected EOF', () => {
+    const query = 'SHOW';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        offsets: {
+          end: 4,
+          start: 4,
+        },
+        message: `Did you mean any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER or USERS?`,
+        range: {
+          end: {
+            character: 4,
+            line: 0,
+          },
+          start: {
+            character: 4,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

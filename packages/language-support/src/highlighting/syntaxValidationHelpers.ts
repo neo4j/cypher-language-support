@@ -12,7 +12,6 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 import CypherParser from '../generated-parser/CypherParser';
-import { isDefined } from '../helpers';
 import { tokenNames } from '../lexerSymbols';
 
 export type SyntaxDiagnostic = Diagnostic & {
@@ -114,26 +113,21 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     charPositionInLine: number,
     msg: string,
   ): void {
-    let errorMessage: string | undefined;
     const lineIndex = line - 1;
     const start = charPositionInLine;
-    let end = charPositionInLine;
+    const end =
+      offendingSymbol.type === CypherParser.EOF
+        ? start
+        : start + offendingSymbol.text.length;
 
-    if (
-      isDefined(offendingSymbol) &&
-      offendingSymbol.type !== CypherParser.EOF
-    ) {
-      end = start + offendingSymbol.text.length;
+    const parser = recognizer as CypherParser;
+    const tokenIntervals = parser.getExpectedTokens();
+    const parserSuggestedTokens = this.toTokenList(tokenIntervals);
 
-      const parser = recognizer as CypherParser;
-      const tokenIntervals = parser.getExpectedTokens();
-      const parserSuggestedTokens = this.toTokenList(tokenIntervals);
-
-      errorMessage = getHelpfulErrorMessage(
-        offendingSymbol,
-        parserSuggestedTokens,
-      );
-    }
+    const errorMessage: string | undefined = getHelpfulErrorMessage(
+      offendingSymbol,
+      parserSuggestedTokens,
+    );
 
     const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
