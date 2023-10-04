@@ -41,12 +41,7 @@ export const lightThemeConstants: ThemeOptions = {
     searchPanel: {
       background: tokens.palette.light.neutral.bg.default,
       text: tokens.palette.light.neutral.text.default,
-      buttonBackground: tokens.palette.light.neutral.bg.weak,
       buttonHoverBackground: tokens.palette.light.neutral.bg.strong,
-      checkboxBackground: tokens.palette.light.neutral.bg.weak,
-      checkboxBorder: tokens.palette.light.neutral.bg.strongest,
-      checkboxCheckedBackground: tokens.palette.light.primary.bg.strong,
-      checkboxCheckMark: tokens.palette.light.neutral.text.inverse,
     },
   },
   highlightStyles: {
@@ -85,16 +80,9 @@ export const darkThemeConstants: ThemeOptions = {
     searchPanel: {
       background: convertToHex(tokens.palette.dark.neutral.bg.default),
       text: convertToHex(tokens.palette.dark.neutral.text.default),
-      buttonBackground: convertToHex(tokens.palette.dark.neutral.bg.weak),
       buttonHoverBackground: convertToHex(
         tokens.palette.dark.neutral.bg.strong,
       ),
-      checkboxBackground: convertToHex(tokens.palette.dark.neutral.bg.weak),
-      checkboxBorder: convertToHex(tokens.palette.dark.neutral.bg.strongest),
-      checkboxCheckedBackground: convertToHex(
-        tokens.palette.dark.primary.bg.strong,
-      ),
-      checkboxCheckMark: convertToHex(tokens.palette.dark.neutral.text.inverse),
     },
   },
   highlightStyles: {
