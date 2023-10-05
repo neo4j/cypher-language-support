@@ -1,17 +1,17 @@
 import { CodeCompletionCore } from 'antlr4-c3';
-import { Diagnostic } from 'vscode-languageserver-types';
 import CypherParser from '../generated-parser/CypherParser';
 import { tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult } from '../parserWrapper';
 import {
   normalizedLevenshteinDistance,
   similarityForSuggestions,
+  SyntaxDiagnostic,
 } from './syntaxValidationHelpers';
 
 export function completionCoreErrormessage(
   parsingResult: EnrichedParsingResult,
-  diag: Diagnostic,
-): Diagnostic {
+  diag: SyntaxDiagnostic,
+): SyntaxDiagnostic {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
@@ -40,19 +40,18 @@ export function completionCoreErrormessage(
 
   const errorText = tokens[caretIndex].text;
 
-  const nearestErrorContext = parsingResult.errorContexts.find(
+  const containingErrorContext = parsingResult.errorContexts.find(
     (errorParentCtx) =>
-      diag.range.start.line + 1 === errorParentCtx.start.line &&
-      diag.range.start.character >= errorParentCtx.start.column &&
-      diag.range.start.character <= errorParentCtx.stop.column,
+      errorParentCtx.start.start < diag.offsets.start &&
+      errorParentCtx.stop.stop > diag.offsets.end,
   );
-  console.log(parsingResult.errorContexts, diag, nearestErrorContext);
+  console.log(containingErrorContext);
 
   const candidates = codeCompletion.collectCandidates(
     caretIndex,
     // this only works for the last error
     // @ts-expect-error antrl-c3 has updated to correct antlr type
-    nearestErrorContext ?? undefined,
+    containingErrorContext ?? undefined,
   );
 
   const ruleCandidates = Array.from(candidates.rules.keys());
