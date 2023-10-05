@@ -2,11 +2,9 @@
 import {
   CharStreams,
   CommonTokenStream,
-  DefaultErrorStrategy,
-  Parser,
+  ErrorNode,
   ParserRuleContext,
   ParseTreeListener,
-  RecognitionException,
   Token,
 } from 'antlr4';
 
@@ -85,13 +83,35 @@ export interface EnrichedParsingResult extends ParsingResult {
 // DefaultErrorStrategy is not exported properly!!!
 // GRRR
 // https://github.com/antlr/antlr4/issues/4287
-console.log(DefaultErrorStrategy);
+/*
 class MyErrorStrategy extends DefaultErrorStrategy {
   errorContexts: ParserRuleContext[] = [];
   reportError(recognizer: Parser, e: RecognitionException) {
     super.reportError(recognizer, e);
 
     this.errorContexts.push(recognizer._ctx);
+  }
+}
+const errorCollector = new MyErrorStrategy();
+parser._errHandler = errorCollector;
+*/
+
+// In the mean time we'll have to walk the tree to get the error nodes
+// since parse listeenre didn't work ??
+class ErrorCollector extends ParseTreeListener {
+  errorContexts: ParserRuleContext[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode(errorNode: ErrorNode) {
+    this.errorContexts.push(errorNode.parentCtx);
+  }
+
+  exitEveryRule(ctx: unknown) {
+    /* no-op */
   }
 }
 
@@ -224,10 +244,12 @@ class ParserWrapper {
 
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      parser._parseListeners = [labelsCollector, variableFinder];
-
-      const errorCollector = new MyErrorStrategy();
-      parser._errHandler = errorCollector;
+      const errorCollector = new ErrorCollector();
+      parser._parseListeners = [
+        labelsCollector,
+        variableFinder,
+        errorCollector,
+      ];
 
       const result = createParsingResult(parsingScaffolding).result;
 

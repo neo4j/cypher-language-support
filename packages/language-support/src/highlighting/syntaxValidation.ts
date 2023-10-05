@@ -119,7 +119,9 @@ export function validateSyntax(
   dbSchema: DbSchema,
 ): Diagnostic[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
-  const errors = parsingResult.errors;
+  const errors = parsingResult.errors.map((diag) =>
+    completionCoreErrormessage(parsingResult, diag),
+  );
 
   if (errors.length === 0) {
     const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
@@ -136,10 +138,9 @@ export function validateSyntax(
       });
     });
   }
+
   const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-  const diagnostics = errors
-    .map((diag) => completionCoreErrormessage(parsingResult, diag, dbSchema))
-    .concat(warnings);
+  const diagnostics = errors.concat(warnings);
 
   return diagnostics;
 }

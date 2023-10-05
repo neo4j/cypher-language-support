@@ -1,6 +1,5 @@
 import { CodeCompletionCore } from 'antlr4-c3';
 import { Diagnostic } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
 import CypherParser from '../generated-parser/CypherParser';
 import { tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult } from '../parserWrapper';
@@ -12,7 +11,6 @@ import {
 export function completionCoreErrormessage(
   parsingResult: EnrichedParsingResult,
   diag: Diagnostic,
-  schema: DbSchema = {},
 ): Diagnostic {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -36,24 +34,6 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
   };
 
-  // THESE never trigger because we don't give errors on misspelled parameters, labels, etc.
-  // since they are grammatically correct
-  const {
-    labels = [],
-    relationshipTypes = [],
-    procedureSignatures = [],
-    parameters = {},
-    databaseNames = {},
-    aliasNames = [],
-  } = schema;
-  const concreteValues: Record<number, string[]> = {
-    [CypherParser.RULE_labelExpression1]: labels.concat(relationshipTypes),
-    [CypherParser.RULE_procedureName]: Object.keys(procedureSignatures),
-    [CypherParser.RULE_parameter]: Object.keys(parameters),
-    [CypherParser.RULE_symbolicAliasName]:
-      Object.keys(databaseNames).concat(aliasNames),
-  };
-
   codeCompletion.preferredRules = new Set<number>(
     Object.keys(nameOfRule).map((n) => parseInt(n, 10)),
   );
@@ -62,21 +42,15 @@ export function completionCoreErrormessage(
 
   const matchingErrorNode = parsingResult.errorContexts.find(
     (errorNode) =>
-      diag.range.start.line === errorNode.parentCtx.start.line &&
-      diag.range.start.character === errorNode.parentCtx.start.column,
-  );
-  console.log(
-    'matchingErrorNode',
-    matchingErrorNode,
-    parsingResult.errorContexts,
-    diag,
+      diag.range.start.line === errorNode.start.line &&
+      diag.range.start.character === errorNode.start.column,
   );
 
   const candidates = codeCompletion.collectCandidates(
     caretIndex,
     // this only works for the last error
     // @ts-expect-error antrl-c3 has updated to correct antlr type
-    parsingResult.stopNode.parentCtx,
+    matchingErrorNode ?? undefined,
   );
 
   const ruleCandidates = Array.from(candidates.rules.keys());
@@ -85,15 +59,6 @@ export function completionCoreErrormessage(
     const name = nameOfRule[ruleNumber];
     if (name) {
       return [name];
-    } else {
-      return [];
-    }
-  });
-
-  const ruleConcreteValues = ruleCandidates.flatMap((ruleNumber) => {
-    const hasValue = concreteValues[ruleNumber];
-    if (hasValue) {
-      return hasValue;
     } else {
       return [];
     }
@@ -128,9 +93,7 @@ export function completionCoreErrormessage(
     return diag;
   }
 
-  const closenessOptions = [...tokenCandidates, ...ruleConcreteValues];
-
-  const bestSuggestion = closenessOptions.reduce<{
+  const bestSuggestion = tokenCandidates.reduce<{
     similarity: number;
     currentBest: string;
   }>((best, suggestion) => {
