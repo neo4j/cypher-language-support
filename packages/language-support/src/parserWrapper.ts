@@ -2,8 +2,11 @@
 import {
   CharStreams,
   CommonTokenStream,
+  DefaultErrorStrategy,
+  Parser,
   ParserRuleContext,
   ParseTreeListener,
+  RecognitionException,
   Token,
 } from 'antlr4';
 
@@ -76,6 +79,20 @@ export interface EnrichedParsingResult extends ParsingResult {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  errorContexts: ParserRuleContext[];
+}
+
+// DefaultErrorStrategy is not exported properly!!!
+// GRRR
+// https://github.com/antlr/antlr4/issues/4287
+console.log(DefaultErrorStrategy);
+class MyErrorStrategy extends DefaultErrorStrategy {
+  errorContexts: ParserRuleContext[] = [];
+  reportError(recognizer: Parser, e: RecognitionException) {
+    super.reportError(recognizer, e);
+
+    this.errorContexts.push(recognizer._ctx);
+  }
 }
 
 export interface ParsingScaffolding {
@@ -209,6 +226,9 @@ class ParserWrapper {
       const variableFinder = new VariableCollector();
       parser._parseListeners = [labelsCollector, variableFinder];
 
+      const errorCollector = new MyErrorStrategy();
+      parser._errHandler = errorCollector;
+
       const result = createParsingResult(parsingScaffolding).result;
 
       const parsingResult: EnrichedParsingResult = {
@@ -218,6 +238,7 @@ class ParserWrapper {
         errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
+        errorContexts: errorCollector.errorContexts,
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
       };

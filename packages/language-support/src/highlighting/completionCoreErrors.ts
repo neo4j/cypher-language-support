@@ -12,7 +12,7 @@ import {
 export function completionCoreErrormessage(
   parsingResult: EnrichedParsingResult,
   diag: Diagnostic,
-  schema: DbSchema,
+  schema: DbSchema = {},
 ): Diagnostic {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -38,22 +38,46 @@ export function completionCoreErrormessage(
 
   // THESE never trigger because we don't give errors on misspelled parameters, labels, etc.
   // since they are grammatically correct
+  const {
+    labels = [],
+    relationshipTypes = [],
+    procedureSignatures = [],
+    parameters = {},
+    databaseNames = {},
+    aliasNames = [],
+  } = schema;
   const concreteValues: Record<number, string[]> = {
-    [CypherParser.RULE_labelExpression1]: schema.labels.concat(
-      schema.relationshipTypes,
-    ),
-    [CypherParser.RULE_procedureName]: Object.keys(schema.procedureSignatures),
-    [CypherParser.RULE_parameter]: Object.keys(schema.parameters),
-    [CypherParser.RULE_symbolicAliasName]: Object.keys(
-      schema.databaseNames,
-    ).concat(schema.aliasNames),
+    [CypherParser.RULE_labelExpression1]: labels.concat(relationshipTypes),
+    [CypherParser.RULE_procedureName]: Object.keys(procedureSignatures),
+    [CypherParser.RULE_parameter]: Object.keys(parameters),
+    [CypherParser.RULE_symbolicAliasName]:
+      Object.keys(databaseNames).concat(aliasNames),
   };
 
   codeCompletion.preferredRules = new Set<number>(
     Object.keys(nameOfRule).map((n) => parseInt(n, 10)),
   );
 
-  const candidates = codeCompletion.collectCandidates(caretIndex);
+  const errorText = tokens[caretIndex].text;
+
+  const matchingErrorNode = parsingResult.errorContexts.find(
+    (errorNode) =>
+      diag.range.start.line === errorNode.parentCtx.start.line &&
+      diag.range.start.character === errorNode.parentCtx.start.column,
+  );
+  console.log(
+    'matchingErrorNode',
+    matchingErrorNode,
+    parsingResult.errorContexts,
+    diag,
+  );
+
+  const candidates = codeCompletion.collectCandidates(
+    caretIndex,
+    // this only works for the last error
+    // @ts-expect-error antrl-c3 has updated to correct antlr type
+    parsingResult.stopNode.parentCtx,
+  );
 
   const ruleCandidates = Array.from(candidates.rules.keys());
 
@@ -110,10 +134,7 @@ export function completionCoreErrormessage(
     similarity: number;
     currentBest: string;
   }>((best, suggestion) => {
-    const similarity = normalizedLevenshteinDistance(
-      suggestion,
-      tokens[caretIndex].text,
-    );
+    const similarity = normalizedLevenshteinDistance(suggestion, errorText);
     if (
       similarity > similarityForSuggestions &&
       (!best || similarity > best.similarity)
