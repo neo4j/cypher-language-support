@@ -40,17 +40,19 @@ export function completionCoreErrormessage(
 
   const errorText = tokens[caretIndex].text;
 
-  const matchingErrorNode = parsingResult.errorContexts.find(
-    (errorNode) =>
-      diag.range.start.line === errorNode.start.line &&
-      diag.range.start.character === errorNode.start.column,
+  const nearestErrorContext = parsingResult.errorContexts.find(
+    (errorParentCtx) =>
+      diag.range.start.line + 1 === errorParentCtx.start.line &&
+      diag.range.start.character >= errorParentCtx.start.column &&
+      diag.range.start.character <= errorParentCtx.stop.column,
   );
+  console.log(parsingResult.errorContexts, diag, nearestErrorContext);
 
   const candidates = codeCompletion.collectCandidates(
     caretIndex,
     // this only works for the last error
     // @ts-expect-error antrl-c3 has updated to correct antlr type
-    matchingErrorNode ?? undefined,
+    nearestErrorContext ?? undefined,
   );
 
   const ruleCandidates = Array.from(candidates.rules.keys());

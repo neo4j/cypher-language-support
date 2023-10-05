@@ -99,7 +99,7 @@ parser._errHandler = errorCollector;
 // In the mean time we'll have to walk the tree to get the error nodes
 // since parse listeenre didn't work ??
 class ErrorCollector extends ParseTreeListener {
-  errorContexts: ParserRuleContext[] = [];
+  errorContexts: Set<ParserRuleContext> = new Set();
   enterEveryRule() {
     /* no-op */
   }
@@ -107,7 +107,7 @@ class ErrorCollector extends ParseTreeListener {
     /* no-op */
   }
   visitErrorNode(errorNode: ErrorNode) {
-    this.errorContexts.push(errorNode.parentCtx);
+    this.errorContexts.add(errorNode.parentCtx);
   }
 
   exitEveryRule(ctx: unknown) {
@@ -260,7 +260,7 @@ class ParserWrapper {
         errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
-        errorContexts: errorCollector.errorContexts,
+        errorContexts: Array.from(errorCollector.errorContexts),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
       };
