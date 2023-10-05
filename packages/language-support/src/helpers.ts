@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
 import antlrDefaultExport, {
-  CharStreams,
   CommonTokenStream,
   ParserRuleContext,
   Token,
@@ -55,15 +54,6 @@ export function getTokens(tokenStream: CommonTokenStream): Token[] {
   // FIXME The type of .tokens is string[], it seems wrong in the antlr4 library
   // Fix this after we've raised an issue and a PR and has been corrected in antlr4
   return tokenStream.tokens as unknown as Token[];
-}
-
-export function parse(cypher: string) {
-  const inputStream = CharStreams.fromString(cypher);
-
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  return parser.statements();
 }
 
 export function isDefined(x: unknown) {

@@ -12,8 +12,11 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 import CypherParser from '../generated-parser/CypherParser';
-import { isDefined } from '../helpers';
 import { tokenNames } from '../lexerSymbols';
+
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -86,7 +89,7 @@ export function getHelpfulErrorMessage(
 }
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
-  errors: Diagnostic[];
+  errors: SyntaxDiagnostic[];
 
   constructor() {
     this.errors = [];
@@ -105,34 +108,36 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
   public syntaxError<T extends Token>(
     recognizer: Recognizer<T>,
-    offendingSymbol: T | undefined,
+    offendingSymbol: T,
     line: number,
     charPositionInLine: number,
     msg: string,
   ): void {
-    let errorMessage: string | undefined;
     const lineIndex = line - 1;
     const start = charPositionInLine;
-    let end = charPositionInLine;
+    const end =
+      offendingSymbol.type === CypherParser.EOF
+        ? start
+        : start + offendingSymbol.text.length;
 
-    if (isDefined(offendingSymbol)) {
-      end = start + offendingSymbol.text.length;
+    const parser = recognizer as CypherParser;
+    const tokenIntervals = parser.getExpectedTokens();
+    const parserSuggestedTokens = this.toTokenList(tokenIntervals);
 
-      const parser = recognizer as CypherParser;
-      const tokenIntervals = parser.getExpectedTokens();
-      const parserSuggestedTokens = this.toTokenList(tokenIntervals);
+    const errorMessage: string | undefined = getHelpfulErrorMessage(
+      offendingSymbol,
+      parserSuggestedTokens,
+    );
 
-      errorMessage = getHelpfulErrorMessage(
-        offendingSymbol,
-        parserSuggestedTokens,
-      );
-    }
-
-    const diagnostic: Diagnostic = {
+    const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {
         start: Position.create(lineIndex, charPositionInLine),
         end: Position.create(lineIndex, end),
+      },
+      offsets: {
+        start: offendingSymbol.start,
+        end: offendingSymbol.stop + 1,
       },
       // If we couldn't find a more helpful error message, keep the original one
       message: errorMessage ?? msg,
