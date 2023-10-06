@@ -1,5 +1,8 @@
 out/
 packages/language-support/src/generated-parser/*
+packages/antlr4/src/antlr4/*
+packages/antlr4/spec/*
+packages/antlr4/src/*
 packages/antlr4-c3/src/*
 packages/antlr4-c3/tests/*
 packages/antlr4-c3/lib/*

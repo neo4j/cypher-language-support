@@ -53,7 +53,9 @@ jobs:
 
       - name: Run tests
         # Tests with the same flags that VSCode does
-        run: npm test -- -- --passWithNoTests --testLocationInResults
+        run: |
+          npm test -- --filter=!antlr4 -- --passWithNoTests --testLocationInResults
+          npm test -- --filter=antlr4
 
   e2e-test:
     name: E2E tests
