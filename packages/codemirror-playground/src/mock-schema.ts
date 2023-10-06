@@ -3797,4 +3797,5 @@ export const dummyDbSchema = {
   },
   databaseNames: ['neo4j', 'oskar', 'system'],
   aliasNames: ['alias2', 'testalias'],
+  userNames: ['oskar', 'neo4j', 'admin'],
 };

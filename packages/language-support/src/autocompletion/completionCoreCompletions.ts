@@ -210,6 +210,7 @@ function calculateNamespacePrefix(
   return namespacePrefix;
 }
 
+
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
@@ -248,6 +249,8 @@ export function completionCoreCompletion(
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
+    // this rule is used for usernames and roles.
+    CypherParser.RULE_symbolicNameOrStringParameter,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -278,6 +281,13 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
+        return parameterCompletions(
+          dbSchema,
+          inferExpectedParameterTypeFromContext(candidateRule),
+        );
+      }
+
+      if (ruleNumber === CypherParser.RULE_symbolicNameOrStringParameter) {
         return parameterCompletions(
           dbSchema,
           inferExpectedParameterTypeFromContext(candidateRule),

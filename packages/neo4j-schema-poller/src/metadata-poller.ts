@@ -5,6 +5,7 @@ import { DataSummary, getDataSummary } from './queries/data-summary.js';
 import { Database, listDatabases } from './queries/databases.js';
 import { listFunctions, Neo4jFunction } from './queries/functions.js';
 import { listProcedures, Procedure } from './queries/procedures.js';
+import { listUsers, Neo4jUser } from './queries/show-users.js';
 import { ExecuteQueryArgs } from './types/sdk-types.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
@@ -76,6 +77,7 @@ export class MetadataPoller {
   private dataSummary: QueryPoller<DataSummary>;
   private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
   private procedures: QueryPoller<{ procedures: Procedure[] }>;
+  private users: QueryPoller<{ users: Neo4jUser[] }>;
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -94,6 +96,16 @@ export class MetadataPoller {
           this.dbSchema.aliasNames = result.data.databases.flatMap(
             (db) => db.aliases ?? [],
           );
+        }
+      },
+    });
+
+    this.users = new QueryPoller({
+      connection,
+      queryArgs: listUsers(),
+      onRefetchDone: (result) => {
+        if (result.success) {
+          this.dbSchema.userNames = result.data.users.map((user) => user.user);
         }
       },
     });
