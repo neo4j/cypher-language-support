@@ -25,12 +25,14 @@ export function completionCoreErrormessage(
 
   const nameOfRule: Record<number, string> = {
     [CypherParser.RULE_expression]: 'an expression',
+    [CypherParser.RULE_expression1]: 'an expression',
     [CypherParser.RULE_labelExpression1]: 'a node label / rel type',
+    [CypherParser.RULE_labelExpression1Is]: 'a node label / rel type',
     [CypherParser.RULE_procedureName]: 'a procedure name',
     [CypherParser.RULE_mapLiteral]: 'a map literal',
     [CypherParser.RULE_parameter]: 'a parameter',
-    [CypherParser.RULE_stringToken]: 'a string',
-    [CypherParser.RULE_symbolicNameString]: 'a name',
+    [CypherParser.RULE_stringLiteral]: 'a string',
+    [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
   };
 
@@ -88,6 +90,8 @@ export function completionCoreErrormessage(
       }
     },
   );
+  // Check if token candidates are all keywords and give a better message
+  // or if they are all symbols
   const options = [...tokenCandidates, ...humanReadableRulename];
 
   if (options.length === 0) {
