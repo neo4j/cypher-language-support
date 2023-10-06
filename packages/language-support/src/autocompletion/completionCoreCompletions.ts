@@ -24,6 +24,30 @@ const reltypeCompletions = (dbSchema: DbSchema) =>
     kind: CompletionItemKind.TypeParameter,
   })) ?? [];
 
+const functionNameCompletions = (
+  candidateRule: CandidateRule,
+  tokens: Token[],
+  dbSchema: DbSchema,
+) =>
+  namespacedCompletion(
+    candidateRule,
+    tokens,
+    Object.keys(dbSchema.functionSignatures),
+    'function',
+  );
+
+const procedureNameCompletions = (
+  candidateRule: CandidateRule,
+  tokens: Token[],
+  dbSchema: DbSchema,
+) =>
+  namespacedCompletion(
+    candidateRule,
+    tokens,
+    Object.keys(dbSchema.procedureSignatures),
+    'procedure',
+  );
+
 const namespacedCompletion = (
   candidateRule: CandidateRule,
   tokens: Token[],
@@ -246,25 +270,14 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        const namespacePrefix = calculateNamespacePrefix(candidateRule, tokens);
-        if (namespacePrefix === null) {
-          return [];
-        }
-
-        return namespacedCompletion(
-          candidateRule,
-          tokens,
-          Object.keys(dbSchema.procedureSignatures),
-          'procedure',
-        );
+        return functionNameCompletions(candidateRule, tokens, dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return namespacedCompletion(
+        return procedureNameCompletions(
           candidateRule,
           tokens,
-          Object.keys(dbSchema.procedureSignatures),
-          'procedure',
+          dbSchema.procedureSignatures,
         );
       }
 
