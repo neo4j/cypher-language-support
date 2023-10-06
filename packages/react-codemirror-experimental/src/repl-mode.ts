@@ -165,7 +165,39 @@ export const replMode = ({
         },
       },
       {
+        mac: 'Cmd-ArrowUp',
+        win: 'Ctrl-ArrowUp',
+        linux: 'Ctrl-ArrowUp',
+        preventDefault: true,
+        run: (view) => {
+          // If text is selected or cursor is not at top of document, do nothing
+          const { empty, head } = view.state.selection.main;
+          if (!empty || head !== 0) {
+            return false;
+          }
+
+          navigateHistory(view, 'BACK');
+          return true;
+        },
+      },
+      {
         key: 'ArrowDown',
+        preventDefault: true,
+        run: (view) => {
+          const { empty, head } = view.state.selection.main;
+          // If text is selected or cursor is not at end of document, do nothing
+          if (!empty || head !== view.state.doc.length) {
+            return false;
+          }
+          navigateHistory(view, 'FORWARDS');
+
+          return true;
+        },
+      },
+      {
+        mac: 'Cmd-ArrowDown',
+        win: 'Ctrl-ArrowDown',
+        linux: 'Ctrl-ArrowDown',
         preventDefault: true,
         run: (view) => {
           const { empty, head } = view.state.selection.main;

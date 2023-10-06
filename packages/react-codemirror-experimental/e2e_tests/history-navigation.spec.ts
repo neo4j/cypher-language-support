@@ -85,3 +85,41 @@ RETURN n;`;
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('draft')).toBeVisible();
 });
+
+test('can navigate with cmd+up as well', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+  const isMac = process.platform === 'darwin';
+  const metaUp = isMac ? 'Meta+ArrowUp' : 'Control+ArrowUp';
+  const metaDown = isMac ? 'Meta+ArrowDown' : 'Control+ArrowDown';
+
+  const initialValue = 'MATCH (n) RETURN n;';
+  await editorPage.createEditor({
+    value: initialValue,
+    initialHistory: [
+      `one
+multiline
+entry
+.`,
+      'second',
+    ],
+  });
+
+  await editorPage.getEditor().press(metaUp);
+  await expect(page.getByText('multiline')).toBeVisible();
+
+  // Single meta up moves all the way to top of editor on mac
+  if (isMac) {
+    await editorPage.getEditor().press(metaUp);
+  } else {
+    await editorPage.getEditor().press('ArrowUp');
+    await editorPage.getEditor().press('ArrowUp');
+    await editorPage.getEditor().press('ArrowUp');
+    await editorPage.getEditor().press('ArrowUp');
+  }
+  // move in history
+  await editorPage.getEditor().press(metaUp);
+  await expect(page.getByText('second')).toBeVisible();
+
+  await editorPage.getEditor().press(metaDown);
+  await expect(page.getByText('multiline')).toBeVisible();
+});

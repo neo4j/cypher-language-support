@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
 jobs:
   lint-and-format:
     name: Run eslint and check formatting
@@ -21,6 +24,8 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build
 
       - name: Check there are no linting errors
@@ -72,11 +77,13 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run e2e test
-        run: npm run test:e2e
+        # We need a graphics server to run integration tests with VSCode
+        # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
+        run: xvfb-run -a npm run test:e2e
 
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: packages/react-codemirror-experimental/playwright-report/
           retention-days: 30

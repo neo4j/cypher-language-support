@@ -3,7 +3,8 @@
     "module": "commonjs",
     "target": "es2022",
     "lib": ["es2022", "dom"],
-    "sourceMap": true
+    "sourceMap": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }

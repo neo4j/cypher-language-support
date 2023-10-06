@@ -12,8 +12,8 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend, validateSyntax } from 'language-support';
+import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
 import { doAutoCompletion } from './autocompletion';
-import { DbSchemaImpl } from './dbSchema';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { CypherLSPSettings } from './types';
@@ -22,7 +22,8 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-const dbSchema = new DbSchemaImpl();
+
+const neo4jSdk = new Neo4jSchemaPoller();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -31,6 +32,7 @@ connection.onInitialize(() => {
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
+        triggerCharacters: ['.'],
       },
       semanticTokensProvider: {
         documentSelector: null,
@@ -71,39 +73,52 @@ connection.onInitialized(() => {
 // Trigger the syntactic errors highlighting on every document change
 documents.onDidChangeContent((change) => {
   const document = change.document;
-  const diagnostics = validateSyntax(document.getText(), dbSchema);
+  const diagnostics = validateSyntax(
+    document.getText(),
+    neo4jSdk.metadata?.dbSchema ?? {},
+  );
   void connection.sendDiagnostics({
     uri: document.uri,
     diagnostics: diagnostics,
   });
 });
+
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(
   applySyntaxColouringForDocument(documents),
 );
+
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents, dbSchema));
+connection.onSignatureHelp(doSignatureHelp(documents, neo4jSdk));
 // Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents, dbSchema));
+connection.onCompletion(doAutoCompletion(documents, neo4jSdk));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
     const neo4jConfig = params.settings.cypherLSP.neo4j;
 
+    neo4jSdk.disconnect();
     if (
       neo4jConfig.connect &&
       neo4jConfig.password &&
       neo4jConfig.URL &&
       neo4jConfig.user
     ) {
-      dbSchema.setConfig({
-        url: neo4jConfig.URL,
-        user: neo4jConfig.user,
-        password: neo4jConfig.password,
-      });
-      void dbSchema.startSignaturesPolling();
-    } else {
-      dbSchema.stopPolling();
+      neo4jSdk
+        .connect(
+          neo4jConfig.URL,
+          {
+            username: neo4jConfig.user,
+            password: neo4jConfig.password,
+          },
+          { appName: 'cypher-language-server' },
+        )
+        .then(() => {
+          neo4jSdk.metadata.startBackgroundPolling();
+        })
+        .catch((error) => {
+          console.error(`Unable to connect to Neo4j: ${String(error)}`);
+        });
     }
   },
 );
