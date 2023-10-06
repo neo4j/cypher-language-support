@@ -40,18 +40,18 @@ export function completionCoreErrormessage(
 
   const errorText = tokens[caretIndex].text;
 
-  const containingErrorContext = parsingResult.errorContexts.find(
-    (errorParentCtx) =>
-      errorParentCtx.start.start < diag.offsets.start &&
-      errorParentCtx.stop.stop > diag.offsets.end,
-  );
-  console.log(containingErrorContext);
+  // const containingErrorContext = parsingResult.errorContexts.find(
+  //   (errorParentCtx) =>
+  //     errorParentCtx.start.start < diag.offsets.start &&
+  //     errorParentCtx.stop.stop > diag.offsets.end,
+  // );
+  //console.log(diag.ctx);
 
   const candidates = codeCompletion.collectCandidates(
     caretIndex,
     // this only works for the last error
     // @ts-expect-error antrl-c3 has updated to correct antlr type
-    containingErrorContext ?? undefined,
+    diag.ctx,
   );
 
   const ruleCandidates = Array.from(candidates.rules.keys());

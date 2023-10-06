@@ -2,6 +2,7 @@ import {
   CommonToken,
   ErrorListener as ANTLRErrorListener,
   IntervalSet,
+  ParserRuleContext,
   Recognizer,
   Token,
 } from 'antlr4';
@@ -16,6 +17,7 @@ import { tokenNames } from '../lexerSymbols';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
+  ctx: ParserRuleContext;
 };
 
 /*
@@ -121,6 +123,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         : start + offendingSymbol.text.length;
 
     const parser = recognizer as CypherParser;
+    const ctx = parser._ctx;
     const tokenIntervals = parser.getExpectedTokens();
     const parserSuggestedTokens = this.toTokenList(tokenIntervals);
 
@@ -139,6 +142,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         start: offendingSymbol.start,
         end: offendingSymbol.stop + 1,
       },
+      ctx: ctx,
       // If we couldn't find a more helpful error message, keep the original one
       message: errorMessage ?? msg,
     };

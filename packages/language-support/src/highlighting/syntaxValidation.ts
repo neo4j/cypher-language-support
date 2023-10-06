@@ -42,6 +42,7 @@ function detectNonDeclaredLabel(
         end: Position.create(lineIndex + linesOffset, endColumn),
       },
       offsets: labelOrRelType.offsets,
+      ctx: undefined,
       message:
         labelOrRelType.labeltype +
         ' ' +
@@ -129,9 +130,9 @@ export function validateSyntax(
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
-  const errors = parsingResult.errors.map((diag) =>
-    completionCoreErrormessage(parsingResult, diag),
-  );
+  const errors = parsingResult.errors
+    .map((diag) => completionCoreErrormessage(parsingResult, diag))
+    .map((diag) => ({ ...diag, ctx: undefined }));
 
   if (errors.length === 0) {
     const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
@@ -150,6 +151,7 @@ export function validateSyntax(
           start: startOffset,
           end: end.offset,
         },
+        ctx: undefined,
         message: e.msg,
       });
     });
