@@ -32,7 +32,7 @@ const functionNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema.functionSignatures),
+    Object.keys(dbSchema?.functionSignatures ?? {}),
     'function',
   );
 
@@ -44,7 +44,7 @@ const procedureNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema.procedureSignatures),
+    Object.keys(dbSchema?.procedureSignatures ?? {}),
     'procedure',
   );
 
@@ -103,13 +103,13 @@ const namespacedCompletion = (
     const functionNameCompletions = Array.from(funcOptions).map((label) => ({
       label,
       kind,
-      detail: '(procedure)',
+      detail,
     }));
 
     const namespaceCompletions = Array.from(namespaceOptions).map((label) => ({
       label,
       kind,
-      detail,
+      detail: '(namespace)',
     }));
 
     return functionNameCompletions.concat(namespaceCompletions);
@@ -274,11 +274,7 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return procedureNameCompletions(
-          candidateRule,
-          tokens,
-          dbSchema.procedureSignatures,
-        );
+        return procedureNameCompletions(candidateRule, tokens, dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
