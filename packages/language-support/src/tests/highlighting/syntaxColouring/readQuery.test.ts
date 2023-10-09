@@ -1316,6 +1316,117 @@ describe('RETURN syntax colouring', () => {
       },
     ]);
   });
+
+  test('Correctly colour unfinished string with double quotes', () => {
+    const query = `RETURN "something`;
+
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: '"something',
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
+
+  test('Correctly colour unfinished string with single quotes', () => {
+    const query = `RETURN 'something`;
+
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: "'something",
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
+
+  test('Correctly colour unfinished multiline strings', () => {
+    const query = `RETURN "something
+    foo
+    bar`;
+
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: '"something',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 1,
+          startCharacter: 0,
+          startOffset: 18,
+        },
+        token: '    foo',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 2,
+          startCharacter: 0,
+          startOffset: 26,
+        },
+        token: '    bar',
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
 });
 
 describe('WHERE syntax colouring', () => {

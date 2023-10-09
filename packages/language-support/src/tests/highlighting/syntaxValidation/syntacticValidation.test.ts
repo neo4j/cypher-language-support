@@ -321,4 +321,64 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([]);
   });
+
+  test('Syntax validation errors on unfinished string', () => {
+    const query = 'RETURN "something';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished string literal',
+        offsets: {
+          end: 17,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on multiline unfinished string', () => {
+    const query = `RETURN 'something
+      foo
+      bar`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished string literal',
+        offsets: {
+          end: 37,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 9,
+            line: 2,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

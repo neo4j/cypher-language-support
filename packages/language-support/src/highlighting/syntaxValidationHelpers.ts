@@ -31,27 +31,44 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     charPositionInLine: number,
     msg: string,
   ): void {
-    const lineIndex = line - 1;
-    const start = charPositionInLine;
-    const end =
-      offendingSymbol.type === CypherParser.EOF
-        ? start
-        : start + offendingSymbol.text.length;
+    const startLine = line - 1;
+    const startColumn = charPositionInLine;
+    const lines = offendingSymbol.text.split('\n');
+    const endLine = startLine + lines.length - 1;
+    const columnOffset = endLine === startLine ? startColumn : 0;
+    const endColumn =
+      offendingSymbol.type === CypherParser.EOF &&
+      offendingSymbol.text === '<EOF>'
+        ? startColumn
+        : columnOffset + lines.at(-1).length;
 
     const parser = recognizer as CypherParser;
     const ctx = parser._ctx as ParserRuleContext;
+    let errorMessage = '';
 
-    const errorMessage = completionCoreErrormessage(
-      parser,
-      parser.getCurrentToken(),
-      ctx,
-    );
+    if (
+      offendingSymbol.type === CypherParser.EOF &&
+      offendingSymbol.text !== '<EOF>'
+    ) {
+      if (
+        offendingSymbol.text.startsWith('"') ||
+        offendingSymbol.text.startsWith("'")
+      ) {
+        errorMessage = 'Unfinished string literal';
+      }
+    } else {
+      errorMessage = completionCoreErrormessage(
+        parser,
+        parser.getCurrentToken(),
+        ctx,
+      );
+    }
 
     const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {
-        start: Position.create(lineIndex, charPositionInLine),
-        end: Position.create(lineIndex, end),
+        start: Position.create(startLine, charPositionInLine),
+        end: Position.create(endLine, endColumn),
       },
       offsets: {
         start: offendingSymbol.start,
