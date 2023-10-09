@@ -2,7 +2,6 @@
 import {
   CharStreams,
   CommonTokenStream,
-  ErrorNode,
   ParserRuleContext,
   ParseTreeListener,
   Token,
@@ -82,42 +81,6 @@ export interface EnrichedParsingResult extends ParsingResult {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
-  errorContexts: ParserRuleContext[];
-}
-
-// DefaultErrorStrategy is not exported properly!!!
-// GRRR
-// https://github.com/antlr/antlr4/issues/4287
-/*
-class MyErrorStrategy extends DefaultErrorStrategy {
-  errorContexts: ParserRuleContext[] = [];
-  reportError(recognizer: Parser, e: RecognitionException) {
-    super.reportError(recognizer, e);
-
-    this.errorContexts.push(recognizer._ctx);
-  }
-}
-const errorCollector = new MyErrorStrategy();
-parser._errHandler = errorCollector;
-*/
-
-// In the mean time we'll have to walk the tree to get the error nodes
-// since parse listeenre didn't work ??
-class ErrorCollector extends ParseTreeListener {
-  errorContexts: Set<ParserRuleContext> = new Set();
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode(errorNode: ErrorNode) {
-    this.errorContexts.add(errorNode.parentCtx);
-  }
-
-  exitEveryRule(ctx: unknown) {
-    /* no-op */
-  }
 }
 
 export interface ParsingScaffolding {
@@ -262,12 +225,7 @@ class ParserWrapper {
 
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const errorCollector = new ErrorCollector();
-      parser._parseListeners = [
-        labelsCollector,
-        variableFinder,
-        errorCollector,
-      ];
+      parser._parseListeners = [labelsCollector, variableFinder];
 
       const result = createParsingResult(parsingScaffolding).result;
 
@@ -278,7 +236,6 @@ class ParserWrapper {
         errors: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
-        errorContexts: Array.from(errorCollector.errorContexts),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
       };
