@@ -1,4 +1,8 @@
-import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
+import {
+  CandidateRule,
+  CandidatesCollection,
+  CodeCompletionCore,
+} from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -95,6 +99,34 @@ const functionCompletions = (
     return functionNameCompletions.concat(namespaceCompletions);
   }
 };
+
+export function getTokenCandidates(candidates: CandidatesCollection) {
+  const tokenEntries = candidates.tokens.entries();
+
+  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
+    const [tokenNumber, followUpList] = value;
+
+    const firstToken = tokenNames[tokenNumber];
+    const followUpString = followUpList.indexes
+      .map((i) => tokenNames[i])
+      .join(' ');
+
+    if (firstToken === undefined) {
+      return [];
+    } else if (followUpString === '') {
+      return [firstToken];
+    } else {
+      const followUp = firstToken + ' ' + followUpString;
+      if (followUpList.optional) {
+        return [firstToken, followUp];
+      }
+
+      return [followUp];
+    }
+  });
+
+  return tokenCandidates;
+}
 
 const parameterCompletions = (
   dbInfo: DbSchema,
@@ -341,29 +373,7 @@ export function completionCoreCompletion(
     },
   );
 
-  const tokenEntries = candidates.tokens.entries();
-  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
-    const [tokenNumber, followUpList] = value;
-
-    const firstToken = tokenNames[tokenNumber];
-    const followUpString = followUpList.indexes
-      .map((i) => tokenNames[i])
-      .join(' ');
-
-    if (firstToken === undefined) {
-      return [];
-    } else if (followUpString === '') {
-      return [firstToken];
-    } else {
-      const followUp = firstToken + ' ' + followUpString;
-      if (followUpList.optional) {
-        return [firstToken, followUp];
-      }
-
-      return [followUp];
-    }
-  });
-
+  const tokenCandidates = getTokenCandidates(candidates);
   const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
     label: t,
     kind: CompletionItemKind.Keyword,

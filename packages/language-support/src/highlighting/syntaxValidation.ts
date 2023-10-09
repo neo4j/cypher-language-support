@@ -127,33 +127,37 @@ export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const parsingResult = parserWrapper.parse(wholeFileText);
-  const errors = parsingResult.errors;
+  let diagnostics: SyntaxDiagnostic[] = [];
 
-  if (errors.length === 0) {
-    const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
-    semanticAnalysisErrors.forEach((e) => {
-      const start = Position.create(e.line - 1, e.column - 1);
-      const startOffset = e.offset;
-      const end = findEndPosition(parsingResult, start, startOffset);
+  if (wholeFileText.length > 0) {
+    const parsingResult = parserWrapper.parse(wholeFileText);
+    const errors = parsingResult.errors;
 
-      errors.push({
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: start,
-          end: end.relative,
-        },
-        offsets: {
-          start: startOffset,
-          end: end.offset,
-        },
-        message: e.msg,
+    if (errors.length === 0) {
+      const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
+      semanticAnalysisErrors.forEach((e) => {
+        const start = Position.create(e.line - 1, e.column - 1);
+        const startOffset = e.offset;
+        const end = findEndPosition(parsingResult, start, startOffset);
+
+        errors.push({
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: start,
+            end: end.relative,
+          },
+          offsets: {
+            start: startOffset,
+            end: end.offset,
+          },
+          message: e.msg,
+        });
       });
-    });
-  }
+    }
 
-  const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-  const diagnostics = errors.concat(warnings);
+    const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+    diagnostics = errors.concat(warnings);
+  }
 
   return diagnostics;
 }

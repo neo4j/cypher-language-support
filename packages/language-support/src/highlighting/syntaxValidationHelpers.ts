@@ -4,8 +4,7 @@ import {
   Recognizer,
   Token,
 } from 'antlr4';
-import { ParserRuleContext } from 'antlr4-c3/out/src/antrl4';
-import { distance } from 'fastest-levenshtein';
+import { ParserRuleContext } from 'antlr4-c3';
 import {
   Diagnostic,
   DiagnosticSeverity,
@@ -17,20 +16,6 @@ import { completionCoreErrormessage } from './completionCoreErrors';
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
 };
-
-/*
-We ask for 0.7 similarity (number between 0 and 1) for 
-considering the user has made a typo when writing a symbol
-*/
-export const similarityForSuggestions = 0.7;
-
-export function normalizedLevenshteinDistance(s1: string, s2: string): number {
-  const numEdits: number = distance(s1.toUpperCase(), s2.toUpperCase());
-
-  // normalize by length of longest string
-  const longestLength = Math.max(s1.length, s2.length);
-  return (longestLength - numEdits) / longestLength;
-}
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];
@@ -61,6 +46,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       parser.getCurrentToken(),
       ctx,
     );
+
     const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {

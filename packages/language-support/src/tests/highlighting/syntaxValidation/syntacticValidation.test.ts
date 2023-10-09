@@ -311,4 +311,14 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Syntax validation does not error on an empty query', () => {
+    const query = '';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([]);
+  });
 });

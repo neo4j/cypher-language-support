@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ATNState } from './antrl4';
+import { ATNState } from './antlr4';
 
 export function advanceToNonEpsilon(current: ATNState) {
     const BLOCK_END = current.constructor.BLOCK_END;
