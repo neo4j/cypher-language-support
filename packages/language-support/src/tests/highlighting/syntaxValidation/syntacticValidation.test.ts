@@ -36,7 +36,7 @@ describe('Syntactic validation spec', () => {
           start: 0,
         },
         message:
-          'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING, WITH, EXPLAIN or PROFILE?',
+          "Expected any of EXPLAIN, PROFILE, USING PERIODIC COMMIT, USE, CREATE, DROP, ALTER, RENAME, DENY, DENY IMMUTABLE, REVOKE, GRANT, START DATABASE, STOP DATABASE, ENABLE SERVER, DRYRUN, DEALLOCATE, REALLOCATE, SHOW, TERMINATE, RETURN, DETACH DELETE, DELETE, SET, REMOVE, OPTIONAL MATCH, MATCH, MERGE, WITH, UNWIND, CALL, LOAD CSV or FOREACH '('.",
         range: {
           end: {
             character: 3,
@@ -61,7 +61,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -86,7 +86,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -115,7 +115,8 @@ describe('Syntactic validation spec', () => {
           end: 114,
           start: 113,
         },
-        message: "Did you mean '}'?",
+        message:
+          "Expected any of USE, RETURN, CREATE, DETACH DELETE, DELETE, SET, REMOVE, OPTIONAL MATCH, MATCH, MERGE, WITH, UNWIND, CALL, LOAD CSV, FOREACH '(', UNION, UNION ALL, '}' or an expression.",
         range: {
           end: {
             character: 47,
@@ -140,7 +141,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -295,7 +296,7 @@ describe('Syntactic validation spec', () => {
           end: 4,
           start: 4,
         },
-        message: `Did you mean any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER or USERS?`,
+        message: `Expected any of USER DEFINED, USERS, ROLE, ROLES, SUPPORTED, PRIVILEGE, PRIVILEGE AS, PRIVILEGES, PRIVILEGES AS, SERVER, SERVERS, ALIAS, ALIASES, TRANSACTION, TRANSACTIONS, FUNCTION, FUNCTION EXECUTABLE, FUNCTIONS, FUNCTIONS EXECUTABLE, SETTING, SETTINGS, PROCEDURE, PROCEDURE EXECUTABLE, PROCEDURES, PROCEDURES EXECUTABLE, CONSTRAINT, CONSTRAINTS, CURRENT USER, DATABASE, DATABASES, DEFAULT DATABASE, HOME DATABASE, INDEX, INDEXES, BUILT IN, REL, RELATIONSHIP, EXIST, EXISTS, EXISTENCE, PROPERTY, NODE, KEY, UNIQUENESS, UNIQUE, LOOKUP, POINT, TEXT, FULLTEXT, RANGE, BTREE, POPULATED or ALL.`,
         range: {
           end: {
             character: 4,

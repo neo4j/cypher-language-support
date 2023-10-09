@@ -1,11 +1,10 @@
 import {
   CommonToken,
   ErrorListener as ANTLRErrorListener,
-  IntervalSet,
-  ParserRuleContext,
   Recognizer,
   Token,
 } from 'antlr4';
+import { ParserRuleContext } from 'antlr4-c3/out/src/antrl4';
 import { distance } from 'fastest-levenshtein';
 import {
   Diagnostic,
@@ -13,11 +12,10 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 import CypherParser from '../generated-parser/CypherParser';
-import { tokenNames } from '../lexerSymbols';
+import { completionCoreErrormessage } from './completionCoreErrors';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
-  ctx: ParserRuleContext;
 };
 
 /*
@@ -34,78 +32,11 @@ export function normalizedLevenshteinDistance(s1: string, s2: string): number {
   return (longestLength - numEdits) / longestLength;
 }
 
-function filterSuggestions(mispeltKeyword: string, suggestions: string[]) {
-  return suggestions.filter((suggestion) => {
-    return (
-      normalizedLevenshteinDistance(mispeltKeyword, suggestion) >
-      similarityForSuggestions
-    );
-  });
-}
-
-export function getHelpfulErrorMessage(
-  offendingSymbol: Token,
-  possibleTokenNumbers: number[],
-): undefined | string {
-  const msgs: string[] = [];
-  const mispeltKeyword = offendingSymbol.text;
-  const parserSuggestedTokens = possibleTokenNumbers
-    .filter((t) => t !== CypherParser.EOF && t !== CypherParser.SEMICOLON)
-    .map((t) => tokenNames.at(t));
-
-  let mostLikelyCandidates: string[] = filterSuggestions(
-    mispeltKeyword,
-    parserSuggestedTokens,
-  );
-
-  if (mostLikelyCandidates.length === 0) {
-    mostLikelyCandidates = parserSuggestedTokens;
-    const eof = possibleTokenNumbers.find((t) => t === CypherParser.EOF);
-    const semicolon = possibleTokenNumbers.find(
-      (t) => t === CypherParser.SEMICOLON,
-    );
-
-    // It should not happen we have one but not the other
-    if (eof && semicolon) {
-      msgs.push('Did you mean to finish the statement or open a new one?');
-    }
-  }
-
-  if (mostLikelyCandidates.length === 1) {
-    msgs.push('Did you mean ' + mostLikelyCandidates[0] + '?');
-  } else if (mostLikelyCandidates.length >= 1) {
-    msgs.push(
-      'Did you mean any of ' +
-        mostLikelyCandidates.slice(0, -1).join(', ') +
-        ' or ' +
-        mostLikelyCandidates.at(-1) +
-        '?',
-    );
-  }
-
-  if (msgs.length > 0) {
-    return msgs.join(' ');
-  } else {
-    return undefined;
-  }
-}
-
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];
 
   constructor() {
     this.errors = [];
-  }
-
-  private toTokenList(tokens: IntervalSet): number[] {
-    const range = (start: number, end: number) =>
-      Array.from(Array(end - start).keys()).map((x) => x + start);
-
-    const result = tokens.intervals.flatMap((interval) =>
-      range(interval.start, interval.stop),
-    );
-
-    return result;
   }
 
   public syntaxError<T extends Token>(
@@ -123,15 +54,13 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         : start + offendingSymbol.text.length;
 
     const parser = recognizer as CypherParser;
-    const ctx = parser._ctx;
-    const tokenIntervals = parser.getExpectedTokens();
-    const parserSuggestedTokens = this.toTokenList(tokenIntervals);
+    const ctx = parser._ctx as ParserRuleContext;
 
-    const errorMessage: string | undefined = getHelpfulErrorMessage(
-      offendingSymbol,
-      parserSuggestedTokens,
+    const errorMessage = completionCoreErrormessage(
+      parser,
+      parser.getCurrentToken(),
+      ctx,
     );
-
     const diagnostic: SyntaxDiagnostic = {
       severity: DiagnosticSeverity.Error,
       range: {
@@ -142,7 +71,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         start: offendingSymbol.start,
         end: offendingSymbol.stop + 1,
       },
-      ctx: ctx,
       // If we couldn't find a more helpful error message, keep the original one
       message: errorMessage ?? msg,
     };

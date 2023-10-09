@@ -1,27 +1,20 @@
+import { Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
+import { ParserRuleContext } from 'antlr4-c3/out/src/antrl4';
 import CypherParser from '../generated-parser/CypherParser';
 import { tokenNames } from '../lexerSymbols';
-import { EnrichedParsingResult } from '../parserWrapper';
 import {
   normalizedLevenshteinDistance,
   similarityForSuggestions,
-  SyntaxDiagnostic,
 } from './syntaxValidationHelpers';
 
 export function completionCoreErrormessage(
-  parsingResult: EnrichedParsingResult,
-  diag: SyntaxDiagnostic,
-): SyntaxDiagnostic {
-  const parser = parsingResult.parser;
-  const tokens = parsingResult.tokens;
-
+  parser: CypherParser,
+  currentToken: Token,
+  ctx: ParserRuleContext,
+): string | undefined {
   const codeCompletion = new CodeCompletionCore(parser);
-
-  const caretIndex = tokens.findIndex(
-    (t) =>
-      t.line - 1 === diag.range.start.line &&
-      t.column === diag.range.start.character,
-  );
+  const caretIndex = currentToken.tokenIndex;
 
   const nameOfRule: Record<number, string> = {
     [CypherParser.RULE_expression]: 'an expression',
@@ -40,7 +33,7 @@ export function completionCoreErrormessage(
     Object.keys(nameOfRule).map((n) => parseInt(n, 10)),
   );
 
-  const errorText = tokens[caretIndex].text;
+  const errorText = currentToken.text;
 
   // const containingErrorContext = parsingResult.errorContexts.find(
   //   (errorParentCtx) =>
@@ -52,8 +45,7 @@ export function completionCoreErrormessage(
   const candidates = codeCompletion.collectCandidates(
     caretIndex,
     // this only works for the last error
-    // @ts-expect-error antrl-c3 has updated to correct antlr type
-    diag.ctx,
+    ctx,
   );
 
   const ruleCandidates = Array.from(candidates.rules.keys());
@@ -95,7 +87,7 @@ export function completionCoreErrormessage(
   const options = [...tokenCandidates, ...humanReadableRulename];
 
   if (options.length === 0) {
-    return diag;
+    return undefined;
   }
 
   const bestSuggestion = tokenCandidates.reduce<{
@@ -113,20 +105,14 @@ export function completionCoreErrormessage(
   }, null);
 
   if (bestSuggestion !== null) {
-    return {
-      ...diag,
-      message: `Did you mean ${bestSuggestion.currentBest}?`,
-    };
+    return `Did you mean ${bestSuggestion.currentBest}?`;
   }
 
   if (options.length <= 2) {
-    return { ...diag, message: `Expected ${options.join(' or ')}.` };
+    return `Expected ${options.join(' or ')}.`;
   } else {
-    return {
-      ...diag,
-      message: `Expected any of ${options
-        .slice(0, -1)
-        .join(', ')} or ${options.at(-1)}.`,
-    };
+    return `Expected any of ${options.slice(0, -1).join(', ')} or ${options.at(
+      -1,
+    )}.`;
   }
 }
