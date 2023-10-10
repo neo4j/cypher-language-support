@@ -10,7 +10,7 @@ describe('Syntactic validation spec', () => {
           end: 5,
           start: 0,
         },
-        message: 'Did you mean MATCH?',
+        message: 'Unexpected keyword. Did you mean MATCH?',
         range: {
           end: {
             character: 5,
@@ -61,7 +61,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean WHERE?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -86,7 +86,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean WHERE?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -141,7 +141,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean WHERE?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -215,6 +215,36 @@ describe('Syntactic validation spec', () => {
           },
         },
         severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on missing label expression', () => {
+    const query = `MATCH (n:) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: [], relationshipTypes: [] },
+      }),
+    ).toEqual([
+      {
+        message: "Expected '!' or a node label / rel type.",
+        offsets: {
+          end: 10,
+          start: 9,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 9,
+            line: 0,
+          },
+        },
+        severity: 1,
       },
     ]);
   });

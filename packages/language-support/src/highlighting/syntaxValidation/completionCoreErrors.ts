@@ -3,6 +3,7 @@ import { CodeCompletionCore, ParserRuleContext } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
 import { getTokenCandidates } from '../../autocompletion/completionCoreCompletions';
 import CypherParser from '../../generated-parser/CypherParser';
+import { operatorNames } from '../../lexerSymbols';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -59,12 +60,24 @@ export function completionCoreErrormessage(
   });
 
   const tokenCandidates = getTokenCandidates(candidates);
-  // Check if token candidates are all keywords and give a better message
-  // or if they are all symbols
   const options = [...tokenCandidates, ...humanReadableRulename];
 
   if (options.length === 0) {
     return undefined;
+  }
+
+  const operatorCandidates = tokenCandidates.filter((v) =>
+    operatorNames.has(v),
+  );
+
+  let errorType = '';
+
+  if (operatorCandidates.length === 0) {
+    errorType = 'Unexpected keyword';
+  } else if (operatorCandidates.length === tokenCandidates.length) {
+    errorType = 'Unexpected operator';
+  } else {
+    errorType = 'Unexpected token';
   }
 
   const bestSuggestion = tokenCandidates.reduce<{
@@ -79,10 +92,10 @@ export function completionCoreErrormessage(
       return { similarity, currentBest: suggestion };
     }
     return best;
-  }, null);
+  }, undefined);
 
-  if (bestSuggestion !== null) {
-    return `Did you mean ${bestSuggestion.currentBest}?`;
+  if (bestSuggestion) {
+    return errorType + `. Did you mean ${bestSuggestion.currentBest}?`;
   }
 
   if (options.length <= 2) {

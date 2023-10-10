@@ -142,20 +142,31 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
-      this.labelOrRelTypes.push({
-        labeltype: getLabelType(ctx),
-        labelText: ctx.getText(),
-        couldCreateNewLabel: couldCreateNewLabel(ctx),
-        line: ctx.start.line,
-        column: ctx.start.column,
-        offsets: {
-          start: ctx.start.start,
-          end: ctx.stop.stop + 1,
-        },
-      });
+      // If the parent ctx start doesn't coincide with this ctx start,
+      // it means the parser recovered from an error reading the label
+      // like in the case MATCH (n:) RETURN n
+      // RETURN would be idenfified as the label in that case
+      if (ctx.parentCtx && ctx.parentCtx.start === ctx.start) {
+        this.labelOrRelTypes.push({
+          labeltype: getLabelType(ctx),
+          labelText: ctx.getText(),
+          couldCreateNewLabel: couldCreateNewLabel(ctx),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
-      if (isDefined(symbolicName)) {
+      // Read comment for the label name case
+      if (
+        isDefined(symbolicName) &&
+        ctx.parentCtx &&
+        ctx.parentCtx.start === ctx.start
+      ) {
         this.labelOrRelTypes.push({
           labeltype: getLabelType(ctx),
           labelText: symbolicName.start.text,

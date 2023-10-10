@@ -384,3 +384,5 @@ export const tokenNames: string[] = Array.from({ length }).map(
     symbolicNames[i] ??
     '<INVALID',
 );
+
+export const operatorNames = new Set(lexerOperators.map((i) => tokenNames[i]));
