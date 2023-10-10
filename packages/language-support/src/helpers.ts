@@ -133,6 +133,7 @@ export const rulesDefiningVariables = [
   CypherParser.RULE_anyExpression,
   CypherParser.RULE_noneExpression,
   CypherParser.RULE_singleExpression,
+  CypherParser.RULE_listComprehension,
 ];
 
 export const rulesDefiningOrUsingVariables = [

@@ -193,6 +193,25 @@ describe('unscoped variable completions', () => {
     });
   });
 
+  test('completes path variable', () => {
+    const query = `MATCH path=()
+    RETURN `;
+
+    testCompletions({
+      query,
+      expected: [{ label: 'path', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('completes variable from list comprehension', () => {
+    const query = `RETURN [var IN list WHERE v`;
+
+    testCompletions({
+      query,
+      expected: [{ label: 'var', kind: CompletionItemKind.Variable }],
+    });
+  });
+
   test('handle binding variables in subqueryInTransactionsReportParameters properly', () => {
     const query = `CALL { WITH 1 as a } IN TRANSACTIONS REPORT STATUS AS `;
 
