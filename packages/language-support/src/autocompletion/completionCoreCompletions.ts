@@ -1,3 +1,4 @@
+import { Token } from 'antlr4';
 import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
@@ -22,38 +23,57 @@ const reltypeCompletions = (dbSchema: DbSchema) =>
     label: relType,
     kind: CompletionItemKind.TypeParameter,
   })) ?? [];
-const proceduresCompletions = (dbSchema: DbSchema) =>
-  Object.keys(dbSchema.procedureSignatures ?? {}).map((procedureName) => ({
-    label: procedureName,
-    kind: CompletionItemKind.Method,
-    detail: '(procedure)',
-  }));
 
-const functionCompletions = (
+const functionNameCompletions = (
+  candidateRule: CandidateRule,
+  tokens: Token[],
   dbSchema: DbSchema,
-  namespacePrefix: string,
-): CompletionItem[] => {
-  const fnNames = Object.keys(dbSchema.functionSignatures ?? {});
+) =>
+  namespacedCompletion(
+    candidateRule,
+    tokens,
+    Object.keys(dbSchema?.functionSignatures ?? {}),
+    'function',
+  );
+
+const procedureNameCompletions = (
+  candidateRule: CandidateRule,
+  tokens: Token[],
+  dbSchema: DbSchema,
+) =>
+  namespacedCompletion(
+    candidateRule,
+    tokens,
+    Object.keys(dbSchema?.procedureSignatures ?? {}),
+    'procedure',
+  );
+
+const namespacedCompletion = (
+  candidateRule: CandidateRule,
+  tokens: Token[],
+  fullNames: string[],
+  type: 'procedure' | 'function',
+) => {
+  const namespacePrefix = calculateNamespacePrefix(candidateRule, tokens);
+  if (namespacePrefix === null) {
+    return [];
+  }
+
+  const kind =
+    type === 'procedure'
+      ? CompletionItemKind.Method
+      : CompletionItemKind.Function;
+  const detail = type === 'procedure' ? '(procedure)' : '(function)';
 
   if (namespacePrefix === '') {
     // If we don't have any prefix show full functions and top level namespaces
-    const topLevelPrefixes = fnNames
+    const topLevelPrefixes = fullNames
       .filter((fn) => fn.includes('.'))
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map((label) => ({
-        label,
-        kind: CompletionItemKind.Function,
-        detail: '(namespace)',
-      }))
-      .concat(
-        fnNames.map((label) => ({
-          label,
-          kind: CompletionItemKind.Function,
-          detail: '(function)',
-        })),
-      );
+      .map((label) => ({ label, kind, detail: `(namespace)` }))
+      .concat(fullNames.map((label) => ({ label, kind, detail })));
   } else {
     // if we have a namespace prefix, complete on the namespace level:
     // apoc. => show `util` | `load` | `date` etc.
@@ -61,7 +81,7 @@ const functionCompletions = (
     const funcOptions = new Set<string>();
     const namespaceOptions = new Set<string>();
 
-    for (const name of fnNames) {
+    for (const name of fullNames) {
       if (name.startsWith(namespacePrefix)) {
         // given prefix `apoc.` turn `apoc.util.sleep` => `util`
         const splitByDot = name.slice(namespacePrefix.length).split('.');
@@ -82,13 +102,13 @@ const functionCompletions = (
     // test handle namespace with same name as function
     const functionNameCompletions = Array.from(funcOptions).map((label) => ({
       label,
-      kind: CompletionItemKind.Function,
-      detail: '(function)',
+      kind,
+      detail,
     }));
 
     const namespaceCompletions = Array.from(namespaceOptions).map((label) => ({
       label,
-      kind: CompletionItemKind.Function,
+      kind,
       detail: '(namespace)',
     }));
 
@@ -157,6 +177,39 @@ const isExpectedParameterType = (
   }
 };
 
+function calculateNamespacePrefix(
+  candidateRule: CandidateRule,
+  tokens: Token[],
+): string | null {
+  const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
+  const lastNonEOFToken = ruleTokens.at(-2);
+
+  const nonSpaceTokens = ruleTokens.filter(
+    (token) =>
+      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+  );
+
+  const lastNonSpaceIsDot = nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
+
+  // `gds version` is invalid but `gds .version` and `gds. version` are valid
+  // so if the last token is a space and the last non-space token
+  // is anything but a dot return empty completions to avoid
+  // creating invalid suggestions (db ping)
+  if (lastNonEOFToken?.type === CypherLexer.SPACE && !lastNonSpaceIsDot) {
+    return null;
+  }
+
+  // calculate the current namespace prefix
+  // only keep finished namespaces both second level `gds.ver` => `gds.`
+  // and first level make `gds` => ''
+  if (!lastNonSpaceIsDot) {
+    nonSpaceTokens.pop();
+  }
+
+  const namespacePrefix = nonSpaceTokens.map((token) => token.text).join('');
+  return namespacePrefix;
+}
+
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
@@ -217,41 +270,11 @@ export function completionCoreCompletion(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
       if (ruleNumber === CypherParser.RULE_functionName) {
-        const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
-        const lastNonEOFToken = ruleTokens.at(-2);
-
-        const nonSpaceTokens = ruleTokens.filter(
-          (token) =>
-            token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
-        );
-
-        const lastNonSpaceIsDot =
-          nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
-
-        // `gds version` is invalid but `gds .version` and `gds. version` are valid
-        // so if the last token is a space and the last non-space token
-        // is anything but a dot return empty completions to avoid
-        // creating invalid suggestions (db ping)
-        if (lastNonEOFToken?.type === CypherLexer.SPACE && !lastNonSpaceIsDot) {
-          return [];
-        }
-
-        // calculate the current namespace prefix
-        // only keep finished namespaces both second level `gds.ver` => `gds.`
-        // and first level make `gds` => ''
-        if (!lastNonSpaceIsDot) {
-          nonSpaceTokens.pop();
-        }
-
-        const namespacePrefix = nonSpaceTokens
-          .map((token) => token.text)
-          .join('');
-
-        return functionCompletions(dbSchema, namespacePrefix);
+        return functionNameCompletions(candidateRule, tokens, dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return proceduresCompletions(dbSchema);
+        return procedureNameCompletions(candidateRule, tokens, dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
