@@ -2,13 +2,13 @@ import {
   CompletionItemKind,
   SignatureInformation,
 } from 'vscode-languageserver-types';
-import { testCompletionContains } from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('Procedures auto-completion', () => {
   test('Correctly completes CALL in standalone', () => {
     const query = 'C';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CALL', kind: CompletionItemKind.Keyword }],
     });
@@ -17,7 +17,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes CALL in subquery', () => {
     const query = 'MATCH (n) C';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CALL', kind: CompletionItemKind.Keyword }],
     });
@@ -26,7 +26,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes procedure name in CALL', () => {
     const query = 'CALL db';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: {
         procedureSignatures: {
@@ -55,7 +55,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes YIELD', () => {
     const query = 'CALL proc() Y';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'YIELD', kind: CompletionItemKind.Keyword }],
     });

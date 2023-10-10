@@ -1,15 +1,12 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('expression completions', () => {
   describe('misc expression tests', () => {
     test('Can offer keyword literals in expressions when appropriate', () => {
       const query = 'MATCH (n:Person) WHERE n.name = N';
 
-      testCompletionContains({
+      testCompletions({
         query,
         expected: [
           { label: 'NAN', kind: CompletionItemKind.Keyword },
@@ -21,7 +18,7 @@ describe('expression completions', () => {
     test('Does not incorrectly offer keywords when building string', () => {
       const query = 'MATCH (n:Person) WHERE n.name = "N';
 
-      testCompletionDoesNotContain({
+      testCompletions({
         query,
         excluded: [
           { label: 'NONE', kind: CompletionItemKind.Keyword },
