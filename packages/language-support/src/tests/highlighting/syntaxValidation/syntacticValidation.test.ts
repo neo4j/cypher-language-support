@@ -381,4 +381,60 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Syntax validation errors on multiline unfinished escaped identifier', () => {
+    const query = `RETURN {\`something
+    foo
+    
+    bar: "hello"}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toMatchInlineSnapshot(
+      [
+        {
+          message: 'Unfinished escaped identifier',
+          offsets: {
+            end: 49,
+            start: 8,
+          },
+          range: {
+            end: {
+              character: 17,
+              line: 3,
+            },
+            start: {
+              character: 8,
+              line: 0,
+            },
+          },
+          severity: 1,
+        },
+      ],
+      `
+      [
+        {
+          "message": "Unfinished escaped identifier",
+          "offsets": {
+            "end": 49,
+            "start": 8,
+          },
+          "range": {
+            "end": {
+              "character": 17,
+              "line": 3,
+            },
+            "start": {
+              "character": 8,
+              "line": 0,
+            },
+          },
+          "severity": 1,
+        },
+      ]
+    `,
+    );
+  });
 });

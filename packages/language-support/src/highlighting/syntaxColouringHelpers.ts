@@ -155,6 +155,10 @@ export function getCypherTokenType(token: Token): CypherTokenType {
     const tokenText = token.text;
     if (tokenText.startsWith('"') || tokenText.startsWith("'")) {
       return CypherTokenType.stringLiteral;
+    } else if (tokenText.startsWith('/*')) {
+      return CypherTokenType.comment;
+    } else if (tokenText.startsWith('`')) {
+      return CypherTokenType.symbolicName;
     }
   }
   if (

@@ -55,6 +55,10 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         offendingSymbol.text.startsWith("'")
       ) {
         errorMessage = 'Unfinished string literal';
+      } else if (offendingSymbol.text.startsWith('/*')) {
+        errorMessage = 'Unfinished comment';
+      } else if (offendingSymbol.text.startsWith('`')) {
+        errorMessage = 'Unfinished escaped identifier';
       }
     } else {
       errorMessage = completionCoreErrormessage(
