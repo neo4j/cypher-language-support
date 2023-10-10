@@ -210,7 +210,6 @@ function calculateNamespacePrefix(
   return namespacePrefix;
 }
 
-
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
