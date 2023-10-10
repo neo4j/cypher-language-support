@@ -29,7 +29,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     offendingSymbol: T,
     line: number,
     charPositionInLine: number,
-    msg: string,
   ): void {
     const startLine = line - 1;
     const startColumn = charPositionInLine;
@@ -44,7 +43,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
     const parser = recognizer as CypherParser;
     const ctx = parser._ctx as ParserRuleContext;
-    let errorMessage = '';
+    let errorMessage: string | undefined = undefined;
 
     if (
       offendingSymbol.type === CypherParser.EOF &&
@@ -68,21 +67,22 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       );
     }
 
-    const diagnostic: SyntaxDiagnostic = {
-      severity: DiagnosticSeverity.Error,
-      range: {
-        start: Position.create(startLine, charPositionInLine),
-        end: Position.create(endLine, endColumn),
-      },
-      offsets: {
-        start: offendingSymbol.start,
-        end: offendingSymbol.stop + 1,
-      },
-      // If we couldn't find a more helpful error message, keep the original one
-      message: errorMessage ?? msg,
-    };
-
-    this.errors.push(diagnostic);
+    if (errorMessage) {
+      const diagnostic: SyntaxDiagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range: {
+          start: Position.create(startLine, charPositionInLine),
+          end: Position.create(endLine, endColumn),
+        },
+        offsets: {
+          start: offendingSymbol.start,
+          end: offendingSymbol.stop + 1,
+        },
+        // If we couldn't find a more helpful error message, keep the original one
+        message: errorMessage,
+      };
+      this.errors.push(diagnostic);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

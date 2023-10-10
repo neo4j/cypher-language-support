@@ -392,49 +392,72 @@ describe('Syntactic validation spec', () => {
       getDiagnosticsForQuery({
         query,
       }),
-    ).toMatchInlineSnapshot(
-      [
-        {
-          message: 'Unfinished escaped identifier',
-          offsets: {
-            end: 49,
-            start: 8,
-          },
-          range: {
-            end: {
-              character: 17,
-              line: 3,
-            },
-            start: {
-              character: 8,
-              line: 0,
-            },
-          },
-          severity: 1,
+    ).toEqual([
+      {
+        message: 'Unfinished escaped identifier',
+        offsets: {
+          end: 49,
+          start: 8,
         },
-      ],
-      `
-      [
-        {
-          "message": "Unfinished escaped identifier",
-          "offsets": {
-            "end": 49,
-            "start": 8,
+        range: {
+          end: {
+            character: 17,
+            line: 3,
           },
-          "range": {
-            "end": {
-              "character": 17,
-              "line": 3,
-            },
-            "start": {
-              "character": 8,
-              "line": 0,
-            },
+          start: {
+            character: 8,
+            line: 0,
           },
-          "severity": 1,
         },
-      ]
-    `,
-    );
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on multiple syntactic errors', () => {
+    const query = `CALL { MATCH (n) RETURN } IN TRANSACTIONS RETURN`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected any of DISTINCT, '*' or an expression.",
+        offsets: {
+          end: 25,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: "Expected any of DISTINCT, '*' or an expression.",
+        offsets: {
+          end: 48,
+          start: 48,
+        },
+        range: {
+          end: {
+            character: 48,
+            line: 0,
+          },
+          start: {
+            character: 48,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });
