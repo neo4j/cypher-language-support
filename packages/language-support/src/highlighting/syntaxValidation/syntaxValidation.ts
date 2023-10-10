@@ -1,13 +1,13 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
-import { DbSchema } from '../dbSchema';
+import { DbSchema } from '../../dbSchema';
 import {
   EnrichedParsingResult,
   LabelOrRelType,
   LabelType,
   parserWrapper,
-} from '../parserWrapper';
+} from '../../parserWrapper';
 import { doSemanticAnalysis } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 

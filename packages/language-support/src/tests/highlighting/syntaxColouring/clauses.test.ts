@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from '../../../highlighting/syntaxColouring';
+import { applySyntaxColouring } from '../../../highlighting/syntaxColouring/syntaxColouring';
 
 describe('CALL syntax colouring', () => {
   test('Correctly colours standalone procedure CALL', () => {

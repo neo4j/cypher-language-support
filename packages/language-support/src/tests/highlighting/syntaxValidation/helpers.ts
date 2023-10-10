@@ -1,5 +1,5 @@
 import { DbSchema } from '../../../dbSchema';
-import { validateSyntax } from '../../../highlighting/syntaxValidation';
+import { validateSyntax } from '../../../highlighting/syntaxValidation/syntaxValidation';
 
 type SyntaxValidationTestArgs = {
   query: string;

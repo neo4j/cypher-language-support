@@ -1,8 +1,8 @@
 import { Token } from 'antlr4';
 import { CodeCompletionCore, ParserRuleContext } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
-import { getTokenCandidates } from '../autocompletion/completionCoreCompletions';
-import CypherParser from '../generated-parser/CypherParser';
+import { getTokenCandidates } from '../../autocompletion/completionCoreCompletions';
+import CypherParser from '../../generated-parser/CypherParser';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 

@@ -31,7 +31,7 @@ import {
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
-} from './highlighting/syntaxValidationHelpers';
+} from './highlighting/syntaxValidation/syntaxValidationHelpers';
 
 export interface ParsingResult {
   query: string;

@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from '../../../highlighting/syntaxColouring';
+import { applySyntaxColouring } from '../../../highlighting/syntaxColouring/syntaxColouring';
 
 describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with double quotes', () => {
