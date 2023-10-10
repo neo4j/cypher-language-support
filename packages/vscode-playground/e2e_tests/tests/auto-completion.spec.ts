@@ -8,7 +8,7 @@ type InclusionTestArgs = {
   expected: vscode.CompletionItem[];
 };
 
-export async function testCompletions({
+export async function testCompletionContains({
   textFile,
   position,
   expected,
@@ -45,7 +45,7 @@ suite('Auto completion spec', () => {
       { label: 'WHERE', kind: vscode.CompletionItemKind.Keyword },
       { label: 'CREATE', kind: vscode.CompletionItemKind.Keyword },
     ];
-    await testCompletions({
+    await testCompletionContains({
       textFile: 'auto-completion.cypher',
       position: position,
       expected: expected,

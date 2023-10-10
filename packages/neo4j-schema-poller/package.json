@@ -13,7 +13,6 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rm -rf out",
-    "watch": "tsc -b -w",
-    "test": "jest"
+    "watch": "tsc -b -w"
   }
 }

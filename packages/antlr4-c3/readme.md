@@ -1,4 +1,4 @@
-This is a copy of the code from [antlr4-c3](https://github.com/mike-lischke/antlr4-c3/tree/4cf2e3d3d2305a6ff230987073e4ef6673b742e3) to be able to use the official [Typescript ANTLR runtime](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) until the new [pure Typescript one](https://github.com/mike-lischke/antlr4-c3/issues/75) is ready.
+This is a temporary copy of the code from [antlr4-c3](https://github.com/mike-lischke/antlr4-c3/tree/4cf2e3d3d2305a6ff230987073e4ef6673b742e3) to be able to use the official [Typescript ANTLR runtime](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) until the new [pure Typescript one](https://github.com/mike-lischke/antlr4-c3/issues/75) is ready.
 
 Thanks to [Mike Lischke](https://github.com/mike-lischke) for his excellent library and to [Janusz Sobolewski](https://github.com/sobolewsk) for [his port](https://github.com/sobolewsk/antlr4-c3ts/tree/73affeda1d516b81c7a175a9cb26efb1cb07a694) to the official runtime.
 
