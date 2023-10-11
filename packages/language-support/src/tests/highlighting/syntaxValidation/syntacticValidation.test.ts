@@ -490,4 +490,267 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Syntax validation errors on an expected procedure name', () => {
+    const query = `CALL ,foo`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '{' or a procedure name",
+        offsets: {
+          end: 6,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 6,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected map literal', () => {
+    const query = `RETURN {[242]}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a map literal',
+        offsets: {
+          end: 9,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 9,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected map literal for node properties', () => {
+    const query = `MATCH (n "foo")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Expected any of '=', ')', ':', IS, WHERE, a map literal or a parameter",
+        offsets: {
+          end: 14,
+          start: 9,
+        },
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 9,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected identifier', () => {
+    const query = `RETURN {foo: 345, 'bar': 345}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected an identifier',
+        offsets: {
+          end: 23,
+          start: 18,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 18,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected string or parameter', () => {
+    const query = `CREATE USER foo 
+      SET PASSWORD foo`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a string or a parameter',
+        offsets: {
+          end: 39,
+          start: 36,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 1,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected database name', () => {
+    const query = `CREATE DATABASE "something"`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '=' or a database name",
+        offsets: {
+          end: 27,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected integer', () => {
+    const query = `MATCH ((:Stop)-[:NEXT]->(:Stop)){1,"foo"}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '}' or an unsigned decimal integer",
+        offsets: {
+          end: 40,
+          start: 35,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 35,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected label expression', () => {
+    const query = `MATCH (n: 'Person')`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a node label / rel type',
+        offsets: {
+          end: 18,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected IS label expression', () => {
+    const query = `MATCH (n IS 'Person')`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a node label / rel type',
+        offsets: {
+          end: 20,
+          start: 12,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 0,
+          },
+          start: {
+            character: 12,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

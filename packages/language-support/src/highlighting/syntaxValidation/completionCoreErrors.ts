@@ -1,6 +1,7 @@
 import { Token } from 'antlr4';
 import { CodeCompletionCore, ParserRuleContext } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
+import CypherLexer from '../../generated-parser/CypherLexer';
 import CypherParser from '../../generated-parser/CypherParser';
 import { keywordNames, tokenNames } from '../../lexerSymbols';
 
@@ -28,13 +29,13 @@ export function completionCoreErrormessage(
 
   const rulesOfInterest: Record<number, string> = {
     [CypherParser.RULE_expression9]: 'an expression',
-    [CypherParser.RULE_comparisonExpression6]: 'an expression',
     [CypherParser.RULE_labelExpression2]: 'a node label / rel type',
     [CypherParser.RULE_labelExpression2Is]: 'a node label / rel type',
     [CypherParser.RULE_procedureName]: 'a procedure name',
+    [CypherParser.RULE_stringToken]: 'a string',
     [CypherParser.RULE_mapLiteral]: 'a map literal',
+    [CypherParser.RULE_numberLiteral]: 'a number literal',
     [CypherParser.RULE_parameter]: 'a parameter',
-    [CypherParser.RULE_stringLiteral]: 'a string',
     [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
   };
@@ -57,11 +58,33 @@ export function completionCoreErrormessage(
       return [];
     }
   });
-  const tokenEntries = candidates.tokens.entries();
 
+  const tokenEntries = candidates.tokens.entries();
   const tokenCandidates = Array.from(tokenEntries).flatMap(([tokenNumber]) => {
     const tokenName = tokenNames[tokenNumber];
-    return tokenName ? [tokenName] : [];
+
+    switch (tokenNumber) {
+      case CypherLexer.DECIMAL_DOUBLE:
+        humanReadableRulename.push('a decimal double');
+        return [];
+      case CypherLexer.UNSIGNED_DECIMAL_INTEGER:
+        humanReadableRulename.push('an unsigned decimal integer');
+        return [];
+      case CypherLexer.UNSIGNED_HEX_INTEGER:
+        humanReadableRulename.push('an unsinged hexadecimal integer');
+        return [];
+      case CypherLexer.UNSIGNED_OCTAL_INTEGER:
+        humanReadableRulename.push('an unsigned octal integer');
+        return [];
+      case CypherLexer.STRING_LITERAL1:
+        humanReadableRulename.push('a string');
+        return [];
+      case CypherLexer.STRING_LITERAL2:
+        humanReadableRulename.push('a string');
+        return [];
+      default:
+        return tokenName ? [tokenName] : [];
+    }
   });
 
   const keywordCandidates = tokenCandidates
