@@ -36,7 +36,7 @@ describe('Syntactic validation spec', () => {
           start: 0,
         },
         message:
-          "Expected any of EXPLAIN, PROFILE, USING PERIODIC COMMIT, USE, CREATE, DROP, ALTER, RENAME, DENY, DENY IMMUTABLE, REVOKE, GRANT, START DATABASE, STOP DATABASE, ENABLE SERVER, DRYRUN, DEALLOCATE, REALLOCATE, SHOW, TERMINATE, RETURN, DETACH DELETE, DELETE, SET, REMOVE, OPTIONAL MATCH, MATCH, MERGE, WITH, UNWIND, CALL, LOAD CSV or FOREACH '('.",
+          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
         range: {
           end: {
             character: 3,
@@ -116,7 +116,7 @@ describe('Syntactic validation spec', () => {
           start: 113,
         },
         message:
-          "Expected any of USE, RETURN, CREATE, DETACH DELETE, DELETE, SET, REMOVE, OPTIONAL MATCH, MATCH, MERGE, WITH, UNWIND, CALL, LOAD CSV, FOREACH '(', UNION, UNION ALL, '}' or an expression.",
+          "Expected any of '}', AND, CALL, CREATE, DELETE, DETACH, FOREACH, LOAD, MATCH, MERGE, OPTIONAL, OR, REMOVE, RETURN, SET, UNION, UNWIND, USE, WITH, XOR or an expression",
         range: {
           end: {
             character: 47,
@@ -229,7 +229,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected '!' or a node label / rel type.",
+        message: 'Expected a node label / rel type',
         offsets: {
           end: 10,
           start: 9,
@@ -313,7 +313,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation errors on unexpected EOF', () => {
+  test('Syntax validation errors shows correctly for SHOW commands', () => {
     const query = 'SHOW';
 
     expect(
@@ -326,7 +326,7 @@ describe('Syntactic validation spec', () => {
           end: 4,
           start: 4,
         },
-        message: `Expected any of USER DEFINED, USERS, ROLE, ROLES, SUPPORTED, PRIVILEGE, PRIVILEGE AS, PRIVILEGES, PRIVILEGES AS, SERVER, SERVERS, ALIAS, ALIASES, TRANSACTION, TRANSACTIONS, FUNCTION, FUNCTION EXECUTABLE, FUNCTIONS, FUNCTIONS EXECUTABLE, SETTING, SETTINGS, PROCEDURE, PROCEDURE EXECUTABLE, PROCEDURES, PROCEDURES EXECUTABLE, CONSTRAINT, CONSTRAINTS, CURRENT USER, DATABASE, DATABASES, DEFAULT DATABASE, HOME DATABASE, INDEX, INDEXES, BUILT IN, REL, RELATIONSHIP, EXIST, EXISTS, EXISTENCE, PROPERTY, NODE, KEY, UNIQUENESS, UNIQUE, LOOKUP, POINT, TEXT, FULLTEXT, RANGE, BTREE, POPULATED or ALL.`,
+        message: `Expected any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER or USERS`,
         range: {
           end: {
             character: 4,
@@ -453,7 +453,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected any of DISTINCT, '*' or an expression.",
+        message: "Expected any of '*', DISTINCT or an expression",
         offsets: {
           end: 25,
           start: 24,
@@ -471,7 +471,7 @@ describe('Syntactic validation spec', () => {
         severity: 1,
       },
       {
-        message: "Expected any of DISTINCT, '*' or an expression.",
+        message: "Expected any of '*', DISTINCT or an expression",
         offsets: {
           end: 48,
           start: 48,

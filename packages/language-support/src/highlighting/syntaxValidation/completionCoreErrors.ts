@@ -1,9 +1,8 @@
 import { Token } from 'antlr4';
 import { CodeCompletionCore, ParserRuleContext } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
-import { getTokenCandidates } from '../../autocompletion/completionCoreCompletions';
 import CypherParser from '../../generated-parser/CypherParser';
-import { operatorNames } from '../../lexerSymbols';
+import { keywordNames, tokenNames } from '../../lexerSymbols';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -28,10 +27,10 @@ export function completionCoreErrormessage(
   const caretIndex = currentToken.tokenIndex;
 
   const rulesOfInterest: Record<number, string> = {
-    [CypherParser.RULE_expression]: 'an expression',
-    [CypherParser.RULE_expression1]: 'an expression',
-    [CypherParser.RULE_labelExpression1]: 'a node label / rel type',
-    [CypherParser.RULE_labelExpression1Is]: 'a node label / rel type',
+    [CypherParser.RULE_expression9]: 'an expression',
+    [CypherParser.RULE_comparisonExpression6]: 'an expression',
+    [CypherParser.RULE_labelExpression2]: 'a node label / rel type',
+    [CypherParser.RULE_labelExpression2Is]: 'a node label / rel type',
     [CypherParser.RULE_procedureName]: 'a procedure name',
     [CypherParser.RULE_mapLiteral]: 'a map literal',
     [CypherParser.RULE_parameter]: 'a parameter',
@@ -58,24 +57,34 @@ export function completionCoreErrormessage(
       return [];
     }
   });
+  const tokenEntries = candidates.tokens.entries();
 
-  const tokenCandidates = getTokenCandidates(candidates);
-  const options = [...tokenCandidates, ...humanReadableRulename];
+  const tokenCandidates = Array.from(tokenEntries).flatMap(([tokenNumber]) => {
+    const tokenName = tokenNames[tokenNumber];
+    return tokenName ? [tokenName] : [];
+  });
+
+  const keywordCandidates = tokenCandidates
+    .filter((v) => keywordNames.has(v))
+    .sort();
+  const nonKeywordCandidates = tokenCandidates.filter(
+    (v) => !keywordNames.has(v),
+  );
+
+  const options = [
+    ...nonKeywordCandidates,
+    ...keywordCandidates,
+    ...humanReadableRulename,
+  ];
 
   if (options.length === 0) {
     return undefined;
   }
 
-  const operatorCandidates = tokenCandidates.filter((v) =>
-    operatorNames.has(v),
-  );
-
   let errorType = '';
 
-  if (operatorCandidates.length === 0) {
+  if (keywordCandidates.length === tokenCandidates.length) {
     errorType = 'Unexpected keyword';
-  } else if (operatorCandidates.length === tokenCandidates.length) {
-    errorType = 'Unexpected operator';
   } else {
     errorType = 'Unexpected token';
   }
@@ -99,10 +108,10 @@ export function completionCoreErrormessage(
   }
 
   if (options.length <= 2) {
-    return `Expected ${options.join(' or ')}.`;
+    return `Expected ${options.join(' or ')}`;
   } else {
     return `Expected any of ${options.slice(0, -1).join(', ')} or ${options.at(
       -1,
-    )}.`;
+    )}`;
   }
 }

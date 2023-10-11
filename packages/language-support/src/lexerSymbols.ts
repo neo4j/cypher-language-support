@@ -385,4 +385,4 @@ export const tokenNames: string[] = Array.from({ length }).map(
     '<INVALID',
 );
 
-export const operatorNames = new Set(lexerOperators.map((i) => tokenNames[i]));
+export const keywordNames = new Set(lexerKeywords.map((i) => tokenNames[i]));

@@ -120,7 +120,7 @@ const namespacedCompletion = (
   }
 };
 
-export function getTokenCandidates(candidates: CandidatesCollection) {
+function getTokenCandidates(candidates: CandidatesCollection) {
   const tokenEntries = candidates.tokens.entries();
 
   const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
@@ -251,9 +251,8 @@ export function completionCoreCompletion(
 
   const codeCompletion = new CodeCompletionCore(parser);
 
-  // We always need to subtract one for the EOF
-  // Except if the query is empty and only contains EOF
-  let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
+  // Move the caret index to the end of the query
+  let caretIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
   const eof = tokens[caretIndex];
 

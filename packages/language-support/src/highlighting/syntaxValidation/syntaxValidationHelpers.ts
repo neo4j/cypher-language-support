@@ -60,11 +60,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         errorMessage = 'Unfinished escaped identifier';
       }
     } else {
-      errorMessage = completionCoreErrormessage(
-        parser,
-        parser.getCurrentToken(),
-        ctx,
-      );
+      errorMessage = completionCoreErrormessage(parser, offendingSymbol, ctx);
     }
 
     if (errorMessage) {

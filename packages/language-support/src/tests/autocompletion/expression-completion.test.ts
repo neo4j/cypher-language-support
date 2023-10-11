@@ -31,5 +31,19 @@ describe('expression completions', () => {
         ],
       });
     });
+
+    test('Completes expression in a multiline query', () => {
+      const query = `MATCH (n) WHERE n:A|B AND n.name = 'foo'
+                     CALL {
+                        MATCH (n) WHERE n:A|AND 
+      `;
+
+      expect(
+        testCompletionContains({
+          query: query,
+          expected: [{ label: 'AND', kind: CompletionItemKind.Keyword }],
+        }),
+      );
+    });
   });
 });
