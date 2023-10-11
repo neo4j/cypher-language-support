@@ -412,7 +412,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test('Syntax validation errors on multiline unfinished escaped identifier', () => {
+  test('Syntax validation errors on multiline unfinished property keys', () => {
     const query = `RETURN {\`something
     foo
     
@@ -436,6 +436,37 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on unfinished multiline comment', () => {
+    const query = `/* something
+    foo
+    MATCH (n)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished comment',
+        offsets: {
+          end: 34,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 13,
+            line: 2,
+          },
+          start: {
+            character: 0,
             line: 0,
           },
         },
