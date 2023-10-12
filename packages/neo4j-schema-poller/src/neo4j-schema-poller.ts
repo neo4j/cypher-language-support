@@ -6,6 +6,7 @@ import { listDatabases } from './queries/databases.js';
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
+  private reconnectionTimeout?: NodeJS.Timer;
 
   async connect(
     url: string,
@@ -47,10 +48,43 @@ export class Neo4jSchemaPoller {
     this.metadata.startBackgroundPolling();
   }
 
+  async persistentConnect(
+    url: string,
+    credentials: { username: string; password: string },
+    config: { driverConfig?: Config; appName: string },
+  ) {
+    const shouldHaveConnection = this.connection !== undefined;
+    const connectionAlive = await this.connection?.healthcheck();
+
+    if (!connectionAlive) {
+      if (shouldHaveConnection) {
+        console.error('Connection to Neo4j dropped');
+        this.disconnect();
+      }
+
+      try {
+        await this.connect(url, credentials, config);
+        // eslint-disable-next-line no-console
+        console.log('Established connection to Neo4j');
+      } catch (error) {
+        console.error(
+          `Unable to connect to Neo4j: ${String(
+            error,
+          )}. Retrying in 30 seconds.`,
+        );
+      }
+    }
+
+    this.reconnectionTimeout = setTimeout(() => {
+      void this.persistentConnect(url, credentials, config);
+    }, 30000);
+  }
+
   disconnect() {
     this.connection?.dispose();
     this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
     this.metadata = undefined;
+    clearTimeout(this.reconnectionTimeout);
   }
 }
