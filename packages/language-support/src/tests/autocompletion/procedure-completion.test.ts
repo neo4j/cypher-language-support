@@ -1,9 +1,6 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('Procedures auto-completion', () => {
   const dbSchema: DbSchema = {
@@ -23,7 +20,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes CALL in standalone', () => {
     const query = 'C';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CALL', kind: CompletionItemKind.Keyword }],
     });
@@ -32,7 +29,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes CALL in subquery', () => {
     const query = 'MATCH (n) C';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CALL', kind: CompletionItemKind.Keyword }],
     });
@@ -41,7 +38,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes YIELD', () => {
     const query = 'CALL proc() Y';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'YIELD', kind: CompletionItemKind.Keyword }],
     });
@@ -50,7 +47,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes procedure name in CALL', () => {
     const query = 'CALL db';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -70,7 +67,7 @@ describe('Procedures auto-completion', () => {
 
   test('Correctly limits procedure completions by one namespace', () => {
     const query = 'CALL db.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -85,11 +82,6 @@ describe('Procedures auto-completion', () => {
           detail: '(procedure)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'jwt.security.requestAccess' },
         { label: 'jwt' },
@@ -100,7 +92,7 @@ describe('Procedures auto-completion', () => {
 
   test('Correctly limits procedure completions by double namespace', () => {
     const query = 'CALL db.stats.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -120,11 +112,6 @@ describe('Procedures auto-completion', () => {
           detail: '(procedure)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'tx.getMetaData' },
         { label: 'getMetaData' },
@@ -147,7 +134,7 @@ describe('Procedures auto-completion', () => {
     const query = `CALL db
                             .stats
                             .`;
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -167,11 +154,6 @@ describe('Procedures auto-completion', () => {
           detail: '(procedure)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'tx.getMetaData' },
         { label: 'getMetaData' },
@@ -193,7 +175,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly filters out all procedures when namespace is incorrect', () => {
     const query = 'CALL badnamespace.';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Method }],
@@ -203,7 +185,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly filters out all procedures when procedure name is treated as namespace', () => {
     const query = 'CALL db.ping.';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Method }],
@@ -213,7 +195,7 @@ describe('Procedures auto-completion', () => {
   test('Does not suggest procedures when only valid character is dot', () => {
     const query = 'CALL apoc    ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Method }],
@@ -223,7 +205,7 @@ describe('Procedures auto-completion', () => {
   test('Does not suggest procedures when only valid character is dot - namespaced edition', () => {
     const query = 'CALL apoc . coll ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Method }],
@@ -233,7 +215,7 @@ describe('Procedures auto-completion', () => {
   test('Allows space after dot in procedure', () => {
     const query = 'CALL db  .  ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -248,11 +230,6 @@ describe('Procedures auto-completion', () => {
           detail: '(namespace)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [{ label: 'db' }, { label: 'db.ping' }],
     });
   });

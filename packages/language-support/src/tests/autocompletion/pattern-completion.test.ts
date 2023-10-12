@@ -1,14 +1,11 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH', () => {
     const query = 'M';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -17,7 +14,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes OPTIONAL MATCH', () => {
     const query = 'OP';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -26,7 +23,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes MATCH in OPTIONAL MATCH', () => {
     const query = 'OPTIONAL M';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -35,7 +32,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes label in MATCH', () => {
     const query = 'MATCH (n:P';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
@@ -45,7 +42,7 @@ describe('MATCH auto-completion', () => {
   test("Doesn't complete label before : is entered", () => {
     const query = 'MATCH (n';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       excluded: [
@@ -59,7 +56,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes unstarted label in MATCH', () => {
     const query = 'MATCH (n:';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
@@ -73,18 +70,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -99,18 +91,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -125,18 +112,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
@@ -151,18 +133,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -177,18 +154,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -203,7 +175,7 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [
@@ -222,18 +194,13 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'D', kind: CompletionItemKind.TypeParameter },
         { label: 'E', kind: CompletionItemKind.TypeParameter },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'B', kind: CompletionItemKind.TypeParameter },
         { label: 'C', kind: CompletionItemKind.TypeParameter },
@@ -248,7 +215,7 @@ describe('MATCH auto-completion', () => {
       relationshipTypes: ['D', 'E'],
     };
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -264,7 +231,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes barred label for a node in WHERE', () => {
     const query = 'MATCH (n) WHERE n:A|';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: {
         labels: ['B', 'C'],
@@ -283,7 +250,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes barred label for a relationship in WHERE', () => {
     const query = 'MATCH (n)-[r]-(m) WHERE r:A|';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: {
         labels: ['B', 'C'],
@@ -302,7 +269,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes WHERE', () => {
     const query = 'MATCH (n:Person) W';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -311,7 +278,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes RETURN', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" R';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'RETURN', kind: CompletionItemKind.Keyword }],
     });
@@ -320,7 +287,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes simple RETURN', () => {
     const query = 'MATCH (n) R';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'RETURN', kind: CompletionItemKind.Keyword }],
     });
@@ -329,7 +296,7 @@ describe('MATCH auto-completion', () => {
   test('Does not offer left paren for pattern expression auto-completion', () => {
     const query = 'MATCH ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [{ label: 'LPAREN', kind: CompletionItemKind.Keyword }],
     });
@@ -338,7 +305,7 @@ describe('MATCH auto-completion', () => {
   test('Does not offer keywords/symbols for variable autocompletion', () => {
     const query = 'MATCH (n';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       excluded: [
         { label: 'NONE', kind: CompletionItemKind.Keyword },
@@ -354,7 +321,7 @@ describe('MATCH auto-completion', () => {
   test('Correctly completes AS', () => {
     const query = 'MATCH (n) RETURN n A';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'AS', kind: CompletionItemKind.Keyword }],
     });
@@ -365,7 +332,7 @@ describe('CREATE auto-completion', () => {
   test('Correctly completes CREATE', () => {
     const query = 'CR';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CREATE', kind: CompletionItemKind.Keyword }],
     });
@@ -374,7 +341,7 @@ describe('CREATE auto-completion', () => {
   test('Correctly completes label in CREATE', () => {
     const query = 'CREATE (n:P';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
@@ -384,7 +351,7 @@ describe('CREATE auto-completion', () => {
   test('Correctly completes RETURN', () => {
     const query = 'CREATE (n:Person) RET';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'RETURN', kind: CompletionItemKind.Keyword }],
     });
@@ -395,7 +362,7 @@ describe('Type relationship auto-completion', () => {
   test('Correctly completes relationship type', () => {
     const query = 'MATCH (n)-[r:R';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { relationshipTypes: ['RelationshipType'] },
       expected: [
@@ -409,7 +376,7 @@ describe('Auto-completion works correctly inside pattern comprehensions', () => 
   test('Correctly completes keywords inside pattern comprehensions', () => {
     const query = "MATCH (a:Person {name: 'Andy'}) RETURN [(a)-->(b W";
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -420,7 +387,7 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
   test('Correctly completes keywords inside relationship pattern', () => {
     const query = 'WITH 2000 AS minYear MATCH (a:Person)-[r:KNOWS ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -429,7 +396,7 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
   test('Correctly completes keywords inside relationship pattern with starting hint', () => {
     const query = 'WITH 2000 AS minYear MATCH (a:Person)-[r:KNOWS W';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -438,7 +405,7 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
   test('Correctly completes keywords inside a node pattern', () => {
     const query = 'WITH 2000 AS minYear MATCH (a ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });

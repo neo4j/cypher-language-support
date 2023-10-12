@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CharStreams,
   CommonTokenStream,
@@ -27,6 +26,7 @@ import {
   inNodeLabel,
   inRelationshipType,
   isDefined,
+  rulesDefiningOrUsingVariables,
 } from './helpers';
 import {
   SyntaxDiagnostic,
@@ -200,7 +200,12 @@ class VariableCollector implements ParseTreeListener {
         ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
           CypherParser.EOF;
 
-      if (variable && !nextTokenIsEOF) {
+      const definesVariable = rulesDefiningOrUsingVariables.includes(
+        // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
+        ctx.parentCtx?.ruleIndex as unknown as number,
+      );
+
+      if (variable && !nextTokenIsEOF && definesVariable) {
         this.variables.push(variable);
       }
     }
