@@ -1,14 +1,11 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('Preparser auto-completions', () => {
   test('Correctly completes EXPLAIN and PROFILE', () => {
     const query = 'E';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
@@ -20,7 +17,7 @@ describe('Preparser auto-completions', () => {
   test('Correctly suggests normal completions after EXPLAIN', () => {
     const query = 'EXPLAIN M';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -29,7 +26,7 @@ describe('Preparser auto-completions', () => {
   test('Correctly suggests normal completions after PROFILE', () => {
     const query = 'PROFILE M';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -38,7 +35,7 @@ describe('Preparser auto-completions', () => {
   test('Correctly suggests EXPLAIN and PROFILE at the begining of a new statement', () => {
     const query = 'PROFILE MATCH (n) RETURN n; ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'EXPLAIN', kind: CompletionItemKind.Keyword },
@@ -52,7 +49,7 @@ describe('Auto completion of back to back keywords', () => {
   test('Correctly completes OPTIONAL MATCH', () => {
     const query = 'OP';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -61,7 +58,7 @@ describe('Auto completion of back to back keywords', () => {
   test('Correctly completes DEFAULT DATABASE and HOME DATABASE', () => {
     const query = 'SHOW ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'DATABASE', kind: CompletionItemKind.Keyword },
@@ -75,7 +72,7 @@ describe('Auto completion of back to back keywords', () => {
     const query =
       'MATCH (a:Person)-[:KNOWS]->(b:Person) RETURN b.name AS name ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'UNION', kind: CompletionItemKind.Keyword },
@@ -87,13 +84,9 @@ describe('Auto completion of back to back keywords', () => {
   test('Correctly completes LOAD CSV', () => {
     const query = 'L';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'LOAD CSV', kind: CompletionItemKind.Keyword }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [
         { label: 'LOAD CSV WITH', kind: CompletionItemKind.Keyword },
         { label: 'LOAD CSV WITH HEADERS', kind: CompletionItemKind.Keyword },
@@ -104,13 +97,9 @@ describe('Auto completion of back to back keywords', () => {
   test('Correctly completes WITH HEADERS in LOAD CSV', () => {
     const query = 'LOAD CSV ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WITH HEADERS', kind: CompletionItemKind.Keyword }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [
         { label: 'WITH HEADERS FROM', kind: CompletionItemKind.Keyword },
       ],
@@ -120,13 +109,9 @@ describe('Auto completion of back to back keywords', () => {
   test('Correctly completes WITH HEADERS in LOAD CSV', () => {
     const query = 'LOAD CSV WITH ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'HEADERS', kind: CompletionItemKind.Keyword }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [{ label: 'HEADERS FROM', kind: CompletionItemKind.Keyword }],
     });
   });

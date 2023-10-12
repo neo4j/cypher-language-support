@@ -6,7 +6,10 @@ import {
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherLexer';
-import CypherParser from '../generated-parser/CypherParser';
+import CypherParser, {
+  Expression2Context,
+} from '../generated-parser/CypherParser';
+import { rulesDefiningVariables } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
@@ -298,25 +301,35 @@ export function completionCoreCompletion(
           return [];
         }
 
+        const greatGrandParentRule = candidateRule.ruleList.at(-3);
+        // When propertyKey is used as postfix to an expr there are many false positives
+        // because expression are very flexible. For this case we only suggest property
+        // keys if the expr is a simple variable that is defined.
+        // We still don't know the type of the variable we're completing without a symbol table
+        // but it is likely to be a node/relationship
+        if (
+          parentRule === CypherParser.RULE_property &&
+          grandParentRule == CypherParser.RULE_postFix1 &&
+          greatGrandParentRule === CypherParser.RULE_expression2
+        ) {
+          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
+          if (expr2 instanceof Expression2Context) {
+            const variableName = expr2.expression1().variable()?.getText();
+            if (
+              !variableName ||
+              !parsingResult.collectedVariables.includes(variableName)
+            ) {
+              return [];
+            }
+          }
+        }
+
         return propertyKeyCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
         const parentRule = candidateRule.ruleList.at(-1);
         // some rules only define, never use variables
-        const rulesDefiningVariables = [
-          CypherParser.RULE_returnItem,
-          CypherParser.RULE_unwindClause,
-          CypherParser.RULE_subqueryInTransactionsReportParameters,
-          CypherParser.RULE_procedureResultItem,
-          CypherParser.RULE_foreachClause,
-          CypherParser.RULE_loadCSVClause,
-          CypherParser.RULE_reduceExpression,
-          CypherParser.RULE_allExpression,
-          CypherParser.RULE_anyExpression,
-          CypherParser.RULE_noneExpression,
-          CypherParser.RULE_singleExpression,
-        ];
         if (
           typeof parentRule === 'number' &&
           rulesDefiningVariables.includes(parentRule)
