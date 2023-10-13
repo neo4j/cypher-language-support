@@ -6,7 +6,7 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Did you mean MATCH?',
+        message: 'Unrecognized keyword. Did you mean MATCH?',
         offsets: {
           end: 5,
           start: 0,

@@ -2,9 +2,9 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4';
 
-import CypherLexer from '../generated-parser/CypherLexer';
+import CypherLexer from '../../generated-parser/CypherLexer';
 
-import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
+import { CypherTokenType, lexerSymbols } from '../../lexerSymbols';
 
 interface TokenPosition {
   line: number;
@@ -151,6 +151,16 @@ export function toParsedTokens(
 export function getCypherTokenType(token: Token): CypherTokenType {
   const tokenNumber = token.type;
 
+  if (tokenNumber === CypherLexer.EOF && token.text !== '<EOF>') {
+    const tokenText = token.text;
+    if (tokenText.startsWith('"') || tokenText.startsWith("'")) {
+      return CypherTokenType.stringLiteral;
+    } else if (tokenText.startsWith('/*')) {
+      return CypherTokenType.comment;
+    } else if (tokenText.startsWith('`')) {
+      return CypherTokenType.symbolicName;
+    }
+  }
   if (
     tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
     tokenNumber === CypherLexer.MULTI_LINE_COMMENT
@@ -162,7 +172,7 @@ export function getCypherTokenType(token: Token): CypherTokenType {
 }
 
 export function shouldAssignTokenType(token: Token): boolean {
-  const nonEOF = token.type !== Token.EOF;
+  const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
   const inMainChannel = token.channel == 0;
   const isComment =
     token.type === CypherLexer.SINGLE_LINE_COMMENT ||

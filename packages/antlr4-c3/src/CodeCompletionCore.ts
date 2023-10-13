@@ -11,7 +11,7 @@ import * as antlr4 from 'antlr4';
 import { Vocabulary } from './Vocabulary';
 import { VocabularyImpl } from './VocabularyImpl';
 import { ATNState, ParserRuleContext, IntervalSet, Token, Parser, PrecedencePredicateTransition,
-    PredicateTransition, RuleStartState, RuleTransition, Transition, ATN, intervalSetOf, intervalSetToArray } from './antrl4';
+    PredicateTransition, RuleStartState, RuleTransition, Transition, ATN, intervalSetOf, intervalSetToArray } from './antlr4';
 import { advanceToNonEpsilon } from './CodeCompletionHelpers'
 
 export type TokenList = number[];

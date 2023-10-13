@@ -6,9 +6,9 @@ export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
   syntaxColouringLegend,
-} from './highlighting/syntaxColouring';
-export type { ParsedCypherToken } from './highlighting/syntaxColouringHelpers';
-export { validateSyntax } from './highlighting/syntaxValidation';
+} from './highlighting/syntaxColouring/syntaxColouring';
+export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
+export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';

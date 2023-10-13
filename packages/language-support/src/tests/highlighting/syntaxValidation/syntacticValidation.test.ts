@@ -10,7 +10,7 @@ describe('Syntactic validation spec', () => {
           end: 5,
           start: 0,
         },
-        message: 'Did you mean MATCH?',
+        message: 'Unrecognized keyword. Did you mean MATCH?',
         range: {
           end: {
             character: 5,
@@ -36,7 +36,7 @@ describe('Syntactic validation spec', () => {
           start: 0,
         },
         message:
-          'Did you mean any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, REALLOCATE, RENAME, REMOVE, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING, WITH, EXPLAIN or PROFILE?',
+          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FOREACH, GRANT, LOAD, MATCH, MERGE, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
         range: {
           end: {
             character: 3,
@@ -61,7 +61,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -86,7 +86,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -115,7 +115,8 @@ describe('Syntactic validation spec', () => {
           end: 114,
           start: 113,
         },
-        message: "Did you mean '}'?",
+        message:
+          "Expected any of '}', AND, CALL, CREATE, DELETE, DETACH, FOREACH, LOAD, MATCH, MERGE, OPTIONAL, OR, REMOVE, RETURN, SET, UNION, UNWIND, USE, WITH, XOR or an expression",
         range: {
           end: {
             character: 47,
@@ -140,7 +141,7 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Did you mean to finish the statement or open a new one?',
+        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -218,6 +219,36 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  test('Syntax validation errors on missing label expression', () => {
+    const query = `MATCH (n:) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: [], relationshipTypes: [] },
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a node label / rel type',
+        offsets: {
+          end: 10,
+          start: 9,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 9,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Syntax validation does not warn when it cannot distinguish between label and relationship type', () => {
     const query = `MATCH (n) WHERE n:Rel1 RETURN n`;
 
@@ -282,7 +313,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation errors on unexpected EOF', () => {
+  test('Syntax validation errors shows correctly for SHOW commands', () => {
     const query = 'SHOW';
 
     expect(
@@ -295,7 +326,7 @@ describe('Syntactic validation spec', () => {
           end: 4,
           start: 4,
         },
-        message: `Did you mean any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER or USERS?`,
+        message: `Expected any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER or USERS`,
         range: {
           end: {
             character: 4,
@@ -303,6 +334,449 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 4,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation does not error on an empty query', () => {
+    const query = '';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation errors on unfinished string', () => {
+    const query = 'RETURN "something';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished string literal',
+        offsets: {
+          end: 17,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on multiline unfinished string', () => {
+    const query = `RETURN 'something
+      foo
+      bar`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished string literal',
+        offsets: {
+          end: 37,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 9,
+            line: 2,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on multiline unfinished property keys', () => {
+    const query = `RETURN {\`something
+    foo
+    
+    bar: "hello"}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished escaped identifier',
+        offsets: {
+          end: 49,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 3,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on unfinished multiline comment', () => {
+    const query = `/* something
+    foo
+    MATCH (n)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Unfinished comment',
+        offsets: {
+          end: 34,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 13,
+            line: 2,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on multiple syntactic errors', () => {
+    const query = `CALL { MATCH (n) RETURN } IN TRANSACTIONS RETURN`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected any of '*', DISTINCT or an expression",
+        offsets: {
+          end: 25,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: "Expected any of '*', DISTINCT or an expression",
+        offsets: {
+          end: 48,
+          start: 48,
+        },
+        range: {
+          end: {
+            character: 48,
+            line: 0,
+          },
+          start: {
+            character: 48,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected procedure name', () => {
+    const query = `CALL ,foo`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '{' or a procedure name",
+        offsets: {
+          end: 6,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 6,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected map literal', () => {
+    const query = `RETURN {[242]}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a map literal',
+        offsets: {
+          end: 9,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 9,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected map literal for node properties', () => {
+    const query = `MATCH (n "foo")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Expected any of '=', ')', ':', IS, WHERE, a map literal or a parameter",
+        offsets: {
+          end: 14,
+          start: 9,
+        },
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 9,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected identifier', () => {
+    const query = `RETURN {foo: 345, 'bar': 345}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected an identifier',
+        offsets: {
+          end: 23,
+          start: 18,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 18,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected string or parameter', () => {
+    const query = `CREATE USER foo 
+      SET PASSWORD foo`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a string or a parameter',
+        offsets: {
+          end: 39,
+          start: 36,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 1,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected database name', () => {
+    const query = `CREATE DATABASE "something"`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '=' or a database name",
+        offsets: {
+          end: 27,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected integer', () => {
+    const query = `MATCH ((:Stop)-[:NEXT]->(:Stop)){1,"foo"}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Expected '}' or an unsigned integer",
+        offsets: {
+          end: 40,
+          start: 35,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 35,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected label expression', () => {
+    const query = `MATCH (n: 'Person')`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a node label / rel type',
+        offsets: {
+          end: 18,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation errors on an expected IS label expression', () => {
+    const query = `MATCH (n IS 'Person')`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Expected a node label / rel type',
+        offsets: {
+          end: 20,
+          start: 12,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 0,
+          },
+          start: {
+            character: 12,
             line: 0,
           },
         },

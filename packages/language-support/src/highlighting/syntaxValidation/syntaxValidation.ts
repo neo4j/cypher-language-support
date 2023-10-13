@@ -1,13 +1,13 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
-import { DbSchema } from '../dbSchema';
+import { DbSchema } from '../../dbSchema';
 import {
   EnrichedParsingResult,
   LabelOrRelType,
   LabelType,
   parserWrapper,
-} from '../parserWrapper';
+} from '../../parserWrapper';
 import { doSemanticAnalysis } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
@@ -127,32 +127,37 @@ export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const parsingResult = parserWrapper.parse(wholeFileText);
-  const errors = parsingResult.errors;
+  let diagnostics: SyntaxDiagnostic[] = [];
 
-  if (errors.length === 0) {
-    const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
-    semanticAnalysisErrors.forEach((e) => {
-      const start = Position.create(e.line - 1, e.column - 1);
-      const startOffset = e.offset;
-      const end = findEndPosition(parsingResult, start, startOffset);
+  if (wholeFileText.length > 0) {
+    const parsingResult = parserWrapper.parse(wholeFileText);
+    const errors = parsingResult.errors;
 
-      errors.push({
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: start,
-          end: end.relative,
-        },
-        offsets: {
-          start: startOffset,
-          end: end.offset,
-        },
-        message: e.msg,
+    if (errors.length === 0) {
+      const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
+      semanticAnalysisErrors.forEach((e) => {
+        const start = Position.create(e.line - 1, e.column - 1);
+        const startOffset = e.offset;
+        const end = findEndPosition(parsingResult, start, startOffset);
+
+        errors.push({
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: start,
+            end: end.relative,
+          },
+          offsets: {
+            start: startOffset,
+            end: end.offset,
+          },
+          message: e.msg,
+        });
       });
-    });
+    }
+
+    const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+    diagnostics = errors.concat(warnings);
   }
-  const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-  const diagnostics = errors.concat(warnings);
 
   return diagnostics;
 }

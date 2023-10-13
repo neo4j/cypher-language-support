@@ -6,3 +6,4 @@
  */
 
 export * from "./src/CodeCompletionCore";
+export * from "./src/antlr4";

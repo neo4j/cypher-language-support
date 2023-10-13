@@ -1,5 +1,9 @@
 import { Token } from 'antlr4';
-import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
+import {
+  CandidateRule,
+  CandidatesCollection,
+  CodeCompletionCore,
+} from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
@@ -119,6 +123,34 @@ const namespacedCompletion = (
   }
 };
 
+function getTokenCandidates(candidates: CandidatesCollection) {
+  const tokenEntries = candidates.tokens.entries();
+
+  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
+    const [tokenNumber, followUpList] = value;
+
+    const firstToken = tokenNames[tokenNumber];
+    const followUpString = followUpList.indexes
+      .map((i) => tokenNames[i])
+      .join(' ');
+
+    if (firstToken === undefined) {
+      return [];
+    } else if (followUpString === '') {
+      return [firstToken];
+    } else {
+      const followUp = firstToken + ' ' + followUpString;
+      if (followUpList.optional) {
+        return [firstToken, followUp];
+      }
+
+      return [followUp];
+    }
+  });
+
+  return tokenCandidates;
+}
+
 const parameterCompletions = (
   dbInfo: DbSchema,
   expectedType: ExpectedParameterType,
@@ -222,9 +254,8 @@ export function completionCoreCompletion(
 
   const codeCompletion = new CodeCompletionCore(parser);
 
-  // We always need to subtract one for the EOF
-  // Except if the query is empty and only contains EOF
-  let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
+  // Move the caret index to the end of the query
+  let caretIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
   const eof = tokens[caretIndex];
 
@@ -377,29 +408,7 @@ export function completionCoreCompletion(
     },
   );
 
-  const tokenEntries = candidates.tokens.entries();
-  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
-    const [tokenNumber, followUpList] = value;
-
-    const firstToken = tokenNames[tokenNumber];
-    const followUpString = followUpList.indexes
-      .map((i) => tokenNames[i])
-      .join(' ');
-
-    if (firstToken === undefined) {
-      return [];
-    } else if (followUpString === '') {
-      return [firstToken];
-    } else {
-      const followUp = firstToken + ' ' + followUpString;
-      if (followUpList.optional) {
-        return [firstToken, followUp];
-      }
-
-      return [followUp];
-    }
-  });
-
+  const tokenCandidates = getTokenCandidates(candidates);
   const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
     label: t,
     kind: CompletionItemKind.Keyword,

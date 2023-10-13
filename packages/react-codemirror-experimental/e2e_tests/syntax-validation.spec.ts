@@ -22,7 +22,10 @@ test('Syntactic errors are surfaced', async ({ page }) => {
 
   await editorPage.createEditor({ value: query });
 
-  await editorPage.checkErrorMessage('METCH', 'Did you mean MATCH?');
+  await editorPage.checkErrorMessage(
+    'METCH',
+    'Unrecognized keyword. Did you mean MATCH?',
+  );
 });
 
 test('Errors for undefined labels are surfaced', async ({ page }) => {
