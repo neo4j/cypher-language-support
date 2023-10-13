@@ -39,7 +39,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
     overrideThemeBackgroundColor = false,
     schema = {},
     lint = true,
-    ...rest
+    value,
   } = props;
 
   const maybeReplMode = onExecute
@@ -65,7 +65,7 @@ export const CypherEditor: CypherEditor = React.forwardRef((props, ref) => {
       basicSetup={false}
       // reset to codemirror default and handle via completionKeymap extension
       indentWithTab={false}
-      {...rest}
+      value={value}
     />
   );
 });
