@@ -1,9 +1,6 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('function invocations', () => {
   const dbSchema: DbSchema = {
@@ -55,7 +52,7 @@ describe('function invocations', () => {
 
   test('Correctly completes unstarted function name in left hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE ';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -85,7 +82,7 @@ describe('function invocations', () => {
 
   test('Correctly completes started function name with unfinished namespace', () => {
     const query = 'RETURN gra';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -110,7 +107,7 @@ describe('function invocations', () => {
 
   test('Correctly limits function completions by one namespace', () => {
     const query = 'RETURN apoc.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -125,19 +122,13 @@ describe('function invocations', () => {
           detail: '(namespace)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-
-      dbSchema,
       excluded: [{ label: 'acos', kind: CompletionItemKind.Function }],
     });
   });
 
   test('Correctly limits function completions by double namespace', () => {
     const query = 'RETURN apoc.agg.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -157,11 +148,6 @@ describe('function invocations', () => {
           detail: '(function)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'apoc.agg.slice', kind: CompletionItemKind.Function },
         { label: 'apoc.agg.last', kind: CompletionItemKind.Function },
@@ -184,7 +170,7 @@ describe('function invocations', () => {
     const query = `RETURN apoc
                             .agg
                             .`;
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -204,12 +190,6 @@ describe('function invocations', () => {
           detail: '(function)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-
-      dbSchema,
       excluded: [
         { label: 'apoc.agg.slice', kind: CompletionItemKind.Function },
         { label: 'apoc.agg.last', kind: CompletionItemKind.Function },
@@ -231,7 +211,7 @@ describe('function invocations', () => {
   test('Correctly filters out all functions when namespace is incorrect', () => {
     const query = 'RETURN badnamespace.';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Function }],
@@ -241,7 +221,7 @@ describe('function invocations', () => {
   test('Correctly filters out all functions when function name is treated as namespace', () => {
     const query = 'RETURN apoc.agg.last.';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Function }],
@@ -251,7 +231,7 @@ describe('function invocations', () => {
   test('Does not suggest functions when only valid character is dot', () => {
     const query = 'RETURN apoc    ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Function }],
@@ -261,7 +241,7 @@ describe('function invocations', () => {
   test('Does not suggest functions when only valid character is dot - namespaced edition', () => {
     const query = 'RETURN apoc . coll ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [{ kind: CompletionItemKind.Function }],
@@ -271,7 +251,7 @@ describe('function invocations', () => {
   test('Allows space after dot in function functions', () => {
     const query = 'RETURN apoc  .  ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -286,18 +266,13 @@ describe('function invocations', () => {
           detail: '(namespace)',
         },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [{ label: 'acos', kind: CompletionItemKind.Function }],
     });
   });
 
   test('Correctly completes function name by namespace in left hand side of WHERE ', () => {
     const query = 'MATCH (n) WHERE apoc.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -317,7 +292,7 @@ describe('function invocations', () => {
 
   test('Correctly completes function name in right hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE n.name = fun';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -337,7 +312,7 @@ describe('function invocations', () => {
 
   test('Correctly completes function name in an AND', () => {
     const query = 'RETURN true AND f';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -362,7 +337,7 @@ describe('function invocations', () => {
 
   test('Handles function with same name as namespace', () => {
     const query = 'RETURN ';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: {
         functionSignatures: {

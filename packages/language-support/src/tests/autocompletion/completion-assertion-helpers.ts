@@ -2,22 +2,29 @@ import { CompletionItem } from 'vscode-languageserver-types';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 
-type InclusionTestArgs = {
-  query: string;
-  dbSchema?: DbSchema;
-  expected: CompletionItem[];
-};
-export function testCompletionContains({
+export function testCompletions({
   query,
   dbSchema = {},
-  expected,
-}: InclusionTestArgs) {
+  excluded = [],
+  expected = [],
+  assertEmpty = false,
+}: {
+  query: string;
+  dbSchema?: DbSchema;
+  excluded?: Partial<CompletionItem>[];
+  expected?: CompletionItem[];
+  assertEmpty?: boolean;
+}) {
   const actualCompletionList = autocomplete(query, dbSchema);
+
+  if (assertEmpty) {
+    expect(actualCompletionList).toEqual([]);
+  }
 
   expect(actualCompletionList).not.toContain(null);
   expect(actualCompletionList).not.toContain(undefined);
 
-  const actual = expected.map((expectedItem) =>
+  const expectedCompletions = expected.map((expectedItem) =>
     actualCompletionList.find(
       (value) =>
         value.kind === expectedItem.kind &&
@@ -26,25 +33,9 @@ export function testCompletionContains({
     ),
   );
 
-  expect(expected).toEqual(actual);
-}
+  expect(expected).toEqual(expectedCompletions);
 
-type ExclusionTestArgs = {
-  query: string;
-  dbSchema?: DbSchema;
-  excluded: Partial<CompletionItem>[];
-};
-export function testCompletionDoesNotContain({
-  query,
-  dbSchema = {},
-  excluded,
-}: ExclusionTestArgs) {
-  const actualCompletionList = autocomplete(query, dbSchema);
-
-  expect(actualCompletionList).not.toContain(null);
-  expect(actualCompletionList).not.toContain(undefined);
-
-  const actual = excluded.map((notExpectedItem) =>
+  const unexpectedCompletions = excluded.map((notExpectedItem) =>
     actualCompletionList.find((value) => {
       // if label is left out -> only check kind and vice versa
       const matchingKind =
@@ -59,5 +50,5 @@ export function testCompletionDoesNotContain({
     }),
   );
 
-  expect(actual).toEqual([]);
+  expect(unexpectedCompletions).toEqual([]);
 }

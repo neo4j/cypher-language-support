@@ -1,9 +1,6 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('can complete database names', () => {
   const dbSchema: DbSchema = {
@@ -21,7 +18,7 @@ describe('can complete database names', () => {
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
     const query = 'SHOW DATABASE ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -35,12 +32,7 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
+      // do not suggest non-string parameters
       excluded: [
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
@@ -51,7 +43,7 @@ describe('can complete database names', () => {
   test('Correctly completes database names and aliases in SHOW DATABASE with started db name', () => {
     const query = 'SHOW DATABASE m';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -65,20 +57,10 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    // validate invalid keyword bug isn't present
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [{ label: '', kind: CompletionItemKind.Keyword }],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
+        // validate invalid keyword bug isn't present
+        { label: '', kind: CompletionItemKind.Keyword },
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
@@ -88,7 +70,7 @@ describe('can complete database names', () => {
   test("Doesn't suggest existing database names or aliases when createing database", () => {
     const query = 'CREATE DATABASE ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [
@@ -98,31 +80,19 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // can create new database name using parameter
-    testCompletionContains({
-      query,
-      dbSchema,
-      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
+      // can create new database name using parameter
+      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
     });
   });
 
   test("Doesn't suggest existing database names or aliases when createing alias", () => {
     const query = 'CREATE ALIAS ';
 
-    testCompletionDoesNotContain({
+    testCompletions({
       query,
       dbSchema,
       excluded: [
@@ -132,30 +102,18 @@ describe('can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // can create new alias name using parameter
-    testCompletionContains({
-      query,
-      dbSchema,
-      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
+      // can create new alias name using parameter
+      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
     });
   });
 
   test('suggest only aliases when dropping alias', () => {
     const query = 'DROP ALIAS ';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -164,23 +122,11 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
@@ -189,30 +135,18 @@ describe('can complete database names', () => {
 
   test('suggest only aliases when showing alias', () => {
     const query = 'SHOW ALIAS ';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
@@ -221,7 +155,7 @@ describe('can complete database names', () => {
 
   test('suggest only aliases when altering alias', () => {
     const query = 'ALTER ALIAS a';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -230,23 +164,11 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
@@ -255,7 +177,7 @@ describe('can complete database names', () => {
 
   test('can complete when typing scoped alias', () => {
     const query = 'ALTER ALIAS a.b.c.';
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
@@ -264,23 +186,11 @@ describe('can complete database names', () => {
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
         { label: '$param1', kind: CompletionItemKind.Variable },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-      ],
-    });
-
-    // do not suggest non-string parameters
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
-      excluded: [
+        // do not suggest non-string parameters
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
@@ -292,18 +202,13 @@ describe('can complete database names', () => {
     // I've added a test to verify we don't suggest aliases after the space (false positives)
     const query = 'drop alias myMovies ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema,
       expected: [
         { label: 'FOR DATABASE', kind: CompletionItemKind.Keyword },
         { label: 'IF EXISTS', kind: CompletionItemKind.Keyword },
       ],
-    });
-
-    testCompletionDoesNotContain({
-      query,
-      dbSchema,
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
@@ -331,7 +236,7 @@ describe('can complete database names', () => {
 
     test('correctly completes started parameter in return body', () => {
       const query = 'RETURN $';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [
@@ -344,7 +249,7 @@ describe('can complete database names', () => {
 
     test('correctly completes unstarted parameter in return body', () => {
       const query = 'RETURN ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [
@@ -357,7 +262,7 @@ describe('can complete database names', () => {
 
     test('correctly completes started parameter in where clause', () => {
       const query = 'MATCH (n) WHERE ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [
@@ -370,7 +275,7 @@ describe('can complete database names', () => {
 
     test('correctly completes started parameter in expression', () => {
       const query = 'RETURN 1 + ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [
@@ -383,16 +288,12 @@ describe('can complete database names', () => {
 
     test('correctly suggests parameter in ENABLE SERVER', () => {
       const query = 'ENABLE SERVER ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [
           { label: '$stringParam', kind: CompletionItemKind.Variable },
         ],
-      });
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
         excluded: [
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },
@@ -403,40 +304,26 @@ describe('can complete database names', () => {
     test('suggests parameter as map properties', () => {
       const query = 'match (v :Movie ';
 
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
-      });
-
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
         excluded: [
           { label: '$stringParam', kind: CompletionItemKind.Variable },
           { label: '$intParam', kind: CompletionItemKind.Variable },
+          // ensure variables are not suggested in place of parameters (parameters reuse the variable rule)
+          { label: 'v', kind: CompletionItemKind.Variable },
         ],
-      });
-
-      // ensure variables are not suggested in place of parameters (parameters reuse the variable rule)
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
-        excluded: [{ label: 'v', kind: CompletionItemKind.Variable }],
       });
     });
 
     test('suggests parameter in options field of create constraint', () => {
       const query =
         'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
-      });
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
         excluded: [
           { label: '$stringParam', kind: CompletionItemKind.Variable },
           { label: '$intParam', kind: CompletionItemKind.Variable },
@@ -446,14 +333,10 @@ describe('can complete database names', () => {
 
     test('suggests parameter in options field of create index', () => {
       const query = 'CREATE INDEX abc FOR (n:person) ON (n.name) OPTIONS ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
-      });
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
         excluded: [
           { label: '$stringParam', kind: CompletionItemKind.Variable },
           { label: '$intParam', kind: CompletionItemKind.Variable },
@@ -463,14 +346,10 @@ describe('can complete database names', () => {
 
     test('suggests parameter in options field of create composite database', () => {
       const query = 'CREATE COMPOSITE DATABASE name IF NOT EXISTS OPTIONS ';
-      testCompletionContains({
+      testCompletions({
         query,
         dbSchema,
         expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
-      });
-      testCompletionDoesNotContain({
-        query,
-        dbSchema,
         excluded: [
           { label: '$stringParam', kind: CompletionItemKind.Variable },
           { label: '$intParam', kind: CompletionItemKind.Variable },
@@ -491,16 +370,12 @@ describe('can complete database names', () => {
         'ALTER USER foo IF EXISTS SET PASSWORD ',
       ];
       cases.forEach((query) => {
-        testCompletionContains({
+        testCompletions({
           query,
           dbSchema,
           expected: [
             { label: '$stringParam', kind: CompletionItemKind.Variable },
           ],
-        });
-        testCompletionDoesNotContain({
-          query,
-          dbSchema,
           excluded: [
             { label: '$intParam', kind: CompletionItemKind.Variable },
             { label: '$mapParam', kind: CompletionItemKind.Variable },
@@ -518,16 +393,12 @@ describe('can complete database names', () => {
         'GRANT ROLE abc TO',
       ];
       cases.forEach((query) => {
-        testCompletionContains({
+        testCompletions({
           query,
           dbSchema,
           expected: [
             { label: '$stringParam', kind: CompletionItemKind.Variable },
           ],
-        });
-        testCompletionDoesNotContain({
-          query,
-          dbSchema,
           excluded: [
             { label: '$intParam', kind: CompletionItemKind.Variable },
             { label: '$mapParam', kind: CompletionItemKind.Variable },
@@ -552,16 +423,12 @@ describe('can complete database names', () => {
       ];
 
       nameCases.forEach((query) => {
-        testCompletionContains({
+        testCompletions({
           query,
           dbSchema,
           expected: [
             { label: '$stringParam', kind: CompletionItemKind.Variable },
           ],
-        });
-        testCompletionDoesNotContain({
-          query,
-          dbSchema,
           excluded: [
             { label: '$intParam', kind: CompletionItemKind.Variable },
             { label: '$mapParam', kind: CompletionItemKind.Variable },
@@ -570,14 +437,10 @@ describe('can complete database names', () => {
       });
 
       optionsCases.forEach((query) => {
-        testCompletionContains({
+        testCompletions({
           query,
           dbSchema,
           expected: [{ label: '$mapParam', kind: CompletionItemKind.Variable }],
-        });
-        testCompletionDoesNotContain({
-          query,
-          dbSchema,
           excluded: [
             { label: '$intParam', kind: CompletionItemKind.Variable },
             { label: '$stringParam', kind: CompletionItemKind.Variable },

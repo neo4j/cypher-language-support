@@ -1,14 +1,11 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletionContains,
-  testCompletionDoesNotContain,
-} from './completion-assertion-helpers';
+import { testCompletions } from './completion-assertion-helpers';
 
 describe('Misc auto-completion', () => {
   test('Correctly completes empty statement', () => {
     const query = '';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'MATCH', kind: CompletionItemKind.Keyword },
@@ -20,7 +17,7 @@ describe('Misc auto-completion', () => {
   test('Correctly completes RETURN', () => {
     const query = 'RET';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'RETURN', kind: CompletionItemKind.Keyword }],
     });
@@ -29,13 +26,9 @@ describe('Misc auto-completion', () => {
   test('Correctly completes DISTINCT', () => {
     const query = 'MATCH (n:Person)-[r:KNOWS]-(m:Person) RETURN ';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'DISTINCT', kind: CompletionItemKind.Keyword }],
-    });
-
-    testCompletionDoesNotContain({
-      query,
       excluded: [
         { label: 'STRING_LITERAL1', kind: CompletionItemKind.Keyword },
         { label: 'STRING_LITERAL2', kind: CompletionItemKind.Keyword },
@@ -48,7 +41,7 @@ describe('Misc auto-completion', () => {
     const query = `CALL dbms.info() YIELD *;
                    M`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'MATCH', kind: CompletionItemKind.Keyword }],
     });
@@ -58,7 +51,7 @@ describe('Misc auto-completion', () => {
     const query = `MATCH (n: Person W);
                    C`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'CREATE', kind: CompletionItemKind.Keyword }],
     });
@@ -68,7 +61,7 @@ describe('Misc auto-completion', () => {
     const query = `MATCH (n) REUTRN n;
                    MATCH (n) W`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -79,7 +72,7 @@ describe('Misc auto-completion', () => {
                    MATCH (n) REUTRN n;
                    MATCH (n) W`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
@@ -88,7 +81,7 @@ describe('Misc auto-completion', () => {
   test('Correctly completes next statement when there is no initiating keyword', () => {
     const query = `MATCH (n) RETURN n;`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'MATCH', kind: CompletionItemKind.Keyword },
@@ -101,7 +94,7 @@ describe('Misc auto-completion', () => {
     const query = `MATCH (n) REUTRN n;
                    MATCH (n:P`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['Person', 'Dog'] },
       expected: [
@@ -115,7 +108,7 @@ describe('Misc auto-completion', () => {
     const query = `MATCH (n) REUTRN n;
                    MATCH (n:`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['A', 'B'] },
       expected: [
@@ -129,7 +122,7 @@ describe('Misc auto-completion', () => {
     const query = `MATCH (n) REUTRN n;
                    MATCH (n:A|`;
 
-    testCompletionContains({
+    testCompletions({
       query,
       dbSchema: { labels: ['A', 'B'] },
       expected: [
@@ -144,7 +137,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
   test('Inserts correct text for LIMIT', () => {
     const query = 'RETURN 1 L';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'LIMIT', kind: CompletionItemKind.Keyword }],
     });
@@ -153,7 +146,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
   test('Inserts correct text for SKIP', () => {
     const query = 'RETURN 1 S';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'SKIP', kind: CompletionItemKind.Keyword }],
     });
@@ -162,7 +155,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
   test('Inserts correct text for shortestPath', () => {
     const query = 'MATCH s';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [{ label: 'shortestPath', kind: CompletionItemKind.Keyword }],
     });
@@ -171,7 +164,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
   test('Inserts correct text for allShortestPath', () => {
     const query = 'MATCH a';
 
-    testCompletionContains({
+    testCompletions({
       query,
       expected: [
         { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
