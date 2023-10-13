@@ -1,4 +1,6 @@
 out/
+dist/
+esm/
 packages/language-support/src/generated-parser/*
 packages/antlr4/src/antlr4/*
 packages/antlr4/spec/*
