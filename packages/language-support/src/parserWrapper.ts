@@ -1,10 +1,5 @@
-import {
-  CharStreams,
-  CommonTokenStream,
-  ParserRuleContext,
-  ParseTreeListener,
-  Token,
-} from 'antlr4';
+import type { ParserRuleContext, Token } from 'antlr4';
+import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
 

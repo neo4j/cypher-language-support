@@ -1,9 +1,6 @@
 import { Token } from 'antlr4';
-import {
-  CandidateRule,
-  CandidatesCollection,
-  CodeCompletionCore,
-} from 'antlr4-c3';
+import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
+import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,

@@ -1,13 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "e2e_tests"],
+  "include": ["src"],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "outDir": "out",
-    "declaration": true,
-    "esModuleInterop": true,
-    "paths": {
-      "language-support": ["../language-support/src/index.ts"]
-    }
+    "jsx": "react-jsx"
   }
 }

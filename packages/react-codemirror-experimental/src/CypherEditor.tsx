@@ -3,8 +3,8 @@ import CodeEditor, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
 } from '@uiw/react-codemirror';
+import type { DbSchema } from 'language-support';
 import React from 'react';
-import { DbSchema } from '../../language-support/src/dbSchema';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';

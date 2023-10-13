@@ -4,10 +4,10 @@
   "author": "neo4j",
   "license": "Apache",
   "version": "0.0.1",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./esm/index.js",
   "dependencies": {
-    "antlr4": "*",
+    "antlr4": "4.13.0",
     "antlr4-c3": "*",
     "fastest-levenshtein": "^1.0.16",
     "vscode-languageserver-types": "^3.17.3"
@@ -15,7 +15,9 @@
   "scripts": {
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
     "postinstall": "npm run gen-parser",
-    "build": "npm run gen-parser && tsc -b",
+    "build": "npm run gen-parser && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build-esm": "tsc --module esnext --outDir esm",
+    "build-commonjs": "tsc --module commonjs --outDir dist",
     "clean": "rm -rf out",
     "watch": "tsc -b -w",
     "test": "jest"
