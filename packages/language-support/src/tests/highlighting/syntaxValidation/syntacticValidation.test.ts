@@ -707,7 +707,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected '}' or an unsigned decimal integer",
+        message: "Expected '}' or an unsigned integer",
         offsets: {
           end: 40,
           start: 35,

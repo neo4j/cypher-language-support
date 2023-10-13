@@ -36,7 +36,7 @@ describe('expression completions', () => {
       `;
 
       expect(
-        testCompletionContains({
+        testCompletions({
           query: query,
           expected: [{ label: 'AND', kind: CompletionItemKind.Keyword }],
         }),
