@@ -10,7 +10,7 @@ describe('Syntactic validation spec', () => {
           end: 5,
           start: 0,
         },
-        message: 'Unexpected keyword. Did you mean MATCH?',
+        message: 'Unrecognized keyword. Did you mean MATCH?',
         range: {
           end: {
             character: 5,

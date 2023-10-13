@@ -24,7 +24,7 @@ test('Syntactic errors are surfaced', async ({ page }) => {
 
   await editorPage.checkErrorMessage(
     'METCH',
-    'Unexpected keyword. Did you mean MATCH?',
+    'Unrecognized keyword. Did you mean MATCH?',
   );
 });
 

@@ -68,7 +68,7 @@ export function completionCoreErrormessage(
         humanReadableRulename.push('a decimal double');
         return [];
       case CypherLexer.UNSIGNED_DECIMAL_INTEGER:
-        humanReadableRulename.push('an unsigned decimal integer');
+        humanReadableRulename.push('an unsigned integer');
         return [];
       case CypherLexer.UNSIGNED_HEX_INTEGER:
         humanReadableRulename.push('an unsinged hexadecimal integer');
@@ -106,8 +106,8 @@ export function completionCoreErrormessage(
 
   let errorType = '';
 
-  if (keywordCandidates.length === tokenCandidates.length) {
-    errorType = 'Unexpected keyword';
+  if (nonKeywordCandidates.length === 0) {
+    errorType = 'Unrecognized keyword';
   } else {
     errorType = 'Unexpected token';
   }

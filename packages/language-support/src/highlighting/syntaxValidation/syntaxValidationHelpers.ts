@@ -74,7 +74,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
           start: offendingSymbol.start,
           end: offendingSymbol.stop + 1,
         },
-        // If we couldn't find a more helpful error message, keep the original one
         message: errorMessage,
       };
       this.errors.push(diagnostic);
