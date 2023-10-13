@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) "Neo4j"
+ * Neo4j Sweden AB [https://neo4j.com]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 lexer grammar CypherLexer;
 
 SPACE:
@@ -100,6 +116,9 @@ AND:
 ANY:
    A N Y;
 
+ARRAY:
+   A R R A Y;
+
 AS:
    A S;
 
@@ -153,6 +172,9 @@ CASE:
 
 CHANGE:
    C H A N G E;
+
+CIDR:
+   C I D R;
 
 COLLECT:
    C O L L E C T;
@@ -282,6 +304,9 @@ DURATION:
 
 EACH:
    E A C H;
+
+EDGE:
+   E D G E;
 
 ENABLE:
    E N A B L E;
@@ -445,6 +470,9 @@ LE:
 LIMITROWS:
    L I M I T;
 
+LIST:
+   L I S T;
+
 LOAD:
    L O A D;
 
@@ -462,6 +490,9 @@ LT:
 
 MANAGEMENT:
    M A N A G E M E N T;
+
+MAP:
+   M A P;
 
 MATCH:
    M A T C H;
@@ -504,6 +535,9 @@ NONE:
 
 NOT:
    N O T;
+
+NOTHING:
+  N O T H I N G;
 
 NOWAIT:
    N O W A I T;
@@ -811,6 +845,9 @@ UNIQUENESS:
 UNWIND:
    U N W I N D;
 
+URL:
+   U R L;
+
 USE:
    U S E;
 
@@ -823,11 +860,17 @@ USERS:
 USING:
    U S I N G;
 
+VALUE:
+   V A L U E;
+
 VARCHAR:
    V A R C H A R;
 
 VERBOSE:
    V E R B O S E;
+
+VERTEX:
+   V E R T E X;
 
 WAIT:
    W A I T;
