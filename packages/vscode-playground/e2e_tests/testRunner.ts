@@ -1,6 +1,6 @@
 // Taken from https://code.visualstudio.com/api/working-with-extensions/testing-extension#the-test-runner-script
 import * as glob from 'glob';
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 import * as path from 'path';
 
 export function run(): Promise<void> {
