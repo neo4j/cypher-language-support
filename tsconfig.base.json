@@ -8,7 +8,8 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es2018"
+    "target": "es2018",
+    "outDir": "dist"
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
