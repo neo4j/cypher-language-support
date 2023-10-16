@@ -33,7 +33,7 @@ export function doSignatureHelp(
 
     return signatureHelp(
       textDocument.getText(range),
-      neo4j.metadata.dbSchema ?? {},
+      neo4j.metadata?.dbSchema ?? {},
     );
   };
 }
