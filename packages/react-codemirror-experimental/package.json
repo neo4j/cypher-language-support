@@ -8,13 +8,13 @@
     "README.md"
   ],
   "version": "0.0.14",
-  "main": "dist/index.js",
-  "module": "esm/index.js",
+  "main": "dist/index.cjs",
+  "module": "esm/index.mjs",
   "sideEffects": false,
   "scripts": {
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "tsc --module esnext --outDir esm",
-    "build-commonjs": "tsc --module commonjs --outDir dist",
+    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs --packages=external --alias:language-support=../language-support src/index.ts",
+    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs --packages=external --alias:language-support=../language-support src/index.ts",
     "test": "jest",
     "test:e2e": "playwright test",
     "e2e-http-server": "vite dev"
@@ -32,7 +32,6 @@
     "@uiw/react-codemirror": "^4.19.9",
     "ayu": "^8.0.1",
     "fastest-levenshtein": "^1.0.16",
-    "language-support": "*",
     "react": "^18.2.0",
     "vscode-languageserver-types": "^3.17.3"
   },
@@ -42,6 +41,7 @@
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
     "concurrently": "^8.2.1",
+    "esbuild": "^0.19.4",
     "lodash": "^4.17.21",
     "playwright": "^1.36.2",
     "typescript": "^4.9.3",
