@@ -66,7 +66,7 @@ export class Neo4jConnection {
 
   async healthcheck() {
     try {
-      await this.driver.verifyConnectivity();
+      await this.driver.verifyConnectivity({ database: this.currentDb });
       return true;
     } catch (error) {
       return false;

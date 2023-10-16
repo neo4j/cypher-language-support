@@ -95,30 +95,24 @@ connection.onCompletion(doAutoCompletion(documents, neo4jSdk));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
-    const neo4jConfig = params.settings.cypherLSP.neo4j;
-
     neo4jSdk.disconnect();
+
+    const neo4jConfig = params.settings.cypherLSP.neo4j;
     if (
+      neo4jSdk.connection === undefined &&
       neo4jConfig.connect &&
       neo4jConfig.password &&
       neo4jConfig.URL &&
       neo4jConfig.user
     ) {
-      neo4jSdk
-        .connect(
-          neo4jConfig.URL,
-          {
-            username: neo4jConfig.user,
-            password: neo4jConfig.password,
-          },
-          { appName: 'cypher-language-server' },
-        )
-        .then(() => {
-          neo4jSdk.metadata.startBackgroundPolling();
-        })
-        .catch((error) => {
-          console.error(`Unable to connect to Neo4j: ${String(error)}`);
-        });
+      void neo4jSdk.persistentConnect(
+        neo4jConfig.URL,
+        {
+          username: neo4jConfig.user,
+          password: neo4jConfig.password,
+        },
+        { appName: 'cypher-language-server' },
+      );
     }
   },
 );
