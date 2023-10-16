@@ -1,3 +1,3 @@
-import sharedConfig from '../../jest.config.base.js';
+const sharedConfig = require('../../jest.config.base');
 
-export default sharedConfig;
+module.exports = sharedConfig;
