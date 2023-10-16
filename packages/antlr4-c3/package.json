@@ -27,7 +27,7 @@
     "clean": "rm -rf out"
   },
   "dependencies": {
-    "antlr4": "4.13.0"
+    "antlr4": "*"
   },
   "devDependencies": {
     "@types/jest": "29.5.0",
