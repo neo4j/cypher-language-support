@@ -123,28 +123,43 @@ const namespacedCompletion = (
   }
 };
 
-function getTokenCandidates(candidates: CandidatesCollection) {
+function getTokenCandidates(
+  candidates: CandidatesCollection,
+  ignoredTokens: Set<number>,
+) {
   const tokenEntries = candidates.tokens.entries();
 
   const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
     const [tokenNumber, followUpList] = value;
 
-    const firstToken = tokenNames[tokenNumber];
-    const followUpString = followUpList.indexes
-      .map((i) => tokenNames[i])
-      .join(' ');
+    if (!ignoredTokens.has(tokenNumber)) {
+      const firstToken = tokenNames[tokenNumber];
+      const followUpIndexes = followUpList.indexes;
+      const firstIgnoredToken = followUpIndexes.findIndex((t) =>
+        ignoredTokens.has(t),
+      );
 
-    if (firstToken === undefined) {
-      return [];
-    } else if (followUpString === '') {
-      return [firstToken];
-    } else {
-      const followUp = firstToken + ' ' + followUpString;
-      if (followUpList.optional) {
-        return [firstToken, followUp];
+      const followUpTokens = followUpIndexes.slice(
+        0,
+        firstIgnoredToken >= 0 ? firstIgnoredToken : followUpIndexes.length,
+      );
+
+      const followUpString = followUpTokens.map((i) => tokenNames[i]).join(' ');
+
+      if (firstToken === undefined) {
+        return [];
+      } else if (followUpString === '') {
+        return [firstToken];
+      } else {
+        const followUp = firstToken + ' ' + followUpString;
+        if (followUpList.optional) {
+          return [firstToken, followUp];
+        }
+
+        return [followUp];
       }
-
-      return [followUp];
+    } else {
+      return [];
     }
   });
 
@@ -292,7 +307,7 @@ export function completionCoreCompletion(
   ]);
 
   // Keep only keywords as suggestions
-  codeCompletion.ignoredTokens = new Set<number>(
+  const ignoredTokens = new Set<number>(
     Object.entries(lexerSymbols)
       .filter(([, type]) => type !== CypherTokenType.keyword)
       .map(([token]) => Number(token)),
@@ -408,7 +423,7 @@ export function completionCoreCompletion(
     },
   );
 
-  const tokenCandidates = getTokenCandidates(candidates);
+  const tokenCandidates = getTokenCandidates(candidates, ignoredTokens);
   const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
     label: t,
     kind: CompletionItemKind.Keyword,

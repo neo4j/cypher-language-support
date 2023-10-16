@@ -219,6 +219,6 @@ test('completes allShortestPaths correctly', async ({ page }) => {
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   expect(await editorPage.getEditor().textContent()).toEqual(
-    'MATCH (n) REURN n; RETURN allShortestPaths',
+    'MATCH (n) REURN n; MATCH allShortestPaths',
   );
 });
