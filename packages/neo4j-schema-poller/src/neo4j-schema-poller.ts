@@ -6,7 +6,7 @@ import { listDatabases } from './queries/databases.js';
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
-  private reconnectionTimeout?: NodeJS.Timer;
+  private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
   async connect(
     url: string,
