@@ -13,8 +13,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs --packages=external --alias:language-support=../language-support src/index.ts",
-    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs --packages=external --alias:language-support=../language-support src/index.ts",
+    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs --packages=external src/index.ts",
+    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs --packages=external src/index.ts",
     "test": "jest",
     "test:e2e": "playwright test",
     "e2e-http-server": "vite dev"
