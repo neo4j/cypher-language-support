@@ -188,35 +188,198 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test('Syntax validation warns on missing relationship type when database can be contacted', () => {
-    const query = `MATCH (n)-[r:Rel3]->(m) RETURN n`;
+  test('Syntax validation warns on missing rel type when database can be contacted', () => {
+    const query = `MATCH (n)-[:Rel]->(m) RETURN n`;
 
     expect(
       getDiagnosticsForQuery({
         query,
-        dbSchema: { labels: ['Rel3'], relationshipTypes: ['Rel1', 'Rel2'] },
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
       }),
     ).toEqual([
       {
-        offsets: {
-          end: 17,
-          start: 13,
-        },
         message:
-          "Relationship type Rel3 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Relationship type Rel is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 15,
+          start: 12,
+        },
         range: {
           end: {
-            character: 17,
+            character: 15,
             line: 0,
           },
           start: {
-            character: 13,
+            character: 12,
             line: 0,
           },
         },
         severity: 2,
       },
     ]);
+  });
+
+  test('Syntax validation warns on missing label in a WHERE node predicate', () => {
+    const query = `MATCH (n WHERE n IS Person) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 26,
+          start: 20,
+        },
+        range: {
+          end: {
+            character: 26,
+            line: 0,
+          },
+          start: {
+            character: 20,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation warns on missing label in a WHERE clause if no labels or rel types match it', () => {
+    const query = `MATCH (n) WHERE n IS Person RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Cow'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Label or relationship type Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 27,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation warns on missing rel type in a WHERE clause if no labels or rel types match it', () => {
+    const query = `MATCH (n)-[r]-(m) WHERE r IS Rel RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Cow'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Label or relationship type Rel is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 32,
+          start: 29,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 29,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation does not warn on missing label in a WHERE clause if it is a relationship type', () => {
+    const query = `MATCH (n) WHERE n IS Person RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation does not warn on missing label in a WHERE clause if it is a label', () => {
+    const query = `MATCH ()-[r]-() WHERE r IS Dog RETURN r`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation does not warn on missing label in a CREATE', () => {
+    const query = `CREATE (n: Person) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation does not warn on missing rel type in a CREATE', () => {
+    const query = `CREATE (n)-[r:Rel]->(m) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation does not warn on missing label in a MERGE', () => {
+    const query = `MERGE (n:Label {name: $value})
+    ON CREATE SET n.created = timestamp()
+    ON MATCH SET
+      n.accessTime = timestamp()
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation does not warn on missing rel type in a MERGE', () => {
+    const query = 'MERGE (n)-[r:Rel]-(m) RETURN r';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([]);
   });
 
   test('Syntax validation errors on missing label expression', () => {

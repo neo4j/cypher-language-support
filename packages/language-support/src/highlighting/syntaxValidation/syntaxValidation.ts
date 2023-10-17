@@ -63,8 +63,9 @@ function warnOnUndeclaredLabels(
   if (dbSchema.labels && dbSchema.relationshipTypes) {
     const dbLabels = new Set(dbSchema.labels);
     const dbRelationshipTypes = new Set(dbSchema.relationshipTypes);
+    const labelsAndRelTypes = parsingResult.collectedLabelOrRelTypes;
 
-    parsingResult.collectedLabelOrRelTypes.forEach((labelOrRelType) => {
+    labelsAndRelTypes.forEach((labelOrRelType) => {
       const warning = detectNonDeclaredLabel(
         labelOrRelType,
         dbLabels,

@@ -10,12 +10,9 @@ import CypherLexer from './generated-parser/CypherLexer';
 
 import CypherParser, {
   ClauseContext,
-  CreateClauseContext,
-  ExpressionContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
-  MergeClauseContext,
   StatementsContext,
   VariableContext,
 } from './generated-parser/CypherParser';
@@ -53,15 +50,14 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
 }
 
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
-  const parent = findParent(
-    ctx,
-    (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
-  );
+  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
 
-  return (
-    parent instanceof CreateClauseContext ||
-    parent instanceof MergeClauseContext
-  );
+  if (parent instanceof ClauseContext) {
+    const clause = parent;
+    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+  } else {
+    return false;
+  }
 }
 
 export type LabelOrRelType = {
