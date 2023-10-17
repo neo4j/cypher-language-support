@@ -38,6 +38,19 @@ export async function testCompletionContains({
 }
 
 suite('Auto completion spec', () => {
+  test('Completes allShortestPaths ', async () => {
+    const position = new vscode.Position(2, 28);
+
+    const expected: vscode.CompletionItem[] = [
+      { label: 'allShortestPaths', kind: vscode.CompletionItemKind.Keyword },
+    ];
+    await testCompletionContains({
+      textFile: 'allShortestPaths-completion.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
   test('Completes MATCH clause with WHERE, CREATE, etc', async () => {
     const position = new vscode.Position(0, 10);
 

@@ -190,3 +190,35 @@ test('can complete parameters', async ({ page }) => {
     'RETURN $parameter',
   );
 });
+
+test('completes allShortestPaths correctly', async ({ page }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  await editorPage.createEditor({
+    value: '',
+    schema: {
+      labels: [],
+      relationshipTypes: [],
+      functionSignatures: {},
+      procedureSignatures: {},
+      aliasNames: [],
+      databaseNames: [],
+      parameters: { parameter: { type: 'string' } },
+      propertyKeys: [],
+    },
+  });
+
+  // The first query contains errors on purpose so the
+  // syntax errors get triggered before the auto-completion
+  await editorPage.getEditor().type('MATCH (n) REURN n; MATCH a');
+
+  await page
+    .locator('.cm-tooltip-autocomplete')
+    .getByText('allShortestPaths')
+    .click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  expect(await editorPage.getEditor().textContent()).toEqual(
+    'MATCH (n) REURN n; RETURN allShortestPaths',
+  );
+});
