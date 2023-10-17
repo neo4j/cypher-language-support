@@ -2,7 +2,7 @@
   "name": "neo4j-schema-poller",
   "description": "",
   "author": "neo4j",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "version": "0.0.1",
   "main": "./dist/src/index.js",
   "module": "./esm/src/index.js",

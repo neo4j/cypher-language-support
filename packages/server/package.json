@@ -2,7 +2,7 @@
   "name": "cypher-lsp-server",
   "description": "Cypher LSP's server",
   "author": "neo4j",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "version": "0.0.1",
   "main": "dist/server.js",
   "types": "src/server.ts",

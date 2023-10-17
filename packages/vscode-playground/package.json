@@ -2,7 +2,7 @@
   "name": "cypher-ls-vscode-playground",
   "description": "Cypher Language Server VSCode Playground",
   "author": "neo4j",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.75.0"
