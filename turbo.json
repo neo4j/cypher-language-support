@@ -9,7 +9,9 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
-    "clean": {},
+    "clean": {
+      "cache": false
+    },
     "watch": {},
     "test": {
       "cache": false,

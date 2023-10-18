@@ -36,7 +36,7 @@
             "messages",
             "verbose"
           ],
-          "default": "verbose",
+          "default": "off",
           "description": "Traces the communication between VS Code and the language server."
         },
         "cypherLSP.neo4j.connect": {
@@ -73,7 +73,7 @@
   },
   "scripts": {
     "build": "tsc -b && cp -r ./e2e_tests/fixtures ./dist/e2e_tests/fixtures",
-    "clean": "rm -rf out",
+    "clean": "rm -rf dist",
     "test:e2e": "rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
     "watch": "tsc -b -w"
   },

@@ -7,7 +7,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
+import { Neo4jSchemaPoller } from 'schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {

@@ -7,7 +7,7 @@ import {
 import { Range } from 'vscode-languageserver-types';
 
 import { autocomplete } from 'language-support';
-import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
+import { Neo4jSchemaPoller } from 'schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function doAutoCompletion(
