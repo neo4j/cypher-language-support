@@ -1,4 +1,7 @@
 out
+build
+dist
+esm
 node_modules
 generated-parser
 generated
@@ -8,8 +11,6 @@ generated
 *.tokens
 *.vsix
 .turbo
-build/
-dist/
 *.antlr
 *.jar
 *.clinic

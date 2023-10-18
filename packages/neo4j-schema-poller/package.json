@@ -2,16 +2,18 @@
   "name": "neo4j-schema-poller",
   "description": "",
   "author": "neo4j",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "version": "0.0.1",
-  "main": "./out/src/index.js",
-  "types": "./out/src/index.d.ts",
+  "main": "./dist/src/index.js",
+  "module": "./esm/src/index.js",
   "dependencies": {
     "language-support": "*",
     "neo4j-driver": "^5.12.0"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build-esm": "tsc --module esnext --outDir esm",
+    "build-commonjs": "tsc --module commonjs --outDir dist",
     "clean": "rm -rf out",
     "watch": "tsc -b -w"
   }

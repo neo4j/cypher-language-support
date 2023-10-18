@@ -2,21 +2,24 @@
   "name": "cypher-lsp-server",
   "description": "Cypher LSP's server",
   "author": "neo4j",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "version": "0.0.1",
-  "main": "out/server.js",
+  "main": "dist/server.js",
   "types": "src/server.ts",
   "dependencies": {
     "language-support": "*",
-    "neo4j-schema-poller": "*",
     "neo4j-driver": "^5.3.0",
+    "neo4j-schema-poller": "*",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4",
     "clean": "rm -rf out",
-    "watch": "tsc -b -w",
-    "assemble": "esbuild ./src/server.ts --bundle --outfile=./out/cypher-language-server.js --format=esm --platform=node"
+    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4 --watch ",
+    "assemble": "esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=esm --platform=node"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.4"
   }
 }

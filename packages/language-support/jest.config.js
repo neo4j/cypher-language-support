@@ -1,3 +1,3 @@
-const sharedConfig = require('../../jest.config.base.js')
+const sharedConfig = require('../../jest.config.base.js');
 
-module.exports = sharedConfig
+module.exports = sharedConfig;

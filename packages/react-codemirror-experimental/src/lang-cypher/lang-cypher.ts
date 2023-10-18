@@ -3,7 +3,7 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import { DbSchema } from '../../../language-support/src/dbSchema';
+import type { DbSchema } from 'language-support';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
 import { cypherLinter } from './syntax-validation';

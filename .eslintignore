@@ -1,4 +1,6 @@
 out/
+dist/
+esm/
 packages/language-support/src/generated-parser/*
 packages/antlr4/src/antlr4/*
 packages/antlr4/spec/*
@@ -10,3 +12,4 @@ jest.config.js
 rollup.config.js
 index.html
 packages/language-support/src/highlighting/semanticAnalysis.js
+.eslintrc.js

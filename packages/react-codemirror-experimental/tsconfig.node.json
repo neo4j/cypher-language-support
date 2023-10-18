@@ -7,5 +7,5 @@
     "esModuleInterop": true,
     "allowJs": true
   },
-  "include": ["*.config.ts", "*.config.js", "vite-env.d.ts"]
+  "include": ["*.config.ts", "*.config.js", "vite-env.d.ts", "e2e_tests"]
 }

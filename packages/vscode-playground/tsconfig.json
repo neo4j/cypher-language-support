@@ -1,10 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src", "e2e_tests"],
-  "compilerOptions": {
-    "outDir": "out",
-    "module": "commonjs",
-    "target": "es2022",
-    "skipLibCheck": true
-  }
+  "compilerOptions": { "outDir": "dist" }
 }

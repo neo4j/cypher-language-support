@@ -4,7 +4,7 @@ import {
   Recognizer,
   Token,
 } from 'antlr4';
-import { ParserRuleContext } from 'antlr4-c3';
+import type { ParserRuleContext } from 'antlr4-c3';
 import {
   Diagnostic,
   DiagnosticSeverity,

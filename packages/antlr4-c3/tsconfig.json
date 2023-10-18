@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "outDir": "out",
     "rootDir": ".",
