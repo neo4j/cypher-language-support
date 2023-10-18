@@ -26,7 +26,10 @@
       "persistent": false,
       "dependsOn": ["@neo4j-cypher/react-codemirror-experimental#test:e2e"]
     },
-    "codemirror-playground#dev": {
+    "@neo4j-cypher/react-codemirror-experimental#build": {
+      "dependsOn": ["language-support#build"]
+    },
+    "react-codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
     }
   }

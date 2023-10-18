@@ -1,4 +1,4 @@
-# cypher-lsp-server
+# cypher-language-server
 
 This package contains a LSP server wrapper for the `language-support` package.
 
@@ -6,7 +6,7 @@ This package contains a LSP server wrapper for the `language-support` package.
 
 To package the language server into a single javascript bundle, go to the root of the project and
 do `npm run assemble` or `npm run assemble -- -- --minify` if you'd rather have the code minified.
-After that a file `./packages/server/dist/cypher-language-server.js` will be generated.
+After that a file `./packages/language-server/dist/cypher-language-server.js` will be generated.
 
 You can run the language server with `node ./cypher-language-server.js --stdio`.
 
