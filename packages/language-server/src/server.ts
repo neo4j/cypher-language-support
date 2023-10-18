@@ -12,7 +12,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend, validateSyntax } from 'language-support';
-import { Neo4jSchemaPoller } from 'neo4j-schema-poller';
+import { Neo4jSchemaPoller } from 'schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';

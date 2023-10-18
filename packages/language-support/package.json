@@ -18,7 +18,7 @@
     "build": "npm run gen-parser && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir esm",
     "build-commonjs": "tsc --module commonjs --outDir dist",
-    "clean": "rm -rf out",
+    "clean": "rm -rf dist && rm -rf esm && rm -rf src/generated-parser",
     "watch": "tsc -b -w",
     "test": "jest"
   },

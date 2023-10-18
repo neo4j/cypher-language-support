@@ -1,5 +1,5 @@
 {
-  "name": "neo4j-schema-poller",
+  "name": "schema-poller",
   "description": "",
   "author": "neo4j",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir esm",
     "build-commonjs": "tsc --module commonjs --outDir dist",
-    "clean": "rm -rf out",
+    "clean": "rm -rf dist && rm -rf esm",
     "watch": "tsc -b -w"
   }
 }
