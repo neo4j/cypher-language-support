@@ -3,12 +3,12 @@
     "allowJs": true,
     "declaration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es2018",
+    "target": "ESNext",
     "outDir": "dist"
   },
   "exclude": ["node_modules", ".vscode-test"]
