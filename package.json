@@ -18,7 +18,6 @@
     "watch": "turbo run watch",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
-    "assemble": "turbo run assemble",
     "dev-codemirror": "turbo run react-codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",

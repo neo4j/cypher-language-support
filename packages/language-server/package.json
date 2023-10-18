@@ -16,8 +16,7 @@
   "scripts": {
     "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4",
     "clean": "rm -rf dist && rm -rf esm",
-    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4 --watch ",
-    "assemble": "esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=esm --platform=node"
+    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4 --watch "
   },
   "devDependencies": {
     "esbuild": "^0.19.4"

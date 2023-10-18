@@ -5,10 +5,6 @@
       "outputs": ["out/**", "dist/**", "esm/**"],
       "dependsOn": ["^build"]
     },
-    "assemble": {
-      "cache": false,
-      "dependsOn": ["^build"]
-    },
     "clean": {
       "cache": false
     },
