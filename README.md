@@ -23,4 +23,4 @@ The packages are:
 
 ## Building the project and contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
