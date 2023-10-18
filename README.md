@@ -1,49 +1,26 @@
-# cypher-lsp
+# Cypher Language Support
 
-The mono repo for Neo4j's Cypher Language support, it contains:
+This mono repo contains packages that together make up Neo4j's Cypher Language support.
 
-- LSP server.
-- VSCode extension playground for testing.
-- Web Editor (codemirror) playground
+## Project status
 
-The Trello board for the project is [here](https://trello.com/b/0MAa3MMW/cypher-language-support).
+The project is currently in an early stage. We are still missing important features and the project is not yet stable. We welcome contributions and feedback!
 
-![](./imgs/auto-completion.gif)
+Try it out in our demo or in our alpha releases in [Neo4j Workspace](workspace-preview.neo4j.io) and soon also in our VSCode extension.
 
-## Features
+## Project Overview
 
-- Syntax colouring.
-- Auto completion.
-- Errors highlighting.
+![](./imgs/repo-overview.png)
 
-## Getting started
+The packages are:
 
-Install [antlr4-tools](https://github.com/antlr/antlr4-tools). This will install the `antlr4` and auxiliary tools to work with the parser (like `antlr4-parse`).
+- [language-support](./packages/language-support/README.md) - The core library implementing the language support features.
+- [language-server](./packages/language-server/README.md) - The language server wrapper for the `language-support` package.
+- [vscode-extension](./packages/vscode-extension/README.md) - The Neo4j VSCode extension which bundles the `language-server`
+- [react-codemirror](./packages/react-codemirror/README.md) - A set of [codemirror6](https://codemirror.net/) cypher language support plugins and a react wrapper.
+- [react-codemirror-playground](./packages/react-codemirror-playground/README.md) - A playground for the codemirror integration.
+- [schema-poller](./packages/schema-poller/README.md) - A package used by the language server to
 
-Run `npm install` in the root folder. This installs all dependencies in each package and generates the parser in the server package. The next steps depend on which project you want to run.
+## Contributing
 
-After that, execute `npm run build`, which should compile the full project.
-
-### Running the codemirror demo
-
-Please refer to the [codemirror-playground/README.md](./packages/codemirror-playground/README.md) for a detailed explanation.
-
-### Running the VScode playground
-
-Please refer to the [vscode-playground/README.md](./packages/vscode-playground/README.md) for a detailed explanation.
-
-### Running only the parser
-
-The parser is generated on install, but if you change the .g4 grammar files you can re-generate it using the following command in the server package:
-
-```
-npm run gen-parser
-```
-
-Once antlr4-tools is installed, then you can run the parser in standalone mode with:
-
-```
-antlr4-parse server/src/antlr/Cypher.g4 oC_Cypher -gui
-[Write query][Enter]
-[Ctrl-D]
-```
+[CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
