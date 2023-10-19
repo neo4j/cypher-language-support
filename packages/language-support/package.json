@@ -14,7 +14,6 @@
   },
   "scripts": {
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "postinstall": "npm run gen-parser",
     "build": "npm run gen-parser && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir esm",
     "build-commonjs": "tsc --module commonjs --outDir dist",

@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "ESNext",
-    "outDir": "dist"
+    "outDir": "dist",
+    "incremental": false
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
