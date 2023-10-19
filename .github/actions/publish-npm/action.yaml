@@ -2,7 +2,7 @@ name: 'Publishes package to npm registry'
 
 inputs:
   project-name:
-    description: 'Name of gradle project to test'
+    description: 'Name of the npm package to publish'
     required: true
 
 runs:
