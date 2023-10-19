@@ -1,3 +1,3 @@
-# language-support
+# Langauge Support
 
-Stand-alone language support for Cypher used in `server` and `codemirror`.
+This package contains the core language support features for Cypher built with ANTLR4.

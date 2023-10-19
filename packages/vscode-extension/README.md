@@ -1,6 +1,8 @@
-# vscode-playground
+# VSCode Extension
 
 This is a VScode extension playground for testing the Cypher language server.
+
+It's not yet published on the VSCode marketplace, so to test it you need to run it locally.
 
 For running it, compile the code first:
 
@@ -12,10 +14,6 @@ npm run build
 To launch a new VSCode window with the extension installed go to the `Run & Debug` tab (normally in the left pannel), select and run `VSCode Playground` clicking on the play ▷ button.
 
 This will open a new window where we can open our folder of choice, create a file with `.cypher` extension and start typing cypher helped by the language support.
-
-## running through the terminal. If you have
-
-Note: VSCode must be installed and the `code` executabble must be in your path.
 
 ## Plugin settings
 
