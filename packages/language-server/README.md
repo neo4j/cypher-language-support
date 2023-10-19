@@ -1,6 +1,6 @@
-# cypher-language-server
+# Language Server
 
-This package contains a LSP server wrapper for the `language-support` package.
+A language server wrapper for the `@neo4j-cypher/language-support` package.
 
 ## Bundle the server and run with node
 

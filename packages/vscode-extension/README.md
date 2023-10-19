@@ -1,6 +1,8 @@
-# vscode-playground
+# VSCode Extension
 
 This is a VScode extension playground for testing the Cypher language server.
+
+It's not yet published on the VSCode Marketplace, so to test it you need to run it locally.
 
 For running it, compile the code first:
 
