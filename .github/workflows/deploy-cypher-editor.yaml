@@ -36,5 +36,5 @@ jobs:
         uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: 'packages/react-codemirror-experimental/package.json'
+          package: 'packages/react-codemirror/package.json'
           access: 'restricted'

@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from 'language-support';
+import { applySyntaxColouring } from '@neo4j-cypher/language-support';
 import React from 'react';
 
 export function TokenTable({ document }: { document: string }) {

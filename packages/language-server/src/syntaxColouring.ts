@@ -1,7 +1,7 @@
 import {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
-} from 'language-support';
+} from '@neo4j-cypher/language-support';
 import {
   SemanticTokensBuilder,
   SemanticTokensParams,

@@ -8,7 +8,7 @@ import {
   CypherParser,
   parse,
   ParserRuleContext,
-} from 'language-support';
+} from '@neo4j-cypher/language-support';
 
 export function getDebugTree(cypher: string): SimpleTree {
   const statements = parse(cypher);

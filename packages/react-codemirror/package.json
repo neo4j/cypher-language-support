@@ -1,5 +1,5 @@
 {
-  "name": "@neo4j-cypher/react-codemirror-experimental",
+  "name": "@neo4j-cypher/react-codemirror",
   "license": "Apache-2.0",
   "files": [
     "dist",
