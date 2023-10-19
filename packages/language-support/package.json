@@ -7,8 +7,8 @@
   "main": "./dist/index.js",
   "module": "./esm/index.js",
   "dependencies": {
-    "antlr4": "*",
-    "antlr4-c3": "*",
+    "antlr4": "workspace:*",
+    "antlr4-c3": "workspace:*",
     "fastest-levenshtein": "^1.0.16",
     "vscode-languageserver-types": "^3.17.3"
   },
@@ -23,6 +23,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.5"
+    "@types/jest": "^29.5.5",
+    "concurrently": "^8.2.1"
   }
 }

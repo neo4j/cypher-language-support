@@ -5,9 +5,6 @@
       "outputs": ["out/**", "dist/**", "esm/**"],
       "dependsOn": ["^build"]
     },
-    "clean": {
-      "cache": false
-    },
     "watch": {},
     "test": {
       "cache": false,

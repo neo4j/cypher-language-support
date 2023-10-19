@@ -5,7 +5,6 @@ import {
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { StyleSpec } from 'style-mod';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 import {
   byWordSvg,
@@ -47,7 +46,7 @@ export const createCypherTheme = ({
   highlightStyles,
   inheritBgColor,
 }: ThemeOptions): Extension => {
-  const themeOptions: Record<string, StyleSpec> = {
+  const themeOptions = {
     '&': {
       backgroundColor: inheritBgColor ? 'inherit' : settings.background,
       color: settings.foreground,

@@ -1,5 +1,5 @@
 import { DbSchema } from '@neo4j-cypher/language-support';
-import { SignatureInformation } from 'vscode-languageserver/node';
+import { SignatureInformation } from 'vscode-languageserver-types';
 import { Neo4jConnection } from './neo4j-connection.js';
 import { DataSummary, getDataSummary } from './queries/data-summary.js';
 import { Database, listDatabases } from './queries/databases.js';
@@ -77,7 +77,7 @@ export class MetadataPoller {
   private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
   private procedures: QueryPoller<{ procedures: Procedure[] }>;
 
-  private dbPollingInterval: NodeJS.Timer | undefined;
+  private dbPollingInterval?: ReturnType<typeof setInterval>;
 
   public dbSchema: DbSchema = {};
 
