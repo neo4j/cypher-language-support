@@ -13,20 +13,23 @@
       "cache": false,
       "persistent": true
     },
-    "@neo4j-cypher/react-codemirror-experimental#test:e2e": {
+    "@neo4j-cypher/react-codemirror#test:e2e": {
       "cache": false,
       "persistent": false
     },
     "cypher-ls-vscode-playground#test:e2e": {
       "cache": false,
       "persistent": false,
-      "dependsOn": ["@neo4j-cypher/react-codemirror-experimental#test:e2e"]
+      "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]
     },
-    "@neo4j-cypher/react-codemirror-experimental#build": {
+    "@neo4j-cypher/react-codemirror#build": {
       "dependsOn": ["language-support#build"]
     },
     "react-codemirror-playground#dev": {
       "dependsOn": ["language-support#build"]
+    },
+    "cypher-language-server#build": {
+      "dependsOn": ["language-support#build", "schema-poller#build"]
     }
   }
 }

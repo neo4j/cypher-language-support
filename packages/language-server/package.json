@@ -1,6 +1,6 @@
 {
-  "name": "cypher-lsp-server",
-  "description": "Cypher LSP's server",
+  "name": "cypher-language-server",
+  "description": "Cypher Language Server",
   "author": "neo4j",
   "license": "Apache-2.0",
   "version": "0.0.1",
