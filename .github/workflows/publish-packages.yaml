@@ -1,0 +1,27 @@
+name: Publish react-codemirror package to npm
+
+on:
+  # Runs on pushes targeting the default branch
+  # push:
+  #   branches: ['main']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ['language-support', 'language-server', 'react-codemirror']
+
+    environment: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish ${{ matrix.project }} to npm
+        uses: ./.github/actions/publish-npm
+        with:
+          project-name: ${{ matrix.project }}

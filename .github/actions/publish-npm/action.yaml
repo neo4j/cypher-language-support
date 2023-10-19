@@ -1,0 +1,28 @@
+name: 'Publishes package to npm registry'
+
+inputs:
+  project-name:
+    description: 'Name of gradle project to test'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup antlr4
+      uses: ./.github/actions/setup-antlr4
+
+    - name: Install dependencies with frozen lock file and generate parser
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Publish on updated version number
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
+        package: 'packages/${{inputs.project-name}}/package.json'
+        access: 'public'
