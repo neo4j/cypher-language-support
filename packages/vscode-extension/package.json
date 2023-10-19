@@ -78,6 +78,7 @@
     "watch": "tsc -b -w"
   },
   "dependencies": {
+    "@neo4j-cypher/language-server": "*",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

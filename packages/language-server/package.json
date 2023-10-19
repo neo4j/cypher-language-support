@@ -4,7 +4,7 @@
   "author": "neo4j",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "main": "dist/server.js",
+  "main": "dist/cypher-language-server.js",
   "types": "src/server.ts",
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
@@ -15,9 +15,9 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {
-    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4",
+    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4",
     "clean": "rm -rf dist && rm -rf esm",
-    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4 --watch "
+    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4 --watch "
   },
   "devDependencies": {
     "esbuild": "^0.19.4"
