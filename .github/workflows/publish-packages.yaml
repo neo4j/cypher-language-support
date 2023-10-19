@@ -5,6 +5,10 @@ on:
   # push:
   #   branches: ['main']
 
+  # Run the workflow on push only after the unit tests have passed
+  workflow_run:
+    workflows: ['Run Tests']
+    branches: [main]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
