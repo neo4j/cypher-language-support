@@ -9,7 +9,8 @@
     "url": "git+https://github.com/neo4j/cypher-lsp.git"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "vendor/*"
   ],
   "scripts": {
     "prepare": "husky install",
