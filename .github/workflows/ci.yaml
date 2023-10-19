@@ -81,6 +81,9 @@ jobs:
         # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
         run: xvfb-run -a npm run test:e2e
 
+      - name: ls files
+        run: ls -lh packages/react-codemirror/
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
