@@ -11,7 +11,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
-    "build": "pnpm --recursive build",
+    "build": "turbo run build",
     "clean": "pnpm --recursive clean",
     "watch": "turbo run watch",
     "test": "turbo run test",
