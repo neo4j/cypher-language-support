@@ -13,6 +13,10 @@ To launch a new VSCode window with the extension installed go to the `Run & Debu
 
 This will open a new window where we can open our folder of choice, create a file with `.cypher` extension and start typing cypher helped by the language support.
 
+## running through the terminal. If you have
+
+Note: VSCode must be installed and the `code` executabble must be in your path.
+
 ## Plugin settings
 
 For database aware features (such as autocompleting labels, procedure names, etc), you can connect to a running database (Aura, neo4j docker, etc) by tweaking the playground settings, in the opened window.

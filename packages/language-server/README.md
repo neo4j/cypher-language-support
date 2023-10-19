@@ -1,14 +1,14 @@
-# cypher-language-server
+# Language Server
 
-This package contains a LSP server wrapper for the `language-support` package.
+A language server wrapper for the `@neo4j-cypher/language-support` package.
 
 ## Bundle the server and run with node
 
 To package the language server into a single javascript bundle, go to the root of the project and
-do `npm run build`.
-After that a file `./packages/language-server/dist/server.js` will be generated.
+do `npm run assemble` or `npm run assemble -- -- --minify` if you'd rather have the code minified.
+After that a file `./packages/server/dist/cypher-language-server.js` will be generated.
 
-You can run the language server with `node ./server.js --stdio`.
+You can run the language server with `node ./cypher-language-server.js --stdio`.
 
 Below you can find a few examples in Typescript on how to send messages to that server.
 
@@ -17,7 +17,9 @@ Below you can find a few examples in Typescript on how to send messages to that 
 ```typescript
 import * as child_process from 'child_process';
 
-let lspProcess = child_process.fork('server.js', ['--node-ipc']);
+let lspProcess = child_process.fork('cypher-language-server.js', [
+  '--node-ipc',
+]);
 let messageId = 1;
 
 function send(method: string, params: object) {
@@ -93,7 +95,7 @@ const server = net.createServer((socket: net.Socket) => {
 });
 
 server.listen(3000, () => {
-  child_process.spawn('node', ['server.js', '--socket=3000']);
+  child_process.spawn('node', ['cypher-language-server.js', '--socket=3000']);
 });
 ```
 
@@ -103,7 +105,10 @@ server.listen(3000, () => {
 import * as child_process from 'child_process';
 import * as rpc from 'vscode-jsonrpc/node';
 
-let lspProcess = child_process.spawn('node', ['server.js', '--stdio']);
+let lspProcess = child_process.spawn('node', [
+  'cypher-language-server.js',
+  '--stdio',
+]);
 let messageId = 1;
 
 const reader = new rpc.StreamMessageReader(lspProcess.stdout);
