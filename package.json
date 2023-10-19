@@ -1,12 +1,12 @@
 {
-  "name": "cypher-lsp",
-  "description": "Cypher LSP",
+  "name": "@neo4j-cypher",
+  "description": "Cypher Language Support",
   "license": "Apache",
   "version": "1.0.0",
   "categories": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neo4j/cypher-lsp.git"
+    "url": "git+https://github.com/neo4j/cypher-language-support.git"
   },
   "workspaces": [
     "packages/*",

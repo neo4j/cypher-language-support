@@ -1,6 +1,6 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
-import { DbSchema, validateSyntax } from 'language-support';
+import { DbSchema, validateSyntax } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
 export const cypherLinter: (schema?: DbSchema) => Extension = (schema) =>

@@ -1,9 +1,9 @@
 import { EditorView, KeyBinding, keymap } from '@codemirror/view';
+import type { DbSchema } from '@neo4j-cypher/language-support';
 import CodeEditor, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
 } from '@uiw/react-codemirror';
-import type { DbSchema } from 'language-support';
 import React from 'react';
 import { cypher } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';

@@ -11,8 +11,11 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { syntaxColouringLegend, validateSyntax } from 'language-support';
-import { Neo4jSchemaPoller } from 'schema-poller';
+import {
+  syntaxColouringLegend,
+  validateSyntax,
+} from '@neo4j-cypher/language-support';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';

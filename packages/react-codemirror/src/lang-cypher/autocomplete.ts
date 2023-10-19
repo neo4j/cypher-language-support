@@ -1,5 +1,5 @@
 import { CompletionSource } from '@codemirror/autocomplete';
-import { autocomplete, DbSchema } from 'language-support';
+import { autocomplete, DbSchema } from '@neo4j-cypher/language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 

@@ -1,5 +1,5 @@
-import { CypherEditor } from '@neo4j-cypher/react-codemirror-experimental';
-import { DbSchema } from 'language-support';
+import { DbSchema } from '@neo4j-cypher/language-support';
+import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { dummyDbSchema } from './mock-schema.js';

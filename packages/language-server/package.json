@@ -1,22 +1,23 @@
 {
-  "name": "cypher-lsp-server",
-  "description": "Cypher LSP's server",
+  "name": "@neo4j-cypher/language-server",
+  "description": "Cypher Language Server",
   "author": "neo4j",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "main": "dist/server.js",
+  "main": "dist/cypher-language-server.js",
   "types": "src/server.ts",
   "dependencies": {
-    "language-support": "*",
+    "@neo4j-cypher/language-support": "*",
+    "@neo4j-cypher/schema-poller": "*",
+    "antlr4-c3": "*",
     "neo4j-driver": "^5.3.0",
-    "schema-poller": "*",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "scripts": {
-    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4",
+    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4",
     "clean": "rm -rf dist && rm -rf esm",
-    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/server.js --format=cjs --platform=node --external:antlr4 --watch "
+    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4 --watch "
   },
   "devDependencies": {
     "esbuild": "^0.19.4"

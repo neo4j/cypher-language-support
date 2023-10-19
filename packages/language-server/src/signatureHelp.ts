@@ -1,4 +1,4 @@
-import { signatureHelp } from 'language-support';
+import { signatureHelp } from '@neo4j-cypher/language-support';
 import {
   Position,
   Range,
@@ -7,7 +7,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSchemaPoller } from 'schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {

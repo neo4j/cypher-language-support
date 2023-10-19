@@ -1,4 +1,4 @@
-import { DbSchema } from 'language-support';
+import { DbSchema } from '@neo4j-cypher/language-support';
 import { SignatureInformation } from 'vscode-languageserver/node';
 import { Neo4jConnection } from './neo4j-connection.js';
 import { DataSummary, getDataSummary } from './queries/data-summary.js';

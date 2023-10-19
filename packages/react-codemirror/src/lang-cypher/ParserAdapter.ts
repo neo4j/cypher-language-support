@@ -4,7 +4,7 @@ import {
   applySyntaxColouring,
   CypherTokenType,
   ParsedCypherToken,
-} from 'language-support';
+} from '@neo4j-cypher/language-support';
 import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
