@@ -7,7 +7,7 @@ import {
 import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import React from 'react';
-import { cypher } from './lang-cypher/lang-cypher';
+import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';
 import { getThemeExtension } from './themes';
@@ -27,21 +27,24 @@ export interface CypherEditorProps {
   schema?: DbSchema;
   value?: string;
   className?: string;
-  style?: React.CSSProperties;
   /**
    * `light` / `dark` / `Extension` Defaults to `light`.
    * @default light
    */
   theme?: 'light' | 'dark' | 'none' | Extension;
   onChange?(value: string, viewUpdate: ViewUpdate): void;
-  /**
-   * Extension values can be [provided](https://codemirror.net/6/docs/ref/#state.EditorStateConfig.extensions) when creating a state to attach various kinds of configuration and behavior information.
-   * They can either be built-in extension-providing objects,
-   * such as [state fields](https://codemirror.net/6/docs/ref/#state.StateField) or [facet providers](https://codemirror.net/6/docs/ref/#state.Facet.of),
-   * or objects with an extension in its `extension` property. Extensions can be nested in arrays arbitrarily deep—they will be flattened when processed.
-   */
-  extensions?: Extension[];
 }
+
+// TODO read only
+// TODO line wrap
+/*
+testa mera
+  prompt?: string;
+  extraKeybindings?: KeyBinding[];
+  onExecute?: (cmd: string) => void;
+  initialHistory?: string[];
+
+*/
 
 const themeCompartment = new Compartment();
 
@@ -50,6 +53,7 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
   editorContainer: React.RefObject<HTMLDivElement> = React.createRef();
   editorState: React.MutableRefObject<EditorState> = React.createRef();
   editorView: React.MutableRefObject<EditorView> = React.createRef();
+  schemaRef: React.MutableRefObject<CypherConfig> = React.createRef();
 
   componentDidMount(): void {
     const {
@@ -65,6 +69,8 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
       lint = true,
       onChange,
     } = this.props;
+
+    this.schemaRef.current = { schema, lint };
 
     const maybeReplMode = onExecute
       ? replMode({
@@ -100,7 +106,7 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
         basicNeo4jSetup(prompt),
         themeCompartment.of(themeExtension),
         changeListener,
-        cypher({ lint: lint, schema: schema }),
+        cypher(this.schemaRef.current),
         keymap.of(extraKeybindings),
         maybeReplMode,
         lineWrap ? EditorView.lineWrapping : [],
@@ -161,12 +167,22 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
         ),
       });
     }
+
+    /*
+    The cypher configuration is a mutable object that is passed to the cypher language extension.
+    Much like how the schema based completions work in the official sql language extension.
+    https://github.com/codemirror/lang-sql/blob/4b7b2564dff7cdb1a15f8ccd08142f2cc8a0006f/src/sql.ts#L178C17-L178C18
+    */
+    this.schemaRef.current.schema = this.props.schema;
+    this.schemaRef.current.lint = this.props.lint;
+    console.log('schema', this.schemaRef.current);
   }
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
   }
 
+  // TODO funkar none
   render(): React.ReactNode {
     const { className, theme } = this.props;
 
