@@ -18,10 +18,6 @@ import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';
 import { getThemeExtension } from './themes';
 
-// TODO Exportera så man kan sätta ihop den själv om man vill ha annorlunda
-// look at which props should be reactive here.
-// todo might need to make onChange/on executre reactive as well....
-
 export interface CypherEditorProps {
   prompt?: string;
   extraKeybindings?: KeyBinding[];
@@ -66,7 +62,6 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
   componentDidMount(): void {
     const {
       theme,
-      prompt,
       onExecute,
       initialHistory,
       onNewHistoryEntry,
