@@ -31,7 +31,7 @@ export interface CypherEditorProps {
    * `light` / `dark` / `Extension` Defaults to `light`.
    * @default light
    */
-  theme?: 'light' | 'dark' | 'none' | Extension;
+  theme?: 'light' | 'dark' | Extension;
   onChange?(value: string, viewUpdate: ViewUpdate): void;
 }
 
@@ -103,12 +103,12 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
 
     this.editorState.current = EditorState.create({
       extensions: [
+        maybeReplMode,
         basicNeo4jSetup(prompt),
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
         keymap.of(extraKeybindings),
-        maybeReplMode,
         lineWrap ? EditorView.lineWrapping : [],
       ],
       doc: this.props.value,
@@ -140,7 +140,7 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     // Handle externally set value
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
-    if (currentCmValue !== this.props.value) {
+    if (this.props.value !== undefined && currentCmValue !== this.props.value) {
       this.editorView.current.dispatch({
         changes: {
           from: 0,
@@ -175,14 +175,12 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
-    console.log('schema', this.schemaRef.current);
   }
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
   }
 
-  // TODO funkar none
   render(): React.ReactNode {
     const { className, theme } = this.props;
 

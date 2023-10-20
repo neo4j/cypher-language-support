@@ -1,0 +1,79 @@
+import { expect, test } from '@playwright/experimental-ct-react';
+import { CypherEditor } from '../CypherEditor';
+
+test.use({ viewport: { width: 500, height: 500 } });
+
+test('can mount the editor with text', async ({ mount }) => {
+  const component = await mount(<CypherEditor value="MATCH (n) RETURN n;" />);
+
+  await expect(component).toContainText('MATCH (n) RETURN n;');
+});
+
+test('the editors text can be externally controlled ', async ({ mount }) => {
+  const intitialValue = 'MATCH (n) RETURN n;';
+
+  const component = await mount(<CypherEditor value={intitialValue} />);
+
+  await expect(component).toContainText(intitialValue);
+
+  const newValue = 'RETURN 123';
+  await component.update(<CypherEditor value={newValue} />);
+
+  await expect(component).toContainText(newValue);
+});
+
+test('the editors can report changes to the text ', async ({ mount, page }) => {
+  const intitialValue = 'MATCH (n) ';
+
+  let editorValueCopy = intitialValue;
+  const onChange = (val: string) => {
+    editorValueCopy = val;
+  };
+
+  await mount(<CypherEditor value={intitialValue} onChange={onChange} />);
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('RETURN 12');
+
+  expect(editorValueCopy).toBe('RETURN 12');
+
+  await page.keyboard.type('34');
+
+  expect(editorValueCopy).toBe('RETURN 1234');
+});
+
+test('can complete RETURN', async ({ page, mount }) => {
+  await mount(<CypherEditor />);
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('RETU');
+
+  await page.getByText('RETURN').click();
+  await expect(textField).toHaveText('RETURN');
+});
+
+test('can complete CALL/CREATE', async ({ page, mount }) => {
+  await mount(<CypherEditor />);
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('C');
+  await expect(page.getByText('CALL')).toBeVisible();
+  await expect(page.getByText('CREATE')).toBeVisible();
+
+  await textField.fill('CA');
+  await expect(page.getByText('CALL')).toBeVisible();
+  await expect(page.getByText('CREATE')).not.toBeVisible();
+
+  // wait for the autocomplete interactivity
+  await page.waitForTimeout(500);
+  await textField.press('Enter');
+
+  await expect(textField).toHaveText('CALL');
+});
+
+test('prompt shows up', async ({ mount }) => {
+  const component = await mount(<CypherEditor prompt="neo4j>" />);
+
+  await expect(component).toContainText('neo4j>');
+});
