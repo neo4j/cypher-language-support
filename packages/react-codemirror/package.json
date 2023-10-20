@@ -16,7 +16,8 @@
     "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs src/index.ts",
     "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs src/index.ts",
     "test": "jest",
-    "test:e2e": "playwright test -c playwright-ct.config.ts"
+    "test:e2e": "playwright test -c playwright-ct.config.ts",
+    "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.5.1",
