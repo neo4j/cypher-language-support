@@ -5,7 +5,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "paths": {
-      "language-support": ["../language-support/src/index.ts"]
+      "@neo4j-cypher/language-support": ["../language-support/src/index.ts"]
     }
   }
 }
