@@ -28,7 +28,6 @@ import {
   EditorView,
   highlightSpecialChars,
   keymap,
-  lineNumbers,
   rectangularSelection,
 } from '@codemirror/view';
 
@@ -55,7 +54,7 @@ const insertTab: StateCommand = (cmd) => {
   return true;
 };
 
-export const basicNeo4jSetup = (prompt?: string): Extension[] => {
+export const basicNeo4jSetup = (): Extension[] => {
   const keymaps = [
     closeBracketsKeymap,
     defaultKeymap,
@@ -82,18 +81,6 @@ export const basicNeo4jSetup = (prompt?: string): Extension[] => {
   ].flat();
 
   const extensions: Extension[] = [];
-
-  extensions.push(
-    lineNumbers({
-      formatNumber(a, state) {
-        if (state.doc.lines === 1 && prompt !== undefined) {
-          return prompt;
-        }
-
-        return a.toString();
-      },
-    }),
-  );
 
   extensions.push(highlightSpecialChars());
   extensions.push(history());

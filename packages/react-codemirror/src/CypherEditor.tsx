@@ -4,7 +4,13 @@ import {
   EditorState,
   Extension,
 } from '@codemirror/state';
-import { EditorView, KeyBinding, keymap, ViewUpdate } from '@codemirror/view';
+import {
+  EditorView,
+  KeyBinding,
+  keymap,
+  lineNumbers,
+  ViewUpdate,
+} from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import React from 'react';
 import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
@@ -13,6 +19,9 @@ import { replMode } from './repl-mode';
 import { getThemeExtension } from './themes';
 
 // TODO Exportera så man kan sätta ihop den själv om man vill ha annorlunda
+// look at which props should be reactive here.
+// todo might need to make onChange/on executre reactive as well....
+
 export interface CypherEditorProps {
   prompt?: string;
   extraKeybindings?: KeyBinding[];
@@ -23,25 +32,16 @@ export interface CypherEditorProps {
   autofocus?: boolean;
   lineWrap?: boolean;
   lint?: boolean;
-  readOnly?: boolean;
   schema?: DbSchema;
   value?: string;
   className?: string;
   /**
-   * `light` / `dark` / `Extension` Defaults to `light`.
-   * @default light
+   * `light` / `dark` / `Extension`
+   *  @default light
    */
   theme?: 'light' | 'dark' | Extension;
   onChange?(value: string, viewUpdate: ViewUpdate): void;
 }
-
-// TODO read only
-// TODO line wrap
-
-/*
-testa mera
-  extraKeybindings?: KeyBinding[];
-*/
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
@@ -53,18 +53,28 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
   editorView: React.MutableRefObject<EditorView> = React.createRef();
   schemaRef: React.MutableRefObject<CypherConfig> = React.createRef();
 
+  static defaultProps: CypherEditorProps = {
+    lint: true,
+    schema: {},
+    overrideThemeBackgroundColor: false,
+    lineWrap: false,
+    extraKeybindings: [],
+    initialHistory: [],
+    theme: 'light',
+  };
+
   componentDidMount(): void {
     const {
-      theme = 'light',
+      theme,
       prompt,
       onExecute,
-      initialHistory = [],
+      initialHistory,
       onNewHistoryEntry,
-      extraKeybindings = [],
-      lineWrap = false,
-      overrideThemeBackgroundColor = false,
-      schema = {},
-      lint = true,
+      extraKeybindings,
+      lineWrap,
+      overrideThemeBackgroundColor,
+      schema,
+      lint,
       onChange,
     } = this.props;
 
@@ -102,12 +112,22 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     this.editorState.current = EditorState.create({
       extensions: [
         maybeReplMode,
-        basicNeo4jSetup(prompt),
+        basicNeo4jSetup(),
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
         keyBindingCompartment.of(keymap.of(extraKeybindings)),
         lineWrap ? EditorView.lineWrapping : [],
+
+        lineNumbers({
+          formatNumber: (a, state) => {
+            if (state.doc.lines === 1 && this.props.prompt !== undefined) {
+              return this.props.prompt;
+            }
+
+            return a.toString();
+          },
+        }),
       ],
       doc: this.props.value,
     });
@@ -123,9 +143,6 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
   }
 
   componentDidUpdate(prevProps: CypherEditorProps): void {
-    // TODO default extensions
-    // look at which props should be reactive here.
-
     if (!this.editorView.current) {
       return;
     }
