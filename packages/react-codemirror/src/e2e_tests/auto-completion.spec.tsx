@@ -165,8 +165,6 @@ test('can complete functions', async ({ page, mount }) => {
   await expect(component).toContainText('RETURN function123');
 });
 
-// TODO TEST LINTING
-
 test('can complete procedures', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
