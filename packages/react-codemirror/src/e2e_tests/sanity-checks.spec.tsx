@@ -76,4 +76,7 @@ test('prompt shows up', async ({ mount }) => {
   const component = await mount(<CypherEditor prompt="neo4j>" />);
 
   await expect(component).toContainText('neo4j>');
+
+  await component.update(<CypherEditor prompt="test>" />);
+  await expect(component).toContainText('test>');
 });

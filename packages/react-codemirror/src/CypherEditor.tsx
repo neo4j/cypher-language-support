@@ -37,16 +37,14 @@ export interface CypherEditorProps {
 
 // TODO read only
 // TODO line wrap
+
 /*
 testa mera
-  prompt?: string;
   extraKeybindings?: KeyBinding[];
-  onExecute?: (cmd: string) => void;
-  initialHistory?: string[];
-
 */
 
 const themeCompartment = new Compartment();
+const keyBindingCompartment = new Compartment();
 
 const ExternalEdit = Annotation.define<boolean>();
 export class CypherEditor extends React.Component<CypherEditorProps> {
@@ -108,7 +106,7 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
-        keymap.of(extraKeybindings),
+        keyBindingCompartment.of(keymap.of(extraKeybindings)),
         lineWrap ? EditorView.lineWrapping : [],
       ],
       doc: this.props.value,
@@ -122,16 +120,11 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     if (this.props.autofocus) {
       this.editorView.current.focus();
     }
-
-    // TODO dispatch new db schema when it changes
-
-    // TODO default extensions
   }
 
   componentDidUpdate(prevProps: CypherEditorProps): void {
+    // TODO default extensions
     // look at which props should be reactive here.
-    // hahdle theme
-    // theme compartment?
 
     if (!this.editorView.current) {
       return;
@@ -164,6 +157,14 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
             this.props.theme,
             this.props.overrideThemeBackgroundColor,
           ),
+        ),
+      });
+    }
+
+    if (prevProps.extraKeybindings !== this.props.extraKeybindings) {
+      this.editorView.current.dispatch({
+        effects: keyBindingCompartment.reconfigure(
+          keymap.of(this.props.extraKeybindings),
         ),
       });
     }
