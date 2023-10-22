@@ -1,9 +1,9 @@
 {
   "name": "@neo4j-cypher/language-support",
   "description": "Cypher language support",
-  "author": "neo4j",
+  "author": "Neo4j",
   "license": "Apache-2.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./esm/index.js",
   "dependencies": {

@@ -1,9 +1,9 @@
 {
   "name": "@neo4j-cypher/schema-poller",
   "description": "",
-  "author": "neo4j",
+  "author": "Neo4j",
   "license": "Apache-2.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/src/index.js",
   "module": "./esm/src/index.js",
   "dependencies": {

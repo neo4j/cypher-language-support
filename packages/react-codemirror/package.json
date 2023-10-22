@@ -7,7 +7,7 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.14",
+  "version": "1.0.0",
   "main": "dist/index.cjs",
   "module": "esm/index.mjs",
   "sideEffects": false,

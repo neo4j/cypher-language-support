@@ -1,13 +1,13 @@
 {
   "name": "@neo4j-cypher/vscode-extension",
   "description": "Neo4j's Cypher VSCode extension",
-  "author": "neo4j",
+  "author": "Neo4j",
   "license": "Apache-2.0",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.75.0"
   },
-  "publisher": "neo4j",
+  "publisher": "Neo4j",
   "activationEvents": [
     "onLanguage:cypher"
   ],
