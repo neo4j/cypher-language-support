@@ -8,18 +8,29 @@
     "README.md"
   ],
   "version": "2.0.0-next.0",
-  "main": "dist/index.cjs",
-  "module": "esm/index.mjs",
+  "main": "./build/cjs/index.cjs",
+  "module": "./build/esm/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./build/types/index.d.ts",
+      "require": "./build/cjs/index.cjs",
+      "import": "./build/esm/index.mjs",
+      "default": "./build/cjs/index.cjs"
+    }
+  },
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs --packages=external src/index.ts",
-    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs --packages=external src/index.ts",
+    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build-types": "tsc --emitDeclarationOnly --outDir build/types",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap=external --packages=external --outfile=build/esm/index.mjs",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap=external --packages=external --outfile=build/cjs/index.cjs",
+    "clean": "rm -rf build",
     "test": "jest",
     "test:e2e": "playwright test",
     "e2e-http-server": "vite dev"
   },
   "dependencies": {
+    "@neo4j-cypher/language-support": "2.0.0-next.0",
     "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/language": "^6.6.0",
