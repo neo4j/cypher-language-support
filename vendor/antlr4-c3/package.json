@@ -16,15 +16,22 @@
     "parser"
   ],
   "type": "module",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./esm/index.js",
+  "exports": {
+    "import": "./esm/index.js",
+    "require": "./dist/index.js"
+  },
   "scripts": {
-    "build": "npm run generate && tsc",
+    "build": "npm run generate && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build-esm": "tsc --module esnext --outDir esm",
+    "build-commonjs": "tsc --module commonjs --outDir dist",
     "prepublishOnly": "npm run generate && npm run test",
     "test": "jest",
     "generate": "tests/generate.sh",
     "eslint": "eslint .",
-    "clean": "rm -rf out"
+    "clean": "rm -rf {dist,esm,out}"
   },
   "dependencies": {
     "antlr4": "*"
@@ -39,8 +46,8 @@
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsdoc": "40.0.1",
     "eslint-plugin-prefer-arrow": "1.2.3",
-    "ts-jest": "29.0.5",
+    "ts-jest": "^29.1.1",
     "ts-node": "10.9.1",
-    "typescript": "5.0.2"
+    "typescript": "^4.9.5"
   }
 }

@@ -6,6 +6,11 @@
   "version": "2.0.0-next.0",
   "main": "./dist/index.js",
   "module": "./esm/index.js",
+  "type": "module",
+  "exports": {
+    "import": "./esm/index.js",
+    "require": "./dist/index.js"
+  },
   "dependencies": {
     "antlr4": "*",
     "antlr4-c3": "*",
@@ -18,7 +23,7 @@
     "build": "npm run gen-parser && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir esm",
     "build-commonjs": "tsc --module commonjs --outDir dist",
-    "clean": "rm -rf dist && rm -rf esm && rm -rf src/generated-parser",
+    "clean": "rm -rf {dist,esm,out,src/generated-parser}",
     "watch": "tsc -b -w",
     "test": "jest"
   },
