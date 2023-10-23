@@ -7,5 +7,11 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "antlr4",
+    "antlr4-c3",
+    "vscode-extension",
+    "react-codemirror-playground",
+    "schema-poller"
+  ]
 }
