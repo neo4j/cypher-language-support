@@ -57,7 +57,18 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     this.editorView.current?.dispatch({
       selection: { anchor: position, head: position },
     });
+  }
 
+  setValueAndFocus(value = '') {
+    const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
+    this.editorView.current.dispatch({
+      changes: {
+        from: 0,
+        to: currentCmValue.length,
+        insert: value,
+      },
+      selection: { anchor: value.length, head: value.length },
+    });
     this.editorView.current?.focus();
   }
 
@@ -145,7 +156,10 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     });
 
     if (this.props.autofocus) {
-      this.editorView.current.focus();
+      this.focus();
+      if (this.props.value) {
+        this.updateCursorPosition(this.props.value.length);
+      }
     }
   }
 
@@ -158,7 +172,6 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
     if (this.props.value !== undefined && currentCmValue !== this.props.value) {
-      this.editorView.current.state.selection;
       this.editorView.current.dispatch({
         changes: {
           from: 0,
