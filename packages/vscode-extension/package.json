@@ -1,9 +1,10 @@
 {
-  "name": "@neo4j-cypher/vscode-extension",
-  "description": "Neo4j's Cypher VSCode extension",
+  "name": "neo4j-cypher-vscode-extension",
+  "description": "Enables support for Neo4j and its query language Cypher VSCode extension",
   "author": "Neo4j",
   "license": "Apache-2.0",
   "version": "2.0.0-next.0",
+  "repository": "https://github.com/neo4j/cypher-language-support",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -11,7 +12,7 @@
   "activationEvents": [
     "onLanguage:cypher"
   ],
-  "main": "./dist/src/extension",
+  "main": "./dist/extension.js",
   "contributes": {
     "languages": [
       {
@@ -28,7 +29,7 @@
     "configuration": {
       "title": "Cypher LSP",
       "properties": {
-        "cypherLSP.trace.server": {
+        "neo4j.trace.server": {
           "scope": "window",
           "type": "string",
           "enum": [
@@ -39,25 +40,25 @@
           "default": "off",
           "description": "Traces the communication between VS Code and the language server."
         },
-        "cypherLSP.neo4j.connect": {
+        "neo4j.connect": {
           "order": 1,
           "type": "boolean",
           "default": true,
           "description": "Shall connect to Neo4j to gather data about labels and types."
         },
-        "cypherLSP.neo4j.URL": {
+        "neo4j.URL": {
           "order": 2,
           "type": "string",
           "default": "bolt://localhost:7687",
           "description": "Url of the database to connect."
         },
-        "cypherLSP.neo4j.user": {
+        "neo4j.user": {
           "order": 3,
           "type": "string",
           "default": "neo4j",
           "description": "Username of the database to connect."
         },
-        "cypherLSP.neo4j.password": {
+        "neo4j.password": {
           "order": 4,
           "type": "string",
           "default": "password",
@@ -72,6 +73,9 @@
     }
   },
   "scripts": {
+    "vscode:prepublish": "npm run bundle-extension && npm run bundle-language-server",
+    "bundle-language-server": "cd ../language-server && npm run bundle -- --minify && cp dist/cypher-language-server.js ../vscode-extension/dist/",
+    "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
     "build": "tsc -b && cp -r ./e2e_tests/fixtures ./dist/e2e_tests/fixtures",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
@@ -84,10 +88,10 @@
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^16.11.7",
-    "@types/vscode": "^1.82.0",
+    "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.2.3",
     "mocha": "^10.2.0",
     "typescript": "^4.9.5",
-    "@vscode/vsce": "^2.15.0"
+    "@vscode/vsce": "^2.21.1"
   }
 }

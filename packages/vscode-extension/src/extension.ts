@@ -11,16 +11,19 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
-  const serverModule = context.asAbsolutePath(
+  const runServer = context.asAbsolutePath(
+    path.join('dist', 'cypher-language-server.js'),
+  );
+  const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+    run: { module: runServer, transport: TransportKind.ipc },
     debug: {
-      module: serverModule,
+      module: debugServer,
       transport: TransportKind.ipc,
     },
   };
