@@ -8,7 +8,7 @@
 const config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ['dist', 'esm', 'out']
+  modulePathIgnorePatterns: ['dist', 'out']
 };
 
 module.exports = config;

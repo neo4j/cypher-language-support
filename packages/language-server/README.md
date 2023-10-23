@@ -5,7 +5,7 @@ A language server wrapper for the `@neo4j-cypher/language-support` package.
 ## Bundle the server and run with node
 
 To package the language server into a single javascript bundle, go to the root of the project and
-do `npm run prepublish`.
+do `npm run bundle`.
 After that a file `./packages/language-server/dist/cypher-language-server.js` will be generated.
 
 You can run the language server with `node ./cypher-language-server.js --stdio`.
