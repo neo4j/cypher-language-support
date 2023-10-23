@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "outputs": ["out/**", "dist/**", "esm/**"],
+      "outputs": ["out/**", "dist/**"],
       "dependsOn": ["^build"]
     },
     "clean": {
@@ -44,12 +44,11 @@
     "@neo4j-cypher/react-codemirror-playground#dev": {
       "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
     },
-    "@neo4j-cypher/vscode-extension#build": {
-      "cache": false,
+    "neo4j-cypher-vscode-extension#build": {
       "persistent": false,
       "dependsOn": ["@neo4j-cypher/language-server#build"]
     },
-    "@neo4j-cypher/vscode-extension#test:e2e": {
+    "neo4j-cypher-vscode-extension#test:e2e": {
       "cache": false,
       "persistent": false,
       "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]

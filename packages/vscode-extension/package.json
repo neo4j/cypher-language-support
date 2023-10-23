@@ -73,13 +73,12 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run bundle-extension && npm run bundle-language-server",
+    "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle -- --minify && cp dist/cypher-language-server.js ../vscode-extension/dist/",
     "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
-    "build": "tsc -b && cp -r ./e2e_tests/fixtures ./dist/e2e_tests/fixtures",
+    "build": "tsc -b && npm run bundle-extension && npm run bundle-language-server",
     "clean": "rm -rf dist",
-    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
-    "watch": "tsc -b -w"
+    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.0",
