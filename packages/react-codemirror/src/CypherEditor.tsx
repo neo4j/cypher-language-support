@@ -49,6 +49,18 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
   editorView: React.MutableRefObject<EditorView> = React.createRef();
   schemaRef: React.MutableRefObject<CypherConfig> = React.createRef();
 
+  focus() {
+    this.editorView.current?.focus();
+  }
+
+  updateCursorPosition(position: number) {
+    this.editorView.current?.dispatch({
+      selection: { anchor: position, head: position },
+    });
+
+    this.editorView.current?.focus();
+  }
+
   static defaultProps: CypherEditorProps = {
     lint: true,
     schema: {},
@@ -146,6 +158,7 @@ export class CypherEditor extends React.Component<CypherEditorProps> {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
     if (this.props.value !== undefined && currentCmValue !== this.props.value) {
+      this.editorView.current.state.selection;
       this.editorView.current.dispatch({
         changes: {
           from: 0,
