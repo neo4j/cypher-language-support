@@ -16,17 +16,10 @@
     "parser"
   ],
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "module": "./esm/index.js",
-  "exports": {
-    "import": "./esm/index.js",
-    "require": "./dist/index.js"
-  },
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
   "scripts": {
-    "build": "npm run generate && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "tsc --module esnext --outDir esm",
-    "build-commonjs": "tsc --module commonjs --outDir dist",
+    "build": "npm run generate && tsc",
     "prepublishOnly": "npm run generate && npm run test",
     "test": "jest",
     "generate": "tests/generate.sh",

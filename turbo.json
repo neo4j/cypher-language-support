@@ -8,7 +8,9 @@
     "clean": {
       "cache": false
     },
-    "watch": {},
+    "watch": {
+      "cache": false
+    },
     "test": {
       "cache": false,
       "persistent": true

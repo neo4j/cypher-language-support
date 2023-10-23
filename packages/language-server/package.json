@@ -4,20 +4,20 @@
   "author": "Neo4j",
   "license": "Apache-2.0",
   "version": "2.0.0-next.0",
-  "main": "dist/cypher-language-server.js",
+  "main": "./dist/server.js",
   "types": "src/server.ts",
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",
     "@neo4j-cypher/schema-poller": "2.0.0-next.0",
-    "antlr4-c3": "*",
     "neo4j-driver": "^5.3.0",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "scripts": {
-    "build": "tsc --noEmit && esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4",
-    "clean": "rm -rf dist && rm -rf esm",
-    "watch": "esbuild ./src/server.ts --bundle --outfile=./dist/cypher-language-server.js --format=cjs --platform=node --external:antlr4 --watch "
+    "build": "tsc -b",
+    "assemble": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js",
+    "clean": "rm -rf dist",
+    "watch": "tsc -b -w"
   },
   "devDependencies": {
     "esbuild": "^0.19.4"
