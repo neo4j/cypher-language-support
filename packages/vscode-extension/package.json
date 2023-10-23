@@ -74,7 +74,7 @@
   "scripts": {
     "build": "tsc -b && cp -r ./e2e_tests/fixtures ./dist/e2e_tests/fixtures",
     "clean": "rm -rf dist",
-    "test:e2e": "rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
+    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
     "watch": "tsc -b -w"
   },
   "dependencies": {

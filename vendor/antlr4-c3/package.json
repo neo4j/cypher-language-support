@@ -16,15 +16,22 @@
     "parser"
   ],
   "type": "module",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
+  "main": "./build/cjs/index.js",
+  "types": "./build/cjs/index.d.ts",
+  "module": "./build/esm/index.js",
+  "exports": {
+    "import": "./build/esm/index.js",
+    "require": "./build/cjs/index.js"
+  },
   "scripts": {
-    "build": "npm run generate && tsc",
+    "build": "npm run generate && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build-esm": "tsc --module esnext --outDir build/esm",
+    "build-commonjs": "tsc --module commonjs --outDir build/cjs",
     "prepublishOnly": "npm run generate && npm run test",
     "test": "jest",
     "generate": "tests/generate.sh",
     "eslint": "eslint .",
-    "clean": "rm -rf {dist,esm,out}"
+    "clean": "rm -rf {build,out}"
   },
   "dependencies": {
     "antlr4": "*"
