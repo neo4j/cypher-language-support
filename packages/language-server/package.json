@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "assemble": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js",
+    "prepublish": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js",
     "clean": "rm -rf dist",
     "watch": "tsc -b -w"
   },
