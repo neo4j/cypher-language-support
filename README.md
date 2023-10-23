@@ -6,7 +6,7 @@ This mono repo contains packages that together make up Neo4j's Cypher Language s
 
 The project is in an early stage. We are still missing important features and the project is not yet stable. We welcome feedback and contributions!
 
-Try it out in our demo or in our alpha releases in [Neo4j Workspace](https://workspace.neo4j.io) and soon also in our VSCode extension.
+Try it out in our [demo](https://neo4j.github.io/cypher-language-support/) or in our alpha releases in [Neo4j Workspace](https://workspace.neo4j.io) and soon also in our VSCode extension.
 
 ## Project Overview
 
