@@ -96,7 +96,7 @@ describe('Semantic validation spec', () => {
         message:
           'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
         offsets: {
-          end: 50,
+          end: 53,
           start: 0,
         },
         range: {
@@ -125,7 +125,7 @@ describe('Semantic validation spec', () => {
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 126,
+          end: 131,
           start: 0,
         },
         range: {
@@ -143,7 +143,7 @@ describe('Semantic validation spec', () => {
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 126,
+          end: 131,
           start: 73,
         },
         range: {
@@ -463,7 +463,7 @@ describe('Semantic validation spec', () => {
         message:
           'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
-          end: 67,
+          end: 70,
           start: 66,
         },
         range: {
@@ -562,7 +562,7 @@ describe('Semantic validation spec', () => {
         message:
           'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
         offsets: {
-          end: 17,
+          end: 28,
           start: 6,
         },
         range: {
@@ -590,7 +590,7 @@ describe('Semantic validation spec', () => {
       {
         message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
         offsets: {
-          end: 26,
+          end: 30,
           start: 19,
         },
         range: {

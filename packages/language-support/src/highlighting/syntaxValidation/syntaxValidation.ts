@@ -110,7 +110,7 @@ function findEndPosition(
     };
   } else {
     return {
-      offset: token.start + 1,
+      offset: token.stop + 1,
       relative: Position.create(
         token.line - 1,
         token.column + token.text.length,
