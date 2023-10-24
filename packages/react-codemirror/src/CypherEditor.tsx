@@ -12,7 +12,7 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
-import React from 'react';
+import { Component, createRef } from 'react';
 import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { replMode } from './repl-mode';
@@ -43,11 +43,11 @@ const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
 
 const ExternalEdit = Annotation.define<boolean>();
-export class CypherEditor extends React.Component<CypherEditorProps> {
-  editorContainer: React.RefObject<HTMLDivElement> = React.createRef();
-  editorState: React.MutableRefObject<EditorState> = React.createRef();
-  editorView: React.MutableRefObject<EditorView> = React.createRef();
-  schemaRef: React.MutableRefObject<CypherConfig> = React.createRef();
+export class CypherEditor extends Component<CypherEditorProps> {
+  editorContainer: React.RefObject<HTMLDivElement> = createRef();
+  editorState: React.MutableRefObject<EditorState> = createRef();
+  editorView: React.MutableRefObject<EditorView> = createRef();
+  schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
   focus() {
     this.editorView.current?.focus();

@@ -141,6 +141,9 @@ export const replMode = ({
           if (doc.trim() !== '') {
             onExecute?.(doc);
             onNewHistoryEntry?.(doc);
+            view.dispatch({
+              effects: pushToHistory.of(doc),
+            });
           }
 
           return true;
