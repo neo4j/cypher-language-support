@@ -1,0 +1,13 @@
+dist/
+!dist/extension.js
+!dist/cypher-language-server.js
+../../
+../
+node_modules
+out/
+src/
+e2e_tests/
+tsconfig.json
+webpack.config.js
+.turbo
+.vscode

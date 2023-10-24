@@ -1,0 +1,25 @@
+# Node files
+node_modules
+npm-debug.log
+
+# OSX files
+Thumbs.db
+.DS_Store
+
+# Turbo folders
+.turbo/
+
+# Test files
+*.test.ts
+*.spec.ts
+
+# Antlr4 generated files
+*.interp
+*.tokens
+
+# Sourcemap files
+*.map
+.vscode/
+.eslintrc.json
+.github/
+.git/

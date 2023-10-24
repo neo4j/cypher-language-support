@@ -16,12 +16,13 @@
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
       ],
-      "outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"],
+      "outFiles": [
+        "${workspaceRoot}/packages/vscode-extension/**/*.js",
+        "${workspaceRoot}/packages/language-support/**/*.cjs",
+        "${workspaceRoot}/packages/schema-poller/**/*.cjs"
+      ],
       "autoAttachChildProcesses": true,
-      "preLaunchTask": {
-        "type": "npm",
-        "script": "watch"
-      }
+      "sourceMaps": true
     }
   ],
   "type": "pwa-node",

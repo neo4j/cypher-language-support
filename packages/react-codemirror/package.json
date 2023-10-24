@@ -8,21 +8,30 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.14",
-  "main": "dist/index.cjs",
-  "module": "esm/index.mjs",
-  "types": "dist/react-codemirror/src/index.d.ts",
+  "version": "2.0.0-next.0",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.cjs"
+    }
+  },
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\" \"npm:build-types\"",
-    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs src/index.ts",
-    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs src/index.ts",
-    "build-types": "tsc --emitDeclarationOnly --outDir dist",
+    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/index.mjs",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
+    "clean": "rm -rf dist",
     "test": "jest",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
     "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui"
   },
   "dependencies": {
+    "@neo4j-cypher/language-support": "2.0.0-next.0",
     "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/language": "^6.6.0",
@@ -47,7 +56,7 @@
     "lodash": "^4.17.21",
     "playwright": "^1.36.2",
     "react": "^18.2.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

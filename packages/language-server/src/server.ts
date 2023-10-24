@@ -19,7 +19,7 @@ import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
-import { CypherLSPSettings } from './types';
+import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -56,7 +56,7 @@ connection.onInitialize(() => {
 
 connection.onInitialized(() => {
   void connection.client.register(DidChangeConfigurationNotification.type, {
-    section: 'cypherLSP',
+    section: 'neo4j',
   });
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
@@ -97,10 +97,10 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSdk));
 connection.onCompletion(doAutoCompletion(documents, neo4jSdk));
 
 connection.onDidChangeConfiguration(
-  (params: { settings: { cypherLSP: CypherLSPSettings } }) => {
+  (params: { settings: { neo4j: Neo4jSettings } }) => {
     neo4jSdk.disconnect();
 
-    const neo4jConfig = params.settings.cypherLSP.neo4j;
+    const neo4jConfig = params.settings.neo4j;
     if (
       neo4jSdk.connection === undefined &&
       neo4jConfig.connect &&
