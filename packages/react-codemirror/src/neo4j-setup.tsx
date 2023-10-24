@@ -98,7 +98,7 @@ export const basicNeo4jSetup = (): Extension[] => {
   extensions.push(
     autocompletion({
       icons: false,
-      interactionDelay: 0,
+      interactionDelay: 5,
       addToOptions: [
         {
           render(completion, state) {
