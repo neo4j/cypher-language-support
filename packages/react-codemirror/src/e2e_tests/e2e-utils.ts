@@ -1,29 +1,12 @@
-import { expect, Locator, type Page } from '@playwright/test';
+import { expect } from '@playwright/experimental-ct-react';
+import type { Locator, Page } from 'playwright/test';
 
-import type { CypherEditorProps } from '../src/CypherEditor.js';
-
-/**
- * Testing just react components in playwright is still in experimental mode
- * currently it requires a react app. This is a workaround to be able to
- * control the editor props directly
- */
-declare global {
-  interface Window {
-    renderCodemirror: (props: CypherEditorProps) => void;
-  }
-}
 export class CypherEditorPage {
   readonly page: Page;
 
   constructor(page: Page) {
     this.page = page;
   }
-
-  createEditor = async (props: CypherEditorProps) => {
-    await this.page.evaluate((p) => {
-      window.renderCodemirror(p as unknown);
-    }, props);
-  };
 
   getEditor() {
     return this.page.getByRole('textbox');
@@ -82,9 +65,7 @@ export class CypherEditorPage {
     expectedMsg: string,
   ) {
     await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
-      {
-        timeout: 2000,
-      },
+      { timeout: 2000 },
     );
 
     await this.page.getByText(queryChunk, { exact: true }).hover();

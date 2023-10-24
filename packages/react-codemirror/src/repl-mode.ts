@@ -143,7 +143,6 @@ export const replMode = ({
             onNewHistoryEntry?.(doc);
             view.dispatch({
               effects: pushToHistory.of(doc),
-              changes: { from: 0, to: view.state.doc.length, insert: '' },
             });
           }
 

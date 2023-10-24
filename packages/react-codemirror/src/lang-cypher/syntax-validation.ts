@@ -1,14 +1,17 @@
-import { Diagnostic, linter } from '@codemirror/lint';
+import { linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
-import { DbSchema, validateSyntax } from '@neo4j-cypher/language-support';
+import { validateSyntax } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
+import type { CypherConfig } from './lang-cypher';
 
-export const cypherLinter: (schema?: DbSchema) => Extension = (schema) =>
+export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter((view) => {
-    const diagnostics: Diagnostic[] = [];
+    if (!config.lint) {
+      return [];
+    }
 
-    validateSyntax(view.state.doc.toString(), schema).forEach((diagnostic) => {
-      diagnostics.push({
+    return validateSyntax(view.state.doc.toString(), config.schema).map(
+      (diagnostic) => ({
         from: diagnostic.offsets.start,
         to: diagnostic.offsets.end,
         severity:
@@ -16,8 +19,6 @@ export const cypherLinter: (schema?: DbSchema) => Extension = (schema) =>
             ? 'error'
             : 'warning',
         message: diagnostic.message,
-      });
-    });
-
-    return diagnostics;
+      }),
+    );
   });

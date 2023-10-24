@@ -1,12 +1,11 @@
-import { expect, test } from '@playwright/test';
-import { darkThemeConstants, lightThemeConstants } from '../src/themes';
-import { CypherEditorPage } from './cypher-editor';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { CypherEditor } from '../CypherEditor';
+import { darkThemeConstants, lightThemeConstants } from '../themes';
+import { CypherEditorPage } from './e2e-utils';
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('localhost:3000');
-});
+test.use({ viewport: { width: 500, height: 500 } });
 
-test('light theme highlighting', async ({ page }) => {
+test('light theme highlighting', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `
   MATCH (variable :Label)-[:REL_TYPE]->() 
@@ -16,7 +15,7 @@ WHERE variable.property = "String"
     OR $parameter > 1234 
 RETURN variable;`;
 
-  await editorPage.createEditor({ value: query, theme: 'light' });
+  await mount(<CypherEditor value={query} theme="light" />);
 
   const keywordcolors = await Promise.all(
     ['MATCH', 'WHERE', 'RETURN'].map((kw) =>
@@ -65,7 +64,7 @@ RETURN variable;`;
   expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
 });
 
-test('dark theme highlighting', async ({ page }) => {
+test('dark theme highlighting', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `
   MATCH (variable :Label)-[:REL_TYPE]->() 
@@ -75,7 +74,7 @@ WHERE variable.property = "String"
     OR $parameter > 1234 
 RETURN variable;`;
 
-  await editorPage.createEditor({ value: query, theme: 'dark' });
+  await mount(<CypherEditor value={query} theme="dark" />);
 
   const keywordcolors = await Promise.all(
     ['MATCH', 'WHERE', 'RETURN'].map((kw) =>
@@ -124,30 +123,51 @@ RETURN variable;`;
   expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
 });
 
-test('respects prop to allow overriding bkg color', async ({ page }) => {
+test('can live switch theme ', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
-  await editorPage.createEditor({
-    value: 'text',
-    theme: 'light',
-    overrideThemeBackgroundColor: true,
-  });
+  const component = await mount(<CypherEditor theme="light" value="RETURN" />);
+
+  expect(
+    await editorPage.getHexColorOfLocator(
+      page.getByText('RETURN', { exact: true }),
+    ),
+  ).toEqual(lightThemeConstants.highlightStyles.keyword);
+
+  await component.update(<CypherEditor theme="dark" value="RETURN" />);
+
+  expect(
+    await editorPage.getHexColorOfLocator(
+      page.getByText('RETURN', { exact: true }),
+    ),
+  ).toEqual(darkThemeConstants.highlightStyles.keyword);
+});
+
+test('respects prop to allow overriding bkg color', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+  await mount(
+    <CypherEditor theme="light" value="text" overrideThemeBackgroundColor />,
+  );
+
   expect(await editorPage.editorBackgroundIsUnset()).toEqual(true);
 });
 
-test('highlights multiline string literal correctly', async ({ page }) => {
+test('highlights multiline string literal correctly', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
   const query = `
 RETURN "
 multilinestring";`;
 
-  await editorPage.createEditor({ value: query, theme: 'light' });
+  await mount(<CypherEditor theme="light" value={query} />);
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('multilinestring')),
   ).toEqual(lightThemeConstants.highlightStyles.stringLiteral);
 });
 
-test('highlights multiline label correctly', async ({ page }) => {
+test('highlights multiline label correctly', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `
 MATCH (v:\`
@@ -155,14 +175,14 @@ MATCH (v:\`
 Label\`)
 `;
 
-  await editorPage.createEditor({ value: query, theme: 'light' });
+  await mount(<CypherEditor theme="light" value={query} />);
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('Label')),
   ).toEqual(lightThemeConstants.highlightStyles.label);
 });
 
-test('highlights multiline comment correctly', async ({ page }) => {
+test('highlights multiline comment correctly', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `
 /*
@@ -170,7 +190,7 @@ test('highlights multiline comment correctly', async ({ page }) => {
 comment
 */";`;
 
-  await editorPage.createEditor({ value: query, theme: 'light' });
+  await mount(<CypherEditor theme="light" value={query} />);
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('comment')),
