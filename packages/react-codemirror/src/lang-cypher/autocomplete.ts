@@ -1,7 +1,8 @@
 import { CompletionSource } from '@codemirror/autocomplete';
-import { autocomplete, DbSchema } from '@neo4j-cypher/language-support';
+import { autocomplete } from '@neo4j-cypher/language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
+import type { CypherConfig } from './lang-cypher';
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {
@@ -35,9 +36,8 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c];
 };
 
-const emptySchema: DbSchema = {};
-export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
-  (schema) => (context) => {
+export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
+  (config) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
 
     const triggerCharacters = ['.', ':', '{', '$'];
@@ -53,7 +53,7 @@ export const cypherAutocomplete: (schema?: DbSchema) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(textUntilCursor, schema ?? emptySchema);
+    const options = autocomplete(textUntilCursor, config.schema ?? {});
 
     return {
       from: context.matchBefore(/(\w|\$)*$/).from,

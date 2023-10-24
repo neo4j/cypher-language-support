@@ -1,6 +1,6 @@
 import { tags } from '@lezer/highlight';
 import { applySyntaxColouring } from '@neo4j-cypher/language-support';
-import { tokenTypeToStyleTag } from '../lang-cypher/constants';
+import { tokenTypeToStyleTag } from './constants';
 
 const cypherQueryWithAllTokenTypes = `MATCH (variable :Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 

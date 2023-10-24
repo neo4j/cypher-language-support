@@ -1,26 +1,35 @@
-import { expect, test } from '@playwright/test';
-import { CypherEditorPage } from './cypher-editor';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { CypherEditor } from '../CypherEditor';
+import { CypherEditorPage } from './e2e-utils';
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('localhost:3000');
-});
-
-test('Prop lint set to false disables syntax validation', async ({ page }) => {
-  const editorPage = new CypherEditorPage(page);
+test.use({ viewport: { width: 1000, height: 500 } });
+test('Prop lint set to false disables syntax validation', async ({
+  page,
+  mount,
+}) => {
   const query = 'METCH (n) RETURN n';
 
-  await editorPage.createEditor({ value: query, lint: false });
+  await mount(<CypherEditor value={query} lint={false} />);
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
     timeout: 2000,
   });
 });
 
-test('Syntactic errors are surfaced', async ({ page }) => {
+// TODO
+test.skip('Can turn linting back on', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
-  await editorPage.createEditor({ value: query });
+  const component = await mount(<CypherEditor value={query} lint={false} />);
+
+  await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
+    timeout: 2000,
+  });
+
+  await component.update(<CypherEditor value={query} lint />);
+
+  await editorPage.getEditor().fill('METCH (n) RETURN n');
 
   await editorPage.checkErrorMessage(
     'METCH',
@@ -28,14 +37,28 @@ test('Syntactic errors are surfaced', async ({ page }) => {
   );
 });
 
-test('Errors for undefined labels are surfaced', async ({ page }) => {
+test('Syntactic errors are surfaced', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = 'METCH (n) RETURN n';
+
+  await mount(<CypherEditor value={query} />);
+
+  await editorPage.checkErrorMessage(
+    'METCH',
+    'Unrecognized keyword. Did you mean MATCH?',
+  );
+});
+
+test('Errors for undefined labels are surfaced', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n: Person) RETURN n';
 
-  await editorPage.createEditor({
-    value: query,
-    schema: { labels: ['Movie'], relationshipTypes: [] },
-  });
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={{ labels: ['Movie'], relationshipTypes: [] }}
+    />,
+  );
 
   await editorPage.checkWarningMessage(
     'Person',
@@ -45,6 +68,7 @@ test('Errors for undefined labels are surfaced', async ({ page }) => {
 
 test('Errors for multiline undefined labels are highlighted correctly', async ({
   page,
+  mount,
 }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `MATCH (n:\`Foo
@@ -52,10 +76,12 @@ test('Errors for multiline undefined labels are highlighted correctly', async ({
   const expectedMsg = `Label \`Foo
     Bar\` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`;
 
-  await editorPage.createEditor({
-    value: query,
-    schema: { labels: ['Movie'], relationshipTypes: [] },
-  });
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={{ labels: ['Movie'], relationshipTypes: [] }}
+    />,
+  );
 
   await editorPage.checkWarningMessage('`Foo', expectedMsg);
   await editorPage.checkWarningMessage('Bar`', expectedMsg);
@@ -63,20 +89,21 @@ test('Errors for multiline undefined labels are highlighted correctly', async ({
 
 test('Semantic errors are surfaced when there are no syntactic errors', async ({
   page,
+  mount,
 }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n) RETURN m';
 
-  await editorPage.createEditor({ value: query });
+  await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage('m', 'Variable `m` not defined');
 });
 
-test('Semantic errors are correctly accumulated', async ({ page }) => {
+test('Semantic errors are correctly accumulated', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'CALL { MATCH (n) } IN TRANSACTIONS OF -1 ROWS';
 
-  await editorPage.createEditor({ value: query });
+  await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage(
     'MATCH (n)',
@@ -89,14 +116,14 @@ test('Semantic errors are correctly accumulated', async ({ page }) => {
   );
 });
 
-test('Multiline errors are correctly placed', async ({ page }) => {
+test('Multiline errors are correctly placed', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `CALL { 
     MATCH (n) 
   } IN TRANSACTIONS 
   OF -1 ROWS`;
 
-  await editorPage.createEditor({ value: query });
+  await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage(
     'MATCH (n)',
@@ -109,14 +136,14 @@ test('Multiline errors are correctly placed', async ({ page }) => {
   );
 });
 
-test('Validation errors are correctly overlapped', async ({ page }) => {
+test('Validation errors are correctly overlapped', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `CALL { MATCH (n)
     RETURN n
   } IN TRANSACTIONS 
   OF -1 ROWS`;
 
-  await editorPage.createEditor({ value: query });
+  await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage(
     '-1',

@@ -1,20 +1,27 @@
-import { expect, test } from '@playwright/test';
-import { CypherEditorPage } from './cypher-editor';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { CypherEditor } from '../CypherEditor';
+import { CypherEditorPage } from './e2e-utils';
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('localhost:3000');
-});
+test.use({ viewport: { width: 500, height: 500 } });
 
-test('respects preloaded history', async ({ page }) => {
+test('respects preloaded history', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
 
   const initialValue = 'MATCH (n) RETURN n;';
-  await editorPage.createEditor({
-    value: initialValue,
-    initialHistory: ['first', 'second'],
-  });
+
+  await mount(
+    <CypherEditor
+      value={initialValue}
+      initialHistory={['first', 'second']}
+      onExecute={() => {
+        /* needed to turn on history movements */
+      }}
+    />,
+  );
+
   await editorPage.getEditor().press('ArrowUp');
   await expect(page.getByText('first')).toBeVisible();
+
   // First arrow up is to get to start of line
   await editorPage.getEditor().press('ArrowUp');
   await editorPage.getEditor().press('ArrowUp');
@@ -26,40 +33,46 @@ test('respects preloaded history', async ({ page }) => {
   await expect(page.getByText(initialValue)).toBeVisible();
 });
 
-test('can execute queries and see them in history', async ({ page }) => {
+test('can execute queries and see them in history', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
 
   const initialValue = `MATCH (n)
 RETURN n;`;
 
-  await editorPage.createEditor({ value: initialValue });
+  let exectutedQueries = 0;
+  const onExecute = () => {
+    exectutedQueries++;
+  };
+
+  await mount(<CypherEditor value={initialValue} onExecute={onExecute} />);
 
   // Execute initial query
   await editorPage.getEditor().press('Control+Enter');
   await editorPage.getEditor().press('Meta+Enter');
-  await expect(page.getByText('query-executed')).toBeVisible();
+  expect(exectutedQueries).toBe(1);
 
   // Ensure query execution doesn't fire if the query is only whitespace
-  await editorPage.getEditor().type('     ');
+  await editorPage.getEditor().fill('     ');
   await editorPage.getEditor().press('Control+Enter');
   await editorPage.getEditor().press('Meta+Enter');
-  await expect(page.getByText('query-executed')).toHaveCount(1);
+  expect(exectutedQueries).toBe(1);
 
-  // Ensure shift enter doesn't execute query
-  await editorPage.getEditor().type('multiline');
+  // Ensure only enter doesn't execute query
+  await editorPage.getEditor().fill('multiline');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
-  await editorPage.getEditor().type('entry');
-  await expect(page.getByText('query-executed')).toHaveCount(1);
+  await page.keyboard.type('entry');
+  expect(exectutedQueries).toBe(1);
   await editorPage.getEditor().press('Control+Enter');
   await editorPage.getEditor().press('Meta+Enter');
+  expect(exectutedQueries).toBe(2);
 
   // type a new query and make sure it's not lost when navigating history
-  await editorPage.getEditor().type('draft');
+  await editorPage.getEditor().fill('draft');
   await expect(page.getByText('draft')).toBeVisible();
-  await expect(page.getByText('query-executed')).toHaveCount(2);
+  expect(exectutedQueries).toBe(2);
 
   // Navigate to the top of the editor before navigating history
   await editorPage.getEditor().press('ArrowLeft');
@@ -86,23 +99,29 @@ RETURN n;`;
   await expect(page.getByText('draft')).toBeVisible();
 });
 
-test('can navigate with cmd+up as well', async ({ page }) => {
+test('can navigate with cmd+up as well', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const isMac = process.platform === 'darwin';
   const metaUp = isMac ? 'Meta+ArrowUp' : 'Control+ArrowUp';
   const metaDown = isMac ? 'Meta+ArrowDown' : 'Control+ArrowDown';
 
   const initialValue = 'MATCH (n) RETURN n;';
-  await editorPage.createEditor({
-    value: initialValue,
-    initialHistory: [
-      `one
+
+  await mount(
+    <CypherEditor
+      value={initialValue}
+      initialHistory={[
+        `one
 multiline
 entry
 .`,
-      'second',
-    ],
-  });
+        'second',
+      ]}
+      onExecute={() => {
+        /* needed to turn on history movements */
+      }}
+    />,
+  );
 
   await editorPage.getEditor().press(metaUp);
   await expect(page.getByText('multiline')).toBeVisible();
