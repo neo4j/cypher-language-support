@@ -5,11 +5,11 @@
     "@neo4j-cypher/language-server": "1.0.0",
     "@neo4j-cypher/language-support": "1.0.0",
     "@neo4j-cypher/react-codemirror": "1.0.0",
-    "@neo4j-cypher/react-codemirror-playground": "1.0.0",
-    "@neo4j-cypher/schema-poller": "1.0.0",
-    "@neo4j-cypher/vscode-extension": "1.0.0",
     "antlr4": "4.13.1",
-    "antlr4-c3": "3.0.1"
+    "antlr4-c3": "3.0.1",
+    "neo4j-cypher-vscode-extension": "1.0.0",
+    "@neo4j-cypher/react-codemirror-playground": "2.0.0-next.0",
+    "@neo4j-cypher/schema-poller": "2.0.0-next.0"
   },
   "changesets": ["fuzzy-rice-train"]
 }

@@ -1,5 +1,6 @@
 {
   "name": "neo4j-cypher-vscode-extension",
+  "private": true,
   "description": "Enables support for Neo4j and its query language Cypher",
   "author": "Neo4j",
   "license": "Apache-2.0",

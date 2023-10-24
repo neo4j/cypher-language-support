@@ -1,11 +1,12 @@
 {
   "name": "@neo4j-cypher/schema-poller",
+  "private": true,
   "description": "",
   "author": "Neo4j",
   "license": "Apache-2.0",
   "version": "2.0.0-next.0",
   "main": "./dist/cjs/src/index.js",
-  "moudle": "./dist/esm/src/index.js",
+  "module": "./dist/esm/src/index.js",
   "exports": {
     ".": {
       "require": "./dist/cjs/src/index.js",
