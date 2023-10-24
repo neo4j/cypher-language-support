@@ -1,11 +1,19 @@
 {
   "name": "@neo4j-cypher/language-support",
   "description": "Cypher language support",
-  "author": "neo4j",
+  "author": "Neo4j",
   "license": "Apache-2.0",
-  "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./esm/index.js",
+  "version": "2.0.0-next.0",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.js",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.cjs"
+    }
+  },
   "dependencies": {
     "antlr4": "*",
     "antlr4-c3": "*",
@@ -14,11 +22,11 @@
   },
   "scripts": {
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "postinstall": "npm run gen-parser",
-    "build": "npm run gen-parser && concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "tsc --module esnext --outDir esm",
-    "build-commonjs": "tsc --module commonjs --outDir dist",
-    "clean": "rm -rf dist && rm -rf esm && rm -rf src/generated-parser",
+    "build": "npm run gen-parser && concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
+    "clean": "rm -rf {dist,src/generated-parser}",
     "watch": "tsc -b -w",
     "test": "jest"
   },

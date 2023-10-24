@@ -1,12 +1,10 @@
 // These settings are defined in the package.json
-export type CypherLSPSettings = {
+export type Neo4jSettings = {
   trace: {
     server: 'off' | 'messages' | 'verbose';
   };
-  neo4j: {
-    connect?: boolean;
-    password?: string;
-    URL?: string;
-    user?: string;
-  };
+  connect?: boolean;
+  password?: string;
+  URL?: string;
+  user?: string;
 };

@@ -7,19 +7,30 @@
     "package.json",
     "README.md"
   ],
-  "version": "0.0.14",
-  "main": "dist/index.cjs",
-  "module": "esm/index.mjs",
+  "version": "2.0.0-next.0",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.cjs"
+    }
+  },
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
-    "build-esm": "esbuild --bundle --format=esm --outfile=esm/index.mjs --packages=external src/index.ts",
-    "build-commonjs": "esbuild --bundle --format=cjs --outfile=dist/index.cjs --packages=external src/index.ts",
+    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/index.mjs",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
+    "clean": "rm -rf dist",
     "test": "jest",
     "test:e2e": "playwright test",
     "e2e-http-server": "vite dev"
   },
   "dependencies": {
+    "@neo4j-cypher/language-support": "2.0.0-next.0",
     "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/language": "^6.6.0",
@@ -44,7 +55,7 @@
     "esbuild": "^0.19.4",
     "lodash": "^4.17.21",
     "playwright": "^1.36.2",
-    "typescript": "^4.9.3",
+    "typescript": "^4.9.5",
     "vite": "^4.4.8",
     "vite-plugin-node-stdlib-browser": "^0.2.1"
   }

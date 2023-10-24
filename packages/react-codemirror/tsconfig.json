@@ -3,9 +3,6 @@
   "include": ["src"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true,
-    "paths": {
-      "language-support": ["../language-support/src/index.ts"]
-    }
+    "allowJs": true
   }
 }
