@@ -20,7 +20,7 @@ export function CodeEditor() {
 }
 ```
 
-For a full example, see the [react-codemirror-playground](../react-codemirror-playground).
+For a full example, see the [react-codemirror-playground](https://github.com/neo4j/cypher-language-support/tree/main/packages/react-codemirror-playground).
 
 ## Usage without react
 
