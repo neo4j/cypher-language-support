@@ -1,11 +1,7 @@
 name: Publish packages to npm
 
 on:
-  # Run the workflow on push only after the tests have passed
-  workflow_run:
-    workflows: [Run Tests]
-    types:
-      - completed
+  push:
     branches: ['publishing']
 
 env:
@@ -34,7 +30,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23 # v1.4.5
         with:
           publish: npm run release
         # env:
