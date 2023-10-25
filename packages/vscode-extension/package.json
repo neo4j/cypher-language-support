@@ -4,7 +4,7 @@
   "description": "Enables support for Neo4j and its query language Cypher",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.0",
+  "version": "2.0.0-next.1",
   "publisher": "Neo4j Inc.",
   "activationEvents": [
     "onLanguage:cypher"
@@ -83,14 +83,14 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run build",
-    "bundle-language-server": "cd ../language-server && npm run bundle -- --minify && cp dist/cypher-language-server.js ../vscode-extension/dist/",
+    "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-ls.js ../vscode-extension/dist/",
     "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
     "build": "tsc -b && npm run bundle-extension && npm run bundle-language-server",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.0",
+    "@neo4j-cypher/language-server": "2.0.0-next.1",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

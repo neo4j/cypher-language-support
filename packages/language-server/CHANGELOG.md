@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.1
+
+### Patch Changes
+
+- Makes language server executable with npx
+
 ## 2.0.0-next.0
 
 ### Major Changes
