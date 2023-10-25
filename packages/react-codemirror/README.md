@@ -4,7 +4,7 @@ This package can be built with `npm run build` and then published to npm with `n
 
 ## Usage
 
-`npm install @neo4j-cypher/reactcodemirror`
+`npm install @neo4j-cypher/react-codemirror@next`
 
 ```tsx
 import { useState } from 'react';
