@@ -25,9 +25,6 @@ jobs:
       - name: Install dependencies with frozen lock file and generate parser
         run: npm ci
 
-      - name: Build project
-        run: npm run build
-
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23 # v1.4.5
@@ -35,3 +32,4 @@ jobs:
           publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -8,6 +8,7 @@
   "module": "dist/antlr4.node.mjs",
   "types": "src/antlr4/index.d.ts",
   "repository": "antlr/antlr4.git",
+  "private": true,
   "keywords": [
     "lexer",
     "parser",
