@@ -1,12 +1,10 @@
 name: Publish react-codemirror package to npm
 
 on:
-  # Runs on pushes targeting the default branch
-  # push:
-  #   branches: ['main']
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  # Run the workflow on push only after the unit tests have passed
+  workflow_run:
+    workflows: ['Run Tests']
+    branches: []
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
@@ -32,9 +30,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Publish on updated version number
-        uses: JS-DevTools/npm-publish@v2
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
         with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: 'packages/react-codemirror/package.json'
-          access: 'restricted'
+          publish: npm run release
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
