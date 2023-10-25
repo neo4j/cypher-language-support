@@ -19,5 +19,5 @@ const schema: DbSchema = { labels: ['Person'] };
 
 autocomplete('MATCH (n:', schema); // yields CompletionItem[] containing "Person"
 
-validateSyntax('RETRN 123'); // yields SyntaxDiagnostic[] with Invalid keyword, did you mean RETURN?
+validateSyntax('RETRN 123', schema); // yields SyntaxDiagnostic[] with Invalid keyword, did you mean RETURN?
 ```
