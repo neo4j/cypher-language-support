@@ -16,8 +16,7 @@ test('Prop lint set to false disables syntax validation', async ({
   });
 });
 
-// TODO
-test.skip('Can turn linting back on', async ({ page, mount }) => {
+test('Can turn linting back on', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
