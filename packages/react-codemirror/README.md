@@ -9,7 +9,7 @@ This package can be built with `npm run build` and then published to npm with `n
 ```tsx
 import { useState } from 'react';
 
-import { CypherEditor } from '@neo4j-cypher/react-codemirror';
+import { CypherEditor } from '@neo4j-cypher/react-codemirror@next';
 
 export function CodeEditor() {
   const [value, setValue] = useState('');

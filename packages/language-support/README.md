@@ -6,7 +6,7 @@ This package contains the core language support features for Cypher built with A
 
 The API is not yet properly documented, but here are two simple examples of what you can do!
 
-`npm install @neo4j-cypher/language-support`
+`npm install @neo4j-cypher/language-support@next`
 
 ```typescript
 import {
