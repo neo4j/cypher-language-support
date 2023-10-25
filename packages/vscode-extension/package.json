@@ -2,18 +2,26 @@
   "name": "neo4j-cypher-vscode-extension",
   "private": true,
   "description": "Enables support for Neo4j and its query language Cypher",
-  "author": "Neo4j",
+  "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "version": "2.0.0-next.0",
-  "repository": "https://github.com/neo4j/cypher-language-support",
-  "engines": {
-    "vscode": "^1.75.0"
-  },
-  "publisher": "Neo4j",
+  "publisher": "Neo4j Inc.",
   "activationEvents": [
     "onLanguage:cypher"
   ],
   "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2",
+    "vscode": "^1.75.0"
+  },
   "contributes": {
     "languages": [
       {

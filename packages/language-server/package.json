@@ -1,7 +1,7 @@
 {
   "name": "@neo4j-cypher/language-server",
   "description": "Cypher Language Server",
-  "author": "Neo4j",
+  "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "files": [
     "./dist/cypher-language-server.js",
@@ -14,6 +14,17 @@
   "version": "2.0.0-next.0",
   "main": "./dist/cypher-language-server.js",
   "types": "src/server.ts",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
+  },
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",
     "neo4j-driver": "^5.3.0",

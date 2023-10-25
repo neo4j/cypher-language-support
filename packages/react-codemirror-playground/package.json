@@ -8,6 +8,17 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
+  },
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",
     "@neo4j-cypher/react-codemirror": "2.0.0-next.0",

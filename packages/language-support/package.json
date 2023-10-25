@@ -1,7 +1,7 @@
 {
   "name": "@neo4j-cypher/language-support",
   "description": "Cypher language support",
-  "author": "Neo4j",
+  "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "files": [
     "dist",
@@ -21,6 +21,17 @@
       "import": "./dist/esm/index.mjs",
       "default": "./dist/cjs/index.cjs"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
   },
   "dependencies": {
     "antlr4": "*",
