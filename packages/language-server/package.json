@@ -23,9 +23,6 @@
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
   },
-  "bin": {
-    "cypher-language-server": "/dist/cypher-language-server.js"
-  },
   "bugs": {
     "url": "https://github.com/neo4j/cypher-language-support/issues"
   },
