@@ -4,7 +4,7 @@ on:
   # Run the workflow on push only after the unit tests have passed
   workflow_run:
     workflows: ['Run Tests']
-    branches: []
+    branches: ['publishing']
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'

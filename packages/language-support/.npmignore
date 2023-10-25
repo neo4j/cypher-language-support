@@ -1,4 +1,0 @@
-*.tsbuildinfo
-
-src/tests
-dist/types/tests
