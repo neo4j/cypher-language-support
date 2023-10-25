@@ -1,7 +1,7 @@
 {
   "name": "@neo4j-cypher/react-codemirror-playground",
   "private": true,
-  "version": "2.0.0-next.0",
+  "version": "2.0.0-next.1",
   "type": "module",
   "scripts": {
     "dev": "vite --open",
@@ -21,13 +21,12 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",
-    "@neo4j-cypher/react-codemirror": "2.0.0-next.0",
+    "@neo4j-cypher/react-codemirror": "2.0.0-next.1",
     "@codemirror/autocomplete": "^6.5.1",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/language": "^6.6.0",
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
-    "@uiw/react-codemirror": "^4.19.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite-plugin-node-stdlib-browser": "^0.2.1",
