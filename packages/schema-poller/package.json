@@ -1,17 +1,29 @@
 {
   "name": "@neo4j-cypher/schema-poller",
+  "private": true,
   "description": "",
-  "author": "Neo4j",
+  "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "version": "2.0.0-next.0",
   "main": "./dist/cjs/src/index.js",
-  "moudle": "./dist/esm/src/index.js",
+  "module": "./dist/esm/src/index.js",
   "exports": {
     ".": {
       "require": "./dist/cjs/src/index.js",
       "import": "./dist/esm/src/index.js",
       "default": "./dist/cjs/src/index.js"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",

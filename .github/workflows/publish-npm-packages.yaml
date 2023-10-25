@@ -1,12 +1,8 @@
-name: Publish react-codemirror package to npm
+name: Publish packages to npm
 
 on:
-  # Runs on pushes targeting the default branch
-  # push:
-  #   branches: ['main']
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    branches: ['publishing']
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
@@ -32,9 +28,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Publish on updated version number
-        uses: JS-DevTools/npm-publish@v2
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23 # v1.4.5
         with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: 'packages/react-codemirror/package.json'
-          access: 'restricted'
+          publish: npm run release
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

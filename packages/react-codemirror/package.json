@@ -3,8 +3,19 @@
   "license": "Apache-2.0",
   "files": [
     "dist",
+    "src",
     "package.json",
-    "README.md"
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "react",
+    "editor",
+    "codemirror",
+    "codemirror 6"
   ],
   "version": "2.0.0-next.0",
   "main": "./dist/cjs/index.cjs",
@@ -27,6 +38,17 @@
     "test": "jest",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
     "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "2.0.0-next.0",
