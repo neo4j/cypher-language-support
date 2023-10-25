@@ -1,0 +1,4 @@
+*.tsbuildinfo
+
+src/e2e_tests
+dist/types/e2e_tests

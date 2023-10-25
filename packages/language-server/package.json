@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "files": [
     "./dist/cypher-language-server.js",
+    "./src",
     "package.json",
     "README.md",
     "LICENSE.md",
