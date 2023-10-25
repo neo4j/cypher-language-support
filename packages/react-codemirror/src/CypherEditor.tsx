@@ -19,23 +19,84 @@ import { replMode } from './repl-mode';
 import { getThemeExtension } from './themes';
 
 export interface CypherEditorProps {
+  /**
+   * The prompt to show on single line editors
+   */
   prompt?: string;
+  /**
+   * Custom keybindings to add to the editor.
+   * See https://codemirror.net/6/docs/ref/#keymap.of
+   */
   extraKeybindings?: KeyBinding[];
+  /**
+   * Callback on query execution, triggered via ctrl/cmd + Enter.
+   * If provided, will enable "repl-mode", which turns on navigating editor history
+   *
+   * @param cmd - the editor value when ctrl/cmd + enter was pressed
+   * @returns void
+   */
   onExecute?: (cmd: string) => void;
+  /**
+   * Seed the editor history with some initial history entries
+   * Navigateable via up/down arrow keys
+   */
   initialHistory?: string[];
+  /**
+   * Callback when a new history entry is added, useful for keeping track of history
+   * outside of the editor.
+   */
   onNewHistoryEntry?: (historyEntry: string) => void;
+  /**
+   * When set to `true` the editor will use the background color of the parent element.
+   *
+   * @default false
+   */
   overrideThemeBackgroundColor?: boolean;
+  /**
+   * Whether the editor should take focus on mount.
+   * Will move the cursor to the end of the query when provided with an initial value.
+   *
+   * @default false
+   */
   autofocus?: boolean;
+  /**
+   * Whether the editor should wrap lines.
+   *
+   * @default false
+   */
   lineWrap?: boolean;
+  /**
+   * Whether the editor should perform syntax validation.
+   *
+   * @default true
+   */
   lint?: boolean;
+  /**
+   * The schema to use for autocompletion and linting.
+   *
+   * @type {DbSchema}
+   */
   schema?: DbSchema;
+  /**
+   * The current value of the editor.
+   */
   value?: string;
+  /**
+   * Extra css classnames to add to the editor container.
+   */
   className?: string;
   /**
+   * Set the built in theme or provide a custom theme.
+   *
    * `light` / `dark` / `Extension`
    *  @default light
    */
   theme?: 'light' | 'dark' | Extension;
+  /**
+   * Callback when the editor value changes.
+   * @param {string} value - the current editor value
+   * @param {ViewUpdate} viewUpdate - the view update from codemirror
+   */
   onChange?(value: string, viewUpdate: ViewUpdate): void;
 }
 
@@ -44,21 +105,40 @@ const keyBindingCompartment = new Compartment();
 
 const ExternalEdit = Annotation.define<boolean>();
 export class CypherEditor extends Component<CypherEditorProps> {
+  /**
+   * The codemirror editor container.
+   */
   editorContainer: React.RefObject<HTMLDivElement> = createRef();
+  /**
+   * The codemirror editor state.
+   */
   editorState: React.MutableRefObject<EditorState> = createRef();
+  /**
+   * The codemirror editor view.
+   */
   editorView: React.MutableRefObject<EditorView> = createRef();
-  schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+  private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
+  /**
+   * Focus the editor
+   */
   focus() {
     this.editorView.current?.focus();
   }
 
+  /**
+   * Move the cursor to the supplied position.
+   * For example, to move the cursor to the end of the editor, use `value.length`
+   */
   updateCursorPosition(position: number) {
     this.editorView.current?.dispatch({
       selection: { anchor: position, head: position },
     });
   }
 
+  /**
+   * Externally set the editor value and focus the editor.
+   */
   setValueAndFocus(value = '') {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
     this.editorView.current.dispatch({
