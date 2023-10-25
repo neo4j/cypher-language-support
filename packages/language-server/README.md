@@ -2,7 +2,11 @@
 
 A language server wrapper for the `@neo4j-cypher/language-support` package.
 
-## Bundle the server and run with node
+## Installation
+
+We will provide a quick way to install the serer via npm soon™️. For now you can build it yourself, see instructions below.
+
+### Bundling and usage from typescript
 
 To package the language server into a single javascript bundle, go to the root of the project and
 do `npm run bundle`.
