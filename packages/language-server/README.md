@@ -12,7 +12,7 @@ npm i -g @neo4j-cypher/language-server
 
 ### Usage
 
-Once installed, you can run the language server using `npx @neo4j-cypher/language-server --stdio`.
+Once installed, you can run the language server using `cypher-language-server --stdio`.
 
 Below you can find a few examples in Typescript on how to send messages to that server.
 
@@ -21,10 +21,7 @@ Below you can find a few examples in Typescript on how to send messages to that 
 ```typescript
 import * as child_process from 'child_process';
 
-let lspProcess = child_process.spawn('npx', [
-  '@neo4j-cypher/language-server',
-  '--ipc',
-]);
+let lspProcess = child_process.spawn('cypher-language-server', ['--ipc']);
 let messageId = 1;
 
 function send(method: string, params: object) {
@@ -100,10 +97,7 @@ const server = net.createServer((socket: net.Socket) => {
 });
 
 server.listen(3000, () => {
-  child_process.spawn('npx', [
-    '@neo4j-cypher/language-server',
-    '--socket=3000',
-  ]);
+  child_process.spawn('cypher-language-server', ['--socket=3000']);
 });
 ```
 
@@ -113,10 +107,7 @@ server.listen(3000, () => {
 import * as child_process from 'child_process';
 import * as rpc from 'vscode-jsonrpc/node';
 
-let lspProcess = child_process.spawn('npx', [
-  '@neo4j-cypher/language-server',
-  '--stdio',
-]);
+let lspProcess = child_process.spawn('cypher-language-server', ['--stdio']);
 let messageId = 1;
 
 const reader = new rpc.StreamMessageReader(lspProcess.stdout);

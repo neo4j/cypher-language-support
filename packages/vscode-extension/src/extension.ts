@@ -11,7 +11,9 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
-  const runServer = context.asAbsolutePath(path.join('dist', 'cypher-ls.js'));
+  const runServer = context.asAbsolutePath(
+    path.join('dist', 'cypher-language-server.js'),
+  );
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
