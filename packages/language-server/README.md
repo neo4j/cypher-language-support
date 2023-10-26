@@ -4,11 +4,15 @@ A language server wrapper for the `@neo4j-cypher/language-support` package.
 
 ## Installation
 
-We will provide a quick way to install the serer via npm soon™️. For now you can build it yourself, see instructions below.
+You can install the language server using npm:
 
-### Usage from typescript
+```
+npm i -g @neo4j-cypher/language-server
+```
 
-You can run the language server with `npx @neo4j-cypher/language-server.js --stdio`.
+### Usage
+
+Once installed, you can run the language server using `npx @neo4j-cypher/language-server --stdio`.
 
 Below you can find a few examples in Typescript on how to send messages to that server.
 
