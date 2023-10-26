@@ -1,5 +1,13 @@
 # @neo4j-cypher/vscode-extension
 
+## 2.0.0-next.1
+
+### Patch Changes
+
+- Makes language server executable with npx
+- Updated dependencies
+  - @neo4j-cypher/language-server@2.0.0-next.1
+
 ## 2.0.0-next.0
 
 ### Major Changes

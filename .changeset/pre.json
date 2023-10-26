@@ -11,5 +11,9 @@
     "antlr4": "4.13.1",
     "antlr4-c3": "3.0.1"
   },
-  "changesets": ["brown-ravens-obey", "fuzzy-rice-train"]
+  "changesets": [
+    "brown-ravens-obey",
+    "fuzzy-rice-train",
+    "nervous-rabbits-greet"
+  ]
 }
