@@ -16,6 +16,8 @@ Once installed, you can run the language server using `cypher-language-server --
 
 Below you can find a few examples in Typescript on how to send messages to that server.
 
+For integrations with other editors, see [Integrating with other editors](#integrating-with-other-editors).
+
 ### Using ipc
 
 ```typescript
@@ -138,4 +140,36 @@ reader.listen((data) => {
 });
 
 initialize();
+```
+
+### Integrating with other editors
+
+#### Emacs
+
+##### With `lsp-mode`
+
+```elisp
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+  ;; '(cypher-mode . "cypher")) ;; use this if you have a cypher-mode installed
+  '(".*cypher" . "cypher")) ;; otherwise, you can simply match on file ending with a regex
+
+(lsp-register-client
+(make-lsp-client :new-connection (lsp-stdio-connection '("cypher-language-server" "--stdio"))
+  :activation-fn (lsp-activate-on "cypher")
+  :server-id 'cypher)))
+```
+
+If you want semantic highlighting, remember to set 
+
+```elisp
+(setq lsp-semantic-tokens-enable t)
+```
+
+##### With `eglot`
+
+As of Emacs 29, `eglot` is built in. In `eglot`, a language server needs to be associate with a specific major mode. Install any available `cypher-mode` in order to get the server running with `eglot`. Note also that `eglot` does not support semantic highlighting.
+
+```elisp
+(add-to-list 'Eglot-server-programs '((cypher-mode) "cypher-language-server" "--stdio")))
 ```
