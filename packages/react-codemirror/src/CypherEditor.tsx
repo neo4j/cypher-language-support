@@ -40,7 +40,8 @@ export interface CypherEditorProps {
    */
   onExecute?: (cmd: string) => void;
   /**
-   * The editor history navigateable via up/down arrow keys. Ordered newest to oldest.
+   * The editor history navigateable via up/down arrow keys. Order newest to oldest.
+   * Add to this list with the `onExecute` callback for REPL style history.
    */
   history?: string[];
   /**
