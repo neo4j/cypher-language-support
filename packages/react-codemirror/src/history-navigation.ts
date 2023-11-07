@@ -77,11 +77,11 @@ const historyState = StateField.define<HistoryState>({
             };
           }
         }
-      } else if (effect.is(pushToHistory)) {
+      } else if (effect.is(replaceHistory)) {
         return {
           ...value,
           index: DRAFT_ENTRY_INDEX,
-          history: [effect.value, ...value.history],
+          history: effect.value,
         };
       }
     }
@@ -91,7 +91,7 @@ const historyState = StateField.define<HistoryState>({
 
 type HistoryNavigation = 'BACK' | 'FORWARDS';
 const moveInHistory = StateEffect.define<HistoryNavigation>();
-const pushToHistory = StateEffect.define<string>();
+export const replaceHistory = StateEffect.define<string[]>();
 
 function navigateHistory(view: EditorView, direction: HistoryNavigation) {
   view.dispatch(
@@ -116,39 +116,16 @@ function navigateHistory(view: EditorView, direction: HistoryNavigation) {
 }
 
 type ReplProps = {
-  onExecute: (cmd: string) => void;
-  initialHistory?: string[];
-  onNewHistoryEntry?: (historyEntry: string) => void;
+  history?: string[];
 };
 
-export const replMode = ({
-  onExecute,
-  onNewHistoryEntry,
-  initialHistory,
-}: ReplProps): Extension[] => {
+export const replMode = ({ history }: ReplProps): Extension[] => {
   return [
     historyState.init(() => ({
       ...historyInitialState,
-      history: initialHistory,
+      history,
     })),
     keymap.of([
-      {
-        key: 'Ctrl-Enter',
-        mac: 'Mod-Enter',
-        preventDefault: true,
-        run: (view) => {
-          const doc = view.state.doc.toString();
-          if (doc.trim() !== '') {
-            onExecute?.(doc);
-            onNewHistoryEntry?.(doc);
-            view.dispatch({
-              effects: pushToHistory.of(doc),
-            });
-          }
-
-          return true;
-        },
-      },
       {
         key: 'ArrowUp',
         preventDefault: true,
