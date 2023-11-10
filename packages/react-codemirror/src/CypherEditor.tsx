@@ -13,9 +13,12 @@ import {
 } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import { Component, createRef } from 'react';
+import {
+  replaceHistory,
+  replMode as historyNavigation,
+} from './history-navigation';
 import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
-import { replMode } from './repl-mode';
 import { getThemeExtension } from './themes';
 
 export interface CypherEditorProps {
@@ -37,15 +40,10 @@ export interface CypherEditorProps {
    */
   onExecute?: (cmd: string) => void;
   /**
-   * Seed the editor history with some initial history entries
-   * Navigateable via up/down arrow keys
+   * The editor history navigateable via up/down arrow keys. Order newest to oldest.
+   * Add to this list with the `onExecute` callback for REPL style history.
    */
-  initialHistory?: string[];
-  /**
-   * Callback when a new history entry is added, useful for keeping track of history
-   * outside of the editor.
-   */
-  onNewHistoryEntry?: (historyEntry: string) => void;
+  history?: string[];
   /**
    * When set to `true` the editor will use the background color of the parent element.
    *
@@ -99,6 +97,25 @@ export interface CypherEditorProps {
    */
   onChange?(value: string, viewUpdate: ViewUpdate): void;
 }
+
+const executeKeybinding = (onExecute?: (cmd: string) => void) =>
+  onExecute
+    ? [
+        {
+          key: 'Ctrl-Enter',
+          mac: 'Mod-Enter',
+          preventDefault: true,
+          run: (view: EditorView) => {
+            const doc = view.state.doc.toString();
+            if (doc.trim() !== '') {
+              onExecute(doc);
+            }
+
+            return true;
+          },
+        },
+      ]
+    : [];
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
@@ -158,33 +175,23 @@ export class CypherEditor extends Component<CypherEditorProps> {
     overrideThemeBackgroundColor: false,
     lineWrap: false,
     extraKeybindings: [],
-    initialHistory: [],
+    history: [],
     theme: 'light',
   };
 
   componentDidMount(): void {
     const {
       theme,
-      onExecute,
-      initialHistory,
-      onNewHistoryEntry,
       extraKeybindings,
       lineWrap,
       overrideThemeBackgroundColor,
       schema,
       lint,
       onChange,
+      onExecute,
     } = this.props;
 
     this.schemaRef.current = { schema, lint };
-
-    const maybeReplMode = onExecute
-      ? replMode({
-          onExecute,
-          initialHistory,
-          onNewHistoryEntry,
-        })
-      : [];
 
     const themeExtension = getThemeExtension(
       theme,
@@ -209,12 +216,14 @@ export class CypherEditor extends Component<CypherEditorProps> {
 
     this.editorState.current = EditorState.create({
       extensions: [
-        maybeReplMode,
+        keyBindingCompartment.of(
+          keymap.of([...executeKeybinding(onExecute), ...extraKeybindings]),
+        ),
+        historyNavigation(this.props),
         basicNeo4jSetup(),
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
-        keyBindingCompartment.of(keymap.of(extraKeybindings)),
         lineWrap ? EditorView.lineWrapping : [],
 
         lineNumbers({
@@ -279,11 +288,23 @@ export class CypherEditor extends Component<CypherEditorProps> {
       });
     }
 
-    if (prevProps.extraKeybindings !== this.props.extraKeybindings) {
+    if (
+      prevProps.extraKeybindings !== this.props.extraKeybindings ||
+      prevProps.onExecute !== this.props.onExecute
+    ) {
       this.editorView.current.dispatch({
         effects: keyBindingCompartment.reconfigure(
-          keymap.of(this.props.extraKeybindings),
+          keymap.of([
+            ...executeKeybinding(this.props.onExecute),
+            ...this.props.extraKeybindings,
+          ]),
         ),
+      });
+    }
+
+    if (prevProps.history?.length !== this.props.history?.length) {
+      this.editorView.current.dispatch({
+        effects: replaceHistory.of(this.props.history ?? []),
       });
     }
 

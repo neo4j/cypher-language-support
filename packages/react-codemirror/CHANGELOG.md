@@ -1,5 +1,11 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.2
+
+### Patch Changes
+
+- 3866e43: Editor history is now a controlled prop
+
 ## 2.0.0-next.1
 
 ### Patch Changes
