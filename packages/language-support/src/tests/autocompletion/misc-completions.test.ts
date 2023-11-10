@@ -23,6 +23,25 @@ describe('Misc auto-completion', () => {
     });
   });
 
+  test('Requires space to complete next keyword', () => {
+    const query = 'SHOW';
+
+    testCompletions({
+      query,
+      expected: [{ label: 'SHOW', kind: CompletionItemKind.Keyword }],
+      excluded: [{ label: 'DATABASE', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
+  test('Completes keyword, even when current word is also valid keyword', () => {
+    const query = 'SHOW DATA';
+
+    testCompletions({
+      query,
+      expected: [{ label: 'DATABASE', kind: CompletionItemKind.Keyword }],
+    });
+  });
+
   test('Correctly completes DISTINCT', () => {
     const query = 'MATCH (n:Person)-[r:KNOWS]-(m:Person) RETURN ';
 
