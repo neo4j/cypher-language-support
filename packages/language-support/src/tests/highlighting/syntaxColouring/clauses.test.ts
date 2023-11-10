@@ -2121,3 +2121,83 @@ describe('Subqueries colouring', () => {
     ]);
   });
 });
+
+describe('CREATE colouring', () => {
+  test('correctly highlight broken create constraint', () => {
+    // is missing :Label, should not crash
+    expect(applySyntaxColouring('CREATE CONSTRAINT FOR (node)')).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'CREATE',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'CONSTRAINT',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 3,
+        position: {
+          line: 0,
+          startCharacter: 18,
+          startOffset: 18,
+        },
+        token: 'FOR',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 22,
+          startOffset: 22,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 0,
+          startCharacter: 23,
+          startOffset: 23,
+        },
+        token: 'node',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 27,
+          startOffset: 27,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+    ]);
+  });
+});
