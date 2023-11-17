@@ -146,7 +146,13 @@ initialize();
 
 #### Emacs
 
-##### With `lsp-mode`
+##### With [lsp-mode](https://github.com/emacs-lsp/lsp-mode)
+
+As of version 8.0.1, `lsp-mode` provides built in support for the `cypher-language-server`. `lsp-mode` will connect to a `cypher-language-server` for any file ending with `.cypher`, or if you're currently in a `cypher-mode`. 
+
+If the `cypher-language-server` is not already installed, you can install the server by running `M-x lsp-install-server RET` and then selecting `cypher-ls` from the list.
+
+##### With [lsp-mode](https://github.com/emacs-lsp/lsp-mode) < 8.0.1
 
 ```elisp
 (with-eval-after-load 'lsp-mode
@@ -166,7 +172,7 @@ If you want semantic highlighting, remember to set
 (setq lsp-semantic-tokens-enable t)
 ```
 
-##### With `eglot`
+##### With [eglot](https://joaotavora.github.io/eglot/)
 
 As of Emacs 29, `eglot` is built in. In `eglot`, a language server needs to be associate with a specific major mode. Install any available `cypher-mode` in order to get the server running with `eglot`. Note also that `eglot` does not support semantic highlighting.
 
@@ -176,7 +182,7 @@ As of Emacs 29, `eglot` is built in. In `eglot`, a language server needs to be a
 
 #### Neovim
 
-##### With `nvim-lspconfig`
+##### With [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
 
 There is built-in support for the `cypher-language-server` in the plugin ([cypher_ls](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cypher_ls)).
 
