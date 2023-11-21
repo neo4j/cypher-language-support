@@ -16,7 +16,7 @@ interface SemanticAnalysisError {
 export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
   try {
     let semanticErrorsResult = undefined;
-    semanticAnalysis(query, (a) => {
+    semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
     const errors = semanticErrorsResult.$array.data;
