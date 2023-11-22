@@ -302,7 +302,13 @@ export class CypherEditor extends Component<CypherEditorProps> {
       });
     }
 
-    if (prevProps.history?.length !== this.props.history?.length) {
+    // This component rerenders on every keystroke and comparing the
+    // full lists of editor strings on every render could be expensive.
+    const didChangeHistoryEstimate =
+      prevProps.history?.length !== this.props.history?.length ||
+      prevProps.history?.[0] !== this.props.history?.[0];
+
+    if (didChangeHistoryEstimate) {
       this.editorView.current.dispatch({
         effects: replaceHistory.of(this.props.history ?? []),
       });
