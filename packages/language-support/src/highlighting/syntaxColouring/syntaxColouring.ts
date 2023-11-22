@@ -115,9 +115,12 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
-    const labelName = ctx.symbolicNameString().start;
-
-    this.addToken(labelName, CypherTokenType.label, labelName.text);
+    // Error recovery can insert a LabelOrRelType node with no text
+    // See for example CREATE CONSTRAINT FOR (node)
+    const labelName = ctx.symbolicNameString()?.start;
+    if (labelName) {
+      this.addToken(labelName, CypherTokenType.label, labelName.text);
+    }
   };
 
   exitLeftArrow = (ctx: LeftArrowContext) => {
