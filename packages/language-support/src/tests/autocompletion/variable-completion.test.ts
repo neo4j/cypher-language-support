@@ -38,7 +38,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('suggests both variables after renaming variable', () => {
-    const query = 'MATCH (n:Person) WITH n as m RETURN';
+    const query = 'MATCH (n:Person) WITH n as m RETURN ';
     testCompletions({
       query,
       expected: [
@@ -49,7 +49,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('does not suggest variable when renaming variable', () => {
-    const query = 'MATCH (n:Person) WITH n as';
+    const query = 'MATCH (n:Person) WITH n as ';
 
     testCompletions({
       query,
@@ -58,7 +58,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('does not suggest variables when unwinding ', () => {
-    const query = 'MATCH (n:Person) UNWIND [] as';
+    const query = 'MATCH (n:Person) UNWIND [] as ';
 
     testCompletions({
       query,

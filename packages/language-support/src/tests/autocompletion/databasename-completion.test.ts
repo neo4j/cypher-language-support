@@ -319,7 +319,7 @@ describe('can complete database names', () => {
 
     test('suggests parameter in options field of create constraint', () => {
       const query =
-        'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS';
+        'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS ';
       testCompletions({
         query,
         dbSchema,
@@ -359,14 +359,14 @@ describe('can complete database names', () => {
 
     test('suggests parameters for user management', () => {
       const cases = [
-        'CREATE USER',
-        'DROP USER',
-        'ALTER USER',
-        'RENAME USER',
-        'SHOW USER',
-        'ALTER CURRENT USER SET PASSWORD FROM',
+        'CREATE USER ',
+        'DROP USER ',
+        'ALTER USER ',
+        'RENAME USER ',
+        'SHOW USER ',
+        'ALTER CURRENT USER SET PASSWORD FROM ',
         'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
-        'ALTER USER',
+        'ALTER USER ',
         'ALTER USER foo IF EXISTS SET PASSWORD ',
       ];
       cases.forEach((query) => {
@@ -386,11 +386,11 @@ describe('can complete database names', () => {
 
     test('suggests parameters for role management', () => {
       const cases = [
-        'CREATE ROLE',
-        'DROP ROLE',
-        'RENAME ROLE',
-        'GRANT ROLE',
-        'GRANT ROLE abc TO',
+        'CREATE ROLE ',
+        'DROP ROLE ',
+        'RENAME ROLE ',
+        'GRANT ROLE ',
+        'GRANT ROLE abc TO ',
       ];
       cases.forEach((query) => {
         testCompletions({
@@ -418,8 +418,8 @@ describe('can complete database names', () => {
         'DEALLOCATE DATABASES FROM SERVERS "ab", ',
       ];
       const optionsCases = [
-        'ENABLE SERVER "abc" OPTIONS',
-        'ALTER SERVER "abc" SET OPTIONS',
+        'ENABLE SERVER "abc" OPTIONS ',
+        'ALTER SERVER "abc" SET OPTIONS ',
       ];
 
       nameCases.forEach((query) => {

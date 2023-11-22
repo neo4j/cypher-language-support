@@ -11,7 +11,12 @@ import CypherParser, {
   Expression2Context,
 } from '../generated-parser/CypherParser';
 import { rulesDefiningVariables } from '../helpers';
-import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
+import {
+  CypherTokenType,
+  lexerKeywords,
+  lexerSymbols,
+  tokenNames,
+} from '../lexerSymbols';
 import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
@@ -282,7 +287,13 @@ export function completionCoreCompletion(
   // The identfier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
   // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
-  if (tokens[caretIndex - 1]?.type === CypherLexer.IDENTIFIER) {
+  // When an identifer overlaps with a keyword, it's no longer treates as an identifier (although it's a valid identifier)
+  // So we need to move the caret back for keywords as well
+  const previousToken = tokens[caretIndex - 1]?.type;
+  if (
+    previousToken === CypherLexer.IDENTIFIER ||
+    lexerKeywords.includes(previousToken)
+  ) {
     caretIndex--;
   }
 
