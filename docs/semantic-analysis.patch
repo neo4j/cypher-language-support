@@ -1,0 +1,39 @@
+diff --git a/packages/language-support/src/highlighting/syntaxValidation/semanticAnalysis.js b/packages/language-support/src/highlighting/syntaxValidation/semanticAnalysis.js
+index 552b1e70a..bebbb1969 100644
+--- a/packages/language-support/src/highlighting/syntaxValidation/semanticAnalysis.js
++++ b/packages/language-support/src/highlighting/syntaxValidation/semanticAnalysis.js
+@@ -5,7 +5,7 @@
+             module(root, exports);
+         });
+     } else if (typeof exports === 'object' && exports !== null && typeof exports.nodeName !== 'string') {
+-        module(global, exports);
++        module(globalThis, exports);
+     } else {
+         module(root, root);
+     }
+@@ -604,7 +604,7 @@
+                 javaArgs.data[i] = $rt_str(args[i]);
+             }
+             $rt_startThread(function() {
+-                f.call(null, javaArgs);
++                return f.call(null, javaArgs);
+             }, callback);
+         };
+     }
+@@ -1479,7 +1479,6 @@
+         sci_TreeSeqMap$OrderBy$Insertion$__clinit_();
+         sci_TreeSeqMap$OrderBy$Modification$__clinit_();
+         oncie_ListComprehension$__clinit_();
+-        cnsa_Main_analyzeQuery($args.data[0]);
+     }
+     function cnsa_Main_analyzeQuery($queryText) {
+         var $result, $semanticErrors, var$4, var$5, var$6, var$7, var$8, $$je;
+@@ -222094,4 +222093,8 @@
+         c = otji_JSWrapper$_clinit_$lambda$_29_1.prototype;
+         c.accept = c.$accept$exported$0;
+     })();
++    // Initialize everything
++    $rt_exports.main([]);
++    // Export the analyze function as well
++    $rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
+ }));
