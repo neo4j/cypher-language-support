@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src"],
+  "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "out",
     "declaration": true,
