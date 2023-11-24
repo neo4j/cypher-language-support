@@ -1,5 +1,13 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- 8de605b: Improved history prop change detection
+- Updated dependencies [17909e3]
+  - @neo4j-cypher/language-support@2.0.0-next.2
+
 ## 2.0.0-next.3
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [17909e3]
+  - @neo4j-cypher/language-support@2.0.0-next.2
+
 ## 2.0.0-next.2
 
 ### Patch Changes
