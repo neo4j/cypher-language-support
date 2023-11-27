@@ -1,0 +1,51 @@
+name: Performance Regression Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  benchmark:
+    name: Time benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out pull request branch
+      - uses: actions/checkout@v2
+        with:
+          path: pr
+      # Check out base branch (to compare performance)
+      - uses: actions/checkout@v2
+        with:
+          ref: main
+          path: main
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Run benchmark on main and stores the output to a file
+      - name: Run benchmark on main (baseline)
+        run: npm install && cd main/packages/language-support && npm run build-benchmarks && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+
+      # Run benchmark on the PR branch and stores the output to a separate file (must use the same tool as above)
+      - name: Run pull request benchmark
+        run: npm install && cd pr/packages/language-support && npm run build-benchmarks && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+
+      - name: Compare benchmark result
+        uses: openpgpjs/github-action-pull-request-benchmark@v1
+        with:
+          name: 'Time benchmark'
+          # What benchmark tool the benchmarks.txt files came from
+          tool: 'benchmarkjs'
+          # Where the two output files from the benchmark tool are stored
+          pr-benchmark-file-path: pr/packages/language-support/benchmarks.txt
+          base-benchmark-file-path: main/packages/language-support/benchmarks.txt
+          # A comment will be left on the latest PR commit if `alert-threshold` is exceeded
+          comment-on-alert: true
+          alert-threshold: '130%'
+          # Workflow will fail if `fail-threshold` is exceeded
+          fail-on-alert: true
+          fail-threshold: '150%'
+          # A token is needed to leave commit comments
+          github-token: ${{ secrets.GITHUB_TOKEN }}
