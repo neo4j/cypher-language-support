@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
-        working-directory: ~
+        working-directory: /
 
       - name: Install dependencies with frozen lock file
         run: npm ci
