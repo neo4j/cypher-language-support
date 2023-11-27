@@ -34,13 +34,13 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build-benchmark
-        working-directory: main
+        working-directory: pr
 
       - name: Build benchmarks
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build-benchmark
-        working-directory: pr
+        working-directory: main
 
       # Run benchmark on main and stores the output to a file
       - name: Run benchmark on main (baseline)
