@@ -19,8 +19,8 @@ jobs:
           ref: main
           path: main
 
-      #- name: Setup antlr4
-      #uses: pr/.github/actions/setup-antlr4
+      - name: Setup antlr4
+        uses: ./main/.github/actions/setup-antlr4
 
       - name: Install dependencies with frozen lock file
         run: npm ci
