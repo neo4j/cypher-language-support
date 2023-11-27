@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+defaults:
+  run:
+    working-directory: .
+
 jobs:
   benchmark:
     name: Time benchmark
@@ -21,7 +25,6 @@ jobs:
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
-        working-directory: /
 
       - name: Install dependencies with frozen lock file
         run: npm ci
