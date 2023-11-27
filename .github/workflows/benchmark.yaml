@@ -26,11 +26,11 @@ jobs:
 
       # Run benchmark on main and stores the output to a file
       - name: Run benchmark on main (baseline)
-        run: cd main && npm install && cd packages/language-support && npm run build-benchmarks && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+        run: cd main && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
 
       # Run benchmark on the PR branch and stores the output to a separate file (must use the same tool as above)
       - name: Run pull request benchmark
-        run: cd pr && npm install && cd packages/language-support && npm run build-benchmarks && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+        run: cd pr && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
 
       - name: Compare benchmark result
         uses: openpgpjs/github-action-pull-request-benchmark@v1
