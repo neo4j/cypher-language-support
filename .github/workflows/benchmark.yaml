@@ -10,27 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out pull request branch
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: pr
-      # Check out base branch (to compare performance)
-      - uses: actions/checkout@v2
+
+      - uses: actions/checkout@v3
         with:
           ref: main
           path: main
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file
+        run: npm ci
+        working-directory: main
+
+      - name: Build benchmarks
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build-benchmark
+        working-directory: main
 
       # Run benchmark on main and stores the output to a file
       - name: Run benchmark on main (baseline)
-        run: cd main && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+        run: BENCHMARKING=true node main/packages/language-support/dist/benchmark/benchmark.js | tee main-benchmarks.txt
 
       # Run benchmark on the PR branch and stores the output to a separate file (must use the same tool as above)
-      - name: Run pull request benchmark
-        run: cd pr && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+      #- name: Run pull request benchmark
+      #run: cd pr && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
 
       - name: Compare benchmark result
         uses: openpgpjs/github-action-pull-request-benchmark@v1

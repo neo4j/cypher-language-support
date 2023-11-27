@@ -1,0 +1,2 @@
+simple - parse x 25,891 ops/sec ±0.38% (100 runs sampled)
+simple - highlight x 4,987 ops/sec ±0.44% (97 runs sampled)

@@ -15,6 +15,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
+    "build-benchmark": "turbo run build-benchmark",
     "release": "turbo run build && npx changeset publish",
     "clean": "turbo run clean",
     "watch": "turbo run watch",
