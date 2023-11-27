@@ -19,8 +19,8 @@ jobs:
           ref: main
           path: main
 
-      - name: Setup antlr4
-        uses: main/.github/actions/setup-antlr4
+      #- name: Setup antlr4
+      #uses: pr/.github/actions/setup-antlr4
 
       - name: Install dependencies with frozen lock file
         run: npm ci
@@ -58,8 +58,8 @@ jobs:
         with:
           name: 'Time benchmark'
           tool: 'benchmarkjs'
-          pr-benchmark-file-path: pr/packages/language-support/benchmarks.txt
-          base-benchmark-file-path: main/packages/language-support/benchmarks.txt
+          pr-benchmark-file-path: pr-benchmarks.txt
+          base-benchmark-file-path: main-benchmarks.txt
           comment-on-alert: true
           alert-threshold: '130%'
           fail-on-alert: true
