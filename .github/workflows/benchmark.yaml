@@ -25,20 +25,21 @@ jobs:
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
+        working-directory: $GITHUB_WORKSPACE/main
 
       - name: Install dependencies with frozen lock file
         run: npm ci
-        working-directory: main
+        working-directory: $GITHUB_WORKSPACE/main
 
       - name: Install dependencies with frozen lock file
         run: npm ci
-        working-directory: pr
+        working-directory: $GITHUB_WORKSPACE/pr
 
       - name: Build benchmarks
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build-benchmark
-        working-directory: main
+        working-directory: $GITHUB_WORKSPACE/main
 
       - name: Build benchmarks
         env:
