@@ -21,10 +21,15 @@ jobs:
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
+        working-directory: ~
 
       - name: Install dependencies with frozen lock file
         run: npm ci
         working-directory: main
+
+      - name: Install dependencies with frozen lock file
+        run: npm ci
+        working-directory: pr
 
       - name: Build benchmarks
         env:
@@ -32,9 +37,18 @@ jobs:
         run: npm run build-benchmark
         working-directory: main
 
+      - name: Build benchmarks
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build-benchmark
+        working-directory: pr
+
       # Run benchmark on main and stores the output to a file
       - name: Run benchmark on main (baseline)
         run: BENCHMARKING=true node main/packages/language-support/dist/benchmark/benchmark.js | tee main-benchmarks.txt
+
+      - name: Run benchmark on pr
+        run: BENCHMARKING=true node pr/packages/language-support/dist/benchmark/benchmark.js | tee main-benchmarks.txt
 
       # Run benchmark on the PR branch and stores the output to a separate file (must use the same tool as above)
       #- name: Run pull request benchmark
