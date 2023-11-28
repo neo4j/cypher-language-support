@@ -68,7 +68,7 @@ export type LabelOrRelType = {
 };
 
 export interface EnrichedParsingResult extends ParsingResult {
-  errors: SyntaxDiagnostic[];
+  diagnostics: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -240,7 +240,7 @@ class ParserWrapper {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
-        errors: errorListener.errors,
+        diagnostics: errorListener.errors,
         result: result,
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,

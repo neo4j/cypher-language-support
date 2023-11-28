@@ -51,10 +51,62 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Surfaces notifications correctly', () => {
+    const query = `
+    MATCH (shadowed)
+    CALL {
+      MATCH (shadowed)-[:REL]->(m) // warning here
+      RETURN m
+    }
+    RETURN *
+    `;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: shadowed)',
+        offsets: {
+          end: 54,
+          start: 46,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 3,
+          },
+          start: {
+            character: 13,
+            line: 3,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
   test('Accumulates several semantic errors', () => {
     const query = `CALL { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+        offsets: {
+          end: 53,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 53,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message: 'Variable `m` not defined',
         offsets: {
@@ -92,45 +144,26 @@ describe('Semantic validation spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
-        offsets: {
-          end: 53,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 53,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
   test('Shows errors for CALL IN TXs used in UNION', () => {
     const query = `CALL { CREATE (x) } IN TRANSACTIONS
-    RETURN 1 AS result
-    UNION
-    CALL { CREATE (x) } IN TRANSACTIONS
-    RETURN 2 AS result`;
+      RETURN 1 AS result
+      UNION
+      CALL { CREATE (x) } IN TRANSACTIONS
+      RETURN 2 AS result`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 131,
+          end: 139,
           start: 0,
         },
         range: {
           end: {
-            character: 22,
+            character: 24,
             line: 4,
           },
           start: {
@@ -143,16 +176,16 @@ describe('Semantic validation spec', () => {
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 131,
-          start: 73,
+          end: 139,
+          start: 79,
         },
         range: {
           end: {
-            character: 22,
+            character: 24,
             line: 4,
           },
           start: {
-            character: 4,
+            character: 6,
             line: 3,
           },
         },
@@ -163,47 +196,85 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for CALL when return variable already bound', () => {
     const query = `WITH 1 AS i
-    CALL {
-      WITH 2 AS i
-      RETURN *
-        UNION
-      WITH 3 AS i
-      RETURN *
-    }
-    RETURN i`;
+      CALL {
+        WITH 2 AS i
+        RETURN *
+          UNION
+        WITH 3 AS i
+        RETURN *
+      }
+      RETURN i`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Variable `i` already declared in outer scope',
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
         offsets: {
-          end: 55,
-          start: 54,
+          end: 44,
+          start: 43,
         },
         range: {
           end: {
-            character: 14,
+            character: 19,
+            line: 2,
+          },
+          start: {
+            character: 18,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 61,
+          start: 60,
+        },
+        range: {
+          end: {
+            character: 16,
             line: 3,
           },
           start: {
-            character: 13,
+            character: 15,
             line: 3,
           },
         },
         severity: 1,
       },
       {
-        message: 'Variable `i` already declared in outer scope',
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
         offsets: {
-          end: 102,
-          start: 101,
+          end: 97,
+          start: 96,
         },
         range: {
           end: {
-            character: 14,
+            character: 19,
+            line: 5,
+          },
+          start: {
+            character: 18,
+            line: 5,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 114,
+          start: 113,
+        },
+        range: {
+          end: {
+            character: 16,
             line: 6,
           },
           start: {
-            character: 13,
+            character: 15,
             line: 6,
           },
         },
@@ -240,40 +311,40 @@ describe('Semantic validation spec', () => {
 
   test('Does not show errors for multiple USE with the same database', () => {
     const query = `USE x
-      WITH 1 AS a
-      CALL {
-        USE x
-        RETURN 2 AS b
-      }
-      RETURN *`;
+        WITH 1 AS a
+        CALL {
+          USE x
+          RETURN 2 AS b
+        }
+        RETURN *`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors for using multiple USE with different databases', () => {
     const query = `USE neo4j
-      WITH 1 AS a
-      CALL {
-        USE other
-        RETURN 2 AS b
-      }
-      RETURN *`;
+        WITH 1 AS a
+        CALL {
+          USE other
+          RETURN 2 AS b
+        }
+        RETURN *`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
         offsets: {
-          end: 80,
-          start: 49,
+          end: 88,
+          start: 55,
         },
         range: {
           end: {
-            character: 21,
+            character: 23,
             line: 4,
           },
           start: {
-            character: 8,
+            character: 10,
             line: 3,
           },
         },
@@ -284,28 +355,28 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for simple shadowing of variables', () => {
     const query = `MATCH (a)
-    RETURN COUNT {
-      MATCH (a)-->(b)
-      WITH b as a
-      MATCH (b)-->(c)
-      RETURN a
-    }`;
+      RETURN COUNT {
+        MATCH (a)-->(b)
+        WITH b as a
+        MATCH (b)-->(c)
+        RETURN a
+      }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'The variable `a` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
-          end: 68,
-          start: 67,
+          end: 74,
+          start: 73,
         },
         range: {
           end: {
-            character: 17,
+            character: 19,
             line: 3,
           },
           start: {
-            character: 16,
+            character: 18,
             line: 3,
           },
         },
@@ -317,29 +388,29 @@ describe('Semantic validation spec', () => {
   // This test avoids a regression in the transpilation Java -> Javascript that we found at some point
   test('Shows errors for queries with WHERE', () => {
     const query = `MATCH (person:Person)
-    WHERE COUNT {
-        MATCH (n)
-        RETURN n.prop
-        UNION ALL
-        MATCH (m)
-    } > 1
-    RETURN person.name`;
+      WHERE COUNT {
+          MATCH (n)
+          RETURN n.prop
+          UNION ALL
+          MATCH (m)
+      } > 1
+      RETURN person.name`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'All sub queries in an UNION must have the same return column names',
         offsets: {
-          end: 115,
-          start: 88,
+          end: 125,
+          start: 96,
         },
         range: {
           end: {
-            character: 17,
+            character: 19,
             line: 5,
           },
           start: {
-            character: 8,
+            character: 10,
             line: 4,
           },
         },
@@ -352,6 +423,24 @@ describe('Semantic validation spec', () => {
     const query = `RETURN COLLECT { MATCH (a) }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'A Collect Expression must end with a single return column.',
+        offsets: {
+          end: 28,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
@@ -371,76 +460,58 @@ describe('Semantic validation spec', () => {
         },
         severity: 1,
       },
-      {
-        message: 'A Collect Expression must end with a single return column.',
-        offsets: {
-          end: 28,
-          start: 7,
-        },
-        range: {
-          end: {
-            character: 28,
-            line: 0,
-          },
-          start: {
-            character: 7,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
   test('Does not show errors for a correct COLLECT', () => {
     const query = `MATCH (a)
-      WHERE COLLECT {
-        MATCH (a)
-        RETURN a.prop
-      }[0] = a
-      RETURN a
-      `;
+        WHERE COLLECT {
+          MATCH (a)
+          RETURN a.prop
+        }[0] = a
+        RETURN a
+        `;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
   test('Shows errors for COLLECT with updating subqueries', () => {
     const query = `MATCH (a)
-    RETURN COLLECT { SET a.name = 1 }
-    `;
+      RETURN COLLECT { SET a.name = 1 }
+      `;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'A Collect Expression cannot contain any updates',
+        message: 'A Collect Expression must end with a single return column.',
         offsets: {
-          end: 47,
-          start: 21,
+          end: 49,
+          start: 23,
         },
         range: {
           end: {
-            character: 37,
+            character: 39,
             line: 1,
           },
           start: {
-            character: 11,
+            character: 13,
             line: 1,
           },
         },
         severity: 1,
       },
       {
-        message: 'A Collect Expression must end with a single return column.',
+        message: 'A Collect Expression cannot contain any updates',
         offsets: {
-          end: 47,
-          start: 21,
+          end: 49,
+          start: 23,
         },
         range: {
           end: {
-            character: 37,
+            character: 39,
             line: 1,
           },
           start: {
-            character: 11,
+            character: 13,
             line: 1,
           },
         },
@@ -451,28 +522,28 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for shadowing inside COLLECT subqueries', () => {
     const query = `WITH 5 as aNum
-    MATCH (a)
-    RETURN COLLECT {
-      WITH 6 as aNum
-      MATCH (a)-->(b) WHERE b.prop = aNum
-      RETURN a
-    }`;
+      MATCH (a)
+      RETURN COLLECT {
+        WITH 6 as aNum
+        MATCH (a)-->(b) WHERE b.prop = aNum
+        RETURN a
+      }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
-          end: 70,
-          start: 66,
+          end: 76,
+          start: 72,
         },
         range: {
           end: {
-            character: 20,
+            character: 22,
             line: 3,
           },
           start: {
-            character: 16,
+            character: 18,
             line: 3,
           },
         },
@@ -483,30 +554,30 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for nested CALL inside COLLECT subqueries', () => {
     const query = `WITH 5 AS y
-    RETURN COLLECT {
-        UNWIND [0, 1, 2] AS x
-        CALL {
-            WITH x
-            RETURN x * 10 AS y
-        }
-        RETURN y
-    }`;
+      RETURN COLLECT {
+          UNWIND [0, 1, 2] AS x
+          CALL {
+              WITH x
+              RETURN x * 10 AS y
+          }
+          RETURN y
+      }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
-          end: 127,
-          start: 126,
+          end: 137,
+          start: 136,
         },
         range: {
           end: {
-            character: 30,
+            character: 32,
             line: 5,
           },
           start: {
-            character: 29,
+            character: 31,
             line: 5,
           },
         },
@@ -517,22 +588,22 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for EXISTS with updating subqueries', () => {
     const query = `MATCH (a)
-    RETURN EXISTS { MATCH (b) MERGE (b)-[:FOLLOWS]->(:Person) }`;
+      RETURN EXISTS { MATCH (b) MERGE (b)-[:FOLLOWS]->(:Person) }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'An Exists Expression cannot contain any updates',
         offsets: {
-          end: 73,
-          start: 21,
+          end: 75,
+          start: 23,
         },
         range: {
           end: {
-            character: 63,
+            character: 65,
             line: 1,
           },
           start: {
-            character: 11,
+            character: 13,
             line: 1,
           },
         },
@@ -543,13 +614,13 @@ describe('Semantic validation spec', () => {
 
   test('Does not show errors for a correct EXISTS', () => {
     const query = `MATCH (a)
-      RETURN EXISTS {
-        MATCH (a)-[:KNOWS]->(b)
-        RETURN b.name as name
-        UNION ALL
-        MATCH (a)-[:LOVES]->(b)
-        RETURN b.name as name
-      }`;
+        RETURN EXISTS {
+          MATCH (a)-[:KNOWS]->(b)
+          RETURN b.name as name
+          UNION ALL
+          MATCH (a)-[:LOVES]->(b)
+          RETURN b.name as name
+        }`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
@@ -582,43 +653,43 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for pattern selectors', () => {
     const query = `MATCH
-        p1 = ANY 2 PATHS (a)-->*(c)-->(c),
-        p2 = (x)-->*(c)-->(z)
-      RETURN count(*)`;
+          p1 = ANY 2 PATHS (a)-->*(c)-->(c),
+          p2 = (x)-->*(c)-->(z)
+        RETURN count(*)`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
+        message:
+          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
         offsets: {
-          end: 30,
-          start: 19,
+          end: 82,
+          start: 16,
         },
         range: {
           end: {
-            character: 24,
-            line: 1,
+            character: 31,
+            line: 2,
           },
           start: {
-            character: 13,
+            character: 10,
             line: 1,
           },
         },
         severity: 1,
       },
       {
-        message:
-          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
+        message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
         offsets: {
-          end: 78,
-          start: 14,
+          end: 32,
+          start: 21,
         },
         range: {
           end: {
-            character: 29,
-            line: 2,
+            character: 26,
+            line: 1,
           },
           start: {
-            character: 8,
+            character: 15,
             line: 1,
           },
         },
@@ -696,6 +767,24 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
         severity: 1,
       },
       {
+        message: 'Variable `p` already declared',
+        offsets: {
+          end: 37,
+          start: 22,
+        },
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 22,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
@@ -709,24 +798,6 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
           },
           start: {
             character: 23,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message: 'Variable `p` already declared',
-        offsets: {
-          end: 37,
-          start: 22,
-        },
-        range: {
-          end: {
-            character: 37,
-            line: 0,
-          },
-          start: {
-            character: 22,
             line: 0,
           },
         },
@@ -884,6 +955,25 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
         },
         severity: 1,
       },
+      {
+        message:
+          'The use of shortestPath and allShortestPaths with fixed length relationships is deprecated and will be removed in a future version. Please use a path with a length of 1 [r*1..1] instead or a Match with a limit.',
+        offsets: {
+          end: 32,
+          start: 27,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 27,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
     ]);
   });
 
@@ -939,6 +1029,25 @@ That is, neither of these is a quantified path pattern.`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          'If a part of a query contains multiple disconnected patterns, this will build a cartesian product between all those parts. This may produce a large amount of data and slow down query processing. While occasionally intended, it may often be possible to reformulate the query that avoids the use of this cross product, perhaps by adding a relationship between the different parts or by using OPTIONAL MATCH (identifiers are: (a, b, s, u))',
+        offsets: {
+          end: 82,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 82,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
@@ -966,7 +1075,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Variable length relationships cannot be part of a quantified path pattern.',
+          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
         offsets: {
           end: 26,
           start: 8,
@@ -985,7 +1094,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
       {
         message:
-          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
           end: 26,
           start: 8,

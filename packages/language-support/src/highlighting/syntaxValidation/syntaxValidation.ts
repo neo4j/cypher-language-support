@@ -8,7 +8,10 @@ import {
   LabelType,
   parserWrapper,
 } from '../../parserWrapper';
-import { doSemanticAnalysis } from './semanticAnalysisWrapper';
+import {
+  doSemanticAnalysis,
+  SemanticAnalysisElement,
+} from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
 function detectNonDeclaredLabel(
@@ -124,6 +127,40 @@ type PositionWithOffset = {
   offset: number;
 };
 
+export function sortByPosition(elements: SyntaxDiagnostic[]) {
+  return elements.sort((a, b) => {
+    const lineDiff = a.range.start.line - b.range.start.line;
+    if (lineDiff !== 0) return lineDiff;
+
+    return a.range.start.character - b.range.start.character;
+  });
+}
+
+function pushToParserDiagnostics(
+  elements: SemanticAnalysisElement[],
+  severity: DiagnosticSeverity,
+  parsingResult: EnrichedParsingResult,
+) {
+  elements.map((e) => {
+    const start = Position.create(e.position.line - 1, e.position.column - 1);
+    const startOffset = e.position.offset;
+    const end = findEndPosition(parsingResult, start, startOffset);
+
+    parsingResult.diagnostics.push({
+      severity: severity,
+      range: {
+        start: start,
+        end: end.relative,
+      },
+      offsets: {
+        start: startOffset,
+        end: end.offset,
+      },
+      message: e.message,
+    });
+  });
+}
+
 export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
@@ -132,33 +169,26 @@ export function validateSyntax(
 
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
-    const errors = parsingResult.errors;
+    diagnostics = parsingResult.diagnostics;
 
-    if (errors.length === 0) {
-      const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
-      semanticAnalysisErrors.forEach((e) => {
-        const start = Position.create(e.line - 1, e.column - 1);
-        const startOffset = e.offset;
-        const end = findEndPosition(parsingResult, start, startOffset);
+    if (diagnostics.length === 0) {
+      const semanticAnalysisResult = doSemanticAnalysis(wholeFileText);
+      pushToParserDiagnostics(
+        semanticAnalysisResult.errors,
+        DiagnosticSeverity.Error,
+        parsingResult,
+      );
 
-        errors.push({
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: start,
-            end: end.relative,
-          },
-          offsets: {
-            start: startOffset,
-            end: end.offset,
-          },
-          message: e.msg,
-        });
-      });
+      pushToParserDiagnostics(
+        semanticAnalysisResult.notifications,
+        DiagnosticSeverity.Warning,
+        parsingResult,
+      );
     }
 
     const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    diagnostics = errors.concat(warnings);
+    diagnostics = diagnostics.concat(warnings);
   }
 
-  return diagnostics;
+  return sortByPosition(diagnostics);
 }
