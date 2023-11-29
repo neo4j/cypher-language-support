@@ -11,21 +11,42 @@ declare global {
   }
 }
 
-test('benchmarking & performance test session', async ({
-  mount,
-  page,
-  browser,
-}) => {
+test('benchmarking & performance test session', async ({ mount, page }) => {
+  const client = await page.context().newCDPSession(page);
   if (process.env.BENCHMARKING === 'true') {
     test.setTimeout(1000000);
-    const client = await page.context().newCDPSession(page);
     await client.send('Performance.enable');
     await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
     await client.send('Overlay.setShowFPSCounter', { show: true });
-    await browser.startTracing(page, {
-      path: './trace.json',
-      screenshots: true,
+
+    await client.send('Tracing.start', {
+      streamFormat: 'proto',
+      transferMode: 'ReturnAsStream',
+      bufferUsageReportingInterval: 1000,
+      traceConfig: {
+        recordMode: 'recordContinuously',
+        enableSampling: true,
+      },
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    client.on('Tracing.tracingComplete', async (event) => {
+      const { stream } = event;
+      const traceFile = 'trace.proto';
+
+      const fileStream = fs.createWriteStream(traceFile);
+
+      let chunk = await client.send('IO.read', { handle: stream });
+      while (!chunk.eof) {
+        fileStream.write(Buffer.from(chunk.data, 'base64'));
+        chunk = await client.send('IO.read', { handle: stream });
+      }
+
+      // Close the stream and the file
+      await client.send('IO.close', { handle: stream });
+      fileStream.end();
+    });
+
     await page.evaluate(() => {
       window.longtasks = [];
       const observer = new PerformanceObserver((list) => {
@@ -104,8 +125,24 @@ test('benchmarking & performance test session', async ({
     await component.update(<CypherEditor value={''} schema={{}} />);
     await page.evaluate(() => window.performance.mark('start idling'));
     // Used to see memeory usage over time while idle
+
+    await client.send('Tracing.end');
     await page.waitForTimeout(2 * 60 * 1000);
-    await browser.stopTracing();
+
+    /*
+    async for dc_event in session.listen(
+      devtools.tracing.DataCollected, devtools.tracing.TracingComplete
+  ):
+      # The DataCollected event is sent for each batch of events, and the TracingComplete event is sent when the tracing is done
+      if type(dc_event) == devtools.tracing.DataCollected:
+          data[
+              "traceEvents"
+          ] += (
+              dc_event.value
+          )  # Collect the events and do whatever you want with them
+      if type(dc_event) == devtools.tracing.TracingComplete:
+          break  # This is how you stop the event loop
+          */
 
     // save long task information to json
     const longtasks = await page.evaluate(() => window.longtasks);
