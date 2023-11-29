@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import fs from 'fs';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2e-utils';
 import { largeQuery, mockSchema } from './mock-data';
@@ -93,7 +92,6 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
     .pressSequentially('veryveryveryverylongvariable');
 
   if (process.env.BENCHMARKING === 'true') {
-    // save long task information to json
     const longtasks = await page.evaluate(() => window.longtasks);
     const sortedLongTasks = longtasks.sort((a, b) => a - b);
     const medianLongTask =
@@ -103,16 +101,41 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
     const over500 = sortedLongTasks.filter((t) => t > 500).length;
     const nintyninethPercentile =
       sortedLongTasks[Math.floor(sortedLongTasks.length * 0.99)];
+    const longTaskCount = longtasks.length;
+    const totalLongTaskTime = longtasks.reduce((a, b) => a + b, 0);
 
-    fs.writeFileSync(
-      'stats.json',
-      JSON.stringify({
-        longtasksCount: longtasks.length,
-        medianLongTask,
-        averageLongTask,
-        over500,
-        nintyninethPercentile,
-      }),
+    const USER_ID = 1226722;
+    const API_KEY = process.env.GRAFANA_API_KEY;
+
+    if (!API_KEY) {
+      throw new Error('Missing grafana api key');
+    }
+
+    const metrics = {
+      medianLongTask,
+      averageLongTask,
+      over500,
+      nintyninethPercentile,
+      longTaskCount,
+      totalLongTaskTime,
+    };
+    const body = Object.entries(metrics)
+      .map(
+        ([key, value]) =>
+          `benchmark,bar_label=${key},source=playwright metric=${value}`,
+      )
+      .join('\n');
+
+    await fetch(
+      'https://influx-prod-39-prod-eu-north-0.grafana.net/api/v1/push/influx/write',
+      {
+        method: 'post',
+        body,
+        headers: {
+          Authorization: `Bearer ${USER_ID}:${API_KEY}`,
+          'Content-Type': 'text/plain',
+        },
+      },
     );
   }
 });
