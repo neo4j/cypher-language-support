@@ -626,7 +626,7 @@ export const autocompletionQueries = {
   variableCompletion: 'WITH 1 as variable MATCH (n) WHERE n.name = ',
 };
 
-export const pokemonquery = `
+export const largePokemonquery = `
 CREATE 
 (Grass:Type {name:"Grass"}), 
 (Poison:Type {name:"Poison"}), 

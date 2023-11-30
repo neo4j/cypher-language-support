@@ -8,6 +8,7 @@ import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
 import {
   autocompletionQueries,
   createMovieDb,
+  largePokemonquery,
   simpleQuery,
   tictactoe,
 } from './benchmark-queries';
@@ -55,6 +56,12 @@ suite
   })
   .add('tictactoe - autocomplete next statement - medium Schema', function () {
     autocomplete(tictactoe, benchmarkingMediumSizeSchema);
+  })
+  .add('pokemon - parse', function () {
+    parse(largePokemonquery);
+  })
+  .add('pokemon - syntax highlight', function () {
+    parse(largePokemonquery);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {
