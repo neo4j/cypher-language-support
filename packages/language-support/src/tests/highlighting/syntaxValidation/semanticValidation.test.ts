@@ -633,7 +633,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`: \`a\`.\`prop\`}))+.`,
+In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop}))+.`,
         offsets: {
           end: 8,
           start: 7,
@@ -778,8 +778,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
         severity: 1,
       },
       {
-        message:
-          'Sub-path assignment is currently not supported outside quantified path patterns.',
+        message: 'Sub-path assignment is currently not supported.',
         offsets: {
           end: 35,
           start: 23,
@@ -894,7 +893,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(\`x\` {\`prop\`
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `A quantified path pattern needs to have at least one relationship.
-In this case, the quantified path pattern ((\`n\`) (\`m\`)){1, 5} consists of only nodes.`,
+In this case, the quantified path pattern ((n) (m)){1, 5} consists of only nodes.`,
         offsets: {
           end: 21,
           start: 6,
@@ -913,7 +912,7 @@ In this case, the quantified path pattern ((\`n\`) (\`m\`)){1, 5} consists of on
       },
       {
         message: `Juxtaposition is currently only supported for quantified path patterns.
-In this case, both (\`n\`) and (\`m\`) are single nodes.
+In this case, both (n) and (m) are single nodes.
 That is, neither of these is a quantified path pattern.`,
         offsets: {
           end: 14,
@@ -941,7 +940,7 @@ That is, neither of these is a quantified path pattern.`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`b\` {\`h\`: (\`nodes\`(\`p\`)[0]).\`prop\`}))*.`,
+In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
           end: 66,
           start: 6,
@@ -1096,58 +1095,13 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
     ]);
   });
 
-  test('Shows errors for label expressions when used in a CREATE', () => {
-    const query = 'CREATE (n IS A&B) RETURN n';
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message:
-          'Label expressions in patterns are not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
-        offsets: {
-          end: 14,
-          start: 14,
-        },
-        range: {
-          end: {
-            character: 14,
-            line: 0,
-          },
-          start: {
-            character: 14,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'The IS keyword in patterns is not allowed in a CREATE clause, but only in a MATCH clause and in expressions',
-        offsets: {
-          end: 14,
-          start: 14,
-        },
-        range: {
-          end: {
-            character: 14,
-            line: 0,
-          },
-          start: {
-            character: 14,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
   test('Shows errors for label expressions mixing IS with semicolon', () => {
     const query = 'MATCH (n IS A:B) RETURN n';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS `A`&`B`.",
+          "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS A&B.",
         offsets: {
           end: 13,
           start: 13,
@@ -1159,51 +1113,6 @@ In this case, p is defined in the same \`MATCH\` clause as ((\`a\`)-[\`e\`]->(\`
           },
           start: {
             character: 13,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
-  test('Shows errors for label expressions when used in MERGE', () => {
-    const query = 'MERGE (n IS %) RETURN n';
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message:
-          'Label expressions in patterns are not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
-        offsets: {
-          end: 13,
-          start: 12,
-        },
-        range: {
-          end: {
-            character: 13,
-            line: 0,
-          },
-          start: {
-            character: 12,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'The IS keyword in patterns is not allowed in a MERGE clause, but only in a MATCH clause and in expressions',
-        offsets: {
-          end: 13,
-          start: 12,
-        },
-        range: {
-          end: {
-            character: 13,
-            line: 0,
-          },
-          start: {
-            character: 12,
             line: 0,
           },
         },

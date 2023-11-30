@@ -15,7 +15,11 @@ interface SemanticAnalysisError {
 
 export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
   try {
-    const errors = semanticAnalysis(query).$array.data;
+    let semanticErrorsResult = undefined;
+    semanticAnalysis([query], (a) => {
+      semanticErrorsResult = a;
+    });
+    const errors = semanticErrorsResult.$array.data;
     let i = 0;
     let keepLooping = true;
     const result: SemanticAnalysisError[] = [];
@@ -25,7 +29,7 @@ export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
 
       if (error !== null) {
         const errorMsg = error['$msg'];
-        const position = error['$position69'];
+        const position = error['$position91'];
         result.push({
           msg: errorMsg.toString(),
           line: position['$line0'],

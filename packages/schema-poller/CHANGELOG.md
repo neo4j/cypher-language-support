@@ -1,5 +1,20 @@
 # @neo4j-cypher/schema-poller
 
+## 2.0.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [17909e3]
+  - @neo4j-cypher/language-support@2.0.0-next.2
+
+## 2.0.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [a790700]
+- Updated dependencies [08db455]
+  - @neo4j-cypher/language-support@2.0.0-next.1
+
 ## 2.0.0-next.0
 
 ### Major Changes
