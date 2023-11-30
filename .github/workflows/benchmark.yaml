@@ -7,6 +7,7 @@ on:
 jobs:
   benchmark:
     name: Time benchmark
+    environment: grafana-api-key
     runs-on: ubuntu-latest
 
     steps:
@@ -31,3 +32,5 @@ jobs:
 
       - name: Benchmark
         run: npm run benchmark --concurrency 1
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
