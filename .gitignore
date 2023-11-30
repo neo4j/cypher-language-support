@@ -16,3 +16,4 @@ generated
 *.clinic
 *.tsbuildinfo
 *.npmrc
+benchmarks.txt
