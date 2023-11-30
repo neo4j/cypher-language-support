@@ -1,0 +1,67 @@
+name: Performance Regression Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  benchmark:
+    name: Time benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: pr
+
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+          path: main
+
+      - name: Setup antlr4
+        uses: ./main/.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file
+        run: npm ci
+        working-directory: main
+
+      - name: Install dependencies with frozen lock file
+        run: npm ci
+        working-directory: pr
+
+      - name: Build benchmarks
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build-benchmark
+        working-directory: pr
+
+      - name: Build benchmarks
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build-benchmark
+        working-directory: main
+
+      # Run benchmark on main and stores the output to a file
+      - name: Run benchmark on main (baseline)
+        run: BENCHMARKING=true node main/packages/language-support/dist/benchmark/benchmark.js | tee main-benchmarks.txt
+
+      - name: Run benchmark on pr
+        run: BENCHMARKING=true node pr/packages/language-support/dist/benchmark/benchmark.js | tee pr-benchmarks.txt
+
+      # Run benchmark on the PR branch and stores the output to a separate file (must use the same tool as above)
+      #- name: Run pull request benchmark
+      #run: cd pr && npm install && cd packages/language-support && npm run build-benchmark && BENCHMARKING=true node dist/benchmark/benchmark.js | tee benchmarks.txt
+
+      - name: Compare benchmark result
+        uses: openpgpjs/github-action-pull-request-benchmark@v1
+        with:
+          name: 'Time benchmark'
+          tool: 'benchmarkjs'
+          pr-benchmark-file-path: pr-benchmarks.txt
+          base-benchmark-file-path: main-benchmarks.txt
+          comment-on-alert: true
+          alert-threshold: '130%'
+          fail-on-alert: true
+          fail-threshold: '150%'
+          github-token: ${{ secrets.GITHUB_TOKEN }}

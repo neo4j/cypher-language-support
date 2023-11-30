@@ -106,7 +106,6 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
 
     const USER_ID = 1226722;
     const API_KEY = process.env.GRAFANA_API_KEY;
-
     if (!API_KEY) {
       throw new Error('Missing grafana api key');
     }
@@ -136,6 +135,13 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
           'Content-Type': 'text/plain',
         },
       },
-    );
+    ).then((res) => {
+      if (res.ok) {
+        // eslint-disable-next-line no-console
+        console.log('Metrics pushed to grafana successfully');
+      } else {
+        throw new Error(`Failed to push metrics to grafana: ${res.statusText}`);
+      }
+    });
   }
 });

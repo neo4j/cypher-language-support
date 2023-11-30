@@ -15,7 +15,6 @@
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
-    "build-benchmark": "turbo run build-benchmark",
     "release": "turbo run build && npx changeset publish",
     "clean": "turbo run clean",
     "watch": "turbo run watch",
@@ -24,7 +23,12 @@
     "dev-codemirror": "turbo run @neo4j-cypher/react-codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
-    "format": "prettier --config .prettierrc.json '**/*.ts' --write"
+    "format": "prettier --config .prettierrc.json '**/*.ts' --write",
+    "benchmark": "turbo run benchmark --concurrency=1"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
