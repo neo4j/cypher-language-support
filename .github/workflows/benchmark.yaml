@@ -22,9 +22,6 @@ jobs:
       - name: Install dependencies with frozen lock file
         run: npm ci
 
-      - name: Install dependencies with frozen lock file
-        run: npm ci
-
       - name: Build project
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
