@@ -127,26 +127,24 @@ type PositionWithOffset = {
   offset: number;
 };
 
-export function sortByPosition(elements: SyntaxDiagnostic[]) {
-  return elements.sort((a, b) => {
-    const lineDiff = a.range.start.line - b.range.start.line;
-    if (lineDiff !== 0) return lineDiff;
+export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
+  const lineDiff = a.range.start.line - b.range.start.line;
+  if (lineDiff !== 0) return lineDiff;
 
-    return a.range.start.character - b.range.start.character;
-  });
+  return a.range.start.character - b.range.start.character;
 }
 
-function pushToParserDiagnostics(
+function getSemanticAnalysisDiagnostics(
   elements: SemanticAnalysisElement[],
   severity: DiagnosticSeverity,
   parsingResult: EnrichedParsingResult,
-) {
-  elements.map((e) => {
+): SyntaxDiagnostic[] {
+  return elements.map((e) => {
     const start = Position.create(e.position.line - 1, e.position.column - 1);
     const startOffset = e.position.offset;
     const end = findEndPosition(parsingResult, start, startOffset);
 
-    parsingResult.diagnostics.push({
+    return {
       severity: severity,
       range: {
         start: start,
@@ -157,7 +155,7 @@ function pushToParserDiagnostics(
         end: end.offset,
       },
       message: e.message,
-    });
+    };
   });
 }
 
@@ -173,22 +171,24 @@ export function validateSyntax(
 
     if (diagnostics.length === 0) {
       const semanticAnalysisResult = doSemanticAnalysis(wholeFileText);
-      pushToParserDiagnostics(
+      const errors = getSemanticAnalysisDiagnostics(
         semanticAnalysisResult.errors,
         DiagnosticSeverity.Error,
         parsingResult,
       );
 
-      pushToParserDiagnostics(
+      const warnings = getSemanticAnalysisDiagnostics(
         semanticAnalysisResult.notifications,
         DiagnosticSeverity.Warning,
         parsingResult,
       );
+
+      diagnostics.push(...warnings, ...errors);
     }
 
-    const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    diagnostics = diagnostics.concat(warnings);
+    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+    diagnostics.push(...labelWarnings);
   }
 
-  return sortByPosition(diagnostics);
+  return diagnostics.sort(sortByPosition);
 }
