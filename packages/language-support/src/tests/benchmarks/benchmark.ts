@@ -61,7 +61,7 @@ suite
     parse(largePokemonquery);
   })
   .add('pokemon - syntax highlight', function () {
-    parse(largePokemonquery);
+    applySyntaxColouring(largePokemonquery);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {
