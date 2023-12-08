@@ -1,0 +1,64 @@
+name: Performance Regression Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  benchmark:
+    name: Time benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: pr
+
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+          path: main
+
+      - name: Setup antlr4
+        uses: ./main/.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file for main branch
+        run: npm ci
+        working-directory: main
+
+      - name: Install dependencies with frozen lock file for pr branch
+        run: npm ci
+        working-directory: pr
+
+      - name: Build project for main
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build
+        working-directory: main
+
+      - name: Build project for pr
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build
+        working-directory: pr
+
+      - name: Run benchmark on main (baseline)
+        run: npm run benchmark | tee main-benchmarks.txt
+        working-directory: main/packages/language-support
+
+      - name: Run benchmark on pr
+        run: npm run benchmark | tee pr-benchmarks.txt
+        working-directory: pr/packages/language-support
+
+      - name: Compare benchmark result
+        uses: openpgpjs/github-action-pull-request-benchmark@v1
+        with:
+          name: 'Time benchmark'
+          tool: 'benchmarkjs'
+          pr-benchmark-file-path: pr/packages/language-support/pr-benchmarks.txt
+          base-benchmark-file-path: main/packages/language-support/main-benchmarks.txt
+          comment-on-alert: true
+          alert-threshold: '130%'
+          fail-on-alert: true
+          fail-threshold: '150%'
+          github-token: ${{ secrets.GITHUB_TOKEN }}

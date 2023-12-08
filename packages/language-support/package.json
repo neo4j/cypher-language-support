@@ -52,11 +52,14 @@
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
+    "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",
     "watch": "tsc -b -w",
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.5"
+    "@types/benchmark": "^2.1.5",
+    "@types/jest": "^29.5.5",
+    "benchmark": "^2.1.4"
   }
 }

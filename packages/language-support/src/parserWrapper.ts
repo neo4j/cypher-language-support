@@ -251,6 +251,10 @@ class ParserWrapper {
       return parsingResult;
     }
   }
+
+  clearCache() {
+    this.parsingResult = undefined;
+  }
 }
 
 export const parserWrapper = new ParserWrapper();
