@@ -40,7 +40,7 @@ export function activate(context: ExtensionContext) {
 
   // Create the language client and start the client.
   client = new LanguageClient(
-    'cypherLSP',
+    'neo4j',
     'Cypher Language Client',
     serverOptions,
     clientOptions,
