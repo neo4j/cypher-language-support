@@ -3,7 +3,7 @@ import Benchmark from 'benchmark';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { applySyntaxColouring } from '../../highlighting/syntaxColouring/syntaxColouring';
 import { validateSyntax } from '../../highlighting/syntaxValidation/syntaxValidation';
-import { parse } from '../../parserWrapper';
+import { parse, parserWrapper } from '../../parserWrapper';
 import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
 import {
   autocompletionQueries,
@@ -22,45 +22,62 @@ suite
     parse(simpleQuery);
   })
   .add('simple - highlight', function () {
+    parserWrapper.clearCache();
     applySyntaxColouring(simpleQuery);
   })
   .add('simple - validate syntax', function () {
+    parserWrapper.clearCache();
     validateSyntax(simpleQuery, benchmarkingMediumSizeSchema);
   })
   .add('simple - autocomplete next statement', function () {
+    parserWrapper.clearCache();
     autocomplete(simpleQuery, benchmarkingMediumSizeSchema);
   })
   .add('movies - parse', function () {
     parse(createMovieDb);
   })
   .add('movies - highlight', function () {
+    parserWrapper.clearCache();
     applySyntaxColouring(createMovieDb);
   })
   .add('movies - validate syntax', function () {
+    parserWrapper.clearCache();
     validateSyntax(createMovieDb, benchmarkingMediumSizeSchema);
   })
   .add('movies - autocomplete next statement', function () {
+    parserWrapper.clearCache();
     autocomplete(createMovieDb, benchmarkingMediumSizeSchema);
   })
   .add('tictactoe - parse', function () {
+    parserWrapper.clearCache();
     parse(tictactoe);
   })
   .add('tictactoe - highlight', function () {
+    parserWrapper.clearCache();
     applySyntaxColouring(tictactoe);
   })
   .add('tictactoe - validate syntax', function () {
+    parserWrapper.clearCache();
     validateSyntax(tictactoe, benchmarkingMediumSizeSchema);
   })
   .add('tictactoe - autocomplete next statement - no Schema', function () {
+    parserWrapper.clearCache();
     autocomplete(tictactoe, {});
   })
   .add('tictactoe - autocomplete next statement - medium Schema', function () {
+    parserWrapper.clearCache();
     autocomplete(tictactoe, benchmarkingMediumSizeSchema);
   })
   .add('pokemon - parse', function () {
+    parserWrapper.clearCache();
     parse(largePokemonquery);
   })
+  .add('pokemon - parserwrapper parse', function () {
+    parserWrapper.clearCache();
+    parserWrapper.parse(largePokemonquery);
+  })
   .add('pokemon - syntax highlight', function () {
+    parserWrapper.clearCache();
     applySyntaxColouring(largePokemonquery);
   });
 
@@ -69,6 +86,7 @@ Object.entries(autocompletionQueries).forEach(([name, query]) => {
     parse(query);
   });
   suite.add(`autocomplete - ${name}`, function () {
+    parserWrapper.clearCache();
     autocomplete(query, benchmarkingMediumSizeSchema);
   });
 });
@@ -105,7 +123,6 @@ suite
         )
         .join('\n');
 
-      console.log(body);
       await fetch(
         'https://influx-prod-39-prod-eu-north-0.grafana.net/api/v1/push/influx/write',
         {

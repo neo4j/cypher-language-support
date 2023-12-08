@@ -300,3 +300,7 @@ export function applySyntaxColouring(
 
   return result;
 }
+
+export function clearCache() {
+  delete parserWrapper.parsingResult;
+}

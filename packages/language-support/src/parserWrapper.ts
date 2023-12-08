@@ -220,8 +220,7 @@ class ParserWrapper {
   parse(query: string): EnrichedParsingResult {
     if (
       this.parsingResult !== undefined &&
-      this.parsingResult.query === query &&
-      process.env.BENCHMARKING !== 'true'
+      this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
@@ -251,6 +250,10 @@ class ParserWrapper {
       this.parsingResult = parsingResult;
       return parsingResult;
     }
+  }
+
+  clearCache() {
+    this.parsingResult = undefined;
   }
 }
 
