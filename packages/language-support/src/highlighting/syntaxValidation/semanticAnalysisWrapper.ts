@@ -6,45 +6,32 @@
 // @ts-ignore
 import { semanticAnalysis } from './semanticAnalysis';
 
-export interface SemanticAnalysisError {
-  msg: string;
-  line: number;
-  column: number;
-  offset: number;
+export interface SemanticAnalysisResult {
+  errors: SemanticAnalysisElement[];
+  notifications: SemanticAnalysisElement[];
 }
 
-export function doSemanticAnalysis(query: string): SemanticAnalysisError[] {
+export interface SemanticAnalysisElement {
+  message: string;
+  position: {
+    offset: number;
+    line: number;
+    column: number;
+  };
+}
+
+export function doSemanticAnalysis(query: string): SemanticAnalysisResult {
   try {
     let semanticErrorsResult = undefined;
     semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
-    const errors = semanticErrorsResult.$array.data;
-    let i = 0;
-    let keepLooping = true;
-    const result: SemanticAnalysisError[] = [];
-
-    while (i < errors.length && keepLooping) {
-      const error = errors[i];
-
-      if (error !== null) {
-        const errorMsg = error['$msg'];
-        const position = error['$position91'];
-        result.push({
-          msg: errorMsg.toString(),
-          line: position['$line0'],
-          column: position['$column0'],
-          offset: position['$offset0'],
-        });
-      } else {
-        keepLooping = false;
-      }
-      i++;
-    }
-
-    return result;
+    const errors: SemanticAnalysisElement[] = semanticErrorsResult.$errors.data;
+    const notifications: SemanticAnalysisElement[] =
+      semanticErrorsResult.$notifications.data;
+    return { errors: errors, notifications: notifications };
   } catch (e) {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
-    return [];
+    return { errors: [], notifications: [] };
   }
 }

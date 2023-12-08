@@ -52,6 +52,9 @@
       "cache": false,
       "persistent": false,
       "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]
+    },
+    "benchmark": {
+      "cache": false
     }
   }
 }

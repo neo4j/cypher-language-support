@@ -8,17 +8,18 @@ import {
   LabelType,
   parserWrapper,
 } from '../../parserWrapper';
-import type { SemanticAnalysisError } from './semanticAnalysisWrapper';
+import {
+  SemanticAnalysisElement,
+  SemanticAnalysisResult,
+} from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
 const semanticAnalysisWorker = new Worker(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore sdf
-  new URL('./semanticAnalysisWorker.js', import.meta.url),
+  // @ts-ignore this import.meta.url doesn't work for cjs
+  new URL('./semanticAnalysisWorker.js', import.meta?.url),
   { type: 'module' },
 );
-
-// separate out the lintsourcese to be 2 separate ones, have the other one be async
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -88,11 +89,6 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-type PositionWithOffset = {
-  relative: Position;
-  offset: number;
-};
-
 function findEndPosition(
   parsingResult: EnrichedParsingResult,
   start: Position,
@@ -133,21 +129,56 @@ function findEndPosition(
   }
 }
 
+type PositionWithOffset = {
+  relative: Position;
+  offset: number;
+};
+
+export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
+  const lineDiff = a.range.start.line - b.range.start.line;
+  if (lineDiff !== 0) return lineDiff;
+
+  return a.range.start.character - b.range.start.character;
+}
+
+function getSemanticAnalysisDiagnostics(
+  elements: SemanticAnalysisElement[],
+  severity: DiagnosticSeverity,
+  parsingResult: EnrichedParsingResult,
+): SyntaxDiagnostic[] {
+  return elements.map((e) => {
+    const start = Position.create(e.position.line - 1, e.position.column - 1);
+    const startOffset = e.position.offset;
+    const end = findEndPosition(parsingResult, start, startOffset);
+
+    return {
+      severity: severity,
+      range: {
+        start: start,
+        end: end.relative,
+      },
+      offsets: {
+        start: startOffset,
+        end: end.offset,
+      },
+      message: e.message,
+    };
+  });
+}
+
 export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  let diagnostics: SyntaxDiagnostic[] = [];
-
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
-    const errors = parsingResult.errors;
+    const diagnostics = parsingResult.diagnostics;
 
-    const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    diagnostics = errors.concat(warnings);
+    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+    return [...diagnostics, ...labelWarnings].sort(sortByPosition);
   }
 
-  return diagnostics;
+  return [];
 }
 
 export async function runSemanticAnalysis(
@@ -155,37 +186,29 @@ export async function runSemanticAnalysis(
 ): Promise<SyntaxDiagnostic[]> {
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
-    const errors = parsingResult.errors;
-
-    if (errors.length === 0) {
+    const { diagnostics } = parsingResult;
+    if (diagnostics.length === 0) {
       return new Promise((resolve, reject) => {
         // Receiving results from the worker
         semanticAnalysisWorker.addEventListener('message', function (event) {
+          // eslint-disable-next-line no-console
           console.log('Received data from worker: ', event.data);
 
-          const result = (event.data as { result: SemanticAnalysisError[] })
-            .result;
+          const { result } = event.data as { result: SemanticAnalysisResult };
 
-          const diagnostics = result.map((e: SemanticAnalysisError) => {
-            const start = Position.create(e.line - 1, e.column - 1);
-            const startOffset = e.offset;
-            const end = findEndPosition(parsingResult, start, startOffset);
+          const errors = getSemanticAnalysisDiagnostics(
+            result.errors,
+            DiagnosticSeverity.Error,
+            parsingResult,
+          );
 
-            return {
-              severity: DiagnosticSeverity.Error,
-              range: {
-                start: start,
-                end: end.relative,
-              },
-              offsets: {
-                start: startOffset,
-                end: end.offset,
-              },
-              message: e.msg,
-            };
-          });
+          const warnings = getSemanticAnalysisDiagnostics(
+            result.notifications,
+            DiagnosticSeverity.Warning,
+            parsingResult,
+          );
 
-          resolve(diagnostics);
+          resolve([...errors, ...warnings].sort(sortByPosition));
         });
 
         semanticAnalysisWorker.addEventListener('error', function (error) {
@@ -193,6 +216,7 @@ export async function runSemanticAnalysis(
         });
 
         const requestId = Math.random().toString();
+        // eslint-disable-next-line no-console
         console.log('sending message');
         semanticAnalysisWorker.postMessage({ requestId, query: wholeFileText });
       });
