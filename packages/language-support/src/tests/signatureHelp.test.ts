@@ -164,7 +164,7 @@ describe('Functions signature help', () => {
   //   variable, property, property, spurious (
   // or
   //   functionName (
-  test.skip('Provides signature help for functions first argument when argument non started', () => {
+  test('Provides signature help for functions first argument when argument non started', () => {
     testSignatureHelp(
       `MATCH (n)
          RETURN apoc.do.when(`,
