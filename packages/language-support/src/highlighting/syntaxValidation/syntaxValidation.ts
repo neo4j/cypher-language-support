@@ -8,8 +8,17 @@ import {
   LabelType,
   parserWrapper,
 } from '../../parserWrapper';
-import { doSemanticAnalysis } from './semanticAnalysisWrapper';
+import type { SemanticAnalysisError } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
+
+const semanticAnalysisWorker = new Worker(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore sdf
+  new URL('./semanticAnalysisWorker.js', import.meta.url),
+  { type: 'module' },
+);
+
+// separate out the lintsourcese to be 2 separate ones, have the other one be async
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -79,6 +88,11 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
+type PositionWithOffset = {
+  relative: Position;
+  offset: number;
+};
+
 function findEndPosition(
   parsingResult: EnrichedParsingResult,
   start: Position,
@@ -119,11 +133,6 @@ function findEndPosition(
   }
 }
 
-type PositionWithOffset = {
-  relative: Position;
-  offset: number;
-};
-
 export function validateSyntax(
   wholeFileText: string,
   dbSchema: DbSchema,
@@ -134,31 +143,61 @@ export function validateSyntax(
     const parsingResult = parserWrapper.parse(wholeFileText);
     const errors = parsingResult.errors;
 
-    if (errors.length === 0) {
-      const semanticAnalysisErrors = doSemanticAnalysis(wholeFileText);
-      semanticAnalysisErrors.forEach((e) => {
-        const start = Position.create(e.line - 1, e.column - 1);
-        const startOffset = e.offset;
-        const end = findEndPosition(parsingResult, start, startOffset);
-
-        errors.push({
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: start,
-            end: end.relative,
-          },
-          offsets: {
-            start: startOffset,
-            end: end.offset,
-          },
-          message: e.msg,
-        });
-      });
-    }
-
     const warnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
     diagnostics = errors.concat(warnings);
   }
 
   return diagnostics;
+}
+
+export async function runSemanticAnalysis(
+  wholeFileText: string,
+): Promise<SyntaxDiagnostic[]> {
+  if (wholeFileText.length > 0) {
+    const parsingResult = parserWrapper.parse(wholeFileText);
+    const errors = parsingResult.errors;
+
+    if (errors.length === 0) {
+      return new Promise((resolve, reject) => {
+        // Receiving results from the worker
+        semanticAnalysisWorker.addEventListener('message', function (event) {
+          console.log('Received data from worker: ', event.data);
+
+          const result = (event.data as { result: SemanticAnalysisError[] })
+            .result;
+
+          const diagnostics = result.map((e: SemanticAnalysisError) => {
+            const start = Position.create(e.line - 1, e.column - 1);
+            const startOffset = e.offset;
+            const end = findEndPosition(parsingResult, start, startOffset);
+
+            return {
+              severity: DiagnosticSeverity.Error,
+              range: {
+                start: start,
+                end: end.relative,
+              },
+              offsets: {
+                start: startOffset,
+                end: end.offset,
+              },
+              message: e.msg,
+            };
+          });
+
+          resolve(diagnostics);
+        });
+
+        semanticAnalysisWorker.addEventListener('error', function (error) {
+          reject(error);
+        });
+
+        const requestId = Math.random().toString();
+        console.log('sending message');
+        semanticAnalysisWorker.postMessage({ requestId, query: wholeFileText });
+      });
+    }
+  }
+
+  return [];
 }

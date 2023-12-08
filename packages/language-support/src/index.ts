@@ -8,7 +8,10 @@ export {
   syntaxColouringLegend,
 } from './highlighting/syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
-export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
+export {
+  runSemanticAnalysis,
+  validateSyntax,
+} from './highlighting/syntaxValidation/syntaxValidation';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';

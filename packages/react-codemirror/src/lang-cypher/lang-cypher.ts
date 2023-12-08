@@ -6,7 +6,7 @@ import {
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
-import { cypherLinter } from './syntax-validation';
+import { cypherLinter, semanticAnalysisLinter } from './syntax-validation';
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
@@ -28,5 +28,6 @@ export function cypher(config: CypherConfig) {
       autocomplete: cypherAutocomplete(config),
     }),
     cypherLinter(config),
+    semanticAnalysisLinter(config),
   ]);
 }

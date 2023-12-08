@@ -50,7 +50,7 @@
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
     "build": "npm run gen-parser && concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
-    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs && esbuild ./src/highlighting/syntaxValidation/semanticAnalysisWorker.ts --bundle --format=esm --sourcemap --outfile=dist/esm/semanticAnalysisWorker.js",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
     "clean": "rm -rf {dist,src/generated-parser}",
     "watch": "tsc -b -w",

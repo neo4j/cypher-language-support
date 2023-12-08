@@ -6,7 +6,7 @@
 // @ts-ignore
 import { semanticAnalysis } from './semanticAnalysis';
 
-interface SemanticAnalysisError {
+export interface SemanticAnalysisError {
   msg: string;
   line: number;
   column: number;
