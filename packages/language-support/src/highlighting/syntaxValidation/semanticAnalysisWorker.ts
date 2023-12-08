@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { doSemanticAnalysis } from './semanticAnalysisWrapper.js';
 
 type SemanticAnaylysisRequestMessage = { requestId: string; query: string };
@@ -9,5 +11,31 @@ self.onmessage = (event: MessageEvent) => {
   );
 
   // TODO there's something in the latest semantic anaylsis which makes this no longer possible
-  postMessage({ result });
+  console.log(result.errors);
+  postMessage({
+    result: {
+      errors: result.errors.map(({ message, position }) => ({
+        message,
+        position: {
+          // @ts-ignore sdf
+          column: position.$column2,
+          // @ts-ignore sdf
+          line: position.$line2,
+          // @ts-ignore sdf
+          offset: position.$offset2,
+        },
+      })),
+      notifications: result.notifications.map(({ message, position }) => ({
+        message,
+        position: {
+          // @ts-ignore sdf
+          column: position.$column2,
+          // @ts-ignore sdf
+          line: position.$line2,
+          // @ts-ignore sdf
+          offset: position.$offset2,
+        },
+      })),
+    },
+  });
 };

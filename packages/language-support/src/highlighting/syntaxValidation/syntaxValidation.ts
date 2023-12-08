@@ -202,13 +202,17 @@ export async function runSemanticAnalysis(
             parsingResult,
           );
 
+          /*
           const warnings = getSemanticAnalysisDiagnostics(
             result.notifications,
             DiagnosticSeverity.Warning,
             parsingResult,
-          );
 
-          resolve([...errors, ...warnings].sort(sortByPosition));
+          );
+          */
+          console.log(errors);
+
+          resolve([...errors /* ...warnings*/]); // .sort(sortByPosition));
         });
 
         semanticAnalysisWorker.addEventListener('error', function (error) {
