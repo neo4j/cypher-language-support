@@ -181,6 +181,38 @@ export function validateSyntax(
   return [];
 }
 
+function runSemanticAnalysisInWorker(
+  query: string,
+  parsingResult: EnrichedParsingResult,
+): Promise<SyntaxDiagnostic[]> {
+  // See explaination here on why and how we use the MessageChannel API rather than just postMessage():
+  // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
+
+  const channel = new MessageChannel();
+
+  semanticAnalysisWorker.postMessage({ query }, [channel.port1]);
+
+  return new Promise((resolve) => {
+    channel.port2.onmessage = (event) => {
+      const result = event.data as SemanticAnalysisResult;
+
+      const errors = getSemanticAnalysisDiagnostics(
+        result.errors,
+        DiagnosticSeverity.Error,
+        parsingResult,
+      );
+
+      const warnings = getSemanticAnalysisDiagnostics(
+        result.notifications,
+        DiagnosticSeverity.Warning,
+        parsingResult,
+      );
+
+      resolve([...errors, ...warnings]);
+    };
+  });
+}
+
 export async function runSemanticAnalysis(
   wholeFileText: string,
 ): Promise<SyntaxDiagnostic[]> {
@@ -188,42 +220,7 @@ export async function runSemanticAnalysis(
     const parsingResult = parserWrapper.parse(wholeFileText);
     const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
-      return new Promise((resolve, reject) => {
-        // Receiving results from the worker
-        semanticAnalysisWorker.addEventListener('message', function (event) {
-          // eslint-disable-next-line no-console
-          console.log('Received data from worker: ', event.data);
-
-          const { result } = event.data as { result: SemanticAnalysisResult };
-
-          const errors = getSemanticAnalysisDiagnostics(
-            result.errors,
-            DiagnosticSeverity.Error,
-            parsingResult,
-          );
-
-          /*
-          const warnings = getSemanticAnalysisDiagnostics(
-            result.notifications,
-            DiagnosticSeverity.Warning,
-            parsingResult,
-
-          );
-          */
-          console.log(errors);
-
-          resolve([...errors /* ...warnings*/]); // .sort(sortByPosition));
-        });
-
-        semanticAnalysisWorker.addEventListener('error', function (error) {
-          reject(error);
-        });
-
-        const requestId = Math.random().toString();
-        // eslint-disable-next-line no-console
-        console.log('sending message');
-        semanticAnalysisWorker.postMessage({ requestId, query: wholeFileText });
-      });
+      return runSemanticAnalysisInWorker(wholeFileText, parsingResult);
     }
   }
 
