@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "out",
     "declaration": true,
-    "allowJs": true
+    "allowJs": true,
+    "module": "ESNext"
   }
 }

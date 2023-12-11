@@ -14,12 +14,16 @@ import {
 } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
-const semanticAnalysisWorker = new Worker(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore this import.meta.url doesn't work for cjs
-  new URL('./semanticAnalysisWorker.js', import.meta?.url),
-  { type: 'module' },
-);
+// TODO make normal tests work even if using older method.
+// TODO make it work for node with web-worker
+// TODO make it work for jest
+// TODO make it work for vsocde extension -> cjs
+
+const semanticAnalysisWorker = Worker
+  ? new Worker(new URL('./semanticAnalysisWorker.js', import.meta.url), {
+      type: 'module',
+    })
+  : null;
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -181,36 +185,54 @@ export function validateSyntax(
   return [];
 }
 
-function runSemanticAnalysisInWorker(
+async function getSemanticDiagnostics(
   query: string,
   parsingResult: EnrichedParsingResult,
 ): Promise<SyntaxDiagnostic[]> {
-  // See explaination here on why and how we use the MessageChannel API rather than just postMessage():
-  // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
+  if (semanticAnalysisWorker !== null) {
+    // See explaination here on why and how we use the MessageChannel API rather than just postMessage():
+    // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
 
-  const channel = new MessageChannel();
+    const channel = new MessageChannel();
 
-  semanticAnalysisWorker.postMessage({ query }, [channel.port1]);
+    semanticAnalysisWorker.postMessage({ query }, [channel.port1]);
 
-  return new Promise((resolve) => {
-    channel.port2.onmessage = (event) => {
-      const result = event.data as SemanticAnalysisResult;
+    return new Promise((resolve) => {
+      channel.port2.onmessage = (event) => {
+        const result = event.data as SemanticAnalysisResult;
 
-      const errors = getSemanticAnalysisDiagnostics(
-        result.errors,
-        DiagnosticSeverity.Error,
-        parsingResult,
-      );
+        const errors = getSemanticAnalysisDiagnostics(
+          result.errors,
+          DiagnosticSeverity.Error,
+          parsingResult,
+        );
 
-      const warnings = getSemanticAnalysisDiagnostics(
-        result.notifications,
-        DiagnosticSeverity.Warning,
-        parsingResult,
-      );
+        const warnings = getSemanticAnalysisDiagnostics(
+          result.notifications,
+          DiagnosticSeverity.Warning,
+          parsingResult,
+        );
 
-      resolve([...errors, ...warnings]);
-    };
-  });
+        resolve([...errors, ...warnings]);
+      };
+    });
+  } else {
+    const helper = await import('./semanticAnalysisWrapper');
+    const result = helper.doSemanticAnalysis(query);
+    const errors = getSemanticAnalysisDiagnostics(
+      result.errors,
+      DiagnosticSeverity.Error,
+      parsingResult,
+    );
+
+    const warnings = getSemanticAnalysisDiagnostics(
+      result.notifications,
+      DiagnosticSeverity.Warning,
+      parsingResult,
+    );
+
+    return [...errors, ...warnings];
+  }
 }
 
 export async function runSemanticAnalysis(
@@ -220,7 +242,7 @@ export async function runSemanticAnalysis(
     const parsingResult = parserWrapper.parse(wholeFileText);
     const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
-      return runSemanticAnalysisInWorker(wholeFileText, parsingResult);
+      return getSemanticDiagnostics(wholeFileText, parsingResult);
     }
   }
 
