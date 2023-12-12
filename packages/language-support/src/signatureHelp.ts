@@ -3,10 +3,12 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { ParserRuleContext } from 'antlr4';
+import { ParserRuleContext, ParseTree } from 'antlr4';
 import {
   CallClauseContext,
+  ExpressionContext,
   FunctionInvocationContext,
+  StatementsContext,
 } from './generated-parser/CypherParser';
 
 import { DbSchema } from './dbSchema';
@@ -46,9 +48,68 @@ function tryParseProcedure(
   }
 }
 
+/* 
+RETURN apoc.do.when( gets parsed as:
+
+      statements
+     /    |    \     
+statement (    EOF
+    /  \
+RETURN  expression
+
+
+
+rather than:
+
+
+        statements
+      /            \     
+statement          EOF
+    /  \ 
+RETURN  functionInvocation
+             /         \ 
+        functionName    (
+
+
+so we need to treat that case differently because we cannot modify the 
+relative priority of functionInvocation vs expression
+
+RETURN apoc.do.when(x gets parsed correctly (when we've started the first argument),
+because the parser has enough information to recognize that case
+
+*/
+function findRightmostPreviousExpression(
+  currentNode: ParserRuleContext,
+): ParserRuleContext | undefined {
+  const parentChildren = currentNode.parentCtx.children;
+  let result: ParserRuleContext | undefined = undefined;
+
+  if (parentChildren && parentChildren.length > 2) {
+    let current: ParseTree | undefined =
+      parentChildren[parentChildren.length - 3];
+    let expressionFound = false;
+
+    while (
+      current instanceof ParserRuleContext &&
+      current.children &&
+      current.children.length > 0 &&
+      !expressionFound
+    ) {
+      const children = current.children;
+      current = children[children.length - 1];
+      expressionFound = current instanceof ExpressionContext;
+    }
+
+    result = expressionFound ? (current as ParserRuleContext) : undefined;
+  }
+
+  return result;
+}
+
 function tryParseFunction(
   currentNode: ParserRuleContext,
 ): ParsedMethod | undefined {
+  let result: ParsedMethod | undefined = undefined;
   const functionInvocation = findParent(
     currentNode,
     (node) => node instanceof FunctionInvocationContext,
@@ -59,13 +120,27 @@ function tryParseFunction(
     const methodName = ctx.functionName().getText();
     const numMethodArgs = ctx.functionArgument_list().length;
 
-    return {
+    result = {
       methodName: methodName,
       numProcedureArgs: numMethodArgs,
     };
-  } else {
-    return undefined;
+  } else if (
+    currentNode.getText() === '(' &&
+    currentNode.parentCtx instanceof StatementsContext
+  ) {
+    // If we finish in an expression followed by (,
+    // take the expression text as method name
+    const prevExpresion = findRightmostPreviousExpression(currentNode);
+
+    if (prevExpresion) {
+      result = {
+        methodName: prevExpresion.getText(),
+        numProcedureArgs: 0,
+      };
+    }
   }
+
+  return result;
 }
 
 function toSignatureHelp(
