@@ -159,11 +159,6 @@ describe('Functions signature help', () => {
     };
   }
 
-  // TODO Fix this test.
-  // It stopped working because apoc.do.when( can be parsed ambiguously as
-  //   variable, property, property, spurious (
-  // or
-  //   functionName (
   test('Provides signature help for functions first argument when argument non started', () => {
     testSignatureHelp(
       `MATCH (n)

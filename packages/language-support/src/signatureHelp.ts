@@ -62,11 +62,13 @@ RETURN  expression
 rather than:
 
 
-      statements
-     /    |    \     
-statement (    EOF
-    /  \
+        statements
+      /            \     
+statement          EOF
+    /  \ 
 RETURN  functionInvocation
+             /         \ 
+        functionName    (
 
 
 so we need to treat that case differently because we cannot modify the 
@@ -79,12 +81,12 @@ because the parser has enough information to recognize that case
 function findRightmostPreviousExpression(
   currentNode: ParserRuleContext,
 ): ParserRuleContext | undefined {
-  const parentCtx = currentNode.parentCtx;
+  const parentChildren = currentNode.parentCtx.children;
   let result: ParserRuleContext | undefined = undefined;
 
-  if (parentCtx instanceof StatementsContext && parentCtx.children.length > 2) {
+  if (parentChildren && parentChildren.length > 2) {
     let current: ParseTree | undefined =
-      parentCtx.children[parentCtx.children.length - 3];
+      parentChildren[parentChildren.length - 3];
     let expressionFound = false;
 
     while (
@@ -122,7 +124,12 @@ function tryParseFunction(
       methodName: methodName,
       numProcedureArgs: numMethodArgs,
     };
-  } else if (currentNode.getText() === '(') {
+  } else if (
+    currentNode.getText() === '(' &&
+    currentNode.parentCtx instanceof StatementsContext
+  ) {
+    // If we finish in an expression followed by (,
+    // take the expression text as method name
     const prevExpresion = findRightmostPreviousExpression(currentNode);
 
     if (prevExpresion) {
@@ -167,8 +174,6 @@ export function signatureHelp(
   if (parsedProc && dbSchema.procedureSignatures) {
     result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
   } else {
-    // If we finish in an expression followed by (,
-    // try parsing the expression as a functionInvocation?
     const parsedFunc = tryParseFunction(stopNode);
 
     if (parsedFunc && dbSchema.functionSignatures) {
