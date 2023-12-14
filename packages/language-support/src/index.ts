@@ -1,7 +1,11 @@
 export type { ParserRuleContext } from 'antlr4';
 export { autocomplete } from './autocompletion/autocompletion';
 export type { DbSchema } from './dbSchema';
-export { antlrUtils } from './helpers';
+export {
+  CallClauseContext,
+  FunctionInvocationContext,
+} from './generated-parser/CypherParser';
+export { antlrUtils, findParent } from './helpers';
 export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
@@ -10,7 +14,7 @@ export {
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse } from './parserWrapper';
+export { parse, parserWrapper } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { CypherLexer };
 export { CypherParser };

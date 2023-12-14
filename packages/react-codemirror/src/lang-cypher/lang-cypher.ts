@@ -6,6 +6,7 @@ import {
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
+import { signatureHelpTooltip } from './signature-help';
 import { cypherLinter } from './syntax-validation';
 
 const facet = defineLanguageFacet({
@@ -28,5 +29,6 @@ export function cypher(config: CypherConfig) {
       autocomplete: cypherAutocomplete(config),
     }),
     cypherLinter(config),
+    signatureHelpTooltip(config),
   ]);
 }
