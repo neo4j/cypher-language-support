@@ -1,3 +1,7 @@
 # Neo4j Cypher LSP support for IntelliJ
 
-nothing to see here...yet :D
+## Build and run
+
+* Build the plugin via `./gradlew buildPlugin`.
+* Choose the plugin's zip archive from `build/distributions/cypher-lsp-support-<version>.zip` when installing it manually in IntelliJ
+
