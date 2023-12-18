@@ -1,3 +1,4 @@
+import { syntaxTree } from '@codemirror/language';
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import {
@@ -18,10 +19,11 @@ function getSignatureHelpTooltip(
 
   if (schema) {
     const pos = state.selection.main.head;
-    //const node = syntaxTree(state).resolveInner(pos, -1);
+    const symbol = syntaxTree(state).resolveInner(pos, -1);
     const tree = parserWrapper.parsingResult;
 
     if (
+      (symbol.name === 'bracket' || symbol.name === 'separator') &&
       tree &&
       findParent(
         tree.stopNode,
@@ -34,11 +36,23 @@ function getSignatureHelpTooltip(
       const signatureHelpInfo = signatureHelp(query, schema);
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
+      const activeParameter = signatureHelpInfo.activeParameter;
 
       if (
         activeSignature !== undefined &&
-        signatures[activeSignature].documentation !== undefined
+        activeSignature >= 0 &&
+        activeSignature < signatures.length &&
+        signatures[activeSignature].documentation !== undefined &&
+        activeParameter >= 0 &&
+        activeParameter < (signatures[activeSignature].parameters?.length ?? 0)
       ) {
+        const signature = signatures[activeSignature];
+        const parameters = signature.parameters;
+        const doc =
+          parameters[activeParameter].documentation.toString() +
+          '\n\n' +
+          signature.documentation.toString();
+
         result = [
           {
             pos: pos,
@@ -46,11 +60,21 @@ function getSignatureHelpTooltip(
             strictSide: true,
             arrow: true,
             create: () => {
-              const dom = document.createElement('div');
-              dom.className = 'cm-tooltip-cursor';
-              dom.textContent =
-                signatures[activeSignature].documentation.toString();
-              return { dom };
+              const div = document.createElement('div');
+              const methodName = document.createElement('div');
+              const argPlusDescription = document.createElement('div');
+              const separator = document.createElement('hr');
+              const lineBreak = document.createElement('br');
+
+              div.append(
+                ...[methodName, separator, lineBreak, argPlusDescription],
+              );
+              div.className = 'cm-tooltip-cursor';
+
+              methodName.innerText = signature.label;
+              argPlusDescription.innerText = doc;
+
+              return { dom: div };
             },
           },
         ];
