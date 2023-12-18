@@ -2,1236 +2,5143 @@ export const dummyDbSchema = {
   functionSignatures: {
     abs: {
       label: 'abs',
+      documentation: 'Returns the absolute value of a floating point number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     acos: {
       label: 'acos',
+      documentation: 'Returns the arccosine of a number in radians.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     all: {
       label: 'all',
+      documentation:
+        'Returns true if the predicate holds for all elements in the given list.',
+      parameters: [
+        {
+          label: 'variable',
+          documentation: 'variable :: ANY?',
+        },
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     any: {
       label: 'any',
+      documentation:
+        'Returns true if the predicate holds for at least one element in the given list.',
+      parameters: [
+        {
+          label: 'variable',
+          documentation: 'variable :: ANY?',
+        },
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.agg.first': {
       label: 'apoc.agg.first',
+      documentation: 'Returns the first value from the given collection.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.agg.graph': {
       label: 'apoc.agg.graph',
+      documentation:
+        'Returns all distinct nodes and relationships collected into a map with the keys `nodes` and `relationships`.',
+      parameters: [
+        {
+          label: 'path',
+          documentation: 'path :: ANY?',
+        },
+      ],
     },
     'apoc.agg.last': {
       label: 'apoc.agg.last',
+      documentation: 'Returns the last value from the given collection.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.agg.maxItems': {
       label: 'apoc.agg.maxItems',
+      documentation:
+        'Returns a map {items:[], value:n} where the `value` key is the maximum value present, and `items` represent all items with the same value.',
+      parameters: [
+        {
+          label: 'items',
+          documentation: 'items :: ANY?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'groupLimit',
+          documentation: 'groupLimit = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.agg.median': {
       label: 'apoc.agg.median',
+      documentation:
+        'Returns the mathematical median for all non-null numeric values.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.agg.minItems': {
       label: 'apoc.agg.minItems',
+      documentation:
+        'Returns a map {items:[], value:n} where the `value` key is the minimum value present, and `items` represent all items with the same value.',
+      parameters: [
+        {
+          label: 'items',
+          documentation: 'items :: ANY?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'groupLimit',
+          documentation: 'groupLimit = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.agg.nth': {
       label: 'apoc.agg.nth',
+      documentation:
+        'Returns the nth value in the given collection (to fetch the last item of an unknown length collection, -1 can be used).',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'offset',
+          documentation: 'offset :: INTEGER?',
+        },
+      ],
     },
     'apoc.agg.percentiles': {
       label: 'apoc.agg.percentiles',
+      documentation:
+        'Returns the given percentiles over the range of numerical values in the given collection.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: NUMBER?',
+        },
+        {
+          label: 'percentiles',
+          documentation:
+            'percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST? OF FLOAT?',
+        },
+      ],
     },
     'apoc.agg.product': {
       label: 'apoc.agg.product',
+      documentation:
+        'Returns the product of all non-null numerical values in the collection.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: NUMBER?',
+        },
+      ],
     },
     'apoc.agg.slice': {
       label: 'apoc.agg.slice',
+      documentation:
+        'Returns a subset of non-null values from the given collection (the collection is considered to be zero-indexed).\nTo specify the range from start until the end of the collection, the length should be set to -1.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'from',
+          documentation: 'from = 0 :: INTEGER?',
+        },
+        {
+          label: 'to',
+          documentation: 'to = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.agg.statistics': {
       label: 'apoc.agg.statistics',
+      documentation:
+        'Returns the following statistics on the numerical values in the given collection: percentiles, min, minNonZero, max, total, mean, stdev.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: NUMBER?',
+        },
+        {
+          label: 'percentiles',
+          documentation:
+            'percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST? OF FLOAT?',
+        },
+      ],
     },
     'apoc.any.isDeleted': {
       label: 'apoc.any.isDeleted',
+      documentation:
+        'Returns true if the given node or relationship no longer exists.',
+      parameters: [
+        {
+          label: 'object',
+          documentation: 'object :: ANY?',
+        },
+      ],
     },
     'apoc.any.properties': {
       label: 'apoc.any.properties',
+      documentation:
+        'Returns all properties of the given object.\nThe object can be a virtual node, a real node, a virtual relationship, a real relationship, or a map.',
+      parameters: [
+        {
+          label: 'object',
+          documentation: 'object :: ANY?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.any.property': {
       label: 'apoc.any.property',
-    },
-    'apoc.any.rebind': {
-      label: 'apoc.any.rebind',
+      documentation:
+        'Returns the property for the given key from an object.\nThe object can be a virtual node, a real node, a virtual relationship, a real relationship, or a map.',
+      parameters: [
+        {
+          label: 'object',
+          documentation: 'object :: ANY?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+      ],
     },
     'apoc.bitwise.op': {
       label: 'apoc.bitwise.op',
+      documentation: 'Returns the result of the bitwise operation',
+      parameters: [
+        {
+          label: 'a',
+          documentation: 'a :: INTEGER?',
+        },
+        {
+          label: 'operator',
+          documentation: 'operator :: STRING?',
+        },
+        {
+          label: 'b',
+          documentation: 'b :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.avg': {
       label: 'apoc.coll.avg',
-    },
-    'apoc.coll.avgDuration': {
-      label: 'apoc.coll.avgDuration',
+      documentation: 'Returns the average of the numbers in the list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'apoc.coll.combinations': {
       label: 'apoc.coll.combinations',
+      documentation:
+        'Returns a collection of all combinations of list elements between the selection size minSelect and maxSelect (default: minSelect).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'minSelect',
+          documentation: 'minSelect :: INTEGER?',
+        },
+        {
+          label: 'maxSelect',
+          documentation: 'maxSelect = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.contains': {
       label: 'apoc.coll.contains',
+      documentation:
+        'Returns whether or not the given value exists in the given collection (using a HashSet).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.coll.containsAll': {
       label: 'apoc.coll.containsAll',
+      documentation:
+        'Returns whether or not all of the given values exist in the given collection (using a HashSet).',
+      parameters: [
+        {
+          label: 'coll1',
+          documentation: 'coll1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'coll2',
+          documentation: 'coll2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.containsAllSorted': {
       label: 'apoc.coll.containsAllSorted',
+      documentation:
+        'Returns whether or not all of the given values in the second list exist in an already sorted collection (using a binary search).',
+      parameters: [
+        {
+          label: 'coll1',
+          documentation: 'coll1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'coll2',
+          documentation: 'coll2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.containsDuplicates': {
       label: 'apoc.coll.containsDuplicates',
+      documentation:
+        'Returns true if a collection contains duplicate elements.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.containsSorted': {
       label: 'apoc.coll.containsSorted',
+      documentation:
+        'Returns whether or not the given value exists in an already sorted collection (using a binary search).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.coll.different': {
       label: 'apoc.coll.different',
+      documentation:
+        'Returns true if all the values in the given list are unique.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.disjunction': {
       label: 'apoc.coll.disjunction',
+      documentation: 'Returns the disjunct set of two lists.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.dropDuplicateNeighbors': {
       label: 'apoc.coll.dropDuplicateNeighbors',
+      documentation: 'Removes duplicate consecutive objects in the list.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.duplicates': {
       label: 'apoc.coll.duplicates',
+      documentation: 'Returns a list of duplicate items in the collection.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.duplicatesWithCount': {
       label: 'apoc.coll.duplicatesWithCount',
+      documentation:
+        'Returns a list of duplicate items in the collection and their count, keyed by `item` and `count`.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.fill': {
       label: 'apoc.coll.fill',
+      documentation: 'Returns a list with the given count of items.',
+      parameters: [
+        {
+          label: 'items',
+          documentation: 'items :: STRING?',
+        },
+        {
+          label: 'count',
+          documentation: 'count :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.flatten': {
       label: 'apoc.coll.flatten',
+      documentation:
+        'Flattens the given list (to flatten nested lists, set recursive to true).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'recursive',
+          documentation: 'recursive = false :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.coll.frequencies': {
       label: 'apoc.coll.frequencies',
+      documentation:
+        'Returns a list of frequencies of the items in the collection, keyed by `item` and `count`.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.frequenciesAsMap': {
       label: 'apoc.coll.frequenciesAsMap',
+      documentation:
+        'Returns a map of frequencies of the items in the collection, keyed by `item` and `count`.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.indexOf': {
       label: 'apoc.coll.indexOf',
+      documentation:
+        'Returns the index for the first occurrence of the specified value in the list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.coll.insert': {
       label: 'apoc.coll.insert',
+      documentation: 'Inserts a value into the specified index in the list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.coll.insertAll': {
       label: 'apoc.coll.insertAll',
+      documentation:
+        'Inserts all of the values into the list, starting at the specified index.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.intersection': {
       label: 'apoc.coll.intersection',
+      documentation: 'Returns the distinct intersection of two lists.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.isEqualCollection': {
       label: 'apoc.coll.isEqualCollection',
+      documentation:
+        'Returns true if the two collections contain the same elements with the same cardinality in any order (using a HashMap).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.max': {
       label: 'apoc.coll.max',
+      documentation: 'Returns the maximum of all values in the given list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.min': {
       label: 'apoc.coll.min',
+      documentation: 'Returns the minimum of all values in the given list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.occurrences': {
       label: 'apoc.coll.occurrences',
+      documentation: 'Returns the count of the given item in the collection.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'item',
+          documentation: 'item :: ANY?',
+        },
+      ],
     },
     'apoc.coll.pairWithOffset': {
       label: 'apoc.coll.pairWithOffset',
+      documentation: 'Returns a list of pairs defined by the offset.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'offset',
+          documentation: 'offset :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.pairs': {
       label: 'apoc.coll.pairs',
+      documentation:
+        'Returns a list of adjacent elements in the list ([1,2],[2,3],[3,null]).',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.pairsMin': {
       label: 'apoc.coll.pairsMin',
+      documentation:
+        'Returns lists of adjacent elements in the list ([1,2],[2,3]), skipping the final element.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.partition': {
       label: 'apoc.coll.partition',
+      documentation:
+        'Partitions the original list into sub-lists of the given batch size.\nThe final list may be smaller than the given batch size.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'batchSize',
+          documentation: 'batchSize :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.randomItem': {
       label: 'apoc.coll.randomItem',
+      documentation:
+        'Returns a random item from the list, or null on an empty or null list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.randomItems': {
       label: 'apoc.coll.randomItems',
+      documentation:
+        'Returns a list of itemCount random items from the original list (optionally allowing elements in the original list to be selected more than once).',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'itemCount',
+          documentation: 'itemCount :: INTEGER?',
+        },
+        {
+          label: 'allowRepick',
+          documentation: 'allowRepick = false :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.coll.remove': {
       label: 'apoc.coll.remove',
+      documentation:
+        'Removes a range of values from the list, beginning at position index for the given length of values.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+        {
+          label: 'length',
+          documentation: 'length = 1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.removeAll': {
       label: 'apoc.coll.removeAll',
-    },
-    'apoc.coll.reverse': {
-      label: 'apoc.coll.reverse',
+      documentation:
+        'Returns the first list with all elements of the second list removed.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.runningTotal': {
       label: 'apoc.coll.runningTotal',
+      documentation: 'Returns an accumulative array.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'apoc.coll.set': {
       label: 'apoc.coll.set',
+      documentation: 'Sets the element at the given index to the new value.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.coll.shuffle': {
       label: 'apoc.coll.shuffle',
+      documentation: 'Returns the list shuffled.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.sort': {
       label: 'apoc.coll.sort',
+      documentation: 'Sorts the given list into ascending order.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.sortMaps': {
       label: 'apoc.coll.sortMaps',
+      documentation:
+        'Sorts the given list into ascending order, based on the map property indicated by `prop`.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF MAP?',
+        },
+        {
+          label: 'prop',
+          documentation: 'prop :: STRING?',
+        },
+      ],
     },
     'apoc.coll.sortMulti': {
       label: 'apoc.coll.sortMulti',
+      documentation:
+        'Sorts the given list of maps by the given fields.\nTo indicate that a field should be sorted according to ascending values, prefix it with a caret (^).\nIt is also possible to add limits to the list and to skip values.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF MAP?',
+        },
+        {
+          label: 'orderFields',
+          documentation: 'orderFields = [] :: LIST? OF STRING?',
+        },
+        {
+          label: 'limit',
+          documentation: 'limit = -1 :: INTEGER?',
+        },
+        {
+          label: 'skip',
+          documentation: 'skip = 0 :: INTEGER?',
+        },
+      ],
     },
     'apoc.coll.sortNodes': {
       label: 'apoc.coll.sortNodes',
+      documentation:
+        'Sorts the given list of nodes by their property into ascending order.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF NODE?',
+        },
+        {
+          label: 'prop',
+          documentation: 'prop :: STRING?',
+        },
+      ],
     },
     'apoc.coll.sortText': {
       label: 'apoc.coll.sortText',
+      documentation: 'Sorts the given list of strings into ascending order.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF STRING?',
+        },
+        {
+          label: 'conf',
+          documentation: 'conf = {} :: MAP?',
+        },
+      ],
     },
     'apoc.coll.stdev': {
       label: 'apoc.coll.stdev',
+      documentation:
+        'Returns sample or population standard deviation with isBiasCorrected true or false respectively.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'isBiasCorrected',
+          documentation: 'isBiasCorrected = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.coll.subtract': {
       label: 'apoc.coll.subtract',
+      documentation:
+        'Returns the first list as a set with all the elements of the second list removed.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.sum': {
       label: 'apoc.coll.sum',
+      documentation: 'Returns the sum of all the numbers in the list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'apoc.coll.sumLongs': {
       label: 'apoc.coll.sumLongs',
+      documentation: 'Returns the sum of all the numbers in the list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'apoc.coll.toSet': {
       label: 'apoc.coll.toSet',
+      documentation: 'Returns a unique list from the given list.',
+      parameters: [
+        {
+          label: 'coll',
+          documentation: 'coll :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.union': {
       label: 'apoc.coll.union',
+      documentation: 'Returns the distinct union of the two given lists.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.unionAll': {
       label: 'apoc.coll.unionAll',
+      documentation:
+        'Returns the full union of the two given lists (duplicates included).',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.coll.zip': {
       label: 'apoc.coll.zip',
+      documentation:
+        'Returns the two given lists zipped together as a list of lists.',
+      parameters: [
+        {
+          label: 'list1',
+          documentation: 'list1 :: LIST? OF ANY?',
+        },
+        {
+          label: 'list2',
+          documentation: 'list2 :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.convert.fromJsonList': {
       label: 'apoc.convert.fromJsonList',
+      documentation: 'Converts the given JSON list into a Cypher list.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path =  :: STRING?',
+        },
+        {
+          label: 'pathOptions',
+          documentation: 'pathOptions = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.convert.fromJsonMap': {
       label: 'apoc.convert.fromJsonMap',
+      documentation: 'Converts the given JSON map into a Cypher map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path =  :: STRING?',
+        },
+        {
+          label: 'pathOptions',
+          documentation: 'pathOptions = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.convert.getJsonProperty': {
       label: 'apoc.convert.getJsonProperty',
+      documentation:
+        'Converts a serialized JSON object from the property of the given node into the equivalent Cypher structure (e.g. map, list).',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path =  :: STRING?',
+        },
+        {
+          label: 'pathOptions',
+          documentation: 'pathOptions = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.convert.getJsonPropertyMap': {
       label: 'apoc.convert.getJsonPropertyMap',
-    },
-    'apoc.convert.toBoolean': {
-      label: 'apoc.convert.toBoolean',
-    },
-    'apoc.convert.toBooleanList': {
-      label: 'apoc.convert.toBooleanList',
-    },
-    'apoc.convert.toFloat': {
-      label: 'apoc.convert.toFloat',
-    },
-    'apoc.convert.toIntList': {
-      label: 'apoc.convert.toIntList',
-    },
-    'apoc.convert.toInteger': {
-      label: 'apoc.convert.toInteger',
+      documentation:
+        'Converts a serialized JSON object from the property of the given node into a Cypher map.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path =  :: STRING?',
+        },
+        {
+          label: 'pathOptions',
+          documentation: 'pathOptions = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.convert.toJson': {
       label: 'apoc.convert.toJson',
+      documentation: 'Serializes the given JSON value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toList': {
       label: 'apoc.convert.toList',
+      documentation: 'Converts the given value into a list.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toMap': {
       label: 'apoc.convert.toMap',
+      documentation: 'Converts the given value into a map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toNode': {
       label: 'apoc.convert.toNode',
+      documentation: 'Converts the given value into a node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toNodeList': {
       label: 'apoc.convert.toNodeList',
+      documentation: 'Converts the given value into a list of nodes.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toRelationship': {
       label: 'apoc.convert.toRelationship',
+      documentation: 'Converts the given value into a relationship.',
+      parameters: [
+        {
+          label: 'rel',
+          documentation: 'rel :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toRelationshipList': {
       label: 'apoc.convert.toRelationshipList',
+      documentation: 'Converts the given value into a list of relationships.',
+      parameters: [
+        {
+          label: 'relList',
+          documentation: 'relList :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toSet': {
       label: 'apoc.convert.toSet',
+      documentation: 'Converts the given value into a set.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: ANY?',
+        },
+      ],
     },
     'apoc.convert.toSortedJsonMap': {
       label: 'apoc.convert.toSortedJsonMap',
-    },
-    'apoc.convert.toString': {
-      label: 'apoc.convert.toString',
-    },
-    'apoc.convert.toStringList': {
-      label: 'apoc.convert.toStringList',
+      documentation:
+        'Converts a serialized JSON object from the property of a given node into a Cypher map.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'ignoreCase',
+          documentation: 'ignoreCase = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.create.uuid': {
       label: 'apoc.create.uuid',
+      documentation: 'Returns a UUID.',
+      parameters: [],
     },
     'apoc.create.uuidBase64': {
       label: 'apoc.create.uuidBase64',
+      documentation: 'Returns a UUID encoded with base64.',
+      parameters: [],
     },
     'apoc.create.uuidBase64ToHex': {
       label: 'apoc.create.uuidBase64ToHex',
+      documentation:
+        'Takes the given base64 encoded UUID and returns it as a hexadecimal string.',
+      parameters: [
+        {
+          label: 'base64Uuid',
+          documentation: 'base64Uuid :: STRING?',
+        },
+      ],
     },
     'apoc.create.uuidHexToBase64': {
       label: 'apoc.create.uuidHexToBase64',
+      documentation:
+        'Takes the given UUID represented as a hexadecimal string and returns it encoded with base64.',
+      parameters: [
+        {
+          label: 'uuid',
+          documentation: 'uuid :: STRING?',
+        },
+      ],
     },
     'apoc.create.vNode': {
       label: 'apoc.create.vNode',
+      documentation: 'Returns a virtual node.',
+      parameters: [
+        {
+          label: 'labels',
+          documentation: 'labels :: LIST? OF STRING?',
+        },
+        {
+          label: 'props',
+          documentation: 'props = {} :: MAP?',
+        },
+      ],
     },
     'apoc.create.vRelationship': {
       label: 'apoc.create.vRelationship',
+      documentation: 'Returns a virtual relationship.',
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: NODE?',
+        },
+        {
+          label: 'relType',
+          documentation: 'relType :: STRING?',
+        },
+        {
+          label: 'props',
+          documentation: 'props :: MAP?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: NODE?',
+        },
+      ],
     },
     'apoc.create.virtual.fromNode': {
       label: 'apoc.create.virtual.fromNode',
-    },
-    'apoc.cypher.runFirstColumn': {
-      label: 'apoc.cypher.runFirstColumn',
+      documentation: 'Returns a virtual node from the given existing node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'propertyNames',
+          documentation: 'propertyNames :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.cypher.runFirstColumnMany': {
       label: 'apoc.cypher.runFirstColumnMany',
+      documentation:
+        'Runs the given statement with the given parameters and returns the first column collected into a list.',
+      parameters: [
+        {
+          label: 'statement',
+          documentation: 'statement :: STRING?',
+        },
+        {
+          label: 'params',
+          documentation: 'params :: MAP?',
+        },
+      ],
     },
     'apoc.cypher.runFirstColumnSingle': {
       label: 'apoc.cypher.runFirstColumnSingle',
-    },
-    'apoc.data.domain': {
-      label: 'apoc.data.domain',
+      documentation:
+        'Runs the given statement with the given parameters and returns the first element of the first column.',
+      parameters: [
+        {
+          label: 'statement',
+          documentation: 'statement :: STRING?',
+        },
+        {
+          label: 'params',
+          documentation: 'params :: MAP?',
+        },
+      ],
     },
     'apoc.data.url': {
       label: 'apoc.data.url',
+      documentation: 'Turns a URL into a map.',
+      parameters: [
+        {
+          label: 'url',
+          documentation: 'url :: STRING?',
+        },
+      ],
     },
     'apoc.date.add': {
       label: 'apoc.date.add',
+      documentation: 'Adds a unit of specified time to the given timestamp.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: INTEGER?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'addValue',
+          documentation: 'addValue :: INTEGER?',
+        },
+        {
+          label: 'addUnit',
+          documentation: 'addUnit :: STRING?',
+        },
+      ],
     },
     'apoc.date.convert': {
       label: 'apoc.date.convert',
+      documentation:
+        'Converts the given timestamp from one time unit into a timestamp of a different time unit.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: INTEGER?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'toUnit',
+          documentation: 'toUnit :: STRING?',
+        },
+      ],
     },
     'apoc.date.convertFormat': {
       label: 'apoc.date.convertFormat',
+      documentation:
+        'Converts a string of one type of date format into a string of another type of date format.',
+      parameters: [
+        {
+          label: 'temporal',
+          documentation: 'temporal :: STRING?',
+        },
+        {
+          label: 'currentFormat',
+          documentation: 'currentFormat :: STRING?',
+        },
+        {
+          label: 'convertTo',
+          documentation: 'convertTo = yyyy-MM-dd :: STRING?',
+        },
+      ],
     },
     'apoc.date.currentTimestamp': {
       label: 'apoc.date.currentTimestamp',
+      documentation:
+        'Returns the current Unix epoch timestamp in milliseconds.',
+      parameters: [],
     },
     'apoc.date.field': {
       label: 'apoc.date.field',
+      documentation: 'Returns the value of one field from the given date time.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: INTEGER?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit = d :: STRING?',
+        },
+        {
+          label: 'timezone',
+          documentation: 'timezone = UTC :: STRING?',
+        },
+      ],
     },
     'apoc.date.fields': {
       label: 'apoc.date.fields',
+      documentation:
+        'Splits the given date into fields returning a map containing the values of each field.',
+      parameters: [
+        {
+          label: 'date',
+          documentation: 'date :: STRING?',
+        },
+        {
+          label: 'pattern',
+          documentation: 'pattern = yyyy-MM-dd HH:mm:ss :: STRING?',
+        },
+      ],
     },
     'apoc.date.format': {
       label: 'apoc.date.format',
+      documentation:
+        'Returns a string representation of the time value.\nThe time unit (default: ms), date format (default: ISO), and time zone (default: current time zone) can all be changed.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: INTEGER?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit = ms :: STRING?',
+        },
+        {
+          label: 'format',
+          documentation: 'format = yyyy-MM-dd HH:mm:ss :: STRING?',
+        },
+        {
+          label: 'timezone',
+          documentation: 'timezone =  :: STRING?',
+        },
+      ],
     },
     'apoc.date.fromISO8601': {
       label: 'apoc.date.fromISO8601',
+      documentation:
+        'Converts the given date string (ISO8601) to an integer representing the time value in milliseconds.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: STRING?',
+        },
+      ],
     },
     'apoc.date.parse': {
       label: 'apoc.date.parse',
-    },
-    'apoc.date.parseAsZonedDateTime': {
-      label: 'apoc.date.parseAsZonedDateTime',
+      documentation:
+        'Parses the given date string from a specified format into the specified time unit.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: STRING?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit = ms :: STRING?',
+        },
+        {
+          label: 'format',
+          documentation: 'format = yyyy-MM-dd HH:mm:ss :: STRING?',
+        },
+        {
+          label: 'timezone',
+          documentation: 'timezone =  :: STRING?',
+        },
+      ],
     },
     'apoc.date.systemTimezone': {
       label: 'apoc.date.systemTimezone',
+      documentation:
+        'Returns the display name of the system time zone (e.g. Europe/London).',
+      parameters: [],
     },
     'apoc.date.toISO8601': {
       label: 'apoc.date.toISO8601',
+      documentation:
+        'Returns a string representation of a specified time value in the ISO8601 format.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: INTEGER?',
+        },
+        {
+          label: 'unit',
+          documentation: 'unit = ms :: STRING?',
+        },
+      ],
     },
     'apoc.date.toYears': {
       label: 'apoc.date.toYears',
+      documentation:
+        'Converts the given timestamp or the given date into a floating point representing years.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'format',
+          documentation: 'format = yyyy-MM-dd HH:mm:ss :: STRING?',
+        },
+      ],
     },
     'apoc.diff.nodes': {
       label: 'apoc.diff.nodes',
+      documentation:
+        'Returns a list detailing the differences between the two given nodes.',
+      parameters: [
+        {
+          label: 'leftNode',
+          documentation: 'leftNode :: NODE?',
+        },
+        {
+          label: 'rightNode',
+          documentation: 'rightNode :: NODE?',
+        },
+      ],
     },
     'apoc.hashing.fingerprint': {
       label: 'apoc.hashing.fingerprint',
+      documentation:
+        'Calculates a MD5 checksum over a node or a relationship (identical entities share the same checksum).\nUnsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'object',
+          documentation: 'object :: ANY?',
+        },
+        {
+          label: 'excludedPropertyKeys',
+          documentation: 'excludedPropertyKeys = [] :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.hashing.fingerprintGraph': {
       label: 'apoc.hashing.fingerprintGraph',
+      documentation:
+        'Calculates a MD5 checksum over the full graph.\nThis function uses in-memory data structures.\nUnsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'propertyExcludes',
+          documentation: 'propertyExcludes = [] :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.hashing.fingerprinting': {
       label: 'apoc.hashing.fingerprinting',
+      documentation:
+        'Calculates a MD5 checksum over a node or a relationship (identical entities share the same checksum).\nUnlike `apoc.hashing.fingerprint()`, this function supports a number of config parameters.\nUnsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'object',
+          documentation: 'object :: ANY?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.json.path': {
       label: 'apoc.json.path',
+      documentation: 'Returns the given JSON path.',
+      parameters: [
+        {
+          label: 'json',
+          documentation: 'json :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path = $ :: STRING?',
+        },
+        {
+          label: 'pathOptions',
+          documentation: 'pathOptions = null :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.label.exists': {
       label: 'apoc.label.exists',
+      documentation:
+        'Returns true or false depending on whether or not the given label exists.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: ANY?',
+        },
+        {
+          label: 'label',
+          documentation: 'label :: STRING?',
+        },
+      ],
     },
     'apoc.map.clean': {
       label: 'apoc.map.clean',
+      documentation:
+        'Filters the keys and values contained in the given lists.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.flatten': {
       label: 'apoc.map.flatten',
+      documentation:
+        'Flattens nested items in the given map.\nThis function is the reverse of the `apoc.map.unflatten` function.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter = . :: STRING?',
+        },
+      ],
     },
     'apoc.map.fromLists': {
       label: 'apoc.map.fromLists',
+      documentation:
+        'Creates a map from the keys and values in the given lists.',
+      parameters: [
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.fromNodes': {
       label: 'apoc.map.fromNodes',
+      documentation:
+        'Returns a map of the given prop to the node of the given label.',
+      parameters: [
+        {
+          label: 'label',
+          documentation: 'label :: STRING?',
+        },
+        {
+          label: 'prop',
+          documentation: 'prop :: STRING?',
+        },
+      ],
     },
     'apoc.map.fromPairs': {
       label: 'apoc.map.fromPairs',
+      documentation: 'Creates a map from the given list of key-value pairs.',
+      parameters: [
+        {
+          label: 'pairs',
+          documentation: 'pairs :: LIST? OF LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.fromValues': {
       label: 'apoc.map.fromValues',
+      documentation:
+        'Creates a map from the alternating keys and values in the given list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.get': {
       label: 'apoc.map.get',
+      documentation:
+        'Returns a value for the given key.\nIf the given key does not exist, or lacks a default value, this function will throw an exception.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'value',
+          documentation: 'value = null :: ANY?',
+        },
+        {
+          label: 'fail',
+          documentation: 'fail = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.map.groupBy': {
       label: 'apoc.map.groupBy',
+      documentation:
+        'Creates a map of the list keyed by the given property, with single values.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+      ],
     },
     'apoc.map.groupByMulti': {
       label: 'apoc.map.groupByMulti',
+      documentation:
+        'Creates a map of the lists keyed by the given property, with the list values.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+      ],
     },
     'apoc.map.merge': {
       label: 'apoc.map.merge',
+      documentation: 'Merges the two given maps into one map.',
+      parameters: [
+        {
+          label: 'map1',
+          documentation: 'map1 :: MAP?',
+        },
+        {
+          label: 'map2',
+          documentation: 'map2 :: MAP?',
+        },
+      ],
     },
     'apoc.map.mergeList': {
       label: 'apoc.map.mergeList',
+      documentation: 'Merges all maps in the given list into one map.',
+      parameters: [
+        {
+          label: 'maps',
+          documentation: 'maps :: LIST? OF MAP?',
+        },
+      ],
     },
     'apoc.map.mget': {
       label: 'apoc.map.mget',
+      documentation:
+        'Returns a list of values for the given keys.\nIf one of the keys does not exist, or lacks a default value, this function will throw an exception.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'values',
+          documentation: 'values = [] :: LIST? OF ANY?',
+        },
+        {
+          label: 'fail',
+          documentation: 'fail = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.map.removeKey': {
       label: 'apoc.map.removeKey',
+      documentation:
+        'Removes the given key from the map (recursively if recursive is true).',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.map.removeKeys': {
       label: 'apoc.map.removeKeys',
+      documentation:
+        'Removes the given keys from the map (recursively if recursive is true).',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.map.setEntry': {
       label: 'apoc.map.setEntry',
+      documentation: 'Adds or updates the given entry in the map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.map.setKey': {
       label: 'apoc.map.setKey',
+      documentation: 'Adds or updates the given entry in the map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.map.setLists': {
       label: 'apoc.map.setLists',
+      documentation:
+        'Adds or updates the given keys/value pairs provided in list format (e.g. [key1, key2],[value1, value2]) in a map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.setPairs': {
       label: 'apoc.map.setPairs',
+      documentation:
+        'Adds or updates the given key/value pairs (e.g. [key1,value1],[key2,value2]) in a map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'pairs',
+          documentation: 'pairs :: LIST? OF LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.setValues': {
       label: 'apoc.map.setValues',
+      documentation:
+        'Adds or updates the alternating key/value pairs (e.g. [key1,value1,key2,value2]) in a map.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'pairs',
+          documentation: 'pairs :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.sortedProperties': {
       label: 'apoc.map.sortedProperties',
+      documentation:
+        'Returns a list of key/value pairs.\nThe pairs are sorted by alphabetically by key, with optional case sensitivity.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'ignoreCase',
+          documentation: 'ignoreCase = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.map.submap': {
       label: 'apoc.map.submap',
+      documentation:
+        'Returns a sub-map for the given keys.\nIf one of the keys does not exist, or lacks a default value, this function will throw an exception.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys :: LIST? OF STRING?',
+        },
+        {
+          label: 'values',
+          documentation: 'values = [] :: LIST? OF ANY?',
+        },
+        {
+          label: 'fail',
+          documentation: 'fail = true :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.map.unflatten': {
       label: 'apoc.map.unflatten',
+      documentation:
+        'Unflattens items in the given map to nested items.\nThis function is the reverse of the `apoc.map.flatten` function.',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter = . :: STRING?',
+        },
+      ],
     },
     'apoc.map.updateTree': {
       label: 'apoc.map.updateTree',
+      documentation:
+        'Adds the data map on each level of the nested tree, where the key-value pairs match.',
+      parameters: [
+        {
+          label: 'tree',
+          documentation: 'tree :: MAP?',
+        },
+        {
+          label: 'key',
+          documentation: 'key :: STRING?',
+        },
+        {
+          label: 'data',
+          documentation: 'data :: LIST? OF LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.map.values': {
       label: 'apoc.map.values',
+      documentation:
+        'Returns a list of values indicated by the given keys (returns a null value if a given key is missing).',
+      parameters: [
+        {
+          label: 'map',
+          documentation: 'map :: MAP?',
+        },
+        {
+          label: 'keys',
+          documentation: 'keys = [] :: LIST? OF STRING?',
+        },
+        {
+          label: 'addNullsForMissing',
+          documentation: 'addNullsForMissing = false :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.math.cosh': {
       label: 'apoc.math.cosh',
+      documentation: 'Returns the hyperbolic cosine.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.coth': {
       label: 'apoc.math.coth',
+      documentation: 'Returns the hyperbolic cotangent.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.csch': {
       label: 'apoc.math.csch',
+      documentation: 'Returns the hyperbolic cosecant.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.maxByte': {
       label: 'apoc.math.maxByte',
+      documentation: 'Returns the maximum value of a byte.',
+      parameters: [],
     },
     'apoc.math.maxDouble': {
       label: 'apoc.math.maxDouble',
+      documentation:
+        'Returns the largest positive finite value of type double.',
+      parameters: [],
     },
     'apoc.math.maxInt': {
       label: 'apoc.math.maxInt',
+      documentation: 'Returns the maximum value of an integer.',
+      parameters: [],
     },
     'apoc.math.maxLong': {
       label: 'apoc.math.maxLong',
+      documentation: 'Returns the maximum value of a long.',
+      parameters: [],
     },
     'apoc.math.minByte': {
       label: 'apoc.math.minByte',
+      documentation: 'Returns the minimum value of a byte.',
+      parameters: [],
     },
     'apoc.math.minDouble': {
       label: 'apoc.math.minDouble',
+      documentation:
+        'Returns the smallest positive non-zero value of type double.',
+      parameters: [],
     },
     'apoc.math.minInt': {
       label: 'apoc.math.minInt',
+      documentation: 'Returns the minimum value of an integer.',
+      parameters: [],
     },
     'apoc.math.minLong': {
       label: 'apoc.math.minLong',
-    },
-    'apoc.math.round': {
-      label: 'apoc.math.round',
+      documentation: 'Returns the minimum value of a long.',
+      parameters: [],
     },
     'apoc.math.sech': {
       label: 'apoc.math.sech',
+      documentation: 'Returns the hyperbolic secant of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.sigmoid': {
       label: 'apoc.math.sigmoid',
+      documentation: 'Returns the sigmoid of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.sigmoidPrime': {
       label: 'apoc.math.sigmoidPrime',
+      documentation:
+        'Returns the sigmoid prime [ sigmoid(val) * (1 - sigmoid(val)) ] of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.sinh': {
       label: 'apoc.math.sinh',
+      documentation: 'Returns the hyperbolic sine of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.math.tanh': {
       label: 'apoc.math.tanh',
+      documentation: 'Returns the hyperbolic tangent of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+      ],
     },
     'apoc.meta.cypher.isType': {
       label: 'apoc.meta.cypher.isType',
+      documentation: 'Returns true if the given value matches the given type.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'type',
+          documentation: 'type :: STRING?',
+        },
+      ],
     },
     'apoc.meta.cypher.type': {
       label: 'apoc.meta.cypher.type',
+      documentation: 'Returns the type name of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+      ],
     },
     'apoc.meta.cypher.types': {
       label: 'apoc.meta.cypher.types',
-    },
-    'apoc.meta.isType': {
-      label: 'apoc.meta.isType',
+      documentation:
+        'Returns a map containing the type names of the given values.',
+      parameters: [
+        {
+          label: 'props',
+          documentation: 'props :: ANY?',
+        },
+      ],
     },
     'apoc.meta.nodes.count': {
       label: 'apoc.meta.nodes.count',
-    },
-    'apoc.meta.type': {
-      label: 'apoc.meta.type',
-    },
-    'apoc.meta.typeName': {
-      label: 'apoc.meta.typeName',
-    },
-    'apoc.meta.types': {
-      label: 'apoc.meta.types',
+      documentation:
+        'Returns the sum of the nodes with the given labels in the list.',
+      parameters: [
+        {
+          label: 'nodes',
+          documentation: 'nodes = [] :: LIST? OF STRING?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.node.degree': {
       label: 'apoc.node.degree',
+      documentation: 'Returns the total degrees for the given node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.node.degree.in': {
       label: 'apoc.node.degree.in',
+      documentation:
+        'Returns the total number of incoming relationships to the given node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.node.degree.out': {
       label: 'apoc.node.degree.out',
+      documentation:
+        'Returns the total number of outgoing relationships from the given node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.node.id': {
       label: 'apoc.node.id',
+      documentation: 'Returns the id for the given virtual node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+      ],
     },
     'apoc.node.labels': {
       label: 'apoc.node.labels',
-    },
-    'apoc.node.rebind': {
-      label: 'apoc.node.rebind',
+      documentation: 'Returns the labels for the given virtual node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+      ],
     },
     'apoc.node.relationship.exists': {
       label: 'apoc.node.relationship.exists',
+      documentation:
+        'Returns a boolean based on whether the given node has a relationship (or whether the given node has a relationship of the given type and direction).',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.node.relationship.types': {
       label: 'apoc.node.relationship.types',
+      documentation:
+        'Returns a list of distinct relationship types for the given node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.node.relationships.exist': {
       label: 'apoc.node.relationships.exist',
+      documentation:
+        'Returns a boolean based on whether the given node has relationships (or whether the given nodes has relationships of the given type and direction).',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+        {
+          label: 'relTypes',
+          documentation: 'relTypes =  :: STRING?',
+        },
+      ],
     },
     'apoc.nodes.connected': {
       label: 'apoc.nodes.connected',
+      documentation:
+        'Returns true when a given node is directly connected to another given node.\nThis function is optimized for dense nodes.',
+      parameters: [
+        {
+          label: 'startNode',
+          documentation: 'startNode :: NODE?',
+        },
+        {
+          label: 'endNode',
+          documentation: 'endNode :: NODE?',
+        },
+        {
+          label: 'types',
+          documentation: 'types =  :: STRING?',
+        },
+      ],
     },
     'apoc.nodes.isDense': {
       label: 'apoc.nodes.isDense',
+      documentation: 'Returns true if the given node is a dense node.',
+      parameters: [
+        {
+          label: 'node',
+          documentation: 'node :: NODE?',
+        },
+      ],
     },
     'apoc.nodes.relationship.types': {
       label: 'apoc.nodes.relationship.types',
+      documentation:
+        'Returns a list of distinct relationship types from the given list of nodes.',
+      parameters: [
+        {
+          label: 'nodes',
+          documentation: 'nodes :: ANY?',
+        },
+        {
+          label: 'types',
+          documentation: 'types =  :: STRING?',
+        },
+      ],
     },
     'apoc.nodes.relationships.exist': {
       label: 'apoc.nodes.relationships.exist',
+      documentation:
+        'Returns a boolean based on whether or not the given nodes have the given relationships.',
+      parameters: [
+        {
+          label: 'nodes',
+          documentation: 'nodes :: ANY?',
+        },
+        {
+          label: 'types',
+          documentation: 'types =  :: STRING?',
+        },
+      ],
     },
     'apoc.number.arabicToRoman': {
       label: 'apoc.number.arabicToRoman',
+      documentation: 'Converts the given Arabic numbers to Roman numbers.',
+      parameters: [
+        {
+          label: 'number',
+          documentation: 'number :: ANY?',
+        },
+      ],
     },
     'apoc.number.exact.add': {
       label: 'apoc.number.exact.add',
+      documentation:
+        'Returns the result of adding the two given large numbers (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'stringA',
+          documentation: 'stringA :: STRING?',
+        },
+        {
+          label: 'stringB',
+          documentation: 'stringB :: STRING?',
+        },
+      ],
     },
     'apoc.number.exact.div': {
       label: 'apoc.number.exact.div',
+      documentation:
+        'Returns the result of dividing a given large number with another given large number (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'stringA',
+          documentation: 'stringA :: STRING?',
+        },
+        {
+          label: 'stringB',
+          documentation: 'stringB :: STRING?',
+        },
+        {
+          label: 'precision',
+          documentation: 'precision = 0 :: INTEGER?',
+        },
+        {
+          label: 'roundingMode',
+          documentation: 'roundingMode = HALF_UP :: STRING?',
+        },
+      ],
     },
     'apoc.number.exact.mul': {
       label: 'apoc.number.exact.mul',
+      documentation:
+        'Returns the result of multiplying two given large numbers (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'stringA',
+          documentation: 'stringA :: STRING?',
+        },
+        {
+          label: 'stringB',
+          documentation: 'stringB :: STRING?',
+        },
+        {
+          label: 'precision',
+          documentation: 'precision = 0 :: INTEGER?',
+        },
+        {
+          label: 'roundingMode',
+          documentation: 'roundingMode = HALF_UP :: STRING?',
+        },
+      ],
     },
     'apoc.number.exact.sub': {
       label: 'apoc.number.exact.sub',
+      documentation:
+        'Returns the result of subtracting a given large number from another given large number (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'stringA',
+          documentation: 'stringA :: STRING?',
+        },
+        {
+          label: 'stringB',
+          documentation: 'stringB :: STRING?',
+        },
+      ],
     },
     'apoc.number.exact.toExact': {
       label: 'apoc.number.exact.toExact',
+      documentation:
+        'Returns the exact value of the given number (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'number',
+          documentation: 'number :: INTEGER?',
+        },
+      ],
     },
     'apoc.number.exact.toFloat': {
       label: 'apoc.number.exact.toFloat',
+      documentation:
+        'Returns the float value of the given large number (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'string',
+          documentation: 'string :: STRING?',
+        },
+        {
+          label: 'precision',
+          documentation: 'precision = 0 :: INTEGER?',
+        },
+        {
+          label: 'roundingMode',
+          documentation: 'roundingMode = HALF_UP :: STRING?',
+        },
+      ],
     },
     'apoc.number.exact.toInteger': {
       label: 'apoc.number.exact.toInteger',
+      documentation:
+        'Returns the integer value of the given large number (using Java BigDecimal).',
+      parameters: [
+        {
+          label: 'string',
+          documentation: 'string :: STRING?',
+        },
+        {
+          label: 'precision',
+          documentation: 'precision = 0 :: INTEGER?',
+        },
+        {
+          label: 'roundingMode',
+          documentation: 'roundingMode = HALF_UP :: STRING?',
+        },
+      ],
     },
     'apoc.number.format': {
       label: 'apoc.number.format',
+      documentation:
+        'Formats the given long or double using the given pattern and language to produce a string.',
+      parameters: [
+        {
+          label: 'number',
+          documentation: 'number :: ANY?',
+        },
+        {
+          label: 'pattern',
+          documentation: 'pattern =  :: STRING?',
+        },
+        {
+          label: 'language',
+          documentation: 'language =  :: STRING?',
+        },
+      ],
     },
     'apoc.number.parseFloat': {
       label: 'apoc.number.parseFloat',
+      documentation:
+        'Parses the given string using the given pattern and language to produce a double.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'pattern',
+          documentation: 'pattern =  :: STRING?',
+        },
+        {
+          label: 'language',
+          documentation: 'language =  :: STRING?',
+        },
+      ],
     },
     'apoc.number.parseInt': {
       label: 'apoc.number.parseInt',
+      documentation:
+        'Parses the given string using the given pattern and language to produce a long.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'pattern',
+          documentation: 'pattern =  :: STRING?',
+        },
+        {
+          label: 'language',
+          documentation: 'language =  :: STRING?',
+        },
+      ],
     },
     'apoc.number.romanToArabic': {
       label: 'apoc.number.romanToArabic',
+      documentation: 'Converts the given Roman numbers to Arabic numbers.',
+      parameters: [
+        {
+          label: 'romanNumber',
+          documentation: 'romanNumber :: STRING?',
+        },
+      ],
     },
     'apoc.path.combine': {
       label: 'apoc.path.combine',
+      documentation: 'Combines the two given paths into one path.',
+      parameters: [
+        {
+          label: 'path1',
+          documentation: 'path1 :: PATH?',
+        },
+        {
+          label: 'path2',
+          documentation: 'path2 :: PATH?',
+        },
+      ],
     },
     'apoc.path.create': {
       label: 'apoc.path.create',
+      documentation:
+        'Returns a path from the given start node and a list of relationships.',
+      parameters: [
+        {
+          label: 'startNode',
+          documentation: 'startNode :: NODE?',
+        },
+        {
+          label: 'rels',
+          documentation: 'rels = [] :: LIST? OF RELATIONSHIP?',
+        },
+      ],
     },
     'apoc.path.elements': {
       label: 'apoc.path.elements',
+      documentation:
+        'Converts the given path into a list of nodes and relationships.',
+      parameters: [
+        {
+          label: 'path',
+          documentation: 'path :: PATH?',
+        },
+      ],
     },
     'apoc.path.slice': {
       label: 'apoc.path.slice',
+      documentation:
+        'Returns a sub-path of the given length and offset from the given path.',
+      parameters: [
+        {
+          label: 'path',
+          documentation: 'path :: PATH?',
+        },
+        {
+          label: 'offset',
+          documentation: 'offset = 0 :: INTEGER?',
+        },
+        {
+          label: 'length',
+          documentation: 'length = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.rel.endNode': {
       label: 'apoc.rel.endNode',
+      documentation: 'Returns the end node for the given virtual relationship.',
+      parameters: [
+        {
+          label: 'rel',
+          documentation: 'rel :: RELATIONSHIP?',
+        },
+      ],
     },
     'apoc.rel.id': {
       label: 'apoc.rel.id',
-    },
-    'apoc.rel.rebind': {
-      label: 'apoc.rel.rebind',
+      documentation: 'Returns the id for the given virtual relationship.',
+      parameters: [
+        {
+          label: 'rel',
+          documentation: 'rel :: RELATIONSHIP?',
+        },
+      ],
     },
     'apoc.rel.startNode': {
       label: 'apoc.rel.startNode',
+      documentation:
+        'Returns the start node for the given virtual relationship.',
+      parameters: [
+        {
+          label: 'rel',
+          documentation: 'rel :: RELATIONSHIP?',
+        },
+      ],
     },
     'apoc.rel.type': {
       label: 'apoc.rel.type',
+      documentation: 'Returns the type for the given virtual relationship.',
+      parameters: [
+        {
+          label: 'rel',
+          documentation: 'rel :: RELATIONSHIP?',
+        },
+      ],
     },
     'apoc.schema.node.constraintExists': {
       label: 'apoc.schema.node.constraintExists',
+      documentation:
+        'Returns a boolean depending on whether or not a constraint exists for the given node label with the given property names.',
+      parameters: [
+        {
+          label: 'labelName',
+          documentation: 'labelName :: STRING?',
+        },
+        {
+          label: 'propertyName',
+          documentation: 'propertyName :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.schema.node.indexExists': {
       label: 'apoc.schema.node.indexExists',
+      documentation:
+        'Returns a boolean depending on whether or not an index exists for the given node label with the given property names.',
+      parameters: [
+        {
+          label: 'labelName',
+          documentation: 'labelName :: STRING?',
+        },
+        {
+          label: 'propertyName',
+          documentation: 'propertyName :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.schema.relationship.constraintExists': {
       label: 'apoc.schema.relationship.constraintExists',
+      documentation:
+        'Returns a boolean depending on whether or not a constraint exists for the given relationship type with the given property names.',
+      parameters: [
+        {
+          label: 'type',
+          documentation: 'type :: STRING?',
+        },
+        {
+          label: 'propertyName',
+          documentation: 'propertyName :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.schema.relationship.indexExists': {
       label: 'apoc.schema.relationship.indexExists',
+      documentation:
+        'Returns a boolean depending on whether or not an index exists for the given relationship type with the given property names.',
+      parameters: [
+        {
+          label: 'type',
+          documentation: 'type :: STRING?',
+        },
+        {
+          label: 'propertyName',
+          documentation: 'propertyName :: LIST? OF STRING?',
+        },
+      ],
     },
     'apoc.scoring.existence': {
       label: 'apoc.scoring.existence',
+      documentation: 'Returns the given score if true, 0 if false.',
+      parameters: [
+        {
+          label: 'score',
+          documentation: 'score :: INTEGER?',
+        },
+        {
+          label: 'exists',
+          documentation: 'exists :: BOOLEAN?',
+        },
+      ],
     },
     'apoc.scoring.pareto': {
       label: 'apoc.scoring.pareto',
-    },
-    'apoc.static.get': {
-      label: 'apoc.static.get',
-    },
-    'apoc.static.getAll': {
-      label: 'apoc.static.getAll',
+      documentation:
+        'Applies a Pareto scoring function over the given integers.',
+      parameters: [
+        {
+          label: 'minimumThreshold',
+          documentation: 'minimumThreshold :: INTEGER?',
+        },
+        {
+          label: 'eightyPercentValue',
+          documentation: 'eightyPercentValue :: INTEGER?',
+        },
+        {
+          label: 'maximumValue',
+          documentation: 'maximumValue :: INTEGER?',
+        },
+        {
+          label: 'score',
+          documentation: 'score :: INTEGER?',
+        },
+      ],
     },
     'apoc.temporal.format': {
       label: 'apoc.temporal.format',
+      documentation:
+        'Formats the given temporal value into the given time format.',
+      parameters: [
+        {
+          label: 'temporal',
+          documentation: 'temporal :: ANY?',
+        },
+        {
+          label: 'format',
+          documentation: 'format = yyyy-MM-dd :: STRING?',
+        },
+      ],
     },
     'apoc.temporal.formatDuration': {
       label: 'apoc.temporal.formatDuration',
+      documentation: 'Formats the given duration into the given time format.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+        {
+          label: 'format',
+          documentation: 'format :: STRING?',
+        },
+      ],
     },
     'apoc.temporal.toZonedTemporal': {
       label: 'apoc.temporal.toZonedTemporal',
+      documentation:
+        'Parses the given date string using the specified format into the given time zone.',
+      parameters: [
+        {
+          label: 'time',
+          documentation: 'time :: STRING?',
+        },
+        {
+          label: 'format',
+          documentation: 'format = yyyy-MM-dd HH:mm:ss :: STRING?',
+        },
+        {
+          label: 'timezone',
+          documentation: 'timezone = UTC :: STRING?',
+        },
+      ],
     },
     'apoc.text.base64Decode': {
       label: 'apoc.text.base64Decode',
+      documentation: 'Decodes the given Base64 encoded string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.base64Encode': {
       label: 'apoc.text.base64Encode',
+      documentation: 'Encodes the given string with Base64.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.base64UrlDecode': {
       label: 'apoc.text.base64UrlDecode',
+      documentation: 'Decodes the given Base64 encoded URL.',
+      parameters: [
+        {
+          label: 'url',
+          documentation: 'url :: STRING?',
+        },
+      ],
     },
     'apoc.text.base64UrlEncode': {
       label: 'apoc.text.base64UrlEncode',
+      documentation: 'Encodes the given URL with Base64.',
+      parameters: [
+        {
+          label: 'url',
+          documentation: 'url :: STRING?',
+        },
+      ],
     },
     'apoc.text.byteCount': {
       label: 'apoc.text.byteCount',
+      documentation: 'Returns the size of the given string in bytes.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'charset',
+          documentation: 'charset = UTF-8 :: STRING?',
+        },
+      ],
     },
     'apoc.text.bytes': {
       label: 'apoc.text.bytes',
+      documentation: 'Returns the given string as bytes.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'charset',
+          documentation: 'charset = UTF-8 :: STRING?',
+        },
+      ],
     },
     'apoc.text.camelCase': {
       label: 'apoc.text.camelCase',
+      documentation: 'Converts the given string to camel case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.capitalize': {
       label: 'apoc.text.capitalize',
+      documentation: 'Capitalizes the first letter of the given string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.capitalizeAll': {
       label: 'apoc.text.capitalizeAll',
+      documentation:
+        'Capitalizes the first letter of every word in the given string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.charAt': {
       label: 'apoc.text.charAt',
+      documentation:
+        'Returns the long value of the character at the given index.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.clean': {
       label: 'apoc.text.clean',
+      documentation:
+        'Strips the given string of everything except alpha numeric characters and converts it to lower case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.code': {
       label: 'apoc.text.code',
+      documentation: 'Converts the long value into a string.',
+      parameters: [
+        {
+          label: 'codepoint',
+          documentation: 'codepoint :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.compareCleaned': {
       label: 'apoc.text.compareCleaned',
+      documentation:
+        'Compares two given strings stripped of everything except alpha numeric characters converted to lower case.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.decapitalize': {
       label: 'apoc.text.decapitalize',
+      documentation:
+        'Turns the first letter of the given string from upper case to lower case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.decapitalizeAll': {
       label: 'apoc.text.decapitalizeAll',
+      documentation:
+        'Turns the first letter of every word in the given string to lower case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.distance': {
       label: 'apoc.text.distance',
+      documentation:
+        'Compares the two given strings using the Levenshtein distance algorithm.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.doubleMetaphone': {
       label: 'apoc.text.doubleMetaphone',
+      documentation:
+        'Returns the double metaphone phonetic encoding of all words in the given string value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: STRING?',
+        },
+      ],
     },
     'apoc.text.format': {
       label: 'apoc.text.format',
+      documentation: 'Formats the given string with the given parameters.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'params',
+          documentation: 'params :: LIST? OF ANY?',
+        },
+        {
+          label: 'language',
+          documentation: 'language = en :: STRING?',
+        },
+      ],
     },
     'apoc.text.fuzzyMatch': {
       label: 'apoc.text.fuzzyMatch',
+      documentation: 'Performs a fuzzy match search of the two given strings.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.hammingDistance': {
       label: 'apoc.text.hammingDistance',
+      documentation:
+        'Compares the two given strings using the Hamming distance algorithm.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.hexCharAt': {
       label: 'apoc.text.hexCharAt',
+      documentation:
+        'Returns the hexadecimal value of the given string at the given index.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'index',
+          documentation: 'index :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.hexValue': {
       label: 'apoc.text.hexValue',
+      documentation: 'Returns the hexadecimal value of the given value.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.indexOf': {
       label: 'apoc.text.indexOf',
+      documentation:
+        'Returns the first occurrence of the lookup string in the given string, or -1 if not found.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'lookup',
+          documentation: 'lookup :: STRING?',
+        },
+        {
+          label: 'from',
+          documentation: 'from = 0 :: INTEGER?',
+        },
+        {
+          label: 'to',
+          documentation: 'to = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.indexesOf': {
       label: 'apoc.text.indexesOf',
+      documentation:
+        'Returns all occurences of the lookup string in the given string, or an empty list if not found.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'lookup',
+          documentation: 'lookup :: STRING?',
+        },
+        {
+          label: 'from',
+          documentation: 'from = 0 :: INTEGER?',
+        },
+        {
+          label: 'to',
+          documentation: 'to = -1 :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.jaroWinklerDistance': {
       label: 'apoc.text.jaroWinklerDistance',
+      documentation:
+        'compares the two given strings using the Jaro-Winkler distance algorithm.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.join': {
       label: 'apoc.text.join',
+      documentation: 'Joins the given strings using the given delimiter.',
+      parameters: [
+        {
+          label: 'texts',
+          documentation: 'texts :: LIST? OF STRING?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter :: STRING?',
+        },
+      ],
     },
     'apoc.text.levenshteinDistance': {
       label: 'apoc.text.levenshteinDistance',
+      documentation:
+        'Compares the given strings using the Levenshtein distance algorithm.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.levenshteinSimilarity': {
       label: 'apoc.text.levenshteinSimilarity',
+      documentation:
+        'Returns the similarity (a value within 0 and 1) between the two given strings based on the Levenshtein distance algorithm.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+      ],
     },
     'apoc.text.lpad': {
       label: 'apoc.text.lpad',
+      documentation: 'Left pads the given string by the given width.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'count',
+          documentation: 'count :: INTEGER?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter =   :: STRING?',
+        },
+      ],
     },
     'apoc.text.phonetic': {
       label: 'apoc.text.phonetic',
+      documentation:
+        'Returns the US_ENGLISH phonetic soundex encoding of all words of the string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.random': {
       label: 'apoc.text.random',
+      documentation:
+        'Generates a random string to the given length using a length parameter and an optional string of valid characters.\nUnsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'length',
+          documentation: 'length :: INTEGER?',
+        },
+        {
+          label: 'valid',
+          documentation: 'valid = A-Za-z0-9 :: STRING?',
+        },
+      ],
     },
     'apoc.text.regexGroups': {
       label: 'apoc.text.regexGroups',
+      documentation:
+        'Returns all groups matching the given regular expression in the given text.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'regex',
+          documentation: 'regex :: STRING?',
+        },
+      ],
     },
     'apoc.text.regreplace': {
       label: 'apoc.text.regreplace',
+      documentation:
+        'Finds and replaces all matches found by the given regular expression with the given replacement.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'regex',
+          documentation: 'regex :: STRING?',
+        },
+        {
+          label: 'replacement',
+          documentation: 'replacement :: STRING?',
+        },
+      ],
     },
     'apoc.text.repeat': {
       label: 'apoc.text.repeat',
+      documentation:
+        'Returns the result of the given item multiplied by the given count.',
+      parameters: [
+        {
+          label: 'item',
+          documentation: 'item :: STRING?',
+        },
+        {
+          label: 'count',
+          documentation: 'count :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.replace': {
       label: 'apoc.text.replace',
+      documentation:
+        'Finds and replaces all matches found by the given regular expression with the given replacement.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'regex',
+          documentation: 'regex :: STRING?',
+        },
+        {
+          label: 'replacement',
+          documentation: 'replacement :: STRING?',
+        },
+      ],
     },
     'apoc.text.rpad': {
       label: 'apoc.text.rpad',
+      documentation: 'Right pads the given string by the given width.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'count',
+          documentation: 'count :: INTEGER?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter =   :: STRING?',
+        },
+      ],
     },
     'apoc.text.slug': {
       label: 'apoc.text.slug',
+      documentation:
+        'Replaces the whitespace in the given string with the given delimiter.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'delimiter',
+          documentation: 'delimiter = - :: STRING?',
+        },
+      ],
     },
     'apoc.text.snakeCase': {
       label: 'apoc.text.snakeCase',
+      documentation: 'Converts the given string to snake case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.sorensenDiceSimilarity': {
       label: 'apoc.text.sorensenDiceSimilarity',
+      documentation:
+        'Compares the two given strings using the Sørensen–Dice coefficient formula, with the provided IETF language tag.',
+      parameters: [
+        {
+          label: 'text1',
+          documentation: 'text1 :: STRING?',
+        },
+        {
+          label: 'text2',
+          documentation: 'text2 :: STRING?',
+        },
+        {
+          label: 'languageTag',
+          documentation: 'languageTag = en :: STRING?',
+        },
+      ],
     },
     'apoc.text.split': {
       label: 'apoc.text.split',
+      documentation:
+        'Splits the given string using a given regular expression as a separator.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+        {
+          label: 'regex',
+          documentation: 'regex :: STRING?',
+        },
+        {
+          label: 'limit',
+          documentation: 'limit = 0 :: INTEGER?',
+        },
+      ],
     },
     'apoc.text.swapCase': {
       label: 'apoc.text.swapCase',
+      documentation: 'Swaps the cases in the given string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.toCypher': {
       label: 'apoc.text.toCypher',
+      documentation: 'Converts the given value to a Cypher property string.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: ANY?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.text.toUpperCase': {
       label: 'apoc.text.toUpperCase',
+      documentation: 'Converts the given string to upper case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.upperCamelCase': {
       label: 'apoc.text.upperCamelCase',
+      documentation: 'Converts the given string to upper camel case.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.urldecode': {
       label: 'apoc.text.urldecode',
+      documentation: 'Decodes the given URL encoded string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.text.urlencode': {
       label: 'apoc.text.urlencode',
-    },
-    'apoc.trigger.nodesByLabel': {
-      label: 'apoc.trigger.nodesByLabel',
-    },
-    'apoc.trigger.propertiesByKey': {
-      label: 'apoc.trigger.propertiesByKey',
-    },
-    'apoc.trigger.toNode': {
-      label: 'apoc.trigger.toNode',
-    },
-    'apoc.trigger.toRelationship': {
-      label: 'apoc.trigger.toRelationship',
-    },
-    'apoc.ttl.config': {
-      label: 'apoc.ttl.config',
+      documentation: 'Encodes the given URL string.',
+      parameters: [
+        {
+          label: 'text',
+          documentation: 'text :: STRING?',
+        },
+      ],
     },
     'apoc.util.compress': {
       label: 'apoc.util.compress',
+      documentation: 'Zips the given string.',
+      parameters: [
+        {
+          label: 'data',
+          documentation: 'data :: STRING?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.util.decompress': {
       label: 'apoc.util.decompress',
+      documentation: 'Unzips the given byte array.',
+      parameters: [
+        {
+          label: 'data',
+          documentation: 'data :: BYTEARRAY?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'apoc.util.md5': {
       label: 'apoc.util.md5',
+      documentation:
+        'Returns the MD5 checksum of the concatenation of all string values in the given list.\nMD5 is a weak hashing algorithm which is unsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.util.sha1': {
       label: 'apoc.util.sha1',
+      documentation:
+        'Returns the SHA1 of the concatenation of all string values in the given list.\nSHA1 is a weak hashing algorithm which is unsuitable for cryptographic use-cases.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.util.sha256': {
       label: 'apoc.util.sha256',
+      documentation:
+        'Returns the SHA256 of the concatenation of all string values in the given list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.util.sha384': {
       label: 'apoc.util.sha384',
+      documentation:
+        'Returns the SHA384 of the concatenation of all string values in the given list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.util.sha512': {
       label: 'apoc.util.sha512',
+      documentation:
+        'Returns the SHA512 of the concatenation of all string values in the list.',
+      parameters: [
+        {
+          label: 'values',
+          documentation: 'values :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.util.validatePredicate': {
       label: 'apoc.util.validatePredicate',
+      documentation:
+        'If the given predicate is true an exception is thrown, otherwise it returns true (for use inside `WHERE` subclauses).',
+      parameters: [
+        {
+          label: 'predicate',
+          documentation: 'predicate :: BOOLEAN?',
+        },
+        {
+          label: 'message',
+          documentation: 'message :: STRING?',
+        },
+        {
+          label: 'params',
+          documentation: 'params :: LIST? OF ANY?',
+        },
+      ],
     },
     'apoc.version': {
       label: 'apoc.version',
+      documentation: 'Returns the APOC version currently installed.',
+      parameters: [],
     },
     'apoc.xml.parse': {
       label: 'apoc.xml.parse',
+      documentation: 'Parses the given XML string as a map.',
+      parameters: [
+        {
+          label: 'data',
+          documentation: 'data :: STRING?',
+        },
+        {
+          label: 'path',
+          documentation: 'path = / :: STRING?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+        {
+          label: 'simple',
+          documentation: 'simple = false :: BOOLEAN?',
+        },
+      ],
     },
     asin: {
       label: 'asin',
+      documentation: 'Returns the arcsine of a number in radians.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     atan: {
       label: 'atan',
+      documentation: 'Returns the arctangent of a number in radians.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     atan2: {
       label: 'atan2',
+      documentation:
+        'Returns the arctangent2 of a set of coordinates in radians.',
+      parameters: [
+        {
+          label: 'y',
+          documentation: 'y :: FLOAT?',
+        },
+        {
+          label: 'x',
+          documentation: 'x :: FLOAT?',
+        },
+      ],
     },
     avg: {
       label: 'avg',
+      documentation: 'Returns the average of a set of duration values.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: DURATION?',
+        },
+      ],
     },
     ceil: {
       label: 'ceil',
+      documentation:
+        'Returns the smallest floating point number that is greater than or equal to a number and equal to a mathematical integer.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     coalesce: {
       label: 'coalesce',
+      documentation:
+        'Returns the first non-null value in a list of expressions.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     collect: {
       label: 'collect',
+      documentation:
+        'Returns a list containing the values returned by an expression.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     cos: {
       label: 'cos',
+      documentation: 'Returns the cosine  of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     cot: {
       label: 'cot',
+      documentation: 'Returns the cotangent of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     count: {
       label: 'count',
+      documentation: 'Returns the number of values or rows.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     date: {
       label: 'date',
+      documentation: 'Create a Date instant.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'date.realtime': {
       label: 'date.realtime',
+      documentation: 'Get the current Date instant using the realtime clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'date.statement': {
       label: 'date.statement',
+      documentation: 'Get the current Date instant using the statement clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'date.transaction': {
       label: 'date.transaction',
+      documentation:
+        'Get the current Date instant using the transaction clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'date.truncate': {
       label: 'date.truncate',
+      documentation:
+        'Truncate the input temporal value to a Date instant using the specified unit.',
+      parameters: [
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+        {
+          label: 'fields',
+          documentation: 'fields = null :: MAP?',
+        },
+      ],
     },
     datetime: {
       label: 'datetime',
+      documentation: 'Create a DateTime instant.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'datetime.fromepoch': {
       label: 'datetime.fromepoch',
+      documentation:
+        'Create a DateTime given the seconds and nanoseconds since the start of the epoch.',
+      parameters: [
+        {
+          label: 'seconds',
+          documentation: 'seconds :: NUMBER?',
+        },
+        {
+          label: 'nanoseconds',
+          documentation: 'nanoseconds :: NUMBER?',
+        },
+      ],
     },
     'datetime.fromepochmillis': {
       label: 'datetime.fromepochmillis',
+      documentation:
+        'Create a DateTime given the milliseconds since the start of the epoch.',
+      parameters: [
+        {
+          label: 'milliseconds',
+          documentation: 'milliseconds :: NUMBER?',
+        },
+      ],
     },
     'datetime.realtime': {
       label: 'datetime.realtime',
+      documentation:
+        'Get the current DateTime instant using the realtime clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'datetime.statement': {
       label: 'datetime.statement',
+      documentation:
+        'Get the current DateTime instant using the statement clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'datetime.transaction': {
       label: 'datetime.transaction',
+      documentation:
+        'Get the current DateTime instant using the transaction clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'datetime.truncate': {
       label: 'datetime.truncate',
+      documentation:
+        'Truncate the input temporal value to a DateTime instant using the specified unit.',
+      parameters: [
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+        {
+          label: 'fields',
+          documentation: 'fields = null :: MAP?',
+        },
+      ],
     },
     degrees: {
       label: 'degrees',
+      documentation: 'Converts radians to degrees.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     duration: {
       label: 'duration',
+      documentation: 'Construct a Duration value.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     'duration.between': {
       label: 'duration.between',
+      documentation:
+        "Compute the duration between the 'from' instant (inclusive) and the 'to' instant (exclusive) in logical units.",
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: ANY?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: ANY?',
+        },
+      ],
     },
     'duration.inDays': {
       label: 'duration.inDays',
+      documentation:
+        "Compute the duration between the 'from' instant (inclusive) and the 'to' instant (exclusive) in days.",
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: ANY?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: ANY?',
+        },
+      ],
     },
     'duration.inMonths': {
       label: 'duration.inMonths',
+      documentation:
+        "Compute the duration between the 'from' instant (inclusive) and the 'to' instant (exclusive) in months.",
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: ANY?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: ANY?',
+        },
+      ],
     },
     'duration.inSeconds': {
       label: 'duration.inSeconds',
+      documentation:
+        "Compute the duration between the 'from' instant (inclusive) and the 'to' instant (exclusive) in seconds.",
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: ANY?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: ANY?',
+        },
+      ],
     },
     e: {
       label: 'e',
+      documentation: 'Returns the base of the natural logarithm, e.',
+      parameters: [],
+    },
+    elementId: {
+      label: 'elementId',
+      documentation: 'Returns the element id of a relationship.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: RELATIONSHIP?',
+        },
+      ],
     },
     endNode: {
       label: 'endNode',
+      documentation: 'Returns the end node of a relationship.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: RELATIONSHIP?',
+        },
+      ],
     },
     exists: {
       label: 'exists',
+      documentation:
+        'Returns true if a match for the pattern exists in the graph.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     exp: {
       label: 'exp',
+      documentation:
+        'Returns e^n, where e is the base of the natural logarithm, and n is the value of the argument expression.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     file: {
       label: 'file',
+      documentation:
+        'Returns the absolute path of the file that LOAD CSV is using.',
+      parameters: [],
     },
     floor: {
       label: 'floor',
+      documentation:
+        'Returns the largest floating point number that is less than or equal to a number and equal to a mathematical integer.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.adamicAdar': {
       label: 'gds.alpha.linkprediction.adamicAdar',
+      documentation: 'Given two nodes, calculate Adamic Adar similarity',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.commonNeighbors': {
       label: 'gds.alpha.linkprediction.commonNeighbors',
+      documentation: 'Given two nodes, returns the number of common neighbors',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.preferentialAttachment': {
       label: 'gds.alpha.linkprediction.preferentialAttachment',
+      documentation: 'Given two nodes, calculate Preferential Attachment',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.resourceAllocation': {
       label: 'gds.alpha.linkprediction.resourceAllocation',
+      documentation:
+        'Given two nodes, calculate Resource Allocation similarity',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.sameCommunity': {
       label: 'gds.alpha.linkprediction.sameCommunity',
+      documentation:
+        'Given two nodes, indicates if they have the same community',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'communityProperty',
+          documentation: 'communityProperty = community :: STRING?',
+        },
+      ],
     },
     'gds.alpha.linkprediction.totalNeighbors': {
       label: 'gds.alpha.linkprediction.totalNeighbors',
+      documentation: 'Given two nodes, calculate Total Neighbors',
+      parameters: [
+        {
+          label: 'node1',
+          documentation: 'node1 :: NODE?',
+        },
+        {
+          label: 'node2',
+          documentation: 'node2 :: NODE?',
+        },
+        {
+          label: 'config',
+          documentation: 'config = {} :: MAP?',
+        },
+      ],
     },
     'gds.alpha.ml.oneHotEncoding': {
       label: 'gds.alpha.ml.oneHotEncoding',
+      documentation:
+        'RETURN gds.alpha.ml.oneHotEncoding(availableValues, selectedValues) - return a list of selected values in a one hot encoding format.',
+      parameters: [
+        {
+          label: 'availableValues',
+          documentation: 'availableValues :: LIST? OF ANY?',
+        },
+        {
+          label: 'selectedValues',
+          documentation: 'selectedValues :: LIST? OF ANY?',
+        },
+      ],
     },
     'gds.graph.exists': {
       label: 'gds.graph.exists',
+      documentation: 'Checks if a graph exists in the catalog.',
+      parameters: [
+        {
+          label: 'graphName',
+          documentation: 'graphName :: STRING?',
+        },
+      ],
     },
     'gds.graph.project': {
       label: 'gds.graph.project',
+      documentation:
+        'Creates a named graph in the catalog for use by algorithms.',
+      parameters: [
+        {
+          label: 'graphName',
+          documentation: 'graphName :: STRING?',
+        },
+        {
+          label: 'sourceNode',
+          documentation: 'sourceNode :: ANY?',
+        },
+        {
+          label: 'targetNode',
+          documentation: 'targetNode = null :: ANY?',
+        },
+        {
+          label: 'dataConfig',
+          documentation: 'dataConfig = null :: ANY?',
+        },
+        {
+          label: 'configuration',
+          documentation: 'configuration = null :: ANY?',
+        },
+        {
+          label: 'alphaMigrationConfig',
+          documentation: 'alphaMigrationConfig = null :: ANY?',
+        },
+      ],
+    },
+    'gds.isLicensed': {
+      label: 'gds.isLicensed',
+      documentation:
+        'RETURN gds.isLicensed - Return if GDS is licensed. For more details use the procedure gds.license.state.',
+      parameters: [],
     },
     'gds.similarity.cosine': {
       label: 'gds.similarity.cosine',
+      documentation:
+        'RETURN gds.similarity.cosine(vector1, vector2) - Given two collection vectors, calculate cosine similarity',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.similarity.euclidean': {
       label: 'gds.similarity.euclidean',
+      documentation:
+        'RETURN gds.similarity.euclidean(vector1, vector2) - Given two collection vectors, calculate similarity based on euclidean distance',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.similarity.euclideanDistance': {
       label: 'gds.similarity.euclideanDistance',
+      documentation:
+        'RETURN gds.similarity.euclideanDistance(vector1, vector2) - Given two collection vectors, calculate the euclidean distance (square root of the sum of the squared differences)',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.similarity.jaccard': {
       label: 'gds.similarity.jaccard',
+      documentation:
+        'RETURN gds.similarity.jaccard(vector1, vector2) - Given two collection vectors, calculate Jaccard similarity',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.similarity.overlap': {
       label: 'gds.similarity.overlap',
+      documentation:
+        'RETURN gds.similarity.overlap(vector1, vector2) - Given two collection vectors, calculate overlap similarity',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.similarity.pearson': {
       label: 'gds.similarity.pearson',
+      documentation:
+        'RETURN gds.similarity.pearson(vector1, vector2) - Given two collection vectors, calculate pearson similarity',
+      parameters: [
+        {
+          label: 'vector1',
+          documentation: 'vector1 :: LIST? OF NUMBER?',
+        },
+        {
+          label: 'vector2',
+          documentation: 'vector2 :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.util.NaN': {
       label: 'gds.util.NaN',
+      documentation: 'RETURN gds.util.NaN() - Returns NaN as a Cypher value.',
+      parameters: [],
     },
     'gds.util.asNode': {
       label: 'gds.util.asNode',
+      documentation:
+        'RETURN gds.util.asNode(nodeId) - Return the node objects for the given node id or null if none exists.',
+      parameters: [
+        {
+          label: 'nodeId',
+          documentation: 'nodeId :: NUMBER?',
+        },
+      ],
     },
     'gds.util.asNodes': {
       label: 'gds.util.asNodes',
+      documentation:
+        'RETURN gds.util.asNodes(nodeIds) - Return the node objects for the given node ids or an empty list if none exists.',
+      parameters: [
+        {
+          label: 'nodeIds',
+          documentation: 'nodeIds :: LIST? OF NUMBER?',
+        },
+      ],
     },
     'gds.util.infinity': {
       label: 'gds.util.infinity',
+      documentation:
+        'RETURN gds.util.infinity() - Return infinity as a Cypher value.',
+      parameters: [],
     },
     'gds.util.isFinite': {
       label: 'gds.util.isFinite',
+      documentation:
+        'RETURN gds.util.isFinite(value) - Return true iff the given argument is a finite value (not ±Infinity, NaN, or null).',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: NUMBER?',
+        },
+      ],
     },
     'gds.util.isInfinite': {
       label: 'gds.util.isInfinite',
+      documentation:
+        'RETURN gds.util.isInfinite(value) - Return true iff the given argument is not a finite value (not ±Infinity, NaN, or null).',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: NUMBER?',
+        },
+      ],
     },
     'gds.util.nodeProperty': {
       label: 'gds.util.nodeProperty',
+      documentation:
+        'Returns a node property value from a named in-memory graph.',
+      parameters: [
+        {
+          label: 'graphName',
+          documentation: 'graphName :: STRING?',
+        },
+        {
+          label: 'nodeId',
+          documentation: 'nodeId :: ANY?',
+        },
+        {
+          label: 'propertyKey',
+          documentation: 'propertyKey :: STRING?',
+        },
+        {
+          label: 'nodeLabel',
+          documentation: 'nodeLabel = * :: STRING?',
+        },
+      ],
     },
     'gds.version': {
       label: 'gds.version',
+      documentation:
+        'RETURN gds.version() | Return the installed graph data science library version.',
+      parameters: [],
+    },
+    'graph.names': {
+      label: 'graph.names',
+      documentation: 'Lists the names of graph in the current database',
+      parameters: [],
+    },
+    'graph.propertiesByName': {
+      label: 'graph.propertiesByName',
+      documentation: 'Returns the map of properties associated with a graph',
+      parameters: [
+        {
+          label: 'graphName',
+          documentation: 'graphName :: STRING?',
+        },
+      ],
     },
     haversin: {
       label: 'haversin',
+      documentation: 'Returns half the versine of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     head: {
       label: 'head',
+      documentation: 'Returns the first element in a list.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     id: {
       label: 'id',
+      documentation: 'Returns the id of a relationship.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: RELATIONSHIP?',
+        },
+      ],
     },
     isEmpty: {
       label: 'isEmpty',
+      documentation: 'Checks whether a string is empty.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
+    },
+    isNaN: {
+      label: 'isNaN',
+      documentation: 'Returns whether the given floating point number is NaN.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     keys: {
       label: 'keys',
+      documentation:
+        'Returns a list containing the string representations for all the property names of a map.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: MAP?',
+        },
+      ],
     },
     labels: {
       label: 'labels',
+      documentation:
+        'Returns a list containing the string representations for all the labels of a node.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: NODE?',
+        },
+      ],
     },
     last: {
       label: 'last',
+      documentation: 'Returns the last element in a list.',
+      parameters: [
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     left: {
       label: 'left',
+      documentation:
+        'Returns a string containing the specified number of leftmost characters of the original string.',
+      parameters: [
+        {
+          label: 'original',
+          documentation: 'original :: STRING?',
+        },
+        {
+          label: 'length',
+          documentation: 'length :: INTEGER?',
+        },
+      ],
     },
     length: {
       label: 'length',
+      documentation: 'Returns the length of a path.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: PATH?',
+        },
+      ],
     },
     linenumber: {
       label: 'linenumber',
+      documentation:
+        'Returns the line number that LOAD CSV is currently using.',
+      parameters: [],
     },
     localdatetime: {
       label: 'localdatetime',
+      documentation: 'Create a LocalDateTime instant.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localdatetime.realtime': {
       label: 'localdatetime.realtime',
+      documentation:
+        'Get the current LocalDateTime instant using the realtime clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localdatetime.statement': {
       label: 'localdatetime.statement',
+      documentation:
+        'Get the current LocalDateTime instant using the statement clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localdatetime.transaction': {
       label: 'localdatetime.transaction',
+      documentation:
+        'Get the current LocalDateTime instant using the transaction clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localdatetime.truncate': {
       label: 'localdatetime.truncate',
+      documentation:
+        'Truncate the input temporal value to a LocalDateTime instant using the specified unit.',
+      parameters: [
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+        {
+          label: 'fields',
+          documentation: 'fields = null :: MAP?',
+        },
+      ],
     },
     localtime: {
       label: 'localtime',
+      documentation: 'Create a LocalTime instant.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localtime.realtime': {
       label: 'localtime.realtime',
+      documentation:
+        'Get the current LocalTime instant using the realtime clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localtime.statement': {
       label: 'localtime.statement',
+      documentation:
+        'Get the current LocalTime instant using the statement clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localtime.transaction': {
       label: 'localtime.transaction',
+      documentation:
+        'Get the current LocalTime instant using the transaction clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'localtime.truncate': {
       label: 'localtime.truncate',
+      documentation:
+        'Truncate the input temporal value to a LocalTime instant using the specified unit.',
+      parameters: [
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+        {
+          label: 'fields',
+          documentation: 'fields = null :: MAP?',
+        },
+      ],
     },
     log: {
       label: 'log',
+      documentation: 'Returns the natural logarithm of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     log10: {
       label: 'log10',
+      documentation: 'Returns the common logarithm (base 10) of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     ltrim: {
       label: 'ltrim',
+      documentation:
+        'Returns the original string with leading whitespace removed.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
     },
     max: {
       label: 'max',
+      documentation: 'Returns the maximum value in a set of values.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     min: {
       label: 'min',
+      documentation: 'Returns the minimum value in a set of values.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     nodes: {
       label: 'nodes',
+      documentation: 'Returns a list containing all the nodes in a path.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: PATH?',
+        },
+      ],
     },
     none: {
       label: 'none',
+      documentation:
+        'Returns true if the predicate holds for no element in the given list.',
+      parameters: [
+        {
+          label: 'variable',
+          documentation: 'variable :: ANY?',
+        },
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     percentileCont: {
       label: 'percentileCont',
+      documentation:
+        'Returns the percentile of a value over a group using linear interpolation.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+        {
+          label: 'percentile',
+          documentation: 'percentile :: FLOAT?',
+        },
+      ],
     },
     percentileDisc: {
       label: 'percentileDisc',
+      documentation:
+        'Returns the nearest floating point value to the given percentile over a group using a rounding method.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+        {
+          label: 'percentile',
+          documentation: 'percentile :: FLOAT?',
+        },
+      ],
     },
     pi: {
       label: 'pi',
+      documentation: 'Returns the mathematical constant pi.',
+      parameters: [],
     },
     point: {
       label: 'point',
+      documentation:
+        'Returns a 2D or 3D point object, given two or respectively three coordinate values in the Cartesian coordinate system or WGS 84 geographic coordinate system.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: MAP?',
+        },
+      ],
     },
     'point.distance': {
       label: 'point.distance',
+      documentation:
+        'Returns a floating point number representing the geodesic distance between any two points in the same CRS.',
+      parameters: [
+        {
+          label: 'from',
+          documentation: 'from :: POINT?',
+        },
+        {
+          label: 'to',
+          documentation: 'to :: POINT?',
+        },
+      ],
     },
     'point.withinBBox': {
       label: 'point.withinBBox',
+      documentation:
+        'Returns true if the provided point is within the bounding box defined by the two provided points.',
+      parameters: [
+        {
+          label: 'point',
+          documentation: 'point :: POINT?',
+        },
+        {
+          label: 'lowerLeft',
+          documentation: 'lowerLeft :: POINT?',
+        },
+        {
+          label: 'upperRight',
+          documentation: 'upperRight :: POINT?',
+        },
+      ],
     },
     properties: {
       label: 'properties',
+      documentation: 'Returns a map containing all the properties of a map.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: MAP?',
+        },
+      ],
     },
     radians: {
       label: 'radians',
+      documentation: 'Converts degrees to radians.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     rand: {
       label: 'rand',
+      documentation:
+        'Returns a random floating point number in the range from 0 (inclusive) to 1 (exclusive); i.e. [0,1).',
+      parameters: [],
     },
     randomUUID: {
       label: 'randomUUID',
+      documentation: 'Generates a random UUID.',
+      parameters: [],
     },
     range: {
       label: 'range',
+      documentation:
+        'Returns a list comprising all integer values within a specified range created with step length.',
+      parameters: [
+        {
+          label: 'start',
+          documentation: 'start :: INTEGER?',
+        },
+        {
+          label: 'end',
+          documentation: 'end :: INTEGER?',
+        },
+        {
+          label: 'step',
+          documentation: 'step :: INTEGER?',
+        },
+      ],
     },
     reduce: {
       label: 'reduce',
+      documentation:
+        'Runs an expression against individual elements of a list, storing the result of the expression in an accumulator.',
+      parameters: [
+        {
+          label: 'accumulator',
+          documentation: 'accumulator :: ANY?',
+        },
+        {
+          label: 'variable',
+          documentation: 'variable :: LIST? OF ANY?',
+        },
+      ],
     },
     relationships: {
       label: 'relationships',
+      documentation:
+        'Returns a list containing all the relationships in a path.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: PATH?',
+        },
+      ],
     },
     replace: {
       label: 'replace',
+      documentation:
+        'Returns a string in which all occurrences of a specified search string in the original string have been replaced by another (specified) replace string.',
+      parameters: [
+        {
+          label: 'original',
+          documentation: 'original :: STRING?',
+        },
+        {
+          label: 'search',
+          documentation: 'search :: STRING?',
+        },
+        {
+          label: 'replace',
+          documentation: 'replace :: STRING?',
+        },
+      ],
     },
     reverse: {
       label: 'reverse',
+      documentation:
+        'Returns a list in which the order of all elements in the original list have been reversed.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     right: {
       label: 'right',
+      documentation:
+        'Returns a string containing the specified number of rightmost characters of the original string.',
+      parameters: [
+        {
+          label: 'original',
+          documentation: 'original :: STRING?',
+        },
+        {
+          label: 'length',
+          documentation: 'length :: INTEGER?',
+        },
+      ],
     },
     round: {
       label: 'round',
+      documentation:
+        'Returns the value of a number rounded to the specified precision with the specified rounding mode.',
+      parameters: [
+        {
+          label: 'value',
+          documentation: 'value :: FLOAT?',
+        },
+        {
+          label: 'precision',
+          documentation: 'precision :: NUMBER?',
+        },
+        {
+          label: 'mode',
+          documentation: 'mode :: STRING?',
+        },
+      ],
     },
     rtrim: {
       label: 'rtrim',
+      documentation:
+        'Returns the original string with trailing whitespace removed.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
     },
     sign: {
       label: 'sign',
+      documentation:
+        'Returns the signum of a floating point number: 0 if the number is 0, -1 for any negative number, and 1 for any positive number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     sin: {
       label: 'sin',
+      documentation: 'Returns the sine of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     single: {
       label: 'single',
+      documentation:
+        'Returns true if the predicate holds for exactly one of the elements in the given list.',
+      parameters: [
+        {
+          label: 'variable',
+          documentation: 'variable :: ANY?',
+        },
+        {
+          label: 'list',
+          documentation: 'list :: LIST? OF ANY?',
+        },
+      ],
     },
     size: {
       label: 'size',
+      documentation: 'Returns the number of Unicode characters in a string.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
     },
     split: {
       label: 'split',
+      documentation:
+        'Returns a list of strings resulting from the splitting of the original string around matches of any of the given delimiters.',
+      parameters: [
+        {
+          label: 'original',
+          documentation: 'original :: STRING?',
+        },
+        {
+          label: 'splitDelimiters',
+          documentation: 'splitDelimiters :: LIST? OF STRING?',
+        },
+      ],
     },
     sqrt: {
       label: 'sqrt',
+      documentation: 'Returns the square root of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     startNode: {
       label: 'startNode',
+      documentation: 'Returns the start node of a relationship.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: RELATIONSHIP?',
+        },
+      ],
     },
     stdev: {
       label: 'stdev',
+      documentation:
+        'Returns the standard deviation for the given value over a group for a sample of a population.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     stdevp: {
       label: 'stdevp',
+      documentation:
+        'Returns the standard deviation for the given value over a group for an entire population.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     substring: {
       label: 'substring',
+      documentation:
+        "Returns a substring of length 'length' of the original string, beginning with a 0-based index start.",
+      parameters: [
+        {
+          label: 'original',
+          documentation: 'original :: STRING?',
+        },
+        {
+          label: 'start',
+          documentation: 'start :: INTEGER?',
+        },
+        {
+          label: 'length',
+          documentation: 'length :: INTEGER?',
+        },
+      ],
     },
     sum: {
       label: 'sum',
+      documentation: 'Returns the sum of a set of durations',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: DURATION?',
+        },
+      ],
     },
     tail: {
       label: 'tail',
+      documentation: 'Returns all but the first element in a list.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     tan: {
       label: 'tan',
+      documentation: 'Returns the tangent of a number.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: FLOAT?',
+        },
+      ],
     },
     time: {
       label: 'time',
+      documentation: 'Create a Time instant.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'time.realtime': {
       label: 'time.realtime',
+      documentation: 'Get the current Time instant using the realtime clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'time.statement': {
       label: 'time.statement',
+      documentation: 'Get the current Time instant using the statement clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'time.transaction': {
       label: 'time.transaction',
+      documentation:
+        'Get the current Time instant using the transaction clock.',
+      parameters: [
+        {
+          label: 'timezone',
+          documentation: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+      ],
     },
     'time.truncate': {
       label: 'time.truncate',
+      documentation:
+        'Truncate the input temporal value to a Time instant using the specified unit.',
+      parameters: [
+        {
+          label: 'unit',
+          documentation: 'unit :: STRING?',
+        },
+        {
+          label: 'input',
+          documentation: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY?',
+        },
+        {
+          label: 'fields',
+          documentation: 'fields = null :: MAP?',
+        },
+      ],
     },
     toBoolean: {
       label: 'toBoolean',
+      documentation:
+        'Converts a integer value to a boolean value. 0 is defined to be FALSE and any other integer is defined to be TRUE.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: INTEGER?',
+        },
+      ],
     },
     toBooleanList: {
       label: 'toBooleanList',
+      documentation:
+        'Converts a list of values to a list of boolean values. If any values are not convertible to boolean they will be null in the list returned.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     toBooleanOrNull: {
       label: 'toBooleanOrNull',
+      documentation:
+        'Converts a value to a boolean value, or null if the value cannot be converted.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     toFloat: {
       label: 'toFloat',
+      documentation: 'Converts an integer value to a floating point value.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: NUMBER?',
+        },
+      ],
     },
     toFloatList: {
       label: 'toFloatList',
+      documentation:
+        'Converts a list of values to a list of float values. If any values are not convertible to float they will be null in the list returned.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     toFloatOrNull: {
       label: 'toFloatOrNull',
+      documentation:
+        'Converts a value to a floating point value, or null if the value cannot be converted.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     toInteger: {
       label: 'toInteger',
+      documentation:
+        'Converts a boolean to an integer value. TRUE is defined to be 1 and FALSE is defined to be 0.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: BOOLEAN?',
+        },
+      ],
     },
     toIntegerList: {
       label: 'toIntegerList',
+      documentation:
+        'Converts a list of values to a list of integer values. If any values are not convertible to integer they will be null in the list returned.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     toIntegerOrNull: {
       label: 'toIntegerOrNull',
+      documentation:
+        'Converts a value to an integer value, or null if the value cannot be converted.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     toLower: {
       label: 'toLower',
+      documentation: 'Returns the original string in lowercase.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
+    },
+    toString: {
+      label: 'toString',
+      documentation:
+        'Converts an integer, float, boolean, point or temporal type (i.e. Date, Time, LocalTime, DateTime, LocalDateTime or Duration) value to a string.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     toStringList: {
       label: 'toStringList',
+      documentation:
+        'Converts a list of values to a list of string values. If any values are not convertible to string they will be null in the list returned.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: LIST? OF ANY?',
+        },
+      ],
     },
     toStringOrNull: {
       label: 'toStringOrNull',
+      documentation:
+        'Converts an integer, float, boolean, point or temporal type (i.e. Date, Time, LocalTime, DateTime, LocalDateTime or Duration) value to a string, or null if the value cannot be converted.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: ANY?',
+        },
+      ],
     },
     toUpper: {
       label: 'toUpper',
+      documentation: 'Returns the original string in uppercase.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
     },
     trim: {
       label: 'trim',
+      documentation:
+        'Returns the original string with leading and trailing whitespace removed.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: STRING?',
+        },
+      ],
     },
     type: {
       label: 'type',
+      documentation:
+        'Returns the string representation of the relationship type.',
+      parameters: [
+        {
+          label: 'input',
+          documentation: 'input :: RELATIONSHIP?',
+        },
+      ],
     },
   },
   procedureSignatures: {
