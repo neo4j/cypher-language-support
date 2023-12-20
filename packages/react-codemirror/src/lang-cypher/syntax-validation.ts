@@ -1,7 +1,7 @@
-import { linter } from '@codemirror/lint';
+import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
 import {
-  runSemanticAnalysis,
+  SyntaxDiagnostic,
   validateSyntax,
 } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
@@ -26,21 +26,41 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     );
   });
 
+const semanticAnalysisWorker = new Worker(
+  new URL('./semantic-analysis-worker.mjs', import.meta.url),
+  { type: 'module' },
+);
+
 export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
   config,
 ) =>
   linter(async (view) => {
-    console.log('semanticAnalysisLinter started');
     if (!config.lint) {
       return [];
     }
 
-    const diagnostics = await runSemanticAnalysis(view.state.doc.toString());
-    return diagnostics.map((diagnostic) => ({
-      from: diagnostic.offsets.start,
-      to: diagnostic.offsets.end,
-      severity:
-        diagnostic.severity === DiagnosticSeverity.Error ? 'error' : 'warning',
-      message: diagnostic.message,
-    }));
+    const channel = new MessageChannel();
+    const query = view.state.doc.toString();
+
+    semanticAnalysisWorker.postMessage({ query }, [channel.port1]);
+
+    return new Promise((resolve) => {
+      channel.port2.onmessage = (event) => {
+        const rawDiagnostics = event.data as SyntaxDiagnostic[];
+
+        const diagnostics = rawDiagnostics.map(
+          (diagnostic): Diagnostic => ({
+            from: diagnostic.offsets.start,
+            to: diagnostic.offsets.end,
+            severity:
+              diagnostic.severity === DiagnosticSeverity.Error
+                ? 'error'
+                : 'warning',
+            message: diagnostic.message,
+          }),
+        );
+
+        resolve(diagnostics);
+      };
+    });
   });

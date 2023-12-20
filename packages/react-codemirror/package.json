@@ -18,13 +18,15 @@
     "codemirror 6"
   ],
   "version": "2.0.0-next.4",
-  "module": "./dist/esm/index.mjs",
+  "main": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently 'npm:build-types' 'npm:build-esm'",
+    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-worker'",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/index.mjs",
+    "build-worker": "esbuild ./src/lang-cypher/semantic-analysis-worker.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/semantic-analysis-worker.mjs",
     "clean": "rm -rf dist",
     "test": "jest",
     "test:e2e": "playwright test -c playwright-ct.config.ts",

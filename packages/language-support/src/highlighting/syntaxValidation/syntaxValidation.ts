@@ -9,8 +9,8 @@ import {
   parserWrapper,
 } from '../../parserWrapper';
 import {
-  doSemanticAnalysis,
   SemanticAnalysisElement,
+  wrappedSemanticAnalysis,
 } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
@@ -82,7 +82,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-function findEndPosition(
+export function findEndPosition(
   e: SemanticAnalysisElement,
   parsingResult: EnrichedParsingResult,
 ): SyntaxDiagnostic {
@@ -160,13 +160,13 @@ export function validateSyntax(
   return [];
 }
 
-export function runSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
+export function doSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
     const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
       // TODO gör async för att inte ladda in två gånger
-      const { notifications, errors } = doSemanticAnalysis(wholeFileText);
+      const { notifications, errors } = wrappedSemanticAnalysis(wholeFileText);
 
       return notifications
         .concat(errors)

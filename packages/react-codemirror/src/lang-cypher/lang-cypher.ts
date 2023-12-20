@@ -5,7 +5,7 @@ import {
 } from '@codemirror/language';
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
-import { ParserAdapter } from './ParserAdapter';
+import { ParserAdapter } from './parser-adapter';
 import { cypherLinter, semanticAnalysisLinter } from './syntax-validation';
 
 const facet = defineLanguageFacet({

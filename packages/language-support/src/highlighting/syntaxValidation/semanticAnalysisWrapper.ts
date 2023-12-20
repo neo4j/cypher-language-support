@@ -22,7 +22,7 @@ export interface SemanticAnalysisElement {
   };
 }
 
-export function doSemanticAnalysis(query: string): SemanticAnalysisResult {
+export function wrappedSemanticAnalysis(query: string): SemanticAnalysisResult {
   try {
     let semanticErrorsResult = undefined;
     semanticAnalysis([query], (a) => {

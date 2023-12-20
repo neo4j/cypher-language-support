@@ -1,5 +1,6 @@
 import {
   createConnection,
+  Diagnostic,
   DidChangeConfigurationNotification,
   InitializeResult,
   ProposedFeatures,
@@ -22,6 +23,11 @@ import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
+
+import { join } from 'path';
+import { MessageChannel, Worker } from 'worker_threads';
+
+const semanticAnalysisWorker = new Worker(join(__dirname, 'worker.js'));
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -84,6 +90,23 @@ documents.onDidChangeContent((change) => {
     uri: document.uri,
     diagnostics: diagnostics,
   });
+});
+
+documents.onDidChangeContent((change) => {
+  const { port1, port2 } = new MessageChannel();
+
+  const { document } = change;
+  const query = document.getText();
+
+  port2.on('message', (diagnostics: Diagnostic[]) => {
+    void connection.sendDiagnostics({
+      uri: document.uri,
+      diagnostics: diagnostics,
+    });
+  });
+  // start / end doesn't work yet
+
+  semanticAnalysisWorker.postMessage({ query, port: port1 }, [port1]);
 });
 
 // Trigger the syntax colouring
