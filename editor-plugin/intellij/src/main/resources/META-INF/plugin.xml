@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>org.neo4j.intellij.lsp.cypher-lsp-support</id>
+
+    <name>Cypher Lsp Support</name>
+
+    <vendor url="https://www.neo4j.com">Neo4j Inc.</vendor>
+
+    <description><![CDATA[
+    LSP server support for Neo4j's Cypher query language.
+    This is enabled by the cypher-language-server that is part of the cypher-language-support package.
+  ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
+    <depends>JavaScript</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <platform.lsp.serverSupportProvider
+                implementation="org.neo4j.intellij.lsp.cypherlspsupport.CypherLspServerSupportProvider"/>
+    </extensions>
+</idea-plugin>
