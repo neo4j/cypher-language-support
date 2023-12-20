@@ -64,7 +64,7 @@ public class CypherLspServerSupportProvider implements LspServerSupportProvider 
                 throw new ExecutionException("Could not find nodeJS interpreter");
             }
 
-            File lsp = JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "language-server/cypher-language-server.js");
+            File lsp = JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "cypher-language-server.js");
             if (lsp == null || !lsp.exists()) {
                 throw new ExecutionException("Language server not found :(");
             }

@@ -16,16 +16,41 @@ intellij {
     plugins.set(listOf("JavaScript"))
 }
 
+abstract class GreetingTask : DefaultTask() {
+    @TaskAction
+    fun greet() {
+        println("hello from GreetingTask")
+    }
+}
+
+tasks.register<GreetingTask>("hello")
+
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = "17"
         targetCompatibility = "17"
     }
 
+    named("clean") {
+        doFirst {
+            exec {
+                commandLine("bash", "-c", "rm -rf *.js")
+            }
+        }
+    }
+
+    named("prepareSandbox") {
+        doFirst {
+            exec {
+                commandLine("bash", "-c", "cd ../.. && npm run build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
+            }
+        }
+    }
+
     prepareSandbox {
-        from("language-server") {
+        from(".") {
             include("*.js")
-            into("cypher-lsp-support/language-server")
+            into("cypher-lsp-support")
         }
     }
 
