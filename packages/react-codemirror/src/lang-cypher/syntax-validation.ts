@@ -39,6 +39,8 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
+    // This is why we need the message channel
+    // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
     const channel = new MessageChannel();
     const query = view.state.doc.toString();
 
