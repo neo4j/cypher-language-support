@@ -1,10 +1,13 @@
-import { getDiagnosticsForQuery } from './helpers';
+import {
+  runSemanticAnalysis,
+  validateSyntax,
+} from '../../../highlighting/syntaxValidation/syntaxValidation';
 
 describe('Semantic validation spec', () => {
   test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(validateSyntax(query, {})).toEqual([
       {
         message: 'Unrecognized keyword. Did you mean MATCH?',
         offsets: {
@@ -24,12 +27,13 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
     ]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors for undefined variables', () => {
     const query = 'MATCH (n) RETURN m';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'Variable `m` not defined',
         offsets: {
@@ -61,7 +65,7 @@ describe('Semantic validation spec', () => {
     RETURN *
     `;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: shadowed)',
@@ -87,7 +91,7 @@ describe('Semantic validation spec', () => {
   test('Accumulates several semantic errors', () => {
     const query = `CALL { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
@@ -154,7 +158,7 @@ describe('Semantic validation spec', () => {
       CALL { CREATE (x) } IN TRANSACTIONS
       RETURN 2 AS result`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
@@ -205,7 +209,7 @@ describe('Semantic validation spec', () => {
       }
       RETURN i`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
@@ -286,7 +290,7 @@ describe('Semantic validation spec', () => {
   test('Shows errors for subquery with only WITH', () => {
     const query = 'WITH 1 AS a CALL { WITH a } RETURN a';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
@@ -318,7 +322,7 @@ describe('Semantic validation spec', () => {
         }
         RETURN *`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors for using multiple USE with different databases', () => {
@@ -330,7 +334,7 @@ describe('Semantic validation spec', () => {
         }
         RETURN *`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
@@ -362,7 +366,7 @@ describe('Semantic validation spec', () => {
         RETURN a
       }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'The variable `a` is shadowing a variable with the same name from the outer scope and needs to be renamed',
@@ -396,7 +400,7 @@ describe('Semantic validation spec', () => {
       } > 1
       RETURN person.name`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'All sub queries in an UNION must have the same return column names',
@@ -422,7 +426,7 @@ describe('Semantic validation spec', () => {
   test('Shows errors for COLLECT without a single RETURN', () => {
     const query = `RETURN COLLECT { MATCH (a) }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'A Collect Expression must end with a single return column.',
         offsets: {
@@ -472,7 +476,7 @@ describe('Semantic validation spec', () => {
         RETURN a
         `;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors for COLLECT with updating subqueries', () => {
@@ -480,7 +484,7 @@ describe('Semantic validation spec', () => {
       RETURN COLLECT { SET a.name = 1 }
       `;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'A Collect Expression must end with a single return column.',
         offsets: {
@@ -529,7 +533,7 @@ describe('Semantic validation spec', () => {
         RETURN a
       }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'The variable `aNum` is shadowing a variable with the same name from the outer scope and needs to be renamed',
@@ -563,7 +567,7 @@ describe('Semantic validation spec', () => {
           RETURN y
       }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
@@ -590,7 +594,7 @@ describe('Semantic validation spec', () => {
     const query = `MATCH (a)
       RETURN EXISTS { MATCH (b) MERGE (b)-[:FOLLOWS]->(:Person) }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'An Exists Expression cannot contain any updates',
         offsets: {
@@ -622,13 +626,13 @@ describe('Semantic validation spec', () => {
           RETURN b.name as name
         }`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors about semantic features not enabled yet in the product', () => {
     const query = 'MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
@@ -657,7 +661,7 @@ describe('Semantic validation spec', () => {
           p2 = (x)-->*(c)-->(z)
         RETURN count(*)`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
@@ -701,7 +705,7 @@ describe('Semantic validation spec', () => {
   test('Shows errors for variables not bound in Graph Pattern Matching', () => {
     const query = `MATCH (a) (()--(x {prop: a.prop}))+ (b) (()--())+ (c) RETURN *`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop}))+.`,
@@ -727,7 +731,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
@@ -809,7 +813,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
@@ -872,7 +876,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   test('Shows errors for nesting of quantified path patterns', () => {
     const query = 'MATCH ((a)-->(b)-[r]->*(c))+ RETURN count(*)';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: 'Quantified path patterns are not allowed to be nested.',
         offsets: {
@@ -897,7 +901,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   test('Shows errors when using shortestPath in quantified path patterns', () => {
     const query = 'MATCH (p = shortestPath((a)-[]->(b)))+ RETURN p';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
@@ -980,7 +984,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   test('Shows errors on quantified path patterns without relationship', () => {
     const query = 'MATCH ((n) (m)){1, 5} RETURN count(*)';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: `A quantified path pattern needs to have at least one relationship.
 In this case, the quantified path pattern ((n) (m)){1, 5} consists of only nodes.`,
@@ -1027,7 +1031,7 @@ That is, neither of these is a quantified path pattern.`,
     const query =
       'MATCH p=(x)-->(y), ((a)-[e]->(b {h: nodes(p)[0].prop}))* (s)-->(u) RETURN count(*)';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'If a part of a query contains multiple disconnected patterns, this will build a cartesian product between all those parts. This may produce a large amount of data and slow down query processing. While occasionally intended, it may often be possible to reformulate the query that avoids the use of this cross product, perhaps by adding a relationship between the different parts or by using OPTIONAL MATCH (identifiers are: (a, b, s, u))',
@@ -1072,7 +1076,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
   test('Shows errors on variable length relationships in quantified patterns', () => {
     const query = 'MATCH ()-[r:A*1..2]->{1,2}() RETURN r';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
@@ -1118,13 +1122,13 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     const query =
       'MATCH ((a)-[r]-(b WHERE r.prop = COUNT { MATCH ALL ((c)-[q]-(d))+ RETURN q } ))+ RETURN 1';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors on pattern expression when used wherever we do not expect a boolean value', () => {
     const query = 'MATCH (a) RETURN (a)--()';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
@@ -1150,7 +1154,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
   test('Shows errors for pattern expressions used inside size()', () => {
     const query = 'MATCH (a) RETURN size((a)--())';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
@@ -1176,13 +1180,13 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
   test('Does not show errors for pattern expression used as a boolean value', () => {
     const query = 'RETURN NOT ()--()';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([]);
+    expect(runSemanticAnalysis(query)).toEqual([]);
   });
 
   test('Shows errors for label expressions containing |:', () => {
     const query = 'MATCH (n:A|:B) RETURN n';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message: "Label expressions are not allowed to contain '|:'.",
         offsets: {
@@ -1207,7 +1211,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
   test('Shows errors for label expressions mixing IS with semicolon', () => {
     const query = 'MATCH (n IS A:B) RETURN n';
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(runSemanticAnalysis(query)).toEqual([
       {
         message:
           "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS A&B.",

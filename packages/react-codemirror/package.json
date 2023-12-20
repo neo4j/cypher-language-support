@@ -18,22 +18,13 @@
     "codemirror 6"
   ],
   "version": "2.0.0-next.4",
-  "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
-  "types": "./dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/cjs/index.cjs",
-      "import": "./dist/esm/index.mjs",
-      "default": "./dist/cjs/index.cjs"
-    }
-  },
+  "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build": "concurrently 'npm:build-types' 'npm:build-esm'",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/index.mjs",
-    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
     "clean": "rm -rf dist",
     "test": "jest",
     "test:e2e": "playwright test -c playwright-ct.config.ts",

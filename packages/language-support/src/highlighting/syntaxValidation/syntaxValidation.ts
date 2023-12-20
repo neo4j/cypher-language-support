@@ -9,21 +9,10 @@ import {
   parserWrapper,
 } from '../../parserWrapper';
 import {
+  doSemanticAnalysis,
   SemanticAnalysisElement,
-  SemanticAnalysisResult,
 } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
-
-// TODO make normal tests work even if using older method.
-// TODO make it work for node with web-worker
-// TODO make it work for jest
-// TODO make it work for vsocde extension -> cjs
-
-const semanticAnalysisWorker = Worker
-  ? new Worker(new URL('./semanticAnalysisWorker.js', import.meta.url), {
-      type: 'module',
-    })
-  : null;
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -94,11 +83,14 @@ function warnOnUndeclaredLabels(
 }
 
 function findEndPosition(
+  e: SemanticAnalysisElement,
   parsingResult: EnrichedParsingResult,
-  start: Position,
-  startOffset: number,
-): PositionWithOffset {
+): SyntaxDiagnostic {
   let token: Token | undefined = undefined;
+
+  const start = Position.create(e.position.line - 1, e.position.column - 1);
+  const startOffset = e.position.offset;
+
   const line = start.line + 1;
   const column = start.character;
   const toExplore: ParseTree[] = [parsingResult.result];
@@ -119,55 +111,38 @@ function findEndPosition(
 
   if (token === undefined) {
     return {
-      offset: startOffset,
-      relative: start,
+      severity: e.severity,
+      message: e.message,
+      range: {
+        start: start,
+        end: start,
+      },
+      offsets: {
+        start: startOffset,
+        end: startOffset,
+      },
     };
   } else {
     return {
-      offset: token.stop + 1,
-      relative: Position.create(
-        token.line - 1,
-        token.column + token.text.length,
-      ),
+      severity: e.severity,
+      message: e.message,
+      range: {
+        start: start,
+        end: Position.create(token.line - 1, token.column + token.text.length),
+      },
+      offsets: {
+        start: startOffset,
+        end: token.stop + 1,
+      },
     };
   }
 }
-
-type PositionWithOffset = {
-  relative: Position;
-  offset: number;
-};
 
 export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
   return a.range.start.character - b.range.start.character;
-}
-
-function getSemanticAnalysisDiagnostics(
-  elements: SemanticAnalysisElement[],
-  severity: DiagnosticSeverity,
-  parsingResult: EnrichedParsingResult,
-): SyntaxDiagnostic[] {
-  return elements.map((e) => {
-    const start = Position.create(e.position.line - 1, e.position.column - 1);
-    const startOffset = e.position.offset;
-    const end = findEndPosition(parsingResult, start, startOffset);
-
-    return {
-      severity: severity,
-      range: {
-        start: start,
-        end: end.relative,
-      },
-      offsets: {
-        start: startOffset,
-        end: end.offset,
-      },
-      message: e.message,
-    };
-  });
 }
 
 export function validateSyntax(
@@ -185,64 +160,18 @@ export function validateSyntax(
   return [];
 }
 
-async function getSemanticDiagnostics(
-  query: string,
-  parsingResult: EnrichedParsingResult,
-): Promise<SyntaxDiagnostic[]> {
-  if (semanticAnalysisWorker !== null) {
-    // See explaination here on why and how we use the MessageChannel API rather than just postMessage():
-    // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
-
-    const channel = new MessageChannel();
-
-    semanticAnalysisWorker.postMessage({ query }, [channel.port1]);
-
-    return new Promise((resolve) => {
-      channel.port2.onmessage = (event) => {
-        const result = event.data as SemanticAnalysisResult;
-
-        const errors = getSemanticAnalysisDiagnostics(
-          result.errors,
-          DiagnosticSeverity.Error,
-          parsingResult,
-        );
-
-        const warnings = getSemanticAnalysisDiagnostics(
-          result.notifications,
-          DiagnosticSeverity.Warning,
-          parsingResult,
-        );
-
-        resolve([...errors, ...warnings]);
-      };
-    });
-  } else {
-    const helper = await import('./semanticAnalysisWrapper');
-    const result = helper.doSemanticAnalysis(query);
-    const errors = getSemanticAnalysisDiagnostics(
-      result.errors,
-      DiagnosticSeverity.Error,
-      parsingResult,
-    );
-
-    const warnings = getSemanticAnalysisDiagnostics(
-      result.notifications,
-      DiagnosticSeverity.Warning,
-      parsingResult,
-    );
-
-    return [...errors, ...warnings];
-  }
-}
-
-export async function runSemanticAnalysis(
-  wholeFileText: string,
-): Promise<SyntaxDiagnostic[]> {
+export function runSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
     const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
-      return getSemanticDiagnostics(wholeFileText, parsingResult);
+      // TODO gör async för att inte ladda in två gånger
+      const { notifications, errors } = doSemanticAnalysis(wholeFileText);
+
+      return notifications
+        .concat(errors)
+        .map((elem) => findEndPosition(elem, parsingResult))
+        .sort(sortByPosition);
     }
   }
 
