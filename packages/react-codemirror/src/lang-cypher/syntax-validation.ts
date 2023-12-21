@@ -27,7 +27,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   });
 
 const semanticAnalysisWorker = new Worker(
-  new URL('./semantic-analysis-worker.mjs', import.meta.url),
+  new URL('./semantic-analysis-worker', import.meta.url),
   { type: 'module' },
 );
 
