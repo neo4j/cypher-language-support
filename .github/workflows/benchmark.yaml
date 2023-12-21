@@ -25,6 +25,6 @@ jobs:
         run: npm run build
 
       - name: Benchmark
-        run: npm run benchmark
+        run: npm run benchmark --concurrency=1
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
