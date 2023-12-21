@@ -165,7 +165,6 @@ export function doSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
     const parsingResult = parserWrapper.parse(wholeFileText);
     const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
-      // TODO gör async för att inte ladda in två gånger
       const { notifications, errors } = wrappedSemanticAnalysis(wholeFileText);
 
       return notifications

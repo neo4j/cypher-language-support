@@ -104,7 +104,6 @@ documents.onDidChangeContent((change) => {
       diagnostics: diagnostics,
     });
   });
-  // start / end doesn't work yet
 
   semanticAnalysisWorker.postMessage({ query, port: port1 }, [port1]);
 });
