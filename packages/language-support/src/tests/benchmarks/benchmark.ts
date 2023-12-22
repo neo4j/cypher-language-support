@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import Benchmark from 'benchmark';
 import { autocomplete } from '../../autocompletion/autocompletion';
-import { applySyntaxColouring } from '../../highlighting/syntaxColouring/syntaxColouring';
+import { applySyntaxColouring2 } from '../../highlighting/syntaxColouring/syntaxColouring';
 import { validateSyntax } from '../../highlighting/syntaxValidation/syntaxValidation';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
@@ -23,7 +23,7 @@ suite
   })
   .add('simple - highlight', function () {
     parserWrapper.clearCache();
-    applySyntaxColouring(simpleQuery);
+    applySyntaxColouring2(simpleQuery);
   })
   .add('simple - validate syntax', function () {
     parserWrapper.clearCache();
@@ -38,7 +38,7 @@ suite
   })
   .add('movies - highlight', function () {
     parserWrapper.clearCache();
-    applySyntaxColouring(createMovieDb);
+    applySyntaxColouring2(createMovieDb);
   })
   .add('movies - validate syntax', function () {
     parserWrapper.clearCache();
@@ -54,7 +54,7 @@ suite
   })
   .add('tictactoe - highlight', function () {
     parserWrapper.clearCache();
-    applySyntaxColouring(tictactoe);
+    applySyntaxColouring2(tictactoe);
   })
   .add('tictactoe - validate syntax', function () {
     parserWrapper.clearCache();
@@ -78,7 +78,7 @@ suite
   })
   .add('pokemon - syntax highlight', function () {
     parserWrapper.clearCache();
-    applySyntaxColouring(largePokemonquery);
+    applySyntaxColouring2(largePokemonquery);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {

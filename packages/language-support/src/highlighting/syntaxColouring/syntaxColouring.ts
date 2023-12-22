@@ -265,11 +265,16 @@ function colourLexerTokens(tokens: Token[]) {
 export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
+  const parsestart = performance.now();
   const parsingResult = parserWrapper.parse(wholeFileText);
   const tokens = parsingResult.tokens;
+  const parseend = performance.now();
+  console.log('parse time', parseend - parsestart);
 
   // Get a first pass at the colouring using only the lexer
   const lexerTokens: Map<string, ParsedCypherToken> = colourLexerTokens(tokens);
+  const lexerColored = performance.now();
+  console.log('lexer time', lexerColored - parseend);
 
   const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
 
@@ -281,6 +286,9 @@ export function applySyntaxColouring(
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
   ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parsingResult.result);
+
+  const treewalked = performance.now();
+  console.log('tree walk time', treewalked - lexerColored);
 
   const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
 
@@ -298,5 +306,15 @@ export function applySyntaxColouring(
     sortTokens(Array.from(allColouredTokens.values())),
   );
 
+  console.log('tree merge after', performance.now() - treewalked);
+
   return result;
+}
+
+export function applySyntaxColouring2(
+  wholeFileText: string,
+): ParsedCypherToken[] {
+  const parsingResult = parserWrapper.parse(wholeFileText);
+
+  return sortTokens(Array.from(parsingResult.highlights.values()));
 }
