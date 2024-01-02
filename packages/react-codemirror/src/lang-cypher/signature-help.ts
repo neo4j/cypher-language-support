@@ -42,16 +42,20 @@ function getSignatureHelpTooltip(
         activeSignature !== undefined &&
         activeSignature >= 0 &&
         activeSignature < signatures.length &&
-        signatures[activeSignature].documentation !== undefined &&
-        activeParameter >= 0 &&
-        activeParameter < (signatures[activeSignature].parameters?.length ?? 0)
+        signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
         const parameters = signature.parameters;
-        const doc =
-          parameters[activeParameter].documentation.toString() +
-          '\n\n' +
-          signature.documentation.toString();
+        let doc = signature.documentation.toString();
+
+        if (
+          activeParameter >= 0 &&
+          activeParameter <
+            (signatures[activeSignature].parameters?.length ?? 0)
+        ) {
+          doc =
+            parameters[activeParameter].documentation.toString() + '\n\n' + doc;
+        }
 
         result = [
           {
