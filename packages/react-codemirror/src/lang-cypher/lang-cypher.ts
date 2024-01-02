@@ -20,6 +20,7 @@ const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
 export type CypherConfig = {
   lint?: boolean;
+  signatureHelp?: boolean;
   schema?: DbSchema;
 };
 

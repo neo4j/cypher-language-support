@@ -17,7 +17,7 @@ function getSignatureHelpTooltip(
   let result: Tooltip[] = [];
   const schema = config.schema;
 
-  if (schema) {
+  if (schema && config.signatureHelp) {
     const pos = state.selection.main.head;
     const symbol = syntaxTree(state).resolveInner(pos, -1);
     const tree = parserWrapper.parsingResult;
@@ -73,7 +73,7 @@ function getSignatureHelpTooltip(
               div.append(
                 ...[methodName, separator, lineBreak, argPlusDescription],
               );
-              div.className = 'cm-tooltip-cursor';
+              div.className = 'cm-tooltip-signature-help';
 
               methodName.innerText = signature.label;
               argPlusDescription.innerText = doc;

@@ -70,6 +70,12 @@ export interface CypherEditorProps {
    */
   lint?: boolean;
   /**
+   * Whether the editor should perform signature help.
+   *
+   * @default true
+   */
+  signatureHelp?: boolean;
+  /**
    * The schema to use for autocompletion and linting.
    *
    * @type {DbSchema}
@@ -171,6 +177,7 @@ export class CypherEditor extends Component<CypherEditorProps> {
 
   static defaultProps: CypherEditorProps = {
     lint: true,
+    signatureHelp: true,
     schema: {},
     overrideThemeBackgroundColor: false,
     lineWrap: false,
@@ -187,11 +194,12 @@ export class CypherEditor extends Component<CypherEditorProps> {
       overrideThemeBackgroundColor,
       schema,
       lint,
+      signatureHelp,
       onChange,
       onExecute,
     } = this.props;
 
-    this.schemaRef.current = { schema, lint };
+    this.schemaRef.current = { schema, lint, signatureHelp };
 
     const themeExtension = getThemeExtension(
       theme,
@@ -321,6 +329,7 @@ export class CypherEditor extends Component<CypherEditorProps> {
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
+    this.schemaRef.current.signatureHelp = this.props.signatureHelp;
   }
 
   componentWillUnmount(): void {
