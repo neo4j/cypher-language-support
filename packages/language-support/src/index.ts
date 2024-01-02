@@ -4,6 +4,7 @@ export type { DbSchema } from './dbSchema';
 export {
   CallClauseContext,
   FunctionInvocationContext,
+  StatementsContext,
 } from './generated-parser/CypherParser';
 export { antlrUtils, findParent } from './helpers';
 export {

@@ -1,14 +1,30 @@
-import { syntaxTree } from '@codemirror/language';
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import {
   CallClauseContext,
   findParent,
   FunctionInvocationContext,
+  ParserRuleContext,
   parserWrapper,
   signatureHelp,
+  StatementsContext,
 } from '@neo4j-cypher/language-support';
 import { CypherConfig } from './lang-cypher';
+
+function isMethodNameOrExpressionName(parent: ParserRuleContext) {
+  return (
+    parent instanceof FunctionInvocationContext ||
+    parent instanceof CallClauseContext ||
+    parent instanceof StatementsContext
+  );
+}
+
+function isMethodName(parent: ParserRuleContext) {
+  return (
+    parent instanceof FunctionInvocationContext ||
+    parent instanceof CallClauseContext
+  );
+}
 
 function getSignatureHelpTooltip(
   state: EditorState,
@@ -19,17 +35,19 @@ function getSignatureHelpTooltip(
 
   if (schema && config.signatureHelp) {
     const pos = state.selection.main.head;
-    const symbol = syntaxTree(state).resolveInner(pos, -1);
+    const tokens = parserWrapper.parsingResult.tokens;
+    const lastToken = tokens.filter((token) => token.channel == 0).at(-2);
     const tree = parserWrapper.parsingResult;
+    const isOpenBracket = lastToken.text === '(';
+    const isSeparator = lastToken.text === ',';
 
     if (
-      (symbol.name === 'bracket' || symbol.name === 'separator') &&
+      (isOpenBracket || isSeparator) &&
       tree &&
-      findParent(
-        tree.stopNode,
-        (parent) =>
-          parent instanceof FunctionInvocationContext ||
-          parent instanceof CallClauseContext,
+      findParent(tree.stopNode, (parent) =>
+        isOpenBracket
+          ? isMethodNameOrExpressionName(parent)
+          : isMethodName(parent),
       )
     ) {
       const query = state.doc.toString();
