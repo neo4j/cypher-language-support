@@ -23,6 +23,9 @@ function updateSettingsFile(port: number, password: string) {
 
 async function main() {
   const password = 'password';
+
+  // TODO Nacho Give this container a name and see whether we can clean it up
+  // just in case we leave it open
   const container = await new Neo4jContainer('neo4j:5')
     .withExposedPorts(7474, 7687)
     .withPassword(password)
