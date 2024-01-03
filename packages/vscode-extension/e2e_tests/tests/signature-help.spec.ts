@@ -20,18 +20,17 @@ export async function testSignatureHelp({
   await eventually(async () => {
     const signatureHelp: vscode.SignatureHelp =
       await vscode.commands.executeCommand(
-        'vscode.provideSignatureHelp',
+        'vscode.executeSignatureHelpProvider',
         docUri,
         position,
       );
 
-    assert.equal(signatureHelp.activeParameter, expected.activeParameter);
-    assert.equal(signatureHelp.activeSignature, expected.activeSignature);
+    assert.equal(signatureHelp.activeParameter, 0);
 
     expected.signatures.forEach((expectedSignature) => {
-      const foundSignature = signatureHelp.signatures.find(
-        (signature) => signature.label === expectedSignature.label,
-      );
+      const foundSignature = signatureHelp.signatures.find((signature) => {
+        return signature.label === expectedSignature.label;
+      });
 
       assert.equal(
         foundSignature.documentation,
@@ -54,9 +53,27 @@ export async function testSignatureHelp({
 
 suite('Signature help spec', () => {
   test('Triggers signature help for first argument of functions', async () => {
-    const position = new vscode.Position(2, 28);
+    const position = new vscode.Position(0, 12);
 
-    const expected: vscode.SignatureHelp = undefined;
+    const expected: vscode.SignatureHelp = {
+      activeParameter: 0,
+      // We don't test the active signature, otherwise we would have to modify
+      // these tests every time a new function is added to the database
+      activeSignature: undefined,
+      signatures: [
+        {
+          label: 'abs',
+          documentation:
+            'Returns the absolute value of an `INTEGER` or `FLOAT`.',
+          parameters: [
+            {
+              label: 'input',
+              documentation: 'input :: INTEGER | FLOAT',
+            },
+          ],
+        },
+      ],
+    };
 
     await testSignatureHelp({
       textFile: 'signature-help-function.cypher',

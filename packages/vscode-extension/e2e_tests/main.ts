@@ -1,7 +1,36 @@
+import { Neo4jContainer } from '@testcontainers/neo4j';
 import { runTests } from '@vscode/test-electron';
+import * as fs from 'fs';
 import * as path from 'path';
 
+function setSetting(file: string, variable: RegExp, value: string) {
+  const data = fs.readFileSync(file).toString();
+  const result = data.replace(variable, value);
+  fs.writeFileSync(file, result);
+}
+
+function updateSettingsFile(port: number, password: string) {
+  const settingsPath = path.join(
+    __dirname,
+    '../../e2e_tests/fixtures/.vscode/',
+  );
+  const settingsTemplate = path.join(settingsPath, 'settings-template.json');
+  const settingsFile = path.join(settingsPath, 'settings.json');
+  fs.copyFileSync(settingsTemplate, settingsFile);
+  setSetting(settingsFile, /\{PORT\}/g, port.toString());
+  setSetting(settingsFile, /\{PASSWORD\}/g, password);
+}
+
 async function main() {
+  const password = 'password';
+  const container = await new Neo4jContainer('neo4j:5')
+    .withExposedPorts(7474, 7687)
+    .withPassword(password)
+    .start();
+
+  const port = container.getMappedPort(7687);
+  updateSettingsFile(port, password);
+
   try {
     /* This is equivalent to running from a command line: 
 
@@ -19,11 +48,17 @@ async function main() {
     const extensionTestsPath = path.resolve(__dirname, './testRunner');
 
     // Bootstraps VS Code and executes the integration tests
-    await runTests({ extensionDevelopmentPath, extensionTestsPath });
+    await runTests({
+      launchArgs: [path.join(__dirname, '../../e2e_tests/fixtures/')],
+      extensionDevelopmentPath,
+      extensionTestsPath,
+    });
   } catch (err) {
     console.error('Failed to run integration tests');
     process.exit(1);
   }
+
+  await container.stop();
 }
 
 void main();
