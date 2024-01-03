@@ -181,6 +181,12 @@ export function shouldAssignTokenType(token: Token): boolean {
   return nonEOF && (inMainChannel || isComment);
 }
 
+export function shouldAssignTokenType2(token: Token): boolean {
+  const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
+  const inMainChannel = token.channel == 0;
+  return nonEOF && inMainChannel;
+}
+
 export function sortTokens(tokens: ParsedCypherToken[]) {
   return tokens.sort((a, b) => {
     const lineDiff = a.position.line - b.position.line;

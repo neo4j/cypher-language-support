@@ -7,18 +7,21 @@ import CypherLexer from './generated-parser/CypherLexer';
 import CypherParser, {
   AllExpressionContext,
   AnyExpressionContext,
+  ArrowLineContext,
   ClauseContext,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  LeftArrowContext,
   NoneExpressionContext,
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
   ReduceExpressionContext,
+  RightArrowContext,
   SingleExpressionContext,
   StatementsContext,
   SymbolicNameStringContext,
@@ -36,7 +39,7 @@ import {
   getCypherTokenType,
   getTokenPosition,
   ParsedCypherToken,
-  shouldAssignTokenType,
+  shouldAssignTokenType2,
   tokenPositionToString,
 } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 import {
@@ -299,7 +302,6 @@ export class SyntaxHighlighter extends ParseTreeListener {
     // ops.exitlabelTime = (ops.exitlabelTime ?? 0) + performance.now() - now;
   };
 
-  /*
   exitLeftArrow = (ctx: LeftArrowContext) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
@@ -311,7 +313,6 @@ export class SyntaxHighlighter extends ParseTreeListener {
   exitRightArrow = (ctx: RightArrowContext) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
-  */
 
   exitFunctionName = (ctx: FunctionNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.function);
@@ -422,7 +423,8 @@ export class SyntaxHighlighter extends ParseTreeListener {
     // klarar vi string utan att ha den som en rule övht
 
     // function shouldHighlightToken(node: TerminalNode) {}
-    if (shouldAssignTokenType(token)) {
+    // I BORKED COMMENTS
+    if (shouldAssignTokenType2(token)) {
       const tokenType = getCypherTokenType(token);
 
       this.addToken(token, tokenType, node.getText());
@@ -456,15 +458,17 @@ class ParserWrapper {
       // This works and seems lik it shoulldbbe f rb
       const highLighter = new SyntaxHighlighter();
       // this line makes steady 100ms into 170ms (70 ms increase)
-      parser._parseListeners = [];
+      // parser._parseListeners = [];
+
+      parser._parseListeners = [
+        //  tom list // 1.15
+        labelsCollector, // 1.2977125807738266
+        variableFinder, // 1.2723442410929504
+        highLighter, // 1.83
+      ];
 
       // adding our actual listeners increases it to ~210ms (40 ms increase)
-      parser._parseListeners = [
-        //
-        labelsCollector,
-        variableFinder,
-        highLighter,
-      ];
+      // parser._parseListeners = [labelsCollector, variableFinder, highLighter];
 
       // ops = {};
       const result = createParsingResult(parsingScaffolding).result;

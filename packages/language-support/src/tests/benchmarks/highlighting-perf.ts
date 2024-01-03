@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 import Benchmark from 'benchmark';
-import { applySyntaxColouring } from '../../highlighting/syntaxColouring/syntaxColouring';
+import {
+  applySyntaxColouring,
+  applySyntaxColouring2,
+} from '../../highlighting/syntaxColouring/syntaxColouring';
 import { parse, parserWrapper } from '../../parserWrapper';
-import { simpleQuery } from './benchmark-queries';
-const query = simpleQuery;
+import { createMovieDb as query } from './benchmark-queries';
 
 Benchmark.options.minSamples = 20;
 
@@ -11,16 +13,21 @@ const suite = new Benchmark.Suite();
 
 suite
   .add('parse', function () {
-    parserWrapper.clearCache();
     parse(query);
   })
-  .add('parserwrapper', function () {
-    parserWrapper.clearCache();
-    parserWrapper.parse(query);
+  .add('old with cache', function () {
+    applySyntaxColouring(query);
   })
-  .add('highlight', function () {
+  .add('old without cache', function () {
     parserWrapper.clearCache();
     applySyntaxColouring(query);
+  })
+  .add('new with cache', function () {
+    applySyntaxColouring2(query);
+  })
+  .add('new without cache', function () {
+    parserWrapper.clearCache();
+    applySyntaxColouring2(query);
   });
 
 suite
@@ -39,6 +46,7 @@ suite
       metrics[benchmark.name] = benchmark.hz;
     });
 
+    /*
     console.log(
       'Parser is faster than parserwrapper by',
       metrics.parse / metrics.parserwrapper,
@@ -47,9 +55,11 @@ suite
       'Parserwrapper is faster than highlight by',
       metrics.parserwrapper / metrics.highlight,
     );
+
+    */
     console.log(
       'Alltogether parser is faster than highlight by',
       metrics.parse / metrics.highlight,
     );
   })
-  .run({ async: true });
+  .run({ async: false });
