@@ -1,6 +1,14 @@
 import { applySyntaxColouring } from '../../../highlighting/syntaxColouring/syntaxColouring';
 
 describe('Comments syntax colouring', () => {
+  test('Correctly  line comment', () => {
+    const query = `// hej 
+2
+`;
+
+    expect(applySyntaxColouring(query)).toEqual([]);
+  });
+
   test('Correctly colours one line comments', () => {
     const query = `
     // Some comment
@@ -76,10 +84,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -90,10 +95,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -193,10 +195,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -207,10 +206,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -239,10 +235,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -264,10 +257,7 @@ describe('Comments syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

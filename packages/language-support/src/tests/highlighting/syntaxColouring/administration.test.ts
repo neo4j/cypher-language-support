@@ -101,10 +101,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -148,10 +145,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -173,10 +167,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -220,10 +211,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'property',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -423,10 +411,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -470,10 +455,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -561,10 +543,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -608,10 +587,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -1888,10 +1864,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -1946,10 +1919,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'paramValue',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -2286,10 +2256,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2333,10 +2300,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -3800,10 +3764,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -3825,10 +3786,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -3913,10 +3871,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -3960,10 +3915,7 @@ describe('Administration commands syntax colouring', () => {
         tokenType: 'symbolicName',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

@@ -18,10 +18,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -65,10 +62,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -167,10 +161,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -258,10 +249,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -336,10 +324,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -383,10 +368,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -474,10 +456,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -565,10 +544,7 @@ describe('Multiline syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -643,10 +619,7 @@ Other\`)
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -701,10 +674,7 @@ Other\`)
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -791,10 +761,7 @@ Other\`)
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -805,10 +772,7 @@ Other\`)
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,

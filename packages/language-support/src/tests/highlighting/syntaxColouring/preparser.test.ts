@@ -28,10 +28,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -53,10 +50,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -118,10 +112,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -143,10 +134,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -208,10 +196,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -233,10 +218,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -302,10 +284,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -327,10 +306,7 @@ describe('Preparser syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

@@ -173,10 +173,7 @@ describe('Unfinished tokens', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

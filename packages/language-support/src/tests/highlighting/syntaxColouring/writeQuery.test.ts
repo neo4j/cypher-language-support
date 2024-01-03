@@ -17,10 +17,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -64,10 +61,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -89,10 +83,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -125,10 +116,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -183,10 +171,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'paramValue',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -197,10 +182,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -233,10 +215,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -280,10 +259,7 @@ describe('CREATE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -348,10 +324,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -527,10 +500,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -552,10 +522,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -610,10 +577,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -624,10 +588,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -715,10 +676,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'numberLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -729,10 +687,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -776,10 +731,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -845,10 +797,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'numberLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -892,10 +841,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 7,
@@ -939,10 +885,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 7,
@@ -986,10 +929,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 8,
@@ -1055,10 +995,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'booleanLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 8,
@@ -1102,10 +1039,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1127,10 +1061,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1152,10 +1083,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1188,10 +1116,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1202,10 +1127,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1216,10 +1138,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 9,
@@ -1263,10 +1182,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1288,10 +1204,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1302,10 +1215,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1393,10 +1303,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'numberLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1407,10 +1314,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1443,10 +1347,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1457,10 +1358,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1548,10 +1446,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'numberLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1562,10 +1457,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1576,10 +1468,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 10,
@@ -1634,10 +1523,7 @@ describe('SET syntax colouring', () => {
         tokenType: 'keywordLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 12,
@@ -1670,10 +1556,7 @@ describe('REMOVE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1717,10 +1600,7 @@ describe('REMOVE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1865,10 +1745,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1912,10 +1789,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1970,10 +1844,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'paramValue',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1984,10 +1855,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -2009,10 +1877,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2056,10 +1921,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2114,10 +1976,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'paramValue',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2128,10 +1987,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2153,10 +2009,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2178,10 +2031,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2203,10 +2053,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2250,10 +2097,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2286,10 +2130,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2311,10 +2152,7 @@ describe('MERGE syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 3,
@@ -2346,10 +2184,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2360,10 +2195,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2385,10 +2217,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2410,10 +2239,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2446,10 +2272,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2460,10 +2283,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2516,10 +2336,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2563,10 +2380,7 @@ describe('DELETE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

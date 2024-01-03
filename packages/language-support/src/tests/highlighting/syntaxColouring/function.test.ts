@@ -29,10 +29,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -43,10 +40,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -130,10 +124,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -177,10 +168,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -267,10 +255,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -281,10 +266,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -342,10 +324,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'predicateFunction',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -499,10 +478,7 @@ describe('Function syntax colouring', () => {
         tokenType: 'property',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,

@@ -1,7 +1,7 @@
 import { Facet } from '@codemirror/state';
 import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
 import {
-  applySyntaxColouring2,
+  applySyntaxColouring,
   CypherTokenType,
   ParsedCypherToken,
 } from '@neo4j-cypher/language-support';
@@ -44,7 +44,7 @@ export class ParserAdapter extends Parser {
   }
 
   private buildTree(document: string) {
-    const tokens = applySyntaxColouring2(document);
+    const tokens = applySyntaxColouring(document);
 
     if (tokens.length < 1) {
       return Tree.build({

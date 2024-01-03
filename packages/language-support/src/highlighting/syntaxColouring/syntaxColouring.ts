@@ -262,7 +262,7 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function applySyntaxColouring(
+export function applySyntaxColouring2(
   wholeFileText: string,
 ): ParsedCypherToken[] {
   // const parsestart = performance.now();
@@ -311,7 +311,7 @@ export function applySyntaxColouring(
   return result;
 }
 
-export function applySyntaxColouring2(
+export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
   const parsingResult = parserWrapper.parse(wholeFileText);

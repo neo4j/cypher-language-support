@@ -2,12 +2,12 @@ import type { ParserRuleContext, TerminalNode, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
-// let ops: Record<string, number> = {};
 
 import CypherParser, {
   AllExpressionContext,
   AnyExpressionContext,
   ArrowLineContext,
+  BooleanLiteralContext,
   ClauseContext,
   FunctionNameContext,
   KeywordLiteralContext,
@@ -16,6 +16,7 @@ import CypherParser, {
   LabelOrRelTypeContext,
   LeftArrowContext,
   NoneExpressionContext,
+  NumberLiteralContext,
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
@@ -24,6 +25,8 @@ import CypherParser, {
   RightArrowContext,
   SingleExpressionContext,
   StatementsContext,
+  StringsLiteralContext,
+  StringTokenContext,
   SymbolicNameStringContext,
   VariableContext,
 } from './generated-parser/CypherParser';
@@ -39,7 +42,6 @@ import {
   getCypherTokenType,
   getTokenPosition,
   ParsedCypherToken,
-  shouldAssignTokenType2,
   tokenPositionToString,
 } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 import {
@@ -110,6 +112,7 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
   const tokenStream = new CommonTokenStream(lexer);
   const parser = new CypherParser(tokenStream);
   parser.removeErrorListeners();
+  console.log(tokenStream.getHiddenTokensToRight(0));
 
   return {
     query: query,
@@ -246,27 +249,13 @@ export class SyntaxHighlighter extends ParseTreeListener {
   }
 
   private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
-    // const now = performance.now();
+    console.log(token.channel);
     if (token.start >= 0) {
-      // Vi kan skita I to parsed token??
       // https://trello.com/c/1pxj8Hce/96-investigate-if-we-can-stop-splitting-tokens-to-handle-multiline-tokens-in-vscode
-      // Almost 100% of overhead is spent here. How many times is this called? check that it's a reasonable amount of times
-      // Since we just end up with maybe 17 things?? also
-      // see how we can make it faster
-      // TODO
       const tokenPosition = getTokenPosition(token);
 
-      // const now2 = performance.now();
-      // 16 ms to do string transformation
-      // ops.total = (ops.total ?? 0) + 1;
       const stringiyed = tokenPositionToString(tokenPosition);
-      //if (this.colouredTokens.has(stringiyed)) {
-      // ops.hit = (ops.hit ?? 0) + 1;
-      //const combo = this.colouredTokens.get(stringiyed).tokenType + tokenType;
-      // ops[combo] = (ops[combo] ?? 0) + 1;
-      // vilken händer först ? token eller visit?
-      // om visist är först kan vi kolla om den finnsi set et redan
-      //}
+
       this.colouredTokens.set(stringiyed, {
         tokenType,
         position: tokenPosition,
@@ -274,17 +263,11 @@ export class SyntaxHighlighter extends ParseTreeListener {
         token: tokenStr,
         bracketInfo: undefined,
       });
-      // ops.count = this.colouredTokens.size;
-      // ops.mapInsert = (ops.mapInsert ?? 0) + performance.now() - now2;
     }
-    // ops.addToken = (ops.addToken ?? 0) + performance.now() - now;
   }
 
   exitLabelName = (ctx: LabelNameContext) => {
-    // const now = performance.now();
-
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
-    // ops.labelTime = (ops.labelTime ?? 0) + performance.now() - now;
   };
 
   exitLabelNameIs = (ctx: LabelNameIsContext) => {
@@ -292,14 +275,12 @@ export class SyntaxHighlighter extends ParseTreeListener {
   };
 
   exitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
-    // const now = performance.now();
     // Error recovery can insert a LabelOrRelType node with no text
     // See for example CREATE CONSTRAINT FOR (node)
     const labelName = ctx.symbolicNameString()?.start;
     if (labelName) {
       this.addToken(labelName, CypherTokenType.label, labelName.text);
     }
-    // ops.exitlabelTime = (ops.exitlabelTime ?? 0) + performance.now() - now;
   };
 
   exitLeftArrow = (ctx: LeftArrowContext) => {
@@ -353,8 +334,7 @@ export class SyntaxHighlighter extends ParseTreeListener {
     this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
   };
 
-  // why duplicated?
-  /*  exitStringToken = (ctx: StringTokenContext) => {
+  exitStringToken = (ctx: StringTokenContext) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
   };
 
@@ -370,7 +350,6 @@ export class SyntaxHighlighter extends ParseTreeListener {
   exitNumberLiteral = (ctx: NumberLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.getText());
   };
-  */
 
   exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.getText());
@@ -415,26 +394,16 @@ export class SyntaxHighlighter extends ParseTreeListener {
   private lastTokenIndex: number | undefined;
 
   visitTerminal(node: TerminalNode): void {
-    // const now = performance.now();
     const token = node.symbol;
-    // minska antalet som kommer här
-    // operator separator dubblett
-    // symbolic name
-    // klarar vi string utan att ha den som en rule övht
 
-    // function shouldHighlightToken(node: TerminalNode) {}
-    // I BORKED COMMENTS
-    if (shouldAssignTokenType2(token)) {
-      const tokenType = getCypherTokenType(token);
+    console.log(token);
+    const tokenType = getCypherTokenType(token);
 
-      this.addToken(token, tokenType, node.getText());
-      if (token.stop > (this.lastTokenIndex ?? 0)) {
-        this.stopNode = node.parentCtx;
-        this.lastTokenIndex = token.stop;
-      }
+    this.addToken(token, tokenType, node.getText());
+    if (token.stop > (this.lastTokenIndex ?? 0)) {
+      this.stopNode = node.parentCtx;
+      this.lastTokenIndex = token.stop;
     }
-    // ops.visitTerminal = (ops.visitTerminal ?? 0) + performance.now() - now;
-    // here we find end node node.parentCtx
   }
 }
 
@@ -455,22 +424,10 @@ class ParserWrapper {
       parser.addErrorListener(errorListener);
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      // This works and seems lik it shoulldbbe f rb
       const highLighter = new SyntaxHighlighter();
-      // this line makes steady 100ms into 170ms (70 ms increase)
-      // parser._parseListeners = [];
 
-      parser._parseListeners = [
-        //  tom list // 1.15
-        labelsCollector, // 1.2977125807738266
-        variableFinder, // 1.2723442410929504
-        highLighter, // 1.83
-      ];
+      parser._parseListeners = [labelsCollector, variableFinder, highLighter];
 
-      // adding our actual listeners increases it to ~210ms (40 ms increase)
-      // parser._parseListeners = [labelsCollector, variableFinder, highLighter];
-
-      // ops = {};
       const result = createParsingResult(parsingScaffolding).result;
 
       const parsingResult: EnrichedParsingResult = {
@@ -479,13 +436,7 @@ class ParserWrapper {
         tokens: getTokens(tokenStream),
         diagnostics: errorListener.errors,
         result: result,
-        // stop node adds about 30ms to the parsing time -> 30% increase from plain parse
-        // find more efficient way to do it
-        // or see if we can find a way to not do it at all
-        // we could probably do it as part of a parser listener
         stopNode: highLighter.stopNode,
-        //stopNode: findStopNode(result),
-        // stopNode: null,
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
         highlights: highLighter.colouredTokens,
@@ -493,7 +444,6 @@ class ParserWrapper {
 
       this.parsingResult = parsingResult;
 
-      // console.log(ops);
       return parsingResult;
     }
   }

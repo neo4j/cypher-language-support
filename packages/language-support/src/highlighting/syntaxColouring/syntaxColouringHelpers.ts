@@ -173,18 +173,8 @@ export function getCypherTokenType(token: Token): CypherTokenType {
 
 export function shouldAssignTokenType(token: Token): boolean {
   const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
-  const inMainChannel = token.channel == 0;
-  const isComment =
-    token.type === CypherLexer.SINGLE_LINE_COMMENT ||
-    token.type === CypherLexer.MULTI_LINE_COMMENT;
 
-  return nonEOF && (inMainChannel || isComment);
-}
-
-export function shouldAssignTokenType2(token: Token): boolean {
-  const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
-  const inMainChannel = token.channel == 0;
-  return nonEOF && inMainChannel;
+  return nonEOF;
 }
 
 export function sortTokens(tokens: ParsedCypherToken[]) {

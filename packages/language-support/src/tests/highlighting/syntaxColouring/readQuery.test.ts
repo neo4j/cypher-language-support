@@ -17,10 +17,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -86,10 +83,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -118,10 +112,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -187,10 +178,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -219,10 +207,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -277,10 +262,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -309,10 +291,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -345,10 +324,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -414,10 +390,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -450,10 +423,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -482,10 +452,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -529,10 +496,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -554,10 +518,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -590,10 +551,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'operator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -659,10 +617,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -695,10 +650,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -737,10 +689,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -762,10 +711,7 @@ describe('MATCH syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -799,10 +745,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -846,10 +789,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -871,10 +811,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -896,10 +833,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -932,10 +866,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -979,10 +910,7 @@ describe('RETURN syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1335,10 +1263,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1382,10 +1307,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1504,10 +1426,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1551,10 +1470,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1598,10 +1514,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1645,10 +1558,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -1844,10 +1754,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1891,10 +1798,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1938,10 +1842,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1952,10 +1853,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1977,10 +1875,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -1991,10 +1886,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2016,10 +1908,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2041,10 +1930,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2154,10 +2040,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2190,10 +2073,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'separator',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2237,10 +2117,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -2295,10 +2172,7 @@ describe('WHERE syntax colouring', () => {
         tokenType: 'property',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'bracket',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,

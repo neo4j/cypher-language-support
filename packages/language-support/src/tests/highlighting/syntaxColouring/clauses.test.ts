@@ -50,10 +50,7 @@ describe('CALL syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -64,10 +61,7 @@ describe('CALL syntax colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -174,10 +168,7 @@ describe('CALL syntax colouring', () => {
         tokenType: 'procedure',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -265,10 +256,7 @@ describe('CALL syntax colouring', () => {
         tokenType: 'stringLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -731,10 +719,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -778,10 +763,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -814,10 +796,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -927,10 +906,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -974,10 +950,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'property',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -988,10 +961,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -1002,10 +972,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 6,
@@ -1016,10 +983,7 @@ describe('LOAD CSV colouring', () => {
         tokenType: 'bracket',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 7,
@@ -1207,10 +1171,7 @@ describe('FOREACH syntax colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1254,10 +1215,7 @@ describe('FOREACH syntax colouring', () => {
         tokenType: 'function',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1279,10 +1237,7 @@ describe('FOREACH syntax colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 1,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1370,10 +1325,7 @@ describe('FOREACH syntax colouring', () => {
         tokenType: 'booleanLiteral',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1555,10 +1507,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1668,10 +1617,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 5,
@@ -1706,10 +1652,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1753,10 +1696,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -1789,10 +1729,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 2,
@@ -1891,10 +1828,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'property',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'curly',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 4,
@@ -1992,10 +1926,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -2039,10 +1970,7 @@ describe('Subqueries colouring', () => {
         tokenType: 'label',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 1,
@@ -2160,10 +2088,7 @@ describe('CREATE colouring', () => {
         tokenType: 'keyword',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
@@ -2185,10 +2110,7 @@ describe('CREATE colouring', () => {
         tokenType: 'variable',
       },
       {
-        bracketInfo: {
-          bracketLevel: 0,
-          bracketType: 'parenthesis',
-        },
+        bracketInfo: undefined,
         length: 1,
         position: {
           line: 0,
