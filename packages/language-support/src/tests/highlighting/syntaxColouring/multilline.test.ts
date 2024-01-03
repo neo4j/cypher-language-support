@@ -680,24 +680,13 @@ Other\`)
       },
       {
         bracketInfo: undefined,
-        length: 6,
+        length: 13,
         position: {
           line: 0,
           startCharacter: 9,
           startOffset: 9,
         },
-        token: '`Label',
-        tokenType: 'label',
-      },
-      {
-        bracketInfo: undefined,
-        length: 6,
-        position: {
-          line: 1,
-          startCharacter: 0,
-          startOffset: 16,
-        },
-        token: 'Other`',
+        token: '`Label\nOther`',
         tokenType: 'label',
       },
       {

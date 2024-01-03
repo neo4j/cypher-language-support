@@ -78,7 +78,7 @@ function isOpeningBracket(token: Token): boolean {
   ].includes(token.type);
 }
 
-function computeBracketInfo(
+export function computeBracketInfo(
   token: Token,
   bracketsLevel?: Map<BracketType, number>,
 ): BracketInfo | undefined {
@@ -105,47 +105,6 @@ function computeBracketInfo(
   }
 
   return bracketInfo;
-}
-
-export function toParsedTokens(
-  tokenPosition: TokenPosition,
-  tokenType: CypherTokenType,
-  tokenStr: string,
-  token: Token,
-  bracketsLevel?: Map<BracketType, number>,
-): ParsedCypherToken[] {
-  let prevLen = 0;
-  return tokenStr.split('\n').flatMap((tokenChunk, i) => {
-    const position =
-      i == 0
-        ? tokenPosition
-        : {
-            line: tokenPosition.line + i,
-            startCharacter: 0,
-            startOffset: token.start + prevLen,
-          };
-    prevLen += tokenChunk.length + '\n'.length;
-
-    // If the token is empty no need to create a token
-    if (tokenChunk.length === 0) {
-      return [];
-    }
-
-    const bracketInfo: BracketInfo | undefined = computeBracketInfo(
-      token,
-      bracketsLevel,
-    );
-
-    return [
-      {
-        position: position,
-        length: tokenChunk.length,
-        tokenType: tokenType,
-        token: tokenChunk,
-        bracketInfo: bracketInfo,
-      },
-    ];
-  });
 }
 
 export function getCypherTokenType(token: Token): CypherTokenType {
@@ -193,17 +152,15 @@ export function sortTokens(tokens: ParsedCypherToken[]) {
 // Assumes the tokens are already sorted
 export function removeOverlappingTokens(tokens: ParsedCypherToken[]) {
   const result: ParsedCypherToken[] = [];
-  let prev: TokenPosition = { line: -1, startCharacter: -1, startOffset: -1 };
   let prevEndCharacter = 0;
 
   tokens.forEach((token) => {
     const current = token.position;
-    if (current.line > prev.line || current.startCharacter > prevEndCharacter) {
+    if (current.startOffset >= prevEndCharacter) {
       // Add current token to the list and in further iterations
       // remove tokens overlapping with it
       result.push(token);
-      prev = current;
-      prevEndCharacter = prev.startCharacter + (token.token?.length ?? 0) - 1;
+      prevEndCharacter = current.startOffset + (token.token?.length ?? 0);
     }
   });
 

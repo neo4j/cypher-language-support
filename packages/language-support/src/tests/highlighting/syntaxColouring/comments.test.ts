@@ -11,24 +11,26 @@ describe('Comments syntax colouring', () => {
     expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
-        length: 15,
+        length: 16,
         position: {
           line: 1,
           startCharacter: 4,
           startOffset: 5,
         },
-        token: '// Some comment',
+        token: `// Some comment
+`,
         tokenType: 'comment',
       },
       {
         bracketInfo: undefined,
-        length: 18,
+        length: 19,
         position: {
           line: 2,
           startCharacter: 4,
           startOffset: 25,
         },
-        token: '// Another comment',
+        token: `// Another comment
+`,
         tokenType: 'comment',
       },
       {
@@ -117,35 +119,15 @@ describe('Comments syntax colouring', () => {
     expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
-        length: 17,
+        length: 36,
         position: {
           line: 1,
           startCharacter: 4,
           startOffset: 5,
         },
-        token: '/* Some multiline',
-        tokenType: 'comment',
-      },
-      {
-        bracketInfo: undefined,
-        length: 11,
-        position: {
-          line: 2,
-          startCharacter: 0,
-          startOffset: 23,
-        },
-        token: '    comment',
-        tokenType: 'comment',
-      },
-      {
-        bracketInfo: undefined,
-        length: 6,
-        position: {
-          line: 3,
-          startCharacter: 0,
-          startOffset: 35,
-        },
-        token: '    */',
+        token: `/* Some multiline
+    comment
+    */`,
         tokenType: 'comment',
       },
       {

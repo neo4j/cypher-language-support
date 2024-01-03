@@ -34,7 +34,9 @@ import CypherParserListener from '../../generated-parser/CypherParserListener';
 import { CypherTokenType } from '../../lexerSymbols';
 import { parserWrapper } from '../../parserWrapper';
 import {
+  BracketInfo,
   BracketType,
+  computeBracketInfo,
   getCypherTokenType,
   getTokenPosition,
   ParsedCypherToken,
@@ -42,7 +44,6 @@ import {
   shouldAssignTokenType,
   sortTokens,
   tokenPositionToString,
-  toParsedTokens,
 } from './syntaxColouringHelpers';
 
 export const syntaxColouringLegend: SemanticTokensLegend = {
@@ -94,15 +95,18 @@ class SyntaxHighlighter extends CypherParserListener {
   }
 
   private addToken(token: Token, tokenType: CypherTokenType, tokenStr: string) {
-    if (token.start >= 0) {
+    if (token.start >= 0 && tokenStr !== '') {
       const tokenPosition = getTokenPosition(token);
 
-      toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
-        (token) => {
-          const tokenPos = tokenPositionToString(token.position);
-          this.colouredTokens.set(tokenPos, token);
-        },
-      );
+      const stringiyed = tokenPositionToString(tokenPosition);
+
+      this.colouredTokens.set(stringiyed, {
+        tokenType,
+        position: tokenPosition,
+        length: tokenStr.length,
+        token: tokenStr,
+        bracketInfo: undefined,
+      });
     }
   }
 
@@ -245,16 +249,20 @@ function colourLexerTokens(tokens: Token[]) {
       const tokenPosition = getTokenPosition(token);
       const tokenStr = token.text ?? '';
 
-      toParsedTokens(
-        tokenPosition,
-        tokenType,
-        tokenStr,
+      const stringiyed = tokenPositionToString(tokenPosition);
+
+      const bracketInfo: BracketInfo | undefined = computeBracketInfo(
         token,
         bracketsLevel,
-      ).forEach((token) => {
-        const tokenPos = tokenPositionToString(token.position);
+      );
 
-        result.set(tokenPos, token);
+      // if(tokenStr !== ''){ }
+      result.set(stringiyed, {
+        tokenType,
+        position: tokenPosition,
+        length: tokenStr.length,
+        token: tokenStr,
+        bracketInfo,
       });
     }
   });
