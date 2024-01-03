@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Locator } from 'playwright/test';
 import { CypherEditor } from '../CypherEditor';
+import { mockSchema } from './mock-data';
 
 test.use({ viewport: { width: 1000, height: 500 } });
 
@@ -31,42 +32,6 @@ function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
 
   return Promise.all([included, excluded]);
 }
-
-const mockSchema = {
-  functionSignatures: {
-    abs: {
-      label: 'abs',
-      documentation: 'Returns the absolute value of a floating point number.',
-      parameters: [
-        {
-          label: 'input',
-          documentation: 'input :: FLOAT?',
-        },
-      ],
-    },
-  },
-  procedureSignatures: {
-    'apoc.import.csv': {
-      label: 'apoc.import.csv',
-      documentation:
-        'Imports nodes and relationships with the given labels and types from the provided CSV file.',
-      parameters: [
-        {
-          label: 'nodes',
-          documentation: 'nodes :: LIST? OF MAP?',
-        },
-        {
-          label: 'rels',
-          documentation: 'rels :: LIST? OF MAP?',
-        },
-        {
-          label: 'config',
-          documentation: 'config :: MAP?',
-        },
-      ],
-    },
-  },
-};
 
 test('Prop signatureHelp set to false disables signature help for functions', async ({
   page,
@@ -166,8 +131,8 @@ test('Signature help set shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      'nodes :: LIST? OF MAP?',
-      'Imports nodes and relationships with the given labels and types from the provided CSV file.',
+      'nodes :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
     ],
   });
 });
@@ -191,8 +156,8 @@ test('Signature help set shows the description for the second argument', async (
 
   await testTooltip(tooltip, {
     includes: [
-      'rels :: LIST? OF MAP?',
-      'Imports nodes and relationships with the given labels and types from the provided CSV file.',
+      'rels :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
     ],
   });
 });
@@ -216,8 +181,8 @@ test('Signature help set shows description for arguments with a space following 
 
   await testTooltip(tooltip, {
     includes: [
-      'rels :: LIST? OF MAP?',
-      'Imports nodes and relationships with the given labels and types from the provided CSV file.',
+      'rels :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
     ],
   });
 });
@@ -241,8 +206,8 @@ test('Signature help set shows the description for the third argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      'config :: MAP?',
-      'Imports nodes and relationships with the given labels and types from the provided CSV file.',
+      'config :: MAP',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
     ],
   });
 });
@@ -266,9 +231,9 @@ test('Signature help only shows the description pass the last argument', async (
 
   await testTooltip(tooltip, {
     includes: [
-      'Imports nodes and relationships with the given labels and types from the provided CSV file.',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
     ],
-    excludes: ['config :: MAP?'],
+    excludes: ['config :: MAP'],
   });
 });
 
