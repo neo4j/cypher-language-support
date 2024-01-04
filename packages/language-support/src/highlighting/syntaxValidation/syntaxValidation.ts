@@ -82,7 +82,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-export function findEndPosition(
+function findEndPosition(
   e: SemanticAnalysisElement,
   parsingResult: EnrichedParsingResult,
 ): SyntaxDiagnostic {
