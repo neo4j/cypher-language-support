@@ -23,13 +23,17 @@ import java.nio.charset.StandardCharsets;
  * @author Rob Steward
  */
 public class CypherLspServerSupportProvider implements LspServerSupportProvider {
+    private boolean hasCypherExtension(VirtualFile file) {
+        String ext = file.getExtension(); // null when the filename didn't contain a "."
+        return ext != null && ext.equals("cypher");
+    }
+
     public void fileOpened(
             Project project,
             VirtualFile file,
             LspServerSupportProvider.LspServerStarter serverStarter
     ) {
-        String ext = file.getExtension(); // null when the filename didn't contain a "."
-        if (ext != null && ext.equals("cypher")) {
+        if (hasCypherExtension(file)) {
             NodeJsInterpreter node = NodeJsInterpreterManager.getInstance(project).getInterpreter();
 
             if (node instanceof NodeJsLocalInterpreter || node instanceof WslNodeInterpreter) {
@@ -43,7 +47,7 @@ public class CypherLspServerSupportProvider implements LspServerSupportProvider 
 
         @Override
         public boolean isSupportedFile(VirtualFile file) {
-            return file.getExtension().equals("cypher");
+            return hasCypherExtension(file);
         }
 
         @Override
