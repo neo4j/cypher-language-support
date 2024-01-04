@@ -24,7 +24,7 @@ const connection = createConnection(ProposedFeatures.all);
 import { join } from 'path';
 import { MessageChannel, Worker } from 'worker_threads';
 
-const errorWorker = new Worker(join(__dirname, 'worker.js'));
+const lintWorker = new Worker(join(__dirname, 'worker.js'));
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -90,7 +90,7 @@ documents.onDidChangeContent((change) => {
     });
   });
 
-  errorWorker.postMessage(
+  lintWorker.postMessage(
     {
       query,
       port: port1,
