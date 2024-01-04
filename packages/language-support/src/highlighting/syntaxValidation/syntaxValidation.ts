@@ -153,17 +153,6 @@ export function validateSyntax(
     const parsingResult = parserWrapper.parse(wholeFileText);
     const diagnostics = parsingResult.diagnostics;
 
-    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    return [...diagnostics, ...labelWarnings].sort(sortByPosition);
-  }
-
-  return [];
-}
-
-export function doSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
-  if (wholeFileText.length > 0) {
-    const parsingResult = parserWrapper.parse(wholeFileText);
-    const { diagnostics } = parsingResult;
     if (diagnostics.length === 0) {
       const { notifications, errors } = wrappedSemanticAnalysis(wholeFileText);
 
@@ -172,6 +161,9 @@ export function doSemanticAnalysis(wholeFileText: string): SyntaxDiagnostic[] {
         .map((elem) => findEndPosition(elem, parsingResult))
         .sort(sortByPosition);
     }
+
+    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+    return [...diagnostics, ...labelWarnings].sort(sortByPosition);
   }
 
   return [];

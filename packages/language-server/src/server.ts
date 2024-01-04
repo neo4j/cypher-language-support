@@ -12,10 +12,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  syntaxColouringLegend,
-  validateSyntax,
-} from '@neo4j-cypher/language-support';
+import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
@@ -27,7 +24,7 @@ const connection = createConnection(ProposedFeatures.all);
 import { join } from 'path';
 import { MessageChannel, Worker } from 'worker_threads';
 
-const semanticAnalysisWorker = new Worker(join(__dirname, 'worker.js'));
+const errorWorker = new Worker(join(__dirname, 'worker.js'));
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -79,19 +76,7 @@ connection.onInitialized(() => {
   );
 });
 
-// Trigger the syntactic errors highlighting on every document change
-documents.onDidChangeContent((change) => {
-  const document = change.document;
-  const diagnostics = validateSyntax(
-    document.getText(),
-    neo4jSdk.metadata?.dbSchema ?? {},
-  );
-  void connection.sendDiagnostics({
-    uri: document.uri,
-    diagnostics: diagnostics,
-  });
-});
-
+// Trigger error highlighting on every document change
 documents.onDidChangeContent((change) => {
   const { port1, port2 } = new MessageChannel();
 
@@ -105,7 +90,14 @@ documents.onDidChangeContent((change) => {
     });
   });
 
-  semanticAnalysisWorker.postMessage({ query, port: port1 }, [port1]);
+  errorWorker.postMessage(
+    {
+      query,
+      port: port1,
+      dbSchema: neo4jSdk.metadata?.dbSchema ?? {},
+    },
+    [port1],
+  );
 });
 
 // Trigger the syntax colouring
