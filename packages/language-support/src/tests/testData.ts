@@ -1,4 +1,4 @@
-export const mockSchema = {
+const mockSchema = {
   functionSignatures: {
     abs: {
       label: 'abs',
@@ -3799,7 +3799,7 @@ export const mockSchema = {
   aliasNames: ['alias2', 'testalias'],
 };
 
-export const largeQuery = `
+const largeQuery = `
 CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
 CREATE (Keanu:Person {name:'Keanu Reeves', born:1964})
 CREATE (Carrie:Person {name:'Carrie-Anne Moss', born:1967})
@@ -4308,3 +4308,8 @@ CREATE
 
 WITH TomH as a
 MATCH (a)-[:ACTED_IN]->(m)<-[:DIRECTED]-(d) RETURN a,m,d LIMIT 10;`;
+
+export const testData = {
+  mockSchema,
+  largeQuery,
+};
