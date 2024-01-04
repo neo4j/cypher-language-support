@@ -151,19 +151,18 @@ export function validateSyntax(
 ): SyntaxDiagnostic[] {
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
-    const diagnostics = parsingResult.diagnostics;
+    let diagnostics = parsingResult.diagnostics;
 
     if (diagnostics.length === 0) {
       const { notifications, errors } = wrappedSemanticAnalysis(wholeFileText);
 
-      return notifications
+      diagnostics = notifications
         .concat(errors)
-        .map((elem) => findEndPosition(elem, parsingResult))
-        .sort(sortByPosition);
+        .map((elem) => findEndPosition(elem, parsingResult));
     }
 
     const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    return [...diagnostics, ...labelWarnings].sort(sortByPosition);
+    return diagnostics.concat(labelWarnings).sort(sortByPosition);
   }
 
   return [];
