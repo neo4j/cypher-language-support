@@ -1,7 +1,7 @@
+import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2e-utils';
-import { largeQuery, mockSchema } from './mock-data';
 
 test.use({ viewport: { width: 1000, height: 500 } });
 declare global {
@@ -31,7 +31,12 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
   }
   const editorPage = new CypherEditorPage(page);
   const component = await mount(
-    <CypherEditor prompt="neo4j>" theme="dark" lint schema={mockSchema} />,
+    <CypherEditor
+      prompt="neo4j>"
+      theme="dark"
+      lint
+      schema={testData.mockSchema}
+    />,
   );
 
   // pressSequentially is less efficient -> we want to test the performance of the editor
@@ -42,27 +47,33 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
 
   // set and unset large query a few times
   await component.update(
-    <CypherEditor value={largeQuery} schema={mockSchema} />,
+    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
   );
-  await component.update(<CypherEditor value="" schema={mockSchema} />);
+  await component.update(
+    <CypherEditor value="" schema={testData.mockSchema} />,
+  );
 
   await component.update(
-    <CypherEditor value={largeQuery} schema={mockSchema} />,
+    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
   );
   await component.update(<CypherEditor value="" />);
 
   await component.update(
-    <CypherEditor value={largeQuery} schema={mockSchema} />,
+    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
   );
-  await component.update(<CypherEditor value="" schema={mockSchema} />);
+  await component.update(
+    <CypherEditor value="" schema={testData.mockSchema} />,
+  );
 
   await component.update(
-    <CypherEditor value={largeQuery} schema={mockSchema} />,
+    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
   );
-  await component.update(<CypherEditor value="" schema={mockSchema} />);
+  await component.update(
+    <CypherEditor value="" schema={testData.mockSchema} />,
+  );
 
   await component.update(
-    <CypherEditor value={largeQuery} schema={mockSchema} />,
+    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
   );
 
   await editorPage.getEditor().pressSequentially(`

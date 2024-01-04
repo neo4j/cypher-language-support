@@ -1,3 +1,4 @@
+import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { eventually, getDocumentUri, openDocument } from '../helpers';
@@ -60,19 +61,7 @@ suite('Signature help spec', () => {
       // We don't test the active signature, otherwise we would have to modify
       // these tests every time a new function is added to the database
       activeSignature: undefined,
-      signatures: [
-        {
-          label: 'abs',
-          documentation:
-            'Returns the absolute value of an `INTEGER` or `FLOAT`.',
-          parameters: [
-            {
-              label: 'input',
-              documentation: 'input :: INTEGER | FLOAT',
-            },
-          ],
-        },
-      ],
+      signatures: [testData.mockSchema.functionSignatures.abs],
     };
 
     await testSignatureHelp({
