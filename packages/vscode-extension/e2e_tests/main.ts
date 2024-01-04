@@ -32,6 +32,8 @@ async function main() {
     .start();
 
   const port = container.getMappedPort(7687);
+  // This sets up a settings.json file based on the settings-template.json
+  // replacing the random port and password we have given the container
   updateSettingsFile(port, password);
 
   try {

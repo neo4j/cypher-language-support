@@ -258,3 +258,25 @@ test('Signature help does not show any help when method finished', async ({
     timeout: 2000,
   });
 });
+
+test('Signature help does not blow up on empty query', async ({
+  page,
+  mount,
+}) => {
+  const query = '';
+
+  await mount(
+    <CypherEditor
+      value={query}
+      signatureHelp={true}
+      schema={mockSchema}
+      autofocus={true}
+    />,
+  );
+
+  await expect(
+    page.locator('.cm-tooltip-signature-help').last(),
+  ).not.toBeVisible({
+    timeout: 2000,
+  });
+});
