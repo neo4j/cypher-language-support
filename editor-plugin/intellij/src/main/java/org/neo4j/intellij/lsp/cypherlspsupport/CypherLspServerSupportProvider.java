@@ -28,7 +28,8 @@ public class CypherLspServerSupportProvider implements LspServerSupportProvider 
             VirtualFile file,
             LspServerSupportProvider.LspServerStarter serverStarter
     ) {
-        if (file.getExtension().equals("cypher")) {
+        String ext = file.getExtension(); // null when the filename didn't contain a "."
+        if (ext != null && ext.equals("cypher")) {
             NodeJsInterpreter node = NodeJsInterpreterManager.getInstance(project).getInterpreter();
 
             if (node instanceof NodeJsLocalInterpreter || node instanceof WslNodeInterpreter) {
