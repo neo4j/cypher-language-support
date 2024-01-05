@@ -116,7 +116,7 @@ test('Prop signatureHelp enables signature help by default', async ({
   });
 });
 
-test('Signature help set shows the description for the first argument', async ({
+test('Signature help shows the description for the first argument', async ({
   page,
   mount,
 }) => {
@@ -141,7 +141,7 @@ test('Signature help set shows the description for the first argument', async ({
   });
 });
 
-test('Signature help set shows the description for the second argument', async ({
+test('Signature help shows the description for the second argument', async ({
   page,
   mount,
 }) => {
@@ -166,7 +166,7 @@ test('Signature help set shows the description for the second argument', async (
   });
 });
 
-test('Signature help set shows description for arguments with a space following a separator', async ({
+test('Signature help shows description for arguments with a space following a separator', async ({
   page,
   mount,
 }) => {
@@ -191,7 +191,7 @@ test('Signature help set shows description for arguments with a space following 
   });
 });
 
-test('Signature help set shows the description for the third argument', async ({
+test('Signature help shows the description for the third argument', async ({
   page,
   mount,
 }) => {
@@ -216,7 +216,7 @@ test('Signature help set shows the description for the third argument', async ({
   });
 });
 
-test('Signature help only shows the description pass the last argument', async ({
+test('Signature help only shows the description past the last argument', async ({
   page,
   mount,
 }) => {

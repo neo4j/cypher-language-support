@@ -26,7 +26,7 @@ export async function testSignatureHelp({
         position,
       );
 
-    assert.equal(signatureHelp.activeParameter, 0);
+    assert.equal(signatureHelp.activeParameter, expected.activeParameter);
 
     expected.signatures.forEach((expectedSignature) => {
       const foundSignature = signatureHelp.signatures.find((signature) => {
@@ -53,8 +53,8 @@ export async function testSignatureHelp({
 }
 
 suite('Signature help spec', () => {
-  test('Triggers signature help for first argument of functions', async () => {
-    const position = new vscode.Position(0, 12);
+  test('Signature help works for functions', async () => {
+    const position = new vscode.Position(0, 11);
 
     const expected: vscode.SignatureHelp = {
       activeParameter: 0,
@@ -65,7 +65,73 @@ suite('Signature help spec', () => {
     };
 
     await testSignatureHelp({
-      textFile: 'signature-help-function.cypher',
+      textFile: 'signature-help.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
+  test('Signature help works for procedures', async () => {
+    const position = new vscode.Position(1, 21);
+
+    const expected: vscode.SignatureHelp = {
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+    };
+
+    await testSignatureHelp({
+      textFile: 'signature-help.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
+  test('Signature help works when changing arguments', async () => {
+    const position = new vscode.Position(1, 27);
+
+    const expected: vscode.SignatureHelp = {
+      activeParameter: 1,
+      activeSignature: undefined,
+      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+    };
+
+    await testSignatureHelp({
+      textFile: 'signature-help.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
+  test('Signature help works for arguments with a space following a separator', async () => {
+    const position = new vscode.Position(1, 28);
+
+    const expected: vscode.SignatureHelp = {
+      activeParameter: 1,
+      activeSignature: undefined,
+      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+    };
+
+    await testSignatureHelp({
+      textFile: 'signature-help.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
+  test('Signature help only shows the description past the last argument', async () => {
+    const position = new vscode.Position(2, 42);
+
+    const expected: vscode.SignatureHelp = {
+      // This is what would make it show only the function description
+      // since there are only 3 arguments in the signature and the last index is 2
+      activeParameter: 3,
+      activeSignature: undefined,
+      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+    };
+
+    await testSignatureHelp({
+      textFile: 'signature-help.cypher',
       position: position,
       expected: expected,
     });

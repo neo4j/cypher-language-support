@@ -28,6 +28,7 @@ async function main() {
   // just in case we leave it open
   const container = await new Neo4jContainer('neo4j:5')
     .withExposedPorts(7474, 7687)
+    .withApoc()
     .withPassword(password)
     .start();
 
