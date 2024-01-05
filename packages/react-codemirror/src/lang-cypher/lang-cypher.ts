@@ -13,16 +13,20 @@ const facet = defineLanguageFacet({
   closeBrackets: { brackets: ['(', '[', '{', "'", '"', '`'] },
 });
 
-const parserAdapter = new ParserAdapter(facet);
-
-const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
-
 export type CypherConfig = {
   lint?: boolean;
   schema?: DbSchema;
 };
 
-export function cypher(config: CypherConfig) {
+export function cypher(
+  config: CypherConfig,
+  onSlowParse?: (timeTaken: number) => void,
+) {
+  console.log('cypher', config);
+  const parserAdapter = new ParserAdapter(facet, onSlowParse);
+
+  const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
+
   return new LanguageSupport(cypherLanguage, [
     cypherLanguage.data.of({
       autocomplete: cypherAutocomplete(config),

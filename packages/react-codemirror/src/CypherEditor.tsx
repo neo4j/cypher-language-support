@@ -17,7 +17,7 @@ import {
   replaceHistory,
   replMode as historyNavigation,
 } from './history-navigation';
-import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
+import { CypherConfig } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { getThemeExtension } from './themes';
 
@@ -119,9 +119,15 @@ const executeKeybinding = (onExecute?: (cmd: string) => void) =>
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
+const cypherCompartment = new Compartment();
+type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
-export class CypherEditor extends Component<CypherEditorProps> {
+
+export class CypherEditor extends Component<
+  CypherEditorProps,
+  CypherEditorState
+> {
   /**
    * The codemirror editor container.
    */
@@ -179,6 +185,14 @@ export class CypherEditor extends Component<CypherEditorProps> {
     theme: 'light',
   };
 
+  private disableCypherSupport = () => {
+    console.log('onslow parse fired', this.editorView.current);
+    this.editorView.current.dispatch({
+      // effects: cypherCompartment.reconfigure(cypherCompartment.of([])),
+      effects: cypherCompartment.reconfigure([]),
+    });
+  };
+
   componentDidMount(): void {
     const {
       theme,
@@ -222,8 +236,10 @@ export class CypherEditor extends Component<CypherEditorProps> {
         historyNavigation(this.props),
         basicNeo4jSetup(),
         themeCompartment.of(themeExtension),
-        changeListener,
-        cypher(this.schemaRef.current),
+        // changeListener,
+        /*cypherCompartment.of(
+          cypher(this.schemaRef.current), //,this.disableCypherSupport),
+        ),*/
         lineWrap ? EditorView.lineWrapping : [],
 
         lineNumbers({
@@ -321,6 +337,13 @@ export class CypherEditor extends Component<CypherEditorProps> {
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
+
+    this.editorView.current.dispatch({
+      // effects: cypherCompartment.reconfigure(cypherCompartment.of([])),
+      effects: cypherCompartment.reconfigure([]),
+      // why does it only workere her??
+      // why is editor still laggy?
+    });
   }
 
   componentWillUnmount(): void {

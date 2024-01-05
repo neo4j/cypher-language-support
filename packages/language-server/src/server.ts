@@ -6,6 +6,7 @@ import {
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
+  TextDocumentChangeEvent,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
@@ -24,7 +25,8 @@ const connection = createConnection(ProposedFeatures.all);
 import { join } from 'path';
 import { MessageChannel, Worker } from 'worker_threads';
 
-const lintWorker = new Worker(join(__dirname, 'worker.js'));
+let oldWorker: Worker | null;
+let nextWorker = new Worker(join(__dirname, 'worker.js'));
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -76,21 +78,35 @@ connection.onInitialized(() => {
   );
 });
 
+// TODO can we make the semantic analysis cancelable without killing the whole thread?
+// TOOD figure out how problematic it is to
+
+let latestVersion: number | null = null;
 // Trigger error highlighting on every document change
-documents.onDidChangeContent((change) => {
+function handleDocChange(change: TextDocumentChangeEvent<TextDocument>) {
   const { port1, port2 } = new MessageChannel();
 
   const { document } = change;
   const query = document.getText();
 
+  const requestVersion = document.version;
+  latestVersion = requestVersion;
   port2.on('message', (diagnostics: Diagnostic[]) => {
-    void connection.sendDiagnostics({
-      uri: document.uri,
-      diagnostics: diagnostics,
-    });
+    console.log('document version done', document.version);
+    if (requestVersion === latestVersion) {
+      void connection.sendDiagnostics({
+        uri: document.uri,
+        diagnostics: diagnostics,
+      });
+    }
   });
 
-  lintWorker.postMessage(
+  void oldWorker?.terminate().then(() => {
+    console.log(`worker ${requestVersion} killed.`);
+  });
+
+  oldWorker = nextWorker;
+  oldWorker.postMessage(
     {
       query,
       port: port1,
@@ -98,7 +114,15 @@ documents.onDidChangeContent((change) => {
     },
     [port1],
   );
-});
+
+  nextWorker = new Worker(join(__dirname, 'worker.js'));
+  console.log('spawn document version', requestVersion);
+}
+
+//const debouncedDocChange = debounce(handleDocChange, 200);
+const debouncedDocChange = handleDocChange;
+
+documents.onDidChangeContent(debouncedDocChange);
 
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(

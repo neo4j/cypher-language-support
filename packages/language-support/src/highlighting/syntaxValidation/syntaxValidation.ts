@@ -151,19 +151,25 @@ export function validateSyntax(
 ): SyntaxDiagnostic[] {
   if (wholeFileText.length > 0) {
     const parsingResult = parserWrapper.parse(wholeFileText);
-    let diagnostics = parsingResult.diagnostics;
-
-    if (diagnostics.length === 0) {
-      const { notifications, errors } = wrappedSemanticAnalysis(wholeFileText);
-
-      diagnostics = notifications
-        .concat(errors)
-        .map((elem) => findEndPosition(elem, parsingResult));
-    }
+    const diagnostics = parsingResult.diagnostics;
 
     const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
     return diagnostics.concat(labelWarnings).sort(sortByPosition);
   }
 
   return [];
+}
+
+export function runSemanticAnalysis(query: string) {
+  if (query.length > 0) {
+    const parsingResult = parserWrapper.parse(query);
+    const diagnostics = parsingResult.diagnostics;
+    if (diagnostics.length === 0) {
+      const { notifications, errors } = wrappedSemanticAnalysis(query);
+
+      return notifications
+        .concat(errors)
+        .map((elem) => findEndPosition(elem, parsingResult));
+    }
+  }
 }

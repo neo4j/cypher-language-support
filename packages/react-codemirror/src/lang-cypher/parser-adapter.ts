@@ -14,7 +14,10 @@ export class ParserAdapter extends Parser {
     topNode: NodeType;
   };
 
-  constructor(facet: Facet<unknown>) {
+  constructor(
+    facet: Facet<unknown>,
+    private onSlowParse?: (timeTaken: number) => void,
+  ) {
     super();
     this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
   }
@@ -44,7 +47,12 @@ export class ParserAdapter extends Parser {
   }
 
   private buildTree(document: string) {
+    const startTime = performance.now();
     const tokens = applySyntaxColouring(document);
+    const timeTaken = performance.now() - startTime;
+    if (timeTaken > 300) {
+      this.onSlowParse?.(timeTaken);
+    }
 
     if (tokens.length < 1) {
       return Tree.build({
