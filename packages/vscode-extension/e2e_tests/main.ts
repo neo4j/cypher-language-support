@@ -24,12 +24,14 @@ function updateSettingsFile(port: number, password: string) {
 async function main() {
   const password = 'password';
 
-  // TODO Nacho Give this container a name and see whether we can clean it up
-  // just in case we leave it open
   const container = await new Neo4jContainer('neo4j:5')
     .withExposedPorts(7474, 7687)
     .withApoc()
     .withPassword(password)
+    // Giving it a name prevents us from spinning up a different
+    // container every time we run the tests and allows us
+    // closing a lingering one when the tests finish
+    .withName('vscode-integration-tests')
     .start();
 
   const port = container.getMappedPort(7687);
