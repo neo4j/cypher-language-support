@@ -25,8 +25,7 @@ const connection = createConnection(ProposedFeatures.all);
 import { join } from 'path';
 import { MessageChannel, Worker } from 'worker_threads';
 
-let oldWorker: Worker | null;
-let nextWorker = new Worker(join(__dirname, 'worker.js'));
+let currentWorker: Worker | null;
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -82,6 +81,7 @@ connection.onInitialized(() => {
 // TOOD figure out how problematic it is to
 
 let latestVersion: number | null = null;
+let inFlight = [];
 // Trigger error highlighting on every document change
 function handleDocChange(change: TextDocumentChangeEvent<TextDocument>) {
   const { port1, port2 } = new MessageChannel();
@@ -91,22 +91,37 @@ function handleDocChange(change: TextDocumentChangeEvent<TextDocument>) {
 
   const requestVersion = document.version;
   latestVersion = requestVersion;
-  port2.on('message', (diagnostics: Diagnostic[]) => {
-    console.log('document version done', document.version);
+
+  port2.on('message', (msg: { diags: Diagnostic[]; done: boolean }) => {
     if (requestVersion === latestVersion) {
       void connection.sendDiagnostics({
         uri: document.uri,
-        diagnostics: diagnostics,
+        diagnostics: msg.diags,
       });
+    }
+
+    if (msg.done) {
+      inFlight = inFlight.filter((n) => n !== requestVersion);
+      console.log('full check done', requestVersion);
+    } else {
+      console.log('basic check done', requestVersion);
     }
   });
 
-  void oldWorker?.terminate().then(() => {
-    console.log(`worker ${requestVersion} killed.`);
-  });
+  console.log(inFlight);
+  // if semantic checks in flight, kill worker
+  if (inFlight.length !== 0) {
+    console.log('kill em');
+    void currentWorker?.terminate().then(() => {
+      console.log(`worker ${requestVersion} killed.`);
+    });
+    inFlight = [];
 
-  oldWorker = nextWorker;
-  oldWorker.postMessage(
+    currentWorker = new Worker(join(__dirname, 'worker.js'));
+  }
+
+  inFlight.push(requestVersion);
+  currentWorker.postMessage(
     {
       query,
       port: port1,
@@ -115,7 +130,6 @@ function handleDocChange(change: TextDocumentChangeEvent<TextDocument>) {
     [port1],
   );
 
-  nextWorker = new Worker(join(__dirname, 'worker.js'));
   console.log('spawn document version', requestVersion);
 }
 
