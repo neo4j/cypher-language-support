@@ -8,10 +8,7 @@ import {
   LabelType,
   parserWrapper,
 } from '../../parserWrapper';
-import {
-  SemanticAnalysisElement,
-  wrappedSemanticAnalysis,
-} from './semanticAnalysisWrapper';
+import { SemanticAnalysisElement } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
 function detectNonDeclaredLabel(
@@ -160,16 +157,22 @@ export function validateSyntax(
   return [];
 }
 
+export const runSemanticAnalysis = validateSyntax;
+/**
+ * Requires your query to not have any parse errors!!
+ *
+ *
 export function runSemanticAnalysis(query: string) {
   if (query.length > 0) {
-    const parsingResult = parserWrapper.parse(query);
-    const diagnostics = parsingResult.diagnostics;
-    if (diagnostics.length === 0) {
-      const { notifications, errors } = wrappedSemanticAnalysis(query);
+    const { notifications, errors } = wrappedSemanticAnalysis(query);
 
-      return notifications
+    return (
+      notifications
         .concat(errors)
-        .map((elem) => findEndPosition(elem, parsingResult));
-    }
+        // todo find end position outside
+        .map((elem) => findEndPosition(elem, parsingResult))
+    );
   }
 }
+
+ */

@@ -1,35 +1,44 @@
 import { Facet } from '@codemirror/state';
 import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
-import {
-  applySyntaxColouring,
-  CypherTokenType,
-  ParsedCypherToken,
-} from '@neo4j-cypher/language-support';
+import Prism from 'prismjs';
+// cursed way to load cypher
+import 'prismjs/components/prism-cypher';
 
-import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
+Prism.manual = true;
+Prism.Token;
+
+import { parserAdapterNodeSet, prismTokenTypeToNode } from './constants';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
 
-export class ParserAdapter extends Parser {
-  cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
+export class PrismParserAdapter extends Parser {
+  cypherTokenTypeToNode: Record<string, NodeType> & {
     topNode: NodeType;
   };
 
-  constructor(
-    facet: Facet<unknown>,
-    private onSlowParse?: (timeTaken: number) => void,
-  ) {
+  constructor(facet: Facet<unknown>) {
     super();
-    this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
+    this.cypherTokenTypeToNode = prismTokenTypeToNode(facet);
   }
 
-  private createBufferForTokens(tokens: ParsedCypherToken[]) {
+  private createBufferForTokens(tokens: (string | Prism.Token)[]) {
+    let totalOffset = 0;
     return tokens.map((token) => {
-      const nodeTypeId = this.cypherTokenTypeToNode[token.tokenType].id;
-      const startOffset = token.position.startOffset;
-      const endOffset = token.position.startOffset + token.length;
+      if (typeof token === 'string') {
+        const nodeTypeId = this.cypherTokenTypeToNode.variable.id;
+        const startOffset = totalOffset;
+        const endOffset = startOffset + token.length;
+        totalOffset = endOffset;
 
-      return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+        return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+      } else {
+        const nodeTypeId = this.cypherTokenTypeToNode[token.type].id;
+        const startOffset = totalOffset;
+        const endOffset = startOffset + token.length;
+        totalOffset = endOffset;
+
+        return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+      }
     });
   }
 
@@ -47,15 +56,12 @@ export class ParserAdapter extends Parser {
     ]);
   }
 
-  // Prism takes 15ms to tokenize the same document that takes 375 ms for the normal parser
   private buildTree(document: string) {
-    const startTime = performance.now();
-    const tokens = applySyntaxColouring(document);
-    const timeTaken = performance.now() - startTime;
-    if (timeTaken > 300) {
-      //this.onSlowParse?.(timeTaken);
-    }
-    console.log('normal parse took', timeTaken);
+    const prismStart = performance.now();
+    const tokens = Prism.tokenize(document, Prism.languages.cypher);
+    const prismtaken = performance.now() - prismStart;
+    console.log(tokens);
+    console.log('prism took', prismtaken);
 
     if (tokens.length < 1) {
       return Tree.build({

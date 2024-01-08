@@ -17,7 +17,7 @@ import {
   replaceHistory,
   replMode as historyNavigation,
 } from './history-navigation';
-import { CypherConfig } from './lang-cypher/lang-cypher';
+import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { getThemeExtension } from './themes';
 
@@ -237,9 +237,9 @@ export class CypherEditor extends Component<
         basicNeo4jSetup(),
         themeCompartment.of(themeExtension),
         // changeListener,
-        /*cypherCompartment.of(
+        cypherCompartment.of(
           cypher(this.schemaRef.current), //,this.disableCypherSupport),
-        ),*/
+        ),
         lineWrap ? EditorView.lineWrapping : [],
 
         lineNumbers({
@@ -338,12 +338,14 @@ export class CypherEditor extends Component<
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
 
+    /*
     this.editorView.current.dispatch({
       // effects: cypherCompartment.reconfigure(cypherCompartment.of([])),
       effects: cypherCompartment.reconfigure([]),
       // why does it only workere her??
       // why is editor still laggy?
     });
+    */
   }
 
   componentWillUnmount(): void {

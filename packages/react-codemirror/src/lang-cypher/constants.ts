@@ -33,6 +33,29 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   punctuation: NodeType.define({ id: 21, name: 'punctuation' }),
 });
 
+// translate from what prism token names to lezer tokens
+// need to duplicate here because the IDs need to be array position when creating the node set below
+export const prismTokenTypeToNode = (facet: Facet<unknown>) => ({
+  topNode: NodeType.define({
+    id: 0,
+    name: 'topNode',
+    props: [languageDataProp.add({ topNode: facet })],
+  }),
+  comment: NodeType.define({ id: 1, name: 'comment' }),
+  keyword: NodeType.define({ id: 2, name: 'keyword' }),
+  'class-name': NodeType.define({ id: 3, name: 'label' }),
+  function: NodeType.define({ id: 4, name: 'function' }),
+  // this is escaped variables
+  identifier: NodeType.define({ id: 5, name: 'variable' }),
+  variable: NodeType.define({ id: 6, name: 'variable' }),
+  string: NodeType.define({ id: 7, name: 'stringLiteral' }),
+  relationship: NodeType.define({ id: 8, name: 'label' }),
+  boolean: NodeType.define({ id: 9, name: 'booleanLiteral' }),
+  number: NodeType.define({ id: 10, name: 'numberLiteral' }),
+  operator: NodeType.define({ id: 11, name: 'operator' }),
+  punctuation: NodeType.define({ id: 12, name: 'punctuation' }),
+});
+
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   comment: tags.comment,
