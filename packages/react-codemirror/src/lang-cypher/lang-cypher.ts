@@ -5,7 +5,7 @@ import {
 } from '@codemirror/language';
 import type { DbSchema } from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
-import { PrismParserAdapter } from './prism-parser-adapter';
+import { ParserAdapter } from './parser-adapter';
 import { cypherLinter, semanticAnalysisLinter } from './syntax-validation';
 
 const facet = defineLanguageFacet({
@@ -17,14 +17,11 @@ export type CypherConfig = {
   lint?: boolean;
   schema?: DbSchema;
   useLightVersion: boolean;
+  setUseLightVersion?: (useLightVersion: boolean) => void;
 };
 
-export function cypher(
-  config: CypherConfig,
-  onSlowParse?: (timeTaken: number) => void,
-) {
-  onSlowParse;
-  const parserAdapter = new PrismParserAdapter(facet);
+export function cypher(config: CypherConfig) {
+  const parserAdapter = new ParserAdapter(facet, config);
 
   const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 

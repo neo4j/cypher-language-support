@@ -6,30 +6,54 @@ import {
   ParsedCypherToken,
 } from '@neo4j-cypher/language-support';
 
+import Prism from 'prismjs';
 import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
+// cursed way to load cypher
+import 'prismjs/components/prism-cypher';
+import { CypherConfig } from './lang-cypher';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
+Prism.manual = true;
+Prism.Token;
 
 export class ParserAdapter extends Parser {
   cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
     topNode: NodeType;
-  };
+  } & Record<string, NodeType>; // todo
 
-  constructor(
-    facet: Facet<unknown>,
-    private onSlowParse?: (timeTaken: number) => void,
-  ) {
+  constructor(facet: Facet<unknown>, private config: CypherConfig) {
     super();
     this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
   }
 
-  private createBufferForTokens(tokens: ParsedCypherToken[]) {
+  private createBufferForAntlrTokens(tokens: ParsedCypherToken[]) {
     return tokens.map((token) => {
       const nodeTypeId = this.cypherTokenTypeToNode[token.tokenType].id;
       const startOffset = token.position.startOffset;
       const endOffset = token.position.startOffset + token.length;
 
       return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+    });
+  }
+
+  private createBufferForPrismTokens(tokens: (string | Prism.Token)[]) {
+    let totalOffset = 0;
+    return tokens.map((token) => {
+      if (typeof token === 'string') {
+        const nodeTypeId = this.cypherTokenTypeToNode.variable.id;
+        const startOffset = totalOffset;
+        const endOffset = startOffset + token.length;
+        totalOffset = endOffset;
+
+        return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+      } else {
+        const nodeTypeId = this.cypherTokenTypeToNode[token.type].id;
+        const startOffset = totalOffset;
+        const endOffset = startOffset + token.length;
+        totalOffset = endOffset;
+
+        return [nodeTypeId, startOffset, endOffset, DEFAULT_NODE_GROUP_SIZE];
+      }
     });
   }
 
@@ -47,30 +71,47 @@ export class ParserAdapter extends Parser {
     ]);
   }
 
-  // Prism takes 15ms to tokenize the same document that takes 375 ms for the normal parser
+  private createEmptyTree(document: string) {
+    return Tree.build({
+      buffer: [
+        this.cypherTokenTypeToNode.topNode.id,
+        0,
+        document.length,
+        DEFAULT_NODE_GROUP_SIZE,
+      ],
+      nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
+      topID: this.cypherTokenTypeToNode.topNode.id,
+    });
+  }
+
+  // Prism is about 20x our parser, which helps a lot for input lag
   private buildTree(document: string) {
-    const startTime = performance.now();
-    const tokens = applySyntaxColouring(document);
-    const timeTaken = performance.now() - startTime;
-    if (timeTaken > 300) {
-      //this.onSlowParse?.(timeTaken);
-    }
-    console.log('normal parse took', timeTaken);
+    let buffer: number[][] = [];
+    if (this.config.useLightVersion) {
+      const tokens = Prism.tokenize(document, Prism.languages.cypher);
 
-    if (tokens.length < 1) {
-      return Tree.build({
-        buffer: [
-          this.cypherTokenTypeToNode.topNode.id,
-          0,
-          document.length,
-          DEFAULT_NODE_GROUP_SIZE,
-        ],
-        nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
-        topID: this.cypherTokenTypeToNode.topNode.id,
-      });
+      if (document.length === 0) {
+        this.config.setUseLightVersion?.(false);
+      }
+      if (tokens.length === 0) {
+        return this.createEmptyTree(document);
+      }
+      buffer = this.createBufferForPrismTokens(tokens);
+      // encapsulate more for less duplication
+    } else {
+      const startTime = performance.now();
+      const tokens = applySyntaxColouring(document);
+      const timeTaken = performance.now() - startTime;
+      if (timeTaken > 300) {
+        this.config.setUseLightVersion?.(true);
+      }
+
+      if (tokens.length === 0) {
+        return this.createEmptyTree(document);
+      }
+      buffer = this.createBufferForAntlrTokens(tokens);
     }
 
-    const buffer = this.createBufferForTokens(tokens);
     this.addTopNodeToBuffer(buffer, document);
 
     return Tree.build({

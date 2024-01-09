@@ -119,7 +119,6 @@ const executeKeybinding = (onExecute?: (cmd: string) => void) =>
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
-const cypherCompartment = new Compartment();
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
@@ -185,14 +184,6 @@ export class CypherEditor extends Component<
     theme: 'light',
   };
 
-  private disableCypherSupport = () => {
-    console.log('onslow parse fired', this.editorView.current);
-    this.editorView.current.dispatch({
-      // effects: cypherCompartment.reconfigure(cypherCompartment.of([])),
-      effects: cypherCompartment.reconfigure([]),
-    });
-  };
-
   componentDidMount(): void {
     const {
       theme,
@@ -205,7 +196,16 @@ export class CypherEditor extends Component<
       onExecute,
     } = this.props;
 
-    this.schemaRef.current = { schema, lint };
+    this.schemaRef.current = {
+      schema,
+      lint,
+      useLightVersion: false,
+      setUseLightVersion: (newVal) => {
+        if (this.schemaRef.current !== undefined) {
+          this.schemaRef.current.useLightVersion = newVal;
+        }
+      },
+    };
 
     const themeExtension = getThemeExtension(
       theme,
@@ -236,10 +236,8 @@ export class CypherEditor extends Component<
         historyNavigation(this.props),
         basicNeo4jSetup(),
         themeCompartment.of(themeExtension),
-        // changeListener,
-        cypherCompartment.of(
-          cypher(this.schemaRef.current), //,this.disableCypherSupport),
-        ),
+        changeListener,
+        cypher(this.schemaRef.current),
         lineWrap ? EditorView.lineWrapping : [],
 
         lineNumbers({
@@ -337,15 +335,6 @@ export class CypherEditor extends Component<
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
-
-    /*
-    this.editorView.current.dispatch({
-      // effects: cypherCompartment.reconfigure(cypherCompartment.of([])),
-      effects: cypherCompartment.reconfigure([]),
-      // why does it only workere her??
-      // why is editor still laggy?
-    });
-    */
   }
 
   componentWillUnmount(): void {

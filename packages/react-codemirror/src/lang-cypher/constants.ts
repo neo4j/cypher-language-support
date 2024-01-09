@@ -31,29 +31,14 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   none: NodeType.define({ id: 19, name: 'none' }),
   separator: NodeType.define({ id: 20, name: 'separator' }),
   punctuation: NodeType.define({ id: 21, name: 'punctuation' }),
-});
-
-// translate from what prism token names to lezer tokens
-// need to duplicate here because the IDs need to be array position when creating the node set below
-export const prismTokenTypeToNode = (facet: Facet<unknown>) => ({
-  topNode: NodeType.define({
-    id: 0,
-    name: 'topNode',
-    props: [languageDataProp.add({ topNode: facet })],
-  }),
-  comment: NodeType.define({ id: 1, name: 'comment' }),
-  keyword: NodeType.define({ id: 2, name: 'keyword' }),
-  'class-name': NodeType.define({ id: 3, name: 'label' }),
-  function: NodeType.define({ id: 4, name: 'function' }),
+  // also include prism token types
+  'class-name': NodeType.define({ id: 22, name: 'label' }),
   // this is escaped variables
-  identifier: NodeType.define({ id: 5, name: 'variable' }),
-  variable: NodeType.define({ id: 6, name: 'variable' }),
-  string: NodeType.define({ id: 7, name: 'stringLiteral' }),
-  relationship: NodeType.define({ id: 8, name: 'label' }),
-  boolean: NodeType.define({ id: 9, name: 'booleanLiteral' }),
-  number: NodeType.define({ id: 10, name: 'numberLiteral' }),
-  operator: NodeType.define({ id: 11, name: 'operator' }),
-  punctuation: NodeType.define({ id: 12, name: 'punctuation' }),
+  identifier: NodeType.define({ id: 23, name: 'variable' }),
+  string: NodeType.define({ id: 24, name: 'stringLiteral' }),
+  relationship: NodeType.define({ id: 25, name: 'label' }),
+  boolean: NodeType.define({ id: 26, name: 'booleanLiteral' }),
+  number: NodeType.define({ id: 27, name: 'numberLiteral' }),
 });
 
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;

@@ -49,7 +49,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const shouldTriggerCompletion =
       inWord || context.explicit || triggerCharacters.includes(lastCharacter);
 
-    if (!config.useLightVersion && !context.explicit) {
+    if (config.useLightVersion && !context.explicit) {
       return null;
     }
 
