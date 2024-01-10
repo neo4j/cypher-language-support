@@ -2,12 +2,15 @@ import { Facet } from '@codemirror/state';
 import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
 import {
   applySyntaxColouring,
-  CypherTokenType,
   ParsedCypherToken,
 } from '@neo4j-cypher/language-support';
 
 import Prism from 'prismjs';
-import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
+import {
+  CodemirrorParseTokenType,
+  cypherTokenTypeToNode,
+  parserAdapterNodeSet,
+} from './constants';
 // This import will load the cypher support in prisma
 import 'prismjs/components/prism-cypher';
 import { CypherConfig } from './lang-cypher';
@@ -16,9 +19,7 @@ const DEFAULT_NODE_GROUP_SIZE = 4;
 Prism.manual = true;
 
 export class ParserAdapter extends Parser {
-  cypherTokenTypeToNode: Record<CypherTokenType, NodeType> & {
-    topNode: NodeType;
-  } & Record<string, NodeType>; // todo
+  cypherTokenTypeToNode: Record<CodemirrorParseTokenType, NodeType>;
 
   constructor(facet: Facet<unknown>, private config: CypherConfig) {
     super();
@@ -102,10 +103,11 @@ export class ParserAdapter extends Parser {
   private createBufferForPrismTokens(tokens: (string | Prism.Token)[]) {
     let totalOffset = 0;
     return tokens.map((token) => {
-      const nodeTypeId =
-        this.cypherTokenTypeToNode[
-          typeof token === 'string' ? 'variable' : token.type
-        ].id;
+      const tokenType = (
+        typeof token === 'string' ? 'variable' : token.type
+      ) as CodemirrorParseTokenType;
+
+      const nodeTypeId = this.cypherTokenTypeToNode[tokenType].id;
       const startOffset = totalOffset;
       const endOffset = startOffset + token.length;
       totalOffset = endOffset;

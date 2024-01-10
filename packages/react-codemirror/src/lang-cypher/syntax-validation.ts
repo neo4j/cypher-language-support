@@ -83,7 +83,9 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
         };
       });
     } catch (err) {
-      console.error(err);
+      if (!(err instanceof workerpool.Promise.CancellationError)) {
+        console.error(err);
+      }
     }
   });
 

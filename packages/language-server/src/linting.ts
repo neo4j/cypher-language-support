@@ -45,7 +45,9 @@ async function rawLintDocument(
         result.map((el) => findEndPosition(el, parserWrapper.parsingResult)),
       );
     } catch (err) {
-      console.error(err);
+      if (!(err instanceof workerpool.Promise.CancellationError)) {
+        console.error(err);
+      }
     }
   }
 }

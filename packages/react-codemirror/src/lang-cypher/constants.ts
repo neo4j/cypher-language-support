@@ -41,6 +41,19 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   number: NodeType.define({ id: 27, name: 'numberLiteral' }),
 });
 
+export type PrismSpecificTokenType =
+  | 'class-name'
+  | 'identifier'
+  | 'string'
+  | 'relationship'
+  | 'boolean'
+  | 'number';
+
+export type CodemirrorParseTokenType =
+  | CypherTokenType
+  | PrismSpecificTokenType
+  | 'topNode';
+
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   comment: tags.comment,
