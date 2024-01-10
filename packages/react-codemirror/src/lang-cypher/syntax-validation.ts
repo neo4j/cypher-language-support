@@ -1,18 +1,24 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
 import {
+  findEndPosition,
   parserWrapper,
-  SyntaxDiagnostic,
   validateSyntax,
 } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
+import workerpool from 'workerpool';
 import type { CypherConfig } from './lang-cypher';
+import type { LinterTask, LintWorker } from './lint-worker';
 
-const lintWorker = new Worker(new URL('./lint-worker', import.meta.url), {
-  type: 'module',
-});
+const pool = workerpool.pool(
+  new URL('./lint-worker', import.meta.url).toString(),
+  {
+    minWorkers: 2,
+    workerOpts: { type: 'module' },
+  },
+);
+let lastSemanticJob: LinterTask | undefined;
 
-// gör dessa i main process
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter((view) => {
     if (!config.lint) {
@@ -43,9 +49,10 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
-    // This is why we need the message channel
-    // https://stackoverflow.com/questions/62076325/how-to-let-a-webworker-do-multiple-tasks-simultaneously
     const query = view.state.doc.toString();
+    if (query.length === 0) {
+      return [];
+    }
 
     const parse = parserWrapper.parse(query);
     // we want to avoid re-parsing with ANTLR4 in the worker thread
@@ -54,28 +61,33 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
-    const channel = new MessageChannel();
-    lintWorker.postMessage({ query, dbSchema: config.schema ?? {} }, [
-      channel.port1,
-    ]);
+    try {
+      if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
+        void lastSemanticJob.cancel();
+      }
 
-    return new Promise((resolve) => {
-      channel.port2.onmessage = (event) => {
-        const msg = event.data as { diags: SyntaxDiagnostic[]; done: boolean };
+      const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+      lastSemanticJob = proxyWorker.runSemanticAnalysis(query);
+      const result = await lastSemanticJob;
 
-        const diagnostics = msg.diags.map(
-          (diagnostic): Diagnostic => ({
-            from: diagnostic.offsets.start,
-            to: diagnostic.offsets.end,
-            severity:
-              diagnostic.severity === DiagnosticSeverity.Error
-                ? 'error'
-                : 'warning',
-            message: diagnostic.message,
-          }),
-        );
+      return result.map((el) => {
+        const diagnostic = findEndPosition(el, parse);
 
-        resolve(diagnostics);
-      };
-    });
+        return {
+          from: diagnostic.offsets.start,
+          to: diagnostic.offsets.end,
+          severity:
+            diagnostic.severity === DiagnosticSeverity.Error
+              ? 'error'
+              : 'warning',
+          message: diagnostic.message,
+        };
+      });
+    } catch (err) {
+      console.error(err);
+    }
   });
+
+export const cleanupWorkers = () => {
+  void pool.terminate();
+};

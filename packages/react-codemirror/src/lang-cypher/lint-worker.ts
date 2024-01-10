@@ -1,24 +1,14 @@
-import {
-  runSemanticAnalysis,
-  validateSyntax,
-  type DbSchema,
-} from '@neo4j-cypher/language-support';
+import { runSemanticAnalysis } from '@neo4j-cypher/language-support';
+import workerpool from 'workerpool';
 
-type SemanticAnaylysisRequestMessage = { query: string; dbSchema: DbSchema };
+workerpool.worker({ runSemanticAnalysis });
 
-self.onmessage = (event: MessageEvent) => {
-  const args = event.data as SemanticAnaylysisRequestMessage;
-  const syntaxErrors = validateSyntax(args.query, args.dbSchema);
+type LinterArgs = Parameters<typeof runSemanticAnalysis>;
 
-  const port = event.ports[0];
-  const shouldDoSemanticCheck = syntaxErrors.length === 0;
+export type LinterTask = workerpool.Promise<
+  ReturnType<typeof runSemanticAnalysis>
+>;
 
-  // send one message as soon as we know normal parser has no errors
-  port.postMessage({ diags: syntaxErrors, done: !shouldDoSemanticCheck });
-
-  // send another message when we have semantic errors as well
-  if (shouldDoSemanticCheck) {
-    const semanticErrors = runSemanticAnalysis(args.query);
-    port.postMessage({ diags: semanticErrors, done: true });
-  }
+export type LintWorker = {
+  runSemanticAnalysis: (...args: LinterArgs) => LinterTask;
 };

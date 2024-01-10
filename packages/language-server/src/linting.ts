@@ -8,20 +8,13 @@ import { join } from 'path';
 import { Diagnostic, TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import type { CheckSyntaxFunction } from './worker';
+import { LinterTask, LintWorker } from './worker';
 
-type LintWorker = {
-  runSemanticAnalysis: (
-    ...args: Parameters<CheckSyntaxFunction>
-  ) => workerpool.Promise<ReturnType<CheckSyntaxFunction>, Error>;
-};
 const pool = workerpool.pool(join(__dirname, 'worker.js'), {
   minWorkers: 2,
 });
 
-let lastSemanticJob:
-  | workerpool.Promise<ReturnType<CheckSyntaxFunction>, Error>
-  | undefined;
+let lastSemanticJob: LinterTask | undefined;
 
 async function rawLintDocument(
   change: TextDocumentChangeEvent<TextDocument>,

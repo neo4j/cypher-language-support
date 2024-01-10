@@ -3,4 +3,12 @@ import workerpool from 'workerpool';
 
 workerpool.worker({ runSemanticAnalysis });
 
-export type CheckSyntaxFunction = typeof runSemanticAnalysis;
+type LinterArgs = Parameters<typeof runSemanticAnalysis>;
+
+export type LinterTask = workerpool.Promise<
+  ReturnType<typeof runSemanticAnalysis>
+>;
+
+export type LintWorker = {
+  runSemanticAnalysis: (...args: LinterArgs) => LinterTask;
+};
