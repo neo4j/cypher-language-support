@@ -10,7 +10,8 @@ export {
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 export {
   findEndPosition,
-  runSemanticAnalysis,
+  lintCypherQuery,
+  validateSemantics,
   validateSyntax,
 } from './highlighting/syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';

@@ -145,12 +145,28 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   return a.range.start.character - b.range.start.character;
 }
 
-export function validateSyntax(
+export function lintCypherQuery(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  if (wholeFileText.length > 0) {
-    const parsingResult = parserWrapper.parse(wholeFileText);
+  const syntaxErrors = validateSyntax(wholeFileText, dbSchema);
+
+  if (syntaxErrors.length > 0) {
+    return syntaxErrors;
+  }
+  const cachedParse = parserWrapper.parse(wholeFileText);
+
+  return validateSemantics(wholeFileText).map((el) =>
+    findEndPosition(el, cachedParse),
+  );
+}
+
+export function validateSyntax(
+  query: string,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  if (query.length > 0) {
+    const parsingResult = parserWrapper.parse(query);
     const diagnostics = parsingResult.diagnostics;
 
     const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
@@ -161,13 +177,14 @@ export function validateSyntax(
 }
 
 /**
- * Requires your query to not have any parse errors!!
- *
+ * Assumes the provided query has no parse errors
  */
-export function runSemanticAnalysis(query: string) {
+export function validateSemantics(query: string): SemanticAnalysisElement[] {
   if (query.length > 0) {
     const { notifications, errors } = wrappedSemanticAnalysis(query);
 
     return notifications.concat(errors);
   }
+
+  return [];
 }

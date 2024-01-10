@@ -66,7 +66,7 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.runSemanticAnalysis(query);
+      lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
       return result.map((el) => {
@@ -87,7 +87,6 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
     }
   });
 
-// TODO can this be integrated into the codemirror lifecycl
 export const cleanupWorkers = () => {
   void pool.terminate();
 };
