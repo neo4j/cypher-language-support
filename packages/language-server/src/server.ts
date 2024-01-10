@@ -6,7 +6,6 @@ import {
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
-  TextDocumentChangeEvent,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
@@ -22,10 +21,7 @@ import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
-import { join } from 'path';
-import { MessageChannel, Worker } from 'worker_threads';
-
-let currentWorker: Worker | null;
+import { cleanupWorkers, lintDocument } from './linting';
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -77,66 +73,14 @@ connection.onInitialized(() => {
   );
 });
 
-// TODO can we make the semantic analysis cancelable without killing the whole thread?
-// TOOD figure out how problematic it is to
-
-let latestVersion: number | null = null;
-let inFlight = [];
-// Trigger error highlighting on every document change
-function handleDocChange(change: TextDocumentChangeEvent<TextDocument>) {
-  const { port1, port2 } = new MessageChannel();
-
-  const { document } = change;
-  const query = document.getText();
-
-  const requestVersion = document.version;
-  latestVersion = requestVersion;
-
-  port2.on('message', (msg: { diags: Diagnostic[]; done: boolean }) => {
-    if (requestVersion === latestVersion) {
-      void connection.sendDiagnostics({
-        uri: document.uri,
-        diagnostics: msg.diags,
-      });
-    }
-
-    if (msg.done) {
-      inFlight = inFlight.filter((n) => n !== requestVersion);
-      console.log('full check done', requestVersion);
-    } else {
-      console.log('basic check done', requestVersion);
-    }
-  });
-
-  console.log(inFlight);
-  // if semantic checks in flight, kill worker
-  if (inFlight.length !== 0) {
-    console.log('kill em');
-    void currentWorker?.terminate().then(() => {
-      console.log(`worker ${requestVersion} killed.`);
+documents.onDidChangeContent((change) =>
+  lintDocument(change, (diagnostics: Diagnostic[]) => {
+    void connection.sendDiagnostics({
+      uri: change.document.uri,
+      diagnostics,
     });
-    inFlight = [];
-
-    currentWorker = new Worker(join(__dirname, 'worker.js'));
-  }
-
-  inFlight.push(requestVersion);
-  currentWorker.postMessage(
-    {
-      query,
-      port: port1,
-      dbSchema: neo4jSdk.metadata?.dbSchema ?? {},
-    },
-    [port1],
-  );
-
-  console.log('spawn document version', requestVersion);
-}
-
-//const debouncedDocChange = debounce(handleDocChange, 200);
-const debouncedDocChange = handleDocChange;
-
-documents.onDidChangeContent(debouncedDocChange);
+  }),
+);
 
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(
@@ -173,4 +117,9 @@ connection.onDidChangeConfiguration(
 );
 
 documents.listen(connection);
+
 connection.listen();
+
+connection.onExit(() => {
+  cleanupWorkers();
+});

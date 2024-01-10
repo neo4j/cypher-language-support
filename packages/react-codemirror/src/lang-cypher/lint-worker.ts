@@ -18,7 +18,7 @@ self.onmessage = (event: MessageEvent) => {
 
   // send another message when we have semantic errors as well
   if (shouldDoSemanticCheck) {
-    const semanticErrors = runSemanticAnalysis(args.query, {});
+    const semanticErrors = runSemanticAnalysis(args.query);
     port.postMessage({ diags: semanticErrors, done: true });
   }
 };

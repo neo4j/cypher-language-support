@@ -8,7 +8,10 @@ import {
   LabelType,
   parserWrapper,
 } from '../../parserWrapper';
-import { SemanticAnalysisElement } from './semanticAnalysisWrapper';
+import {
+  SemanticAnalysisElement,
+  wrappedSemanticAnalysis,
+} from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
 function detectNonDeclaredLabel(
@@ -79,7 +82,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-function findEndPosition(
+export function findEndPosition(
   e: SemanticAnalysisElement,
   parsingResult: EnrichedParsingResult,
 ): SyntaxDiagnostic {
@@ -157,22 +160,14 @@ export function validateSyntax(
   return [];
 }
 
-export const runSemanticAnalysis = validateSyntax;
 /**
  * Requires your query to not have any parse errors!!
  *
- *
+ */
 export function runSemanticAnalysis(query: string) {
   if (query.length > 0) {
     const { notifications, errors } = wrappedSemanticAnalysis(query);
 
-    return (
-      notifications
-        .concat(errors)
-        // todo find end position outside
-        .map((elem) => findEndPosition(elem, parsingResult))
-    );
+    return notifications.concat(errors);
   }
 }
-
- */
