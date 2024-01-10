@@ -156,9 +156,9 @@ export function lintCypherQuery(
   }
   const cachedParse = parserWrapper.parse(wholeFileText);
 
-  return validateSemantics(wholeFileText).map((el) =>
-    findEndPosition(el, cachedParse),
-  );
+  return validateSemantics(wholeFileText)
+    .map((el) => findEndPosition(el, cachedParse))
+    .sort(sortByPosition);
 }
 
 export function validateSyntax(
