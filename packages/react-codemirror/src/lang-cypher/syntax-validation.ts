@@ -54,9 +54,8 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
+    // we want to avoid the ANTLR4 reparse in the worker thread, this should hit our main thread cache
     const parse = parserWrapper.parse(query);
-    // we want to avoid re-parsing with ANTLR4 in the worker thread
-    //  TODO double check the cache works as we want it to
     if (parse.diagnostics.length !== 0) {
       return [];
     }
@@ -88,6 +87,7 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
     }
   });
 
+// TODO can this be integrated into the codemirror lifecycl
 export const cleanupWorkers = () => {
   void pool.terminate();
 };

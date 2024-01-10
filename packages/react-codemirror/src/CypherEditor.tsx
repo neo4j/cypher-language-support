@@ -18,6 +18,7 @@ import {
   replMode as historyNavigation,
 } from './history-navigation';
 import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
+import { cleanupWorkers } from './lang-cypher/syntax-validation';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { getThemeExtension } from './themes';
 
@@ -339,6 +340,7 @@ export class CypherEditor extends Component<
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
+    cleanupWorkers();
   }
 
   render(): React.ReactNode {
