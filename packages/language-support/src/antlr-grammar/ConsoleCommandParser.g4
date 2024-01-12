@@ -10,7 +10,22 @@ options { tokenVocab = ConsoleCommandLexer; }
 
 consoleCommand: COLON (/* playCommand | helpCommand  | */  paramsCmd);
 
-paramsCmd: PARAM expression?;
+paramsCmd: PARAM (LIST | CLEAR | expression)?; 
+
+helpCmd: HELP unescapedSymbolicNameString;
+
+playCmd: PLAY unescapedSymbolicNameString;
+
+clearCmd: CLEAR;
+
+history: HISTORY;
+
+use: USE symbolicAliasName;
+
+snake: SNAKE;
+
+
+
 // playCommand: PLAY ; 
 
 // helpCommand: HELP; 
