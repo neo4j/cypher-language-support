@@ -8,7 +8,7 @@ options { tokenVocab = ConsoleCommandLexer; }
 // Re use Cypher lexer ??? declreare here or not? ?
  // HELP: 'help'; 
 
-consoleCommand: COLON (/* playCommand | helpCommand  | */  paramsCmd);
+consoleCommand: COLON (helpCmd | playCmd | clearCmd | history | use | snake | paramsCmd | cypherQuery);
 
 paramsCmd: PARAM (LIST | CLEAR | expression)?; 
 
@@ -24,11 +24,12 @@ use: USE symbolicAliasName;
 
 snake: SNAKE;
 
+// cypher here??? 
+// then prop to the lang support pkg, use client command or not? 
+
+cypherQuery: statements
 
 
-// playCommand: PLAY ; 
-
-// helpCommand: HELP; 
 
 
 
