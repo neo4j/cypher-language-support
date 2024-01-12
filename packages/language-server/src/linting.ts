@@ -12,6 +12,7 @@ import { LinterTask, LintWorker } from './lint-worker';
 
 const pool = workerpool.pool(join(__dirname, 'lint-worker.js'), {
   minWorkers: 2,
+  workerTerminateTimeout: 2000,
 });
 
 let lastSemanticJob: LinterTask | undefined;

@@ -90,6 +90,12 @@ test('Semantic errors are surfaced when there are no syntactic errors', async ({
   page,
   mount,
 }) => {
+  page.on('worker', (worker) => {
+    console.log('Worker created: ' + worker.url());
+    worker.on('close', (worker) =>
+      console.log('Worker destroyed: ' + worker.url()),
+    );
+  });
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n) RETURN m';
 

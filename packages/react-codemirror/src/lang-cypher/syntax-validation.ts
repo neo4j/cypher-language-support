@@ -10,13 +10,22 @@ import workerpool from 'workerpool';
 import type { CypherConfig } from './lang-cypher';
 import type { LinterTask, LintWorker } from './lint-worker';
 
+/** @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes  */
+import WorkerURL from './lint-worker?url&worker';
+
 const pool = workerpool.pool(
-  new URL('./lint-worker', import.meta.url).toString(),
+  WorkerURL,
+  // new URL('./lint-worker.mjs', import.meta.url).href,
   {
     minWorkers: 2,
-    workerOpts: { type: 'module' },
+    workerOpts: {
+      type: import.meta.env.PROD ? undefined : 'module',
+    },
+    workerTerminateTimeout: 2000,
+    // workerType: 'web',
   },
 );
+
 let lastSemanticJob: LinterTask | undefined;
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
@@ -60,12 +69,15 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
+    console.log(`linting ${query} `);
+    console.log(pool.stats());
     try {
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
         void lastSemanticJob.cancel();
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+      console.log(proxyWorker);
       lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
@@ -84,9 +96,10 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       });
     } catch (err) {
       if (!(err instanceof workerpool.Promise.CancellationError)) {
-        console.error(err);
+        console.error(String(err) + ' ' + query);
       }
     }
+    return [];
   });
 
 export const cleanupWorkers = () => {
