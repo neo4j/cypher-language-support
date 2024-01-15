@@ -10,21 +10,15 @@ import workerpool from 'workerpool';
 import type { CypherConfig } from './lang-cypher';
 import type { LinterTask, LintWorker } from './lint-worker';
 
-/** @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
 import WorkerURL from './lint-worker?url&worker';
 
-const pool = workerpool.pool(
-  WorkerURL,
-  // new URL('./lint-worker.mjs', import.meta.url).href,
-  {
-    minWorkers: 2,
-    workerOpts: {
-      type: import.meta.env.PROD ? undefined : 'module',
-    },
-    workerTerminateTimeout: 2000,
-    // workerType: 'web',
-  },
-);
+const pool = workerpool.pool(WorkerURL as string, {
+  minWorkers: 2,
+  workerOpts: { type: 'module' },
+  workerTerminateTimeout: 2000,
+});
 
 let lastSemanticJob: LinterTask | undefined;
 
@@ -69,15 +63,12 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
-    console.log(`linting ${query} `);
-    console.log(pool.stats());
     try {
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
         void lastSemanticJob.cancel();
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      console.log(proxyWorker);
       lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
