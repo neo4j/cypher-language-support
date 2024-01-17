@@ -24,13 +24,13 @@ import {
   StringTokenContext,
   SymbolicNameStringContext,
   VariableContext,
-} from '../../generated-parser/ConsoleCommandParser';
+} from '../../generated-parser/CommandParser';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherParserListener from '../../generated-parser/ConsoleCommandParserListener';
+import CypherParserListener from '../../generated-parser/CommandParserListener';
 import { CypherTokenType } from '../../lexerSymbols';
 import { parserWrapper } from '../../parserWrapper';
 import {

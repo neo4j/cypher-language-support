@@ -1,7 +1,7 @@
 import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/ConsoleCommandLexer';
+import CypherLexer from './generated-parser/CommandLexer';
 
 import CypherParser, {
   ClauseContext,
@@ -10,7 +10,7 @@ import CypherParser, {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   VariableContext,
-} from './generated-parser/ConsoleCommandParser';
+} from './generated-parser/CommandParser';
 import {
   findParent,
   findStopNode,

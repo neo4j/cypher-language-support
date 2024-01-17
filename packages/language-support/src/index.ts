@@ -15,5 +15,5 @@ export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };
 
-import CypherLexer from './generated-parser/ConsoleCommandLexer';
-import CypherParser from './generated-parser/ConsoleCommandParser';
+import CypherLexer from './generated-parser/CommandLexer';
+import CypherParser from './generated-parser/CommandParser';

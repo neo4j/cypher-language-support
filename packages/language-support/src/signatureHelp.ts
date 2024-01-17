@@ -9,7 +9,7 @@ import {
   ExpressionContext,
   FunctionInvocationContext,
   StatementsContext,
-} from './generated-parser/ConsoleCommandParser';
+} from './generated-parser/CommandParser';
 
 import { DbSchema } from './dbSchema';
 import { findParent } from './helpers';

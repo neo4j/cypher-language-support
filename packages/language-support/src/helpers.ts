@@ -5,12 +5,12 @@ import antlrDefaultExport, {
   ParserRuleContext,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/ConsoleCommandLexer';
+import CypherLexer from './generated-parser/CommandLexer';
 import CypherParser, {
   FullStatementsContext,
   NodePatternContext,
   RelationshipPatternContext,
-} from './generated-parser/ConsoleCommandParser';
+} from './generated-parser/CommandParser';
 import { ParsingResult } from './parserWrapper';
 
 export function findStopNode(root: FullStatementsContext) {

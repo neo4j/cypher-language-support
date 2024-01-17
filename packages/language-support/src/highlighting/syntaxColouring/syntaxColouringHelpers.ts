@@ -2,7 +2,7 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4';
 
-import CypherLexer from '../../generated-parser/ConsoleCommandLexer';
+import CypherLexer from '../../generated-parser/CommandLexer';
 
 import { CypherTokenType, lexerSymbols } from '../../lexerSymbols';
 
