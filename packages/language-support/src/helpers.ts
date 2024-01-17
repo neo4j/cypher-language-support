@@ -5,15 +5,15 @@ import antlrDefaultExport, {
   ParserRuleContext,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/ConsoleCommandLexer';
 import CypherParser, {
+  FullStatementsContext,
   NodePatternContext,
   RelationshipPatternContext,
-  StatementsContext,
-} from './generated-parser/CypherParser';
+} from './generated-parser/ConsoleCommandParser';
 import { ParsingResult } from './parserWrapper';
 
-export function findStopNode(root: StatementsContext) {
+export function findStopNode(root: FullStatementsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 

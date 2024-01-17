@@ -6,10 +6,10 @@ import {
   CompletionItemKind,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherLexer';
+import CypherLexer from '../generated-parser/ConsoleCommandLexer';
 import CypherParser, {
   Expression2Context,
-} from '../generated-parser/CypherParser';
+} from '../generated-parser/ConsoleCommandParser';
 import { rulesDefiningVariables } from '../helpers';
 import {
   CypherTokenType,

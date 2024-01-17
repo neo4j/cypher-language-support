@@ -13,8 +13,7 @@ export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
-export { CypherLexer };
-export { CypherParser };
+export { CypherLexer, CypherParser };
 
-import CypherLexer from './generated-parser/CypherLexer';
-import CypherParser from './generated-parser/CypherParser';
+import CypherLexer from './generated-parser/ConsoleCommandLexer';
+import CypherParser from './generated-parser/ConsoleCommandParser';

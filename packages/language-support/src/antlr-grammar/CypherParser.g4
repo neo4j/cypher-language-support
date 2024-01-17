@@ -16,7 +16,6 @@
  */
 parser grammar CypherParser;
 
-
 options { tokenVocab = CypherLexer; }
 
 statements:

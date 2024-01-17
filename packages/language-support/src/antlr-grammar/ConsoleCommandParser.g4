@@ -4,17 +4,24 @@ import CypherParser;
 
 options { tokenVocab = ConsoleCommandLexer; }
 
-// PLAY: 'play'; 
-// Re use Cypher lexer ??? declreare here or not? ?
- // HELP: 'help'; 
+fullStatements: (SEMICOLON statementOrCommand)* statementOrCommand SEMICOLON? EOF;
 
-consoleCommand: COLON (helpCmd | playCmd | clearCmd | history | use | snake | paramsCmd | cypherQuery);
+statementOrCommand: (consoleCommand | statement);
 
-paramsCmd: PARAM (LIST | CLEAR | expression)?; 
+consoleCommand: COLON (helpCmd | playCmd | clearCmd | history | use | paramsCmd /*| deprecatedCommand*/);
 
-helpCmd: HELP unescapedSymbolicNameString;
 
-playCmd: PLAY unescapedSymbolicNameString;
+paramsCmd: PARAM (LIST | CLEAR | SHOW | map | lambda)?; 
+
+lambda: unescapedSymbolicNameString EQ ARROW_RIGHT_HEAD expression;
+
+helpCmd: HELP helpTopic;
+
+helpTopic: HELP unescapedSymbolicNameString;
+
+playCmd: PLAY guideNameOrUrl;
+
+guideNameOrUrl: unescapedSymbolicNameString;
 
 clearCmd: CLEAR;
 
@@ -22,105 +29,89 @@ history: HISTORY;
 
 use: USE symbolicAliasName;
 
-snake: SNAKE;
 
-// cypher here??? 
-// then prop to the lang support pkg, use client command or not? 
-
-cypherQuery: statements
+// Lista -> supported commands -> tom för 
 
 
 
+/* TODO: 
+semantic analysis
+grass
+gamla commandon
+highlighting // lexer types
 
+deprecatedCommand: (auto | config | dbs | delete | get | head | post | put | schema | server | style | sysinfo);
 
-/*
-cypherConsoleCommandName ( cypherConsoleCommandParameters )? ;
- cypherConsoleCommandName: COLON symbolicNameString (MINUS symbolicNameString)*;
-
-cypherConsoleCommandParameters : cypherConsoleCommandParameter ( cypherConsoleCommandParameter )* ;
-
-cypherConsoleCommandParameter:
-*/
-	// url
-	// | json
-	// | arrowExpression
-	// | mapLiteral
-	// | keyValueLiteral
-	// | stringLiteral
-	// | numberLiteral
-	// | booleanLiteralRule
-	// | subCommand
-	// | commandPath;
-
-// url: uri;
-
-//uri: scheme '://' login? host (':' port)? ('/' path)? urlQuery? frag? ;
-
-
-// arrowExpression: symbolicNameString  '=>'  expression;
+auto: AUTO anything;
 
 /* 
-scheme: string;
+Browser commands.
 
-host: '/'? (hostname | hostnumber);
+Available commands:
+  :begin        Open a transaction
+  :commit       Commit the currently open transaction
+  :connect      Connects to a database
+  :disconnect   Disconnects from database
+  :exit         Exit the logger
+  :help         Show this help message
+  :history      Statement history
+  :impersonate  Impersonate user
+  :param        Set, list or clear query parameters
+  :rollback     Rollback the currently open transaction
+  :source       Executes Cypher statements from a file
+  :sysinfo      Show Neo4j system information 
+  :use          Set the active database
 
-hostname: string ('.' string)*;
+:auto <Cypher query>
+:clear
+:config
+:config <key-value>
+:config {}
+:config {<key-value pairs>}
+:dbs
+:delete <request>
+:get <request>
+:guide
+:guide <guide-name>
+:guide <URL>
+:help
+:head <request>
+:history
+:history clear
+:put <request>
+:play
+:play <guide-name>
+:play <URL>
+:post <request>
+:param <key-value>
+:params
+:params {}
+:params {<key-value pairs>}
+:queries
+:style
+:style <CSS>
+:style reset
+:server change-password / connect 
+:server connect
+:server disconnect
+:server status
+:schema
+:sysinfo
+:use <database>
 
-hostnumber: urlDigits '.' urlDigits '.' urlDigits '.' urlDigits;
+Available commands:
+  :begin        Open a transaction
+  :commit       Commit the currently open transaction
+  :connect      Connects to a database
+  :disconnect   Disconnects from database
+  :exit         Exit the logger
+  :help         Show this help message
+  :history      Statement history
+  :impersonate  Impersonate user
+  :param        Set, list or clear query parameters
+  :rollback     Rollback the currently open transaction
+  :source       Executes Cypher statements from a file
+  :sysinfo      Show Neo4j system information 
+  :use          Set the active database
 
-port: urlDigits;
-
-path: string ('/' string)*;
-
-user: string;
-
-login: user ':' password '@';
-
-password: string;
-
-frag: ('#' string);
-
-urlQuery: ('?' search);
-
-search: searchparameter ('&' searchparameter)*;
-
-searchparameter: string ('=' (string | urlDigits  /* | UrlHex* /))?;
-
-string: symbolicNameString (('+'| '.')? symbolicNameString)*? ;
-
-urlDigits: UNSIGNED_DECIMAL_INTEGER+;
-
-// JSON
-
-/* 
-json: value;
-
-obj : '{'  pair  (',' pair )* '}'
-   | '{' '}'
-   ;
-
-pair : stringLiteral ':'  value
-   ;
-
-array : '['  value  (','  value )* ']'
-   | '['  ']'
-   ;
-
-value : stringLiteral
-   | numberLiteral
-   | obj
-   | array
-   | booleanLiteralRule
-   | NULL
-   ;
-
-
-keyValueLiteral : variable ':' ( stringLiteral | numberLiteral | booleanLiteralRule | symbolicNameString ) ;
-
-commandPath : ( '/' ( symbolicNameString | numberLiteral ) )+ '/'? ;
-
-
-subCommand : ( symbolicNameString ( '-' symbolicNameString )* ) ;
-
-booleanLiteralRule: TRUE | FALSE ;
-*/ 
+ */

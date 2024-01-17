@@ -1,16 +1,16 @@
 import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/ConsoleCommandLexer';
 
 import CypherParser, {
   ClauseContext,
+  FullStatementsContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
-  StatementsContext,
   VariableContext,
-} from './generated-parser/CypherParser';
+} from './generated-parser/ConsoleCommandParser';
 import {
   findParent,
   findStopNode,
@@ -29,7 +29,7 @@ export interface ParsingResult {
   query: string;
   parser: CypherParser;
   tokens: Token[];
-  result: StatementsContext;
+  result: FullStatementsContext;
 }
 
 export enum LabelType {
@@ -96,7 +96,7 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
 
 export function parse(cypher: string) {
   const parser = createParsingScaffolding(cypher).parser;
-  return parser.statements();
+  return parser.fullStatements();
 }
 
 export function createParsingResult(
@@ -105,7 +105,7 @@ export function createParsingResult(
   const query = parsingScaffolding.query;
   const parser = parsingScaffolding.parser;
   const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.statements();
+  const result = parser.fullStatements();
 
   const parsingResult: ParsingResult = {
     query: query,
@@ -214,6 +214,22 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
+export type ParsedCommand =
+  | { type: 'cypher'; query: string }
+  | { type: 'use'; database: string }
+  | { type: 'clear' }
+  | { type: 'history' }
+  | {
+      type: 'create-parameters';
+      parameters: { name: string; expression: string }[];
+    }
+  | { type: 'list-parameters' }
+  | { type: 'clear-parameters' };
+
+// TODO låta bli och ha snake och fånga den som ett error istället
+
+function parseToCommands(): ParsedCommand[] {}
+
 class ParserWrapper {
   parsingResult?: EnrichedParsingResult;
 
@@ -245,6 +261,7 @@ class ParserWrapper {
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
+        statements: re,
       };
 
       this.parsingResult = parsingResult;
