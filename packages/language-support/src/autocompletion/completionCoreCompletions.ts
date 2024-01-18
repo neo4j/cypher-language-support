@@ -317,7 +317,11 @@ export function completionCoreCompletion(
   // Keep only keywords as suggestions
   const ignoredTokens = new Set<number>(
     Object.entries(lexerSymbols)
-      .filter(([, type]) => type !== CypherTokenType.keyword)
+      .filter(
+        ([, type]) =>
+          type !== CypherTokenType.keyword &&
+          type !== CypherTokenType.consoleCommand,
+      )
       .map(([token]) => Number(token)),
   );
 

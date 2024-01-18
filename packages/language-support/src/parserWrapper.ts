@@ -72,6 +72,7 @@ export interface EnrichedParsingResult extends ParsingResult {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  collectedCommands: ParsedCommand[];
 }
 
 export interface ParsingScaffolding {
@@ -216,19 +217,94 @@ class VariableCollector implements ParseTreeListener {
 
 export type ParsedCommand =
   | { type: 'cypher'; query: string }
-  | { type: 'use'; database: string }
+  | { type: 'use'; database?: string /* missing implies default db */ }
   | { type: 'clear' }
   | { type: 'history' }
   | {
-      type: 'create-parameters';
+      type: 'set-parameters';
       parameters: { name: string; expression: string }[];
     }
   | { type: 'list-parameters' }
   | { type: 'clear-parameters' };
 
-// TODO låta bli och ha snake och fånga den som ett error istället
+function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
+  return stmts.statementOrCommand_list().map((stmt) => {
+    const cypherStmt = stmt.statement();
+    if (cypherStmt) {
+      // we get the original text input to preserve whitespace
+      const inputstream = cypherStmt.start.getInputStream();
+      const query = inputstream.getText(stmt.start.start, stmt.stop.stop);
 
-function parseToCommands(): ParsedCommand[] {}
+      return { type: 'cypher', query };
+    }
+
+    const consoleCmd = stmt.consoleCommand();
+    if (consoleCmd) {
+      const use = consoleCmd.use();
+      if (use) {
+        return { type: 'use', database: use.symbolicAliasName()?.getText() };
+      }
+
+      const clearCmd = consoleCmd.clearCmd();
+      if (clearCmd) {
+        return { type: 'clear' };
+      }
+
+      const historyCmd = consoleCmd.history();
+      if (historyCmd) {
+        return { type: 'history' };
+      }
+
+      const paramCmd = consoleCmd.paramsCmd();
+      if (paramCmd) {
+        const cypherMap = paramCmd.map();
+        if (cypherMap) {
+          const names = cypherMap
+            .symbolicNameString_list()
+            .map((name) => name.getText());
+          const expressions = cypherMap
+            .expression_list()
+            .map((expr) => expr.getText());
+
+          return {
+            type: 'set-parameters',
+            parameters: names.map((name, index) => ({
+              name,
+              expression: expressions[index],
+            })),
+          };
+        }
+
+        const lambda = paramCmd.lambda();
+        if (lambda) {
+          return {
+            type: 'set-parameters',
+            parameters: [
+              {
+                name: lambda.unescapedSymbolicNameString().getText(),
+                expression: lambda.expression().getText(),
+              },
+            ],
+          };
+        }
+
+        const clear = paramCmd.CLEAR();
+        if (clear) {
+          return { type: 'clear-parameters' };
+        }
+
+        const list = paramCmd.LIST();
+        if (list) {
+          return { type: 'list-parameters' };
+        }
+        // no argument provided -> list parameters
+        return { type: 'list-parameters' };
+      }
+    }
+
+    throw new Error(`Unknown command ${stmt.getText()}`);
+  });
+}
 
 class ParserWrapper {
   parsingResult?: EnrichedParsingResult;
@@ -261,7 +337,7 @@ class ParserWrapper {
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
-        statements: re,
+        collectedCommands: parseToCommands(result),
       };
 
       this.parsingResult = parsingResult;

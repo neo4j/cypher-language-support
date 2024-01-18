@@ -55,6 +55,7 @@ export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   bracket: tags.bracket,
   punctuation: tags.punctuation,
   separator: tags.separator,
+  consoleCommand: tags.keyword,
 };
 
 export const parserAdapterNodeSet = (nodes: Record<string, NodeType>) =>

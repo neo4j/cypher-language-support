@@ -74,6 +74,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.label]: SemanticTokenTypes.type,
     [CypherTokenType.variable]: SemanticTokenTypes.variable,
     [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
+    [CypherTokenType.consoleCommand]: SemanticTokenTypes.keyword,
   };
 
   const semanticTokenType = tokenMappings[cypherTokenType];
