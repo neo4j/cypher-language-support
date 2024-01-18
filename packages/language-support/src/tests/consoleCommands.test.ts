@@ -184,7 +184,3 @@ describe('command parser also handles cypher', () => {
     ]);
   });
 });
-
-// errors / completions / highlighting
-// turn on / off
-// can handle backticked stuff

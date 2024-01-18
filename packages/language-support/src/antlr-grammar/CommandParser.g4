@@ -20,17 +20,18 @@ history: HISTORY;
 
 use: USE symbolicAliasName?;
 
-
-
 /* 
 Open questions:
-- Should they be keywords or something else
-- If they are not keywords, how should they highlight?
-- Does it matter if we give completions for : commands?
+- Should they be keywords or something else -> lets treat them as commands. (could be neat as bold) 
+- If they are not keywords, how should they highlight? -> let's highlight them in a different way. pick something
 - Improve the error messages for when giving an extra argument?
+- Does it matter if we give completions for : commands?
+- Other things I should test apart from highlighting?
 
 TODO:
 - How to handle "dual use" of use (ha ha)? Catch the USE completion early, so that we can give it in lower case instead? does it make sense to check if "last character was :"? 
+- If they are not keywords, make sure the completion icon is correct
 - If parsed command is not in list of Enabled Commands -> Create diagnostic from the parse
 - Ensure Semantic analysis only runs on Cypher statements, replace all client commands with " " <- so positions still match?
+- Tests for highlighting 
 */
