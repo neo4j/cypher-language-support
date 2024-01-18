@@ -22,19 +22,15 @@ use: USE symbolicAliasName?;
 
 
 
-/* TODO: 
-send only cypher to Semantic analysis
-function som parsar trevligare 
-should they be highlighted? 
-todo lowercase completions
+/* 
+Open questions:
+- Should they be keywords or something else
+- If they are not keywords, how should they highlight?
+- Does it matter if we give completions for : commands?
+- Improve the error messages for when giving an extra argument?
 
-
-use already exists. so how do we sometimes compete it uppercase, sometimes lowercase?
-
-
-how should they highlight.
-how to handle upper/lower case for USE? How to handle other "dual use" aspects 
-how would the actual parsing work for the command list if the list was complety dynamic?
-
-
+TODO:
+- How to handle "dual use" of use (ha ha)? Catch the USE completion early, so that we can give it in lower case instead? does it make sense to check if "last character was :"? 
+- If parsed command is not in list of Enabled Commands -> Create diagnostic from the parse
+- Ensure Semantic analysis only runs on Cypher statements, replace all client commands with " " <- so positions still match?
 */

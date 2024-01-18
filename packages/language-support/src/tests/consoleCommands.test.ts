@@ -19,7 +19,6 @@ describe('sanity checks', () => {
   });
 
   test('completes basic console cmds on :', () => {
-    // TODO these now complete as keywords, should they? also. how do we make the USE lowercase?
     expect(autocomplete(':', {})).toEqual([
       { kind: 14, label: 'param' },
       { kind: 14, label: 'USE' },
