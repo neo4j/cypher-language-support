@@ -40,7 +40,7 @@ export function findStopNode(root: StatementsContext) {
 export function findParent(
   leaf: ParserRuleContext | undefined,
   condition: (node: ParserRuleContext) => boolean,
-): ParserRuleContext | undefined {
+) {
   let current: ParserRuleContext | undefined = leaf;
 
   while (current && !condition(current)) {

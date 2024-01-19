@@ -1,29 +1,19 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
-import {
-  CallClauseContext,
-  findParent,
-  FunctionInvocationContext,
-  ParserRuleContext,
-  parserWrapper,
-  signatureHelp,
-  StatementsContext,
-} from '@neo4j-cypher/language-support';
+import { signatureHelp } from '@neo4j-cypher/language-support';
 import { CypherConfig } from './lang-cypher';
 
-function isMethodNameOrExpressionName(parent: ParserRuleContext) {
-  return (
-    parent instanceof FunctionInvocationContext ||
-    parent instanceof CallClauseContext ||
-    parent instanceof StatementsContext
-  );
-}
+function getTriggerCharacter(query: string, offset: number) {
+  let i = offset - 1;
+  let triggerCharacter = query.at(i);
 
-function isMethodName(parent: ParserRuleContext) {
-  return (
-    parent instanceof FunctionInvocationContext ||
-    parent instanceof CallClauseContext
-  );
+  // Discard all space characters. Note that a space can be more than just a ' '
+  while (/\s/.test(triggerCharacter) && i > 0) {
+    i -= 1;
+    triggerCharacter = query.at(i);
+  }
+
+  return triggerCharacter;
 }
 
 function getSignatureHelpTooltip(
@@ -32,34 +22,19 @@ function getSignatureHelpTooltip(
 ): Tooltip[] {
   let result: Tooltip[] = [];
   const schema = config.schema;
+  const ranges = state.selection.ranges;
+  const range = ranges.at(0);
 
-  const tokens = parserWrapper.parsingResult.tokens.filter(
-    (token) => token.channel == 0,
-  );
-  const lastToken = tokens.at(-2);
-  const prevToken = tokens.at(-3);
+  if (schema && ranges.length === 1 && range.from === range.to) {
+    const position = range.from;
+    const query = state.doc.toString();
 
-  if (schema && lastToken) {
-    const pos = state.selection.main.head;
-    const tree = parserWrapper.parsingResult;
-    const isOpenBracket = lastToken.text === '(';
-    const isPairOfBrackets =
-      prevToken !== undefined &&
-      prevToken.text === '(' &&
-      lastToken.text === ')';
-    const isSeparator = lastToken.text === ',';
+    const triggerCharacter = getTriggerCharacter(query, position);
 
-    if (
-      (isOpenBracket || isPairOfBrackets || isSeparator) &&
-      tree &&
-      findParent(tree.stopNode, (parent) =>
-        isOpenBracket
-          ? isMethodNameOrExpressionName(parent)
-          : isMethodName(parent),
-      )
-    ) {
-      const query = state.doc.toString();
-      const signatureHelpInfo = signatureHelp(query, schema);
+    if (triggerCharacter === '(' || triggerCharacter === ',') {
+      const queryUntilPosition = query.slice(0, position);
+
+      const signatureHelpInfo = signatureHelp(queryUntilPosition, schema);
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
       const activeParameter = signatureHelpInfo.activeParameter;
@@ -85,7 +60,7 @@ function getSignatureHelpTooltip(
 
         result = [
           {
-            pos: pos,
+            pos: position,
             above: true,
             strictSide: true,
             arrow: true,

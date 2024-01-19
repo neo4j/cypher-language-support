@@ -89,14 +89,14 @@ test('Signature help shows the description for the first argument', async ({
   });
 });
 
-test('Signature help works when the parenthesis has been auto closed and the cursor is placed before )', async ({
+test('Signature help shows the description for the first argument when the cursor is at that position', async ({
   page,
   mount,
 }) => {
   const query = 'CALL apoc.import.csv()';
 
   await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={22} />,
+    <CypherEditor value={query} schema={testData.mockSchema} offset={21} />,
   );
 
   const tooltip = page.locator('.cm-tooltip-signature-help').last();
@@ -121,6 +121,46 @@ test('Signature help shows the description for the second argument', async ({
       schema={testData.mockSchema}
       autofocus={true}
     />,
+  );
+
+  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+
+  await testTooltip(tooltip, {
+    includes: [
+      'rels :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+    ],
+  });
+});
+
+test('Signature help shows the description for the second argument when the cursor is at that position', async ({
+  page,
+  mount,
+}) => {
+  const query = 'CALL apoc.import.csv(nodes,)';
+
+  await mount(
+    <CypherEditor value={query} schema={testData.mockSchema} offset={27} />,
+  );
+
+  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+
+  await testTooltip(tooltip, {
+    includes: [
+      'rels :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+    ],
+  });
+});
+
+test('Signature help shows the description for the second argument when the cursor is at that position, even after whitespaces', async ({
+  page,
+  mount,
+}) => {
+  const query = 'CALL apoc.import.csv(nodes,  )';
+
+  await mount(
+    <CypherEditor value={query} schema={testData.mockSchema} offset={28} />,
   );
 
   const tooltip = page.locator('.cm-tooltip-signature-help').last();
@@ -162,6 +202,30 @@ test('Signature help shows the description for the third argument', async ({
   mount,
 }) => {
   const query = 'CALL apoc.import.csv(nodes, rels,';
+
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={testData.mockSchema}
+      autofocus={true}
+    />,
+  );
+
+  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+
+  await testTooltip(tooltip, {
+    includes: [
+      'config :: MAP',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+    ],
+  });
+});
+
+test('Signature help works on multiline queries', async ({ page, mount }) => {
+  const query = `CALL apoc.import.csv(
+    nodes, 
+    rels,  
+    `;
 
   await mount(
     <CypherEditor
