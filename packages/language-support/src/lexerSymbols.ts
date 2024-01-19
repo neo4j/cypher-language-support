@@ -362,8 +362,6 @@ export const lexerConsoleCmds = [
   CypherLexer.CLEAR,
 ];
 
-export const lexerConsoleCmdClashes = [CypherLexer.USE, CypherLexer.LIST];
-
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
