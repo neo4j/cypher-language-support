@@ -22,8 +22,12 @@ export type CypherConfig = {
   schema?: DbSchema;
 };
 
-// cursed way to enable console commands
+// cursed way to enable console commands. Threw it together to test how it feels with the toggle
+// I'm not 100% sure it's needed
 // perhaps export an "init" function from the language support?
+// it is tricky to send the config with each command, because of the cache.
+// easiest way really is to surface a function for linting the commands
+// and run it in the environemtns where we want to warn a.k.a the server?
 parserWrapper.enableConsoleCommands = true;
 
 export function cypher(config: CypherConfig) {
