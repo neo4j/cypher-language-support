@@ -1,4 +1,5 @@
 import { autocomplete } from '../autocompletion/autocompletion';
+import { applySyntaxColouring } from '../highlighting/syntaxColouring/syntaxColouring';
 import { ParsedCommand, parserWrapper } from '../parserWrapper';
 
 function expectParsedCommands(query: string, toEqual: ParsedCommand[]) {
@@ -16,6 +17,53 @@ describe('sanity checks', () => {
   test('parses simple commands without args ', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
+  });
+
+  test('properly highlights simple commands', () => {
+    expect(applySyntaxColouring(':clear')).toEqual([
+      {
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: {
+          line: 0,
+          startCharacter: 1,
+          startOffset: 1,
+        },
+        token: 'clear',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':history')).toEqual([
+      {
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 1,
+          startOffset: 1,
+        },
+        token: 'history',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
@@ -49,9 +97,9 @@ describe('sanity checks', () => {
 
   test('handles misspelled or non-existing command', () => {
     // uses toMatchInlineSnapshot since the error message will change every time we add a command
-    expect(
-      parserWrapper.parse(':foo').diagnostics[0].message,
-    ).toMatchInlineSnapshot(`"Expected any of param, history, clear or USE"`);
+    expect(parserWrapper.parse(':foo').diagnostics[0].message).toEqual(
+      'Expected any of param, history, clear or USE',
+    );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
   });
@@ -76,8 +124,44 @@ describe(':use', () => {
 
   test('gives errors on incorrect usage of :use', () => {
     expectErrorMessage(':use 123', "Expected ';' or a database name");
-    // This message is not great. It would be better if it just said sometihing like unexpected extra argument
     expectErrorMessage(':use foo bar', "Expected ';' or a database name");
+  });
+
+  test('highlights properly', () => {
+    expect(applySyntaxColouring(':use')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 3,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'use',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':use foo')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 3,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'use',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 3,
+        position: { line: 0, startCharacter: 5, startOffset: 5 },
+        token: 'foo',
+        tokenType: 'symbolicName',
+      },
+    ]);
   });
 });
 
@@ -140,6 +224,161 @@ describe('parameters', () => {
       ':param {a: 3',
       "Expected any of '}', ',', AND, OR, XOR or an expression",
     );
+  });
+
+  test('highlights :params properly', () => {
+    expect(applySyntaxColouring(':param')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'param',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':params')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'params',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':params list')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'params',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 8, startOffset: 8 },
+        token: 'list',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':param clear')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'param',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 7, startOffset: 7 },
+        token: 'clear',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':param x => 324')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'param',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 7, startOffset: 7 },
+        token: 'x',
+        tokenType: 'variable',
+      },
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 9, startOffset: 9 },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 10, startOffset: 10 },
+        token: '>',
+        tokenType: 'operator',
+      },
+      {
+        length: 3,
+        position: { line: 0, startCharacter: 12, startOffset: 12 },
+        token: '324',
+        tokenType: 'numberLiteral',
+      },
+    ]);
+    expect(applySyntaxColouring(':params {d: true}')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'params',
+        tokenType: 'consoleCommand',
+      },
+      {
+        bracketInfo: { bracketLevel: 0, bracketType: 'curly' },
+        length: 1,
+        position: { line: 0, startCharacter: 8, startOffset: 8 },
+        token: '{',
+        tokenType: 'bracket',
+      },
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 9, startOffset: 9 },
+        token: 'd',
+        tokenType: 'symbolicName',
+      },
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 10, startOffset: 10 },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 12, startOffset: 12 },
+        token: 'true',
+        tokenType: 'booleanLiteral',
+      },
+      {
+        bracketInfo: { bracketLevel: 0, bracketType: 'curly' },
+        length: 1,
+        position: { line: 0, startCharacter: 16, startOffset: 16 },
+        token: '}',
+        tokenType: 'bracket',
+      },
+    ]);
   });
 });
 
