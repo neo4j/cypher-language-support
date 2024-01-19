@@ -110,10 +110,7 @@ connection.onDidChangeConfiguration(
     ) {
       void neo4jSdk.persistentConnect(
         neo4jConfig.URL,
-        {
-          username: neo4jConfig.user,
-          password: neo4jConfig.password,
-        },
+        { username: neo4jConfig.user, password: neo4jConfig.password },
         { appName: 'cypher-language-server' },
       );
     }

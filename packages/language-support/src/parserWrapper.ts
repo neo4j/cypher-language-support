@@ -240,9 +240,9 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
 
     const consoleCmd = stmt.consoleCommand();
     if (consoleCmd) {
-      const use = consoleCmd.use();
-      if (use) {
-        return { type: 'use', database: use.symbolicAliasName()?.getText() };
+      const useCmd = consoleCmd.useCmd();
+      if (useCmd) {
+        return { type: 'use', database: useCmd.symbolicAliasName()?.getText() };
       }
 
       const clearCmd = consoleCmd.clearCmd();
@@ -250,14 +250,19 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
         return { type: 'clear' };
       }
 
-      const historyCmd = consoleCmd.history();
+      const historyCmd = consoleCmd.historyCmd();
       if (historyCmd) {
         return { type: 'history' };
       }
 
-      const paramCmd = consoleCmd.paramsCmd();
-      if (paramCmd) {
-        const cypherMap = paramCmd.map();
+      const param = consoleCmd.paramsCmd();
+      const paramArgs = param?.paramsArgs();
+
+      if (param && !paramArgs) {
+        // no argument provided -> list parameters
+        return { type: 'list-parameters' };
+      } else {
+        const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
             .symbolicNameString_list()
@@ -275,7 +280,7 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
           };
         }
 
-        const lambda = paramCmd.lambda();
+        const lambda = paramArgs.lambda();
         if (lambda) {
           return {
             type: 'set-parameters',
@@ -288,20 +293,19 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
           };
         }
 
-        const clear = paramCmd.CLEAR();
+        const clear = paramArgs.CLEAR();
         if (clear) {
           return { type: 'clear-parameters' };
         }
 
-        const list = paramCmd.LIST();
+        const list = paramArgs.LIST();
         if (list) {
           return { type: 'list-parameters' };
         }
-        // no argument provided -> list parameters
-        return { type: 'list-parameters' };
       }
     }
 
+    // TODO this fires sometimes?
     throw new Error(`Unknown command ${stmt.getText()}`);
   });
 }

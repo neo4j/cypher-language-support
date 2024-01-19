@@ -31,6 +31,7 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   none: NodeType.define({ id: 19, name: 'none' }),
   separator: NodeType.define({ id: 20, name: 'separator' }),
   punctuation: NodeType.define({ id: 21, name: 'punctuation' }),
+  consoleCommand: NodeType.define({ id: 22, name: 'consoleCommand' }),
 });
 
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
@@ -55,7 +56,7 @@ export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   bracket: tags.bracket,
   punctuation: tags.punctuation,
   separator: tags.separator,
-  consoleCommand: tags.keyword,
+  consoleCommand: tags.macroName,
 };
 
 export const parserAdapterNodeSet = (nodes: Record<string, NodeType>) =>

@@ -5,6 +5,7 @@ import {
   AnyExpressionContext,
   ArrowLineContext,
   BooleanLiteralContext,
+  ConsoleCommandContext,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
@@ -14,6 +15,7 @@ import {
   NoneExpressionContext,
   NumberLiteralContext,
   ParameterContext,
+  ParamsArgsContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
@@ -23,6 +25,7 @@ import {
   StringsLiteralContext,
   StringTokenContext,
   SymbolicNameStringContext,
+  UseCmdContext,
   VariableContext,
 } from '../../generated-parser/CommandParser';
 
@@ -74,7 +77,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.label]: SemanticTokenTypes.type,
     [CypherTokenType.variable]: SemanticTokenTypes.variable,
     [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
-    [CypherTokenType.consoleCommand]: SemanticTokenTypes.keyword,
+    [CypherTokenType.consoleCommand]: SemanticTokenTypes.macro,
   };
 
   const semanticTokenType = tokenMappings[cypherTokenType];
@@ -229,6 +232,44 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
     this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
+  };
+
+  // Fix coloring of colon in console commands, and the
+  exitConsoleCommand = (ctx: ConsoleCommandContext) => {
+    const colon = ctx.COLON();
+    this.addToken(
+      colon.symbol,
+      CypherTokenType.consoleCommand,
+      colon.getText(),
+    );
+  };
+
+  // console commands that clash with cypher keywords
+  exitUseCmd = (ctx: UseCmdContext) => {
+    const use = ctx.USE();
+
+    this.addToken(use.symbol, CypherTokenType.consoleCommand, use.getText());
+  };
+
+  exitParamsArgs = (ctx: ParamsArgsContext) => {
+    // args should not have highlighting but they clash with keywords
+    const clear = ctx.CLEAR();
+    if (clear) {
+      this.addToken(
+        clear.symbol,
+        CypherTokenType.consoleCommand,
+        clear.getText(),
+      );
+    }
+
+    const list = ctx.LIST();
+    if (list) {
+      this.addToken(
+        list.symbol,
+        CypherTokenType.consoleCommand,
+        list.getText(),
+      );
+    }
   };
 }
 
