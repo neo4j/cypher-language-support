@@ -1,11 +1,20 @@
 import { autocomplete } from '../autocompletion/autocompletion';
 import { applySyntaxColouring } from '../highlighting/syntaxColouring/syntaxColouring';
-import { ParsedCommand, parserWrapper } from '../parserWrapper';
+import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
 
-function expectParsedCommands(query: string, toEqual: ParsedCommand[]) {
+function expectParsedCommands(
+  query: string,
+  toEqual: ParsedCommandNoPosition[],
+) {
   const result = parserWrapper.parse(query);
   expect(result.diagnostics).toEqual([]);
-  expect(result.collectedCommands).toEqual(toEqual);
+  expect(
+    result.collectedCommands.map((cmd) => {
+      const copy = { ...cmd };
+      delete copy.start;
+      delete copy.stop;
+    }),
+  ).toEqual(toEqual);
 }
 
 function expectErrorMessage(query: string, msg: string) {

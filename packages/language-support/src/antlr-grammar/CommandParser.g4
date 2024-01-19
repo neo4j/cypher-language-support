@@ -29,17 +29,11 @@ useCompletionRule: USE;
 
 /* 
 TODO:
-- How to handle "dual use" of use (ha ha)? Catch the USE completion early, so that we can give it in lower case instead? does it make sense to check if "last character was :"? 
-- make sure the completion icon is correct and lower case
 - If parsed command is not in list of Enabled Commands -> Create diagnostic from the parse
-- Ensure Semantic analysis only runs on Cypher statements, replace all client commands with " " <- so positions still match?
-- Tests for highlighting 
-- double check highlithing for vscode? 
 - Does it matter if we give completions for : commands?
 
-- Improve the error messages for when giving an extra argument?
+- Ensure Semantic analysis only runs on Cypher statements, replace all client commands with " " <- so positions still match?
 
-
-// LIST also has wrong
+> double check highlithing & completion icon vscode? 
 */
 

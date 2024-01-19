@@ -3,6 +3,7 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
 import CypherLexer from './generated-parser/CommandLexer';
 
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherParser, {
   ClauseContext,
   FullStatementsContext,
@@ -215,7 +216,7 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
-export type ParsedCommand =
+export type ParsedCommandNoPosition =
   | { type: 'cypher'; query: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
   | { type: 'clear' }
@@ -227,32 +228,44 @@ export type ParsedCommand =
   | { type: 'list-parameters' }
   | { type: 'clear-parameters' };
 
+export type ParsedCommand = ParsedCommandNoPosition & {
+  start: Token;
+  stop: Token;
+};
+
 function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
   return stmts.statementOrCommand_list().map((stmt) => {
+    const { start, stop } = stmt;
+
     const cypherStmt = stmt.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       const inputstream = cypherStmt.start.getInputStream();
-      const query = inputstream.getText(stmt.start.start, stmt.stop.stop);
+      const query = inputstream.getText(start.start, stop.stop);
 
-      return { type: 'cypher', query };
+      return { type: 'cypher', query, start, stop };
     }
 
     const consoleCmd = stmt.consoleCommand();
     if (consoleCmd) {
       const useCmd = consoleCmd.useCmd();
       if (useCmd) {
-        return { type: 'use', database: useCmd.symbolicAliasName()?.getText() };
+        return {
+          type: 'use',
+          database: useCmd.symbolicAliasName()?.getText(),
+          start,
+          stop,
+        };
       }
 
       const clearCmd = consoleCmd.clearCmd();
       if (clearCmd) {
-        return { type: 'clear' };
+        return { type: 'clear', start, stop };
       }
 
       const historyCmd = consoleCmd.historyCmd();
       if (historyCmd) {
-        return { type: 'history' };
+        return { type: 'history', start, stop };
       }
 
       const param = consoleCmd.paramsCmd();
@@ -260,7 +273,7 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
 
       if (param && !paramArgs) {
         // no argument provided -> list parameters
-        return { type: 'list-parameters' };
+        return { type: 'list-parameters', start, stop };
       } else {
         const cypherMap = paramArgs.map();
         if (cypherMap) {
@@ -277,6 +290,8 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
               name,
               expression: expressions[index],
             })),
+            start,
+            stop,
           };
         }
 
@@ -290,27 +305,56 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
                 expression: lambda.expression().getText(),
               },
             ],
+            start,
+            stop,
           };
         }
 
         const clear = paramArgs.CLEAR();
         if (clear) {
-          return { type: 'clear-parameters' };
+          return { type: 'clear-parameters', start, stop };
         }
 
         const list = paramArgs.listCompleteRule()?.LIST();
         if (list) {
-          return { type: 'list-parameters' };
+          return { type: 'list-parameters', start, stop };
         }
       }
     }
 
-    // TODO this fires sometimes?
     throw new Error(`Unknown command ${stmt.getText()}`);
   });
 }
 
+function translateTokensToRange(
+  start: Token,
+  stop: Token,
+): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
+  return {
+    range: {
+      start: Position.create(start.line - 1, start.column),
+      end: Position.create(stop.line - 1, stop.column + stop.text.length),
+    },
+    offsets: {
+      start: start.start,
+      end: stop.stop + 1,
+    },
+  };
+}
+function errorOnNonCypherCommands(commands: ParsedCommand[]) {
+  return commands
+    .filter((cmd) => cmd.type !== 'cypher')
+    .map(
+      ({ start, stop }): SyntaxDiagnostic => ({
+        message: 'Console commands are unsupported in this environment.',
+        severity: DiagnosticSeverity.Error,
+        ...translateTokensToRange(start, stop),
+      }),
+    );
+}
+
 class ParserWrapper {
+  enableConsoleCommands = false;
   parsingResult?: EnrichedParsingResult;
 
   parse(query: string): EnrichedParsingResult {
@@ -332,16 +376,23 @@ class ParserWrapper {
 
       const result = createParsingResult(parsingScaffolding).result;
 
+      const diagnostics = errorListener.errors;
+
+      const collectedCommands = parseToCommands(result);
+      if (!this.enableConsoleCommands) {
+        diagnostics.push(...errorOnNonCypherCommands(collectedCommands));
+      }
+
       const parsingResult: EnrichedParsingResult = {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
-        diagnostics: errorListener.errors,
+        diagnostics,
         result: result,
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
-        collectedCommands: parseToCommands(result),
+        collectedCommands,
       };
 
       this.parsingResult = parsingResult;
