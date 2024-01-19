@@ -42,7 +42,6 @@ test('Prop signatureHelp set to false disables signature help for functions', as
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={false}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -64,7 +63,6 @@ test('Prop signatureHelp set to true disables signature help for procedures', as
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={false}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -86,7 +84,6 @@ test('Prop signatureHelp set to true enables signature help', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -125,7 +122,6 @@ test('Signature help shows the description for the first argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -150,7 +146,6 @@ test('Signature help shows the description for the second argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -175,7 +170,6 @@ test('Signature help shows description for arguments with a space following a se
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -200,7 +194,6 @@ test('Signature help shows the description for the third argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -225,7 +218,6 @@ test('Signature help only shows the description past the last argument', async (
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -250,7 +242,6 @@ test('Signature help does not show any help when method finished', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,
@@ -272,7 +263,6 @@ test('Signature help does not blow up on empty query', async ({
   await mount(
     <CypherEditor
       value={query}
-      signatureHelp={true}
       schema={testData.mockSchema}
       autofocus={true}
     />,

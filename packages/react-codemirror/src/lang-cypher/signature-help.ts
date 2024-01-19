@@ -32,17 +32,25 @@ function getSignatureHelpTooltip(
 ): Tooltip[] {
   let result: Tooltip[] = [];
   const schema = config.schema;
-  const tokens = parserWrapper.parsingResult.tokens;
-  const lastToken = tokens.filter((token) => token.channel == 0).at(-2);
+
+  const tokens = parserWrapper.parsingResult.tokens.filter(
+    (token) => token.channel == 0,
+  );
+  const lastToken = tokens.at(-2);
+  const prevToken = tokens.at(-3);
 
   if (schema && config.signatureHelp && lastToken) {
     const pos = state.selection.main.head;
     const tree = parserWrapper.parsingResult;
     const isOpenBracket = lastToken.text === '(';
+    const isPairOfBrackets =
+      prevToken !== undefined &&
+      prevToken.text === '(' &&
+      lastToken.text === ')';
     const isSeparator = lastToken.text === ',';
 
     if (
-      (isOpenBracket || isSeparator) &&
+      (isOpenBracket || isPairOfBrackets || isSeparator) &&
       tree &&
       findParent(tree.stopNode, (parent) =>
         isOpenBracket
