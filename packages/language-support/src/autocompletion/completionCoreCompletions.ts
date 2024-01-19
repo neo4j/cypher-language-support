@@ -125,17 +125,27 @@ const namespacedCompletion = (
   }
 };
 
-function getTokenCandidates(
+function getTokenCompletions(
   candidates: CandidatesCollection,
   ignoredTokens: Set<number>,
-) {
+): CompletionItem[] {
   const tokenEntries = candidates.tokens.entries();
 
-  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
+  const completions = Array.from(tokenEntries).flatMap((value) => {
     const [tokenNumber, followUpList] = value;
 
     if (!ignoredTokens.has(tokenNumber)) {
-      const firstToken = tokenNames[tokenNumber];
+      const isConsoleCommand =
+        lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
+
+      const kind = isConsoleCommand
+        ? CompletionItemKind.Event
+        : CompletionItemKind.Keyword;
+
+      const firstToken = isConsoleCommand
+        ? tokenNames[tokenNumber].toLowerCase()
+        : tokenNames[tokenNumber];
+
       const followUpIndexes = followUpList.indexes;
       const firstIgnoredToken = followUpIndexes.findIndex((t) =>
         ignoredTokens.has(t),
@@ -151,21 +161,28 @@ function getTokenCandidates(
       if (firstToken === undefined) {
         return [];
       } else if (followUpString === '') {
-        return [firstToken];
+        return [{ label: firstToken, kind }];
       } else {
-        const followUp = firstToken + ' ' + followUpString;
+        const followUp =
+          firstToken +
+          ' ' +
+          (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
+
         if (followUpList.optional) {
-          return [firstToken, followUp];
+          return [
+            { label: firstToken, kind },
+            { label: followUp, kind },
+          ];
         }
 
-        return [followUp];
+        return [{ label: followUp, kind }];
       }
     } else {
       return [];
     }
   });
 
-  return tokenCandidates;
+  return completions;
 }
 
 const parameterCompletions = (
@@ -305,6 +322,8 @@ export function completionCoreCompletion(
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
+    CypherParser.RULE_useCompletionRule,
+    CypherParser.RULE_listCompleteRule,
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
@@ -431,17 +450,24 @@ export function completionCoreCompletion(
           ];
         }
       }
+
+      // These are simple tokens that get completed as the wrong kind, due to a lexer conlfict
+      if (ruleNumber === CypherParser.RULE_useCompletionRule) {
+        return [{ label: 'use', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_listCompleteRule) {
+        return [{ label: 'list', kind: CompletionItemKind.Event }];
+      }
+
       return [];
     },
   );
 
-  const tokenCandidates = getTokenCandidates(candidates, ignoredTokens);
-  const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
-    label: t,
-    kind: CompletionItemKind.Keyword,
-  }));
-
-  return [...ruleCompletions, ...tokenCompletions];
+  return [
+    ...ruleCompletions,
+    ...getTokenCompletions(candidates, ignoredTokens),
+  ];
 }
 
 type CompletionHelperArgs = {

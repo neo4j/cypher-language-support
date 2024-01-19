@@ -12,7 +12,7 @@ consoleCommand: COLON (clearCmd | historyCmd | useCmd | paramsCmd);
 
 paramsCmd: PARAM paramsArgs?;
 
-paramsArgs: (CLEAR | LIST | map | lambda);
+paramsArgs: (CLEAR | listCompleteRule | map | lambda);
 
 lambda: unescapedSymbolicNameString EQ GT expression;
 
@@ -20,7 +20,12 @@ clearCmd: CLEAR;
 
 historyCmd: HISTORY;
 
-useCmd: USE symbolicAliasName?;
+useCmd: useCompletionRule symbolicAliasName?;
+
+// These rules are needed to distinguish between use and use command in autocopmletion
+listCompleteRule: LIST; 
+
+useCompletionRule: USE;
 
 /* 
 TODO:

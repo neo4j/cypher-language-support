@@ -298,7 +298,7 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
           return { type: 'clear-parameters' };
         }
 
-        const list = paramArgs.LIST();
+        const list = paramArgs.listCompleteRule()?.LIST();
         if (list) {
           return { type: 'list-parameters' };
         }

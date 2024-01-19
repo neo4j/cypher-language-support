@@ -25,7 +25,7 @@ import {
   StringsLiteralContext,
   StringTokenContext,
   SymbolicNameStringContext,
-  UseCmdContext,
+  UseCompletionRuleContext,
   VariableContext,
 } from '../../generated-parser/CommandParser';
 
@@ -245,7 +245,7 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   // console commands that clash with cypher keywords
-  exitUseCmd = (ctx: UseCmdContext) => {
+  exitUseCompletionRule = (ctx: UseCompletionRuleContext) => {
     const use = ctx.USE();
 
     this.addToken(use.symbol, CypherTokenType.consoleCommand, use.getText());
@@ -262,7 +262,7 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     }
 
-    const list = ctx.LIST();
+    const list = ctx.listCompleteRule()?.LIST();
     if (list) {
       this.addToken(
         list.symbol,

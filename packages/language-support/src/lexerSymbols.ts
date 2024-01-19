@@ -362,6 +362,8 @@ export const lexerConsoleCmds = [
   CypherLexer.CLEAR,
 ];
 
+export const lexerConsoleCmdClashes = [CypherLexer.USE, CypherLexer.LIST];
+
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -388,9 +390,6 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',
   [CypherLexer.SKIPROWS]: 'SKIP',
-  [CypherLexer.HISTORY]: 'history',
-  [CypherLexer.PARAM]: 'param',
-  [CypherLexer.CLEAR]: 'clear',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;
