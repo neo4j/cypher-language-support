@@ -60,7 +60,7 @@ export const lightThemeConstants: ThemeOptions = {
     paramDollar: light.syntax.regexp.hex(),
     paramValue: light.syntax.regexp.hex(),
     namespace: light.syntax.special.hex(),
-    consoleCommand: light.editor.fg.brighten(1).hex(),
+    consoleCommand: light.editor.fg.hex(),
   },
 };
 
@@ -102,7 +102,7 @@ export const darkThemeConstants: ThemeOptions = {
     paramDollar: mirage.syntax.regexp.hex(),
     paramValue: mirage.syntax.regexp.hex(),
     namespace: mirage.syntax.special.hex(),
-    consoleCommand: mirage.syntax.special.hex(),
+    consoleCommand: mirage.editor.fg.hex(),
   },
 };
 

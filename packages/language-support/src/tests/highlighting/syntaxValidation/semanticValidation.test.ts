@@ -1,4 +1,4 @@
-import { parserWrapper } from '../../../parserWrapper';
+import { toggleConsoleCommands } from '../../../parserWrapper';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
@@ -1232,7 +1232,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
   });
 
   test('gives error on console commands when they are disabled', () => {
-    parserWrapper.enableConsoleCommands = true;
+    toggleConsoleCommands(true);
     expect(
       getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
     ).toEqual([
@@ -1273,11 +1273,11 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         severity: 1,
       },
     ]);
-    parserWrapper.enableConsoleCommands = false;
+    toggleConsoleCommands(false);
   });
 
   test('Handles multiple cypher statments in a single query', () => {
-    parserWrapper.enableConsoleCommands = true;
+    toggleConsoleCommands(true);
     expect(getDiagnosticsForQuery({ query: 'RETURN a; RETURN b;' })).toEqual([
       {
         message: 'Variable `a` not defined',
@@ -1316,11 +1316,11 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         severity: 1,
       },
     ]);
-    parserWrapper.enableConsoleCommands = false;
+    toggleConsoleCommands(false);
   });
 
   test('Handles cypher mixed with client commands', () => {
-    parserWrapper.enableConsoleCommands = true;
+    toggleConsoleCommands(true);
     expect(
       getDiagnosticsForQuery({
         query: ':clear;RETURN a;:clear; RETURN b;:history;',
@@ -1363,11 +1363,11 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         severity: 1,
       },
     ]);
-    parserWrapper.enableConsoleCommands = false;
+    toggleConsoleCommands(false);
   });
 
   test('Handles cypher mixed with complex client command', () => {
-    parserWrapper.enableConsoleCommands = true;
+    toggleConsoleCommands(true);
     expect(
       getDiagnosticsForQuery({
         query: `
@@ -1398,6 +1398,6 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         severity: 1,
       },
     ]);
-    parserWrapper.enableConsoleCommands = false;
+    toggleConsoleCommands(false);
   });
 });

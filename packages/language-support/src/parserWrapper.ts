@@ -405,4 +405,15 @@ class ParserWrapper {
   }
 }
 
+/* 
+Because the intiatilization is done right here in this file, in a single ton pattern, this was the
+easiest way to set the setting globally, without messing with the cache
+
+It would make sense for the client to initalize and own the ParserWrapper imo. Something to consider 
+when we refactor the cache mechanism
+*/
+export function toggleConsoleCommands(enabled: boolean) {
+  parserWrapper.enableConsoleCommands = enabled;
+}
+
 export const parserWrapper = new ParserWrapper();
