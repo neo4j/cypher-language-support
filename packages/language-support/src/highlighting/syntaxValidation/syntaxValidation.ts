@@ -138,10 +138,16 @@ function getSemanticAnalysisDiagnostics(
   elements: SemanticAnalysisElement[],
   severity: DiagnosticSeverity,
   parsingResult: EnrichedParsingResult,
+  offset: Token,
 ): SyntaxDiagnostic[] {
   return elements.map((e) => {
-    const start = Position.create(e.position.line - 1, e.position.column - 1);
-    const startOffset = e.position.offset;
+    // if the error is on line 1, we need to offset the column
+    const start = Position.create(
+      e.position.line - 1 + offset.line - 1,
+      e.position.column - 1 + (e.position.line === 1 ? offset.column : 0),
+    );
+
+    const startOffset = e.position.offset + offset.start;
     const end = findEndPosition(parsingResult, start, startOffset);
 
     return {
@@ -169,21 +175,30 @@ export function validateSyntax(
     const parsingResult = parserWrapper.parse(wholeFileText);
     diagnostics = parsingResult.diagnostics;
 
+    // semantic anaylsis doesn't handle multi statements
+    // we break the file into statements and run semantic analysis on each
+    // then mapp the postions back to the original file
     if (diagnostics.length === 0) {
-      const semanticAnalysisResult = doSemanticAnalysis(wholeFileText);
-      const errors = getSemanticAnalysisDiagnostics(
-        semanticAnalysisResult.errors,
-        DiagnosticSeverity.Error,
-        parsingResult,
-      );
+      parsingResult.collectedCommands.forEach((cmd) => {
+        if (cmd.type === 'cypher') {
+          const semanticAnalysisResult = doSemanticAnalysis(cmd.query);
+          const errors = getSemanticAnalysisDiagnostics(
+            semanticAnalysisResult.errors,
+            DiagnosticSeverity.Error,
+            parsingResult,
+            cmd.start,
+          );
 
-      const warnings = getSemanticAnalysisDiagnostics(
-        semanticAnalysisResult.notifications,
-        DiagnosticSeverity.Warning,
-        parsingResult,
-      );
+          const warnings = getSemanticAnalysisDiagnostics(
+            semanticAnalysisResult.notifications,
+            DiagnosticSeverity.Warning,
+            parsingResult,
+            cmd.start,
+          );
 
-      diagnostics.push(...warnings, ...errors);
+          diagnostics.push(...warnings, ...errors);
+        }
+      });
     }
 
     const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);

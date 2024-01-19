@@ -10,7 +10,7 @@ export {
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse } from './parserWrapper';
+export { parse, parserWrapper } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };

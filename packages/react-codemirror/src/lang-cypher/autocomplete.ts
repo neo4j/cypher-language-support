@@ -29,6 +29,7 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
     [CompletionItemKind.Constant]: 'Constant',
     [CompletionItemKind.Struct]: 'Struct',
     // we're missuing the enum here as there is no Console command in the item kind list
+    // deceide which one we want to use - for vscode we can't control the icon
     [CompletionItemKind.Event]: 'Console',
     [CompletionItemKind.Operator]: 'Operator',
     [CompletionItemKind.TypeParameter]: 'TypeParameter',

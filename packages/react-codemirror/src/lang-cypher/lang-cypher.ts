@@ -3,7 +3,7 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import type { DbSchema } from '@neo4j-cypher/language-support';
+import { parserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './ParserAdapter';
 import { cypherLinter } from './syntax-validation';
@@ -21,6 +21,10 @@ export type CypherConfig = {
   lint?: boolean;
   schema?: DbSchema;
 };
+
+// cursed way to enable console commands
+// perhaps export an "init" function from the language support?
+parserWrapper.enableConsoleCommands = true;
 
 export function cypher(config: CypherConfig) {
   return new LanguageSupport(cypherLanguage, [

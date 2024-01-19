@@ -26,14 +26,3 @@ useCmd: useCompletionRule symbolicAliasName?;
 listCompleteRule: LIST; 
 
 useCompletionRule: USE;
-
-/* 
-TODO:
-- If parsed command is not in list of Enabled Commands -> Create diagnostic from the parse
-- Does it matter if we give completions for : commands?
-
-- Ensure Semantic analysis only runs on Cypher statements, replace all client commands with " " <- so positions still match?
-
-> double check highlithing & completion icon vscode? 
-*/
-

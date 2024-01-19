@@ -282,6 +282,7 @@ function calculateNamespacePrefix(
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
+  enableConsoleCommands: boolean,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -322,8 +323,15 @@ export function completionCoreCompletion(
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
-    CypherParser.RULE_useCompletionRule,
-    CypherParser.RULE_listCompleteRule,
+
+    // Either enable the helper rules for lexer clashes,
+    // or collect all console commands like below with symbolicNameString
+    ...(enableConsoleCommands
+      ? [
+          CypherParser.RULE_useCompletionRule,
+          CypherParser.RULE_listCompleteRule,
+        ]
+      : [CypherParser.RULE_consoleCommand]),
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
