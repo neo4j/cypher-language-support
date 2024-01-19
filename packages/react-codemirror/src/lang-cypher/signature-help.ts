@@ -39,7 +39,7 @@ function getSignatureHelpTooltip(
   const lastToken = tokens.at(-2);
   const prevToken = tokens.at(-3);
 
-  if (schema && config.signatureHelp && lastToken) {
+  if (schema && lastToken) {
     const pos = state.selection.main.head;
     const tree = parserWrapper.parsingResult;
     const isOpenBracket = lastToken.text === '(';

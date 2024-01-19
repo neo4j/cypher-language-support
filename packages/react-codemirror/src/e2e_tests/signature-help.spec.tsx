@@ -33,52 +33,7 @@ function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   return Promise.all([included, excluded]);
 }
 
-test('Prop signatureHelp set to false disables signature help for functions', async ({
-  page,
-  mount,
-}) => {
-  const query = 'RETURN abs(';
-
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
-
-  await expect(
-    page.locator('.cm-tooltip-signature-help').last(),
-  ).not.toBeVisible({
-    timeout: 2000,
-  });
-});
-
-test('Prop signatureHelp set to true disables signature help for procedures', async ({
-  page,
-  mount,
-}) => {
-  const query = 'CALL apoc.import.csv(';
-
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
-
-  await expect(
-    page.locator('.cm-tooltip-signature-help').last(),
-  ).not.toBeVisible({
-    timeout: 2000,
-  });
-});
-
-test('Prop signatureHelp set to true enables signature help', async ({
-  page,
-  mount,
-}) => {
+test('Signature help works for functions', async ({ page, mount }) => {
   const query = 'RETURN abs(';
 
   await mount(
@@ -94,10 +49,7 @@ test('Prop signatureHelp set to true enables signature help', async ({
   });
 });
 
-test('Prop signatureHelp enables signature help by default', async ({
-  page,
-  mount,
-}) => {
+test('Signature help works for procedures', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(';
 
   await mount(
@@ -125,6 +77,26 @@ test('Signature help shows the description for the first argument', async ({
       schema={testData.mockSchema}
       autofocus={true}
     />,
+  );
+
+  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+
+  await testTooltip(tooltip, {
+    includes: [
+      'nodes :: LIST<MAP>',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+    ],
+  });
+});
+
+test('Signature help works when the parenthesis has been auto closed and the cursor is placed before )', async ({
+  page,
+  mount,
+}) => {
+  const query = 'CALL apoc.import.csv()';
+
+  await mount(
+    <CypherEditor value={query} schema={testData.mockSchema} offset={22} />,
   );
 
   const tooltip = page.locator('.cm-tooltip-signature-help').last();
