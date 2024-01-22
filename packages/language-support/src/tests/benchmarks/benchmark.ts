@@ -8,8 +8,6 @@ import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
 import {
   autocompletionQueries,
   createMovieDb,
-  largePokemonquery,
-  simpleQuery,
   tictactoe,
 } from './benchmark-queries';
 
@@ -18,21 +16,6 @@ Benchmark.options.minSamples = 20;
 const suite = new Benchmark.Suite();
 
 suite
-  .add('simple - parse', function () {
-    parse(simpleQuery);
-  })
-  .add('simple - highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(simpleQuery);
-  })
-  .add('simple - validate syntax', function () {
-    parserWrapper.clearCache();
-    validateSyntax(simpleQuery, benchmarkingMediumSizeSchema);
-  })
-  .add('simple - autocomplete next statement', function () {
-    parserWrapper.clearCache();
-    autocomplete(simpleQuery, benchmarkingMediumSizeSchema);
-  })
   .add('movies - parse', function () {
     parse(createMovieDb);
   })
@@ -56,10 +39,6 @@ suite
     parserWrapper.clearCache();
     applySyntaxColouring(tictactoe);
   })
-  .add('tictactoe - validate syntax', function () {
-    parserWrapper.clearCache();
-    validateSyntax(tictactoe, benchmarkingMediumSizeSchema);
-  })
   .add('tictactoe - autocomplete next statement - no Schema', function () {
     parserWrapper.clearCache();
     autocomplete(tictactoe, {});
@@ -67,18 +46,6 @@ suite
   .add('tictactoe - autocomplete next statement - medium Schema', function () {
     parserWrapper.clearCache();
     autocomplete(tictactoe, benchmarkingMediumSizeSchema);
-  })
-  .add('pokemon - parse', function () {
-    parserWrapper.clearCache();
-    parse(largePokemonquery);
-  })
-  .add('pokemon - parserwrapper parse', function () {
-    parserWrapper.clearCache();
-    parserWrapper.parse(largePokemonquery);
-  })
-  .add('pokemon - syntax highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(largePokemonquery);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {
