@@ -58,6 +58,10 @@ export interface CypherEditorProps {
    */
   autofocus?: boolean;
   /**
+   * Where to place the cursor in the query. Cannot be enabled at the same time than autofocus
+   */
+  offset?: number;
+  /**
    * Whether the editor should wrap lines.
    *
    * @default false
@@ -249,6 +253,8 @@ export class CypherEditor extends Component<CypherEditorProps> {
       if (this.props.value) {
         this.updateCursorPosition(this.props.value.length);
       }
+    } else if (this.props.offset) {
+      this.updateCursorPosition(this.props.offset);
     }
   }
 
