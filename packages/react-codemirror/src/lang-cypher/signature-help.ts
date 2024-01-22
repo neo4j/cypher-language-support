@@ -32,13 +32,7 @@ function getSignatureHelpTooltip(
     const triggerCharacter = getTriggerCharacter(query, offset);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const queryUntilPosition = query.slice(0, offset);
-
-      const signatureHelpInfo = signatureHelp(
-        queryUntilPosition,
-        schema,
-        offset,
-      );
+      const signatureHelpInfo = signatureHelp(query, schema, offset);
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
       const activeParameter = signatureHelpInfo.activeParameter;

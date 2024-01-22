@@ -170,6 +170,15 @@ describe('Procedures signature help', () => {
       27,
     );
   });
+
+  test('Provides signature help for CALLs even on several spaces', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(true,   )',
+      dbWithProcedure,
+      expectedArgIndex(1),
+      25,
+    );
+  });
 });
 
 describe('Functions signature help', () => {

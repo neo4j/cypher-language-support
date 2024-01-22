@@ -50,16 +50,17 @@ export function findMostSpecificNode(
   ) {
     const symbol = current.symbol;
 
-    if (symbol.start <= position && position <= symbol.stop) {
+    if (symbol.start <= position) {
+      //&& position <= symbol.stop) {
       result = current;
     }
   } else if (current instanceof ParserRuleContext) {
     const children = current.children;
 
     if (children) {
-      let index = children.length - 1;
+      let index = 0;
 
-      while (index >= 0) {
+      while (index < children.length) {
         const child = children[index];
 
         const maybeResult = findMostSpecificNode(
@@ -69,7 +70,7 @@ export function findMostSpecificNode(
         if (maybeResult) {
           result = maybeResult;
         }
-        index--;
+        index++;
       }
     }
   }
