@@ -226,7 +226,8 @@ export type ParsedCommandNoPosition =
       parameters: { name: string; expression: string }[];
     }
   | { type: 'list-parameters' }
-  | { type: 'clear-parameters' };
+  | { type: 'clear-parameters' }
+  | { type: 'parse-error' };
 
 export type ParsedCommand = ParsedCommandNoPosition & {
   start: Token;
@@ -274,7 +275,9 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
       if (param && !paramArgs) {
         // no argument provided -> list parameters
         return { type: 'list-parameters', start, stop };
-      } else {
+      }
+
+      if (paramArgs) {
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
@@ -320,9 +323,10 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
           return { type: 'list-parameters', start, stop };
         }
       }
-    }
 
-    throw new Error(`Unknown command ${stmt.getText()}`);
+      return { type: 'parse-error', start, stop };
+    }
+    return { type: 'parse-error', start, stop };
   });
 }
 
@@ -343,7 +347,7 @@ function translateTokensToRange(
 }
 function errorOnNonCypherCommands(commands: ParsedCommand[]) {
   return commands
-    .filter((cmd) => cmd.type !== 'cypher')
+    .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
         message: 'Console commands are unsupported in this environment.',

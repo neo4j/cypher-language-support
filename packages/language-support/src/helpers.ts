@@ -17,6 +17,7 @@ export function findStopNode(root: FullStatementsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 
+  // This bad boy be inf'n
   while (children && children.length > 0) {
     let index = children.length - 1;
     let child = children[index];

@@ -4,9 +4,9 @@ import CypherParser;
 
 options { tokenVocab = CommandLexer; }
 
-fullStatements: (statementOrCommand SEMICOLON)* statementOrCommand SEMICOLON? EOF;
+fullStatements: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
 
-statementOrCommand: (consoleCommand | statement);
+statementOrCommand: (statement | consoleCommand);
 
 consoleCommand: COLON (clearCmd | historyCmd | useCmd | paramsCmd);
 

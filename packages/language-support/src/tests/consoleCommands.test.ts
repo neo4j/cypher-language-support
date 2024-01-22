@@ -1,6 +1,10 @@
 import { autocomplete } from '../autocompletion/autocompletion';
 import { applySyntaxColouring } from '../highlighting/syntaxColouring/syntaxColouring';
-import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
+import {
+  ParsedCommandNoPosition,
+  parserWrapper,
+  toggleConsoleCommands,
+} from '../parserWrapper';
 
 function expectParsedCommands(
   query: string,
@@ -11,8 +15,11 @@ function expectParsedCommands(
   expect(
     result.collectedCommands.map((cmd) => {
       const copy = { ...cmd };
+      // These data structures are recursive, so .toEqual doesn't work.
+      // We test the positions work properly in with the error position tests
       delete copy.start;
       delete copy.stop;
+      return copy;
     }),
   ).toEqual(toEqual);
 }
@@ -23,6 +30,13 @@ function expectErrorMessage(query: string, msg: string) {
 }
 
 describe('sanity checks', () => {
+  beforeAll(() => {
+    toggleConsoleCommands(true);
+  });
+  afterAll(() => {
+    toggleConsoleCommands(false);
+  });
+
   test('parses simple commands without args ', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
@@ -77,10 +91,10 @@ describe('sanity checks', () => {
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
-      { kind: 14, label: 'param' },
-      { kind: 14, label: 'USE' },
-      { kind: 14, label: 'history' },
-      { kind: 14, label: 'clear' },
+      { kind: 23, label: 'use' },
+      { kind: 23, label: 'param' },
+      { kind: 23, label: 'history' },
+      { kind: 23, label: 'clear' },
     ]);
   });
 
@@ -103,18 +117,25 @@ describe('sanity checks', () => {
   test('accepts mixed case', () => {
     expectParsedCommands(':cLeaR;', [{ type: 'clear' }]);
   });
+  // TODO Limiation -> error messages are in caps
+  // TODO There's a "did you mean :" in the METCH examples
 
   test('handles misspelled or non-existing command', () => {
-    // uses toMatchInlineSnapshot since the error message will change every time we add a command
     expect(parserWrapper.parse(':foo').diagnostics[0].message).toEqual(
-      'Expected any of param, history, clear or USE',
+      'Expected any of PARAM, HISTORY, CLEAR or USE',
     );
 
-    expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
+    expectErrorMessage(':clea', 'Unexpected token. Did you mean CLEAR?');
   });
 });
 
 describe(':use', () => {
+  beforeAll(() => {
+    toggleConsoleCommands(true);
+  });
+  afterAll(() => {
+    toggleConsoleCommands(false);
+  });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
   });
@@ -175,6 +196,12 @@ describe(':use', () => {
 });
 
 describe('parameters', () => {
+  beforeAll(() => {
+    toggleConsoleCommands(true);
+  });
+  afterAll(() => {
+    toggleConsoleCommands(false);
+  });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
     expectParsedCommands(':params ', [{ type: 'list-parameters' }]);
@@ -392,23 +419,26 @@ describe('parameters', () => {
 });
 
 describe('command parser also handles cypher', () => {
+  beforeAll(() => {
+    toggleConsoleCommands(true);
+  });
+  afterAll(() => {
+    toggleConsoleCommands(false);
+  });
   test('parses cypher', () => {
-    expect(parserWrapper.parse('MATCH (n) RETURN n').collectedCommands).toEqual(
-      [{ query: 'MATCH (n) RETURN n', type: 'cypher' }],
-    );
+    expectParsedCommands('MATCH (n) RETURN n', [
+      { query: 'MATCH (n) RETURN n', type: 'cypher' },
+    ]);
   });
 
   test('preserves original whitespace', () => {
-    expect(
-      parserWrapper.parse('MATCH\n(n)\nRETURN n').collectedCommands,
-    ).toEqual([{ query: 'MATCH\n(n)\nRETURN n', type: 'cypher' }]);
+    expectParsedCommands('MATCH\n(n)\nRETURN n', [
+      { query: 'MATCH\n(n)\nRETURN n', type: 'cypher' },
+    ]);
   });
 
   test('can split cypher into statements', () => {
-    expect(
-      parserWrapper.parse('CALL db.info(); RETURN 123; SHOW DATABASES')
-        .collectedCommands,
-    ).toEqual([
+    expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
       { query: 'CALL db.info()', type: 'cypher' },
       { query: 'RETURN 123', type: 'cypher' },
       { query: 'SHOW DATABASES', type: 'cypher' },
@@ -416,19 +446,18 @@ describe('command parser also handles cypher', () => {
   });
 
   test('can weave cypher with cmds', () => {
-    expect(
-      parserWrapper.parse(
-        ':use neo4j; :param x => 23;RETURN $x;:use system; SHOW DATABASES; ',
-      ).collectedCommands,
-    ).toEqual([
-      { database: 'neo4j', type: 'use' },
-      {
-        parameters: [{ name: 'x', expression: '23' }],
-        type: 'set-parameters',
-      },
-      { query: 'RETURN $x', type: 'cypher' },
-      { database: 'system', type: 'use' },
-      { query: 'SHOW DATABASES', type: 'cypher' },
-    ]);
+    expectParsedCommands(
+      ':use neo4j; :param x => 23;RETURN $x;:use system; SHOW DATABASES; ',
+      [
+        { database: 'neo4j', type: 'use' },
+        {
+          parameters: [{ name: 'x', expression: '23' }],
+          type: 'set-parameters',
+        },
+        { query: 'RETURN $x', type: 'cypher' },
+        { database: 'system', type: 'use' },
+        { query: 'SHOW DATABASES', type: 'cypher' },
+      ],
+    );
   });
 });

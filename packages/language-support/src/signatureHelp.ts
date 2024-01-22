@@ -7,8 +7,8 @@ import { ParserRuleContext, ParseTree } from 'antlr4';
 import {
   CallClauseContext,
   ExpressionContext,
+  FullStatementsContext,
   FunctionInvocationContext,
-  StatementsContext,
 } from './generated-parser/CommandParser';
 
 import { DbSchema } from './dbSchema';
@@ -126,7 +126,7 @@ function tryParseFunction(
     };
   } else if (
     currentNode.getText() === '(' &&
-    currentNode.parentCtx instanceof StatementsContext
+    currentNode.parentCtx instanceof FullStatementsContext
   ) {
     // If we finish in an expression followed by (,
     // take the expression text as method name

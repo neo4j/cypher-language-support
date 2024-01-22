@@ -39,8 +39,6 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_parameter]: 'a parameter',
     [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
-    // main impact of this is to prevent the ":" from being suggested
-    [CypherParser.RULE_consoleCommand]: 'a console command',
   };
 
   codeCompletion.preferredRules = new Set<number>(
@@ -65,6 +63,12 @@ export function completionCoreErrormessage(
   const tokenEntries = candidates.tokens.entries();
   const tokenCandidates = Array.from(tokenEntries).flatMap(([tokenNumber]) => {
     const tokenName = tokenNames[tokenNumber];
+
+    // We don't want to suggest the ":" of console cmds as it's not helpful even
+    // when console cmds are available
+    if (caretIndex === 0 && tokenNumber === CypherLexer.COLON) {
+      return [];
+    }
 
     switch (tokenNumber) {
       case CypherLexer.DECIMAL_DOUBLE:
