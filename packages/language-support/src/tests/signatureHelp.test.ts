@@ -10,8 +10,9 @@ export function testSignatureHelp(
   fileText: string,
   dbSchema: DbSchema,
   expected: SignatureHelp,
+  offset: number = fileText.length,
 ) {
-  const actualSignatureHelp = signatureHelp(fileText, dbSchema);
+  const actualSignatureHelp = signatureHelp(fileText, dbSchema, offset);
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);
@@ -133,6 +134,42 @@ describe('Procedures signature help', () => {
       emptyResult,
     );
   });
+
+  test('Does not provide blow up for caret position of 0', () => {
+    testSignatureHelp('', dbWithProcedure, emptyResult);
+  });
+
+  test('Provides signature help for CALLs when offset is before end of query for first argument', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(true, something',
+      dbWithProcedure,
+      expectedArgIndex(0),
+      18,
+    );
+
+    testSignatureHelp(
+      'CALL apoc.do.when(true, something',
+      dbWithProcedure,
+      expectedArgIndex(0),
+      22,
+    );
+  });
+
+  test('Provides signature help for CALLs when offset is before end of query for second argument', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(true, foo, bar',
+      dbWithProcedure,
+      expectedArgIndex(1),
+      23,
+    );
+
+    testSignatureHelp(
+      'CALL apoc.do.when(true, foo, bar',
+      dbWithProcedure,
+      expectedArgIndex(1),
+      27,
+    );
+  });
 });
 
 describe('Functions signature help', () => {
@@ -221,6 +258,42 @@ describe('Functions signature help', () => {
          MATCH (`,
       dbWithFunction,
       emptyResult,
+    );
+  });
+
+  test('Does not provide blow up for caret position of 0', () => {
+    testSignatureHelp('', dbWithFunction, emptyResult);
+  });
+
+  test('Provides signature help for functions when offset is before end of query for first argument', () => {
+    testSignatureHelp(
+      'RETURN apoc.do.when(true, something',
+      dbWithFunction,
+      expectedArgIndex(0),
+      20,
+    );
+
+    testSignatureHelp(
+      'RETURN apoc.do.when(true, something',
+      dbWithFunction,
+      expectedArgIndex(0),
+      24,
+    );
+  });
+
+  test('Provides signature help for functions when offset is before end of query for second argument', () => {
+    testSignatureHelp(
+      'RETURN apoc.do.when(true, foo, bar',
+      dbWithFunction,
+      expectedArgIndex(1),
+      25,
+    );
+
+    testSignatureHelp(
+      'RETURN apoc.do.when(true, foo, bar',
+      dbWithFunction,
+      expectedArgIndex(1),
+      29,
     );
   });
 });

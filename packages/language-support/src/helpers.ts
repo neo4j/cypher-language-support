@@ -3,6 +3,7 @@
 import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,
+  TerminalNode,
   Token,
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
@@ -35,6 +36,45 @@ export function findStopNode(root: StatementsContext) {
   }
 
   return current;
+}
+
+export function findMostSpecificNode(
+  current: ParserRuleContext,
+  position: number,
+): ParserRuleContext | undefined {
+  let result: ParserRuleContext | undefined = undefined;
+
+  if (
+    current instanceof TerminalNode &&
+    current.symbol.type !== CypherParser.EOF
+  ) {
+    const symbol = current.symbol;
+
+    if (symbol.start <= position && position <= symbol.stop) {
+      result = current;
+    }
+  } else if (current instanceof ParserRuleContext) {
+    const children = current.children;
+
+    if (children) {
+      let index = children.length - 1;
+
+      while (index >= 0) {
+        const child = children[index];
+
+        const maybeResult = findMostSpecificNode(
+          child as ParserRuleContext,
+          position,
+        );
+        if (maybeResult) {
+          result = maybeResult;
+        }
+        index--;
+      }
+    }
+  }
+
+  return result;
 }
 
 export function findParent(

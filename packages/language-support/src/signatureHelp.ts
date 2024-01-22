@@ -12,7 +12,7 @@ import {
 } from './generated-parser/CypherParser';
 
 import { DbSchema } from './dbSchema';
-import { findParent } from './helpers';
+import { findMostSpecificNode, findParent } from './helpers';
 import { parserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
@@ -28,6 +28,7 @@ interface ParsedMethod {
 
 function tryParseProcedure(
   currentNode: ParserRuleContext,
+  caretPosition: number,
 ): ParsedMethod | undefined {
   const callClause = findParent(
     currentNode,
@@ -36,12 +37,14 @@ function tryParseProcedure(
 
   if (callClause) {
     const ctx = callClause as CallClauseContext;
-
     const methodName = ctx.procedureName().getText();
-    const numProcedureArgs = ctx.procedureArgument_list().length;
+    const previousArguments = ctx.COMMA_list().filter((arg) => {
+      return arg.symbol.stop < caretPosition;
+    });
+    const numProcedureArgs = previousArguments.length;
     return {
       methodName: methodName,
-      numProcedureArgs: numProcedureArgs,
+      numProcedureArgs: numProcedureArgs + 1,
     };
   } else {
     return undefined;
@@ -108,6 +111,7 @@ function findRightmostPreviousExpression(
 
 function tryParseFunction(
   currentNode: ParserRuleContext,
+  caretPosition: number,
 ): ParsedMethod | undefined {
   let result: ParsedMethod | undefined = undefined;
   const functionInvocation = findParent(
@@ -118,8 +122,10 @@ function tryParseFunction(
   if (functionInvocation) {
     const ctx = functionInvocation as FunctionInvocationContext;
     const methodName = ctx.functionName().getText();
-    const numMethodArgs = ctx.functionArgument_list().length;
-
+    const previousArguments = ctx.COMMA_list().filter((arg) => {
+      return arg.symbol.stop < caretPosition;
+    });
+    const numMethodArgs = previousArguments.length + 1;
     result = {
       methodName: methodName,
       numProcedureArgs: numMethodArgs,
@@ -163,23 +169,31 @@ function toSignatureHelp(
 }
 
 export function signatureHelp(
-  textUntilPosition: string,
+  fullQuery: string,
   dbSchema: DbSchema,
+  caretPosition: number,
 ): SignatureHelp {
-  const parserResult = parserWrapper.parse(textUntilPosition);
-  const stopNode = parserResult.stopNode;
   let result: SignatureHelp = emptyResult;
 
-  const parsedProc = tryParseProcedure(stopNode);
-  if (parsedProc && dbSchema.procedureSignatures) {
-    result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
-  } else {
-    const parsedFunc = tryParseFunction(stopNode);
+  if (caretPosition > 0) {
+    const parserResult = parserWrapper.parse(fullQuery);
+    const stopNode = findMostSpecificNode(
+      parserResult.result,
+      caretPosition - 1,
+    );
 
-    if (parsedFunc && dbSchema.functionSignatures) {
-      result = toSignatureHelp(dbSchema.functionSignatures, parsedFunc);
+    if (stopNode) {
+      const parsedProc = tryParseProcedure(stopNode, caretPosition);
+      if (parsedProc && dbSchema.procedureSignatures) {
+        result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
+      } else {
+        const parsedFunc = tryParseFunction(stopNode, caretPosition);
+
+        if (parsedFunc && dbSchema.functionSignatures) {
+          result = toSignatureHelp(dbSchema.functionSignatures, parsedFunc);
+        }
+      }
     }
   }
-
   return result;
 }

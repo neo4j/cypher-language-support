@@ -26,15 +26,19 @@ function getSignatureHelpTooltip(
   const range = ranges.at(0);
 
   if (schema && ranges.length === 1 && range.from === range.to) {
-    const position = range.from;
+    const offset = range.from;
     const query = state.doc.toString();
 
-    const triggerCharacter = getTriggerCharacter(query, position);
+    const triggerCharacter = getTriggerCharacter(query, offset);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const queryUntilPosition = query.slice(0, position);
+      const queryUntilPosition = query.slice(0, offset);
 
-      const signatureHelpInfo = signatureHelp(queryUntilPosition, schema);
+      const signatureHelpInfo = signatureHelp(
+        queryUntilPosition,
+        schema,
+        offset,
+      );
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
       const activeParameter = signatureHelpInfo.activeParameter;
@@ -60,7 +64,7 @@ function getSignatureHelpTooltip(
 
         result = [
           {
-            pos: position,
+            pos: offset,
             above: true,
             strictSide: true,
             arrow: true,
