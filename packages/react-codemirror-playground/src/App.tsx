@@ -6,8 +6,7 @@ import { TokenTable } from './TokenTable';
 import { getDebugTree } from './tree-util';
 
 const demos = {
-  allTokenTypes: `:clear;
-MATCH (variable :Label)-[:REL_TYPE]->() 
+  allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 
     OR namespaced.function() = false
     // comment
@@ -33,8 +32,7 @@ RETURN count(*)`,
 type DemoName = keyof typeof demos;
 
 export function App() {
-  const [selectedDemoName, setSelectedDemoName] =
-    useState<DemoName>('allTokenTypes');
+  const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
   const [showCodemirrorParse, setShowCodemirrorParse] = useState(false);
   const [showAntlrParse, setShowAntlrParse] = useState(false);
@@ -54,10 +52,10 @@ export function App() {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-blue-300 dark:bg-gray-700 dark:text-white">
-        <div className="flex justify-center gap-10 pt-5 ">
+      <div className="bg-blue-300 dark:bg-gray-700 min-h-screen dark:text-white">
+        <div className=" flex justify-center pt-5 gap-10 ">
           <div className="auto min-w-[500px] w-3/6 flex flex-col gap-5 bg-white dark:bg-gray-600 p-10 rounded-lg shadow-lg">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <h1 className="text-4xl ">Cypher Codemirror Demo</h1>
               <button
                 className="w-10 h-10"
@@ -70,7 +68,7 @@ export function App() {
                   strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true"
-                  className="self-center w-full h-full text-gray-500"
+                  className="w-full h-full text-gray-500 self-center"
                 >
                   <path
                     strokeLinecap="round"
@@ -103,7 +101,7 @@ export function App() {
               ))}
             </div>
             <CypherEditor
-              className="text-sm border-2 border-gray-100 dark:border-gray-400"
+              className="border-2 border-gray-100 dark:border-gray-400 text-sm"
               value={value}
               onChange={setValue}
               prompt="neo4j$"

@@ -234,7 +234,7 @@ class SyntaxHighlighter extends CypherParserListener {
     this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
   };
 
-  // Fix coloring of colon in console commands, and the
+  // Fix coloring of colon in console commands (operator -> consoleCommand)
   exitConsoleCommand = (ctx: ConsoleCommandContext) => {
     const colon = ctx.COLON();
     this.addToken(
@@ -252,7 +252,6 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitParamsArgs = (ctx: ParamsArgsContext) => {
-    // args should not have highlighting but they clash with keywords
     const clear = ctx.CLEAR();
     if (clear) {
       this.addToken(
