@@ -24,7 +24,10 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Benchmark
-        run: npm run benchmark --concurrency 1
+        run: npm run benchmark --concurrency=1
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}

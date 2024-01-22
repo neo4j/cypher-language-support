@@ -18,6 +18,7 @@ export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxVal
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse, parserWrapper } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
+export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };
 
 import CypherLexer from './generated-parser/CypherLexer';

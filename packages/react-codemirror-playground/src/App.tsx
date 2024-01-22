@@ -1,8 +1,7 @@
-import { DbSchema } from '@neo4j-cypher/language-support';
+import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
-import { dummyDbSchema } from './mock-schema.js';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './tree-util';
 
@@ -41,9 +40,9 @@ export function App() {
   const [commandRanCount, setCommandRanCount] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
-  const [schema, setSchema] = useState<DbSchema>(dummyDbSchema);
+  const [schema, setSchema] = useState<DbSchema>(testData.mockSchema);
   const [schemaText, setSchemaText] = useState<string>(
-    JSON.stringify(dummyDbSchema, undefined, 2),
+    JSON.stringify(testData.mockSchema, undefined, 2),
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
