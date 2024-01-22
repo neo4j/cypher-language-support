@@ -12,6 +12,7 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
+import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import {
   replaceHistory,
@@ -185,6 +186,8 @@ export class CypherEditor extends Component<
     theme: 'light',
   };
 
+  private debouncedOnChange = debounce(this.props.onChange, 200);
+
   componentDidMount(): void {
     const {
       theme,
@@ -193,7 +196,6 @@ export class CypherEditor extends Component<
       overrideThemeBackgroundColor,
       schema,
       lint,
-      onChange,
       onExecute,
     } = this.props;
 
@@ -213,7 +215,7 @@ export class CypherEditor extends Component<
       overrideThemeBackgroundColor,
     );
 
-    const changeListener = onChange
+    const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             const wasUserEdit = !upt.transactions.some((tr) =>
@@ -223,7 +225,7 @@ export class CypherEditor extends Component<
             if (upt.docChanged && wasUserEdit) {
               const doc = upt.state.doc;
               const value = doc.toString();
-              onChange(value, upt);
+              this.debouncedOnChange(value, upt);
             }
           }),
         ]

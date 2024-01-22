@@ -56,6 +56,7 @@
     "@types/workerpool": "^6.4.7",
     "ayu": "^8.0.1",
     "fastest-levenshtein": "^1.0.16",
+    "lodash.debounce": "^4.0.8",
     "prismjs": "^1.29.0",
     "vscode-languageserver-types": "^3.17.3",
     "workerpool": "^9.0.4"
@@ -64,6 +65,7 @@
     "@neo4j-ndl/base": "^1.10.1",
     "@playwright/experimental-ct-react": "^1.39.0",
     "@playwright/test": "^1.36.2",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
     "concurrently": "^8.2.1",
