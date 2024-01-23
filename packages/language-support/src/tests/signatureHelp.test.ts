@@ -134,6 +134,13 @@ describe('Procedures signature help', () => {
       'CALL apoc.do.when(true, something',
       dbSchema,
       expectedArgIndex(0),
+      20,
+    );
+
+    testSignatureHelp(
+      'CALL apoc.do.when(true, something',
+      dbSchema,
+      expectedArgIndex(0),
       22,
     );
   });
@@ -144,6 +151,13 @@ describe('Procedures signature help', () => {
       dbSchema,
       expectedArgIndex(1),
       23,
+    );
+
+    testSignatureHelp(
+      'CALL apoc.do.when(true, foo, bar',
+      dbSchema,
+      expectedArgIndex(1),
+      25,
     );
 
     testSignatureHelp(
@@ -203,13 +217,13 @@ describe('Functions signature help', () => {
 
   test('Provides signature help for functions second argument', () => {
     testSignatureHelp(
-      'MATCH (n) WHERE apoc.coll.combinations(coll,',
+      'RETURN apoc.coll.combinations(coll,',
       dbSchema,
       expectedArgIndex(1),
     );
 
     testSignatureHelp(
-      'MATCH (n) WHERE apoc.coll.combinations(coll, "foo"',
+      'RETURN apoc.coll.combinations(coll, "foo"',
       dbSchema,
       expectedArgIndex(1),
     );
@@ -232,7 +246,7 @@ describe('Functions signature help', () => {
   test('Provides signature help with several statements where cursor one requires autocompletion', () => {
     testSignatureHelp(
       `MATCH (n) RETURN n;
-         MATCH (m) WHERE apoc.coll.combinations(c`,
+      RETURN apoc.coll.combinations(c`,
       dbSchema,
       expectedArgIndex(0),
     );
@@ -258,6 +272,13 @@ describe('Functions signature help', () => {
       dbSchema,
       expectedArgIndex(0),
       39,
+    );
+
+    testSignatureHelp(
+      'MATCH (n) WHERE apoc.coll.combinations(coll, "foo"',
+      dbSchema,
+      expectedArgIndex(0),
+      41,
     );
 
     testSignatureHelp(

@@ -3,8 +3,8 @@ import { showTooltip, Tooltip } from '@codemirror/view';
 import { signatureHelp } from '@neo4j-cypher/language-support';
 import { CypherConfig } from './lang-cypher';
 
-function getTriggerCharacter(query: string, offset: number) {
-  let i = offset - 1;
+function getTriggerCharacter(query: string, caretPosition: number) {
+  let i = caretPosition - 1;
   let triggerCharacter = query.at(i);
 
   // Discard all space characters. Note that a space can be more than just a ' '
@@ -26,13 +26,13 @@ function getSignatureHelpTooltip(
   const range = ranges.at(0);
 
   if (schema && ranges.length === 1 && range.from === range.to) {
-    const offset = range.from;
+    const caretPosition = range.from;
     const query = state.doc.toString();
 
-    const triggerCharacter = getTriggerCharacter(query, offset);
+    const triggerCharacter = getTriggerCharacter(query, caretPosition);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const signatureHelpInfo = signatureHelp(query, schema, offset);
+      const signatureHelpInfo = signatureHelp(query, schema, caretPosition);
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
       const activeParameter = signatureHelpInfo.activeParameter;
@@ -58,7 +58,7 @@ function getSignatureHelpTooltip(
 
         result = [
           {
-            pos: offset,
+            pos: caretPosition,
             above: true,
             strictSide: true,
             arrow: true,

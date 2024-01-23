@@ -14,7 +14,7 @@ import {
 import { DbSchema } from './dbSchema';
 import {
   EnrichedParseTree,
-  findMostApproximateNode as findClosestNodeByTheLeft,
+  findNearestNodeStartingBeforeOrAt,
   findParent,
 } from './helpers';
 import { parserWrapper } from './parserWrapper';
@@ -42,6 +42,8 @@ function tryParseProcedure(
   if (callClause) {
     const ctx = callClause as CallClauseContext;
     const methodName = ctx.procedureName().getText();
+    // We know where we are in a procedure or function depending on how
+    // many commas inside the procedure we've parsed before the caret
     const previousArguments = ctx.COMMA_list().filter((arg) => {
       return arg.symbol.stop < caretPosition;
     });
@@ -126,6 +128,8 @@ function tryParseFunction(
   if (functionInvocation) {
     const ctx = functionInvocation as FunctionInvocationContext;
     const methodName = ctx.functionName().getText();
+    // We know where we are in a procedure or function depending on how
+    // many commas inside the procedure we've parsed before the caret
     const previousArguments = ctx.COMMA_list().filter((arg) => {
       return arg.symbol.stop < caretPosition;
     });
@@ -181,7 +185,7 @@ export function signatureHelp(
 
   if (caretPosition > 0) {
     const parserResult = parserWrapper.parse(fullQuery);
-    const stopNode = findClosestNodeByTheLeft(
+    const stopNode = findNearestNodeStartingBeforeOrAt(
       parserResult.result,
       caretPosition - 1,
     );
