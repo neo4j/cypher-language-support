@@ -12,7 +12,11 @@ import {
 } from './generated-parser/CypherParser';
 
 import { DbSchema } from './dbSchema';
-import { findMostSpecificNode, findParent } from './helpers';
+import {
+  EnrichedParseTree,
+  findMostApproximateNode as findClosestNodeByTheLeft,
+  findParent,
+} from './helpers';
 import { parserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
@@ -27,7 +31,7 @@ interface ParsedMethod {
 }
 
 function tryParseProcedure(
-  currentNode: ParserRuleContext,
+  currentNode: EnrichedParseTree,
   caretPosition: number,
 ): ParsedMethod | undefined {
   const callClause = findParent(
@@ -82,7 +86,7 @@ because the parser has enough information to recognize that case
 
 */
 function findRightmostPreviousExpression(
-  currentNode: ParserRuleContext,
+  currentNode: EnrichedParseTree,
 ): ParserRuleContext | undefined {
   const parentChildren = currentNode.parentCtx.children;
   let result: ParserRuleContext | undefined = undefined;
@@ -110,7 +114,7 @@ function findRightmostPreviousExpression(
 }
 
 function tryParseFunction(
-  currentNode: ParserRuleContext,
+  currentNode: EnrichedParseTree,
   caretPosition: number,
 ): ParsedMethod | undefined {
   let result: ParsedMethod | undefined = undefined;
@@ -177,7 +181,7 @@ export function signatureHelp(
 
   if (caretPosition > 0) {
     const parserResult = parserWrapper.parse(fullQuery);
-    const stopNode = findMostSpecificNode(
+    const stopNode = findClosestNodeByTheLeft(
       parserResult.result,
       caretPosition - 1,
     );

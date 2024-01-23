@@ -3,6 +3,7 @@
 import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,
+  ParseTree,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -13,6 +14,23 @@ import CypherParser, {
   StatementsContext,
 } from './generated-parser/CypherParser';
 import { ParsingResult } from './parserWrapper';
+
+/* In antlr we have 
+
+        ParseTree
+           / \
+          /   \
+TerminalNode   RuleContext
+                \
+                ParserRuleContext                 
+
+Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
+This type fixes that because it's what we need to traverse the tree most
+of the time
+*/
+export type EnrichedParseTree = ParseTree & {
+  parentCtx: ParserRuleContext | undefined;
+};
 
 export function findStopNode(root: StatementsContext) {
   let children = root.children;
@@ -38,11 +56,11 @@ export function findStopNode(root: StatementsContext) {
   return current;
 }
 
-export function findMostSpecificNode(
-  current: ParserRuleContext,
+export function findMostApproximateNode(
+  current: ParseTree,
   position: number,
-): ParserRuleContext | undefined {
-  let result: ParserRuleContext | undefined = undefined;
+): EnrichedParseTree | undefined {
+  let result: EnrichedParseTree | undefined = undefined;
 
   if (
     current instanceof TerminalNode &&
@@ -51,7 +69,6 @@ export function findMostSpecificNode(
     const symbol = current.symbol;
 
     if (symbol.start <= position) {
-      //&& position <= symbol.stop) {
       result = current;
     }
   } else if (current instanceof ParserRuleContext) {
@@ -63,10 +80,7 @@ export function findMostSpecificNode(
       while (index < children.length) {
         const child = children[index];
 
-        const maybeResult = findMostSpecificNode(
-          child as ParserRuleContext,
-          position,
-        );
+        const maybeResult = findMostApproximateNode(child, position);
         if (maybeResult) {
           result = maybeResult;
         }
@@ -79,10 +93,10 @@ export function findMostSpecificNode(
 }
 
 export function findParent(
-  leaf: ParserRuleContext | undefined,
-  condition: (node: ParserRuleContext) => boolean,
-) {
-  let current: ParserRuleContext | undefined = leaf;
+  leaf: EnrichedParseTree | undefined,
+  condition: (node: EnrichedParseTree) => boolean,
+): EnrichedParseTree {
+  let current: EnrichedParseTree | undefined = leaf;
 
   while (current && !condition(current)) {
     current = current.parentCtx;
