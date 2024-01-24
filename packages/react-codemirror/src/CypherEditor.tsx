@@ -190,7 +190,9 @@ export class CypherEditor extends Component<
     theme: 'light',
   };
 
-  private debouncedOnChange = debounce(this.props.onChange, 200);
+  private debouncedOnChange = this.props.onChange
+    ? debounce(this.props.onChange, 200)
+    : undefined;
 
   componentDidMount(): void {
     const {
