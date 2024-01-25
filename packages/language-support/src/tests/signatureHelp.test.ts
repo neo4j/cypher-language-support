@@ -118,7 +118,7 @@ describe('Procedures signature help', () => {
     );
   });
 
-  test('Does not provide blow up for caret position of 0', () => {
+  test('Does not blow up for caret position of 0', () => {
     testSignatureHelp('', dbSchema, emptyResult);
   });
 
@@ -262,7 +262,7 @@ describe('Functions signature help', () => {
     );
   });
 
-  test('Does not provide blow up for caret position of 0', () => {
+  test('Does not blow up for caret position of 0', () => {
     testSignatureHelp('', dbSchema, emptyResult);
   });
 

@@ -84,7 +84,7 @@ export function findNearestNodeStartingBeforeOrAt(
           We'll try to pick the most specific node whose position is lower or equal to where the caret is
 
               i.e. for CALL procedure(true
-                                   ^
+                                        ^
           we would have a parsing tree akin to this one:
 
                      procedure: CALL ( expression
