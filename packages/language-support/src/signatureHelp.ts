@@ -3,20 +3,17 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTree } from 'antlr4';
-import {
+import { ParseTreeWalker } from 'antlr4';
+import CypherParser, {
   CallClauseContext,
   ExpressionContext,
   FunctionInvocationContext,
-  StatementsContext,
 } from './generated-parser/CypherParser';
 
+import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
-import {
-  EnrichedParseTree,
-  findNearestNodeStartingBeforeOrAt,
-  findParent,
-} from './helpers';
+import CypherParserListener from './generated-parser/CypherParserListener';
+import { isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
@@ -25,136 +22,14 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
+export enum MethodType {
+  function = 'function',
+  procedure = 'procedure',
+}
 interface ParsedMethod {
   methodName: string;
-  numProcedureArgs: number;
-}
-
-function tryParseProcedure(
-  currentNode: EnrichedParseTree,
-  caretPosition: number,
-): ParsedMethod | undefined {
-  const callClause = findParent(
-    currentNode,
-    (node) => node instanceof CallClauseContext,
-  );
-
-  if (callClause) {
-    const ctx = callClause as CallClauseContext;
-    const methodName = ctx.procedureName().getText();
-    // We know where we are in a procedure or function depending on how
-    // many commas inside the procedure we've parsed before the caret
-    const previousArguments = ctx.COMMA_list().filter((arg) => {
-      return arg.symbol.stop < caretPosition;
-    });
-    const numProcedureArgs = previousArguments.length;
-    return {
-      methodName: methodName,
-      numProcedureArgs: numProcedureArgs + 1,
-    };
-  } else {
-    return undefined;
-  }
-}
-
-/* 
-RETURN apoc.do.when( gets parsed as:
-
-      statements
-     /    |    \     
-statement (    EOF
-    /  \
-RETURN  expression
-
-
-
-rather than:
-
-
-        statements
-      /            \     
-statement          EOF
-    /  \ 
-RETURN  functionInvocation
-             /         \ 
-        functionName    (
-
-
-so we need to treat that case differently because we cannot modify the 
-relative priority of functionInvocation vs expression
-
-RETURN apoc.do.when(x gets parsed correctly (when we've started the first argument),
-because the parser has enough information to recognize that case
-
-*/
-function findRightmostPreviousExpression(
-  currentNode: EnrichedParseTree,
-): ParserRuleContext | undefined {
-  const parentChildren = currentNode.parentCtx.children;
-  let result: ParserRuleContext | undefined = undefined;
-
-  if (parentChildren && parentChildren.length > 2) {
-    let current: ParseTree | undefined =
-      parentChildren[parentChildren.length - 3];
-    let expressionFound = false;
-
-    while (
-      current instanceof ParserRuleContext &&
-      current.children &&
-      current.children.length > 0 &&
-      !expressionFound
-    ) {
-      const children = current.children;
-      current = children[children.length - 1];
-      expressionFound = current instanceof ExpressionContext;
-    }
-
-    result = expressionFound ? (current as ParserRuleContext) : undefined;
-  }
-
-  return result;
-}
-
-function tryParseFunction(
-  currentNode: EnrichedParseTree,
-  caretPosition: number,
-): ParsedMethod | undefined {
-  let result: ParsedMethod | undefined = undefined;
-  const functionInvocation = findParent(
-    currentNode,
-    (node) => node instanceof FunctionInvocationContext,
-  );
-
-  if (functionInvocation) {
-    const ctx = functionInvocation as FunctionInvocationContext;
-    const methodName = ctx.functionName().getText();
-    // We know where we are in a procedure or function depending on how
-    // many commas inside the procedure we've parsed before the caret
-    const previousArguments = ctx.COMMA_list().filter((arg) => {
-      return arg.symbol.stop < caretPosition;
-    });
-    const numMethodArgs = previousArguments.length + 1;
-    result = {
-      methodName: methodName,
-      numProcedureArgs: numMethodArgs,
-    };
-  } else if (
-    currentNode.getText() === '(' &&
-    currentNode.parentCtx instanceof StatementsContext
-  ) {
-    // If we finish in an expression followed by (,
-    // take the expression text as method name
-    const prevExpresion = findRightmostPreviousExpression(currentNode);
-
-    if (prevExpresion) {
-      result = {
-        methodName: prevExpresion.getText(),
-        numProcedureArgs: 0,
-      };
-    }
-  }
-
-  return result;
+  activeParameter: number;
+  methodType: MethodType;
 }
 
 function toSignatureHelp(
@@ -162,18 +37,116 @@ function toSignatureHelp(
   parsedMethod: ParsedMethod,
 ) {
   const methodName = parsedMethod.methodName;
-  const numMethodArgs = parsedMethod.numProcedureArgs;
   const method = methodSignatures[methodName];
   const signatures = method ? [method] : [];
-  const argPosition =
-    numMethodArgs !== undefined ? Math.max(numMethodArgs - 1, 0) : undefined;
 
   const signatureHelp: SignatureHelp = {
     signatures: signatures,
     activeSignature: method ? 0 : undefined,
-    activeParameter: argPosition,
+    activeParameter: parsedMethod.activeParameter,
   };
   return signatureHelp;
+}
+
+class SignatureHelper extends CypherParserListener {
+  result: ParsedMethod;
+  constructor(private tokens: Token[], private caretToken: Token) {
+    super();
+  }
+
+  exitExpression = (ctx: ExpressionContext) => {
+    // If the caret is at (
+    if (this.caretToken.type === CypherParser.LPAREN) {
+      /* We need to compute the next token that is not a space following the expression
+      
+        Example: in the case 'RETURN apoc.do.when     (' the expression finishes before the (
+        and we would have a collection of spaces between apoc.do.when and the left parenthesis
+
+      */
+      let index = ctx.stop.tokenIndex + 1;
+      let nextToken = this.tokens[index];
+
+      while (
+        nextToken.type === CypherParser.SPACE &&
+        index < this.tokens.length
+      ) {
+        index++;
+        nextToken = this.tokens[index];
+      }
+
+      if (
+        this.caretToken.start === nextToken?.start &&
+        this.caretToken.stop === nextToken?.stop
+      ) {
+        const methodName = ctx.getText();
+        const numMethodArgs = 0;
+        this.result = {
+          methodName: methodName,
+          activeParameter: numMethodArgs,
+          methodType: MethodType.function,
+        };
+      }
+    }
+  };
+
+  exitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We have opened the left parenthesis
+      isDefined(ctx.LPAREN())
+    ) {
+      const methodName = ctx.functionName().getText();
+      const previousArguments = ctx.COMMA_list().filter((arg) => {
+        return arg.symbol.stop <= this.caretToken.start;
+      });
+
+      this.result = {
+        methodName: methodName,
+        activeParameter: previousArguments.length,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  exitCallClause = (ctx: CallClauseContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We have opened the left parenthesis
+      isDefined(ctx.LPAREN())
+    ) {
+      const methodName = ctx.procedureName().getText();
+      const previousArguments = ctx.COMMA_list().filter((arg) => {
+        return arg.symbol.stop <= this.caretToken.start;
+      });
+
+      this.result = {
+        methodName: methodName,
+        activeParameter: previousArguments.length,
+        methodType: MethodType.procedure,
+      };
+    }
+  };
+}
+
+function findCaretToken(tokens: Token[], caretPosition: number): Token {
+  let i = 0;
+  let result: Token;
+  let keepLooking = true;
+
+  while (i < tokens.length && keepLooking) {
+    const currentToken = tokens[i];
+    keepLooking = currentToken.start < caretPosition;
+
+    if (currentToken.channel === 0 && keepLooking) {
+      result = currentToken;
+    }
+
+    i++;
+  }
+
+  return result;
 }
 
 export function signatureHelp(
@@ -185,23 +158,24 @@ export function signatureHelp(
 
   if (caretPosition > 0) {
     const parserResult = parserWrapper.parse(fullQuery);
-    const stopNode = findNearestNodeStartingBeforeOrAt(
-      parserResult.result,
-      caretPosition - 1,
+
+    const caretToken = findCaretToken(parserResult.tokens, caretPosition);
+    const treeSyntaxHighlighter = new SignatureHelper(
+      parserResult.tokens,
+      caretToken,
     );
 
-    if (stopNode) {
-      const parsedProc = tryParseProcedure(stopNode, caretPosition);
-      if (parsedProc && dbSchema.procedureSignatures) {
-        result = toSignatureHelp(dbSchema.procedureSignatures, parsedProc);
-      } else {
-        const parsedFunc = tryParseFunction(stopNode, caretPosition);
+    ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parserResult.result);
+    const method = treeSyntaxHighlighter.result;
 
-        if (parsedFunc && dbSchema.functionSignatures) {
-          result = toSignatureHelp(dbSchema.functionSignatures, parsedFunc);
-        }
+    if (method !== undefined) {
+      if (method.methodType === MethodType.function) {
+        result = toSignatureHelp(dbSchema.functionSignatures, method);
+      } else {
+        result = toSignatureHelp(dbSchema.procedureSignatures, method);
       }
     }
   }
+
   return result;
 }

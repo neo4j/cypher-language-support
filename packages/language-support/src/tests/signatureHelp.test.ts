@@ -176,6 +176,49 @@ describe('Procedures signature help', () => {
       25,
     );
   });
+
+  test('Provides signature help for CALLs even on several spaces', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(true,   )',
+      dbSchema,
+      expectedArgIndex(1),
+      25,
+    );
+  });
+
+  test('Provides signature help for CALLs when argument far apart from parenthesis', () => {
+    testSignatureHelp('CALL apoc.do.when     (', dbSchema, expectedArgIndex(0));
+  });
+
+  test('Provides signature help for CALLs when name and parenthesis contain spaces', () => {
+    testSignatureHelp(
+      'CALL apoc       .  do     .  when   (arg  ,    ',
+      dbSchema,
+      expectedArgIndex(1),
+    );
+  });
+
+  test('Does not provide signature help for functions when parenthesis not opened', () => {
+    testSignatureHelp(`CALL apoc.do.when`, dbSchema, emptyResult);
+  });
+
+  test('Provides signature help for the right CALL when there are several procedures in the same statement', () => {
+    testSignatureHelp(
+      `CALL apoc.do.when(true, if, else, {})
+       CALL apoc.do.case([], else, {})`,
+      dbSchema,
+      expectedArgIndex(1),
+      26,
+    );
+
+    testSignatureHelp(
+      `CALL apoc.do.case([], else, {})
+       CALL apoc.do.when(true, if, else, {})`,
+      dbSchema,
+      expectedArgIndex(1),
+      63,
+    );
+  });
 });
 
 describe('Functions signature help', () => {
@@ -302,6 +345,50 @@ describe('Functions signature help', () => {
       dbSchema,
       expectedArgIndex(1),
       50,
+    );
+  });
+
+  test('Provides signature help for functions when argument far apart from parenthesis', () => {
+    testSignatureHelp(
+      `MATCH (n)
+         RETURN apoc.coll.combinations   (`,
+      dbSchema,
+      expectedArgIndex(0),
+    );
+  });
+
+  test('Provides signature help for functions when name and parenthesis contain spaces', () => {
+    testSignatureHelp(
+      'RETURN apoc       .  coll     .  combinations   (arg  ,    ',
+      dbSchema,
+      expectedArgIndex(1),
+    );
+  });
+
+  test('Does not provide signature help for functions when parenthesis not opened', () => {
+    testSignatureHelp(
+      `MATCH (n)
+         RETURN apoc.coll.combinations`,
+      dbSchema,
+      emptyResult,
+    );
+  });
+
+  test('Provides signature help for the right function when there are several functions in the same statement', () => {
+    testSignatureHelp(
+      `RETURN apoc.coll.combinations(coll, minSelect, maxSelect), 
+              apoc.coll.contains(coll, value)`,
+      dbSchema,
+      expectedArgIndex(1),
+      37,
+    );
+
+    testSignatureHelp(
+      `RETURN apoc.coll.contains(coll, value), 
+              apoc.coll.combinations(coll, minSelect, maxSelect)`,
+      dbSchema,
+      expectedArgIndex(1),
+      89,
     );
   });
 });
