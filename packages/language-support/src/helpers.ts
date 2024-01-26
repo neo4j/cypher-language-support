@@ -4,7 +4,6 @@ import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
-  TerminalNode,
   Token,
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
@@ -54,65 +53,6 @@ export function findStopNode(root: StatementsContext) {
   }
 
   return current;
-}
-
-export function findNearestNodeStartingBeforeOrAt(
-  current: ParseTree,
-  position: number,
-): EnrichedParseTree | undefined {
-  let result: EnrichedParseTree | undefined = undefined;
-
-  if (
-    current instanceof TerminalNode &&
-    current.symbol.type !== CypherParser.EOF
-  ) {
-    const symbol = current.symbol;
-
-    if (symbol.start <= position) {
-      result = current;
-    }
-  } else if (current instanceof ParserRuleContext) {
-    const children = current.children;
-
-    if (children) {
-      let index = 0;
-
-      while (index < children.length) {
-        const child = children[index];
-
-        /*
-          We'll try to pick the most specific node whose position is lower or equal to where the caret is
-
-              i.e. for CALL procedure(true
-                                        ^
-          we would have a parsing tree akin to this one:
-
-                     procedure: CALL ( expression
-                                           |
-                                    boolean literal
-                                           |
-                                          true
- 
-
-          we would return the literal true.
-
-          If the caret was at a space, we would pick what's inmediately before the space:
-
-             CALL procedure(true,  
-                                   ^
-          we would pick the COMMA element. This is because spaces don't appear in the 
-          parse tree, so we want to pick whatever rule is closest to them
-        */
-        const maybeResult = findNearestNodeStartingBeforeOrAt(child, position);
-        if (maybeResult) {
-          result = maybeResult;
-        }
-        index++;
-      }
-    }
-  }
-
-  return result;
 }
 
 export function findParent(

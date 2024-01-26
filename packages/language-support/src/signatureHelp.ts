@@ -57,11 +57,12 @@ class SignatureHelper extends CypherParserListener {
   exitExpression = (ctx: ExpressionContext) => {
     // If the caret is at (
     if (this.caretToken.type === CypherParser.LPAREN) {
-      /* We need to compute the next token that is not a space following the expression
+      /* We need to compute the next token that is not 
+         a space following the expression
       
-        Example: in the case 'RETURN apoc.do.when     (' the expression finishes before the (
-        and we would have a collection of spaces between apoc.do.when and the left parenthesis
-
+        Example: in the case 'RETURN apoc.do.when     (' the 
+        expression finishes before the ( and we would have a 
+        collection of spaces between apoc.do.when and the left parenthesis
       */
       let index = ctx.stop.tokenIndex + 1;
       let nextToken = this.tokens[index];
@@ -93,7 +94,8 @@ class SignatureHelper extends CypherParserListener {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&
-      // We have opened the left parenthesis
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
       isDefined(ctx.LPAREN())
     ) {
       const methodName = ctx.functionName().getText();
@@ -113,7 +115,8 @@ class SignatureHelper extends CypherParserListener {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&
-      // We have opened the left parenthesis
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
       isDefined(ctx.LPAREN())
     ) {
       const methodName = ctx.procedureName().getText();
