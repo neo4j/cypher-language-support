@@ -4,7 +4,7 @@ import CypherParser;
 
 options { tokenVocab = CypherCmdLexer; }
 
-fullStatements: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
+statementsOrCommands: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
 
 statementOrCommand: (statement | consoleCommand);
 
@@ -12,7 +12,7 @@ consoleCommand: COLON (clearCmd | historyCmd | useCmd | paramsCmd);
 
 paramsCmd: PARAM paramsArgs?;
 
-paramsArgs: (CLEAR | listCompleteRule | map | lambda);
+paramsArgs: (CLEAR | listCompletionRule | map | lambda);
 
 lambda: unescapedSymbolicNameString EQ GT expression;
 
@@ -22,7 +22,7 @@ historyCmd: HISTORY;
 
 useCmd: useCompletionRule symbolicAliasName?;
 
-// These rules are needed to distinguish between use and use command in autocopmletion
-listCompleteRule: LIST; 
+// These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
+listCompletionRule: LIST; 
 
 useCompletionRule: USE;

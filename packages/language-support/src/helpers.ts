@@ -7,13 +7,13 @@ import antlrDefaultExport, {
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
-  FullStatementsContext,
   NodePatternContext,
   RelationshipPatternContext,
+  StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsingResult } from './parserWrapper';
 
-export function findStopNode(root: FullStatementsContext) {
+export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 

@@ -261,7 +261,7 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     }
 
-    const list = ctx.listCompleteRule()?.LIST();
+    const list = ctx.listCompletionRule()?.LIST();
     if (list) {
       this.addToken(
         list.symbol,

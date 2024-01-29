@@ -329,7 +329,7 @@ export function completionCoreCompletion(
     ...(enableConsoleCommands
       ? [
           CypherParser.RULE_useCompletionRule,
-          CypherParser.RULE_listCompleteRule,
+          CypherParser.RULE_listCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -464,7 +464,7 @@ export function completionCoreCompletion(
         return [{ label: 'use', kind: CompletionItemKind.Event }];
       }
 
-      if (ruleNumber === CypherParser.RULE_listCompleteRule) {
+      if (ruleNumber === CypherParser.RULE_listCompletionRule) {
         return [{ label: 'list', kind: CompletionItemKind.Event }];
       }
 

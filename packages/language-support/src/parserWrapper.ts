@@ -6,10 +6,10 @@ import CypherLexer from './generated-parser/CypherCmdLexer';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherParser, {
   ClauseContext,
-  FullStatementsContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  StatementsOrCommandsContext,
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
@@ -30,7 +30,7 @@ export interface ParsingResult {
   query: string;
   parser: CypherParser;
   tokens: Token[];
-  result: FullStatementsContext;
+  result: StatementsOrCommandsContext;
 }
 
 export enum LabelType {
@@ -98,7 +98,7 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
 
 export function parse(cypher: string) {
   const parser = createParsingScaffolding(cypher).parser;
-  return parser.fullStatements();
+  return parser.statementsOrCommands();
 }
 
 export function createParsingResult(
@@ -107,7 +107,7 @@ export function createParsingResult(
   const query = parsingScaffolding.query;
   const parser = parsingScaffolding.parser;
   const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.fullStatements();
+  const result = parser.statementsOrCommands();
 
   const parsingResult: ParsingResult = {
     query: query,
@@ -234,7 +234,7 @@ export type ParsedCommand = ParsedCommandNoPosition & {
   stop: Token;
 };
 
-function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
+function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
   return stmts.statementOrCommand_list().map((stmt) => {
     const { start, stop } = stmt;
 
@@ -318,7 +318,7 @@ function parseToCommands(stmts: FullStatementsContext): ParsedCommand[] {
           return { type: 'clear-parameters', start, stop };
         }
 
-        const list = paramArgs.listCompleteRule()?.LIST();
+        const list = paramArgs.listCompletionRule()?.LIST();
         if (list) {
           return { type: 'list-parameters', start, stop };
         }
