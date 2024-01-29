@@ -21,6 +21,10 @@ export interface SemanticAnalysisElement {
     column: number;
   };
 }
+type SemanticAnalysisElementNoSeverity = Omit<
+  SemanticAnalysisElement,
+  'severity'
+>;
 
 export function wrappedSemanticAnalysis(query: string): SemanticAnalysisResult {
   try {
@@ -28,8 +32,9 @@ export function wrappedSemanticAnalysis(query: string): SemanticAnalysisResult {
     semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
-    const errors: SemanticAnalysisElement[] = semanticErrorsResult.$errors.data;
-    const notifications: SemanticAnalysisElement[] =
+    const errors: SemanticAnalysisElementNoSeverity[] =
+      semanticErrorsResult.$errors.data;
+    const notifications: SemanticAnalysisElementNoSeverity[] =
       semanticErrorsResult.$notifications.data;
 
     return {
