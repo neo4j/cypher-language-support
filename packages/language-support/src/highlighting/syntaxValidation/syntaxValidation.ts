@@ -175,9 +175,11 @@ export function validateSyntax(
     const parsingResult = parserWrapper.parse(wholeFileText);
     diagnostics = parsingResult.diagnostics;
 
-    // semantic anaylsis doesn't handle multi statements
-    // we break the file into statements and run semantic analysis on each
-    // then mapp the postions back to the original file
+    /*  
+    Semantic anaylsis can only handle one cypher statement at a time and naturally only supports cypher.
+    We work around these limitations by breaking the file into statements, then run semantic analysis 
+    on each individual cypher statement and map the positions back to the original query.
+    */
     if (diagnostics.length === 0) {
       parsingResult.collectedCommands.forEach((cmd) => {
         if (cmd.type === 'cypher') {
