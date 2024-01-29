@@ -163,13 +163,13 @@ export function signatureHelp(
     const parserResult = parserWrapper.parse(fullQuery);
 
     const caretToken = findCaretToken(parserResult.tokens, caretPosition);
-    const treeSyntaxHighlighter = new SignatureHelper(
+    const signatureHelper = new SignatureHelper(
       parserResult.tokens,
       caretToken,
     );
 
-    ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parserResult.result);
-    const method = treeSyntaxHighlighter.result;
+    ParseTreeWalker.DEFAULT.walk(signatureHelper, parserResult.result);
+    const method = signatureHelper.result;
 
     if (method !== undefined) {
       if (method.methodType === MethodType.function) {
