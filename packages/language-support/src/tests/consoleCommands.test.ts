@@ -260,6 +260,13 @@ describe('parameters', () => {
       ':param {a: 3',
       "Expected any of '}', ',', AND, OR, XOR or an expression",
     );
+    expectErrorMessage(':param RETURN', "Expected '='");
+    expectErrorMessage(':param RETURN b', "Expected '='");
+    expectErrorMessage(':param b => ', 'Expected an expression');
+    expectErrorMessage(':param {', "Expected '}' or an identifier");
+    expectErrorMessage(':param {x}', "Expected ':'");
+    expectErrorMessage(':param {x: ', 'Expected an expression');
+    expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
   });
 
   test('highlights :params properly', () => {

@@ -281,33 +281,32 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            .symbolicNameString_list()
+            ?.symbolicNameString_list()
             .map((name) => name.getText());
           const expressions = cypherMap
-            .expression_list()
+            ?.expression_list()
             .map((expr) => expr.getText());
 
-          return {
-            type: 'set-parameters',
-            parameters: names.map((name, index) => ({
-              name,
-              expression: expressions[index],
-            })),
-            start,
-            stop,
-          };
+          if (names && expressions && names.length === expressions.length) {
+            return {
+              type: 'set-parameters',
+              parameters: names.map((name, index) => ({
+                name,
+                expression: expressions[index],
+              })),
+              start,
+              stop,
+            };
+          }
         }
 
         const lambda = paramArgs.lambda();
-        if (lambda) {
+        const name = lambda?.unescapedSymbolicNameString()?.getText();
+        const expression = lambda?.expression()?.getText();
+        if (name && expression) {
           return {
             type: 'set-parameters',
-            parameters: [
-              {
-                name: lambda.unescapedSymbolicNameString().getText(),
-                expression: lambda.expression().getText(),
-              },
-            ],
+            parameters: [{ name, expression }],
             start,
             stop,
           };
@@ -383,6 +382,7 @@ class ParserWrapper {
       const diagnostics = errorListener.errors;
 
       const collectedCommands = parseToCommands(result);
+
       if (!this.enableConsoleCommands) {
         diagnostics.push(...errorOnNonCypherCommands(collectedCommands));
       }
