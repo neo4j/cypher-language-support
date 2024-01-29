@@ -1,4 +1,4 @@
-import CypherLexer from './generated-parser/CommandLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 
 export enum CypherTokenType {
   comment = 'comment',

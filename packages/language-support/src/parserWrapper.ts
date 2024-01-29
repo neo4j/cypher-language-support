@@ -1,7 +1,7 @@
 import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/CommandLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherParser, {
@@ -11,7 +11,7 @@ import CypherParser, {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   VariableContext,
-} from './generated-parser/CommandParser';
+} from './generated-parser/CypherCmdParser';
 import {
   findParent,
   findStopNode,

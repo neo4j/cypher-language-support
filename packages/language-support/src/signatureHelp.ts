@@ -9,7 +9,7 @@ import {
   ExpressionContext,
   FullStatementsContext,
   FunctionInvocationContext,
-} from './generated-parser/CommandParser';
+} from './generated-parser/CypherCmdParser';
 
 import { DbSchema } from './dbSchema';
 import { findParent } from './helpers';

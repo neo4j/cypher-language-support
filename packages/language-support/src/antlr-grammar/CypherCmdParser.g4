@@ -1,8 +1,8 @@
-parser grammar CommandParser;
+parser grammar CypherCmdParser;
 
 import CypherParser;
 
-options { tokenVocab = CommandLexer; }
+options { tokenVocab = CypherCmdLexer; }
 
 fullStatements: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
 

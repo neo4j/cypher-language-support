@@ -1,4 +1,4 @@
-lexer grammar CommandLexer;
+lexer grammar CypherCmdLexer;
 
 import CypherLexer;
 

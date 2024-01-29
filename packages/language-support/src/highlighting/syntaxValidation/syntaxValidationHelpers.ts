@@ -10,7 +10,7 @@ import {
   DiagnosticSeverity,
   Position,
 } from 'vscode-languageserver-types';
-import CypherParser from '../../generated-parser/CommandParser';
+import CypherParser from '../../generated-parser/CypherCmdParser';
 import { completionCoreErrormessage } from './completionCoreErrors';
 
 export type SyntaxDiagnostic = Diagnostic & {

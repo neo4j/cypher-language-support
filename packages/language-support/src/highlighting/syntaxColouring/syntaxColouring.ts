@@ -27,13 +27,13 @@ import {
   SymbolicNameStringContext,
   UseCompletionRuleContext,
   VariableContext,
-} from '../../generated-parser/CommandParser';
+} from '../../generated-parser/CypherCmdParser';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherParserListener from '../../generated-parser/CommandParserListener';
+import CypherParserListener from '../../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../../lexerSymbols';
 import { parserWrapper } from '../../parserWrapper';
 import {

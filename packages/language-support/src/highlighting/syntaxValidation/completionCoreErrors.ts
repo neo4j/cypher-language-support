@@ -2,8 +2,8 @@ import { Token } from 'antlr4';
 import type { ParserRuleContext } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
-import CypherLexer from '../../generated-parser/CommandLexer';
-import CypherParser from '../../generated-parser/CommandParser';
+import CypherLexer from '../../generated-parser/CypherCmdLexer';
+import CypherParser from '../../generated-parser/CypherCmdParser';
 import { keywordNames, tokenNames } from '../../lexerSymbols';
 
 /*
