@@ -8,13 +8,18 @@ export {
   syntaxColouringLegend,
 } from './highlighting/syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
-export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
+export {
+  findEndPosition,
+  lintCypherQuery,
+  validateSemantics,
+  validateSyntax,
+} from './highlighting/syntaxValidation/syntaxValidation';
+export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse } from './parserWrapper';
+export { parse, parserWrapper } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
-export { CypherLexer };
-export { CypherParser };
+export { CypherLexer, CypherParser };
 
 import CypherLexer from './generated-parser/CypherLexer';
 import CypherParser from './generated-parser/CypherParser';

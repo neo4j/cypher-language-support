@@ -1,5 +1,6 @@
 import {
   createConnection,
+  Diagnostic,
   DidChangeConfigurationNotification,
   InitializeResult,
   ProposedFeatures,
@@ -11,10 +12,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import {
-  syntaxColouringLegend,
-  validateSyntax,
-} from '@neo4j-cypher/language-support';
+import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
@@ -22,6 +20,8 @@ import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
+
+import { cleanupWorkers, lintDocument } from './linting';
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -73,18 +73,14 @@ connection.onInitialized(() => {
   );
 });
 
-// Trigger the syntactic errors highlighting on every document change
-documents.onDidChangeContent((change) => {
-  const document = change.document;
-  const diagnostics = validateSyntax(
-    document.getText(),
-    neo4jSdk.metadata?.dbSchema ?? {},
-  );
-  void connection.sendDiagnostics({
-    uri: document.uri,
-    diagnostics: diagnostics,
-  });
-});
+documents.onDidChangeContent((change) =>
+  lintDocument(change, (diagnostics: Diagnostic[]) => {
+    void connection.sendDiagnostics({
+      uri: change.document.uri,
+      diagnostics,
+    });
+  }),
+);
 
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(
@@ -121,4 +117,9 @@ connection.onDidChangeConfiguration(
 );
 
 documents.listen(connection);
+
 connection.listen();
+
+connection.onExit(() => {
+  cleanupWorkers();
+});

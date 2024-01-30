@@ -3,6 +3,7 @@
   "include": ["src"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true
+    "allowJs": true,
+    "module": "esnext"
   }
 }

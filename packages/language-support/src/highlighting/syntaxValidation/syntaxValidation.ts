@@ -9,8 +9,8 @@ import {
   parserWrapper,
 } from '../../parserWrapper';
 import {
-  doSemanticAnalysis,
   SemanticAnalysisElement,
+  wrappedSemanticAnalysis,
 } from './semanticAnalysisWrapper';
 import { SyntaxDiagnostic } from './syntaxValidationHelpers';
 
@@ -82,12 +82,15 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-function findEndPosition(
+export function findEndPosition(
+  e: SemanticAnalysisElement,
   parsingResult: EnrichedParsingResult,
-  start: Position,
-  startOffset: number,
-): PositionWithOffset {
+): SyntaxDiagnostic {
   let token: Token | undefined = undefined;
+
+  const start = Position.create(e.position.line - 1, e.position.column - 1);
+  const startOffset = e.position.offset;
+
   const line = start.line + 1;
   const column = start.character;
   const toExplore: ParseTree[] = [parsingResult.result];
@@ -108,24 +111,32 @@ function findEndPosition(
 
   if (token === undefined) {
     return {
-      offset: startOffset,
-      relative: start,
+      severity: e.severity,
+      message: e.message,
+      range: {
+        start: start,
+        end: start,
+      },
+      offsets: {
+        start: startOffset,
+        end: startOffset,
+      },
     };
   } else {
     return {
-      offset: token.stop + 1,
-      relative: Position.create(
-        token.line - 1,
-        token.column + token.text.length,
-      ),
+      severity: e.severity,
+      message: e.message,
+      range: {
+        start: start,
+        end: Position.create(token.line - 1, token.column + token.text.length),
+      },
+      offsets: {
+        start: startOffset,
+        end: token.stop + 1,
+      },
     };
   }
 }
-
-type PositionWithOffset = {
-  relative: Position;
-  offset: number;
-};
 
 export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
@@ -134,61 +145,46 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   return a.range.start.character - b.range.start.character;
 }
 
-function getSemanticAnalysisDiagnostics(
-  elements: SemanticAnalysisElement[],
-  severity: DiagnosticSeverity,
-  parsingResult: EnrichedParsingResult,
-): SyntaxDiagnostic[] {
-  return elements.map((e) => {
-    const start = Position.create(e.position.line - 1, e.position.column - 1);
-    const startOffset = e.position.offset;
-    const end = findEndPosition(parsingResult, start, startOffset);
-
-    return {
-      severity: severity,
-      range: {
-        start: start,
-        end: end.relative,
-      },
-      offsets: {
-        start: startOffset,
-        end: end.offset,
-      },
-      message: e.message,
-    };
-  });
-}
-
-export function validateSyntax(
+export function lintCypherQuery(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  let diagnostics: SyntaxDiagnostic[] = [];
+  const syntaxErrors = validateSyntax(wholeFileText, dbSchema);
 
-  if (wholeFileText.length > 0) {
-    const parsingResult = parserWrapper.parse(wholeFileText);
-    diagnostics = parsingResult.diagnostics;
+  if (syntaxErrors.length > 0) {
+    return syntaxErrors;
+  }
+  const cachedParse = parserWrapper.parse(wholeFileText);
 
-    if (diagnostics.length === 0) {
-      const semanticAnalysisResult = doSemanticAnalysis(wholeFileText);
-      const errors = getSemanticAnalysisDiagnostics(
-        semanticAnalysisResult.errors,
-        DiagnosticSeverity.Error,
-        parsingResult,
-      );
+  return validateSemantics(wholeFileText)
+    .map((el) => findEndPosition(el, cachedParse))
+    .sort(sortByPosition);
+}
 
-      const warnings = getSemanticAnalysisDiagnostics(
-        semanticAnalysisResult.notifications,
-        DiagnosticSeverity.Warning,
-        parsingResult,
-      );
-
-      diagnostics.push(...warnings, ...errors);
-    }
+export function validateSyntax(
+  query: string,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  if (query.length > 0) {
+    const parsingResult = parserWrapper.parse(query);
+    const diagnostics = parsingResult.diagnostics;
 
     const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    diagnostics.push(...labelWarnings);
+    return diagnostics.concat(labelWarnings).sort(sortByPosition);
   }
 
-  return diagnostics.sort(sortByPosition);
+  return [];
+}
+
+/**
+ * Assumes the provided query has no parse errors
+ */
+export function validateSemantics(query: string): SemanticAnalysisElement[] {
+  if (query.length > 0) {
+    const { notifications, errors } = wrappedSemanticAnalysis(query);
+
+    return notifications.concat(errors);
+  }
+
+  return [];
 }

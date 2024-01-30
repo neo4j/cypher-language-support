@@ -2,7 +2,10 @@
 import Benchmark from 'benchmark';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { applySyntaxColouring } from '../../highlighting/syntaxColouring/syntaxColouring';
-import { validateSyntax } from '../../highlighting/syntaxValidation/syntaxValidation';
+import {
+  lintCypherQuery,
+  validateSyntax,
+} from '../../highlighting/syntaxValidation/syntaxValidation';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
 import {
@@ -42,7 +45,7 @@ suite
   })
   .add('movies - validate syntax', function () {
     parserWrapper.clearCache();
-    validateSyntax(createMovieDb, benchmarkingMediumSizeSchema);
+    lintCypherQuery(createMovieDb, benchmarkingMediumSizeSchema);
   })
   .add('movies - autocomplete next statement', function () {
     parserWrapper.clearCache();
@@ -58,7 +61,7 @@ suite
   })
   .add('tictactoe - validate syntax', function () {
     parserWrapper.clearCache();
-    validateSyntax(tictactoe, benchmarkingMediumSizeSchema);
+    lintCypherQuery(tictactoe, benchmarkingMediumSizeSchema);
   })
   .add('tictactoe - autocomplete next statement - no Schema', function () {
     parserWrapper.clearCache();
