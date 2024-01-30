@@ -117,8 +117,6 @@ describe('sanity checks', () => {
   test('accepts mixed case', () => {
     expectParsedCommands(':cLeaR;', [{ type: 'clear' }]);
   });
-  // TODO Limiation -> error messages are in caps
-  // TODO There's a "did you mean :" in the METCH examples
 
   test('handles misspelled or non-existing command', () => {
     expect(parserWrapper.parse(':foo').diagnostics[0].message).toEqual(
