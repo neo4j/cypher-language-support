@@ -7,7 +7,8 @@ import {
   validateSyntax,
 } from '../../highlighting/syntaxValidation/syntaxValidation';
 import { parse, parserWrapper } from '../../parserWrapper';
-import { benchmarkingMediumSizeSchema } from './benchmark-dbschemas';
+import { signatureHelp } from '../../signatureHelp';
+import { testData } from '../testData';
 import {
   autocompletionQueries,
   createMovieDb,
@@ -16,7 +17,11 @@ import {
   tictactoe,
 } from './benchmark-queries';
 
-Benchmark.options.minSamples = 20;
+const periodicIterate = 'CALL apoc.periodic.iterate(';
+const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';
+
+Benchmark.options.minSamples = 10;
+Benchmark.options.maxTime = 1;
 
 const suite = new Benchmark.Suite();
 
@@ -30,11 +35,11 @@ suite
   })
   .add('simple - validate syntax', function () {
     parserWrapper.clearCache();
-    validateSyntax(simpleQuery, benchmarkingMediumSizeSchema);
+    validateSyntax(simpleQuery, testData.mockSchema);
   })
   .add('simple - autocomplete next statement', function () {
     parserWrapper.clearCache();
-    autocomplete(simpleQuery, benchmarkingMediumSizeSchema);
+    autocomplete(simpleQuery, testData.mockSchema);
   })
   .add('movies - parse', function () {
     parse(createMovieDb);
@@ -45,11 +50,18 @@ suite
   })
   .add('movies - validate syntax', function () {
     parserWrapper.clearCache();
-    lintCypherQuery(createMovieDb, benchmarkingMediumSizeSchema);
+    lintCypherQuery(createMovieDb, testData.mockSchema);
   })
   .add('movies - autocomplete next statement', function () {
     parserWrapper.clearCache();
-    autocomplete(createMovieDb, benchmarkingMediumSizeSchema);
+    autocomplete(createMovieDb, testData.mockSchema);
+  })
+  .add('movies - signature help', function () {
+    const subQuery = createMovieDb + periodicIterate;
+    const query = createMovieDb + periodicIterate + periodicIterateFirstArg;
+    parserWrapper.clearCache();
+    signatureHelp(query, testData.mockSchema);
+    signatureHelp(subQuery, testData.mockSchema);
   })
   .add('tictactoe - parse', function () {
     parserWrapper.clearCache();
@@ -61,7 +73,7 @@ suite
   })
   .add('tictactoe - validate syntax', function () {
     parserWrapper.clearCache();
-    lintCypherQuery(tictactoe, benchmarkingMediumSizeSchema);
+    lintCypherQuery(tictactoe, testData.mockSchema);
   })
   .add('tictactoe - autocomplete next statement - no Schema', function () {
     parserWrapper.clearCache();
@@ -69,7 +81,14 @@ suite
   })
   .add('tictactoe - autocomplete next statement - medium Schema', function () {
     parserWrapper.clearCache();
-    autocomplete(tictactoe, benchmarkingMediumSizeSchema);
+    autocomplete(tictactoe, testData.mockSchema);
+  })
+  .add('tictactoe - signature help', function () {
+    const subQuery = tictactoe + periodicIterate;
+    const query = tictactoe + periodicIterate + periodicIterateFirstArg;
+    parserWrapper.clearCache();
+    signatureHelp(query, testData.mockSchema);
+    signatureHelp(subQuery, testData.mockSchema);
   })
   .add('pokemon - parse', function () {
     parserWrapper.clearCache();
@@ -82,6 +101,22 @@ suite
   .add('pokemon - syntax highlight', function () {
     parserWrapper.clearCache();
     applySyntaxColouring(largePokemonquery);
+  })
+  .add('pokemon - signature help', function () {
+    const subQuery = largePokemonquery + periodicIterate;
+    const query = largePokemonquery + periodicIterate + periodicIterateFirstArg;
+    parserWrapper.clearCache();
+    // This mimics getting the cursor back in the query and retriggering signature help
+    signatureHelp(query, testData.mockSchema);
+    signatureHelp(subQuery, testData.mockSchema);
+  })
+  .add('multistatement - autocompletion', function () {
+    const query = tictactoe + ';\n' + tictactoe;
+    const subQuery = tictactoe;
+    parserWrapper.clearCache();
+    // This mimics getting the cursor back in the query and retriggering auto-completion
+    autocomplete(query, testData.mockSchema);
+    autocomplete(subQuery, testData.mockSchema);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {
@@ -90,7 +125,7 @@ Object.entries(autocompletionQueries).forEach(([name, query]) => {
   });
   suite.add(`autocomplete - ${name}`, function () {
     parserWrapper.clearCache();
-    autocomplete(query, benchmarkingMediumSizeSchema);
+    autocomplete(query, testData.mockSchema);
   });
 });
 
