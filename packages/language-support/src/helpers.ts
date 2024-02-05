@@ -12,7 +12,7 @@ import CypherParser, {
   RelationshipPatternContext,
   StatementsContext,
 } from './generated-parser/CypherParser';
-import { ParsingResult } from './parserWrapper';
+import { ParsingResult, StatementParsing } from './parserWrapper';
 
 /* In antlr we have 
 
@@ -92,35 +92,6 @@ type AntlrDefaultExport = {
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
-export function findLatestStatement(
-  parsingResult: ParsingResult,
-): undefined | string {
-  const tokens = parsingResult.tokens;
-  const lastTokenIndex = tokens.length - 1;
-
-  let tokenIndex = lastTokenIndex;
-  let found = false;
-  let lastStatement: undefined | string = undefined;
-
-  // Last token is always EOF
-  while (tokenIndex > 0 && !found) {
-    tokenIndex--;
-    found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;
-  }
-
-  if (found) {
-    lastStatement = '';
-
-    tokenIndex += 1;
-    while (tokenIndex < lastTokenIndex) {
-      lastStatement += tokens.at(tokenIndex)?.text ?? '';
-      tokenIndex++;
-    }
-  }
-
-  return lastStatement;
-}
-
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
@@ -137,6 +108,80 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
   );
 
   return isDefined(relPattern);
+}
+
+class MyTokenStream extends CommonTokenStream {
+  tokens: antlrDefaultExport.Token[] = [];
+
+  constructor(lexer: CypherLexer, tokens: Token[]) {
+    super(lexer);
+    this.tokens = [...tokens];
+  }
+}
+
+export function findCaret(
+  parsingResult: ParsingResult,
+  caretPosition: number,
+): { statement: StatementParsing; token: Token } | undefined {
+  const statements = parsingResult.statementsParsing;
+  let i = 0;
+  let result: { statement: StatementParsing; token: Token } = undefined;
+  let keepLooking = true;
+
+  while (i < statements.length && keepLooking) {
+    let j = 0;
+    const statement = statements[i];
+    const tokens = statement.tokens;
+
+    while (j < tokens.length && keepLooking) {
+      const currentToken = tokens[j];
+      keepLooking = currentToken.start < caretPosition;
+
+      if (currentToken.channel === 0 && keepLooking) {
+        result = { statement: statement, token: currentToken };
+      }
+
+      j++;
+    }
+    i++;
+  }
+
+  return result;
+}
+
+// TODO Should this be moved to the parser wrapper?
+export function splitIntoStatements(
+  tokenStream: CommonTokenStream,
+  lexer: CypherLexer,
+): CommonTokenStream[] {
+  tokenStream.fill();
+  const tokens = tokenStream.tokens;
+
+  let i = 0;
+  const result: CommonTokenStream[] = [];
+  let chunk: Token[] = [];
+  let offset = 0;
+
+  while (i < tokens.length) {
+    const current = tokens[i].clone();
+    current.tokenIndex -= offset;
+
+    chunk.push(current);
+
+    if (
+      current.type === CypherLexer.SEMICOLON ||
+      current.type === CypherLexer.EOF
+    ) {
+      // This does not relex since we are not calling fill on the token stream
+      result.push(new MyTokenStream(lexer, chunk));
+      offset = i + 1;
+      chunk = [];
+    }
+
+    i++;
+  }
+
+  return result;
 }
 
 export const rulesDefiningVariables = [

@@ -2,7 +2,6 @@ import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherLexer';
-
 import CypherParser, {
   ClauseContext,
   LabelNameContext,
@@ -14,22 +13,31 @@ import CypherParser, {
 import {
   findParent,
   findStopNode,
-  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
   rulesDefiningOrUsingVariables,
+  splitIntoStatements,
 } from './helpers';
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
 } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 
-export interface ParsingResult {
-  query: string;
+export interface StatementParsing {
+  statement: string;
   parser: CypherParser;
   tokens: Token[];
-  result: StatementsContext;
+  ctx: StatementsContext;
+  diagnostics: SyntaxDiagnostic[];
+  stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
+  collectedVariables: string[];
+}
+
+export interface ParsingResult {
+  query: string;
+  statementsParsing: StatementParsing[];
 }
 
 export enum LabelType {
@@ -67,51 +75,47 @@ export type LabelOrRelType = {
   };
 };
 
-export interface EnrichedParsingResult extends ParsingResult {
-  diagnostics: SyntaxDiagnostic[];
-  stopNode: ParserRuleContext;
-  collectedLabelOrRelTypes: LabelOrRelType[];
-  collectedVariables: string[];
-}
-
-export interface ParsingScaffolding {
-  query: string;
-  parser: CypherParser;
-  tokenStream: CommonTokenStream;
-}
-
-export function createParsingScaffolding(query: string): ParsingScaffolding {
-  const inputStream = CharStreams.fromString(query);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  parser.removeErrorListeners();
-
-  return {
-    query: query,
-    parser: parser,
-    tokenStream: tokenStream,
-  };
-}
-
-export function parse(cypher: string) {
-  const parser = createParsingScaffolding(cypher).parser;
-  return parser.statements();
-}
-
 export function createParsingResult(
-  parsingScaffolding: ParsingScaffolding,
+  query: string,
+  tokenStream: CommonTokenStream,
+  lexer: CypherLexer,
 ): ParsingResult {
-  const query = parsingScaffolding.query;
-  const parser = parsingScaffolding.parser;
-  const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.statements();
+  const stsTokenStreams = splitIntoStatements(tokenStream, lexer);
+
+  const results: StatementParsing[] = stsTokenStreams.map((t) => {
+    // TODO Why do we duplicate an EOF here sometimes if we don't deep copy?
+    const tokens = [...t.tokens];
+    // TODO Can this be done with the first start and last stop position on the stream?
+    const statement = tokens
+      .filter((token) => token.text !== '<EOF>')
+      .map((token) => token.text)
+      .join('');
+    const parser = new CypherParser(t);
+    const labelsCollector = new LabelAndRelTypesCollector();
+    const variableFinder = new VariableCollector();
+    const errorListener = new SyntaxErrorsListener();
+    parser._parseListeners = [labelsCollector, variableFinder];
+    parser.removeErrorListeners();
+    parser.addErrorListener(errorListener);
+    const ctx = parser.statements();
+
+    return {
+      statement: statement,
+      parser: parser,
+      tokens: tokens,
+      diagnostics: statement.length > 0 ? errorListener.errors : [],
+      // TODO this is statements in plural :(
+      ctx: ctx,
+      // TODO See if we can remove this
+      stopNode: findStopNode(ctx),
+      collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+      collectedVariables: variableFinder.variables,
+    };
+  });
 
   const parsingResult: ParsingResult = {
     query: query,
-    parser: parser,
-    tokens: getTokens(tokenStream),
-    result: result,
+    statementsParsing: results,
   };
 
   return parsingResult;
@@ -215,39 +219,20 @@ class VariableCollector implements ParseTreeListener {
 }
 
 class ParserWrapper {
-  parsingResult?: EnrichedParsingResult;
+  parsingResult?: ParsingResult;
 
-  parse(query: string): EnrichedParsingResult {
+  parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingScaffolding = createParsingScaffolding(query);
-      const parser = parsingScaffolding.parser;
-      const tokenStream = parsingScaffolding.tokenStream;
-      const errorListener = new SyntaxErrorsListener();
-      parser.addErrorListener(errorListener);
+      const inputStream = CharStreams.fromString(query);
+      const lexer = new CypherLexer(inputStream);
+      const tokenStream = new CommonTokenStream(lexer);
+      const parsingResult = createParsingResult(query, tokenStream, lexer);
 
-      const labelsCollector = new LabelAndRelTypesCollector();
-      const variableFinder = new VariableCollector();
-      parser._parseListeners = [labelsCollector, variableFinder];
-
-      const result = createParsingResult(parsingScaffolding).result;
-
-      const parsingResult: EnrichedParsingResult = {
-        query: query,
-        parser: parser,
-        tokens: getTokens(tokenStream),
-        diagnostics: errorListener.errors,
-        result: result,
-        stopNode: findStopNode(result),
-        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
-        collectedVariables: variableFinder.variables,
-      };
-
-      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }

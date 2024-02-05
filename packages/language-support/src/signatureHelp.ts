@@ -13,7 +13,7 @@ import CypherParser, {
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
 import CypherParserListener from './generated-parser/CypherParserListener';
-import { isDefined } from './helpers';
+import { findCaret, isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
@@ -133,25 +133,6 @@ class SignatureHelper extends CypherParserListener {
   };
 }
 
-function findCaretToken(tokens: Token[], caretPosition: number): Token {
-  let i = 0;
-  let result: Token;
-  let keepLooking = true;
-
-  while (i < tokens.length && keepLooking) {
-    const currentToken = tokens[i];
-    keepLooking = currentToken.start < caretPosition;
-
-    if (currentToken.channel === 0 && keepLooking) {
-      result = currentToken;
-    }
-
-    i++;
-  }
-
-  return result;
-}
-
 export function signatureHelp(
   fullQuery: string,
   dbSchema: DbSchema,
@@ -159,23 +140,28 @@ export function signatureHelp(
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
 
+  // TODO Is this check needed
   if (caretPosition > 0) {
     const parserResult = parserWrapper.parse(fullQuery);
+    const caret = findCaret(parserResult, caretPosition);
 
-    const caretToken = findCaretToken(parserResult.tokens, caretPosition);
-    const signatureHelper = new SignatureHelper(
-      parserResult.tokens,
-      caretToken,
-    );
+    if (caret) {
+      const statement = caret.statement;
 
-    ParseTreeWalker.DEFAULT.walk(signatureHelper, parserResult.result);
-    const method = signatureHelper.result;
+      const signatureHelper = new SignatureHelper(
+        statement.tokens,
+        caret.token,
+      );
 
-    if (method !== undefined) {
-      if (method.methodType === MethodType.function) {
-        result = toSignatureHelp(dbSchema.functionSignatures, method);
-      } else {
-        result = toSignatureHelp(dbSchema.procedureSignatures, method);
+      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+      const method = signatureHelper.result;
+
+      if (method !== undefined) {
+        if (method.methodType === MethodType.function) {
+          result = toSignatureHelp(dbSchema.functionSignatures, method);
+        } else {
+          result = toSignatureHelp(dbSchema.procedureSignatures, method);
+        }
       }
     }
   }

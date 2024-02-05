@@ -17,7 +17,7 @@ import {
   lexerSymbols,
   tokenNames,
 } from '../lexerSymbols';
-import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
+import { StatementParsing } from '../parserWrapper';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -263,7 +263,7 @@ function calculateNamespacePrefix(
 }
 
 export function completionCoreCompletion(
-  parsingResult: EnrichedParsingResult,
+  parsingResult: StatementParsing,
   dbSchema: DbSchema,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -441,7 +441,7 @@ export function completionCoreCompletion(
 }
 
 type CompletionHelperArgs = {
-  parsingResult: ParsingResult;
+  parsingResult: StatementParsing;
   dbSchema: DbSchema;
   candidateRule: CandidateRule;
 };

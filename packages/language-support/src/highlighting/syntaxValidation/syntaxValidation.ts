@@ -3,10 +3,10 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../../dbSchema';
 import {
-  EnrichedParsingResult,
   LabelOrRelType,
   LabelType,
   parserWrapper,
+  StatementParsing,
 } from '../../parserWrapper';
 import {
   SemanticAnalysisElement,
@@ -58,7 +58,7 @@ function detectNonDeclaredLabel(
 }
 
 function warnOnUndeclaredLabels(
-  parsingResult: EnrichedParsingResult,
+  parsingResult: StatementParsing,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
@@ -84,7 +84,7 @@ function warnOnUndeclaredLabels(
 
 export function findEndPosition(
   e: SemanticAnalysisElement,
-  parsingResult: EnrichedParsingResult,
+  parsingResult: StatementParsing,
 ): SyntaxDiagnostic {
   let token: Token | undefined = undefined;
 
@@ -93,7 +93,7 @@ export function findEndPosition(
 
   const line = start.line + 1;
   const column = start.character;
-  const toExplore: ParseTree[] = [parsingResult.result];
+  const toExplore: ParseTree[] = [parsingResult.ctx];
 
   while (toExplore.length > 0 && !token) {
     const current: ParseTree = toExplore.pop();
@@ -145,35 +145,41 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   return a.range.start.character - b.range.start.character;
 }
 
+// TODO Does this need to be exported
 export function lintCypherQuery(
   wholeFileText: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const syntaxErrors = validateSyntax(wholeFileText, dbSchema);
-
-  if (syntaxErrors.length > 0) {
-    return syntaxErrors;
-  }
   const cachedParse = parserWrapper.parse(wholeFileText);
+  const statements = cachedParse.statementsParsing;
 
-  return validateSemantics(wholeFileText)
-    .map((el) => findEndPosition(el, cachedParse))
-    .sort(sortByPosition);
+  const result = statements.flatMap((statementParsing) => {
+    const syntaxErrors = validateSyntax(statementParsing, dbSchema);
+
+    if (syntaxErrors.length > 0) {
+      return syntaxErrors;
+    }
+
+    // TODO
+    return validateSemantics(statementParsing.statement)
+      .map((el) => findEndPosition(el, statementParsing))
+      .sort(sortByPosition);
+  });
+
+  return result;
 }
 
+// TODO Does this need to be exported
 export function validateSyntax(
-  query: string,
+  statementParsing: StatementParsing,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  if (query.length > 0) {
-    const parsingResult = parserWrapper.parse(query);
-    const diagnostics = parsingResult.diagnostics;
-
-    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
-    return diagnostics.concat(labelWarnings).sort(sortByPosition);
+  if (statementParsing.statement.length === 0) {
+    return [];
   }
-
-  return [];
+  const diagnostics = statementParsing.diagnostics;
+  const labelWarnings = warnOnUndeclaredLabels(statementParsing, dbSchema);
+  return diagnostics.concat(labelWarnings).sort(sortByPosition);
 }
 
 /**

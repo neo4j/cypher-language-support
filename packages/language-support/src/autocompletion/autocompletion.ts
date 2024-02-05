@@ -1,15 +1,15 @@
 import { CompletionItem } from 'vscode-languageserver-types';
 
 import { DbSchema } from '../dbSchema';
-import { findLatestStatement } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
 import { completionCoreCompletion } from './completionCoreCompletions';
 
 export function autocomplete(
   textUntilPosition: string,
   dbSchema: DbSchema,
+  // TODO Add caret index here
 ): CompletionItem[] {
-  let parsingResult = parserWrapper.parse(textUntilPosition);
+  const parsingResult = parserWrapper.parse(textUntilPosition);
   /* We try to locate the latest statement by finding the latest available `;` 
      in the query and take from that point to the end of the query
 
@@ -23,10 +23,11 @@ export function autocomplete(
      inside findLatestStatement
   */
 
-  const lastStatement = findLatestStatement(parsingResult);
-  if (lastStatement != undefined) {
-    parsingResult = parserWrapper.parse(lastStatement);
+  // TODO Fix me
+  const lastStatement = parsingResult.statementsParsing.at(-1);
+  if (lastStatement !== undefined) {
+    return completionCoreCompletion(lastStatement, dbSchema);
   }
 
-  return completionCoreCompletion(parsingResult, dbSchema);
+  return [];
 }
