@@ -32,7 +32,28 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   separator: NodeType.define({ id: 20, name: 'separator' }),
   punctuation: NodeType.define({ id: 21, name: 'punctuation' }),
   consoleCommand: NodeType.define({ id: 22, name: 'consoleCommand' }),
+  // also include prism token types
+  'class-name': NodeType.define({ id: 23, name: 'label' }),
+  // this is escaped variables
+  identifier: NodeType.define({ id: 24, name: 'variable' }),
+  string: NodeType.define({ id: 25, name: 'stringLiteral' }),
+  relationship: NodeType.define({ id: 26, name: 'label' }),
+  boolean: NodeType.define({ id: 27, name: 'booleanLiteral' }),
+  number: NodeType.define({ id: 28, name: 'numberLiteral' }),
 });
+
+export type PrismSpecificTokenType =
+  | 'class-name'
+  | 'identifier'
+  | 'string'
+  | 'relationship'
+  | 'boolean'
+  | 'number';
+
+export type CodemirrorParseTokenType =
+  | CypherTokenType
+  | PrismSpecificTokenType
+  | 'topNode';
 
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {

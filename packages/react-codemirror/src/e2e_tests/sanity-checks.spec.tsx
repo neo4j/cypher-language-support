@@ -22,7 +22,7 @@ test('the editors text can be externally controlled ', async ({ mount }) => {
   await expect(component).toContainText(newValue);
 });
 
-test('the editors can report changes to the text ', async ({ mount, page }) => {
+test('the editor can report changes to the text ', async ({ mount, page }) => {
   const intitialValue = 'MATCH (n) ';
 
   let editorValueCopy = intitialValue;
@@ -36,11 +36,16 @@ test('the editors can report changes to the text ', async ({ mount, page }) => {
 
   await textField.fill('RETURN 12');
 
-  expect(editorValueCopy).toBe('RETURN 12');
+  // editor update is debounced, retry wait for debounced
+  await expect(() => {
+    expect(editorValueCopy).toBe('RETURN 12');
+  }).toPass({ intervals: [300, 300, 1000] });
 
   await page.keyboard.type('34');
 
-  expect(editorValueCopy).toBe('RETURN 1234');
+  await expect(() => {
+    expect(editorValueCopy).toBe('RETURN 12');
+  }).toPass({ intervals: [300, 300, 1000] });
 });
 
 test('can complete RETURN', async ({ page, mount }) => {

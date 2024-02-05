@@ -12,12 +12,14 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
+import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import {
   replaceHistory,
   replMode as historyNavigation,
 } from './history-navigation';
 import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
+import { cleanupWorkers } from './lang-cypher/syntax-validation';
 import { basicNeo4jSetup } from './neo4j-setup';
 import { getThemeExtension } from './themes';
 
@@ -57,6 +59,10 @@ export interface CypherEditorProps {
    * @default false
    */
   autofocus?: boolean;
+  /**
+   * Where to place the cursor in the query. Cannot be enabled at the same time than autofocus
+   */
+  offset?: number;
   /**
    * Whether the editor should wrap lines.
    *
@@ -119,9 +125,14 @@ const executeKeybinding = (onExecute?: (cmd: string) => void) =>
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
+type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
-export class CypherEditor extends Component<CypherEditorProps> {
+
+export class CypherEditor extends Component<
+  CypherEditorProps,
+  CypherEditorState
+> {
   /**
    * The codemirror editor container.
    */
@@ -179,6 +190,10 @@ export class CypherEditor extends Component<CypherEditorProps> {
     theme: 'light',
   };
 
+  private debouncedOnChange = this.props.onChange
+    ? debounce(this.props.onChange, 200)
+    : undefined;
+
   componentDidMount(): void {
     const {
       theme,
@@ -187,18 +202,26 @@ export class CypherEditor extends Component<CypherEditorProps> {
       overrideThemeBackgroundColor,
       schema,
       lint,
-      onChange,
       onExecute,
     } = this.props;
 
-    this.schemaRef.current = { schema, lint };
+    this.schemaRef.current = {
+      schema,
+      lint,
+      useLightVersion: false,
+      setUseLightVersion: (newVal) => {
+        if (this.schemaRef.current !== undefined) {
+          this.schemaRef.current.useLightVersion = newVal;
+        }
+      },
+    };
 
     const themeExtension = getThemeExtension(
       theme,
       overrideThemeBackgroundColor,
     );
 
-    const changeListener = onChange
+    const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             const wasUserEdit = !upt.transactions.some((tr) =>
@@ -208,7 +231,7 @@ export class CypherEditor extends Component<CypherEditorProps> {
             if (upt.docChanged && wasUserEdit) {
               const doc = upt.state.doc;
               const value = doc.toString();
-              onChange(value, upt);
+              this.debouncedOnChange(value, upt);
             }
           }),
         ]
@@ -249,6 +272,8 @@ export class CypherEditor extends Component<CypherEditorProps> {
       if (this.props.value) {
         this.updateCursorPosition(this.props.value.length);
       }
+    } else if (this.props.offset) {
+      this.updateCursorPosition(this.props.offset);
     }
   }
 
@@ -325,6 +350,7 @@ export class CypherEditor extends Component<CypherEditorProps> {
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
+    cleanupWorkers();
   }
 
   render(): React.ReactNode {

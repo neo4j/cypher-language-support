@@ -18,22 +18,12 @@
     "codemirror 6"
   ],
   "version": "2.0.0-next.4",
-  "main": "./dist/cjs/index.cjs",
-  "module": "./dist/esm/index.mjs",
-  "types": "./dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/cjs/index.cjs",
-      "import": "./dist/esm/index.mjs",
-      "default": "./dist/cjs/index.cjs"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
-    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
-    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --packages=external --outfile=dist/esm/index.mjs",
-    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
+    "build": "tsc --declaration --outDir dist/",
     "clean": "rm -rf dist",
     "test": "jest",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
@@ -62,14 +52,20 @@
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
     "@neo4j-cypher/language-support": "2.0.0-next.2",
+    "@types/prismjs": "^1.26.3",
+    "@types/workerpool": "^6.4.7",
     "ayu": "^8.0.1",
     "fastest-levenshtein": "^1.0.16",
-    "vscode-languageserver-types": "^3.17.3"
+    "lodash.debounce": "^4.0.8",
+    "prismjs": "^1.29.0",
+    "vscode-languageserver-types": "^3.17.3",
+    "workerpool": "^9.0.4"
   },
   "devDependencies": {
     "@neo4j-ndl/base": "^1.10.1",
     "@playwright/experimental-ct-react": "^1.39.0",
     "@playwright/test": "^1.36.2",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^3.1.0",
     "concurrently": "^8.2.1",

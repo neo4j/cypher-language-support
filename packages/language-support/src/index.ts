@@ -8,9 +8,15 @@ export {
   syntaxColouringLegend,
 } from './highlighting/syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
-export { validateSyntax } from './highlighting/syntaxValidation/syntaxValidation';
+export {
+  findEndPosition,
+  lintCypherQuery,
+  validateSemantics,
+  validateSyntax,
+} from './highlighting/syntaxValidation/syntaxValidation';
+export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, toggleConsoleCommands } from './parserWrapper';
+export { parse, parserWrapper, toggleConsoleCommands } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };
