@@ -52,6 +52,53 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Handles multiple statements in semantic analysis', () => {
+    const query = `MATCH (n) RETURN m;
+    
+    match (m) return 
+    n
+    `;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `m` not defined',
+        offsets: {
+          end: 18,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 52,
+          start: 51,
+        },
+        range: {
+          end: {
+            character: 5,
+            line: 3,
+          },
+          start: {
+            character: 4,
+            line: 3,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Surfaces notifications correctly', () => {
     const query = `
     MATCH (shadowed)
@@ -483,7 +530,7 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'A Collect Expression must end with a single return column.',
+        message: 'A Collect Expression cannot contain any updates',
         offsets: {
           end: 49,
           start: 23,
@@ -501,7 +548,7 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message: 'A Collect Expression cannot contain any updates',
+        message: 'A Collect Expression must end with a single return column.',
         offsets: {
           end: 49,
           start: 23,

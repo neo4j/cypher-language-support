@@ -216,6 +216,13 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
+type CypherCmd = { type: 'cypher'; query: string };
+type RuleTokens = {
+  start: Token;
+  stop: Token;
+};
+
+export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
   | { type: 'cypher'; query: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
@@ -229,10 +236,7 @@ export type ParsedCommandNoPosition =
   | { type: 'clear-parameters' }
   | { type: 'parse-error' };
 
-export type ParsedCommand = ParsedCommandNoPosition & {
-  start: Token;
-  stop: Token;
-};
+export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
   return stmts.statementOrCommand_list().map((stmt) => {

@@ -25,12 +25,8 @@ type SemanticAnalysisElementNoSeverity = Omit<
   SemanticAnalysisElement,
   'severity'
 >;
-type TokenOffset = { line: number; column: number };
 
-export function wrappedSemanticAnalysis(
-  query: string,
-  { lineoffs },
-): SemanticAnalysisResult {
+export function wrappedSemanticAnalysis(query: string): SemanticAnalysisResult {
   try {
     let semanticErrorsResult = undefined;
     semanticAnalysis([query], (a) => {
@@ -41,12 +37,6 @@ export function wrappedSemanticAnalysis(
     const notifications: SemanticAnalysisElementNoSeverity[] =
       semanticErrorsResult.$notifications.data;
 
-    const start = Position.create(
-      e.position.line - 1 + offset.line - 1,
-      e.position.column - 1 + (e.position.line === 1 ? offset.column : 0),
-    );
-
-    const startOffset = e.position.offset + offset.start;
     return {
       errors: errors.map(({ message, position }) => ({
         severity: DiagnosticSeverity.Error,

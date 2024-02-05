@@ -9,7 +9,6 @@ export {
 } from './highlighting/syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 export {
-  findEndPosition,
   lintCypherQuery,
   validateSemantics,
   validateSyntax,
