@@ -25,6 +25,7 @@ async function rawLintDocument(
 
   const query = document.getText();
   if (query.length === 0) {
+    sendDiagnostics([]);
     return;
   }
 
