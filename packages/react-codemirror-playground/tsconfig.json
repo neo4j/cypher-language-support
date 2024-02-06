@@ -5,6 +5,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "lib": ["DOM"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "module": "ES2020"
   }
 }

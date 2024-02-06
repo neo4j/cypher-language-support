@@ -1,5 +1,5 @@
 import { DbSchema } from '../../../dbSchema';
-import { validateSyntax } from '../../../highlighting/syntaxValidation/syntaxValidation';
+import { lintCypherQuery } from '../../../highlighting/syntaxValidation/syntaxValidation';
 
 type SyntaxValidationTestArgs = {
   query: string;
@@ -10,5 +10,5 @@ export function getDiagnosticsForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return validateSyntax(query, dbSchema);
+  return lintCypherQuery(query, dbSchema);
 }

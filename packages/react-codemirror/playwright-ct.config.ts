@@ -10,7 +10,7 @@ export default defineConfig({
   /* Maximum time one test can run for. */
   timeout: 10 * 1000,
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -26,7 +26,21 @@ export default defineConfig({
 
     /* Port to use for Playwright component endpoint. */
     ctPort: 3100,
+
+    // vite config to get worker working
+    ctViteConfig: {
+      build: {
+        rollupOptions: {
+          output: {
+            entryFileNames: `assets/[name].js`,
+            chunkFileNames: `assets/[name].js`,
+            assetFileNames: `assets/[name].[ext]`,
+          },
+        },
+      },
+    },
   },
+
   // Glob patterns or regular expressions that match test files.
   testMatch: '*.spec.tsx',
 
