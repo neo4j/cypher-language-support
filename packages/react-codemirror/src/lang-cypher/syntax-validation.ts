@@ -1,10 +1,6 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
-import {
-  findEndPosition,
-  parserWrapper,
-  validateSyntax,
-} from '@neo4j-cypher/language-support';
+import { parserWrapper, validateSyntax } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './lang-cypher';
@@ -59,7 +55,13 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
 
     // we want to avoid the ANTLR4 reparse in the worker thread, this should hit our main thread cache
     const parse = parserWrapper.parse(query);
-    if (parse.diagnostics.length !== 0) {
+    const statements = parse.statementsParsing;
+
+    const anySyntacticError =
+      statements.filter((statement) => statement.diagnostics.length !== 0)
+        .length > 0;
+
+    if (anySyntacticError) {
       return [];
     }
 
@@ -72,9 +74,7 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
-      return result.map((el) => {
-        const diagnostic = findEndPosition(el, parse);
-
+      return result.map((diagnostic) => {
         return {
           from: diagnostic.offsets.start,
           to: diagnostic.offsets.end,

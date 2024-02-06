@@ -82,7 +82,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-export function findEndPosition(
+function findEndPosition(
   e: SemanticAnalysisElement,
   parsingResult: StatementParsing,
 ): SyntaxDiagnostic {
@@ -147,49 +147,56 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
 
 // TODO Does this need to be exported
 export function lintCypherQuery(
-  wholeFileText: string,
+  query: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const cachedParse = parserWrapper.parse(wholeFileText);
-  const statements = cachedParse.statementsParsing;
+  const syntaxErrors = validateSyntax(query, dbSchema);
+  if (syntaxErrors.length > 0) {
+    return syntaxErrors;
+  }
 
-  const result = statements.flatMap((statementParsing) => {
-    const syntaxErrors = validateSyntax(statementParsing, dbSchema);
+  const semanticErrors = validateSemantics(query);
+  return semanticErrors;
+}
 
-    if (syntaxErrors.length > 0) {
-      return syntaxErrors;
-    }
-
-    // TODO
-    return validateSemantics(statementParsing.statement)
-      .map((el) => findEndPosition(el, statementParsing))
-      .sort(sortByPosition);
+// TODO Does this need to be exported
+export function validateSyntax(
+  query: string,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  if (query.length === 0) {
+    return [];
+  }
+  const statements = parserWrapper.parse(query);
+  const result = statements.statementsParsing.flatMap((statement) => {
+    const diagnostics = statement.diagnostics;
+    const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
+    return diagnostics.concat(labelWarnings).sort(sortByPosition);
   });
 
   return result;
 }
 
-// TODO Does this need to be exported
-export function validateSyntax(
-  statementParsing: StatementParsing,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  if (statementParsing.statement.length === 0) {
-    return [];
-  }
-  const diagnostics = statementParsing.diagnostics;
-  const labelWarnings = warnOnUndeclaredLabels(statementParsing, dbSchema);
-  return diagnostics.concat(labelWarnings).sort(sortByPosition);
-}
-
 /**
  * Assumes the provided query has no parse errors
  */
-export function validateSemantics(query: string): SemanticAnalysisElement[] {
+export function validateSemantics(query: string): SyntaxDiagnostic[] {
   if (query.length > 0) {
-    const { notifications, errors } = wrappedSemanticAnalysis(query);
+    const cachedParse = parserWrapper.parse(query);
+    const statements = cachedParse.statementsParsing;
+    const semanticErrors = statements.flatMap((current) => {
+      const { notifications, errors } = wrappedSemanticAnalysis(
+        current.statement,
+      );
 
-    return notifications.concat(errors);
+      const elements = notifications.concat(errors);
+      const result = elements
+        .map((el) => findEndPosition(el, current))
+        .sort(sortByPosition);
+      return result;
+    });
+
+    return semanticErrors;
   }
 
   return [];

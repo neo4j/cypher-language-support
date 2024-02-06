@@ -6,12 +6,13 @@ interface SimpleTree {
 import {
   antlrUtils,
   CypherParser,
-  parse,
   ParserRuleContext,
+  parserWrapper,
 } from '@neo4j-cypher/language-support';
 
 export function getDebugTree(cypher: string): SimpleTree {
-  const statements = parse(cypher);
+  const statements = parserWrapper.parse(cypher).statementsParsing;
+
   function walk(node: ParserRuleContext): SimpleTree {
     const name = antlrUtils.tree.Trees.getNodeText(
       node,
@@ -25,5 +26,11 @@ export function getDebugTree(cypher: string): SimpleTree {
     };
   }
 
-  return walk(statements);
+  const children = statements.map((statement) => walk(statement.ctx));
+
+  return {
+    // TODO Is this correct?
+    name: 'root',
+    children: children,
+  };
 }

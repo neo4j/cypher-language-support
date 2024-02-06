@@ -1,8 +1,4 @@
-import {
-  findEndPosition,
-  parserWrapper,
-  validateSyntax,
-} from '@neo4j-cypher/language-support';
+import { validateSyntax } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
 import { Diagnostic, TextDocumentChangeEvent } from 'vscode-languageserver';
@@ -42,9 +38,7 @@ async function rawLintDocument(
       lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
-      sendDiagnostics(
-        result.map((el) => findEndPosition(el, parserWrapper.parsingResult)),
-      );
+      sendDiagnostics(result);
     } catch (err) {
       if (!(err instanceof workerpool.Promise.CancellationError)) {
         console.error(err);
