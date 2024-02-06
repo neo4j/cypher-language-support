@@ -60,8 +60,8 @@ suite
     const subQuery = createMovieDb + periodicIterate;
     const query = createMovieDb + periodicIterate + periodicIterateFirstArg;
     parserWrapper.clearCache();
-    signatureHelp(query, testData.mockSchema);
-    signatureHelp(subQuery, testData.mockSchema);
+    signatureHelp(query, testData.mockSchema, query.length - 1);
+    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
   })
   .add('tictactoe - parse', function () {
     parserWrapper.clearCache();
@@ -87,8 +87,8 @@ suite
     const subQuery = tictactoe + periodicIterate;
     const query = tictactoe + periodicIterate + periodicIterateFirstArg;
     parserWrapper.clearCache();
-    signatureHelp(query, testData.mockSchema);
-    signatureHelp(subQuery, testData.mockSchema);
+    signatureHelp(query, testData.mockSchema, query.length - 1);
+    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
   })
   .add('pokemon - parse', function () {
     parserWrapper.clearCache();
@@ -107,8 +107,8 @@ suite
     const query = largePokemonquery + periodicIterate + periodicIterateFirstArg;
     parserWrapper.clearCache();
     // This mimics getting the cursor back in the query and retriggering signature help
-    signatureHelp(query, testData.mockSchema);
-    signatureHelp(subQuery, testData.mockSchema);
+    signatureHelp(query, testData.mockSchema, query.length - 1);
+    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
   })
   .add('multistatement - autocompletion', function () {
     const query = tictactoe + ';\n' + tictactoe;
