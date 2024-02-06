@@ -361,7 +361,6 @@ function errorOnNonCypherCommands(commands: ParsedCommand[]) {
 }
 
 class ParserWrapper {
-  enableConsoleCommands = false;
   parsingResult?: EnrichedParsingResult;
 
   parse(query: string): EnrichedParsingResult {
@@ -387,7 +386,7 @@ class ParserWrapper {
 
       const collectedCommands = parseToCommands(result);
 
-      if (!this.enableConsoleCommands) {
+      if (!consoleCommandEnabled()) {
         diagnostics.push(...errorOnNonCypherCommands(collectedCommands));
       }
 
@@ -414,14 +413,19 @@ class ParserWrapper {
 }
 
 /* 
-Because the intiatilization is done right here in this file, in a single ton pattern, this was the
-easiest way to set the setting globally, without messing with the cache
+ Because the parserWrapper is done as a single-ton global variable, the setting for 
+ console commands was also easiest to do as a global variable as it avoid messing with the cache
 
-It would make sense for the client to initalize and own the ParserWrapper imo. Something to consider 
-when we refactor the cache mechanism
+It would make sense for the client to initialize and own the ParserWrapper, then each editor can have
+it's own cache and preference on if console commands are enabled or not.
+
 */
-export function toggleConsoleCommands(enabled: boolean) {
-  parserWrapper.enableConsoleCommands = enabled;
+let enableConsoleCommands = false;
+export function setConsoleCommandsEnabled(enabled: boolean) {
+  enableConsoleCommands = enabled;
+}
+export function consoleCommandEnabled() {
+  return enableConsoleCommands;
 }
 
 export const parserWrapper = new ParserWrapper();

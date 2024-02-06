@@ -3,7 +3,7 @@ import { applySyntaxColouring } from '../highlighting/syntaxColouring/syntaxColo
 import {
   ParsedCommandNoPosition,
   parserWrapper,
-  toggleConsoleCommands,
+  setConsoleCommandsEnabled,
 } from '../parserWrapper';
 
 function expectParsedCommands(
@@ -31,10 +31,10 @@ function expectErrorMessage(query: string, msg: string) {
 
 describe('sanity checks', () => {
   beforeAll(() => {
-    toggleConsoleCommands(true);
+    setConsoleCommandsEnabled(true);
   });
   afterAll(() => {
-    toggleConsoleCommands(false);
+    setConsoleCommandsEnabled(false);
   });
 
   test('parses simple commands without args ', () => {
@@ -119,20 +119,18 @@ describe('sanity checks', () => {
   });
 
   test('handles misspelled or non-existing command', () => {
-    expect(parserWrapper.parse(':foo').diagnostics[0].message).toEqual(
-      'Expected any of PARAM, HISTORY, CLEAR or USE',
-    );
+    expectErrorMessage(':foo', 'Expected any of param, history, clear or use');
 
-    expectErrorMessage(':clea', 'Unexpected token. Did you mean CLEAR?');
+    expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
   });
 });
 
 describe(':use', () => {
   beforeAll(() => {
-    toggleConsoleCommands(true);
+    setConsoleCommandsEnabled(true);
   });
   afterAll(() => {
-    toggleConsoleCommands(false);
+    setConsoleCommandsEnabled(false);
   });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
@@ -195,10 +193,10 @@ describe(':use', () => {
 
 describe('parameters', () => {
   beforeAll(() => {
-    toggleConsoleCommands(true);
+    setConsoleCommandsEnabled(true);
   });
   afterAll(() => {
-    toggleConsoleCommands(false);
+    setConsoleCommandsEnabled(false);
   });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
@@ -425,10 +423,10 @@ describe('parameters', () => {
 
 describe('command parser also handles cypher', () => {
   beforeAll(() => {
-    toggleConsoleCommands(true);
+    setConsoleCommandsEnabled(true);
   });
   afterAll(() => {
-    toggleConsoleCommands(false);
+    setConsoleCommandsEnabled(false);
   });
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [

@@ -28,9 +28,5 @@ export function autocomplete(
     parsingResult = parserWrapper.parse(lastStatement);
   }
 
-  return completionCoreCompletion(
-    parsingResult,
-    dbSchema,
-    parserWrapper.enableConsoleCommands,
-  );
+  return completionCoreCompletion(parsingResult, dbSchema);
 }

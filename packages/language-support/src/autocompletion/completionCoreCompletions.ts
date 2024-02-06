@@ -17,7 +17,11 @@ import {
   lexerSymbols,
   tokenNames,
 } from '../lexerSymbols';
-import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
+import {
+  consoleCommandEnabled,
+  EnrichedParsingResult,
+  ParsingResult,
+} from '../parserWrapper';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -282,7 +286,6 @@ function calculateNamespacePrefix(
 export function completionCoreCompletion(
   parsingResult: EnrichedParsingResult,
   dbSchema: DbSchema,
-  enableConsoleCommands: boolean,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -326,7 +329,7 @@ export function completionCoreCompletion(
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(enableConsoleCommands
+    ...(consoleCommandEnabled()
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
@@ -459,7 +462,7 @@ export function completionCoreCompletion(
         }
       }
 
-      // These are simple tokens that get completed as the wrong kind, due to a lexer conlfict
+      // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
       if (ruleNumber === CypherParser.RULE_useCompletionRule) {
         return [{ label: 'use', kind: CompletionItemKind.Event }];
       }

@@ -4,7 +4,13 @@ import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
 import CypherLexer from '../../generated-parser/CypherCmdLexer';
 import CypherParser from '../../generated-parser/CypherCmdParser';
-import { keywordNames, tokenNames } from '../../lexerSymbols';
+import {
+  CypherTokenType,
+  keywordNames,
+  lexerSymbols,
+  tokenNames,
+} from '../../lexerSymbols';
+import { consoleCommandEnabled } from '../../parserWrapper';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -28,7 +34,7 @@ export function completionCoreErrormessage(
   const codeCompletion = new CodeCompletionCore(parser);
   const caretIndex = currentToken.tokenIndex;
 
-  const rulesOfInterest: Record<number, string> = {
+  const rulesOfInterest: Record<number, string | null> = {
     [CypherParser.RULE_expression9]: 'an expression',
     [CypherParser.RULE_labelExpression2]: 'a node label / rel type',
     [CypherParser.RULE_labelExpression2Is]: 'a node label / rel type',
@@ -39,6 +45,14 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_parameter]: 'a parameter',
     [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
+    // Either enable the helper rules for lexer clashes,
+    // or collect all console commands like below with symbolicNameString
+    ...(consoleCommandEnabled()
+      ? {
+          [CypherParser.RULE_useCompletionRule]: 'use',
+          [CypherParser.RULE_listCompletionRule]: 'list',
+        }
+      : { [CypherParser.RULE_consoleCommand]: null }),
   };
 
   codeCompletion.preferredRules = new Set<number>(
@@ -62,10 +76,15 @@ export function completionCoreErrormessage(
 
   const tokenEntries = candidates.tokens.entries();
   const tokenCandidates = Array.from(tokenEntries).flatMap(([tokenNumber]) => {
-    const tokenName = tokenNames[tokenNumber];
+    const isConsoleCommand =
+      lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
 
-    // We don't want to suggest the ":" of console cmds as it's not helpful even
-    // when console cmds are available
+    const tokenName = isConsoleCommand
+      ? tokenNames[tokenNumber].toLowerCase()
+      : tokenNames[tokenNumber];
+
+    // We don't want to suggest the ":" of console commands as it's not helpful even
+    // when console commands are available
     if (caretIndex === 0 && tokenNumber === CypherLexer.COLON) {
       return [];
     }
@@ -108,6 +127,14 @@ export function completionCoreErrormessage(
   ];
 
   if (options.length === 0) {
+    // options length is 0 should only happen when RULE_consoleCommand is hit and there are no other options
+    if (
+      ruleCandidates.find(
+        (ruleNumber) => ruleNumber === CypherParser.RULE_consoleCommand,
+      )
+    ) {
+      return 'Console commands are unsupported in this environment.';
+    }
     return undefined;
   }
 
