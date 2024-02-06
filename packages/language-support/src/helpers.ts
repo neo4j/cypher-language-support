@@ -3,6 +3,7 @@
 import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,
+  ParseTree,
   Token,
 } from 'antlr4';
 import CypherLexer from './generated-parser/CypherLexer';
@@ -12,6 +13,23 @@ import CypherParser, {
   StatementsContext,
 } from './generated-parser/CypherParser';
 import { ParsingResult } from './parserWrapper';
+
+/* In antlr we have 
+
+        ParseTree
+           / \
+          /   \
+TerminalNode   RuleContext
+                \
+                ParserRuleContext                 
+
+Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
+This type fixes that because it's what we need to traverse the tree most
+of the time
+*/
+export type EnrichedParseTree = ParseTree & {
+  parentCtx: ParserRuleContext | undefined;
+};
 
 export function findStopNode(root: StatementsContext) {
   let children = root.children;
@@ -38,10 +56,10 @@ export function findStopNode(root: StatementsContext) {
 }
 
 export function findParent(
-  leaf: ParserRuleContext | undefined,
-  condition: (node: ParserRuleContext) => boolean,
-) {
-  let current: ParserRuleContext | undefined = leaf;
+  leaf: EnrichedParseTree | undefined,
+  condition: (node: EnrichedParseTree) => boolean,
+): EnrichedParseTree {
+  let current: EnrichedParseTree | undefined = leaf;
 
   while (current && !condition(current)) {
     current = current.parentCtx;
