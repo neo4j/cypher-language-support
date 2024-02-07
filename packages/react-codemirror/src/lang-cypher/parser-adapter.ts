@@ -13,7 +13,7 @@ import {
 } from './constants';
 // This import will load the cypher support in prisma
 import 'prismjs/components/prism-cypher';
-import { CypherConfig } from './lang-cypher';
+import { CypherConfig } from './langCypher';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
 Prism.manual = true;

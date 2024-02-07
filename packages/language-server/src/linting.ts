@@ -4,9 +4,9 @@ import { join } from 'path';
 import { Diagnostic, TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import { LinterTask, LintWorker } from './lint-worker';
+import { LinterTask, LintWorker } from './lintWorker';
 
-const pool = workerpool.pool(join(__dirname, 'lint-worker.js'), {
+const pool = workerpool.pool(join(__dirname, 'lintWorker.js'), {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
