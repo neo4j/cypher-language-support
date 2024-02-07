@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.3
+
+### Patch Changes
+
+- 8cc77c6: Add support for console commands
+- 1e210cb: Moves semantic analysis to a separate worker file
+- f6d20b2: Adds signature help capabilities to the language support
+
 ## 2.0.0-next.2
 
 ### Patch Changes

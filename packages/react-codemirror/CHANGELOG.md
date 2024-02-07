@@ -1,5 +1,16 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.5
+
+### Patch Changes
+
+- 8cc77c6: Add support for console commands
+- 1e210cb: Moves semantic analysis to a separate worker file
+- Updated dependencies [8cc77c6]
+- Updated dependencies [1e210cb]
+- Updated dependencies [f6d20b2]
+  - @neo4j-cypher/language-support@2.0.0-next.3
+
 ## 2.0.0-next.4
 
 ### Patch Changes
