@@ -1,5 +1,14 @@
 # @neo4j-cypher/vscode-extension
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- 1e210cb: Moves semantic analysis to a separate worker file
+- Updated dependencies [8cc77c6]
+- Updated dependencies [1e210cb]
+  - @neo4j-cypher/language-server@2.0.0-next.4
+
 ## 2.0.0-next.3
 
 ### Patch Changes
