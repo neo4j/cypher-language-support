@@ -1,7 +1,5 @@
 import { signatureHelp } from '@neo4j-cypher/language-support';
 import {
-  Position,
-  Range,
   SignatureHelp,
   SignatureHelpParams,
   TextDocuments,
@@ -26,14 +24,12 @@ export function doSignatureHelp(
     if (textDocument === undefined || endOfTriggerHelp) return emptyResult;
 
     const position = params.position;
-    const range: Range = {
-      start: Position.create(0, 0),
-      end: position,
-    };
+    const offset = textDocument.offsetAt(position);
 
     return signatureHelp(
-      textDocument.getText(range),
+      textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
+      offset,
     );
   };
 }
