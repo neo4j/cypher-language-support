@@ -1,16 +1,17 @@
 import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherParser, {
   ClauseContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
-  StatementsContext,
+  StatementsOrCommandsContext,
   VariableContext,
-} from './generated-parser/CypherParser';
+} from './generated-parser/CypherCmdParser';
 import {
   findParent,
   findStopNode,
@@ -29,7 +30,7 @@ export interface ParsingResult {
   query: string;
   parser: CypherParser;
   tokens: Token[];
-  result: StatementsContext;
+  result: StatementsOrCommandsContext;
 }
 
 export enum LabelType {
@@ -72,6 +73,7 @@ export interface EnrichedParsingResult extends ParsingResult {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  collectedCommands: ParsedCommand[];
 }
 
 export interface ParsingScaffolding {
@@ -96,7 +98,7 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
 
 export function parse(cypher: string) {
   const parser = createParsingScaffolding(cypher).parser;
-  return parser.statements();
+  return parser.statementsOrCommands();
 }
 
 export function createParsingResult(
@@ -105,7 +107,7 @@ export function createParsingResult(
   const query = parsingScaffolding.query;
   const parser = parsingScaffolding.parser;
   const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.statements();
+  const result = parser.statementsOrCommands();
 
   const parsingResult: ParsingResult = {
     query: query,
@@ -214,6 +216,150 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
+type CypherCmd = { type: 'cypher'; query: string };
+type RuleTokens = {
+  start: Token;
+  stop: Token;
+};
+
+export type ParsedCypherCmd = CypherCmd & RuleTokens;
+export type ParsedCommandNoPosition =
+  | { type: 'cypher'; query: string }
+  | { type: 'use'; database?: string /* missing implies default db */ }
+  | { type: 'clear' }
+  | { type: 'history' }
+  | {
+      type: 'set-parameters';
+      parameters: { name: string; expression: string }[];
+    }
+  | { type: 'list-parameters' }
+  | { type: 'clear-parameters' }
+  | { type: 'parse-error' };
+
+export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
+
+function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
+  return stmts.statementOrCommand_list().map((stmt) => {
+    const { start, stop } = stmt;
+
+    const cypherStmt = stmt.statement();
+    if (cypherStmt) {
+      // we get the original text input to preserve whitespace
+      const inputstream = cypherStmt.start.getInputStream();
+      const query = inputstream.getText(start.start, stop.stop);
+
+      return { type: 'cypher', query, start, stop };
+    }
+
+    const consoleCmd = stmt.consoleCommand();
+    if (consoleCmd) {
+      const useCmd = consoleCmd.useCmd();
+      if (useCmd) {
+        return {
+          type: 'use',
+          database: useCmd.symbolicAliasName()?.getText(),
+          start,
+          stop,
+        };
+      }
+
+      const clearCmd = consoleCmd.clearCmd();
+      if (clearCmd) {
+        return { type: 'clear', start, stop };
+      }
+
+      const historyCmd = consoleCmd.historyCmd();
+      if (historyCmd) {
+        return { type: 'history', start, stop };
+      }
+
+      const param = consoleCmd.paramsCmd();
+      const paramArgs = param?.paramsArgs();
+
+      if (param && !paramArgs) {
+        // no argument provided -> list parameters
+        return { type: 'list-parameters', start, stop };
+      }
+
+      if (paramArgs) {
+        const cypherMap = paramArgs.map();
+        if (cypherMap) {
+          const names = cypherMap
+            ?.symbolicNameString_list()
+            .map((name) => name.getText());
+          const expressions = cypherMap
+            ?.expression_list()
+            .map((expr) => expr.getText());
+
+          if (names && expressions && names.length === expressions.length) {
+            return {
+              type: 'set-parameters',
+              parameters: names.map((name, index) => ({
+                name,
+                expression: expressions[index],
+              })),
+              start,
+              stop,
+            };
+          }
+        }
+
+        const lambda = paramArgs.lambda();
+        const name = lambda?.unescapedSymbolicNameString()?.getText();
+        const expression = lambda?.expression()?.getText();
+        if (name && expression) {
+          return {
+            type: 'set-parameters',
+            parameters: [{ name, expression }],
+            start,
+            stop,
+          };
+        }
+
+        const clear = paramArgs.CLEAR();
+        if (clear) {
+          return { type: 'clear-parameters', start, stop };
+        }
+
+        const list = paramArgs.listCompletionRule()?.LIST();
+        if (list) {
+          return { type: 'list-parameters', start, stop };
+        }
+      }
+
+      return { type: 'parse-error', start, stop };
+    }
+    return { type: 'parse-error', start, stop };
+  });
+}
+
+function translateTokensToRange(
+  start: Token,
+  stop: Token,
+): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
+  return {
+    range: {
+      start: Position.create(start.line - 1, start.column),
+      end: Position.create(stop.line - 1, stop.column + stop.text.length),
+    },
+    offsets: {
+      start: start.start,
+      end: stop.stop + 1,
+    },
+  };
+}
+function errorOnNonCypherCommands(commands: ParsedCommand[]) {
+  return commands
+    .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
+    .map(
+      ({ start, stop }): SyntaxDiagnostic => ({
+        message: 'Console commands are unsupported in this environment.',
+        severity: DiagnosticSeverity.Error,
+        ...translateTokensToRange(start, stop),
+      }),
+    );
+}
+
 class ParserWrapper {
   parsingResult?: EnrichedParsingResult;
 
@@ -236,15 +382,24 @@ class ParserWrapper {
 
       const result = createParsingResult(parsingScaffolding).result;
 
+      const diagnostics = errorListener.errors;
+
+      const collectedCommands = parseToCommands(result);
+
+      if (!consoleCommandEnabled()) {
+        diagnostics.push(...errorOnNonCypherCommands(collectedCommands));
+      }
+
       const parsingResult: EnrichedParsingResult = {
         query: query,
         parser: parser,
         tokens: getTokens(tokenStream),
-        diagnostics: errorListener.errors,
+        diagnostics,
         result: result,
         stopNode: findStopNode(result),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
+        collectedCommands,
       };
 
       this.parsingResult = parsingResult;
@@ -255,6 +410,22 @@ class ParserWrapper {
   clearCache() {
     this.parsingResult = undefined;
   }
+}
+
+/* 
+ Because the parserWrapper is done as a single-ton global variable, the setting for 
+ console commands was also easiest to do as a global variable as it avoid messing with the cache
+
+It would make sense for the client to initialize and own the ParserWrapper, then each editor can have
+it's own cache and preference on if console commands are enabled or not.
+
+*/
+let enableConsoleCommands = false;
+export function setConsoleCommandsEnabled(enabled: boolean) {
+  enableConsoleCommands = enabled;
+}
+export function consoleCommandEnabled() {
+  return enableConsoleCommands;
 }
 
 export const parserWrapper = new ParserWrapper();

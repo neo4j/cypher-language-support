@@ -1,3 +1,4 @@
+import { setConsoleCommandsEnabled } from '../../../parserWrapper';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
@@ -44,6 +45,53 @@ describe('Semantic validation spec', () => {
           start: {
             character: 17,
             line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Handles multiple statements in semantic analysis', () => {
+    const query = `MATCH (n) RETURN m;
+    
+    match (m) return 
+    n
+    `;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `m` not defined',
+        offsets: {
+          end: 18,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 52,
+          start: 51,
+        },
+        range: {
+          end: {
+            character: 5,
+            line: 3,
+          },
+          start: {
+            character: 4,
+            line: 3,
           },
         },
         severity: 1,
@@ -482,7 +530,7 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'A Collect Expression must end with a single return column.',
+        message: 'A Collect Expression cannot contain any updates',
         offsets: {
           end: 49,
           start: 23,
@@ -500,7 +548,7 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message: 'A Collect Expression cannot contain any updates',
+        message: 'A Collect Expression must end with a single return column.',
         offsets: {
           end: 49,
           start: 23,
@@ -1228,5 +1276,175 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         severity: 1,
       },
     ]);
+  });
+
+  test('gives error on console commands when they are disabled', () => {
+    setConsoleCommandsEnabled(true);
+    expect(
+      getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
+    ).toEqual([
+      {
+        message: 'Variable `a` not defined',
+        offsets: {
+          end: 8,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 8,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `b` not defined',
+        offsets: {
+          end: 25,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    setConsoleCommandsEnabled(false);
+  });
+
+  test('Handles multiple cypher statements in a single query', () => {
+    setConsoleCommandsEnabled(true);
+    expect(getDiagnosticsForQuery({ query: 'RETURN a; RETURN b;' })).toEqual([
+      {
+        message: 'Variable `a` not defined',
+        offsets: {
+          end: 8,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 8,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `b` not defined',
+        offsets: {
+          end: 18,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    setConsoleCommandsEnabled(false);
+  });
+
+  test('Handles cypher mixed with client commands', () => {
+    setConsoleCommandsEnabled(true);
+    expect(
+      getDiagnosticsForQuery({
+        query: ':clear;RETURN a;:clear; RETURN b;:history;',
+      }),
+    ).toEqual([
+      {
+        message: 'Variable `a` not defined',
+        offsets: {
+          end: 15,
+          start: 14,
+        },
+        range: {
+          end: {
+            character: 15,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `b` not defined',
+        offsets: {
+          end: 32,
+          start: 31,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 31,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    setConsoleCommandsEnabled(false);
+  });
+
+  test('Handles cypher mixed with complex client command', () => {
+    setConsoleCommandsEnabled(true);
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+      :param {
+
+        d : 343
+
+      }
+      ;RETURN a;`,
+      }),
+    ).toEqual([
+      {
+        message: 'Variable `a` not defined',
+        offsets: {
+          end: 57,
+          start: 56,
+        },
+        range: {
+          end: {
+            character: 15,
+            line: 6,
+          },
+          start: {
+            character: 14,
+            line: 6,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    setConsoleCommandsEnabled(false);
   });
 });

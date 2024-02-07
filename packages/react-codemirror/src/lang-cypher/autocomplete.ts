@@ -28,7 +28,8 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
     [CompletionItemKind.EnumMember]: 'EnumMember',
     [CompletionItemKind.Constant]: 'Constant',
     [CompletionItemKind.Struct]: 'Struct',
-    [CompletionItemKind.Event]: 'Event',
+    // we're missuing the enum here as there is no `Console` kind in the predefined list
+    [CompletionItemKind.Event]: 'Console',
     [CompletionItemKind.Operator]: 'Operator',
     [CompletionItemKind.TypeParameter]: 'TypeParameter',
   };

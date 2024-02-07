@@ -3,7 +3,10 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import type { DbSchema } from '@neo4j-cypher/language-support';
+import {
+  setConsoleCommandsEnabled,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import { cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signature-help';
@@ -22,6 +25,7 @@ export type CypherConfig = {
 };
 
 export function cypher(config: CypherConfig) {
+  setConsoleCommandsEnabled(true);
   const parserAdapter = new ParserAdapter(facet, config);
 
   const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');

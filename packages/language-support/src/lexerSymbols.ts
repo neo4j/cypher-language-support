@@ -1,4 +1,4 @@
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 
 export enum CypherTokenType {
   comment = 'comment',
@@ -22,6 +22,7 @@ export enum CypherTokenType {
   separator = 'separator',
   punctuation = 'punctuation',
   none = 'none',
+  consoleCommand = 'consoleCommand',
 }
 
 export const lexerOperators = [
@@ -355,6 +356,12 @@ export const lexerKeywords = [
   CypherLexer.PROFILE,
 ];
 
+export const lexerConsoleCmds = [
+  CypherLexer.HISTORY,
+  CypherLexer.PARAM,
+  CypherLexer.CLEAR,
+];
+
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -373,6 +380,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerSeparators, CypherTokenType.separator),
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
+  ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {

@@ -9,17 +9,20 @@ export {
 } from './highlighting/syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './highlighting/syntaxColouring/syntaxColouringHelpers';
 export {
-  findEndPosition,
   lintCypherQuery,
   validateSemantics,
   validateSyntax,
 } from './highlighting/syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper } from './parserWrapper';
+export {
+  parse,
+  parserWrapper,
+  setConsoleCommandsEnabled,
+} from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };
 
-import CypherLexer from './generated-parser/CypherLexer';
-import CypherParser from './generated-parser/CypherParser';
+import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherParser from './generated-parser/CypherCmdParser';

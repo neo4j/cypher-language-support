@@ -6,6 +6,7 @@ import {
   EnrichedParsingResult,
   LabelOrRelType,
   LabelType,
+  ParsedCypherCmd,
   parserWrapper,
 } from '../../parserWrapper';
 import {
@@ -82,60 +83,76 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-export function findEndPosition(
-  e: SemanticAnalysisElement,
-  parsingResult: EnrichedParsingResult,
-): SyntaxDiagnostic {
-  let token: Token | undefined = undefined;
+type FixSemanticPositionsArgs = {
+  semanticElements: SemanticAnalysisElement[];
+  cmd: ParsedCypherCmd;
+  parseResult: EnrichedParsingResult;
+};
 
-  const start = Position.create(e.position.line - 1, e.position.column - 1);
-  const startOffset = e.position.offset;
+function fixSemanticAnalysisPositions({
+  semanticElements,
+  cmd,
+  parseResult,
+}: FixSemanticPositionsArgs): SyntaxDiagnostic[] {
+  return semanticElements.map((e) => {
+    let token: Token | undefined = undefined;
 
-  const line = start.line + 1;
-  const column = start.character;
-  const toExplore: ParseTree[] = [parsingResult.result];
+    const start = Position.create(
+      e.position.line - 1 + cmd.start.line - 1,
+      e.position.column - 1 + (e.position.line === 1 ? cmd.start.column : 0),
+    );
 
-  while (toExplore.length > 0 && !token) {
-    const current: ParseTree = toExplore.pop();
+    const startOffset = e.position.offset + cmd.start.start;
 
-    if (current instanceof ParserRuleContext) {
-      const startToken = current.start;
-      if (startToken.line === line && startToken.column === column) {
-        token = current.stop;
-      }
-      if (current.children) {
-        current.children.forEach((child) => toExplore.push(child));
+    const line = start.line + 1;
+    const column = start.character;
+    const toExplore: ParseTree[] = [parseResult.result];
+
+    while (toExplore.length > 0 && !token) {
+      const current: ParseTree = toExplore.pop();
+
+      if (current instanceof ParserRuleContext) {
+        const startToken = current.start;
+        if (startToken.line === line && startToken.column === column) {
+          token = current.stop;
+        }
+        if (current.children) {
+          current.children.forEach((child) => toExplore.push(child));
+        }
       }
     }
-  }
 
-  if (token === undefined) {
-    return {
-      severity: e.severity,
-      message: e.message,
-      range: {
-        start: start,
-        end: start,
-      },
-      offsets: {
-        start: startOffset,
-        end: startOffset,
-      },
-    };
-  } else {
-    return {
-      severity: e.severity,
-      message: e.message,
-      range: {
-        start: start,
-        end: Position.create(token.line - 1, token.column + token.text.length),
-      },
-      offsets: {
-        start: startOffset,
-        end: token.stop + 1,
-      },
-    };
-  }
+    if (token === undefined) {
+      return {
+        severity: e.severity,
+        message: e.message,
+        range: {
+          start: start,
+          end: start,
+        },
+        offsets: {
+          start: startOffset,
+          end: startOffset,
+        },
+      };
+    } else {
+      return {
+        severity: e.severity,
+        message: e.message,
+        range: {
+          start: start,
+          end: Position.create(
+            token.line - 1,
+            token.column + token.text.length,
+          ),
+        },
+        offsets: {
+          start: startOffset,
+          end: token.stop + 1,
+        },
+      };
+    }
+  });
 }
 
 export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
@@ -154,11 +171,8 @@ export function lintCypherQuery(
   if (syntaxErrors.length > 0) {
     return syntaxErrors;
   }
-  const cachedParse = parserWrapper.parse(wholeFileText);
 
-  return validateSemantics(wholeFileText)
-    .map((el) => findEndPosition(el, cachedParse))
-    .sort(sortByPosition);
+  return validateSemantics(wholeFileText);
 }
 
 export function validateSyntax(
@@ -176,15 +190,30 @@ export function validateSyntax(
   return [];
 }
 
-/**
- * Assumes the provided query has no parse errors
- */
-export function validateSemantics(query: string): SemanticAnalysisElement[] {
-  if (query.length > 0) {
-    const { notifications, errors } = wrappedSemanticAnalysis(query);
-
-    return notifications.concat(errors);
+export function validateSemantics(wholeFileText: string): SyntaxDiagnostic[] {
+  const reparse = parserWrapper.parse(wholeFileText);
+  if (reparse.diagnostics.length > 0) {
+    return [];
   }
 
-  return [];
+  /*  
+    Semantic analysis can only handle one cypher statement at a time and naturally only supports cypher.
+    We work around these limitations by breaking the file into statements, then run semantic analysis 
+    on each individual cypher statement and map the positions back to the original query.
+    */
+  return reparse.collectedCommands
+    .flatMap((cmd) => {
+      if (cmd.type === 'cypher' && cmd.query.length > 0) {
+        const { notifications, errors } = wrappedSemanticAnalysis(cmd.query);
+
+        return fixSemanticAnalysisPositions({
+          cmd,
+          semanticElements: notifications.concat(errors),
+          parseResult: reparse,
+        });
+      }
+
+      return [];
+    })
+    .sort(sortByPosition);
 }
