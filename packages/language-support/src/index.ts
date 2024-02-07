@@ -15,10 +15,10 @@ export {
 } from './highlighting/syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parserWrapper } from './parserWrapper';
+export { parserWrapper, setConsoleCommandsEnabled } from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };
 
-import CypherLexer from './generated-parser/CypherLexer';
-import CypherParser from './generated-parser/CypherParser';
+import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherParser from './generated-parser/CypherCmdParser';

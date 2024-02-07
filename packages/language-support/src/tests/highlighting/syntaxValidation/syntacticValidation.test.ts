@@ -947,4 +947,33 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Syntax validation errors on incomplete console commands if console commands are not enabled', () => {
+    const query = `:`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: 'Console commands are unsupported in this environment.',
+        offsets: {
+          end: 1,
+          start: 1,
+        },
+        range: {
+          end: {
+            character: 1,
+            line: 0,
+          },
+          start: {
+            character: 1,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

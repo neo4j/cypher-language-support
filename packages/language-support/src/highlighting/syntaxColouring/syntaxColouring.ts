@@ -5,6 +5,7 @@ import {
   AnyExpressionContext,
   ArrowLineContext,
   BooleanLiteralContext,
+  ConsoleCommandContext,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
@@ -14,6 +15,7 @@ import {
   NoneExpressionContext,
   NumberLiteralContext,
   ParameterContext,
+  ParamsArgsContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   PropertyKeyNameContext,
@@ -23,14 +25,15 @@ import {
   StringsLiteralContext,
   StringTokenContext,
   SymbolicNameStringContext,
+  UseCompletionRuleContext,
   VariableContext,
-} from '../../generated-parser/CypherParser';
+} from '../../generated-parser/CypherCmdParser';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherParserListener from '../../generated-parser/CypherParserListener';
+import CypherParserListener from '../../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../../lexerSymbols';
 import { parserWrapper } from '../../parserWrapper';
 import {
@@ -74,6 +77,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.label]: SemanticTokenTypes.type,
     [CypherTokenType.variable]: SemanticTokenTypes.variable,
     [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
+    [CypherTokenType.consoleCommand]: SemanticTokenTypes.macro,
   };
 
   const semanticTokenType = tokenMappings[cypherTokenType];
@@ -228,6 +232,43 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
     this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
+  };
+
+  // Fix coloring of colon in console commands (operator -> consoleCommand)
+  exitConsoleCommand = (ctx: ConsoleCommandContext) => {
+    const colon = ctx.COLON();
+    this.addToken(
+      colon.symbol,
+      CypherTokenType.consoleCommand,
+      colon.getText(),
+    );
+  };
+
+  // console commands that clash with cypher keywords
+  exitUseCompletionRule = (ctx: UseCompletionRuleContext) => {
+    const use = ctx.USE();
+
+    this.addToken(use.symbol, CypherTokenType.consoleCommand, use.getText());
+  };
+
+  exitParamsArgs = (ctx: ParamsArgsContext) => {
+    const clear = ctx.CLEAR();
+    if (clear) {
+      this.addToken(
+        clear.symbol,
+        CypherTokenType.consoleCommand,
+        clear.getText(),
+      );
+    }
+
+    const list = ctx.listCompletionRule()?.LIST();
+    if (list) {
+      this.addToken(
+        list.symbol,
+        CypherTokenType.consoleCommand,
+        list.getText(),
+      );
+    }
   };
 }
 

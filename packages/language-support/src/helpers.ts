@@ -6,12 +6,12 @@ import antlrDefaultExport, {
   ParseTree,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
   RelationshipPatternContext,
-  StatementsContext,
-} from './generated-parser/CypherParser';
+  StatementsOrCommandsContext,
+} from './generated-parser/CypherCmdParser';
 import { ParsingResult, StatementParsing } from './parserWrapper';
 
 /* In antlr we have 
@@ -31,7 +31,7 @@ export type EnrichedParseTree = ParseTree & {
   parentCtx: ParserRuleContext | undefined;
 };
 
-export function findStopNode(root: StatementsContext) {
+export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 

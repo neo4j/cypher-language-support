@@ -82,60 +82,75 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-function findEndPosition(
-  e: SemanticAnalysisElement,
-  parsingResult: StatementParsing,
-): SyntaxDiagnostic {
-  let token: Token | undefined = undefined;
+type FixSemanticPositionsArgs = {
+  semanticElements: SemanticAnalysisElement[];
+  parseResult: StatementParsing;
+};
 
-  const start = Position.create(e.position.line - 1, e.position.column - 1);
-  const startOffset = e.position.offset;
+function fixSemanticAnalysisPositions({
+  semanticElements,
+  parseResult,
+}: FixSemanticPositionsArgs): SyntaxDiagnostic[] {
+  const cmd = parseResult.command;
+  return semanticElements.map((e) => {
+    let token: Token | undefined = undefined;
 
-  const line = start.line + 1;
-  const column = start.character;
-  const toExplore: ParseTree[] = [parsingResult.ctx];
+    const start = Position.create(
+      e.position.line - 1 + cmd.start.line - 1,
+      e.position.column - 1 + (e.position.line === 1 ? cmd.start.column : 0),
+    );
 
-  while (toExplore.length > 0 && !token) {
-    const current: ParseTree = toExplore.pop();
+    const startOffset = e.position.offset + cmd.start.start;
 
-    if (current instanceof ParserRuleContext) {
-      const startToken = current.start;
-      if (startToken.line === line && startToken.column === column) {
-        token = current.stop;
-      }
-      if (current.children) {
-        current.children.forEach((child) => toExplore.push(child));
+    const line = start.line + 1;
+    const column = start.character;
+    const toExplore: ParseTree[] = [parseResult.ctx];
+
+    while (toExplore.length > 0 && !token) {
+      const current: ParseTree = toExplore.pop();
+
+      if (current instanceof ParserRuleContext) {
+        const startToken = current.start;
+        if (startToken.line === line && startToken.column === column) {
+          token = current.stop;
+        }
+        if (current.children) {
+          current.children.forEach((child) => toExplore.push(child));
+        }
       }
     }
-  }
 
-  if (token === undefined) {
-    return {
-      severity: e.severity,
-      message: e.message,
-      range: {
-        start: start,
-        end: start,
-      },
-      offsets: {
-        start: startOffset,
-        end: startOffset,
-      },
-    };
-  } else {
-    return {
-      severity: e.severity,
-      message: e.message,
-      range: {
-        start: start,
-        end: Position.create(token.line - 1, token.column + token.text.length),
-      },
-      offsets: {
-        start: startOffset,
-        end: token.stop + 1,
-      },
-    };
-  }
+    if (token === undefined) {
+      return {
+        severity: e.severity,
+        message: e.message,
+        range: {
+          start: start,
+          end: start,
+        },
+        offsets: {
+          start: startOffset,
+          end: startOffset,
+        },
+      };
+    } else {
+      return {
+        severity: e.severity,
+        message: e.message,
+        range: {
+          start: start,
+          end: Position.create(
+            token.line - 1,
+            token.column + token.text.length,
+          ),
+        },
+        offsets: {
+          start: startOffset,
+          end: token.stop + 1,
+        },
+      };
+    }
+  });
 }
 
 export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
@@ -185,15 +200,21 @@ export function validateSemantics(query: string): SyntaxDiagnostic[] {
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
     const semanticErrors = statements.flatMap((current) => {
-      const { notifications, errors } = wrappedSemanticAnalysis(
-        current.statement,
-      );
+      const cmd = current.command;
+      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+        const { notifications, errors } = wrappedSemanticAnalysis(
+          cmd.statement,
+        );
 
-      const elements = notifications.concat(errors);
-      const result = elements
-        .map((el) => findEndPosition(el, current))
-        .sort(sortByPosition);
-      return result;
+        const elements = notifications.concat(errors);
+        const result = fixSemanticAnalysisPositions({
+          semanticElements: elements,
+          parseResult: current,
+        }).sort(sortByPosition);
+        return result;
+      }
+
+      return [];
     });
 
     return semanticErrors;

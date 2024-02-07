@@ -80,6 +80,9 @@ export const createCypherTheme = ({
     '& .cm-selectionMatch': {
       backgroundColor: settings.textMatchingSelection,
     },
+    '& .cm-bold': {
+      fontWeight: 'bold',
+    },
     '& .cm-panels': {
       backgroundColor: settings.searchPanel.background,
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
@@ -198,6 +201,7 @@ export const createCypherTheme = ({
     ([token, color]: [HighlightedCypherTokenTypes, string]): TagStyle => ({
       tag: tokenTypeToStyleTag[token],
       color,
+      class: token === 'consoleCommand' ? 'cm-bold' : undefined,
     }),
   );
   const highlightStyle = HighlightStyle.define(styles);
