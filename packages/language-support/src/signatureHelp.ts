@@ -12,7 +12,7 @@ import CypherParser, {
 
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
-import CypherParserListener from './generated-parser/CypherParserListener';
+import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
 
@@ -48,7 +48,7 @@ function toSignatureHelp(
   return signatureHelp;
 }
 
-class SignatureHelper extends CypherParserListener {
+class SignatureHelper extends CypherCmdParserListener {
   result: ParsedMethod;
   constructor(private tokens: Token[], private caretToken: Token) {
     super();
