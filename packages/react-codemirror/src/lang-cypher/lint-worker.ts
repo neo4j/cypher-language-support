@@ -1,14 +1,12 @@
 import { validateSemantics } from '@neo4j-cypher/language-support';
-import workerpool from 'workerpool';
 
-workerpool.worker({ validateSemantics });
+export type SemanticAnalysisRequestMessage = { query: string };
 
-type LinterArgs = Parameters<typeof validateSemantics>;
+self.onmessage = (event: MessageEvent) => {
+  const args = event.data as SemanticAnalysisRequestMessage;
 
-export type LinterTask = workerpool.Promise<
-  ReturnType<typeof validateSemantics>
->;
+  const port = event.ports[0];
 
-export type LintWorker = {
-  validateSemantics: (...args: LinterArgs) => LinterTask;
+  const semanticErrors = validateSemantics(args.query);
+  port.postMessage(semanticErrors);
 };

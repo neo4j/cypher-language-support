@@ -1,22 +1,22 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
-import { parserWrapper, validateSyntax } from '@neo4j-cypher/language-support';
+import {
+  SyntaxDiagnostic,
+  validateSyntax,
+} from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
-import workerpool from 'workerpool';
 import type { CypherConfig } from './lang-cypher';
-import type { LinterTask, LintWorker } from './lint-worker';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
-import WorkerURL from './lint-worker?url&worker';
+const createWorker = () =>
+  new Worker(new URL('./lint-worker', import.meta.url), { type: 'module' });
+let lintWorker = createWorker();
+let workerBusy = false;
 
-const pool = workerpool.pool(WorkerURL as string, {
-  minWorkers: 2,
-  workerOpts: { type: 'module' },
-  workerTerminateTimeout: 2000,
-});
-
-let lastSemanticJob: LinterTask | undefined;
+function resetWorker() {
+  lintWorker.terminate();
+  lintWorker = createWorker();
+  workerBusy = false;
+}
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter((view) => {
@@ -53,38 +53,54 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       return [];
     }
 
-    // we want to avoid the ANTLR4 reparse in the worker thread, this should hit our main thread cache
-    const parse = parserWrapper.parse(query);
-    if (parse.diagnostics.length !== 0) {
-      return [];
+    const channel = new MessageChannel();
+    if (workerBusy) {
+      resetWorker();
     }
 
-    try {
-      if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
-        void lastSemanticJob.cancel();
-      }
+    workerBusy = true;
+    lintWorker.postMessage({ query, dbSchema: config.schema ?? {} }, [
+      channel.port1,
+    ]);
 
-      const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.validateSemantics(query);
-      const result = await lastSemanticJob;
+    const diagPromise = new Promise<Diagnostic[]>((resolve) => {
+      channel.port2.onmessage = (event) => {
+        const msg = event.data as SyntaxDiagnostic[];
 
-      return result.map((diag) => {
-        return {
-          from: diag.offsets.start,
-          to: diag.offsets.end,
-          severity:
-            diag.severity === DiagnosticSeverity.Error ? 'error' : 'warning',
-          message: diag.message,
-        };
-      });
-    } catch (err) {
-      if (!(err instanceof workerpool.Promise.CancellationError)) {
-        console.error(String(err) + ' ' + query);
-      }
-    }
-    return [];
+        const diagnostics = msg.map(
+          (diagnostic): Diagnostic => ({
+            from: diagnostic.offsets.start,
+            to: diagnostic.offsets.end,
+            severity:
+              diagnostic.severity === DiagnosticSeverity.Error
+                ? 'error'
+                : 'warning',
+            message: diagnostic.message,
+          }),
+        );
+
+        if (workerBusy) {
+          workerBusy = false;
+        }
+        resolve(diagnostics);
+      };
+    });
+
+    const timeoutPromise = new Promise<Diagnostic[]>((resolve) => {
+      setTimeout(() => {
+        if (workerBusy) {
+          resetWorker();
+        }
+
+        resolve([]);
+      }, 2000);
+    });
+
+    const result = await Promise.race([diagPromise, timeoutPromise]);
+
+    return result;
   });
 
 export const cleanupWorkers = () => {
-  void pool.terminate();
+  void lintWorker.terminate();
 };
