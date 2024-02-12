@@ -4,11 +4,13 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherParser, {
+import {
   ClauseContext,
+  default as CypherParser,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  StatementOrCommandContext,
   StatementsOrCommandsContext,
   VariableContext,
 } from './generated-parser/CypherCmdParser';
@@ -40,6 +42,16 @@ export interface StatementParsing {
 export interface ParsingResult {
   query: string;
   statementsParsing: StatementParsing[];
+}
+
+export interface ParsingScaffolding {
+  query: string;
+  statementsScaffolding: StatementParsingScaffolding[];
+}
+
+export interface StatementParsingScaffolding {
+  parser: CypherParser;
+  tokens: Token[];
 }
 
 export enum LabelType {
@@ -77,48 +89,75 @@ export type LabelOrRelType = {
   };
 };
 
-export function createParsingResult(
-  query: string,
-  tokenStream: CommonTokenStream,
-  lexer: CypherLexer,
-): ParsingResult {
+export function createParsingScaffolding(query: string): ParsingScaffolding {
+  const inputStream = CharStreams.fromString(query);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
   const stsTokenStreams = splitIntoStatements(tokenStream, lexer);
 
-  const results: StatementParsing[] = stsTokenStreams.map((t) => {
-    // TODO Why do we duplicate an EOF here sometimes if we don't deep copy?
-    const tokens = [...t.tokens];
-    const parser = new CypherParser(t);
-    const labelsCollector = new LabelAndRelTypesCollector();
-    const variableFinder = new VariableCollector();
-    const errorListener = new SyntaxErrorsListener();
-    parser._parseListeners = [labelsCollector, variableFinder];
-    parser.removeErrorListeners();
-    parser.addErrorListener(errorListener);
-    const ctx = parser.statementsOrCommands();
-    const nonEmptyQuery =
-      tokens.find((t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE) !==
-      undefined;
-    const diagnostics = nonEmptyQuery ? errorListener.errors : [];
-    // TODO Fix me
-    const collectedCommand = parseToCommands(ctx).at(0);
+  const statementsScaffolding: StatementParsingScaffolding[] =
+    stsTokenStreams.map((t) => {
+      const tokens = [...t.tokens];
+      const parser = new CypherParser(t);
 
-    if (!consoleCommandEnabled()) {
-      diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
-    }
+      return {
+        parser: parser,
+        tokens: tokens,
+      };
+    });
 
-    return {
-      command: collectedCommand,
-      parser: parser,
-      tokens: tokens,
-      diagnostics: diagnostics,
-      // TODO this is statements in plural :(
-      ctx: ctx,
-      // TODO See if we can remove this
-      stopNode: findStopNode(ctx),
-      collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
-      collectedVariables: variableFinder.variables,
-    };
-  });
+  return {
+    query: query,
+    statementsScaffolding: statementsScaffolding,
+  };
+}
+
+export function parse(query: string): StatementOrCommandContext[] {
+  const statementScaffolding =
+    createParsingScaffolding(query).statementsScaffolding;
+  const result = statementScaffolding.map((statement) =>
+    statement.parser.statementOrCommand(),
+  );
+
+  return result;
+}
+
+export function createParsingResult(query: string): ParsingResult {
+  const parsingScaffolding = createParsingScaffolding(query);
+
+  const results: StatementParsing[] =
+    parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
+      const { parser, tokens } = statementScaffolding;
+      const labelsCollector = new LabelAndRelTypesCollector();
+      const variableFinder = new VariableCollector();
+      const errorListener = new SyntaxErrorsListener();
+      parser._parseListeners = [labelsCollector, variableFinder];
+      parser.removeErrorListeners();
+      parser.addErrorListener(errorListener);
+      const ctx = parser.statementsOrCommands();
+      const nonEmptyQuery =
+        tokens.find(
+          (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
+        ) !== undefined;
+      const diagnostics = nonEmptyQuery ? errorListener.errors : [];
+      // TODO Fix me
+      const collectedCommand = parseToCommands(ctx).at(0);
+
+      if (!consoleCommandEnabled()) {
+        diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
+      }
+
+      return {
+        command: collectedCommand,
+        parser: parser,
+        tokens: tokens,
+        diagnostics: diagnostics,
+        ctx: ctx,
+        stopNode: findStopNode(ctx),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+        collectedVariables: variableFinder.variables,
+      };
+    });
 
   const parsingResult: ParsingResult = {
     query: query,
@@ -357,8 +396,7 @@ function translateTokensToRange(
     },
   };
 }
-function errorOnNonCypherCommands(command: ParsedCommand) {
-  // TODO Fix me
+function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
     .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
     .map(
@@ -380,10 +418,7 @@ class ParserWrapper {
     ) {
       return this.parsingResult;
     } else {
-      const inputStream = CharStreams.fromString(query);
-      const lexer = new CypherLexer(inputStream);
-      const tokenStream = new CommonTokenStream(lexer);
-      const parsingResult = createParsingResult(query, tokenStream, lexer);
+      const parsingResult = createParsingResult(query);
 
       return parsingResult;
     }

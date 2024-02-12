@@ -160,7 +160,6 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   return a.range.start.character - b.range.start.character;
 }
 
-// TODO Does this need to be exported
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
@@ -174,7 +173,6 @@ export function lintCypherQuery(
   return semanticErrors;
 }
 
-// TODO Does this need to be exported
 export function validateSyntax(
   query: string,
   dbSchema: DbSchema,

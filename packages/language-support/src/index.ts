@@ -15,7 +15,11 @@ export {
 } from './highlighting/syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parserWrapper, setConsoleCommandsEnabled } from './parserWrapper';
+export {
+  parse,
+  parserWrapper,
+  setConsoleCommandsEnabled,
+} from './parserWrapper';
 export { signatureHelp } from './signatureHelp';
 export { testData } from './tests/testData';
 export { CypherLexer, CypherParser };

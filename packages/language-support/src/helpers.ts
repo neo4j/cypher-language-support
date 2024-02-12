@@ -110,7 +110,7 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
   return isDefined(relPattern);
 }
 
-class MyTokenStream extends CommonTokenStream {
+class CustomTokenStream extends CommonTokenStream {
   tokens: antlrDefaultExport.Token[] = [];
 
   constructor(lexer: CypherLexer, tokens: Token[]) {
@@ -173,7 +173,7 @@ export function splitIntoStatements(
       current.type === CypherLexer.EOF
     ) {
       // This does not relex since we are not calling fill on the token stream
-      result.push(new MyTokenStream(lexer, chunk));
+      result.push(new CustomTokenStream(lexer, chunk));
       offset = i + 1;
       chunk = [];
     }

@@ -22,8 +22,6 @@ export function autocomplete(
      If there was no ;, we don't want to reparse, so we return undefined 
      inside findLatestStatement
   */
-
-  // TODO Fix me
   const lastStatement = parsingResult.statementsParsing.at(-1);
   if (lastStatement !== undefined) {
     return completionCoreCompletion(lastStatement, dbSchema);
