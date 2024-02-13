@@ -32,6 +32,8 @@ export interface StatementParsing {
   command: ParsedCommand;
   parser: CypherParser;
   tokens: Token[];
+  // A statement needs to be parsed with the .statements() rule because
+  // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
   diagnostics: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
@@ -140,8 +142,7 @@ export function createParsingResult(query: string): ParsingResult {
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) !== undefined;
       const diagnostics = nonEmptyQuery ? errorListener.errors : [];
-      // TODO Fix me
-      const collectedCommand = parseToCommands(ctx).at(0);
+      const collectedCommand = parseToCommand(ctx);
 
       if (!consoleCommandEnabled()) {
         diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
@@ -286,8 +287,10 @@ export type ParsedCommandNoPosition =
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
-function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
-  return stmts.statementOrCommand_list().map((stmt) => {
+function parseToCommand(stmts: StatementsOrCommandsContext): ParsedCommand {
+  const stmt = stmts.statementOrCommand_list().at(0);
+
+  if (stmt) {
     const { start, stop } = stmt;
 
     const cypherStmt = stmt.statement();
@@ -378,7 +381,8 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
       return { type: 'parse-error', start, stop };
     }
     return { type: 'parse-error', start, stop };
-  });
+  }
+  return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }
 
 function translateTokensToRange(

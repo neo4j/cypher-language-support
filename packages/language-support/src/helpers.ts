@@ -149,7 +149,6 @@ export function findCaret(
   return result;
 }
 
-// TODO Should this be moved to the parser wrapper?
 export function splitIntoStatements(
   tokenStream: CommonTokenStream,
   lexer: CypherLexer,
