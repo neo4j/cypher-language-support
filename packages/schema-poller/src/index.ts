@@ -1,1 +1,1 @@
-export { Neo4jSchemaPoller } from './schema-poller';
+export { Neo4jSchemaPoller } from './schemaPoller';

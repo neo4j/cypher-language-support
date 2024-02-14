@@ -1,5 +1,5 @@
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs } from '../types/sdk-types';
+import { ExecuteQueryArgs } from '../types/sdkTypes';
 
 export type DatabaseStatus =
   | 'online'

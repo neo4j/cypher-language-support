@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import Benchmark from 'benchmark';
 import { autocomplete } from '../../autocompletion/autocompletion';
-import { applySyntaxColouring } from '../../highlighting/syntaxColouring/syntaxColouring';
+import { parse, parserWrapper } from '../../parserWrapper';
+import { signatureHelp } from '../../signatureHelp';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 import {
   lintCypherQuery,
   validateSyntax,
-} from '../../highlighting/syntaxValidation/syntaxValidation';
-import { parse, parserWrapper } from '../../parserWrapper';
-import { signatureHelp } from '../../signatureHelp';
+} from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
 import {
   autocompletionQueries,
@@ -15,7 +15,7 @@ import {
   largePokemonquery,
   simpleQuery,
   tictactoe,
-} from './benchmark-queries';
+} from './benchmarkQueries';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';
