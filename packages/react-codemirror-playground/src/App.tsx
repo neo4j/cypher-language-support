@@ -3,7 +3,7 @@ import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
-import { getDebugTree } from './tree-util';
+import { getDebugTree } from './treeUtil';
 
 const demos = {
   allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 

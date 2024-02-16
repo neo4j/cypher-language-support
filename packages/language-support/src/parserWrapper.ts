@@ -24,7 +24,7 @@ import {
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
-} from './highlighting/syntaxValidation/syntaxValidationHelpers';
+} from './syntaxValidation/syntaxValidationHelpers';
 
 export interface ParsingResult {
   query: string;

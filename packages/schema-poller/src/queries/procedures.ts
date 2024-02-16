@@ -3,7 +3,7 @@ import type {
   ArgumentDescription,
   ExecuteQueryArgs,
   ReturnDescription,
-} from '../types/sdk-types.js';
+} from '../types/sdkTypes.js';
 
 type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE';
 

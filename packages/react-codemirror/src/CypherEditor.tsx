@@ -17,10 +17,10 @@ import { Component, createRef } from 'react';
 import {
   replaceHistory,
   replMode as historyNavigation,
-} from './history-navigation';
-import { cypher, CypherConfig } from './lang-cypher/lang-cypher';
-import { cleanupWorkers } from './lang-cypher/syntax-validation';
-import { basicNeo4jSetup } from './neo4j-setup';
+} from './historyNavigation';
+import { cypher, CypherConfig } from './lang-cypher/langCypher';
+import { cleanupWorkers } from './lang-cypher/syntaxValidation';
+import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 
 export interface CypherEditorProps {

@@ -2,7 +2,7 @@ import { resultTransformers } from 'neo4j-driver';
 import type {
   ArgumentDescription,
   ExecuteQueryArgs,
-} from '../types/sdk-types.js';
+} from '../types/sdkTypes.js';
 
 export type Neo4jFunction = {
   name: string;
