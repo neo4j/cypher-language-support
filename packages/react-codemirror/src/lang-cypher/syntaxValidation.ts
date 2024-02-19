@@ -71,7 +71,10 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.validateSemantics(query, config.schema ?? {});
+      lastSemanticJob = proxyWorker.validateSemantics(
+        query,
+        config.schema ?? {},
+      );
       const result = await lastSemanticJob;
 
       return result.map((diag) => {

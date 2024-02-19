@@ -32,5 +32,5 @@ export type Neo4jFunction = {
   argumentDescription: ArgumentDescription[];
   returnDescription: string;
   signature: string;
-  aggregating: boolean;
+  isAggregate: boolean;
 };
