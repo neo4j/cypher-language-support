@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
+import { DbSchema } from '../../dbSchema';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { semanticAnalysis, updateSignatureResolver } from './semanticAnalysis';
@@ -33,11 +33,21 @@ export function wrappedSemanticAnalysis(
 ): SemanticAnalysisResult {
   try {
     let semanticErrorsResult = undefined;
+<<<<<<< HEAD:packages/language-support/src/syntaxValidation/semanticAnalysisWrapper.ts
     console.log(dbSchema.rawProcedures);
     updateSignatureResolver({
       procedures: dbSchema.rawProcedures,
       functions: dbSchema.rawFunctions,
     });
+=======
+
+    if (dbSchema.rawFunctions && dbSchema.rawProcedures) {
+      updateSignatureResolver({
+        procedures: dbSchema.rawProcedures,
+        functions: dbSchema.rawFunctions,
+      });
+    }
+>>>>>>> ae5b3cc5d (Fixes functions registry for list types):packages/language-support/src/highlighting/syntaxValidation/semanticAnalysisWrapper.ts
     semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
@@ -67,7 +77,10 @@ export function wrappedSemanticAnalysis(
       })),
     };
   } catch (e) {
+<<<<<<< HEAD:packages/language-support/src/syntaxValidation/semanticAnalysisWrapper.ts
     console.log(e);
+=======
+>>>>>>> ae5b3cc5d (Fixes functions registry for list types):packages/language-support/src/highlighting/syntaxValidation/semanticAnalysisWrapper.ts
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
     return { errors: [], notifications: [] };
   }
