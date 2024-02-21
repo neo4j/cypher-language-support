@@ -8,7 +8,7 @@ import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import type { CypherConfig } from './langCypher';
 
 const createWorker = () =>
-  new Worker(new URL('./lint-worker', import.meta.url), { type: 'module' });
+  new Worker(new URL('./lintWorker', import.meta.url), { type: 'module' });
 let lintWorker = createWorker();
 let workerBusy = false;
 
