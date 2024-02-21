@@ -1,4 +1,5 @@
-import { setConsoleCommandsEnabled } from '../../parserWrapper';
+import { setConsoleCommandsEnabled } from '../../../parserWrapper';
+import { testData } from '../../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
@@ -1444,5 +1445,105 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
     ]);
     setConsoleCommandsEnabled(false);
+  });
+
+  test('Provides semantic validation for built-in functions', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `WITH character_length() AS a
+        WITH character_length(1) AS b, a
+        RETURN a,b`,
+      }),
+    ).toEqual([
+      {
+        message: "Insufficient parameters for function 'character_length'",
+        offsets: {
+          end: 28,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Type mismatch: expected String but was Integer',
+        offsets: {
+          end: 60,
+          start: 59,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 1,
+          },
+          start: {
+            character: 30,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Provides semantic validation for procedures when a schema is available', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+        CALL db.awaitIndex('index', 'time')
+        CALL db.awaitIndex()
+        `,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: 'Type mismatch: expected Integer but was String',
+        offsets: {
+          end: 43,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 1,
+          },
+          start: {
+            character: 36,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: `Procedure call does not provide the required number of arguments: got 0 expected at least 1 (total: 2, 1 of which have default values).
+
+Procedure db.awaitIndex has signature: db.awaitIndex(indexName :: STRING, timeOutSeconds  =  300 :: INTEGER) :: 
+meaning that it expects at least 1 argument of type STRING
+`,
+        offsets: {
+          end: 73,
+          start: 53,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 2,
+          },
+          start: {
+            character: 8,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });

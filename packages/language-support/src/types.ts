@@ -2,6 +2,7 @@ export type ReturnDescription = {
   name: string;
   description: string;
   type: Neo4jStringType;
+  isDeprecated: boolean;
 };
 
 // we could parse this string for better types in the future
@@ -32,5 +33,5 @@ export type Neo4jFunction = {
   argumentDescription: ArgumentDescription[];
   returnDescription: string;
   signature: string;
-  isAggregate: boolean;
+  aggregating: boolean;
 };
