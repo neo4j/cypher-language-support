@@ -1,4 +1,3 @@
-import { snippetCompletion } from '@codemirror/autocomplete';
 import {
   defineLanguageFacet,
   Language,
@@ -33,10 +32,7 @@ export function cypher(config: CypherConfig) {
 
   return new LanguageSupport(cypherLanguage, [
     cypherLanguage.data.of({
-      autocomplete: [
-        cypherAutocomplete(config),
-        snippetCompletion('mySnippet(${one}, ${two})', { label: 'mySnippet' }),
-      ],
+      autocomplete: cypherAutocomplete(config),
     }),
     cypherLinter(config),
     semanticAnalysisLinter(config),
