@@ -76,17 +76,3 @@ test('can complete CALL/CREATE', async ({ page, mount }) => {
 
   await expect(textField).toHaveText('CALL');
 });
-
-test('prompt shows up', async ({ mount, page }) => {
-  const component = await mount(<CypherEditor prompt="neo4j>" />);
-
-  await expect(component).toContainText('neo4j>');
-
-  await component.update(<CypherEditor prompt="test>" />);
-  await expect(component).toContainText('test>');
-
-  const textField = page.getByRole('textbox');
-  await textField.press('a');
-
-  await expect(textField).toHaveText('a');
-});

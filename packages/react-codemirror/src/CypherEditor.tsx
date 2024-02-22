@@ -42,7 +42,7 @@ export interface CypherEditorProps {
    */
   onExecute?: (cmd: string) => void;
   /**
-   * The editor history navigateable via up/down arrow keys. Order newest to oldest.
+   * The editor history navigable via up/down arrow keys. Order newest to oldest.
    * Add to this list with the `onExecute` callback for REPL style history.
    */
   history?: string[];
@@ -102,6 +102,30 @@ export interface CypherEditorProps {
    * @param {ViewUpdate} viewUpdate - the view update from codemirror
    */
   onChange?(value: string, viewUpdate: ViewUpdate): void;
+  /**
+   * Callback when the editor gains focus.
+   */
+  onFocus?(): void;
+  /**
+   * Callback when the editor loses focus.
+   */
+  onBlur?(): void;
+  /**
+   * Placeholder text to display when the editor is empty.
+   */
+  placeholder?: string;
+  /**
+   * Whether the editor should show line numbers.
+   *
+   * @default false
+   */
+  lineNumbers?: boolean;
+  /**
+   * Whether the editor is read-only.
+   *
+   * @default false
+   */
+  readonly?: boolean;
 }
 
 const executeKeybinding = (onExecute?: (cmd: string) => void) =>
@@ -125,6 +149,16 @@ const executeKeybinding = (onExecute?: (cmd: string) => void) =>
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
+const lineNumbersCompartment = new Compartment();
+const formatLineNumber =
+  (prompt?: string) => (a: number, state: EditorState) => {
+    if (state.doc.lines === 1 && prompt !== undefined) {
+      return prompt;
+    }
+
+    return a.toString();
+  };
+
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
@@ -249,15 +283,11 @@ export class CypherEditor extends Component<
         cypher(this.schemaRef.current),
         lineWrap ? EditorView.lineWrapping : [],
 
-        lineNumbers({
-          formatNumber: (a, state) => {
-            if (state.doc.lines === 1 && this.props.prompt !== undefined) {
-              return this.props.prompt;
-            }
-
-            return a.toString();
-          },
-        }),
+        lineNumbersCompartment.of(
+          this.props.lineNumbers
+            ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
+            : [],
+        ),
       ],
       doc: this.props.value,
     });
@@ -309,6 +339,16 @@ export class CypherEditor extends Component<
             this.props.theme,
             this.props.overrideThemeBackgroundColor,
           ),
+        ),
+      });
+    }
+
+    if (prevProps.lineNumbers !== this.props.lineNumbers) {
+      this.editorView.current.dispatch({
+        effects: lineNumbersCompartment.reconfigure(
+          this.props.lineNumbers
+            ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
+            : [],
         ),
       });
     }
