@@ -19,7 +19,7 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.cjs",
-        "${workspaceRoot}/packages/schema-poller/**/*.cjs"
+        "${workspaceRoot}/packages/schema-poller/**/*.js"
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true
