@@ -1,5 +1,5 @@
-import { setConsoleCommandsEnabled } from '../../../parserWrapper';
-import { testData } from '../../testData';
+import { setConsoleCommandsEnabled } from '../../parserWrapper';
+import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
@@ -1630,6 +1630,80 @@ meaning that it expects at least 1 argument of type ANY
           },
         },
         severity: 1,
+      },
+    ]);
+  });
+
+  // TODO This doesn't seem to warn on deprecated
+  // arguments for either functions or procedures,
+  // needs to be solved in the database first
+  test('Notifies of deprecated returns in procedures', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL apoc.meta.graphSample({})`,
+        dbSchema: {
+          rawFunctions: [],
+          rawProcedures: [
+            {
+              name: 'apoc.meta.graphSample',
+              description:
+                'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
+              mode: 'DEFAULT',
+              worksOnSystem: false,
+              argumentDescription: [
+                {
+                  isDeprecated: false,
+                  default: 'DefaultParameterValue{value={}, type=MAP}',
+                  description: 'config = {} :: MAP',
+                  name: 'config',
+                  type: 'MAP',
+                },
+              ],
+
+              signature:
+                'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
+              returnDescription: [
+                {
+                  isDeprecated: true,
+                  description: 'nodes :: LIST<NODE>',
+                  name: 'nodes',
+                  type: 'LIST<NODE>',
+                },
+                {
+                  isDeprecated: false,
+                  description: 'relationships :: LIST<RELATIONSHIP>',
+                  name: 'relationships',
+                  type: 'LIST<RELATIONSHIP>',
+                },
+              ],
+
+              admin: false,
+              option: {
+                deprecated: false,
+              },
+            },
+          ],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "The query used a deprecated field from a procedure. ('nodes' returned by 'apoc.meta.graphSample' is deprecated.)",
+        offsets: {
+          end: 30,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
       },
     ]);
   });
