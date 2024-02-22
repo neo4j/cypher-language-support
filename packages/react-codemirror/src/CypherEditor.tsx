@@ -9,6 +9,7 @@ import {
   KeyBinding,
   keymap,
   lineNumbers,
+  placeholder,
   ViewUpdate,
 } from '@codemirror/view';
 import type { DbSchema } from '@neo4j-cypher/language-support';
@@ -23,6 +24,7 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 
+type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
   /**
    * The prompt to show on single line editors
@@ -102,14 +104,21 @@ export interface CypherEditorProps {
    * @param {ViewUpdate} viewUpdate - the view update from codemirror
    */
   onChange?(value: string, viewUpdate: ViewUpdate): void;
+
   /**
-   * Callback when the editor gains focus.
+   * Map of event handlers to add to the editor.
+   *
+   * Note that the props are compared by reference, meaning object defined inline
+   * will cause the editor to re-render (much like the style prop does in this example:
+   * <div style={{}} />
+   *
+   * Memoize the object if you want/need to avoid this.
+   *
+   * @example
+   * // listen to blur events
+   * <CypherEditor domEventHandlers={{blur: () => console.log("blur event fired")}} />
    */
-  onFocus?(): void;
-  /**
-   * Callback when the editor loses focus.
-   */
-  onBlur?(): void;
+  domEventHandlers?: DomEventHandlers;
   /**
    * Placeholder text to display when the editor is empty.
    */
@@ -117,7 +126,7 @@ export interface CypherEditorProps {
   /**
    * Whether the editor should show line numbers.
    *
-   * @default false
+   * @default true
    */
   lineNumbers?: boolean;
   /**
@@ -150,6 +159,10 @@ const executeKeybinding = (onExecute?: (cmd: string) => void) =>
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
 const lineNumbersCompartment = new Compartment();
+const readOnlyCompartment = new Compartment();
+const placeholderCompartment = new Compartment();
+const domEventHandlerCompartment = new Compartment();
+
 const formatLineNumber =
   (prompt?: string) => (a: number, state: EditorState) => {
     if (state.doc.lines === 1 && prompt !== undefined) {
@@ -222,6 +235,7 @@ export class CypherEditor extends Component<
     extraKeybindings: [],
     history: [],
     theme: 'light',
+    lineNumbers: true,
   };
 
   private debouncedOnChange = this.props.onChange
@@ -286,6 +300,15 @@ export class CypherEditor extends Component<
         lineNumbersCompartment.of(
           this.props.lineNumbers
             ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
+            : [],
+        ),
+        readOnlyCompartment.of(EditorState.readOnly.of(this.props.readonly)),
+        placeholderCompartment.of(
+          this.props.placeholder ? placeholder(this.props.placeholder) : [],
+        ),
+        domEventHandlerCompartment.of(
+          this.props.domEventHandlers
+            ? EditorView.domEventHandlers(this.props.domEventHandlers)
             : [],
         ),
       ],
@@ -353,6 +376,22 @@ export class CypherEditor extends Component<
       });
     }
 
+    if (prevProps.readonly !== this.props.readonly) {
+      this.editorView.current.dispatch({
+        effects: readOnlyCompartment.reconfigure(
+          EditorState.readOnly.of(this.props.readonly),
+        ),
+      });
+    }
+
+    if (prevProps.placeholder !== this.props.placeholder) {
+      this.editorView.current.dispatch({
+        effects: placeholderCompartment.reconfigure(
+          this.props.placeholder ? placeholder(this.props.placeholder) : [],
+        ),
+      });
+    }
+
     if (
       prevProps.extraKeybindings !== this.props.extraKeybindings ||
       prevProps.onExecute !== this.props.onExecute
@@ -363,6 +402,16 @@ export class CypherEditor extends Component<
             ...executeKeybinding(this.props.onExecute),
             ...this.props.extraKeybindings,
           ]),
+        ),
+      });
+    }
+
+    if (prevProps.domEventHandlers !== this.props.domEventHandlers) {
+      this.editorView.current.dispatch({
+        effects: domEventHandlerCompartment.reconfigure(
+          this.props.domEventHandlers
+            ? EditorView.domEventHandlers(this.props.domEventHandlers)
+            : [],
         ),
       });
     }

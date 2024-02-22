@@ -25,3 +25,73 @@ test('line numbers can be turned on/off', async ({ mount }) => {
   await component.update(<CypherEditor lineNumbers={false} />);
   await expect(component).not.toContainText('1');
 });
+
+test('can configure readonly', async ({ mount, page }) => {
+  const component = await mount(<CypherEditor readonly />);
+
+  const textField = page.getByRole('textbox');
+  await textField.press('a');
+  await expect(textField).not.toHaveText('a');
+
+  await component.update(<CypherEditor readonly={false} />);
+  await textField.press('b');
+  await expect(textField).toHaveText('b');
+});
+
+test('can set placeholder ', async ({ mount, page }) => {
+  const component = await mount(<CypherEditor placeholder="bulbasaur" />);
+
+  const textField = page.getByRole('textbox');
+  await expect(textField).toHaveText('bulbasaur');
+
+  await component.update(<CypherEditor placeholder="venusaur" />);
+  await expect(textField).not.toHaveText('bulbasaur');
+  await expect(textField).toHaveText('venusaur');
+
+  await textField.fill('abc');
+  await expect(textField).not.toHaveText('venusaur');
+  await expect(textField).toHaveText('abc');
+});
+
+test('can set/unset onFocus/onBlur', async ({ mount, page }) => {
+  const component = await mount(<CypherEditor />);
+
+  let focusFireCount = 0;
+  let blurFireCount = 0;
+
+  const focus = () => {
+    focusFireCount += 1;
+  };
+  const blur = () => {
+    blurFireCount += 1;
+  };
+
+  await component.update(<CypherEditor domEventHandlers={{ blur, focus }} />);
+
+  const textField = page.getByRole('textbox');
+  await textField.click();
+  await expect(textField).toBeFocused();
+
+  // this is to give the events time to fire
+  await expect(() => {
+    expect(focusFireCount).toBe(1);
+    expect(blurFireCount).toBe(0);
+  }).toPass();
+
+  await textField.blur();
+
+  await expect(() => {
+    expect(focusFireCount).toBe(1);
+    expect(blurFireCount).toBe(1);
+  }).toPass();
+
+  await component.update(<CypherEditor />);
+  await textField.click();
+  await expect(textField).toBeFocused();
+  await textField.blur();
+
+  await expect(() => {
+    expect(focusFireCount).toBe(1);
+    expect(blurFireCount).toBe(1);
+  }).toPass();
+});
