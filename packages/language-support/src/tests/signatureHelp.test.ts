@@ -25,9 +25,9 @@ describe('Procedures signature help', () => {
   const procedureName = 'apoc.do.when';
   const signature = SignatureInformation.create(
     procedureName,
-    dbSchema.procedureSignatures[procedureName].documentation,
+    dbSchema.procedureSignatures[procedureName].documentation.toString(),
     ...dbSchema.procedureSignatures[procedureName].parameters.map((param) =>
-      ParameterInformation.create(param.label, param.documentation),
+      ParameterInformation.create(param.label, param.documentation.toString()),
     ),
   );
 
@@ -226,9 +226,9 @@ describe('Functions signature help', () => {
   const functionName = 'apoc.coll.combinations';
   const signature = SignatureInformation.create(
     functionName,
-    dbSchema.functionSignatures[functionName].documentation,
+    dbSchema.functionSignatures[functionName].documentation.toString(),
     ...dbSchema.functionSignatures[functionName].parameters.map((param) =>
-      ParameterInformation.create(param.label, param.documentation),
+      ParameterInformation.create(param.label, param.documentation.toString()),
     ),
   );
 

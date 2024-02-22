@@ -1447,6 +1447,14 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     setConsoleCommandsEnabled(false);
   });
 
+  test('Does not provide semantic validation for pluggeable functions when schema is not available', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+      }),
+    ).toEqual([]);
+  });
+
   test('Provides semantic validation for built-in functions', () => {
     expect(
       getDiagnosticsForQuery({
@@ -1540,6 +1548,85 @@ meaning that it expects at least 1 argument of type STRING
           start: {
             character: 8,
             line: 2,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows default values correctly for external procedures', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CALL apoc.load.xml()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: `Procedure call does not provide the required number of arguments: got 0 expected at least 1 (total: 4, 3 of which have default values).
+
+Procedure apoc.load.xml has signature: apoc.load.xml(urlOrBinary :: ANY, path  =  / :: STRING, config  =  {} :: MAP, simple  =  false :: BOOLEAN) :: value :: MAP
+meaning that it expects at least 1 argument of type ANY
+`,
+        offsets: {
+          end: 20,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Does not fail if default arguments for procedure not provided', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL apoc.load.xml('url', '/path')`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Does not fail semantic validation for functions that expect LIST<ANY>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.max(['a'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Provides semantic validation for functions that expect LIST<NUMBER>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'Type mismatch: expected List<Float>, List<Integer> or List<Number> but was List<String>',
+        offsets: {
+          end: 31,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
           },
         },
         severity: 1,
