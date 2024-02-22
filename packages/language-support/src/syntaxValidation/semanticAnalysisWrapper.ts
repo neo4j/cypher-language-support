@@ -5,7 +5,7 @@
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { semanticAnalysis } from './semanticAnalysis';
+import { semanticAnalysis } from './semanticAnalysis.js';
 
 export interface SemanticAnalysisResult {
   errors: SemanticAnalysisElement[];

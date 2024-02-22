@@ -2,20 +2,11 @@ import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
 import { parserWrapper, validateSyntax } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
-import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from './lintWorker';
+import type { WorkerPoolModule } from './workerPool';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
-import WorkerURL from './lintWorker?url&worker';
-
-const pool = workerpool.pool(WorkerURL as string, {
-  minWorkers: 2,
-  workerOpts: { type: 'module' },
-  workerTerminateTimeout: 2000,
-});
-
+let poolModule: WorkerPoolModule | undefined;
 let lastSemanticJob: LinterTask | undefined;
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
@@ -63,8 +54,12 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
         void lastSemanticJob.cancel();
       }
+      if (!poolModule) {
+        poolModule = await import('./workerPool');
+      }
 
-      const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+      const proxyWorker =
+        (await poolModule.pool.proxy()) as unknown as LintWorker;
       lastSemanticJob = proxyWorker.validateSemantics(query);
       const result = await lastSemanticJob;
 
@@ -78,7 +73,10 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
         };
       });
     } catch (err) {
-      if (!(err instanceof workerpool.Promise.CancellationError)) {
+      const isCancellationError =
+        poolModule && err instanceof poolModule.CancellationError;
+
+      if (!isCancellationError) {
         console.error(String(err) + ' ' + query);
       }
     }
@@ -86,5 +84,5 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
   });
 
 export const cleanupWorkers = () => {
-  void pool.terminate();
+  void poolModule?.terminateWorkers();
 };
