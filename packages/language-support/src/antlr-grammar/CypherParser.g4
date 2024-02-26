@@ -24,7 +24,10 @@ statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
 
 statement:
-   periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+   preparserOption? periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
+
+preparserOption:
+   EXPLAIN | PROFILE;
 
 singleQueryOrCommand:
    (createCommand | command | singleQuery union*);
@@ -264,10 +267,16 @@ labelExpression2Is:
    EXCLAMATION_MARK* labelExpression1Is;
 
 labelExpression1:
-   (LPAREN labelExpression4 RPAREN | PERCENT | symbolicNameString);
+   LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
+   | PERCENT                      #AnyLabel
+   | symbolicNameString           #LabelName
+   ;
 
 labelExpression1Is:
-   (LPAREN labelExpression4Is RPAREN | PERCENT | symbolicLabelNameString);
+   LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
+   | PERCENT                        #AnyLabelIs
+   | symbolicLabelNameString        #LabelNameIs
+   ;
 
 insertNodeLabelExpression:
    (COLON|IS) insertLabelConjunction;
@@ -322,7 +331,7 @@ expression2:
    expression1 postFix*;
 
 postFix
-   : DOT propertyKeyName                                            #PropertyPostfix
+   : property                                                       #PropertyPostfix
    | labelExpression                                                #LabelPostfix
    | LBRACKET expression RBRACKET                                   #IndexPostfix
    | LBRACKET fromExp=expression? DOTDOT toExp=expression? RBRACKET #RangePostfix
@@ -428,10 +437,19 @@ propertyKeyName:
    symbolicNameString;
 
 parameter[String paramType]:
-   DOLLAR (symbolicNameString | UNSIGNED_DECIMAL_INTEGER);
+   DOLLAR parameterName;
+
+parameterName:
+   (variable | UNSIGNED_DECIMAL_INTEGER);
 
 functionInvocation:
-   namespace symbolicNameString LPAREN (DISTINCT | ALL)? expression? (COMMA expression)* RPAREN;
+   functionName LPAREN DISTINCT? functionArgument? (COMMA functionArgument)* RPAREN;
+
+functionArgument:
+   expression;
+
+functionName:
+   namespace symbolicNameString;
 
 namespace:
    (symbolicNameString DOT)*;

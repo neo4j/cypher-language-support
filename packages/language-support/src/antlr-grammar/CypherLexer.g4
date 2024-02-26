@@ -896,6 +896,12 @@ VALUE:
 VARCHAR:
    V A R C H A R -> type(STRING);
 
+EXPLAIN:
+   E X P L A I N;
+
+PROFILE:
+   P R O F I L E;
+
 VECTOR:
    V E C T O R;
 

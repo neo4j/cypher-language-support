@@ -583,7 +583,7 @@ describe('Administration commands syntax colouring', () => {
           startOffset: 124,
         },
         token: 'indexProvider',
-        tokenType: 'symbolicName',
+        tokenType: 'property',
       },
       {
         bracketInfo: undefined,
@@ -1910,7 +1910,7 @@ describe('Administration commands syntax colouring', () => {
           startOffset: 191,
         },
         token: 'property',
-        tokenType: 'symbolicName',
+        tokenType: 'property',
       },
       {
         bracketInfo: undefined,
@@ -2308,7 +2308,7 @@ describe('Administration commands syntax colouring', () => {
           startOffset: 33,
         },
         token: 'modeConstraint',
-        tokenType: 'symbolicName',
+        tokenType: 'property',
       },
       {
         bracketInfo: undefined,

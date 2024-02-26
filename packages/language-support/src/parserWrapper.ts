@@ -285,7 +285,7 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            ?.symbolicNameString_list()
+            ?.propertyKeyName_list()
             .map((name) => name.getText());
           const expressions = cypherMap
             ?.expression_list()

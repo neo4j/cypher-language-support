@@ -1,8 +1,6 @@
 import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 
 import {
-  AllExpressionContext,
-  AnyExpressionContext,
   ArrowLineContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
@@ -12,7 +10,7 @@ import {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   LeftArrowContext,
-  NoneExpressionContext,
+  ListItemsPredicateContext,
   NumberLiteralContext,
   ParameterContext,
   ParamsArgsContext,
@@ -21,9 +19,8 @@ import {
   PropertyKeyNameContext,
   ReduceExpressionContext,
   RightArrowContext,
-  SingleExpressionContext,
+  StringLiteralContext,
   StringsLiteralContext,
-  StringTokenContext,
   SymbolicNameStringContext,
   UseCompletionRuleContext,
   VariableContext,
@@ -178,7 +175,8 @@ class SyntaxHighlighter extends CypherParserListener {
     this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
   };
 
-  exitStringToken = (ctx: StringTokenContext) => {
+  // TODO Do we need this one and the one below?
+  exitStringLiteral = (ctx: StringLiteralContext) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
   };
 
@@ -210,20 +208,11 @@ class SyntaxHighlighter extends CypherParserListener {
     );
   };
 
-  exitAllExpression = (ctx: AllExpressionContext) => {
-    this.colourPredicateFunction(ctx.ALL());
-  };
-
-  exitAnyExpression = (ctx: AnyExpressionContext) => {
-    this.colourPredicateFunction(ctx.ANY());
-  };
-
-  exitNoneExpression = (ctx: NoneExpressionContext) => {
-    this.colourPredicateFunction(ctx.NONE());
-  };
-
-  exitSingleExpression = (ctx: SingleExpressionContext) => {
-    this.colourPredicateFunction(ctx.SINGLE());
+  exitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
+    if (ctx.ANY()) this.colourPredicateFunction(ctx.ANY());
+    if (ctx.ALL()) this.colourPredicateFunction(ctx.ALL());
+    if (ctx.NONE()) this.colourPredicateFunction(ctx.NONE());
+    if (ctx.SINGLE()) this.colourPredicateFunction(ctx.SINGLE());
   };
 
   exitReduceExpression = (ctx: ReduceExpressionContext) => {
