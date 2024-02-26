@@ -57,7 +57,7 @@ MORE1:
    '/*' -> more , mode (IN_MULTI_LINE_COMMENT);
 
 DECIMAL_DOUBLE:
-   ([0-9] (INTEGER_PART)* ('_')? '.' (INTEGER_PART)+ (DECIMAL_EXPONENT)? (IDENTIFIER)? | '.' (INTEGER_PART)+ (DECIMAL_EXPONENT)? (IDENTIFIER)? | [0-9] (INTEGER_PART)* DECIMAL_EXPONENT (IDENTIFIER)?);
+   ([0-9] (INTEGER_PART)* '.' [0-9] (INTEGER_PART)* (DECIMAL_EXPONENT)? (IDENTIFIER)? | '.' [0-9] (INTEGER_PART)* (DECIMAL_EXPONENT)? (IDENTIFIER)? | [0-9] (INTEGER_PART)* DECIMAL_EXPONENT (IDENTIFIER)?);
 
 UNSIGNED_DECIMAL_INTEGER:
    ([1-9] (INTEGER_PART)* (PART_LETTER)* | '0');
@@ -123,7 +123,10 @@ AS:
    A S;
 
 ASC:
-   A S C (E N D I N G)?;
+   A S C;
+
+ASCENDING:
+   A S C E N D I N G;
 
 ASSERT:
    A S S E R T;
@@ -141,7 +144,7 @@ BINDINGS:
    B I N D I N G S;
 
 BOOL:
-   B O O L;
+   B O O L -> type(BOOLEAN);
 
 BOOLEAN:
    B O O L E A N;
@@ -261,7 +264,10 @@ DENY:
    D E N Y;
 
 DESC:
-   D E S C (E N D I N G)?;
+   D E S C;
+
+DESCENDING:
+   D E S C E N D I N G;
 
 DESTROY:
    D E S T R O Y;
@@ -426,10 +432,13 @@ INDEXES:
    I N D E X E S;
 
 INF:
-   I N F;
+   I N F -> type(INFINITY);
 
 INFINITY:
    I N F I N I T Y;
+
+INSERT:
+   I N S E R T;
 
 INT:
    I N T;
@@ -506,10 +515,10 @@ MINUS:
 PERCENT:
    '%';
 
-NEQ:
+INVALID_NEQ:
    '!=';
 
-NEQ2:
+NEQ:
    '<>';
 
 NAME:
@@ -521,17 +530,38 @@ NAMES:
 NAN:
    N A N;
 
+NFC:
+   N F C;
+
+NFD:
+   N F D;
+
+NFKC:
+   N F K C;
+
+NFKD:
+   N F K D;
+
 NEW:
    N E W;
 
 NODE:
    N O D E;
 
+NODETACH:
+   N O D E T A C H;
+
 NODES:
    N O D E S;
 
 NONE:
    N O N E;
+
+NORMALIZE:
+   N O R M A L I Z E;
+
+NORMALIZED:
+   N O R M A L I Z E D;
 
 NOT:
    N O T;
@@ -864,7 +894,10 @@ VALUE:
    V A L U E;
 
 VARCHAR:
-   V A R C H A R;
+   V A R C H A R -> type(STRING);
+
+VECTOR:
+   V E C T O R;
 
 VERBOSE:
    V E R B O S E;
@@ -898,12 +931,6 @@ YIELD:
 
 ZONED:
    Z O N E D;
-
-EXPLAIN:
-   E X P L A I N;
-
-PROFILE:
-   P R O F I L E;
 
 IDENTIFIER:
    LETTER (PART_LETTER)*;
