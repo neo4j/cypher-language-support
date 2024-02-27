@@ -1,10 +1,10 @@
 import { autocomplete } from '../autocompletion/autocompletion';
-import { applySyntaxColouring } from '../highlighting/syntaxColouring/syntaxColouring';
 import {
   ParsedCommandNoPosition,
   parserWrapper,
   setConsoleCommandsEnabled,
 } from '../parserWrapper';
+import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
 
 function expectParsedCommands(
   query: string,

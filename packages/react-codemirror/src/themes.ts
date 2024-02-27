@@ -3,8 +3,8 @@ import { light, mirage } from 'ayu';
 import {
   createCypherTheme,
   ThemeOptions,
-} from './lang-cypher/create-cypher-theme';
-import { tokens } from './ndl-tokens-copy';
+} from './lang-cypher/createCypherTheme';
+import { tokens } from './ndlTokensCopy';
 
 /* ndl exports most tokens as hex colors but some tokens are exported as rgb colors, in the form of "10, 20, 30"
    This should be fixed in version 2 of ndl.

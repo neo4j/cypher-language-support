@@ -26,7 +26,7 @@ import {
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
-} from './highlighting/syntaxValidation/syntaxValidationHelpers';
+} from './syntaxValidation/syntaxValidationHelpers';
 
 export interface ParsedStatement {
   command: ParsedCommand;
