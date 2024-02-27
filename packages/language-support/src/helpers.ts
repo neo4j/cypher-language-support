@@ -12,7 +12,7 @@ import CypherParser, {
   RelationshipPatternContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
-import { ParsingResult, StatementParsing } from './parserWrapper';
+import { ParsedStatement, ParsingResult } from './parserWrapper';
 
 /* In antlr we have 
 
@@ -110,22 +110,13 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
   return isDefined(relPattern);
 }
 
-class CustomTokenStream extends CommonTokenStream {
-  tokens: antlrDefaultExport.Token[] = [];
-
-  constructor(lexer: CypherLexer, tokens: Token[]) {
-    super(lexer);
-    this.tokens = [...tokens];
-  }
-}
-
 export function findCaret(
   parsingResult: ParsingResult,
   caretPosition: number,
-): { statement: StatementParsing; token: Token } | undefined {
+): { statement: ParsedStatement; token: Token } | undefined {
   const statements = parsingResult.statementsParsing;
   let i = 0;
-  let result: { statement: StatementParsing; token: Token } = undefined;
+  let result: { statement: ParsedStatement; token: Token } = undefined;
   let keepLooking = true;
 
   while (i < statements.length && keepLooking) {
@@ -172,7 +163,9 @@ export function splitIntoStatements(
       current.type === CypherLexer.EOF
     ) {
       // This does not relex since we are not calling fill on the token stream
-      result.push(new CustomTokenStream(lexer, chunk));
+      const tokenStream = new CommonTokenStream(lexer);
+      tokenStream.tokens = chunk;
+      result.push(tokenStream);
       offset = i + 1;
       chunk = [];
     }

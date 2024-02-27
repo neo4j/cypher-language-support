@@ -5,8 +5,8 @@ import { DbSchema } from '../../dbSchema';
 import {
   LabelOrRelType,
   LabelType,
+  ParsedStatement,
   parserWrapper,
-  StatementParsing,
 } from '../../parserWrapper';
 import {
   SemanticAnalysisElement,
@@ -58,7 +58,7 @@ function detectNonDeclaredLabel(
 }
 
 function warnOnUndeclaredLabels(
-  parsingResult: StatementParsing,
+  parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
@@ -84,7 +84,7 @@ function warnOnUndeclaredLabels(
 
 type FixSemanticPositionsArgs = {
   semanticElements: SemanticAnalysisElement[];
-  parseResult: StatementParsing;
+  parseResult: ParsedStatement;
 };
 
 function fixSemanticAnalysisPositions({

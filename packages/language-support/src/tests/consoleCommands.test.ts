@@ -109,7 +109,7 @@ describe('sanity checks', () => {
   test('accepts trailing ; ', () => {
     expectParsedCommands(':history;', [
       { type: 'history' },
-      { type: 'parse-error' },
+      { type: 'cypher', statement: '' },
     ]);
   });
 
@@ -124,14 +124,14 @@ describe('sanity checks', () => {
   test('accepts upper case', () => {
     expectParsedCommands(':HISTORY;', [
       { type: 'history' },
-      { type: 'parse-error' },
+      { type: 'cypher', statement: '' },
     ]);
   });
 
   test('accepts mixed case', () => {
     expectParsedCommands(':cLeaR;', [
       { type: 'clear' },
-      { type: 'parse-error' },
+      { type: 'cypher', statement: '' },
     ]);
   });
 
@@ -477,7 +477,7 @@ describe('command parser also handles cypher', () => {
         { statement: 'RETURN $x', type: 'cypher' },
         { database: 'system', type: 'use' },
         { statement: 'SHOW DATABASES', type: 'cypher' },
-        { type: 'parse-error' },
+        { statement: '', type: 'cypher' },
       ],
     );
   });

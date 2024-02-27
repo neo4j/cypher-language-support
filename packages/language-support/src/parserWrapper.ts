@@ -28,7 +28,7 @@ import {
   SyntaxErrorsListener,
 } from './highlighting/syntaxValidation/syntaxValidationHelpers';
 
-export interface StatementParsing {
+export interface ParsedStatement {
   command: ParsedCommand;
   parser: CypherParser;
   tokens: Token[];
@@ -43,7 +43,7 @@ export interface StatementParsing {
 
 export interface ParsingResult {
   query: string;
-  statementsParsing: StatementParsing[];
+  statementsParsing: ParsedStatement[];
 }
 
 export interface ParsingScaffolding {
@@ -95,10 +95,10 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const stsTokenStreams = splitIntoStatements(tokenStream, lexer);
+  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
 
   const statementsScaffolding: StatementParsingScaffolding[] =
-    stsTokenStreams.map((t) => {
+    stmTokenStreams.map((t) => {
       const tokens = [...t.tokens];
       const parser = new CypherParser(t);
 
@@ -127,7 +127,7 @@ export function parse(query: string): StatementOrCommandContext[] {
 export function createParsingResult(query: string): ParsingResult {
   const parsingScaffolding = createParsingScaffolding(query);
 
-  const results: StatementParsing[] =
+  const results: ParsedStatement[] =
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
@@ -137,12 +137,13 @@ export function createParsingResult(query: string): ParsingResult {
       parser.removeErrorListeners();
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
-      const nonEmptyQuery =
+      // The statement is empty if we cannot find anything that is not EOF or a space
+      const isEmptyStatement =
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
-        ) !== undefined;
-      const diagnostics = nonEmptyQuery ? errorListener.errors : [];
-      const collectedCommand = parseToCommand(ctx);
+        ) === undefined;
+      const diagnostics = isEmptyStatement ? [] : errorListener.errors;
+      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
 
       if (!consoleCommandEnabled()) {
         diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
@@ -287,7 +288,10 @@ export type ParsedCommandNoPosition =
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
-function parseToCommand(stmts: StatementsOrCommandsContext): ParsedCommand {
+function parseToCommand(
+  stmts: StatementsOrCommandsContext,
+  isEmptyStatement: boolean,
+): ParsedCommand {
   const stmt = stmts.statementOrCommand_list().at(0);
 
   if (stmt) {
@@ -296,10 +300,15 @@ function parseToCommand(stmts: StatementsOrCommandsContext): ParsedCommand {
     const cypherStmt = stmt.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
-      const inputstream = cypherStmt.start.getInputStream();
+      const inputstream = start.getInputStream();
       const statement = inputstream.getText(start.start, stop.stop);
 
       return { type: 'cypher', statement, start, stop };
+    }
+
+    if (isEmptyStatement) {
+      const { start } = stmts;
+      return { type: 'cypher', statement: '', start: start, stop: start };
     }
 
     const consoleCmd = stmt.consoleCommand();

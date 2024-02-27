@@ -18,7 +18,7 @@ import {
   tokenNames,
 } from '../lexerSymbols';
 
-import { StatementParsing } from '../parserWrapper';
+import { ParsedStatement } from '../parserWrapper';
 
 import { consoleCommandEnabled } from '../parserWrapper';
 
@@ -283,7 +283,7 @@ function calculateNamespacePrefix(
 }
 
 export function completionCoreCompletion(
-  parsingResult: StatementParsing,
+  parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -481,7 +481,7 @@ export function completionCoreCompletion(
 }
 
 type CompletionHelperArgs = {
-  parsingResult: StatementParsing;
+  parsingResult: ParsedStatement;
   dbSchema: DbSchema;
   candidateRule: CandidateRule;
 };

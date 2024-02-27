@@ -16,8 +16,7 @@ test('Prop lint set to false disables syntax validation', async ({
   });
 });
 
-// TODO Should this be unskipped
-test.skip('Can turn linting back on', async ({ page, mount }) => {
+test('Can turn linting back on', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
@@ -27,7 +26,7 @@ test.skip('Can turn linting back on', async ({ page, mount }) => {
     timeout: 2000,
   });
 
-  await component.update(<CypherEditor value={query} lint />);
+  await component.update(<CypherEditor value={query} lint={true} />);
 
   await editorPage.getEditor().fill('METCH (n) RETURN n');
 

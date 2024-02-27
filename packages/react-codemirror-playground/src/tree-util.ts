@@ -29,8 +29,7 @@ export function getDebugTree(cypher: string): SimpleTree {
   const children = statements.map((statement) => walk(statement));
 
   return {
-    // TODO Is this correct?
-    name: 'root',
+    name: 'topNode',
     children: children,
   };
 }
