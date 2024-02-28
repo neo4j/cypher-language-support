@@ -198,20 +198,21 @@ export function validateSemantics(query: string): SyntaxDiagnostic[] {
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
     const semanticErrors = statements.flatMap((current) => {
-      const cmd = current.command;
-      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
-        const { notifications, errors } = wrappedSemanticAnalysis(
-          cmd.statement,
-        );
+      if (current.diagnostics.length === 0) {
+        const cmd = current.command;
+        if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+          const { notifications, errors } = wrappedSemanticAnalysis(
+            cmd.statement,
+          );
 
-        const elements = notifications.concat(errors);
-        const result = fixSemanticAnalysisPositions({
-          semanticElements: elements,
-          parseResult: current,
-        }).sort(sortByPosition);
-        return result;
+          const elements = notifications.concat(errors);
+          const result = fixSemanticAnalysisPositions({
+            semanticElements: elements,
+            parseResult: current,
+          }).sort(sortByPosition);
+          return result;
+        }
       }
-
       return [];
     });
 

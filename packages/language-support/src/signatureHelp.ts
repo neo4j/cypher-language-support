@@ -140,28 +140,22 @@ export function signatureHelp(
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
 
-  // TODO Is this check needed
-  if (caretPosition > 0) {
-    const parserResult = parserWrapper.parse(fullQuery);
-    const caret = findCaret(parserResult, caretPosition);
+  const parserResult = parserWrapper.parse(fullQuery);
+  const caret = findCaret(parserResult, caretPosition);
 
-    if (caret) {
-      const statement = caret.statement;
+  if (caret) {
+    const statement = caret.statement;
 
-      const signatureHelper = new SignatureHelper(
-        statement.tokens,
-        caret.token,
-      );
+    const signatureHelper = new SignatureHelper(statement.tokens, caret.token);
 
-      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-      const method = signatureHelper.result;
+    ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+    const method = signatureHelper.result;
 
-      if (method !== undefined) {
-        if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(dbSchema.functionSignatures, method);
-        } else {
-          result = toSignatureHelp(dbSchema.procedureSignatures, method);
-        }
+    if (method !== undefined) {
+      if (method.methodType === MethodType.function) {
+        result = toSignatureHelp(dbSchema.functionSignatures, method);
+      } else {
+        result = toSignatureHelp(dbSchema.procedureSignatures, method);
       }
     }
   }
