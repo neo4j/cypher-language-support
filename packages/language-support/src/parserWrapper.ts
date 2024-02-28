@@ -101,6 +101,7 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
     stmTokenStreams.map((t) => {
       const tokens = [...t.tokens];
       const parser = new CypherParser(t);
+      parser.removeErrorListeners();
 
       return {
         parser: parser,
@@ -134,7 +135,6 @@ export function createParsingResult(query: string): ParsingResult {
       const variableFinder = new VariableCollector();
       const errorListener = new SyntaxErrorsListener();
       parser._parseListeners = [labelsCollector, variableFinder];
-      parser.removeErrorListeners();
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
