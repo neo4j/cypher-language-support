@@ -12,6 +12,7 @@ import {
 
 export function getDebugTree(cypher: string): SimpleTree {
   const statements = parse(cypher);
+
   function walk(node: ParserRuleContext): SimpleTree {
     const name = antlrUtils.tree.Trees.getNodeText(
       node,
@@ -25,5 +26,10 @@ export function getDebugTree(cypher: string): SimpleTree {
     };
   }
 
-  return walk(statements);
+  const children = statements.map((statement) => walk(statement));
+
+  return {
+    name: 'topNode',
+    children: children,
+  };
 }

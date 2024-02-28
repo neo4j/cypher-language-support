@@ -12,7 +12,7 @@ import CypherParser, {
   RelationshipPatternContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
-import { ParsingResult } from './parserWrapper';
+import { ParsedStatement, ParsingResult } from './parserWrapper';
 
 /* In antlr we have 
 
@@ -92,35 +92,6 @@ type AntlrDefaultExport = {
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
-export function findLatestStatement(
-  parsingResult: ParsingResult,
-): undefined | string {
-  const tokens = parsingResult.tokens;
-  const lastTokenIndex = tokens.length - 1;
-
-  let tokenIndex = lastTokenIndex;
-  let found = false;
-  let lastStatement: undefined | string = undefined;
-
-  // Last token is always EOF
-  while (tokenIndex > 0 && !found) {
-    tokenIndex--;
-    found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;
-  }
-
-  if (found) {
-    lastStatement = '';
-
-    tokenIndex += 1;
-    while (tokenIndex < lastTokenIndex) {
-      lastStatement += tokens.at(tokenIndex)?.text ?? '';
-      tokenIndex++;
-    }
-  }
-
-  return lastStatement;
-}
-
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
@@ -137,6 +108,72 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
   );
 
   return isDefined(relPattern);
+}
+
+export function findCaret(
+  parsingResult: ParsingResult,
+  caretPosition: number,
+): { statement: ParsedStatement; token: Token } | undefined {
+  const statements = parsingResult.statementsParsing;
+  let i = 0;
+  let result: { statement: ParsedStatement; token: Token } = undefined;
+  let keepLooking = true;
+
+  while (i < statements.length && keepLooking) {
+    let j = 0;
+    const statement = statements[i];
+    const tokens = statement.tokens;
+
+    while (j < tokens.length && keepLooking) {
+      const currentToken = tokens[j];
+      keepLooking = currentToken.start < caretPosition;
+
+      if (currentToken.channel === 0 && keepLooking) {
+        result = { statement: statement, token: currentToken };
+      }
+
+      j++;
+    }
+    i++;
+  }
+
+  return result;
+}
+
+export function splitIntoStatements(
+  tokenStream: CommonTokenStream,
+  lexer: CypherLexer,
+): CommonTokenStream[] {
+  tokenStream.fill();
+  const tokens = tokenStream.tokens;
+
+  let i = 0;
+  const result: CommonTokenStream[] = [];
+  let chunk: Token[] = [];
+  let offset = 0;
+
+  while (i < tokens.length) {
+    const current = tokens[i].clone();
+    current.tokenIndex -= offset;
+
+    chunk.push(current);
+
+    if (
+      current.type === CypherLexer.SEMICOLON ||
+      current.type === CypherLexer.EOF
+    ) {
+      // This does not relex since we are not calling fill on the token stream
+      const tokenStream = new CommonTokenStream(lexer);
+      tokenStream.tokens = chunk;
+      result.push(tokenStream);
+      offset = i + 1;
+      chunk = [];
+    }
+
+    i++;
+  }
+
+  return result;
 }
 
 export const rulesDefiningVariables = [

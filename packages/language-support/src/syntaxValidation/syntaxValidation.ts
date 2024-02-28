@@ -3,10 +3,9 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
 import {
-  EnrichedParsingResult,
   LabelOrRelType,
   LabelType,
-  ParsedCypherCmd,
+  ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
 import {
@@ -59,7 +58,7 @@ function detectNonDeclaredLabel(
 }
 
 function warnOnUndeclaredLabels(
-  parsingResult: EnrichedParsingResult,
+  parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
@@ -85,15 +84,14 @@ function warnOnUndeclaredLabels(
 
 type FixSemanticPositionsArgs = {
   semanticElements: SemanticAnalysisElement[];
-  cmd: ParsedCypherCmd;
-  parseResult: EnrichedParsingResult;
+  parseResult: ParsedStatement;
 };
 
 function fixSemanticAnalysisPositions({
   semanticElements,
-  cmd,
   parseResult,
 }: FixSemanticPositionsArgs): SyntaxDiagnostic[] {
+  const cmd = parseResult.command;
   return semanticElements.map((e) => {
     let token: Token | undefined = undefined;
 
@@ -106,7 +104,7 @@ function fixSemanticAnalysisPositions({
 
     const line = start.line + 1;
     const column = start.character;
-    const toExplore: ParseTree[] = [parseResult.result];
+    const toExplore: ParseTree[] = [parseResult.ctx];
 
     while (toExplore.length > 0 && !token) {
       const current: ParseTree = toExplore.pop();
@@ -163,57 +161,63 @@ export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
 }
 
 export function lintCypherQuery(
-  wholeFileText: string,
+  query: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const syntaxErrors = validateSyntax(wholeFileText, dbSchema);
-
+  const syntaxErrors = validateSyntax(query, dbSchema);
   if (syntaxErrors.length > 0) {
     return syntaxErrors;
   }
 
-  return validateSemantics(wholeFileText);
+  const semanticErrors = validateSemantics(query);
+  return semanticErrors;
 }
 
 export function validateSyntax(
   query: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  if (query.length > 0) {
-    const parsingResult = parserWrapper.parse(query);
-    const diagnostics = parsingResult.diagnostics;
-
-    const labelWarnings = warnOnUndeclaredLabels(parsingResult, dbSchema);
+  if (query.length === 0) {
+    return [];
+  }
+  const statements = parserWrapper.parse(query);
+  const result = statements.statementsParsing.flatMap((statement) => {
+    const diagnostics = statement.diagnostics;
+    const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
     return diagnostics.concat(labelWarnings).sort(sortByPosition);
+  });
+
+  return result;
+}
+
+/**
+ * Assumes the provided query has no parse errors
+ */
+export function validateSemantics(query: string): SyntaxDiagnostic[] {
+  if (query.length > 0) {
+    const cachedParse = parserWrapper.parse(query);
+    const statements = cachedParse.statementsParsing;
+    const semanticErrors = statements.flatMap((current) => {
+      if (current.diagnostics.length === 0) {
+        const cmd = current.command;
+        if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+          const { notifications, errors } = wrappedSemanticAnalysis(
+            cmd.statement,
+          );
+
+          const elements = notifications.concat(errors);
+          const result = fixSemanticAnalysisPositions({
+            semanticElements: elements,
+            parseResult: current,
+          }).sort(sortByPosition);
+          return result;
+        }
+      }
+      return [];
+    });
+
+    return semanticErrors;
   }
 
   return [];
-}
-
-export function validateSemantics(wholeFileText: string): SyntaxDiagnostic[] {
-  const reparse = parserWrapper.parse(wholeFileText);
-  if (reparse.diagnostics.length > 0) {
-    return [];
-  }
-
-  /*  
-    Semantic analysis can only handle one cypher statement at a time and naturally only supports cypher.
-    We work around these limitations by breaking the file into statements, then run semantic analysis 
-    on each individual cypher statement and map the positions back to the original query.
-    */
-  return reparse.collectedCommands
-    .flatMap((cmd) => {
-      if (cmd.type === 'cypher' && cmd.query.length > 0) {
-        const { notifications, errors } = wrappedSemanticAnalysis(cmd.query);
-
-        return fixSemanticAnalysisPositions({
-          cmd,
-          semanticElements: notifications.concat(errors),
-          parseResult: reparse,
-        });
-      }
-
-      return [];
-    })
-    .sort(sortByPosition);
 }
