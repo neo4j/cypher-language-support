@@ -4,18 +4,20 @@ import { DbSchema } from '../../dbSchema';
 
 export function testCompletions({
   query,
+  offset = query.length,
   dbSchema = {},
   excluded = [],
   expected = [],
   assertEmpty = false,
 }: {
   query: string;
+  offset?: number;
   dbSchema?: DbSchema;
   excluded?: Partial<CompletionItem>[];
   expected?: CompletionItem[];
   assertEmpty?: boolean;
 }) {
-  const actualCompletionList = autocomplete(query, dbSchema);
+  const actualCompletionList = autocomplete(query, dbSchema, offset);
 
   if (assertEmpty) {
     expect(actualCompletionList).toEqual([]);

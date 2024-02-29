@@ -126,7 +126,7 @@ export function findCaret(
 
     while (j < tokens.length && keepLooking) {
       const currentToken = tokens[j];
-      keepLooking = currentToken.start < caretPosition;
+      keepLooking = currentToken.start <= caretPosition;
 
       if (currentToken.channel === 0 && keepLooking) {
         result = { statement: statement, token: currentToken };

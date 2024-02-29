@@ -134,31 +134,43 @@ class SignatureHelper extends CypherCmdParserListener {
 }
 
 export function signatureHelp(
-  fullQuery: string,
+  query: string,
   dbSchema: DbSchema,
-  caretPosition: number,
+  caretPosition: number = query.length,
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
+  /* We need the token immediately before the caret
+  
+      CALL something(
+                     ^
+     because in this case what gives us information on where we are 
+     in the procedure is not the space at the caret, but the opening (                
+  */
+  const prevCaretPosition = caretPosition - 1;
 
-  const parserResult = parserWrapper.parse(fullQuery);
-  const caret = findCaret(parserResult, caretPosition);
+  if (prevCaretPosition > 0) {
+    const parserResult = parserWrapper.parse(query);
+    const caret = findCaret(parserResult, prevCaretPosition);
 
-  if (caret) {
-    const statement = caret.statement;
+    if (caret) {
+      const statement = caret.statement;
 
-    const signatureHelper = new SignatureHelper(statement.tokens, caret.token);
+      const signatureHelper = new SignatureHelper(
+        statement.tokens,
+        caret.token,
+      );
 
-    ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-    const method = signatureHelper.result;
+      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+      const method = signatureHelper.result;
 
-    if (method !== undefined) {
-      if (method.methodType === MethodType.function) {
-        result = toSignatureHelp(dbSchema.functionSignatures, method);
-      } else {
-        result = toSignatureHelp(dbSchema.procedureSignatures, method);
+      if (method !== undefined) {
+        if (method.methodType === MethodType.function) {
+          result = toSignatureHelp(dbSchema.functionSignatures, method);
+        } else {
+          result = toSignatureHelp(dbSchema.procedureSignatures, method);
+        }
       }
     }
   }
-
   return result;
 }
