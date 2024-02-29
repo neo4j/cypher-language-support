@@ -27,4 +27,4 @@ From here you can start the `react-codemirror-playground` with:
 
 `npm run dev:codemirror`
 
-To run the VSCode extension, choose `VSCode Playground` in the `Run & Debug` menu in VSCode.
+To run the VSCode extension, choose `VSCode Playground` in the `Run & Debug` menu in VS Code.
