@@ -19,9 +19,6 @@
     "completions"
   ],
   "icon": "images/logo.png",
-  "activationEvents": [
-    "onLanguage:cypher"
-  ],
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
