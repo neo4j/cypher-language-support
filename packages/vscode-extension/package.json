@@ -49,7 +49,7 @@
       }
     ],
     "configuration": {
-      "title": "Cypher LSP",
+      "title": "Neo4j for VS Code",
       "properties": {
         "neo4j.trace.server": {
           "scope": "window",
@@ -66,25 +66,25 @@
           "order": 1,
           "type": "boolean",
           "default": true,
-          "description": "Shall connect to Neo4j to gather data about labels and types."
+          "description": "Connect to Neo4j for database aware completions."
         },
         "neo4j.URL": {
           "order": 2,
           "type": "string",
-          "default": "bolt://localhost:7687",
+          "default": "neo4j://localhost:7687",
           "description": "Url of the database to connect."
         },
         "neo4j.user": {
           "order": 3,
           "type": "string",
           "default": "neo4j",
-          "description": "Username of the database to connect."
+          "description": "Username for database connection."
         },
         "neo4j.password": {
           "order": 4,
           "type": "string",
           "default": "password",
-          "description": "Password of the database to connect."
+          "description": "Password for database connection."
         }
       }
     },

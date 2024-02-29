@@ -1,37 +1,44 @@
-# VSCode Extension
+# Neo4j for VS Code Preview
 
-This is a VScode extension playground for testing the Cypher language server.
+## Getting started
 
-It's not yet published on the VSCode Marketplace, so to test it you need to run it locally.
+Open a file with `.cypher` extension after installing the extension from the VSCode marketplace. To enable database aware features (such as completing labels/functions), set up a connection to a neo4j instance using the settings described in the settings section below.
 
-For running it, compile the code first:
+### Feature Highlights
 
-```
-npm install
-npm run build
-```
+Our extension preview provides a rich set of features for working with Cypher, including:
 
-To launch a new VSCode window with the extension installed go to the `Run & Debug` tab (normally in the left pannel), select and run `VSCode Playground` clicking on the play ▷ button.
+- Syntax highlighting
+- Syntax checking - both syntax and semantic errors (e.g. type errors, unknown labels etc.)
+- Autocompletion for Cypher keywords, functions, labels, properties, database names and more
+- Signature help for functions - shows the signature of the function while typing
 
-This will open a new window where we can open our folder of choice, create a file with `.cypher` extension and start typing cypher helped by the language support.
+![whirlwind-tour](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/images/demo.gif?raw=true)
 
-## Plugin settings
+### Upcoming features
 
-For database aware features (such as autocompleting labels, procedure names, etc), you can connect to a running database (Aura, neo4j docker, etc) by tweaking the playground settings, in the opened window.
+We're working on adding more features to the extension, such as:
 
-The following settings are available in VSCode once the plugin is installed, which can be set either through the `Settings` menu on VSCode or by creating a `.vscode/settings.json` file in the window opened by the play button.
+- Easier database connection management
+- Embedded cypher support in other file types
+- REPL-like scratchpad for debugging queries
+- Automated formatting
 
-### Settings for database connection
+## Extension settings
 
-The following settings refer to the database connection used for signature loading, this will allow for autocomplete on Labels and Types.
+The following settings are available in VSCode once the plugin is installed, which can be set either through the `Settings` menu on VSCode or by editing your `.vscode/settings.json` file.
 
-- `cypherLSP.neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve signature information. Defaults to `true`.
+- `cypherLSP.neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve data used for completions. Defaults to `true`.
 - `cypherLSP.neo4j.user`: Defaults to `"neo4j"`
 - `cypherLSP.neo4j.password`: Defaults to `"password"`
-- `cypherLSP.neo4j.URL`: Defaults to `"bolt://localhost:7687"`
-
-![](../../imgs/vscode-playground.png)
+- `cypherLSP.neo4j.URL`: Defaults to `"neo4j://localhost:7687"`
 
 ### Debug
 
 - `cypherLSP.trace.server`: Traces the communication between VS Code and the language server for debugging purposes.
+
+### Contributing
+
+We welcome your suggestions, ideas, bug reports and contributions on the project on our [github](https://github.com/neo4j/cypher-language-support).
+
+To build the project locally, see the [CONTRIBUTING.md](CONTRIBUTING.md) file at the root of the repository.
