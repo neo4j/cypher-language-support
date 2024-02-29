@@ -50,7 +50,6 @@
     "watch": "tsc -b -w"
   },
   "devDependencies": {
-    "@types/workerpool": "^6.4.7",
     "@types/lodash.debounce": "^4.0.9",
     "esbuild": "^0.19.4"
   }

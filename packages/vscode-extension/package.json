@@ -78,13 +78,13 @@
           "order": 3,
           "type": "string",
           "default": "neo4j",
-          "description": "Username for database connection."
+          "description": "Username for the database connection."
         },
         "neo4j.password": {
           "order": 4,
           "type": "string",
           "default": "password",
-          "description": "Password for database connection."
+          "description": "Password for the database connection."
         }
       }
     },
