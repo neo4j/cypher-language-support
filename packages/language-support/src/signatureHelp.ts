@@ -143,7 +143,7 @@ export function signatureHelp(
   const parserResult = parserWrapper.parse(fullQuery);
   const caret = findCaret(parserResult, caretPosition);
 
-  if (caret) {
+  if (caret && dbSchema.functionSignatures && dbSchema.procedureSignatures) {
     const statement = caret.statement;
 
     const signatureHelper = new SignatureHelper(statement.tokens, caret.token);

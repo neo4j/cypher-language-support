@@ -219,6 +219,18 @@ describe('Procedures signature help', () => {
       63,
     );
   });
+
+  test('Signature help does not crash on empty schema', () => {
+    testSignatureHelp(
+      `CALL apoc.do.when(`,
+      {},
+      {
+        signatures: [],
+        activeSignature: undefined,
+        activeParameter: undefined,
+      },
+    );
+  });
 });
 
 describe('Functions signature help', () => {
@@ -389,6 +401,18 @@ describe('Functions signature help', () => {
       dbSchema,
       expectedArgIndex(1),
       89,
+    );
+  });
+
+  test('Signature help does not crash on empty schema', () => {
+    testSignatureHelp(
+      `RETURN apoc.coll.combinations(`,
+      {},
+      {
+        signatures: [],
+        activeSignature: undefined,
+        activeParameter: undefined,
+      },
     );
   });
 });
