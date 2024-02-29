@@ -1,13 +1,12 @@
-dist/
-!dist/extension.js
-!dist/cypher-language-server.js
+# Ignore everything, https://github.com/microsoft/vscode-vsce/issues/12
+**
+# Required for the ignore everything rule to work from testing
 ../../
 ../
-node_modules
-out/
-src/
-e2e_tests/
-tsconfig.json
-webpack.config.js
-.turbo
-.vscode
+
+# Unignore only required files, readme/package.json automatically included
+!LICENSE.md
+!images/
+!dist/extension.js
+!dist/lintWorker.js
+!dist/cypher-language-server.js

@@ -1,11 +1,24 @@
 {
-  "name": "neo4j-cypher-vscode-extension",
-  "private": true,
-  "description": "Enables support for Neo4j and its query language Cypher",
+  "name": "neo4j-vscode",
+  "displayName": "Neo4j for VS Code",
+  "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
+  "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "version": "2.0.0-next.4",
-  "publisher": "Neo4j Inc.",
+  "preview": true,
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "cypher",
+    "neo4j",
+    "graph",
+    "database",
+    "completions"
+  ],
+  "icon": "images/logo.png",
   "activationEvents": [
     "onLanguage:cypher"
   ],
