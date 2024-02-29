@@ -33,7 +33,7 @@ interface ParsedMethod {
 }
 
 function toSignatureHelp(
-  methodSignatures: Record<string, SignatureInformation>,
+  methodSignatures: Record<string, SignatureInformation> = {},
   parsedMethod: ParsedMethod,
 ) {
   const methodName = parsedMethod.methodName;
