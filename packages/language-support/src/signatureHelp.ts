@@ -139,7 +139,7 @@ export function signatureHelp(
   caretPosition: number = query.length,
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
-  /* We need the token inmediately before the caret
+  /* We need the token immediately before the caret
   
       CALL something(
                      ^
