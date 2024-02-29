@@ -66,13 +66,13 @@
           "order": 1,
           "type": "boolean",
           "default": true,
-          "description": "Connect to Neo4j for database aware completions."
+          "description": "Whether to connect to Neo4j for database aware completions."
         },
         "neo4j.URL": {
           "order": 2,
           "type": "string",
           "default": "neo4j://localhost:7687",
-          "description": "Url of the database to connect."
+          "description": "Url of the databases bolt connector."
         },
         "neo4j.user": {
           "order": 3,
