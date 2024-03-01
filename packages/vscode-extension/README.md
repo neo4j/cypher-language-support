@@ -29,9 +29,9 @@ We're working on adding more features to the extension, such as:
 The following settings are available in VS Code once the plugin is installed, which can be set either through the `Settings` menu on VS Code or by editing your `.vscode/settings.json` file.
 
 - `neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve data used for completions. Defaults to `true`
+- `neo4j.connectURL`: Defaults to `"neo4j://localhost:7687"`, the default url for connecting a local Neo4j instance over websocket via the `bolt` protocol
 - `neo4j.user`: Defaults to `"neo4j"`, the default user for a local Neo4j instance
 - `neo4j.password`: Replace this with the password for the user above
-- `neo4j.connectURL`: Defaults to `"neo4j://localhost:7687"`, the default url for connecting a local Neo4j instance over websocket via the `bolt` protocol
 
 ### Debug
 

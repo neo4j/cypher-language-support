@@ -1,5 +1,5 @@
 {
-  "name": "neo4j-cypher-vscode-extension",
+  "name": "neo4j-vscode",
   "displayName": "Neo4j for VS Code",
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "publisher": "neo4j-extensions",
