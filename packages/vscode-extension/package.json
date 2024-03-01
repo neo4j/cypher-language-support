@@ -65,11 +65,11 @@
           "default": true,
           "description": "Whether to connect to Neo4j for database aware completions."
         },
-        "neo4j.URL": {
+        "neo4j.connectURL": {
           "order": 2,
           "type": "string",
           "default": "neo4j://localhost:7687",
-          "description": "Url of the databases bolt connector."
+          "description": "URL of the Neo4j instance to poll data from, `bolt` & `neo4j` protocols supported."
         },
         "neo4j.user": {
           "order": 3,
