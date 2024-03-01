@@ -9,6 +9,11 @@
     "@neo4j-cypher/language-support#build": {
       "outputs": ["src/generated-parser/**", "dist/**"]
     },
+    "@neo4j-cypher/react-codemirror-playground#dev": {
+      "outputs": [],
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "clean": {
       "cache": false
     },
@@ -25,9 +30,6 @@
       "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
     },
     "@neo4j-cypher/react-codemirror-playground#build": {
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
-    },
-    "@neo4j-cypher/react-codemirror-playground#dev": {
       "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
     },
     "neo4j-cypher-vscode-extension#test:e2e": {
