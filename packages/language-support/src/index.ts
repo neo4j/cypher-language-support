@@ -8,7 +8,7 @@ export {
   parserWrapper,
   setConsoleCommandsEnabled,
 } from './parserWrapper';
-export { signatureHelp } from './signatureHelp';
+export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,

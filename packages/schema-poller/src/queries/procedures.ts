@@ -1,4 +1,4 @@
-import { Neo4jProcedure } from '@neo4j-cypher/language-support/dist/types/types.js';
+import { Neo4jProcedure } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
 import type { ExecuteQueryArgs } from '../types/sdkTypes';
 

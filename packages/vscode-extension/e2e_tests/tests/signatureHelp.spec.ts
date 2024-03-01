@@ -1,5 +1,7 @@
-import { testData } from '@neo4j-cypher/language-support';
-import { toSignatureInformation } from '@neo4j-cypher/language-support/dist/types/signatureHelp';
+import {
+  testData,
+  toSignatureInformation,
+} from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { eventually, getDocumentUri, openDocument } from '../helpers';
