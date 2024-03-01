@@ -21,21 +21,21 @@ We're working on adding more features to the extension, such as:
 
 - Easier database connection management
 - Embedded cypher support in other file types
-- REPL-like scratchpad for debugging queries
+- Query exectution and result visualization
 - Automatic query formatting
 
 ## Extension settings
 
 The following settings are available in VS Code once the plugin is installed, which can be set either through the `Settings` menu on VS Code or by editing your `.vscode/settings.json` file.
 
-- `cypherLSP.neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve data used for completions. Defaults to `true`
-- `cypherLSP.neo4j.user`: Defaults to `"neo4j"`, the default user for a local Neo4j instance
-- `cypherLSP.neo4j.password`: Replace this with the password for the user above
-- `cypherLSP.neo4j.URL`: Defaults to `"neo4j://localhost:7687"`, the default URL for a local Neo4j instance
+- `neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve data used for completions. Defaults to `true`
+- `neo4j.user`: Defaults to `"neo4j"`, the default user for a local Neo4j instance
+- `neo4j.password`: Replace this with the password for the user above
+- `neo4j.boltUrl`: Defaults to `"neo4j://localhost:7687"`, the default url for a local Neo4j instance
 
 ### Debug
 
-- `cypherLSP.trace.server`: Traces the communication between VS Code and the language server for debugging purposes
+- `neo4j.trace.server`: Traces the communication between VS Code and the language server for debugging purposes
 
 ## Contributing
 
