@@ -4,6 +4,7 @@ import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
+  InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
@@ -304,10 +305,10 @@ export function completionCoreCompletion(
   }
 
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
-  // The identfier is finished when the last token is a SPACE or dot etc. etc.
+  // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
   // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
-  // When an identifer overlaps with a keyword, it's no longer treates as an identifier (although it's a valid identifier)
+  // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1]?.type;
   if (
@@ -325,6 +326,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
+    CypherParser.RULE_relationshipPattern,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -468,6 +470,42 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_listCompletionRule) {
         return [{ label: 'list', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_relationshipPattern) {
+        /*
+         * We only want to suggest the snippet at the very start of the rule
+         * since after the user has started competing the relationship pattern themselves
+         * the snippet no longer makes sense.
+         *
+         * We accomplish this by checking that the last rule ended with a right parenthesis
+         * and that the caret is at the start of the rule
+         */
+
+        const lastRuleEndedWithRParen =
+          tokens[candidateRule.startTokenIndex - 1]?.type ===
+          CypherLexer.RPAREN;
+        const caretAtLastRule = caretIndex === candidateRule.startTokenIndex;
+
+        if (lastRuleEndedWithRParen && caretAtLastRule) {
+          return [
+            {
+              label: '-[]->()',
+              kind: CompletionItemKind.Snippet,
+              insertTextFormat: InsertTextFormat.Snippet,
+              insertText: '-[${1: }]->(${2: })',
+              detail: 'path template',
+            },
+            {
+              label: '<-[]-()',
+              kind: CompletionItemKind.Snippet,
+              insertTextFormat: InsertTextFormat.Snippet,
+              insertText: '<-[${1: }]-(${2: })',
+              detail: 'path template',
+            },
+          ];
+        }
+        return [];
       }
 
       return [];
