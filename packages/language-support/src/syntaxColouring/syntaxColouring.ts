@@ -307,12 +307,7 @@ export function applySyntaxColouring(
   wholeFileText: string,
 ): ParsedCypherToken[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
-  const tokens = parsingResult.tokens;
-
-  // Get a first pass at the colouring using only the lexer
-  const lexerTokens: Map<string, ParsedCypherToken> = colourLexerTokens(tokens);
-
-  const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
+  const statements = parsingResult.statementsParsing;
 
   /* Get a second pass at the colouring correcting the colours
      using structural information from the parsing tree
@@ -321,9 +316,21 @@ export function applySyntaxColouring(
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
-  ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, parsingResult.result);
+  const allColouredTokens: Map<string, ParsedCypherToken> = new Map();
+  statements.forEach((statement) => {
+    const tokens = statement.tokens;
 
-  const allColouredTokens = treeSyntaxHighlighter.colouredTokens;
+    // Get a first pass at the colouring using only the lexer
+    const lexerTokens: Map<string, ParsedCypherToken> =
+      colourLexerTokens(tokens);
+    const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
+
+    ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, statement.ctx);
+
+    treeSyntaxHighlighter.colouredTokens.forEach((value, key) =>
+      allColouredTokens.set(key, value),
+    );
+  });
 
   // When we push to the builder, tokens need to be sorted in ascending
   // starting position i.e. as we find them when we read them from left

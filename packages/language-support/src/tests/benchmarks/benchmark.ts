@@ -107,8 +107,8 @@ suite
     const query = largePokemonquery + periodicIterate + periodicIterateFirstArg;
     parserWrapper.clearCache();
     // This mimics getting the cursor back in the query and retriggering signature help
-    signatureHelp(query, testData.mockSchema, query.length - 1);
-    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
+    signatureHelp(query, testData.mockSchema, query.length);
+    signatureHelp(query, testData.mockSchema, subQuery.length);
   })
   .add('multistatement - autocompletion', function () {
     const query = tictactoe + ';\n' + tictactoe;
@@ -116,7 +116,7 @@ suite
     parserWrapper.clearCache();
     // This mimics getting the cursor back in the query and retriggering auto-completion
     autocomplete(query, testData.mockSchema);
-    autocomplete(subQuery, testData.mockSchema);
+    autocomplete(query, testData.mockSchema, subQuery.length);
   });
 
 Object.entries(autocompletionQueries).forEach(([name, query]) => {

@@ -220,4 +220,14 @@ describe('unscoped variable completions', () => {
       excluded: [{ label: 'a', kind: CompletionItemKind.Variable }],
     });
   });
+
+  test('does not suggest variables from other statements', () => {
+    const query = 'MATCH (n:Person) RETURN n; MATCH (x:Dog) RETURN ';
+
+    testCompletions({
+      query,
+      excluded: [{ label: 'n', kind: CompletionItemKind.Variable }],
+      expected: [{ label: 'x', kind: CompletionItemKind.Variable }],
+    });
+  });
 });
