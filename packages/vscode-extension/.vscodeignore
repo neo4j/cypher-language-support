@@ -10,3 +10,4 @@
 !dist/extension.js
 !dist/lintWorker.js
 !dist/cypher-language-server.js
+!cypher-language-configuration.json
