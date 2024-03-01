@@ -1,6 +1,6 @@
 import { Neo4jProcedure } from '@neo4j-cypher/language-support/dist/types/types.js';
 import { resultTransformers } from 'neo4j-driver';
-import type { ExecuteQueryArgs } from '../types/sdk-types.js';
+import type { ExecuteQueryArgs } from '../types/sdkTypes';
 
 type ListFunctionArgs = { executableByMe: boolean };
 /**

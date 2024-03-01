@@ -1642,9 +1642,9 @@ meaning that it expects at least 1 argument of type ANY
       getDiagnosticsForQuery({
         query: `CALL apoc.meta.graphSample({})`,
         dbSchema: {
-          rawFunctions: [],
-          rawProcedures: [
-            {
+          functions: {},
+          procedures: {
+            'apoc.meta.graphSample': {
               name: 'apoc.meta.graphSample',
               description:
                 'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
@@ -1682,7 +1682,7 @@ meaning that it expects at least 1 argument of type ANY
                 deprecated: false,
               },
             },
-          ],
+          },
         },
       }),
     ).toEqual([

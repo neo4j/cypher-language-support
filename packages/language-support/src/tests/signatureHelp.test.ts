@@ -1,10 +1,10 @@
-import {
-  ParameterInformation,
-  SignatureHelp,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import { emptyResult, signatureHelp } from '../signatureHelp';
+import {
+  emptyResult,
+  signatureHelp,
+  toSignatureInformation,
+} from '../signatureHelp';
 import { testData } from './testData';
 
 export function testSignatureHelp(
@@ -23,13 +23,7 @@ export function testSignatureHelp(
 describe('Procedures signature help', () => {
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
-  const signature = SignatureInformation.create(
-    procedureName,
-    dbSchema.procedureSignatures[procedureName].documentation.toString(),
-    ...dbSchema.procedureSignatures[procedureName].parameters.map((param) =>
-      ParameterInformation.create(param.label, param.documentation.toString()),
-    ),
-  );
+  const signature = toSignatureInformation(dbSchema.procedures[procedureName]);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -224,13 +218,7 @@ describe('Procedures signature help', () => {
 describe('Functions signature help', () => {
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
-  const signature = SignatureInformation.create(
-    functionName,
-    dbSchema.functionSignatures[functionName].documentation.toString(),
-    ...dbSchema.functionSignatures[functionName].parameters.map((param) =>
-      ParameterInformation.create(param.label, param.documentation.toString()),
-    ),
-  );
+  const signature = toSignatureInformation(dbSchema.functions[functionName]);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {

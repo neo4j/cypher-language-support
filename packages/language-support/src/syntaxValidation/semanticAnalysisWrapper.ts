@@ -34,10 +34,10 @@ export function wrappedSemanticAnalysis(
   try {
     let semanticErrorsResult = undefined;
 
-    if (dbSchema.rawFunctions && dbSchema.rawProcedures) {
+    if (dbSchema.functions && dbSchema.procedures) {
       updateSignatureResolver({
-        procedures: dbSchema.rawProcedures,
-        functions: dbSchema.rawFunctions,
+        procedures: Object.values(dbSchema.procedures),
+        functions: Object.values(dbSchema.functions),
       });
     }
     semanticAnalysis([query], (a) => {

@@ -1,54 +1,10 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
+import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('function invocations', () => {
-  const dbSchema: DbSchema = {
-    functionSignatures: {
-      abs: { label: 'abs' },
-      acos: { label: 'acos' },
-      all: { label: 'all' },
-      any: { label: 'any' },
-      'apoc.agg.first': { label: 'apoc.agg.first' },
-      'apoc.agg.graph': { label: 'apoc.agg.graph' },
-      'apoc.agg.last': { label: 'apoc.agg.last' },
-      'apoc.agg.maxItems': { label: 'apoc.agg.maxItems' },
-      'apoc.agg.median': { label: 'apoc.agg.median' },
-      'apoc.agg.minItems': { label: 'apoc.agg.minItems' },
-      'apoc.agg.nth': { label: 'apoc.agg.nth' },
-      'apoc.agg.percentiles': { label: 'apoc.agg.percentiles' },
-      'apoc.agg.product': { label: 'apoc.agg.product' },
-      'apoc.agg.slice': { label: 'apoc.agg.slice' },
-      'apoc.agg.statistics': { label: 'apoc.agg.statistics' },
-      'apoc.any.isDeleted': { label: 'apoc.any.isDeleted' },
-      'apoc.any.properties': { label: 'apoc.any.properties' },
-      'apoc.any.property': { label: 'apoc.any.property' },
-      'apoc.any.rebind': { label: 'apoc.any.rebind' },
-      'apoc.bitwise.op': { label: 'apoc.bitwise.op' },
-      'apoc.coll.avg': { label: 'apoc.coll.avg' },
-      'apoc.coll.avgDuration': { label: 'apoc.coll.avgDuration' },
-      'apoc.coll.combinations': { label: 'apoc.coll.combinations' },
-      'apoc.coll.contains': { label: 'apoc.coll.contains' },
-      'apoc.coll.containsAll': { label: 'apoc.coll.containsAll' },
-      'apoc.coll.containsAllSorted': { label: 'apoc.coll.containsAllSorted' },
-      'apoc.coll.containsDuplicates': { label: 'apoc.coll.containsDuplicates' },
-      'apoc.coll.containsSorted': { label: 'apoc.coll.containsSorted' },
-      'apoc.coll.duplicates': { label: 'apoc.coll.duplicates' },
-      'apoc.coll.fill': { label: 'apoc.coll.fill' },
-      'apoc.coll.flatten': { label: 'apoc.coll.flatten' },
-      'apoc.coll.frequencies': { label: 'apoc.coll.frequencies' },
-      'apoc.coll.frequenciesAsMap': { label: 'apoc.coll.frequenciesAsMap' },
-      'apoc.coll.indexOf': { label: 'apoc.coll.indexOf' },
-      'apoc.coll.insert': { label: 'apoc.coll.insert' },
-      'apoc.coll.insertAll': { label: 'apoc.coll.insertAll' },
-      'apoc.coll.intersection': { label: 'apoc.coll.intersection' },
-      'apoc.coll.isEqualCollection': { label: 'apoc.coll.isEqualCollection' },
-      'apoc.coll.max': { label: 'apoc.coll.max' },
-      'apoc.coll.min': { label: 'apoc.coll.min' },
-      'apoc.coll.occurrences': { label: 'apoc.coll.occurrences' },
-      'apoc.coll.pairs': { label: 'apoc.coll.pairs' },
-    },
-  };
+  const dbSchema: DbSchema = testData.mockSchema;
 
   test('Correctly completes unstarted function name in left hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE ';
@@ -340,9 +296,9 @@ describe('function invocations', () => {
     testCompletions({
       query,
       dbSchema: {
-        functionSignatures: {
-          math: { label: 'math' },
-          'math.max': { label: 'math.max' },
+        functions: {
+          math: { ...testData.emptyFunction, name: 'math' },
+          'math.max': { ...testData.emptyFunction, name: 'math.max' },
         },
       },
       expected: [

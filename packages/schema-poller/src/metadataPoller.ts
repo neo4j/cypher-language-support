@@ -3,12 +3,12 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
-import { SignatureInformation } from 'vscode-languageserver/node';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { Database, listDatabases } from './queries/databases.js';
+import { DataSummary, getDataSummary } from './queries/dataSummary.js';
 import { listFunctions } from './queries/functions.js';
 import { listProcedures } from './queries/procedures.js';
-import { ExecuteQueryArgs } from './types/sdk-types.js';
+import { ExecuteQueryArgs } from './types/sdkTypes.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -119,25 +119,14 @@ export class MetadataPoller {
       queryArgs: listFunctions({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          const rawFunctions = result.data.functions;
-          const signatures = result.data.functions.reduce<
-            Record<string, SignatureInformation>
+          const functions = result.data.functions.reduce<
+            Record<string, Neo4jFunction>
           >((acc, curr) => {
-            const { name, argumentDescription, description } = curr;
-
-            acc[name] = SignatureInformation.create(
-              name,
-              description,
-              ...argumentDescription.map((arg) => ({
-                label: arg.name,
-                documentation: arg.description,
-              })),
-            );
-
+            const { name } = curr;
+            acc[name] = curr;
             return acc;
           }, {});
-          this.dbSchema.rawFunctions = rawFunctions;
-          this.dbSchema.functionSignatures = signatures;
+          this.dbSchema.functions = functions;
         }
       },
     });
@@ -147,25 +136,14 @@ export class MetadataPoller {
       queryArgs: listProcedures({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          const rawProcedures = result.data.procedures;
-
-          const signatures = rawProcedures.reduce<
-            Record<string, SignatureInformation>
+          const procedures = result.data.procedures.reduce<
+            Record<string, Neo4jProcedure>
           >((acc, curr) => {
-            const { name, argumentDescription, description } = curr;
-
-            acc[name] = SignatureInformation.create(
-              name,
-              description,
-              ...argumentDescription.map((arg) => ({
-                label: arg.name,
-                documentation: arg.description,
-              })),
-            );
+            const { name } = curr;
+            acc[name] = curr;
             return acc;
           }, {});
-          this.dbSchema.rawProcedures = rawProcedures;
-          this.dbSchema.procedureSignatures = signatures;
+          this.dbSchema.procedures = procedures;
         }
       },
     });
