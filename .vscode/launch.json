@@ -13,6 +13,7 @@
       "request": "launch",
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
+      "preLaunchTask": "npm: build-vscode",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
       ],

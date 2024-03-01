@@ -32,7 +32,7 @@
     "@neo4j-cypher/react-codemirror-playground#build": {
       "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
     },
-    "neo4j-cypher-vscode-extension#test:e2e": {
+    "neo4j-vscode#test:e2e": {
       "cache": false,
       "persistent": false,
       "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]

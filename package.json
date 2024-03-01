@@ -21,6 +21,7 @@
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
     "dev-codemirror": "turbo run @neo4j-cypher/react-codemirror-playground#dev",
+    "build-vscode": "turbo run build --filter neo4j-vscode",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write",
