@@ -103,7 +103,7 @@ describe('Semantic validation spec', () => {
     const query = `
     MATCH (shadowed)
     CALL {
-      MATCH (shadowed)-[:REL]->(m) // warning here
+      MATCH (shadowed)-[]->(m) // warning here
       RETURN m
     }
     RETURN *
@@ -277,6 +277,24 @@ describe('Semantic validation spec', () => {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
           end: 61,
+          start: 53,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 3,
+          },
+          start: {
+            character: 8,
+            line: 3,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 61,
           start: 60,
         },
         range: {
@@ -309,6 +327,24 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 2,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 114,
+          start: 106,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 6,
+          },
+          start: {
+            character: 8,
+            line: 6,
+          },
+        },
+        severity: 1,
       },
       {
         message: 'Variable `i` already declared in outer scope',
@@ -380,8 +416,8 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+        message: `Multiple graphs in the same query not allowed here. This feature is only available on composite databases.
+Attempted to access graph other`,
         offsets: {
           end: 88,
           start: 55,
@@ -706,25 +742,6 @@ describe('Semantic validation spec', () => {
         RETURN count(*)`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message:
-          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
-        offsets: {
-          end: 82,
-          start: 16,
-        },
-        range: {
-          end: {
-            character: 31,
-            line: 2,
-          },
-          start: {
-            character: 10,
-            line: 1,
-          },
-        },
-        severity: 1,
-      },
       {
         message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
         offsets: {
@@ -1077,25 +1094,6 @@ That is, neither of these is a quantified path pattern.`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'If a part of a query contains multiple disconnected patterns, this will build a cartesian product between all those parts. This may produce a large amount of data and slow down query processing. While occasionally intended, it may often be possible to reformulate the query that avoids the use of this cross product, perhaps by adding a relationship between the different parts or by using OPTIONAL MATCH (identifiers are: (a, b, s, u))',
-        offsets: {
-          end: 82,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 82,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
-      {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
@@ -1123,7 +1121,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
           end: 26,
           start: 8,
@@ -1142,7 +1140,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
       {
         message:
-          'Variable length relationships cannot be part of a quantified path pattern.',
+          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
         offsets: {
           end: 26,
           start: 8,
