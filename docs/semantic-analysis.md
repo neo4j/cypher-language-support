@@ -57,10 +57,11 @@ function $rt_mainStarter(f) {
 ```js
 function ons_MainNodejs_main($args) {
     ...
-    sci_TreeSeqMap$OrderBy$Insertion$__clinit_();
-    sci_TreeSeqMap$OrderBy$Modification$__clinit_();
     oncie_ListComprehension$__clinit_();
-    cnsa_Main_analyzeQuery($args.data[0]);
+    oncie_Ands$__clinit_();
+    $args = $args.data;
+    cnsa_Main_updateSignatureResolver(null);
+    cnsa_Main_analyzeQuery($args[0]);
 }
 ```
 
@@ -69,9 +70,8 @@ gets replaced by:
 ```js
 function ons_MainNodejs_main($args) {
     ...
-    sci_TreeSeqMap$OrderBy$Insertion$__clinit_();
-    sci_TreeSeqMap$OrderBy$Modification$__clinit_();
     oncie_ListComprehension$__clinit_();
+    oncie_Ands$__clinit_();
 }
 ```
 
@@ -80,6 +80,10 @@ function ons_MainNodejs_main($args) {
 ```js
     // Initialize everything
     $rt_exports.main([]);
+
+    // Export the signature registry updater
+    $rt_exports.updateSignatureResolver = cnsa_Main_updateSignatureResolver;
+
     // Export the analyze function as well
     $rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
 }));
