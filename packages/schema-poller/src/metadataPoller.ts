@@ -1,11 +1,14 @@
-import { DbSchema } from '@neo4j-cypher/language-support';
+import {
+  DbSchema,
+  Neo4jFunction,
+  Neo4jProcedure,
+} from '@neo4j-cypher/language-support';
 import { SignatureInformation } from 'vscode-languageserver/node';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { Database, listDatabases } from './queries/databases.js';
-import { DataSummary, getDataSummary } from './queries/dataSummary.js';
-import { listFunctions, Neo4jFunction } from './queries/functions.js';
-import { listProcedures, Procedure } from './queries/procedures.js';
-import { ExecuteQueryArgs } from './types/sdkTypes.js';
+import { listFunctions } from './queries/functions.js';
+import { listProcedures } from './queries/procedures.js';
+import { ExecuteQueryArgs } from './types/sdk-types.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -75,7 +78,7 @@ export class MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
   private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
-  private procedures: QueryPoller<{ procedures: Procedure[] }>;
+  private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -116,6 +119,7 @@ export class MetadataPoller {
       queryArgs: listFunctions({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
+          const rawFunctions = result.data.functions;
           const signatures = result.data.functions.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
@@ -132,6 +136,7 @@ export class MetadataPoller {
 
             return acc;
           }, {});
+          this.dbSchema.rawFunctions = rawFunctions;
           this.dbSchema.functionSignatures = signatures;
         }
       },
@@ -142,7 +147,9 @@ export class MetadataPoller {
       queryArgs: listProcedures({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          const signatures = result.data.procedures.reduce<
+          const rawProcedures = result.data.procedures;
+
+          const signatures = rawProcedures.reduce<
             Record<string, SignatureInformation>
           >((acc, curr) => {
             const { name, argumentDescription, description } = curr;
@@ -157,6 +164,7 @@ export class MetadataPoller {
             );
             return acc;
           }, {});
+          this.dbSchema.rawProcedures = rawProcedures;
           this.dbSchema.procedureSignatures = signatures;
         }
       },
