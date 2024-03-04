@@ -32,7 +32,7 @@
     "test": "jest",
     "generate": "tests/generate.sh",
     "eslint": "eslint .",
-    "clean": "rm -rf {dist,out}"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "antlr4": "*"
