@@ -49,7 +49,7 @@ export function toSignatureInformation(
 }
 
 function toSignatureHelp(
-  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure>,
+  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure> = {},
   parsedMethod: ParsedMethod,
 ): SignatureHelp {
   const methodName = parsedMethod.methodName;
