@@ -219,6 +219,11 @@ describe('Procedures signature help', () => {
       63,
     );
   });
+
+  test('Does not crash on missing schema', () => {
+    testSignatureHelp(`CALL apoc.do.when`, undefined, emptyResult);
+    testSignatureHelp(`CALL apoc.do.when`, {}, emptyResult);
+  });
 });
 
 describe('Functions signature help', () => {
@@ -390,5 +395,10 @@ describe('Functions signature help', () => {
       expectedArgIndex(1),
       89,
     );
+  });
+
+  test('Does not crash on missing schema', () => {
+    testSignatureHelp(`CALL apoc.do.when`, undefined, emptyResult);
+    testSignatureHelp(`CALL apoc.do.when`, {}, emptyResult);
   });
 });

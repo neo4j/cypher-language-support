@@ -101,11 +101,11 @@ connection.onDidChangeConfiguration(
       neo4jSdk.connection === undefined &&
       neo4jConfig.connect &&
       neo4jConfig.password &&
-      neo4jConfig.URL &&
+      neo4jConfig.connectURL &&
       neo4jConfig.user
     ) {
       void neo4jSdk.persistentConnect(
-        neo4jConfig.URL,
+        neo4jConfig.connectURL,
         {
           username: neo4jConfig.user,
           password: neo4jConfig.password,
