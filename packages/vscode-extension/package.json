@@ -5,7 +5,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.4",
+  "version": "1.0.0",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -100,7 +100,7 @@
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.4",
+    "@neo4j-cypher/language-server": "2.0.0-next.5",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
