@@ -5,6 +5,7 @@ import {
   setConsoleCommandsEnabled,
 } from '../parserWrapper';
 import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
+import { testData } from './testData';
 
 function expectParsedCommands(
   query: string,
@@ -243,13 +244,19 @@ describe('parameters', () => {
 
   test('autocompletes expressions', () => {
     const arrowCompletions = autocomplete(':param foo => ', {
-      functionSignatures: {
-        'duration.inSeconds': { label: 'duration.inSeconds' },
+      functions: {
+        'duration.inSeconds': {
+          ...testData.emptyFunction,
+          name: 'duration.inSeconds',
+        },
       },
     });
     const mapCompletions = autocomplete(':param {a:  ', {
-      functionSignatures: {
-        'duration.inSeconds': { label: 'duration.inSeconds' },
+      functions: {
+        'duration.inSeconds': {
+          ...testData.emptyFunction,
+          name: 'duration.inSeconds',
+        },
       },
     });
 

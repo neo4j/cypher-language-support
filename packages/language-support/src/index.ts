@@ -8,7 +8,7 @@ export {
   parserWrapper,
   setConsoleCommandsEnabled,
 } from './parserWrapper';
-export { signatureHelp } from './signatureHelp';
+export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
@@ -22,6 +22,7 @@ export {
 } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidationHelpers';
 export { testData } from './tests/testData';
+export type { Neo4jFunction, Neo4jProcedure } from './types';
 export { CypherLexer, CypherParser };
 
 import CypherLexer from './generated-parser/CypherCmdLexer';

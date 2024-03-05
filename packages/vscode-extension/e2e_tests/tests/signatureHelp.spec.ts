@@ -1,4 +1,7 @@
-import { testData } from '@neo4j-cypher/language-support';
+import {
+  testData,
+  toSignatureInformation,
+} from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { eventually, getDocumentUri, openDocument } from '../helpers';
@@ -61,7 +64,11 @@ suite('Signature help spec', () => {
       // We don't test the active signature, otherwise we would have to modify
       // these tests every time a new function is added to the database
       activeSignature: undefined,
-      signatures: [testData.mockSchema.functionSignatures.abs],
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.functions.abs,
+        ) as vscode.SignatureInformation,
+      ],
     };
 
     await testSignatureHelp({
@@ -77,7 +84,11 @@ suite('Signature help spec', () => {
     const expected: vscode.SignatureHelp = {
       activeParameter: 0,
       activeSignature: undefined,
-      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.procedures['apoc.import.csv'],
+        ) as vscode.SignatureInformation,
+      ],
     };
 
     await testSignatureHelp({
@@ -93,7 +104,11 @@ suite('Signature help spec', () => {
     const expected: vscode.SignatureHelp = {
       activeParameter: 1,
       activeSignature: undefined,
-      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.procedures['apoc.import.csv'],
+        ) as vscode.SignatureInformation,
+      ],
     };
 
     await testSignatureHelp({
@@ -109,7 +124,11 @@ suite('Signature help spec', () => {
     const expected: vscode.SignatureHelp = {
       activeParameter: 1,
       activeSignature: undefined,
-      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.procedures['apoc.import.csv'],
+        ) as vscode.SignatureInformation,
+      ],
     };
 
     await testSignatureHelp({
@@ -127,7 +146,11 @@ suite('Signature help spec', () => {
       // since there are only 3 arguments in the signature and the last index is 2
       activeParameter: 3,
       activeSignature: undefined,
-      signatures: [testData.mockSchema.procedureSignatures['apoc.import.csv']],
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.procedures['apoc.import.csv'],
+        ) as vscode.SignatureInformation,
+      ],
     };
 
     await testSignatureHelp({

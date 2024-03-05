@@ -1,10 +1,13 @@
-import { DbSchema } from '@neo4j-cypher/language-support';
-import { SignatureInformation } from 'vscode-languageserver/node';
+import {
+  DbSchema,
+  Neo4jFunction,
+  Neo4jProcedure,
+} from '@neo4j-cypher/language-support';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { Database, listDatabases } from './queries/databases.js';
 import { DataSummary, getDataSummary } from './queries/dataSummary.js';
-import { listFunctions, Neo4jFunction } from './queries/functions.js';
-import { listProcedures, Procedure } from './queries/procedures.js';
+import { listFunctions } from './queries/functions.js';
+import { listProcedures } from './queries/procedures.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
@@ -75,7 +78,7 @@ export class MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
   private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
-  private procedures: QueryPoller<{ procedures: Procedure[] }>;
+  private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
 
   private dbPollingInterval: NodeJS.Timer | undefined;
 
@@ -116,23 +119,14 @@ export class MetadataPoller {
       queryArgs: listFunctions({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          const signatures = result.data.functions.reduce<
-            Record<string, SignatureInformation>
+          const functions = result.data.functions.reduce<
+            Record<string, Neo4jFunction>
           >((acc, curr) => {
-            const { name, argumentDescription, description } = curr;
-
-            acc[name] = SignatureInformation.create(
-              name,
-              description,
-              ...argumentDescription.map((arg) => ({
-                label: arg.name,
-                documentation: arg.description,
-              })),
-            );
-
+            const { name } = curr;
+            acc[name] = curr;
             return acc;
           }, {});
-          this.dbSchema.functionSignatures = signatures;
+          this.dbSchema.functions = functions;
         }
       },
     });
@@ -142,22 +136,14 @@ export class MetadataPoller {
       queryArgs: listProcedures({ executableByMe: true }),
       onRefetchDone: (result) => {
         if (result.success) {
-          const signatures = result.data.procedures.reduce<
-            Record<string, SignatureInformation>
+          const procedures = result.data.procedures.reduce<
+            Record<string, Neo4jProcedure>
           >((acc, curr) => {
-            const { name, argumentDescription, description } = curr;
-
-            acc[name] = SignatureInformation.create(
-              name,
-              description,
-              ...argumentDescription.map((arg) => ({
-                label: arg.name,
-                documentation: arg.description,
-              })),
-            );
+            const { name } = curr;
+            acc[name] = curr;
             return acc;
           }, {});
-          this.dbSchema.procedureSignatures = signatures;
+          this.dbSchema.procedures = procedures;
         }
       },
     });
