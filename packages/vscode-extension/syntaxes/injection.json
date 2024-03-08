@@ -1,0 +1,17 @@
+{
+  "scopeName": "cypher.injection",
+  "fileTypes": ["js", "jsx", "ts", "tsx", "vue", "svelte"],
+  "injectionSelector": "L:source.js -comment -string, L:source.jsx -comment -string, L:source.js.jsx -comment -string, L:source.ts -comment -string, L:source.js (string.quoted.double.html, string.quoted.single.html), L:source.jsx (string.quoted.double.html, string.quoted.single.html), L:source.js.jsx (string.quoted.double.html, string.quoted.single.html), L:source.ts (string.quoted.double.html, string.quoted.single.html), L:source.tsx (string.quoted.double.html, string.quoted.single.html)",
+  "patterns": [
+    {
+      "contentName": "meta.embedded.inline.cypher",
+      "begin": "(\")(--\\s*cypher)",
+      "end": "(\")",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 dist/
 !dist/extension.js
 !dist/cypher-language-server.js
+!syntaxes/*.json
 ../../
 ../
 node_modules
