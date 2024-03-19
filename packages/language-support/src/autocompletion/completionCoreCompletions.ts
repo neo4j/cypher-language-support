@@ -215,12 +215,24 @@ enum ExpectedParameterType {
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   const parentRule = context.ruleList.at(-1);
+  const grandParentRule = context.ruleList.at(-2);
   if (
     [
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_symbolicNameOrStringParameter,
       CypherParser.RULE_passwordExpression,
-    ].includes(parentRule)
+      CypherParser.RULE_createUser,
+      CypherParser.RULE_dropUser,
+      CypherParser.RULE_alterUser,
+      CypherParser.RULE_renameUser,
+      CypherParser.RULE_createRole,
+      CypherParser.RULE_dropRole,
+      CypherParser.RULE_renameRole,
+    ].includes(parentRule) ||
+    [
+      CypherParser.RULE_showUserPrivileges,
+      CypherParser.RULE_grantRole,
+    ].includes(grandParentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (

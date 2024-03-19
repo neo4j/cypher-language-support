@@ -366,7 +366,6 @@ describe('can complete database names', () => {
         'SHOW USER ',
         'ALTER CURRENT USER SET PASSWORD FROM ',
         'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
-        'ALTER USER ',
         'ALTER USER foo IF EXISTS SET PASSWORD ',
       ];
       cases.forEach((query) => {
