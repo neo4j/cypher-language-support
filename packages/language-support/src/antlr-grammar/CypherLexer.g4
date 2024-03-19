@@ -203,6 +203,9 @@ COMMIT:
 COMPOSITE:
    C O M P O S I T E;
 
+CONCURRENT:
+   C O N C U R R E N T;
+
 CONSTRAINT:
    C O N S T R A I N T;
 
@@ -895,12 +898,6 @@ VALUE:
 
 VARCHAR:
    V A R C H A R -> type(STRING);
-
-EXPLAIN:
-   E X P L A I N;
-
-PROFILE:
-   P R O F I L E;
 
 VECTOR:
    V E C T O R;

@@ -242,7 +242,7 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
   return stmts.statementOrCommand_list().map((stmt) => {
     const { start, stop } = stmt;
 
-    const cypherStmt = stmt.statement();
+    const cypherStmt = stmt.preparsedStatement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       const inputstream = cypherStmt.start.getInputStream();

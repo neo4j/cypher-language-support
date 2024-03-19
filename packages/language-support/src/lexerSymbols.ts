@@ -154,6 +154,7 @@ export const lexerKeywords = [
   CypherLexer.COUNT,
   CypherLexer.CREATE,
   CypherLexer.CSV,
+  CypherLexer.CONCURRENT,
   CypherLexer.CURRENT,
   CypherLexer.DATA,
   CypherLexer.DATABASE,

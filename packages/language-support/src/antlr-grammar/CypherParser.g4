@@ -24,10 +24,7 @@ statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
 
 statement:
-   preparserOption? periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
-
-preparserOption:
-   EXPLAIN | PROFILE;
+   periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
 
 singleQueryOrCommand:
    (createCommand | command | singleQuery union*);
@@ -147,7 +144,7 @@ subqueryClause:
    CALL LCURLY regularQuery RCURLY subqueryInTransactionsParameters?;
 
 subqueryInTransactionsParameters:
-   IN TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*;
+   IN (expression? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*;
 
 subqueryInTransactionsBatchParameters:
    OF expression (ROW | ROWS);
@@ -299,12 +296,14 @@ expression10:
 expression9:
     NOT* expression8;
 
+// Making changes here? Consider looking at extendedWhen too.
 expression8:
    expression7 ((EQ | INVALID_NEQ | NEQ | LE | GE | LT | GT) expression7)*;
 
 expression7:
    expression6 comparisonExpression6?;
 
+// Making changes here? Consider looking at extendedWhen too.
 comparisonExpression6
    : (REGEQ | STARTS WITH | ENDS WITH | CONTAINS | IN) expression6 #StringAndListComparison
    | IS NOT? NULL                                                  #NullComparison
@@ -347,6 +346,7 @@ expression1
    : literal
    | parameter["ANY"]
    | caseExpression
+   | extendedCaseExpression
    | COUNT LPAREN TIMES RPAREN
    | existsExpression
    | countExpression
@@ -375,11 +375,31 @@ literal:
    | NAN              #KeywordLiteral
    | NULL             #KeywordLiteral;
 
-caseExpression:
-   CASE caseExp=expression? caseAlternative+ (ELSE elseExp=expression)? END;
+caseExpression
+   : CASE caseAlternative+ (ELSE expression)? END
+   ;
 
-caseAlternative:
-   WHEN expression THEN expression;
+caseAlternative
+   : WHEN expression THEN expression
+   ;
+
+extendedCaseExpression
+   : CASE expression extendedCaseAlternative+ (ELSE elseExp=expression)? END
+   ;
+
+extendedCaseAlternative
+   : WHEN extendedWhen (COMMA extendedWhen)* THEN expression
+   ;
+
+// Making changes here? Consider looking at comparisonExpression6 and expression8 too.
+extendedWhen
+   : (REGEQ | STARTS WITH | ENDS WITH) expression6           #WhenStringOrList
+   | IS NOT? NULL                                             #WhenNull
+   | (IS NOT? TYPED | COLONCOLON) type                        #WhenType
+   | IS NOT? normalForm? NORMALIZED                           #WhenForm
+   | (EQ | NEQ | INVALID_NEQ | LE | GE | LT | GT) expression7 #WhenComparator
+   | expression                                               #WhenEquals
+   ;
 
 listComprehension:
    LBRACKET variable IN expression
@@ -918,7 +938,7 @@ symbolicLabelNameString:
    (escapedSymbolicNameString | unescapedLabelSymbolicNameString);
 
 unescapedLabelSymbolicNameString:
-   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | ARRAY | AS | ASC | ASCENDING | ASSERT | ASSIGN | AT | BINDINGS | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | CIDR | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT_TOKEN | DEFINED | DELETE | DENY | DESC | DESCENDING | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | EDGE | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LIST | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MAP | MERGE | NAME | NAMES | NAN | NEW | NODE | NODETACH | NODES | NONE | NORMALIZE | NOTHING | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | URL | USE | USER | USERS | USING | VALUE |  VECTOR | VERBOSE | VERTEX | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
+   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | ARRAY | AS | ASC | ASCENDING | ASSERT | ASSIGN | AT | BINDINGS | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | CIDR | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONCURRENT | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT | DEFINED | DELETE | DENY | DESC | DESCENDING | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | EDGE | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LIST | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MAP | MERGE | NAME | NAMES | NAN | NEW | NODE | NODETACH | NODES | NONE | NORMALIZE | NOTHING | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | URL | USE | USER | USERS | USING | VALUE |  VECTOR | VERBOSE | VERTEX | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
 
 endOfFile:
    EOF;
