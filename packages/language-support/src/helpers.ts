@@ -3,17 +3,35 @@
 import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,
+  ParseTree,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
   RelationshipPatternContext,
-  StatementsContext,
-} from './generated-parser/CypherParser';
-import { ParsingResult } from './parserWrapper';
+  StatementsOrCommandsContext,
+} from './generated-parser/CypherCmdParser';
+import { ParsedStatement, ParsingResult } from './parserWrapper';
 
-export function findStopNode(root: StatementsContext) {
+/* In antlr we have 
+
+        ParseTree
+           / \
+          /   \
+TerminalNode   RuleContext
+                \
+                ParserRuleContext                 
+
+Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
+This type fixes that because it's what we need to traverse the tree most
+of the time
+*/
+export type EnrichedParseTree = ParseTree & {
+  parentCtx: ParserRuleContext | undefined;
+};
+
+export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
   let current: ParserRuleContext = root;
 
@@ -38,10 +56,10 @@ export function findStopNode(root: StatementsContext) {
 }
 
 export function findParent(
-  leaf: ParserRuleContext | undefined,
-  condition: (node: ParserRuleContext) => boolean,
-) {
-  let current: ParserRuleContext | undefined = leaf;
+  leaf: EnrichedParseTree | undefined,
+  condition: (node: EnrichedParseTree) => boolean,
+): EnrichedParseTree {
+  let current: EnrichedParseTree | undefined = leaf;
 
   while (current && !condition(current)) {
     current = current.parentCtx;
@@ -74,35 +92,6 @@ type AntlrDefaultExport = {
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
-export function findLatestStatement(
-  parsingResult: ParsingResult,
-): undefined | string {
-  const tokens = parsingResult.tokens;
-  const lastTokenIndex = tokens.length - 1;
-
-  let tokenIndex = lastTokenIndex;
-  let found = false;
-  let lastStatement: undefined | string = undefined;
-
-  // Last token is always EOF
-  while (tokenIndex > 0 && !found) {
-    tokenIndex--;
-    found = tokens[tokenIndex].type == CypherLexer.SEMICOLON;
-  }
-
-  if (found) {
-    lastStatement = '';
-
-    tokenIndex += 1;
-    while (tokenIndex < lastTokenIndex) {
-      lastStatement += tokens.at(tokenIndex)?.text ?? '';
-      tokenIndex++;
-    }
-  }
-
-  return lastStatement;
-}
-
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
@@ -120,3 +109,91 @@ export function inRelationshipType(stopNode: ParserRuleContext) {
 
   return isDefined(relPattern);
 }
+
+export function findCaret(
+  parsingResult: ParsingResult,
+  caretPosition: number,
+): { statement: ParsedStatement; token: Token } | undefined {
+  const statements = parsingResult.statementsParsing;
+  let i = 0;
+  let result: { statement: ParsedStatement; token: Token } = undefined;
+  let keepLooking = true;
+
+  while (i < statements.length && keepLooking) {
+    let j = 0;
+    const statement = statements[i];
+    const tokens = statement.tokens;
+
+    while (j < tokens.length && keepLooking) {
+      const currentToken = tokens[j];
+      keepLooking = currentToken.start <= caretPosition;
+
+      if (currentToken.channel === 0 && keepLooking) {
+        result = { statement: statement, token: currentToken };
+      }
+
+      j++;
+    }
+    i++;
+  }
+
+  return result;
+}
+
+export function splitIntoStatements(
+  tokenStream: CommonTokenStream,
+  lexer: CypherLexer,
+): CommonTokenStream[] {
+  tokenStream.fill();
+  const tokens = tokenStream.tokens;
+
+  let i = 0;
+  const result: CommonTokenStream[] = [];
+  let chunk: Token[] = [];
+  let offset = 0;
+
+  while (i < tokens.length) {
+    const current = tokens[i].clone();
+    current.tokenIndex -= offset;
+
+    chunk.push(current);
+
+    if (
+      current.type === CypherLexer.SEMICOLON ||
+      current.type === CypherLexer.EOF
+    ) {
+      // This does not relex since we are not calling fill on the token stream
+      const tokenStream = new CommonTokenStream(lexer);
+      tokenStream.tokens = chunk;
+      result.push(tokenStream);
+      offset = i + 1;
+      chunk = [];
+    }
+
+    i++;
+  }
+
+  return result;
+}
+
+export const rulesDefiningVariables = [
+  CypherParser.RULE_returnItem,
+  CypherParser.RULE_unwindClause,
+  CypherParser.RULE_subqueryInTransactionsReportParameters,
+  CypherParser.RULE_procedureResultItem,
+  CypherParser.RULE_foreachClause,
+  CypherParser.RULE_loadCSVClause,
+  CypherParser.RULE_reduceExpression,
+  CypherParser.RULE_allExpression,
+  CypherParser.RULE_anyExpression,
+  CypherParser.RULE_noneExpression,
+  CypherParser.RULE_singleExpression,
+  CypherParser.RULE_listComprehension,
+];
+
+export const rulesDefiningOrUsingVariables = [
+  ...rulesDefiningVariables,
+  CypherParser.RULE_pattern,
+  CypherParser.RULE_nodePattern,
+  CypherParser.RULE_relationshipPattern,
+];

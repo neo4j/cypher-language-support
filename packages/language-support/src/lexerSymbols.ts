@@ -1,4 +1,4 @@
-import CypherLexer from './generated-parser/CypherLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer';
 
 export enum CypherTokenType {
   comment = 'comment',
@@ -22,6 +22,7 @@ export enum CypherTokenType {
   separator = 'separator',
   punctuation = 'punctuation',
   none = 'none',
+  consoleCommand = 'consoleCommand',
 }
 
 export const lexerOperators = [
@@ -121,6 +122,7 @@ export const lexerKeywords = [
   CypherLexer.ALTER,
   CypherLexer.AND,
   CypherLexer.ANY,
+  CypherLexer.ARRAY,
   CypherLexer.AS,
   CypherLexer.ASC,
   CypherLexer.ASSERT,
@@ -137,6 +139,7 @@ export const lexerKeywords = [
   CypherLexer.BY,
   CypherLexer.CALL,
   CypherLexer.CASE,
+  CypherLexer.CIDR,
   CypherLexer.CHANGE,
   CypherLexer.COLLECT,
   CypherLexer.COMMAND,
@@ -174,6 +177,7 @@ export const lexerKeywords = [
   CypherLexer.DUMP,
   CypherLexer.DURATION,
   CypherLexer.EACH,
+  CypherLexer.EDGE,
   CypherLexer.ELEMENT,
   CypherLexer.ELEMENTS,
   CypherLexer.ELSE,
@@ -220,10 +224,12 @@ export const lexerKeywords = [
   CypherLexer.LABEL,
   CypherLexer.LABELS,
   CypherLexer.LIMITROWS,
+  CypherLexer.LIST,
   CypherLexer.LOAD,
   CypherLexer.LOCAL,
   CypherLexer.LOOKUP,
   CypherLexer.MANAGEMENT,
+  CypherLexer.MAP,
   CypherLexer.MATCH,
   CypherLexer.MERGE,
   CypherLexer.NAME,
@@ -234,6 +240,7 @@ export const lexerKeywords = [
   CypherLexer.NODES,
   CypherLexer.NONE,
   CypherLexer.NOT,
+  CypherLexer.NOTHING,
   CypherLexer.NOWAIT,
   CypherLexer.NULL,
   CypherLexer.OF,
@@ -326,12 +333,15 @@ export const lexerKeywords = [
   CypherLexer.UNIQUE,
   CypherLexer.UNIQUENESS,
   CypherLexer.UNWIND,
+  CypherLexer.URL,
   CypherLexer.USE,
   CypherLexer.USER,
   CypherLexer.USERS,
   CypherLexer.USING,
+  CypherLexer.VALUE,
   CypherLexer.VARCHAR,
   CypherLexer.VERBOSE,
+  CypherLexer.VERTEX,
   CypherLexer.WAIT,
   CypherLexer.WHEN,
   CypherLexer.WHERE,
@@ -344,6 +354,12 @@ export const lexerKeywords = [
   // Preparser tokens
   CypherLexer.EXPLAIN,
   CypherLexer.PROFILE,
+];
+
+export const lexerConsoleCmds = [
+  CypherLexer.HISTORY,
+  CypherLexer.PARAM,
+  CypherLexer.CLEAR,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
@@ -364,6 +380,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerSeparators, CypherTokenType.separator),
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
+  ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {
@@ -384,3 +401,5 @@ export const tokenNames: string[] = Array.from({ length }).map(
     symbolicNames[i] ??
     '<INVALID',
 );
+
+export const keywordNames = new Set(lexerKeywords.map((i) => tokenNames[i]));

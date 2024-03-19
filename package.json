@@ -1,30 +1,38 @@
 {
-  "name": "cypher-lsp",
-  "description": "Cypher LSP",
+  "name": "neo4j-cypher-language-support",
+  "description": "Neo4j's Cypher Language Support",
   "license": "Apache",
   "version": "1.0.0",
   "categories": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neo4j/cypher-lsp.git"
+    "url": "git+https://github.com/neo4j/cypher-language-support.git"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "vendor/*"
   ],
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
+    "release": "turbo run build && npx changeset publish",
     "clean": "turbo run clean",
     "watch": "turbo run watch",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
-    "assemble": "turbo run assemble",
-    "dev-codemirror": "turbo run codemirror-playground#dev",
+    "dev-codemirror": "turbo run @neo4j-cypher/react-codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
-    "format": "prettier --config .prettierrc.json '**/*.ts' --write"
+    "format": "prettier --config .prettierrc.json '**/*.ts' --write",
+    "benchmark": "turbo run benchmark --concurrency=1"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2",
+    "vscode": "^1.22.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.2",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
@@ -34,6 +42,6 @@
     "prettier-plugin-organize-imports": "^3.2.1",
     "ts-jest": "^29.1.1",
     "turbo": "^1.10.15",
-    "typescript": "^4.8.4"
+    "typescript": "4.9.5"
   }
 }

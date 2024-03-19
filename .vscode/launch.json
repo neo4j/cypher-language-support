@@ -14,14 +14,15 @@
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-playground"
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
       ],
-      "outFiles": ["${workspaceRoot}/packages/vscode-playground/out/**/*.js"],
+      "outFiles": [
+        "${workspaceRoot}/packages/vscode-extension/**/*.js",
+        "${workspaceRoot}/packages/language-support/**/*.js",
+        "${workspaceRoot}/packages/schema-poller/**/*.js"
+      ],
       "autoAttachChildProcesses": true,
-      "preLaunchTask": {
-        "type": "npm",
-        "script": "watch"
-      }
+      "sourceMaps": true
     }
   ],
   "type": "pwa-node",

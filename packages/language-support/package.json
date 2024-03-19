@@ -1,11 +1,46 @@
 {
-  "name": "language-support",
+  "name": "@neo4j-cypher/language-support",
   "description": "Cypher language support",
-  "author": "neo4j",
-  "license": "Apache",
-  "version": "0.0.1",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
+  "author": "Neo4j Inc.",
+  "license": "Apache-2.0",
+  "files": [
+    "dist",
+    "src",
+    "package.json",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "autocompletion",
+    "linting",
+    "highlighting"
+  ],
+  "version": "2.0.0-next.4",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.js",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/cjs/index.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
+  },
   "dependencies": {
     "antlr4": "*",
     "antlr4-c3": "*",
@@ -13,14 +48,19 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {
-    "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherParser.g4 src/antlr-grammar/CypherLexer.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "postinstall": "npm run gen-parser",
-    "build": "npm run gen-parser && tsc -b",
-    "clean": "rm -rf out",
+    "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
+    "build": "npm run gen-parser && concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
+    "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
+    "clean": "rm -rf {dist,src/generated-parser}",
     "watch": "tsc -b -w",
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.5"
+    "@types/benchmark": "^2.1.5",
+    "@types/jest": "^29.5.5",
+    "benchmark": "^2.1.4"
   }
 }

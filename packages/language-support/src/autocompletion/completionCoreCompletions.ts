@@ -1,14 +1,26 @@
 import { Token } from 'antlr4';
-import { CandidateRule, CodeCompletionCore } from 'antlr4-c3';
+import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
+import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherLexer';
-import CypherParser from '../generated-parser/CypherParser';
-import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
-import { EnrichedParsingResult, ParsingResult } from '../parserWrapper';
+import CypherLexer from '../generated-parser/CypherCmdLexer';
+import CypherParser, {
+  Expression2Context,
+} from '../generated-parser/CypherCmdParser';
+import { rulesDefiningVariables } from '../helpers';
+import {
+  CypherTokenType,
+  lexerKeywords,
+  lexerSymbols,
+  tokenNames,
+} from '../lexerSymbols';
+
+import { ParsedStatement } from '../parserWrapper';
+
+import { consoleCommandEnabled } from '../parserWrapper';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -32,7 +44,7 @@ const functionNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.functionSignatures ?? {}),
+    Object.keys(dbSchema?.functions ?? {}),
     'function',
   );
 
@@ -44,7 +56,7 @@ const procedureNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.procedureSignatures ?? {}),
+    Object.keys(dbSchema?.procedures ?? {}),
     'procedure',
   );
 
@@ -115,6 +127,66 @@ const namespacedCompletion = (
     return functionNameCompletions.concat(namespaceCompletions);
   }
 };
+
+function getTokenCompletions(
+  candidates: CandidatesCollection,
+  ignoredTokens: Set<number>,
+): CompletionItem[] {
+  const tokenEntries = candidates.tokens.entries();
+
+  const completions = Array.from(tokenEntries).flatMap((value) => {
+    const [tokenNumber, followUpList] = value;
+
+    if (!ignoredTokens.has(tokenNumber)) {
+      const isConsoleCommand =
+        lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
+
+      const kind = isConsoleCommand
+        ? CompletionItemKind.Event
+        : CompletionItemKind.Keyword;
+
+      const firstToken = isConsoleCommand
+        ? tokenNames[tokenNumber].toLowerCase()
+        : tokenNames[tokenNumber];
+
+      const followUpIndexes = followUpList.indexes;
+      const firstIgnoredToken = followUpIndexes.findIndex((t) =>
+        ignoredTokens.has(t),
+      );
+
+      const followUpTokens = followUpIndexes.slice(
+        0,
+        firstIgnoredToken >= 0 ? firstIgnoredToken : followUpIndexes.length,
+      );
+
+      const followUpString = followUpTokens.map((i) => tokenNames[i]).join(' ');
+
+      if (firstToken === undefined) {
+        return [];
+      } else if (followUpString === '') {
+        return [{ label: firstToken, kind }];
+      } else {
+        const followUp =
+          firstToken +
+          ' ' +
+          (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
+
+        if (followUpList.optional) {
+          return [
+            { label: firstToken, kind },
+            { label: followUp, kind },
+          ];
+        }
+
+        return [{ label: followUp, kind }];
+      }
+    } else {
+      return [];
+    }
+  });
+
+  return completions;
+}
 
 const parameterCompletions = (
   dbInfo: DbSchema,
@@ -211,7 +283,7 @@ function calculateNamespacePrefix(
 }
 
 export function completionCoreCompletion(
-  parsingResult: EnrichedParsingResult,
+  parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -219,9 +291,8 @@ export function completionCoreCompletion(
 
   const codeCompletion = new CodeCompletionCore(parser);
 
-  // We always need to subtract one for the EOF
-  // Except if the query is empty and only contains EOF
-  let caretIndex = tokens.length > 1 ? tokens.length - 1 : 0;
+  // Move the caret index to the end of the query
+  let caretIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
   const eof = tokens[caretIndex];
 
@@ -236,7 +307,13 @@ export function completionCoreCompletion(
   // The identfier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
   // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
-  if (tokens[caretIndex - 1]?.type === CypherLexer.IDENTIFIER) {
+  // When an identifer overlaps with a keyword, it's no longer treates as an identifier (although it's a valid identifier)
+  // So we need to move the caret back for keywords as well
+  const previousToken = tokens[caretIndex - 1]?.type;
+  if (
+    previousToken === CypherLexer.IDENTIFIER ||
+    lexerKeywords.includes(previousToken)
+  ) {
     caretIndex--;
   }
 
@@ -251,6 +328,15 @@ export function completionCoreCompletion(
     // this rule is used for usernames and roles.
     CypherParser.RULE_symbolicNameOrStringParameter,
 
+    // Either enable the helper rules for lexer clashes,
+    // or collect all console commands like below with symbolicNameString
+    ...(consoleCommandEnabled()
+      ? [
+          CypherParser.RULE_useCompletionRule,
+          CypherParser.RULE_listCompletionRule,
+        ]
+      : [CypherParser.RULE_consoleCommand]),
+
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
     // To avoid this we want custom completion for identifiers
@@ -260,9 +346,13 @@ export function completionCoreCompletion(
   ]);
 
   // Keep only keywords as suggestions
-  codeCompletion.ignoredTokens = new Set<number>(
+  const ignoredTokens = new Set<number>(
     Object.entries(lexerSymbols)
-      .filter(([, type]) => type !== CypherTokenType.keyword)
+      .filter(
+        ([, type]) =>
+          type !== CypherTokenType.keyword &&
+          type !== CypherTokenType.consoleCommand,
+      )
       .map(([token]) => Number(token)),
   );
 
@@ -307,25 +397,35 @@ export function completionCoreCompletion(
           return [];
         }
 
+        const greatGrandParentRule = candidateRule.ruleList.at(-3);
+        // When propertyKey is used as postfix to an expr there are many false positives
+        // because expression are very flexible. For this case we only suggest property
+        // keys if the expr is a simple variable that is defined.
+        // We still don't know the type of the variable we're completing without a symbol table
+        // but it is likely to be a node/relationship
+        if (
+          parentRule === CypherParser.RULE_property &&
+          grandParentRule == CypherParser.RULE_postFix1 &&
+          greatGrandParentRule === CypherParser.RULE_expression2
+        ) {
+          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
+          if (expr2 instanceof Expression2Context) {
+            const variableName = expr2.expression1().variable()?.getText();
+            if (
+              !variableName ||
+              !parsingResult.collectedVariables.includes(variableName)
+            ) {
+              return [];
+            }
+          }
+        }
+
         return propertyKeyCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
         const parentRule = candidateRule.ruleList.at(-1);
         // some rules only define, never use variables
-        const rulesDefiningVariables = [
-          CypherParser.RULE_returnItem,
-          CypherParser.RULE_unwindClause,
-          CypherParser.RULE_subqueryInTransactionsReportParameters,
-          CypherParser.RULE_procedureResultItem,
-          CypherParser.RULE_foreachClause,
-          CypherParser.RULE_loadCSVClause,
-          CypherParser.RULE_reduceExpression,
-          CypherParser.RULE_allExpression,
-          CypherParser.RULE_anyExpression,
-          CypherParser.RULE_noneExpression,
-          CypherParser.RULE_singleExpression,
-        ];
         if (
           typeof parentRule === 'number' &&
           rulesDefiningVariables.includes(parentRule)
@@ -369,43 +469,28 @@ export function completionCoreCompletion(
           ];
         }
       }
+
+      // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
+      if (ruleNumber === CypherParser.RULE_useCompletionRule) {
+        return [{ label: 'use', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_listCompletionRule) {
+        return [{ label: 'list', kind: CompletionItemKind.Event }];
+      }
+
       return [];
     },
   );
 
-  const tokenEntries = candidates.tokens.entries();
-  const tokenCandidates = Array.from(tokenEntries).flatMap((value) => {
-    const [tokenNumber, followUpList] = value;
-
-    const firstToken = tokenNames[tokenNumber];
-    const followUpString = followUpList.indexes
-      .map((i) => tokenNames[i])
-      .join(' ');
-
-    if (firstToken === undefined) {
-      return [];
-    } else if (followUpString === '') {
-      return [firstToken];
-    } else {
-      const followUp = firstToken + ' ' + followUpString;
-      if (followUpList.optional) {
-        return [firstToken, followUp];
-      }
-
-      return [followUp];
-    }
-  });
-
-  const tokenCompletions: CompletionItem[] = tokenCandidates.map((t) => ({
-    label: t,
-    kind: CompletionItemKind.Keyword,
-  }));
-
-  return [...ruleCompletions, ...tokenCompletions];
+  return [
+    ...ruleCompletions,
+    ...getTokenCompletions(candidates, ignoredTokens),
+  ];
 }
 
 type CompletionHelperArgs = {
-  parsingResult: ParsingResult;
+  parsingResult: ParsedStatement;
   dbSchema: DbSchema;
   candidateRule: CandidateRule;
 };

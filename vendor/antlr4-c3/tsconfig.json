@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "out",
+    "rootDir": ".",
+    "removeComments": false,
+    "noImplicitAny": true,
+    "noImplicitOverride": false,
+    "sourceMap": true,
+    "inlineSources": true,
+    "isolatedModules": false,
+    "allowSyntheticDefaultImports": false,
+    "strictNullChecks": false,
+    "useDefineForClassFields": false,
+    "skipLibCheck": true
+  },
+  "compileOnSave": true,
+  "include": ["src", "index.ts", "tests"],
+  "exclude": ["node_modules"]
+}

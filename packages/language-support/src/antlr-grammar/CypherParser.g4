@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) "Neo4j"
+ * Neo4j Sweden AB [https://neo4j.com]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 parser grammar CypherParser;
 
 
@@ -481,7 +497,13 @@ createConstraint:
    ) (ASSERT EXISTS propertyList | (REQUIRE | ASSERT) propertyList (COLONCOLON cypherTypeName | IS (UNIQUE | KEY | createConstraintNodeCheck | createConstraintRelCheck | NOT NULL | (TYPED | COLONCOLON) cypherTypeName))) (OPTIONS mapOrParameter)?;
 
 cypherTypeName:
-   ((BOOLEAN | BOOL) | (STRING | VARCHAR) | (INT | SIGNED? INTEGER) | FLOAT | DATE | LOCAL (TIME | DATETIME) | ZONED (TIME | DATETIME) | TIME (WITHOUT TIMEZONE | WITH TIMEZONE) | TIMESTAMP (WITHOUT TIMEZONE | WITH TIMEZONE) | DURATION | POINT);
+   cypherTypeNameList;
+
+cypherTypeNameList:
+   cypherTypeNamePart (BAR cypherTypeNamePart)*;
+
+cypherTypeNamePart:
+   (NOTHING | NULL | (BOOLEAN | BOOL) | (STRING | VARCHAR) | (INT | SIGNED? INTEGER) | FLOAT | DATE | LOCAL (TIME | DATETIME) | ZONED (TIME | DATETIME) | TIME (WITHOUT TIMEZONE | WITH TIMEZONE) | TIMESTAMP (WITHOUT TIMEZONE | WITH TIMEZONE) | DURATION | POINT | (NODE | VERTEX) | (RELATIONSHIP | EDGE) | MAP | (LIST | ARRAY) LT cypherTypeName GT | PATH | PROPERTY VALUE | ANY ((NODE | VERTEX) | (RELATIONSHIP | EDGE) | MAP | PROPERTY VALUE | VALUE? LT cypherTypeNameList GT) | ANY VALUE?) (NOT NULL)? ((LIST | ARRAY) (NOT NULL)?)*;
 
 constraintNodePattern:
    variable labelOrRelType RPAREN;
@@ -648,7 +670,7 @@ revokePrivilege:
    privilege FROM symbolicNameOrStringParameterList;
 
 privilege:
-   (allPrivilege | createPrivilege | dropPrivilege | showPrivilege | setPrivilege | removePrivilege | databasePrivilege | dbmsPrivilege | writePrivilege | qualifiedGraphPrivileges | qualifiedGraphPrivilegesWithProperty);
+   (allPrivilege | createPrivilege | dropPrivilege | loadPrivilege | showPrivilege | setPrivilege | removePrivilege | databasePrivilege | dbmsPrivilege | writePrivilege | qualifiedGraphPrivileges | qualifiedGraphPrivilegesWithProperty);
 
 allPrivilege:
    ALL allPrivilegeType? ON allPrivilegeTarget;
@@ -661,27 +683,30 @@ allPrivilegeTarget:
 
 createPrivilege:
    CREATE (
-        ((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS) | NEW (NODE? (LABEL | LABELS) | RELATIONSHIP? (TYPE | TYPES) | PROPERTY? (NAME | NAMES))) ON databaseScopeList |
-        (DATABASE | ALIAS | ROLE | USER | COMPOSITE DATABASE) ON DBMS | ON graphScopeList graphQualifier
+        ((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS) | NEW (NODE? (LABEL | LABELS) | RELATIONSHIP? (TYPE | TYPES) | PROPERTY? (NAME | NAMES))) ON databaseScope |
+        (DATABASE | ALIAS | ROLE | USER | COMPOSITE DATABASE) ON DBMS | ON graphScope graphQualifier
     );
 
 dropPrivilege:
-   DROP (((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS)) ON databaseScopeList | (DATABASE | ALIAS | ROLE | USER | COMPOSITE DATABASE) ON DBMS);
+   DROP (((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS)) ON databaseScope | (DATABASE | ALIAS | ROLE | USER | COMPOSITE DATABASE) ON DBMS);
+
+loadPrivilege:
+   LOAD ON (URL stringOrParameter | CIDR stringOrParameter | ALL DATA);
 
 showPrivilege:
-   SHOW (((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS) | (TRANSACTION | TRANSACTIONS) (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)?) ON databaseScopeList | (ALIAS | PRIVILEGE | ROLE | USER | (SERVER | SERVERS) | (SETTING | SETTINGS) settingQualifier) ON DBMS);
+   SHOW (((INDEX | INDEXES) | (CONSTRAINT | CONSTRAINTS) | (TRANSACTION | TRANSACTIONS) (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)?) ON databaseScope | (ALIAS | PRIVILEGE | ROLE | USER | (SERVER | SERVERS) | (SETTING | SETTINGS) settingQualifier) ON DBMS);
 
 setPrivilege:
-   SET (((PASSWORD | PASSWORDS) | USER (STATUS | HOME DATABASE) | DATABASE ACCESS) ON DBMS | (LABEL labelResource ON graphScopeList | PROPERTY propertyResource ON graphScopeList graphQualifier));
+   SET (((PASSWORD | PASSWORDS) | USER (STATUS | HOME DATABASE) | DATABASE ACCESS) ON DBMS | (LABEL labelResource ON graphScope | PROPERTY propertyResource ON graphScope graphQualifier));
 
 removePrivilege:
-   REMOVE ((PRIVILEGE | ROLE) ON DBMS | LABEL labelResource ON graphScopeList);
+   REMOVE ((PRIVILEGE | ROLE) ON DBMS | LABEL labelResource ON graphScope);
 
 writePrivilege:
-   WRITE ON graphScopeList;
+   WRITE ON graphScope;
 
 databasePrivilege:
-   (ACCESS | START | STOP | (INDEX | INDEXES) MANAGEMENT? | (CONSTRAINT | CONSTRAINTS) MANAGEMENT? | TRANSACTION MANAGEMENT? (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)? | TERMINATE (TRANSACTION | TRANSACTIONS) (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)? | NAME MANAGEMENT?) ON databaseScopeList;
+   (ACCESS | START | STOP | (INDEX | INDEXES) MANAGEMENT? | (CONSTRAINT | CONSTRAINTS) MANAGEMENT? | TRANSACTION MANAGEMENT? (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)? | TERMINATE (TRANSACTION | TRANSACTIONS) (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)? | NAME MANAGEMENT?) ON databaseScope;
 
 dbmsPrivilege:
    (ALTER (USER | DATABASE | ALIAS) | ASSIGN (PRIVILEGE | ROLE) | COMPOSITE DATABASE MANAGEMENT | DATABASE MANAGEMENT | ALIAS MANAGEMENT | EXECUTE ((ADMIN | ADMINISTRATOR) PROCEDURES | BOOSTED ((PROCEDURE | PROCEDURES) executeProcedureQualifier | (USER DEFINED?)? (FUNCTION | FUNCTIONS) executeFunctionQualifier) | (PROCEDURE | PROCEDURES) executeProcedureQualifier | (USER DEFINED?)? (FUNCTION | FUNCTIONS) executeFunctionQualifier) | PRIVILEGE MANAGEMENT | RENAME (ROLE | USER) | SERVER MANAGEMENT | USER MANAGEMENT | IMPERSONATE (LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN)?) ON DBMS;
@@ -699,10 +724,10 @@ globs:
    glob (COMMA glob)*;
 
 qualifiedGraphPrivilegesWithProperty:
-   (TRAVERSE | READ propertyResource | MATCH propertyResource) ON graphScopeList graphQualifier (LPAREN TIMES RPAREN)?;
+   (TRAVERSE | READ propertyResource | MATCH propertyResource) ON graphScope graphQualifier (LPAREN TIMES RPAREN)?;
 
 qualifiedGraphPrivileges:
-   (DELETE | MERGE propertyResource) ON graphScopeList graphQualifier;
+   (DELETE | MERGE propertyResource) ON graphScope graphQualifier;
 
 labelResource:
    (TIMES | symbolicNameList1);
@@ -711,7 +736,7 @@ propertyResource:
    LCURLY (TIMES | symbolicNameList1) RCURLY;
 
 graphQualifier:
-   ((RELATIONSHIP | RELATIONSHIPS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (NODE | NODES) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (ELEMENT | ELEMENTS) (TIMES | symbolicNameString (COMMA symbolicNameString)*))?;
+   ((RELATIONSHIP | RELATIONSHIPS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (NODE | NODES) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (ELEMENT | ELEMENTS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | FOR LPAREN variable? labelOrRelTypes? (RPAREN WHERE expression | WHERE expression RPAREN | mapLiteral RPAREN))?;
 
 createDatabase:
    DATABASE symbolicAliasName (IF NOT EXISTS)? (TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+)? options_? waitClause?;
@@ -740,10 +765,10 @@ waitClause:
 showDatabase:
    ((DATABASES | DATABASE) (symbolicAliasName (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | symbolicAliasName)? | (DEFAULT DATABASE | HOME DATABASE) (yieldClause returnClause? | whereClause)?);
 
-databaseScopeList:
+databaseScope:
    ((DATABASE | DATABASES) (TIMES | symbolicAliasNameList) | DEFAULT DATABASE | HOME DATABASE);
 
-graphScopeList:
+graphScope:
    ((GRAPH | GRAPHS) (TIMES | symbolicAliasNameList) | DEFAULT GRAPH | HOME GRAPH);
 
 createAlias:
@@ -813,7 +838,7 @@ symbolicLabelNameString:
    (escapedSymbolicNameString | unescapedLabelSymbolicNameString);
 
 unescapedLabelSymbolicNameString:
-   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | AS | ASC | ASSERT | ASSIGN | AT | BINDINGS | BOOL | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT | DEFINED | DELETE | DENY | DESC | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INF | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MERGE | NAME | NAMES | NAN | NEW | NODE | NODES | NONE | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | USE | USER | USERS | USING | VARCHAR | VERBOSE | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
+   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | ARRAY | AS | ASC | ASSERT | ASSIGN | AT | BINDINGS | BOOL | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | CIDR | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT | DEFINED | DELETE | DENY | DESC | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | EDGE | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INF | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LIST | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MAP | MERGE | NAME | NAMES | NAN | NEW | NODE | NODES | NONE | NOTHING | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | URL | USE | USER | USERS | USING | VALUE | VARCHAR | VERBOSE | VERTEX | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
 
 endOfFile:
    EOF;

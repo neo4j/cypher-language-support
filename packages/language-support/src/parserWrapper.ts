@@ -1,43 +1,59 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { ParserRuleContext, Token } from 'antlr4';
+import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
+
+import CypherLexer from './generated-parser/CypherCmdLexer';
+
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import {
-  CharStreams,
-  CommonTokenStream,
-  ParserRuleContext,
-  ParseTreeListener,
-  Token,
-} from 'antlr4';
-
-import CypherLexer from './generated-parser/CypherLexer';
-
-import CypherParser, {
   ClauseContext,
-  CreateClauseContext,
-  ExpressionContext,
+  default as CypherParser,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
-  MergeClauseContext,
-  StatementsContext,
+  StatementOrCommandContext,
+  StatementsOrCommandsContext,
   VariableContext,
-} from './generated-parser/CypherParser';
+} from './generated-parser/CypherCmdParser';
 import {
   findParent,
   findStopNode,
-  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
+  rulesDefiningOrUsingVariables,
+  splitIntoStatements,
 } from './helpers';
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
-} from './highlighting/syntaxValidationHelpers';
+} from './syntaxValidation/syntaxValidationHelpers';
+
+export interface ParsedStatement {
+  command: ParsedCommand;
+  parser: CypherParser;
+  tokens: Token[];
+  // A statement needs to be parsed with the .statements() rule because
+  // it's the one that tries to parse until the EOF
+  ctx: StatementsOrCommandsContext;
+  diagnostics: SyntaxDiagnostic[];
+  stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
+  collectedVariables: string[];
+}
 
 export interface ParsingResult {
   query: string;
+  statementsParsing: ParsedStatement[];
+}
+
+export interface ParsingScaffolding {
+  query: string;
+  statementsScaffolding: StatementParsingScaffolding[];
+}
+
+export interface StatementParsingScaffolding {
   parser: CypherParser;
   tokens: Token[];
-  result: StatementsContext;
 }
 
 export enum LabelType {
@@ -53,15 +69,14 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
 }
 
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
-  const parent = findParent(
-    ctx,
-    (ctx) => ctx instanceof ClauseContext || ctx instanceof ExpressionContext,
-  );
+  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
 
-  return (
-    parent instanceof CreateClauseContext ||
-    parent instanceof MergeClauseContext
-  );
+  if (parent instanceof ClauseContext) {
+    const clause = parent;
+    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+  } else {
+    return false;
+  }
 }
 
 export type LabelOrRelType = {
@@ -76,51 +91,79 @@ export type LabelOrRelType = {
   };
 };
 
-export interface EnrichedParsingResult extends ParsingResult {
-  errors: SyntaxDiagnostic[];
-  stopNode: ParserRuleContext;
-  collectedLabelOrRelTypes: LabelOrRelType[];
-  collectedVariables: string[];
-}
-
-export interface ParsingScaffolding {
-  query: string;
-  parser: CypherParser;
-  tokenStream: CommonTokenStream;
-}
-
 export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  parser.removeErrorListeners();
+  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
+
+  const statementsScaffolding: StatementParsingScaffolding[] =
+    stmTokenStreams.map((t) => {
+      const tokens = [...t.tokens];
+      const parser = new CypherParser(t);
+      parser.removeErrorListeners();
+
+      return {
+        parser: parser,
+        tokens: tokens,
+      };
+    });
 
   return {
     query: query,
-    parser: parser,
-    tokenStream: tokenStream,
+    statementsScaffolding: statementsScaffolding,
   };
 }
 
-export function parse(cypher: string) {
-  const parser = createParsingScaffolding(cypher).parser;
-  return parser.statements();
+export function parse(query: string): StatementOrCommandContext[] {
+  const statementScaffolding =
+    createParsingScaffolding(query).statementsScaffolding;
+  const result = statementScaffolding.map((statement) =>
+    statement.parser.statementOrCommand(),
+  );
+
+  return result;
 }
 
-export function createParsingResult(
-  parsingScaffolding: ParsingScaffolding,
-): ParsingResult {
-  const query = parsingScaffolding.query;
-  const parser = parsingScaffolding.parser;
-  const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.statements();
+export function createParsingResult(query: string): ParsingResult {
+  const parsingScaffolding = createParsingScaffolding(query);
+
+  const results: ParsedStatement[] =
+    parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
+      const { parser, tokens } = statementScaffolding;
+      const labelsCollector = new LabelAndRelTypesCollector();
+      const variableFinder = new VariableCollector();
+      const errorListener = new SyntaxErrorsListener();
+      parser._parseListeners = [labelsCollector, variableFinder];
+      parser.addErrorListener(errorListener);
+      const ctx = parser.statementsOrCommands();
+      // The statement is empty if we cannot find anything that is not EOF or a space
+      const isEmptyStatement =
+        tokens.find(
+          (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
+        ) === undefined;
+      const diagnostics = isEmptyStatement ? [] : errorListener.errors;
+      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
+
+      if (!consoleCommandEnabled()) {
+        diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
+      }
+
+      return {
+        command: collectedCommand,
+        parser: parser,
+        tokens: tokens,
+        diagnostics: diagnostics,
+        ctx: ctx,
+        stopNode: findStopNode(ctx),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+        collectedVariables: variableFinder.variables,
+      };
+    });
 
   const parsingResult: ParsingResult = {
     query: query,
-    parser: parser,
-    tokens: getTokens(tokenStream),
-    result: result,
+    statementsParsing: results,
   };
 
   return parsingResult;
@@ -142,20 +185,31 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
-      this.labelOrRelTypes.push({
-        labeltype: getLabelType(ctx),
-        labelText: ctx.getText(),
-        couldCreateNewLabel: couldCreateNewLabel(ctx),
-        line: ctx.start.line,
-        column: ctx.start.column,
-        offsets: {
-          start: ctx.start.start,
-          end: ctx.stop.stop + 1,
-        },
-      });
+      // If the parent ctx start doesn't coincide with this ctx start,
+      // it means the parser recovered from an error reading the label
+      // like in the case MATCH (n:) RETURN n
+      // RETURN would be idenfified as the label in that case
+      if (ctx.parentCtx && ctx.parentCtx.start === ctx.start) {
+        this.labelOrRelTypes.push({
+          labeltype: getLabelType(ctx),
+          labelText: ctx.getText(),
+          couldCreateNewLabel: couldCreateNewLabel(ctx),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
-      if (isDefined(symbolicName)) {
+      // Read comment for the label name case
+      if (
+        isDefined(symbolicName) &&
+        ctx.parentCtx &&
+        ctx.parentCtx.start === ctx.start
+      ) {
         this.labelOrRelTypes.push({
           labeltype: getLabelType(ctx),
           labelText: symbolicName.start.text,
@@ -200,50 +254,208 @@ class VariableCollector implements ParseTreeListener {
         ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
           CypherParser.EOF;
 
-      if (variable && !nextTokenIsEOF) {
+      const definesVariable = rulesDefiningOrUsingVariables.includes(
+        // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
+        ctx.parentCtx?.ruleIndex as unknown as number,
+      );
+
+      if (variable && !nextTokenIsEOF && definesVariable) {
         this.variables.push(variable);
       }
     }
   }
 }
 
-class ParserWrapper {
-  parsingResult?: EnrichedParsingResult;
+type CypherCmd = { type: 'cypher'; query: string };
+type RuleTokens = {
+  start: Token;
+  stop: Token;
+};
 
-  parse(query: string): EnrichedParsingResult {
+export type ParsedCypherCmd = CypherCmd & RuleTokens;
+export type ParsedCommandNoPosition =
+  | { type: 'cypher'; statement: string }
+  | { type: 'use'; database?: string /* missing implies default db */ }
+  | { type: 'clear' }
+  | { type: 'history' }
+  | {
+      type: 'set-parameters';
+      parameters: { name: string; expression: string }[];
+    }
+  | { type: 'list-parameters' }
+  | { type: 'clear-parameters' }
+  | { type: 'parse-error' };
+
+export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
+
+function parseToCommand(
+  stmts: StatementsOrCommandsContext,
+  isEmptyStatement: boolean,
+): ParsedCommand {
+  const stmt = stmts.statementOrCommand_list().at(0);
+
+  if (stmt) {
+    const { start, stop } = stmt;
+
+    const cypherStmt = stmt.statement();
+    if (cypherStmt) {
+      // we get the original text input to preserve whitespace
+      const inputstream = start.getInputStream();
+      const statement = inputstream.getText(start.start, stop.stop);
+
+      return { type: 'cypher', statement, start, stop };
+    }
+
+    if (isEmptyStatement) {
+      const { start } = stmts;
+      return { type: 'cypher', statement: '', start: start, stop: start };
+    }
+
+    const consoleCmd = stmt.consoleCommand();
+    if (consoleCmd) {
+      const useCmd = consoleCmd.useCmd();
+      if (useCmd) {
+        return {
+          type: 'use',
+          database: useCmd.symbolicAliasName()?.getText(),
+          start,
+          stop,
+        };
+      }
+
+      const clearCmd = consoleCmd.clearCmd();
+      if (clearCmd) {
+        return { type: 'clear', start, stop };
+      }
+
+      const historyCmd = consoleCmd.historyCmd();
+      if (historyCmd) {
+        return { type: 'history', start, stop };
+      }
+
+      const param = consoleCmd.paramsCmd();
+      const paramArgs = param?.paramsArgs();
+
+      if (param && !paramArgs) {
+        // no argument provided -> list parameters
+        return { type: 'list-parameters', start, stop };
+      }
+
+      if (paramArgs) {
+        const cypherMap = paramArgs.map();
+        if (cypherMap) {
+          const names = cypherMap
+            ?.symbolicNameString_list()
+            .map((name) => name.getText());
+          const expressions = cypherMap
+            ?.expression_list()
+            .map((expr) => expr.getText());
+
+          if (names && expressions && names.length === expressions.length) {
+            return {
+              type: 'set-parameters',
+              parameters: names.map((name, index) => ({
+                name,
+                expression: expressions[index],
+              })),
+              start,
+              stop,
+            };
+          }
+        }
+
+        const lambda = paramArgs.lambda();
+        const name = lambda?.unescapedSymbolicNameString()?.getText();
+        const expression = lambda?.expression()?.getText();
+        if (name && expression) {
+          return {
+            type: 'set-parameters',
+            parameters: [{ name, expression }],
+            start,
+            stop,
+          };
+        }
+
+        const clear = paramArgs.CLEAR();
+        if (clear) {
+          return { type: 'clear-parameters', start, stop };
+        }
+
+        const list = paramArgs.listCompletionRule()?.LIST();
+        if (list) {
+          return { type: 'list-parameters', start, stop };
+        }
+      }
+
+      return { type: 'parse-error', start, stop };
+    }
+    return { type: 'parse-error', start, stop };
+  }
+  return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
+}
+
+function translateTokensToRange(
+  start: Token,
+  stop: Token,
+): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
+  return {
+    range: {
+      start: Position.create(start.line - 1, start.column),
+      end: Position.create(stop.line - 1, stop.column + stop.text.length),
+    },
+    offsets: {
+      start: start.start,
+      end: stop.stop + 1,
+    },
+  };
+}
+function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
+  return [command]
+    .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
+    .map(
+      ({ start, stop }): SyntaxDiagnostic => ({
+        message: 'Console commands are unsupported in this environment.',
+        severity: DiagnosticSeverity.Error,
+        ...translateTokensToRange(start, stop),
+      }),
+    );
+}
+
+class ParserWrapper {
+  parsingResult?: ParsingResult;
+
+  parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingScaffolding = createParsingScaffolding(query);
-      const parser = parsingScaffolding.parser;
-      const tokenStream = parsingScaffolding.tokenStream;
-      const errorListener = new SyntaxErrorsListener();
-      parser.addErrorListener(errorListener);
+      const parsingResult = createParsingResult(query);
 
-      const labelsCollector = new LabelAndRelTypesCollector();
-      const variableFinder = new VariableCollector();
-      parser._parseListeners = [labelsCollector, variableFinder];
-
-      const result = createParsingResult(parsingScaffolding).result;
-
-      const parsingResult: EnrichedParsingResult = {
-        query: query,
-        parser: parser,
-        tokens: getTokens(tokenStream),
-        errors: errorListener.errors,
-        result: result,
-        stopNode: findStopNode(result),
-        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
-        collectedVariables: variableFinder.variables,
-      };
-
-      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }
+
+  clearCache() {
+    this.parsingResult = undefined;
+  }
+}
+
+/* 
+ Because the parserWrapper is done as a single-ton global variable, the setting for 
+ console commands was also easiest to do as a global variable as it avoid messing with the cache
+
+It would make sense for the client to initialize and own the ParserWrapper, then each editor can have
+it's own cache and preference on if console commands are enabled or not.
+
+*/
+let enableConsoleCommands = false;
+export function setConsoleCommandsEnabled(enabled: boolean) {
+  enableConsoleCommands = enabled;
+}
+export function consoleCommandEnabled() {
+  return enableConsoleCommands;
 }
 
 export const parserWrapper = new ParserWrapper();

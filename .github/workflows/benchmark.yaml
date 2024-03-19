@@ -1,0 +1,33 @@
+name: Push benchmarks to grafana
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  benchmark:
+    name: Time benchmark
+    environment: grafana-api-key
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file and generate parser
+        run: npm ci
+
+      - name: Build project
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Benchmark
+        run: npm run benchmark --concurrency=1
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
