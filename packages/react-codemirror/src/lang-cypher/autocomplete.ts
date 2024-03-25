@@ -41,15 +41,14 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
  * Todo:
  * - Happy with snippet-icon?
  * - Nicer blue
- * - Decide on if it's to trigger on ) or by `-`, or by `<` and `-`
- * - Tests
+ * - nonstandard symbols
  */
 
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
 
-    const triggerCharacters = ['.', ':', '{', '$', ')'];
+    const triggerCharacters = ['.', ':', '{', '$', '<', '-'];
     const lastCharacter = textUntilCursor.slice(-1);
 
     const lastWord = context.matchBefore(/\w*/);
@@ -66,7 +65,12 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(textUntilCursor, config.schema ?? {});
+    const options = autocomplete(
+      textUntilCursor,
+      config.schema ?? {},
+      undefined,
+      context.explicit,
+    );
 
     return {
       from: context.matchBefore(/(\w|\$)*$/).from,

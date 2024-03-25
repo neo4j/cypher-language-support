@@ -283,9 +283,17 @@ function calculateNamespacePrefix(
   return namespacePrefix;
 }
 
+const baseTriggerCharacters = ['.', '(', ')', ','];
+export const snippetTriggerCharacters = ['<', '-'];
+export const completionTriggerCharacters = [
+  ...baseTriggerCharacters,
+  ...snippetTriggerCharacters,
+];
+
 export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
+  manualTrigger = false,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -473,34 +481,29 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_relationshipPattern) {
-        /*
-         * We only want to suggest the snippet at the very start of the rule
-         * since after the user has started competing the relationship pattern themselves
-         * the snippet no longer makes sense.
-         *
-         * We accomplish this by checking that the last rule ended with a right parenthesis
-         * and that the caret is at the start of the rule
-         */
+        if (previousToken === CypherLexer.MINUS) {
+          // check for `MATCH ()<-` where we don't want to suggest snippets
+          const beforePreviousToken = tokens[caretIndex - 2]?.type;
+          if (beforePreviousToken === CypherLexer.LT) {
+            return [];
+          }
 
-        const lastRuleEndedWithRParen =
-          tokens[candidateRule.startTokenIndex - 1]?.type ===
-          CypherLexer.RPAREN;
-        const caretAtLastRule = caretIndex === candidateRule.startTokenIndex;
-
-        if (lastRuleEndedWithRParen && caretAtLastRule) {
           return [
             {
               label: '-[]->()',
               kind: CompletionItemKind.Snippet,
               insertTextFormat: InsertTextFormat.Snippet,
-              insertText: '-[${1: }]->(${2: })',
+              insertText: '[${1: }]->(${2: })',
               detail: 'path template',
             },
+          ];
+        } else if (previousToken === CypherLexer.LT) {
+          return [
             {
               label: '<-[]-()',
               kind: CompletionItemKind.Snippet,
               insertTextFormat: InsertTextFormat.Snippet,
-              insertText: '<-[${1: }]-(${2: })',
+              insertText: '-[${1: }]-(${2: })',
               detail: 'path template',
             },
           ];
@@ -511,6 +514,17 @@ export function completionCoreCompletion(
       return [];
     },
   );
+
+  // if the completion was automatically triggered by a snippet trigger character
+  // we should only return snippet completions
+  if (
+    [CypherLexer.LT, CypherLexer.MINUS].includes(previousToken) &&
+    !manualTrigger
+  ) {
+    return ruleCompletions.filter(
+      (completion) => completion.kind === CompletionItemKind.Snippet,
+    );
+  }
 
   return [
     ...ruleCompletions,
