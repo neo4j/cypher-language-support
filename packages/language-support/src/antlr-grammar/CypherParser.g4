@@ -598,10 +598,13 @@ showRoles:
    (WITH (USERS | USER))? (yieldClause returnClause? | whereClause)?;
 
 grantRole:
-   symbolicNameOrStringParameterList TO symbolicNameOrStringParameterList;
+   symbolicNameOrStringParameterList TO roleUser;
 
 revokeRole:
-   symbolicNameOrStringParameterList FROM symbolicNameOrStringParameterList;
+   symbolicNameOrStringParameterList FROM roleUser;
+
+roleUser:
+   symbolicNameOrStringParameterList;
 
 createUser:
    USER symbolicNameOrStringParameter (IF NOT EXISTS)? SET (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression passwordChangeRequired? (SET (PASSWORD passwordChangeRequired | userStatus | homeDatabase))*;
@@ -651,9 +654,11 @@ showRolePrivileges:
 showUserPrivileges:
    (symbolicNameOrStringParameterList (PRIVILEGE | PRIVILEGES) | (PRIVILEGE | PRIVILEGES) | symbolicNameOrStringParameterList (PRIVILEGE | PRIVILEGES)) (AS REVOKE? (COMMAND | COMMANDS))? (yieldClause returnClause? | whereClause)?;
 
+// TODO Look at this
 grantRoleManagement:
    roleManagementPrivilege TO symbolicNameOrStringParameterList;
 
+// TODO Look at this
 revokeRoleManagement:
    roleManagementPrivilege FROM symbolicNameOrStringParameterList;
 

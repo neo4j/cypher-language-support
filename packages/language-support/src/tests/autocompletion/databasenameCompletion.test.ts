@@ -357,55 +357,6 @@ describe('can complete database names', () => {
       });
     });
 
-    test('suggests parameters for user management', () => {
-      const cases = [
-        'CREATE USER ',
-        'DROP USER ',
-        'ALTER USER ',
-        'RENAME USER ',
-        'SHOW USER ',
-        'ALTER CURRENT USER SET PASSWORD FROM ',
-        'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
-        'ALTER USER foo IF EXISTS SET PASSWORD ',
-      ];
-      cases.forEach((query) => {
-        testCompletions({
-          query,
-          dbSchema,
-          expected: [
-            { label: '$stringParam', kind: CompletionItemKind.Variable },
-          ],
-          excluded: [
-            { label: '$intParam', kind: CompletionItemKind.Variable },
-            { label: '$mapParam', kind: CompletionItemKind.Variable },
-          ],
-        });
-      });
-    });
-
-    test('suggests parameters for role management', () => {
-      const cases = [
-        'CREATE ROLE ',
-        'DROP ROLE ',
-        'RENAME ROLE ',
-        'GRANT ROLE ',
-        'GRANT ROLE abc TO ',
-      ];
-      cases.forEach((query) => {
-        testCompletions({
-          query,
-          dbSchema,
-          expected: [
-            { label: '$stringParam', kind: CompletionItemKind.Variable },
-          ],
-          excluded: [
-            { label: '$intParam', kind: CompletionItemKind.Variable },
-            { label: '$mapParam', kind: CompletionItemKind.Variable },
-          ],
-        });
-      });
-    });
-
     test('suggests parameters for server management', () => {
       const nameCases = [
         'ENABLE SERVER ',

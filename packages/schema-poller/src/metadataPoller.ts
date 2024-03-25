@@ -8,7 +8,8 @@ import { Database, listDatabases } from './queries/databases.js';
 import { DataSummary, getDataSummary } from './queries/dataSummary.js';
 import { listFunctions } from './queries/functions.js';
 import { listProcedures } from './queries/procedures.js';
-import { listUsers, Neo4jUser } from './queries/showUsers.js';
+import { listRoles, Neo4jRole } from './queries/roles.js';
+import { listUsers, Neo4jUser } from './queries/users.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
@@ -81,6 +82,7 @@ export class MetadataPoller {
   private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
   private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
   private users: QueryPoller<{ users: Neo4jUser[] }>;
+  private roles: QueryPoller<{ roles: Neo4jRole[] }>;
   private dbPollingInterval: NodeJS.Timer | undefined;
 
   public dbSchema: DbSchema = {};
@@ -108,6 +110,16 @@ export class MetadataPoller {
       onRefetchDone: (result) => {
         if (result.success) {
           this.dbSchema.userNames = result.data.users.map((user) => user.user);
+        }
+      },
+    });
+
+    this.roles = new QueryPoller({
+      connection,
+      queryArgs: listRoles(),
+      onRefetchDone: (result) => {
+        if (result.success) {
+          this.dbSchema.roleNames = result.data.roles.map((role) => role.role);
         }
       },
     });

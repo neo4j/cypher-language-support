@@ -220,6 +220,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
     [
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_symbolicNameOrStringParameter,
+      CypherParser.RULE_symbolicNameOrStringParameterList,
       CypherParser.RULE_passwordExpression,
       CypherParser.RULE_createUser,
       CypherParser.RULE_dropUser,
@@ -228,6 +229,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
       CypherParser.RULE_createRole,
       CypherParser.RULE_dropRole,
       CypherParser.RULE_renameRole,
+      CypherParser.RULE_revokeRole,
     ].includes(parentRule) ||
     [
       CypherParser.RULE_showUserPrivileges,
@@ -388,13 +390,6 @@ export function completionCoreCompletion(
         );
       }
 
-      if (ruleNumber === CypherParser.RULE_symbolicNameOrStringParameter) {
-        return parameterCompletions(
-          dbSchema,
-          inferExpectedParameterTypeFromContext(candidateRule),
-        );
-      }
-
       if (ruleNumber === CypherParser.RULE_propertyKeyName) {
         // Map literal keys are also parsed as "propertyKey"s even though
         // they are not considered propertyKeys by the database
@@ -453,6 +448,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
         return completeAliasName({ candidateRule, dbSchema, parsingResult });
+      }
+
+      if (ruleNumber === CypherParser.RULE_symbolicNameOrStringParameter) {
+        return completeSymbolicName({ candidateRule, dbSchema, parsingResult });
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
@@ -574,4 +573,76 @@ function completeAliasName({
         kind: CompletionItemKind.Value,
       })),
   ];
+}
+
+function completeSymbolicName({
+  candidateRule,
+  dbSchema,
+}: CompletionHelperArgs): CompletionItem[] {
+  // parameters are valid values in all cases of symbolic name
+  const baseSuggestions = parameterCompletions(
+    dbSchema,
+    inferExpectedParameterTypeFromContext(candidateRule),
+  );
+
+  const rulesCreatingNewUserOrRole = [
+    CypherParser.RULE_createUser,
+    CypherParser.RULE_createRole,
+  ];
+
+  // avoid suggesting existing database names when creating a new user or role
+  if (
+    rulesCreatingNewUserOrRole.some((rule) =>
+      candidateRule.ruleList.includes(rule),
+    )
+  ) {
+    return baseSuggestions;
+  }
+
+  const rulesThatAcceptExistingUsers = [
+    CypherParser.RULE_dropUser,
+    CypherParser.RULE_alterUser,
+    CypherParser.RULE_renameUser,
+    CypherParser.RULE_showUserPrivileges,
+    CypherParser.RULE_roleUser,
+  ];
+
+  if (
+    rulesThatAcceptExistingUsers.some((rule) =>
+      candidateRule.ruleList.includes(rule),
+    )
+  ) {
+    return [
+      ...baseSuggestions,
+      ...(dbSchema?.userNames ?? []).map((userName) => ({
+        label: userName,
+        kind: CompletionItemKind.Value,
+      })),
+    ];
+  }
+
+  const rulesThatAcceptExistingRoles = [
+    CypherParser.RULE_dropRole,
+    CypherParser.RULE_renameRole,
+    CypherParser.RULE_grantRole,
+    CypherParser.RULE_revokeRole,
+    CypherParser.RULE_showRolePrivileges,
+    CypherParser.RULE_grantPrivilege,
+    CypherParser.RULE_denyPrivilege,
+    CypherParser.RULE_revokePrivilege,
+  ];
+
+  if (
+    rulesThatAcceptExistingRoles.some((rule) =>
+      candidateRule.ruleList.includes(rule),
+    )
+  ) {
+    return [
+      ...baseSuggestions,
+      ...(dbSchema?.roleNames ?? []).map((roleName) => ({
+        label: roleName,
+        kind: CompletionItemKind.Value,
+      })),
+    ];
+  }
 }
