@@ -36,11 +36,10 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
 
   return map[c];
 };
+
 /**
- *
  * Todo:
- * - Happy with snippet-icon?
- * - Nicer blue
+ * - e2e test for the automatic triggerings
  * - nonstandard symbols
  */
 

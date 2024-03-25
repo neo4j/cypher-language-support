@@ -23,21 +23,6 @@ describe('snippet completions', () => {
     });
   });
 
-  test.skip('suggests path snippets with special arrowline', () => {
-    testCompletionsExactly({
-      query: 'MATCH ()﹘',
-      expected: [
-        {
-          label: '-[]->()',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText: '[${1: }]->(${2: })',
-          detail: 'path template',
-        },
-      ],
-    });
-  });
-
   test('suggests path snippets after ()<', () => {
     testCompletionsExactly({
       query: 'MATCH ()<',
@@ -71,6 +56,66 @@ describe('snippet completions', () => {
     testCompletions({
       query: 'MATCH ()<-',
       excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+  });
+
+  test('suggests path snippets after MATCH ()-[]->()<', () => {
+    testCompletionsExactly({
+      query: 'MATCH ()<-[]-()<',
+      expected: [
+        {
+          label: '<-[]-()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '-[${1: }]-(${2: })',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets after MATCH ()-[]->()-', () => {
+    testCompletionsExactly({
+      query: 'MATCH ()-[]->()-',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '[${1: }]->(${2: })',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets after MATCH ()--()-', () => {
+    testCompletionsExactly({
+      query: 'MATCH ()--()-',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '[${1: }]->(${2: })',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets after ()-', () => {
+    testCompletionsExactly({
+      query: 'MATCH ()-[]->()-',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '[${1: }]->(${2: })',
+          detail: 'path template',
+        },
+      ],
     });
   });
 
