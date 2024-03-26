@@ -115,7 +115,6 @@ describe('Can complete role names', () => {
     const cases = ['SHOW ROLE ', 'SHOW ROLE role, '];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -129,7 +128,6 @@ describe('Can complete role names', () => {
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
-        offset: 'SHOW ROLE '.length,
       }),
     );
   });
@@ -138,6 +136,8 @@ describe('Can complete role names', () => {
     const cases = [
       'GRANT TRAVERSE ON GRAPH neo4j NODES Post TO ',
       'GRANT TRAVERSE ON GRAPH neo4j NODES Post TO role, ',
+      'GRANT INDEX MANAGEMENT ON DATABASE * TO ',
+      'GRANT INDEX MANAGEMENT ON DATABASE * TO role, ',
     ];
 
     cases.forEach((query) =>
@@ -164,6 +164,8 @@ describe('Can complete role names', () => {
     const cases = [
       'DENY TRAVERSE ON GRAPH neo4j NODES Post TO ',
       'DENY TRAVERSE ON GRAPH neo4j NODES Post TO role, ',
+      'DENY INDEX MANAGEMENT ON DATABASE * TO ',
+      'DENY INDEX MANAGEMENT ON DATABASE * TO role, ',
     ];
 
     cases.forEach((query) =>
@@ -190,6 +192,8 @@ describe('Can complete role names', () => {
     const cases = [
       'REVOKE GRANT TRAVERSE ON GRAPH neo4j NODES Post FROM ',
       'REVOKE GRANT TRAVERSE ON GRAPH neo4j NODES Post FROM role, ',
+      'REVOKE GRANT INDEX MANAGEMENT ON DATABASE * FROM ',
+      'REVOKE GRANT INDEX MANAGEMENT ON DATABASE * FROM role, ',
     ];
 
     cases.forEach((query) =>
@@ -207,7 +211,56 @@ describe('Can complete role names', () => {
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
-        offset: 'SHOW ROLE '.length,
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing role names in GRANT ROLE MANAGEMENT', () => {
+    const cases = [
+      'GRANT ROLE MANAGEMENT ON DBMS TO ',
+      'GRANT ROLE MANAGEMENT ON DBMS TO role, ',
+    ];
+
+    cases.forEach((query) =>
+      // We are placing the caret after the SHOW ROLE
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing role names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing role names in REVOKE ROLE MANAGEMENT', () => {
+    const cases = [
+      'REVOKE ROLE MANAGEMENT ON DBMS FROM ',
+      'REVOKE ROLE MANAGEMENT ON DBMS FROM role, ',
+    ];
+
+    cases.forEach((query) =>
+      // We are placing the caret after the SHOW ROLE
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing role names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
       }),
     );
   });

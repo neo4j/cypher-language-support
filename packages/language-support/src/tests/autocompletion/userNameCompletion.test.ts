@@ -69,7 +69,7 @@ describe('Can complete user names', () => {
     });
   });
 
-  test('Correctly completes parameters and existing user names in RENAME USER', () => {
+  test('Correctly completes parameters and existing user names in RENAME USER source', () => {
     const query = 'RENAME USER ';
 
     testCompletions({
@@ -84,6 +84,23 @@ describe('Can complete user names', () => {
       excluded: [
         { label: '$intParam', kind: CompletionItemKind.Variable },
         { label: '$mapParam', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
+  test('Correctly completes parameters but not existing user names in RENAME USER target', () => {
+    const query = 'RENAME USER user TO ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [{ label: '$stringParam', kind: CompletionItemKind.Variable }],
+      // do not suggest non-string parameters or existing user names
+      excluded: [
+        { label: '$intParam', kind: CompletionItemKind.Variable },
+        { label: '$mapParam', kind: CompletionItemKind.Variable },
+        { label: 'foo', kind: CompletionItemKind.Value },
+        { label: 'bar', kind: CompletionItemKind.Value },
       ],
     });
   });

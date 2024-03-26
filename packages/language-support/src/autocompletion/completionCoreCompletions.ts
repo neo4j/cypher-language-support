@@ -575,9 +575,25 @@ function completeAliasName({
   ];
 }
 
+function findPreviousNonSpace(
+  tokens: Token[],
+  index: number,
+): Token | undefined {
+  let i = index;
+  while (i > 0) {
+    const token = tokens[--i];
+
+    if (token.type !== CypherParser.SPACE) {
+      return token;
+    }
+  }
+
+  return undefined;
+}
 function completeSymbolicName({
   candidateRule,
   dbSchema,
+  parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // parameters are valid values in all cases of symbolic name
   const baseSuggestions = parameterCompletions(
@@ -590,28 +606,33 @@ function completeSymbolicName({
     CypherParser.RULE_createRole,
   ];
 
+  const previousToken = findPreviousNonSpace(
+    parsingResult.tokens,
+    candidateRule.startTokenIndex,
+  );
+  const afterToToken = previousToken.type === CypherParser.TO;
+  const ruleList = candidateRule.ruleList;
+
   // avoid suggesting existing database names when creating a new user or role
   if (
-    rulesCreatingNewUserOrRole.some((rule) =>
-      candidateRule.ruleList.includes(rule),
-    )
+    rulesCreatingNewUserOrRole.some((rule) => ruleList.includes(rule)) ||
+    // We are suggesting an user as target for the renaming
+    //      RENAME USER existing TO target
+    // so target should be non-existent
+    (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
   ) {
     return baseSuggestions;
   }
 
   const rulesThatAcceptExistingUsers = [
     CypherParser.RULE_dropUser,
-    CypherParser.RULE_alterUser,
     CypherParser.RULE_renameUser,
+    CypherParser.RULE_alterUser,
     CypherParser.RULE_showUserPrivileges,
     CypherParser.RULE_roleUser,
   ];
 
-  if (
-    rulesThatAcceptExistingUsers.some((rule) =>
-      candidateRule.ruleList.includes(rule),
-    )
-  ) {
+  if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
     return [
       ...baseSuggestions,
       ...(dbSchema?.userNames ?? []).map((userName) => ({
@@ -622,21 +643,19 @@ function completeSymbolicName({
   }
 
   const rulesThatAcceptExistingRoles = [
-    CypherParser.RULE_dropRole,
-    CypherParser.RULE_renameRole,
     CypherParser.RULE_grantRole,
     CypherParser.RULE_revokeRole,
+    CypherParser.RULE_dropRole,
+    CypherParser.RULE_renameRole,
     CypherParser.RULE_showRolePrivileges,
+    CypherParser.RULE_grantRoleManagement,
+    CypherParser.RULE_revokeRoleManagement,
     CypherParser.RULE_grantPrivilege,
     CypherParser.RULE_denyPrivilege,
     CypherParser.RULE_revokePrivilege,
   ];
 
-  if (
-    rulesThatAcceptExistingRoles.some((rule) =>
-      candidateRule.ruleList.includes(rule),
-    )
-  ) {
+  if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {
     return [
       ...baseSuggestions,
       ...(dbSchema?.roleNames ?? []).map((roleName) => ({

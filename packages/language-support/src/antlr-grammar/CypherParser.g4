@@ -654,11 +654,9 @@ showRolePrivileges:
 showUserPrivileges:
    (symbolicNameOrStringParameterList (PRIVILEGE | PRIVILEGES) | (PRIVILEGE | PRIVILEGES) | symbolicNameOrStringParameterList (PRIVILEGE | PRIVILEGES)) (AS REVOKE? (COMMAND | COMMANDS))? (yieldClause returnClause? | whereClause)?;
 
-// TODO Look at this
 grantRoleManagement:
    roleManagementPrivilege TO symbolicNameOrStringParameterList;
 
-// TODO Look at this
 revokeRoleManagement:
    roleManagementPrivilege FROM symbolicNameOrStringParameterList;
 
