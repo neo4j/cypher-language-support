@@ -283,13 +283,6 @@ function calculateNamespacePrefix(
   return namespacePrefix;
 }
 
-const baseTriggerCharacters = ['.', '(', ')', ','];
-export const snippetTriggerCharacters = ['<', '-'];
-export const completionTriggerCharacters = [
-  ...baseTriggerCharacters,
-  ...snippetTriggerCharacters,
-];
-
 export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
