@@ -1,19 +1,30 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
+import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('Procedures auto-completion', () => {
   const dbSchema: DbSchema = {
-    procedureSignatures: {
-      'tx.getMetaData': { label: 'tx.getMetaData' },
-      'jwt.security.requestAccess': { label: 'jwt.security.requestAccess' },
-      'db.index.fulltext.awaitEventuallyConsistentIndexRefresh': {
-        label: 'db.index.fulltext.awaitEventuallyConsistentIndexRefresh',
+    procedures: {
+      'tx.getMetaData': { ...testData.emptyProcedure, name: 'tx.getMetaData' },
+      'jwt.security.requestAccess': {
+        ...testData.emptyProcedure,
+        name: 'jwt.security.requestAccess',
       },
-      'db.ping': { label: 'db.ping' },
-      'db.stats.retrieve': { label: 'db.stats.retrieve' },
-      'db.stats.collect': { label: 'db.stats.collect' },
-      'db.stats.clear': { label: 'db.stats.clear' },
+      'db.index.fulltext.awaitEventuallyConsistentIndexRefresh': {
+        ...testData.emptyProcedure,
+        name: 'db.index.fulltext.awaitEventuallyConsistentIndexRefresh',
+      },
+      'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
+      'db.stats.retrieve': {
+        ...testData.emptyProcedure,
+        name: 'db.stats.retrieve',
+      },
+      'db.stats.collect': {
+        ...testData.emptyProcedure,
+        name: 'db.stats.collect',
+      },
+      'db.stats.clear': { ...testData.emptyProcedure, name: 'db.stats.clear' },
     },
   };
 

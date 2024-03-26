@@ -169,7 +169,7 @@ export function lintCypherQuery(
     return syntaxErrors;
   }
 
-  const semanticErrors = validateSemantics(query);
+  const semanticErrors = validateSemantics(query, dbSchema);
   return semanticErrors;
 }
 
@@ -193,7 +193,10 @@ export function validateSyntax(
 /**
  * Assumes the provided query has no parse errors
  */
-export function validateSemantics(query: string): SyntaxDiagnostic[] {
+export function validateSemantics(
+  query: string,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
   if (query.length > 0) {
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
@@ -203,6 +206,7 @@ export function validateSemantics(query: string): SyntaxDiagnostic[] {
         if (cmd.type === 'cypher' && cmd.statement.length > 0) {
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
+            dbSchema,
           );
 
           const elements = notifications.concat(errors);

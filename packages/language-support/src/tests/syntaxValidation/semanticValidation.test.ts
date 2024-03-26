@@ -1,4 +1,5 @@
 import { setConsoleCommandsEnabled } from '../../parserWrapper';
+import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
@@ -103,7 +104,7 @@ describe('Semantic validation spec', () => {
     const query = `
     MATCH (shadowed)
     CALL {
-      MATCH (shadowed)-[:REL]->(m) // warning here
+      MATCH (shadowed)-[]->(m) // warning here
       RETURN m
     }
     RETURN *
@@ -277,6 +278,24 @@ describe('Semantic validation spec', () => {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
           end: 61,
+          start: 53,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 3,
+          },
+          start: {
+            character: 8,
+            line: 3,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 61,
           start: 60,
         },
         range: {
@@ -309,6 +328,24 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 2,
+      },
+      {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 114,
+          start: 106,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 6,
+          },
+          start: {
+            character: 8,
+            line: 6,
+          },
+        },
+        severity: 1,
       },
       {
         message: 'Variable `i` already declared in outer scope',
@@ -380,8 +417,8 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Multiple graph references in the same query is not supported on standard databases. This capability is supported on composite databases only.',
+        message: `Multiple graphs in the same query not allowed here. This feature is only available on composite databases.
+Attempted to access graph other`,
         offsets: {
           end: 88,
           start: 55,
@@ -706,25 +743,6 @@ describe('Semantic validation spec', () => {
         RETURN count(*)`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message:
-          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
-        offsets: {
-          end: 82,
-          start: 16,
-        },
-        range: {
-          end: {
-            character: 31,
-            line: 2,
-          },
-          start: {
-            character: 10,
-            line: 1,
-          },
-        },
-        severity: 1,
-      },
       {
         message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
         offsets: {
@@ -1077,25 +1095,6 @@ That is, neither of these is a quantified path pattern.`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'If a part of a query contains multiple disconnected patterns, this will build a cartesian product between all those parts. This may produce a large amount of data and slow down query processing. While occasionally intended, it may often be possible to reformulate the query that avoids the use of this cross product, perhaps by adding a relationship between the different parts or by using OPTIONAL MATCH (identifiers are: (a, b, s, u))',
-        offsets: {
-          end: 82,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 82,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
-      {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
 In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
@@ -1123,7 +1122,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
           end: 26,
           start: 8,
@@ -1142,7 +1141,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
       {
         message:
-          'Variable length relationships cannot be part of a quantified path pattern.',
+          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
         offsets: {
           end: 26,
           start: 8,
@@ -1446,5 +1445,266 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
     ]);
     setConsoleCommandsEnabled(false);
+  });
+
+  test('Does not provide semantic validation for pluggeable functions when schema is not available', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Provides semantic validation for built-in functions', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `WITH character_length() AS a
+        WITH character_length(1) AS b, a
+        RETURN a,b`,
+      }),
+    ).toEqual([
+      {
+        message: "Insufficient parameters for function 'character_length'",
+        offsets: {
+          end: 28,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Type mismatch: expected String but was Integer',
+        offsets: {
+          end: 60,
+          start: 59,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 1,
+          },
+          start: {
+            character: 30,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Provides semantic validation for procedures when a schema is available', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+        CALL db.awaitIndex('index', 'time')
+        CALL db.awaitIndex()
+        `,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: 'Type mismatch: expected Integer but was String',
+        offsets: {
+          end: 43,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 1,
+          },
+          start: {
+            character: 36,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: `Procedure call does not provide the required number of arguments: got 0 expected at least 1 (total: 2, 1 of which have default values).
+
+Procedure db.awaitIndex has signature: db.awaitIndex(indexName :: STRING, timeOutSeconds  =  300 :: INTEGER) :: 
+meaning that it expects at least 1 argument of type STRING
+`,
+        offsets: {
+          end: 73,
+          start: 53,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 2,
+          },
+          start: {
+            character: 8,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows default values correctly for external procedures', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CALL apoc.load.xml()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: `Procedure call does not provide the required number of arguments: got 0 expected at least 1 (total: 4, 3 of which have default values).
+
+Procedure apoc.load.xml has signature: apoc.load.xml(urlOrBinary :: ANY, path  =  / :: STRING, config  =  {} :: MAP, simple  =  false :: BOOLEAN) :: value :: MAP
+meaning that it expects at least 1 argument of type ANY
+`,
+        offsets: {
+          end: 20,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Does not fail if default arguments for procedure not provided', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL apoc.load.xml('url', '/path')`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Does not fail semantic validation for functions that expect LIST<ANY>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.max(['a'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Provides semantic validation for functions that expect LIST<NUMBER>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'Type mismatch: expected List<Float>, List<Integer> or List<Number> but was List<String>',
+        offsets: {
+          end: 31,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  // TODO This doesn't seem to warn on deprecated
+  // arguments for either functions or procedures,
+  // needs to be solved in the database first
+  test('Notifies of deprecated returns in procedures', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL apoc.meta.graphSample({})`,
+        dbSchema: {
+          functions: {},
+          procedures: {
+            'apoc.meta.graphSample': {
+              name: 'apoc.meta.graphSample',
+              description:
+                'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
+              mode: 'DEFAULT',
+              worksOnSystem: false,
+              argumentDescription: [
+                {
+                  isDeprecated: false,
+                  default: 'DefaultParameterValue{value={}, type=MAP}',
+                  description: 'config = {} :: MAP',
+                  name: 'config',
+                  type: 'MAP',
+                },
+              ],
+
+              signature:
+                'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
+              returnDescription: [
+                {
+                  isDeprecated: true,
+                  description: 'nodes :: LIST<NODE>',
+                  name: 'nodes',
+                  type: 'LIST<NODE>',
+                },
+                {
+                  isDeprecated: false,
+                  description: 'relationships :: LIST<RELATIONSHIP>',
+                  name: 'relationships',
+                  type: 'LIST<RELATIONSHIP>',
+                },
+              ],
+
+              admin: false,
+              option: {
+                deprecated: false,
+              },
+            },
+          },
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "The query used a deprecated field from a procedure. ('nodes' returned by 'apoc.meta.graphSample' is deprecated.)",
+        offsets: {
+          end: 30,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 });

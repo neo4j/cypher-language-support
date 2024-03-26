@@ -1,3 +1,4 @@
+import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 
@@ -144,8 +145,11 @@ test('can complete functions', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
-        functionSignatures: {
-          function123: { label: 'function123', documentation: 'no docs' },
+        functions: {
+          function123: {
+            ...testData.emptyFunction,
+            name: 'function123',
+          },
         },
       }}
     />,
@@ -169,8 +173,8 @@ test('can complete procedures', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
-        procedureSignatures: {
-          'db.ping': { label: 'db.ping', documentation: 'no docs' },
+        procedures: {
+          'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
         },
       }}
     />,

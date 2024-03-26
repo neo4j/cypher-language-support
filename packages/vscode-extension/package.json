@@ -1,14 +1,24 @@
 {
-  "name": "neo4j-cypher-vscode-extension",
-  "private": true,
-  "description": "Enables support for Neo4j and its query language Cypher",
+  "name": "neo4j-for-vscode",
+  "displayName": "Neo4j for VS Code",
+  "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
+  "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.4",
-  "publisher": "Neo4j Inc.",
-  "activationEvents": [
-    "onLanguage:cypher"
+  "version": "1.0.0",
+  "preview": true,
+  "categories": [
+    "Programming Languages",
+    "Linters"
   ],
+  "keywords": [
+    "cypher",
+    "neo4j",
+    "graph",
+    "database",
+    "completions"
+  ],
+  "icon": "images/logo.png",
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
@@ -36,7 +46,7 @@
       }
     ],
     "configuration": {
-      "title": "Cypher LSP",
+      "title": "Neo4j for VS Code",
       "properties": {
         "neo4j.trace.server": {
           "scope": "window",
@@ -53,25 +63,25 @@
           "order": 1,
           "type": "boolean",
           "default": true,
-          "description": "Shall connect to Neo4j to gather data about labels and types."
+          "description": "Whether to connect to Neo4j for database aware completions."
         },
-        "neo4j.URL": {
+        "neo4j.connectURL": {
           "order": 2,
           "type": "string",
-          "default": "bolt://localhost:7687",
-          "description": "Url of the database to connect."
+          "default": "neo4j://localhost:7687",
+          "description": "URL of the Neo4j instance to poll data from, `bolt` & `neo4j` protocols supported."
         },
         "neo4j.user": {
           "order": 3,
           "type": "string",
           "default": "neo4j",
-          "description": "Username of the database to connect."
+          "description": "Username for the database connection."
         },
         "neo4j.password": {
           "order": 4,
           "type": "string",
           "default": "password",
-          "description": "Password of the database to connect."
+          "description": "Password for the database connection."
         }
       }
     },
@@ -83,14 +93,14 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run build",
-    "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && cp dist/lintWorker.js ../vscode-extension/dist/",
+    "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
     "build": "tsc -b && npm run bundle-extension && npm run bundle-language-server",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.4",
+    "@neo4j-cypher/language-server": "2.0.0-next.5",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
@@ -99,7 +109,7 @@
     "@types/node": "^16.11.7",
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^2.21.1",
+    "@vscode/vsce": "^2.24.0",
     "mocha": "^10.2.0",
     "typescript": "^4.9.5"
   }

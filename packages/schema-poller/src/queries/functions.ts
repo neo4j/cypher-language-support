@@ -1,19 +1,6 @@
+import { Neo4jFunction } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
-import type {
-  ArgumentDescription,
-  ExecuteQueryArgs,
-} from '../types/sdkTypes.js';
-
-export type Neo4jFunction = {
-  name: string;
-  category: string;
-  description: string;
-  isBuiltIn: boolean;
-  argumentDescription: ArgumentDescription[];
-  returnDescription: string;
-  signature: string;
-  aggregating: boolean;
-};
+import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
 type ListFunctionArgs = { executableByMe: boolean };
 /**

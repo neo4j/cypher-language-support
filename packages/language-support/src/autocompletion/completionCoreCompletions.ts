@@ -45,7 +45,7 @@ const functionNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.functionSignatures ?? {}),
+    Object.keys(dbSchema?.functions ?? {}),
     'function',
   );
 
@@ -57,7 +57,7 @@ const procedureNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.procedureSignatures ?? {}),
+    Object.keys(dbSchema?.procedures ?? {}),
     'procedure',
   );
 

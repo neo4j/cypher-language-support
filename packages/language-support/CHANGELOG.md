@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.4
+
+### Patch Changes
+
+- Adds semantic analysis for procedures and functions
+
 ## 2.0.0-next.3
 
 ### Patch Changes
