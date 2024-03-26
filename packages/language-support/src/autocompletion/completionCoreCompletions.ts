@@ -474,13 +474,11 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_relationshipPattern) {
-        if (previousToken === CypherLexer.MINUS) {
-          // check for `MATCH ()<-` where we don't want to suggest snippets
-          const beforePreviousToken = tokens[caretIndex - 2]?.type;
-          if (beforePreviousToken === CypherLexer.LT) {
-            return [];
-          }
-
+        const beforePreviousToken = tokens[caretIndex - 2]?.type;
+        if (
+          previousToken === CypherLexer.MINUS &&
+          beforePreviousToken === CypherLexer.RPAREN
+        ) {
           return [
             {
               label: '-[]->()',
@@ -488,9 +486,16 @@ export function completionCoreCompletion(
               insertTextFormat: InsertTextFormat.Snippet,
               insertText: '[${1: }]->(${2: })',
               detail: 'path template',
+              // vscode does not call the completion provider for every single character
+              // after the second character is typed (i.e) `MATCH ()-[` the completion is no longer valid
+              // it'd insert `MATCH ()-[[]->()` which is not valid. Hence we filter it out by using the filterText
+              filterText: '-',
             },
           ];
-        } else if (previousToken === CypherLexer.LT) {
+        } else if (
+          previousToken === CypherLexer.LT &&
+          beforePreviousToken === CypherLexer.RPAREN
+        ) {
           return [
             {
               label: '<-[]-()',
@@ -498,6 +503,7 @@ export function completionCoreCompletion(
               insertTextFormat: InsertTextFormat.Snippet,
               insertText: '-[${1: }]-(${2: })',
               detail: 'path template',
+              filterText: '<',
             },
           ];
         }

@@ -121,31 +121,31 @@ describe('snippet completions', () => {
 
   test('does not suggest paths when trigger characters used in expressions', () => {
     testCompletions({
-      query: 'RETURN 1-',
+      query: 'RETURN (1)-',
       excluded: [{ kind: CompletionItemKind.Snippet }],
     });
 
     testCompletions({
-      query: 'RETURN 1<',
+      query: 'RETURN (1)<',
       excluded: [{ kind: CompletionItemKind.Snippet }],
     });
   });
 
   test('typing snippet trigger character should not open completions automatically in expression..', () => {
     testCompletions({
-      query: 'RETURN 1-',
+      query: 'RETURN (1)-',
       assertEmpty: true,
     });
 
     testCompletions({
-      query: 'RETURN 1<',
+      query: 'RETURN (1)<',
       assertEmpty: true,
     });
   });
 
   test('...but manually triggering completions after -/< should still work', () => {
     testCompletions({
-      query: 'RETURN 1-',
+      query: 'RETURN (1)-',
       manualTrigger: true,
       expected: [
         { kind: CompletionItemKind.Keyword, label: 'INFINITY' },
@@ -154,7 +154,7 @@ describe('snippet completions', () => {
     });
 
     testCompletions({
-      query: 'RETURN 1<',
+      query: 'RETURN (1)<',
       manualTrigger: true,
       expected: [
         { kind: CompletionItemKind.Keyword, label: 'INFINITY' },
