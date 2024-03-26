@@ -283,10 +283,13 @@ describe('parameters', () => {
     expectErrorMessage(':param RETURN', "Expected '='");
     expectErrorMessage(':param RETURN b', "Expected '='");
     expectErrorMessage(':param b => ', 'Expected an expression');
-    expectErrorMessage(':param {', "Expected '}' or an identifier");
+    expectErrorMessage(':param {', "Expected any of '}', ',' or an identifier");
     expectErrorMessage(':param {x}', "Expected ':'");
     expectErrorMessage(':param {x: ', 'Expected an expression');
-    expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
+    expectErrorMessage(
+      ':param {: 4} ',
+      "Expected any of '}', ',' or an identifier",
+    );
   });
 
   test('highlights :params properly', () => {
@@ -420,7 +423,7 @@ describe('parameters', () => {
         length: 1,
         position: { line: 0, startCharacter: 9, startOffset: 9 },
         token: 'd',
-        tokenType: 'symbolicName',
+        tokenType: 'property',
       },
       {
         length: 1,

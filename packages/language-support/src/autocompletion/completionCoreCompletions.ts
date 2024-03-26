@@ -220,6 +220,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_symbolicNameOrStringParameter,
       CypherParser.RULE_passwordExpression,
+      CypherParser.RULE_symbolicAliasNameOrParameter,
     ].includes(parentRule)
   ) {
     return ExpectedParameterType.String;
@@ -382,7 +383,7 @@ export function completionCoreCompletion(
         const parentRule = candidateRule.ruleList.at(-1);
         const grandParentRule = candidateRule.ruleList.at(-2);
         if (
-          parentRule === CypherParser.RULE_mapLiteral &&
+          parentRule === CypherParser.RULE_map &&
           grandParentRule === CypherParser.RULE_literal
         ) {
           return [];
@@ -396,7 +397,7 @@ export function completionCoreCompletion(
         // but it is likely to be a node/relationship
         if (
           parentRule === CypherParser.RULE_property &&
-          grandParentRule == CypherParser.RULE_postFix1 &&
+          grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
@@ -453,12 +454,7 @@ export function completionCoreCompletion(
           return reltypeCompletions(dbSchema);
         }
 
-        if (topExprParent === CypherParser.RULE_labelExpressionPredicate) {
-          return [
-            ...labelCompletions(dbSchema),
-            ...reltypeCompletions(dbSchema),
-          ];
-        }
+        return [...labelCompletions(dbSchema), ...reltypeCompletions(dbSchema)];
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict

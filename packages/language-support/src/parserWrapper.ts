@@ -297,7 +297,7 @@ function parseToCommand(
   if (stmt) {
     const { start, stop } = stmt;
 
-    const cypherStmt = stmt.statement();
+    const cypherStmt = stmt.preparsedStatement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       const inputstream = start.getInputStream();
@@ -345,7 +345,7 @@ function parseToCommand(
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            ?.symbolicNameString_list()
+            ?.propertyKeyName_list()
             .map((name) => name.getText());
           const expressions = cypherMap
             ?.expression_list()

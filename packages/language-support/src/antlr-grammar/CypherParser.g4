@@ -16,17 +16,15 @@
  */
 parser grammar CypherParser;
 
-
-options { tokenVocab = CypherLexer; }
+options {
+   tokenVocab = CypherLexer;
+}
 
 statements:
    statement (SEMICOLON statement)* SEMICOLON? EOF;
 
 statement:
-   preparserOption? periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
-
-preparserOption:
-   EXPLAIN | PROFILE;
+   periodicCommitQueryHintFailure? (useClause singleQueryOrCommandWithUseClause | singleQueryOrCommand);
 
 singleQueryOrCommand:
    (createCommand | command | singleQuery union*);
@@ -50,10 +48,13 @@ singleQueryWithUseClause:
    clause*;
 
 clause:
-   (useClause | returnClause | createClause | deleteClause | setClause | removeClause | matchClause | mergeClause | withClause | unwindClause | callClause | subqueryClause | loadCSVClause | foreachClause);
+   (useClause | returnClause | createClause | insertClause | deleteClause | setClause | removeClause | matchClause | mergeClause | withClause | unwindClause | callClause | subqueryClause | loadCSVClause | foreachClause);
 
 useClause:
-   USE (GRAPH expression | expression);
+   USE (GRAPH graphReference | graphReference);
+
+graphReference:
+    LPAREN graphReference RPAREN | functionInvocation | symbolicAliasName;
 
 returnClause:
    RETURN returnBody;
@@ -68,7 +69,7 @@ returnItems:
    (TIMES (COMMA returnItem)* | returnItem (COMMA returnItem)*);
 
 orderItem:
-   expression (DESC | ASC?);
+   expression (DESC | DESCENDING | ASC | ASCENDING ?);
 
 skip:
    SKIPROWS expression;
@@ -85,23 +86,26 @@ withClause:
 createClause:
    CREATE patternList;
 
+insertClause:
+   INSERT insertPatternList;
+
 setClause:
    SET setItem (COMMA setItem)*;
 
 setItem:
-   (propertyExpression EQ expression | variable EQ expression | variable PLUSEQUAL expression | variable nodeLabels);
+   (propertyExpression EQ expression | variable EQ expression | variable PLUSEQUAL expression | variable nodeLabels | variable nodeLabelsIs);
 
 removeClause:
    REMOVE removeItem (COMMA removeItem)*;
 
 removeItem:
-   (propertyExpression | variable nodeLabels);
+   (propertyExpression | variable nodeLabels | variable nodeLabelsIs);
 
 deleteClause:
-   DETACH? DELETE expression (COMMA expression)*;
+   (DETACH | NODETACH)? DELETE expression (COMMA expression)*;
 
 matchClause:
-   OPTIONAL? MATCH matchMode? patternList hints* whereClause?;
+   ((OPTIONAL MATCH) | MATCH) matchMode? patternList hints* whereClause?;
 
 matchMode:
     REPEATABLE (ELEMENT BINDINGS | ELEMENTS | ELEMENT) | DIFFERENT (RELATIONSHIP BINDINGS? | RELATIONSHIPS);
@@ -131,7 +135,7 @@ procedureResultItem:
    symbolicNameString (AS variable)?;
 
 loadCSVClause:
-   LOAD CSV (WITH HEADERS)? FROM expression AS variable (FIELDTERMINATOR stringToken)?;
+   LOAD CSV (WITH HEADERS)? FROM expression AS variable (FIELDTERMINATOR stringLiteral)?;
 
 foreachClause:
    FOREACH LPAREN variable IN expression BAR clause+ RPAREN;
@@ -140,7 +144,7 @@ subqueryClause:
    CALL LCURLY regularQuery RCURLY subqueryInTransactionsParameters?;
 
 subqueryInTransactionsParameters:
-   IN TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*;
+   IN (expression? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*;
 
 subqueryInTransactionsBatchParameters:
    OF expression (ROW | ROWS);
@@ -154,8 +158,14 @@ subqueryInTransactionsReportParameters:
 patternList:
    pattern (COMMA pattern)*;
 
+insertPatternList:
+   insertPattern (COMMA insertPattern)*;
+
 pattern:
    (variable EQ selector? | selector?) anonymousPattern;
+
+insertPattern:
+   (symbolicNameString EQ)? insertPathPatternAtoms;
 
 quantifier:
    (LCURLY UNSIGNED_DECIMAL_INTEGER RCURLY | LCURLY UNSIGNED_DECIMAL_INTEGER? COMMA UNSIGNED_DECIMAL_INTEGER? RCURLY | PLUS | TIMES);
@@ -175,6 +185,9 @@ patternElement:
 pathPatternAtoms:
    (nodePattern (maybeQuantifiedRelationshipPattern nodePattern)* | parenthesizedPath)+;
 
+insertPathPatternAtoms:
+   insertNodePattern (insertRelationshipPattern insertNodePattern)*;
+
 selector:
    (ANY SHORTEST (PATH | PATHS)? | ALL SHORTEST (PATH | PATHS)? | ANY UNSIGNED_DECIMAL_INTEGER? (PATH | PATHS)? | ALL (PATH | PATHS)? | SHORTEST UNSIGNED_DECIMAL_INTEGER? (PATH | PATHS)? (GROUP | GROUPS) | SHORTEST UNSIGNED_DECIMAL_INTEGER (PATH | PATHS)?);
 
@@ -184,14 +197,17 @@ pathPatternNonEmpty:
 nodePattern:
    LPAREN variable? labelExpression? properties? (WHERE expression)? RPAREN;
 
+insertNodePattern:
+   LPAREN variable? insertNodeLabelExpression? properties? RPAREN;
+
 parenthesizedPath:
    LPAREN pattern (WHERE expression)? RPAREN quantifier?;
 
 nodeLabels:
    labelOrRelType+;
 
-labelExpressionPredicate:
-   labelExpression;
+nodeLabelsIs:
+   IS symbolicNameString labelOrRelType*;
 
 labelOrRelType:
    COLON symbolicNameString;
@@ -200,7 +216,7 @@ labelOrRelTypes:
    COLON symbolicNameString (BAR symbolicNameString)*;
 
 properties:
-   (mapLiteral | parameter);
+   (map | parameter["ANY"]);
 
 relationshipPattern:
    leftArrow? arrowLine (
@@ -208,6 +224,11 @@ relationshipPattern:
         variable? labelExpression? pathLength? properties? (WHERE expression)?
         RBRACKET
    )? arrowLine rightArrow?;
+
+insertRelationshipPattern:
+   leftArrow? arrowLine LBRACKET
+   variable? insertRelationshipLabelExpression properties?
+   RBRACKET arrowLine rightArrow?;
 
 leftArrow:
    (LT | ARROW_LEFT_HEAD);
@@ -219,31 +240,28 @@ rightArrow:
    (GT | ARROW_RIGHT_HEAD);
 
 pathLength:
-   TIMES pathLengthLiteral?;
-
-pathLengthLiteral:
-   (UNSIGNED_DECIMAL_INTEGER? DOTDOT UNSIGNED_DECIMAL_INTEGER? | UNSIGNED_DECIMAL_INTEGER);
+   TIMES (from=UNSIGNED_DECIMAL_INTEGER? DOTDOT to=UNSIGNED_DECIMAL_INTEGER? | single=UNSIGNED_DECIMAL_INTEGER)?;
 
 labelExpression:
    (COLON labelExpression4 | IS labelExpression4Is);
 
 labelExpression4:
-   labelExpression3 (BAR (COLON labelExpression3 | labelExpression3))*;
+   labelExpression3 (BAR COLON? labelExpression3)*;
 
 labelExpression4Is:
-   labelExpression3Is (BAR (COLON labelExpression3Is | labelExpression3Is))*;
+   labelExpression3Is (BAR COLON? labelExpression3Is)*;
 
 labelExpression3:
-   labelExpression2 (AMPERSAND labelExpression2 | COLON labelExpression2)*;
+   labelExpression2 ((AMPERSAND | COLON) labelExpression2)*;
 
 labelExpression3Is:
-   labelExpression2Is (AMPERSAND labelExpression2Is | COLON labelExpression2Is)*;
+   labelExpression2Is ((AMPERSAND | COLON) labelExpression2Is)*;
 
 labelExpression2:
-   (EXCLAMATION_MARK labelExpression2 | labelExpression1);
+   EXCLAMATION_MARK* labelExpression1;
 
 labelExpression2Is:
-   (EXCLAMATION_MARK labelExpression2Is | labelExpression1Is);
+   EXCLAMATION_MARK* labelExpression1Is;
 
 labelExpression1:
    LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
@@ -257,10 +275,16 @@ labelExpression1Is:
    | symbolicLabelNameString        #LabelNameIs
    ;
 
-expression:
-   expression12;
+insertNodeLabelExpression:
+   (COLON|IS) insertLabelConjunction;
 
-expression12:
+insertRelationshipLabelExpression:
+   (COLON|IS) symbolicNameString;
+
+insertLabelConjunction:
+   symbolicNameString ((AMPERSAND|COLON) symbolicNameString)*;
+
+expression:
    expression11 (OR expression11)*;
 
 expression11:
@@ -270,34 +294,47 @@ expression10:
    expression9 (AND expression9)*;
 
 expression9:
-   (NOT expression9 | expression8);
+    NOT* expression8;
 
+// Making changes here? Consider looking at extendedWhen too.
 expression8:
-   expression7 (EQ expression7 | NEQ expression7 | NEQ2 expression7 | LE expression7 | GE expression7 | LT expression7 | GT expression7)*;
+   expression7 ((EQ | INVALID_NEQ | NEQ | LE | GE | LT | GT) expression7)*;
 
 expression7:
    expression6 comparisonExpression6?;
 
-comparisonExpression6:
-   (REGEQ expression6 | STARTS WITH expression6 | ENDS WITH expression6 | CONTAINS expression6 | IN expression6 | IS (NULL | NOT (NULL | (TYPED | COLONCOLON) cypherTypeName) | (TYPED | COLONCOLON) cypherTypeName) | COLONCOLON cypherTypeName);
+// Making changes here? Consider looking at extendedWhen too.
+comparisonExpression6
+   : (REGEQ | STARTS WITH | ENDS WITH | CONTAINS | IN) expression6 #StringAndListComparison
+   | IS NOT? NULL                                                  #NullComparison
+   | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type              #TypeComparison
+   | IS NOT? normalForm? NORMALIZED                                #NormalFormComparison
+   ;
+
+normalForm:
+   (NFC | NFD | NFKC | NFKD);
 
 expression6:
-   expression5 (PLUS expression5 | MINUS expression5)*;
+   expression5 ((PLUS | MINUS) expression5)*;
 
 expression5:
-   expression4 (TIMES expression4 | DIVIDE expression4 | PERCENT expression4)*;
+   expression4 ((TIMES | DIVIDE | PERCENT) expression4)*;
 
 expression4:
    expression3 (POW expression3)*;
 
 expression3:
-   (expression2 | PLUS expression2 | MINUS expression2);
+    expression2 | (PLUS | MINUS) expression2;
 
 expression2:
-   expression1 postFix1*;
+   expression1 postFix*;
 
-postFix1:
-   (property | labelExpressionPredicate | labelExpressionPredicate | LBRACKET expression RBRACKET | LBRACKET expression? DOTDOT expression? RBRACKET);
+postFix
+   : property                                                       #PropertyPostfix
+   | labelExpression                                                #LabelPostfix
+   | LBRACKET expression RBRACKET                                   #IndexPostfix
+   | LBRACKET fromExp=expression? DOTDOT toExp=expression? RBRACKET #RangePostfix
+   ;
 
 property:
    DOT propertyKeyName;
@@ -305,53 +342,92 @@ property:
 propertyExpression:
    expression1 property+;
 
-expression1:
-   (literal | parameter | caseExpression | COUNT LPAREN TIMES RPAREN | existsExpression | countExpression | collectExpression | mapProjection | listComprehension | patternComprehension | reduceExpression | allExpression | anyExpression | noneExpression | singleExpression | patternExpression | shortestPathExpression | LPAREN expression RPAREN | functionInvocation | variable);
+expression1
+   : literal
+   | parameter["ANY"]
+   | caseExpression
+   | extendedCaseExpression
+   | COUNT LPAREN TIMES RPAREN
+   | existsExpression
+   | countExpression
+   | collectExpression
+   | mapProjection
+   | listComprehension
+   | listLiteral
+   | patternComprehension
+   | reduceExpression
+   | listItemsPredicate
+   | normalizeExpression
+   | patternExpression
+   | shortestPathExpression
+   | parenthesizedExpression
+   | functionInvocation
+   | variable
+   ;
 
 literal:
-   numberLiteral    #NummericLiteral
+   numberLiteral      #NummericLiteral
    | stringLiteral    #StringsLiteral
-   | mapLiteral       #OtherLiteral
-   | listLiteral      #OtherLiteral
+   | map              #OtherLiteral
    | TRUE             #BooleanLiteral
    | FALSE            #BooleanLiteral
-   | (INFINITY | INF) #KeywordLiteral
+   | INFINITY         #KeywordLiteral
    | NAN              #KeywordLiteral
    | NULL             #KeywordLiteral;
 
-caseExpression:
-   CASE (expression WHEN | WHEN) expression THEN expression (WHEN expression THEN expression)* (ELSE expression)? END;
+caseExpression
+   : CASE caseAlternative+ (ELSE expression)? END
+   ;
+
+caseAlternative
+   : WHEN expression THEN expression
+   ;
+
+extendedCaseExpression
+   : CASE expression extendedCaseAlternative+ (ELSE elseExp=expression)? END
+   ;
+
+extendedCaseAlternative
+   : WHEN extendedWhen (COMMA extendedWhen)* THEN expression
+   ;
+
+// Making changes here? Consider looking at comparisonExpression6 and expression8 too.
+extendedWhen
+   : (REGEQ | STARTS WITH | ENDS WITH) expression6           #WhenStringOrList
+   | IS NOT? NULL                                             #WhenNull
+   | (IS NOT? TYPED | COLONCOLON) type                        #WhenType
+   | IS NOT? normalForm? NORMALIZED                           #WhenForm
+   | (EQ | NEQ | INVALID_NEQ | LE | GE | LT | GT) expression7 #WhenComparator
+   | expression                                               #WhenEquals
+   ;
 
 listComprehension:
-   LBRACKET variable IN expression listComprehensionWhereAndBar;
-
-listComprehensionWhereAndBar:
-   (WHERE expression)? BAR expression RBRACKET |
-     (WHERE expression)? RBRACKET;
+   LBRACKET variable IN expression
+   ((WHERE whereExp=expression)? BAR barExp=expression RBRACKET | (WHERE whereExp=expression)? RBRACKET);
 
 patternComprehension:
    LBRACKET (variable EQ)? pathPatternNonEmpty (WHERE expression)? BAR expression RBRACKET;
 
+patternComprehensionPrefix:
+   LBRACKET (variable EQ)? pathPatternNonEmpty (WHERE | BAR);
+
 reduceExpression:
    REDUCE LPAREN variable EQ expression COMMA variable IN expression BAR expression RPAREN;
 
-allExpression:
-   ALL LPAREN variable IN expression (WHERE expression)? RPAREN;
+listItemsPredicate:
+   (ALL|ANY|NONE|SINGLE) LPAREN variable IN inExp=expression (WHERE whereExp=expression)? RPAREN;
 
-anyExpression:
-   ANY LPAREN variable IN expression (WHERE expression)? RPAREN;
-
-noneExpression:
-   NONE LPAREN variable IN expression (WHERE expression)? RPAREN;
-
-singleExpression:
-   SINGLE LPAREN variable IN expression (WHERE expression)? RPAREN;
+normalizeExpression:
+   NORMALIZE LPAREN expression (COMMA normalForm)? RPAREN;
 
 patternExpression:
    pathPatternNonEmpty;
 
 shortestPathExpression:
    shortestPathPattern;
+
+parenthesizedExpression:
+    LPAREN expression RPAREN;
 
 mapProjection:
    variable LCURLY mapProjectionItem? (COMMA mapProjectionItem)* RCURLY;
@@ -368,9 +444,6 @@ countExpression:
 collectExpression:
    COLLECT LCURLY regularQuery RCURLY;
 
-stringLiteral:
-   stringToken;
-
 numberLiteral:
    MINUS? (DECIMAL_DOUBLE | UNSIGNED_DECIMAL_INTEGER | UNSIGNED_HEX_INTEGER | UNSIGNED_OCTAL_INTEGER);
 
@@ -380,13 +453,10 @@ signedIntegerLiteral:
 listLiteral:
    LBRACKET expression? (COMMA expression)* RBRACKET;
 
-mapLiteral:
-   LCURLY (propertyKeyName COLON expression)? (COMMA propertyKeyName COLON expression)* RCURLY;
-
 propertyKeyName:
    symbolicNameString;
 
-parameter:
+parameter[String paramType]:
    DOLLAR parameterName;
 
 parameterName:
@@ -395,11 +465,11 @@ parameterName:
 functionInvocation:
    functionName LPAREN DISTINCT? functionArgument? (COMMA functionArgument)* RPAREN;
 
-functionName:
-   namespace symbolicNameString;
-
 functionArgument:
    expression;
+
+functionName:
+   namespace symbolicNameString;
 
 namespace:
    (symbolicNameString DOT)*;
@@ -429,7 +499,7 @@ alterCommand:
    ALTER (alterDatabase | alterAlias | alterCurrentUser | alterUser | alterServer);
 
 showCommand:
-   SHOW (ALL showAllCommand | POPULATED (ROLES | ROLE) showRoles | BTREE showIndexesAllowBrief | RANGE showIndexesNoBrief | FULLTEXT showIndexesNoBrief | TEXT showIndexesNoBrief | POINT showIndexesNoBrief | LOOKUP showIndexesNoBrief | UNIQUE showConstraintsAllowBriefAndYield | UNIQUENESS showConstraintsAllowYield | KEY showConstraintsAllowYield | NODE showNodeCommand | PROPERTY showPropertyCommand | EXISTENCE showConstraintsAllowYield | EXISTS showConstraintsAllowBrief | EXIST showConstraintsAllowBriefAndYield | RELATIONSHIP showRelationshipCommand | REL showRelCommand | BUILT IN showFunctions | showIndexesAllowBrief | showDatabase | showCurrentUser | showConstraintsAllowBriefAndYield | showProcedures | showSettings | showFunctions | showTransactions | showAliases | showServers | showPrivileges | showSupportedPrivileges | (ROLES | ROLE) (showRolePrivileges | showRoles | showRolePrivileges) | USER DEFINED showFunctions | (USERS | USER) (showUserPrivileges | showUsers | showUserPrivileges));
+   SHOW (ALL showAllCommand | POPULATED (ROLES | ROLE) showRoles | BTREE showIndexesAllowBrief | RANGE showIndexesNoBrief | FULLTEXT showIndexesNoBrief | TEXT showIndexesNoBrief | POINT showIndexesNoBrief | VECTOR showIndexesNoBrief | LOOKUP showIndexesNoBrief | UNIQUE showConstraintsAllowBriefAndYield | UNIQUENESS showConstraintsAllowYield | KEY showConstraintsAllowYield | NODE showNodeCommand | PROPERTY showPropertyCommand | EXISTENCE showConstraintsAllowYield | EXISTS showConstraintsAllowBrief | EXIST showConstraintsAllowBriefAndYield | RELATIONSHIP showRelationshipCommand | REL showRelCommand | BUILT IN showFunctions | showIndexesAllowBrief | showDatabase | showCurrentUser | showConstraintsAllowBriefAndYield | showProcedures | showSettings | showFunctions | showTransactions | showAliases | showServers | showPrivileges | showSupportedPrivileges | (ROLES | ROLE) (showRolePrivileges | showRoles | showRolePrivileges) | USER DEFINED showFunctions | (USERS | USER) (showUserPrivileges | showUsers | showUserPrivileges));
 
 terminateCommand:
    TERMINATE terminateTransactions;
@@ -456,54 +526,85 @@ yieldClause:
    YIELD (TIMES | yieldItem (COMMA yieldItem)*) (ORDER BY orderItem (COMMA orderItem)*)? (SKIPROWS signedIntegerLiteral)? (LIMITROWS signedIntegerLiteral)? whereClause?;
 
 showIndexesAllowBrief:
-   (INDEX | INDEXES) ((BRIEF | VERBOSE) OUTPUT? | yieldClause returnClause? | whereClause)?;
+   (INDEX | INDEXES) ((BRIEF | VERBOSE) OUTPUT? | yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showIndexesNoBrief:
-   (INDEX | INDEXES) (yieldClause returnClause? | whereClause)?;
+   (INDEX | INDEXES) (yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showConstraintsAllowBriefAndYield:
-   (CONSTRAINT | CONSTRAINTS) ((BRIEF | VERBOSE) OUTPUT? | yieldClause returnClause? | whereClause)?;
+   (CONSTRAINT | CONSTRAINTS) ((BRIEF | VERBOSE) OUTPUT? | yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showConstraintsAllowBrief:
-   (CONSTRAINT | CONSTRAINTS) ((BRIEF | VERBOSE) OUTPUT?)?;
+   (CONSTRAINT | CONSTRAINTS) ((BRIEF | VERBOSE) OUTPUT?)? composableCommandClauses?;
 
 showConstraintsAllowYield:
-   (CONSTRAINT | CONSTRAINTS) (yieldClause returnClause? | whereClause)?;
+   (CONSTRAINT | CONSTRAINTS) (yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showProcedures:
-   (PROCEDURE | PROCEDURES) (EXECUTABLE (BY (CURRENT USER | symbolicNameString))?)? (yieldClause returnClause? | whereClause)?;
+   (PROCEDURE | PROCEDURES) (EXECUTABLE (BY (CURRENT USER | symbolicNameString))?)? (yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showFunctions:
-   (FUNCTION | FUNCTIONS) (EXECUTABLE (BY (CURRENT USER | symbolicNameString))?)? (yieldClause returnClause? | whereClause)?;
+   (FUNCTION | FUNCTIONS) (EXECUTABLE (BY (CURRENT USER | symbolicNameString))?)? (yieldClause returnClause? | whereClause)? composableCommandClauses?;
 
 showTransactions:
-   (TRANSACTION | TRANSACTIONS) (showOrTerminateTransactions | (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression) showOrTerminateTransactions?)?;
+   (TRANSACTION | TRANSACTIONS) (composableCommandClauses | (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression)  composableCommandClauses?)?;
 
 terminateTransactions:
-   (TRANSACTION | TRANSACTIONS) (showOrTerminateTransactions | (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression) showOrTerminateTransactions?)?;
+   (TRANSACTION | TRANSACTIONS) (composableCommandClauses | (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression)  composableCommandClauses?)?;
 
-showOrTerminateTransactions:
-   (TERMINATE terminateTransactions | SHOW showTransactions);
+showSettings:
+   (SETTING | SETTINGS) (composableCommandClauses | (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression) composableCommandClauses?)?;
+
+composableCommandClauses:
+   (TERMINATE terminateTransactions | SHOW (ALL (showConstraintsAllowBriefAndYield | showIndexesAllowBrief | showFunctions) | BTREE showIndexesAllowBrief | BUILT IN showFunctions | EXISTENCE showConstraintsAllowYield | EXISTS showConstraintsAllowBrief | EXIST showConstraintsAllowBriefAndYield | FULLTEXT showIndexesNoBrief | KEY showConstraintsAllowYield | LOOKUP showIndexesNoBrief | NODE showNodeCommand | POINT showIndexesNoBrief | PROPERTY showPropertyCommand | RANGE showIndexesNoBrief | RELATIONSHIP showRelationshipCommand | REL showRelCommand | TEXT showIndexesNoBrief | UNIQUENESS showConstraintsAllowYield | UNIQUE showConstraintsAllowBriefAndYield | USER DEFINED showFunctions | VECTOR showIndexesNoBrief | showConstraintsAllowBriefAndYield | showFunctions | showIndexesAllowBrief | showProcedures | showSettings | showTransactions));
 
 stringsOrExpression:
    (stringList | expression);
 
-showSettings:
-   (SETTING | SETTINGS) (stringsOrExpression (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | stringsOrExpression)?;
-
 createConstraint:
-   CONSTRAINT (ON LPAREN | FOR LPAREN | IF NOT EXISTS (ON | FOR) LPAREN | symbolicNameString? (IF NOT EXISTS)? (ON | FOR) LPAREN) (
+   CONSTRAINT (ON LPAREN | FOR LPAREN | IF NOT EXISTS (ON | FOR) LPAREN | symbolicNameOrStringParameter? (IF NOT EXISTS)? (ON | FOR) LPAREN) (
        constraintNodePattern | constraintRelPattern
-   ) (ASSERT EXISTS propertyList | (REQUIRE | ASSERT) propertyList (COLONCOLON cypherTypeName | IS (UNIQUE | KEY | createConstraintNodeCheck | createConstraintRelCheck | NOT NULL | (TYPED | COLONCOLON) cypherTypeName))) (OPTIONS mapOrParameter)?;
+   ) (ASSERT EXISTS propertyList | (REQUIRE | ASSERT) propertyList (COLONCOLON type | IS (UNIQUE | KEY | createConstraintNodeCheck | createConstraintRelCheck | NOT NULL | (TYPED | COLONCOLON) type))) (OPTIONS mapOrParameter)?;
 
-cypherTypeName:
-   cypherTypeNameList;
+type:
+   typePart (BAR typePart)*;
 
-cypherTypeNameList:
-   cypherTypeNamePart (BAR cypherTypeNamePart)*;
+typePart:
+   typeName typeNullability? typeListSuffix*;
 
-cypherTypeNamePart:
-   (NOTHING | NULL | (BOOLEAN | BOOL) | (STRING | VARCHAR) | (INT | SIGNED? INTEGER) | FLOAT | DATE | LOCAL (TIME | DATETIME) | ZONED (TIME | DATETIME) | TIME (WITHOUT TIMEZONE | WITH TIMEZONE) | TIMESTAMP (WITHOUT TIMEZONE | WITH TIMEZONE) | DURATION | POINT | (NODE | VERTEX) | (RELATIONSHIP | EDGE) | MAP | (LIST | ARRAY) LT cypherTypeName GT | PATH | PROPERTY VALUE | ANY ((NODE | VERTEX) | (RELATIONSHIP | EDGE) | MAP | PROPERTY VALUE | VALUE? LT cypherTypeNameList GT) | ANY VALUE?) (NOT NULL)? ((LIST | ARRAY) (NOT NULL)?)*;
+typeName
+   // Note! These are matched based on the first token. Take precaution in ExpressionBuilder.scala when modifying
+   : NOTHING
+   | NULL
+   | BOOLEAN
+   | STRING
+   | INT
+   | SIGNED? INTEGER
+   | FLOAT
+   | DATE
+   | LOCAL (TIME | DATETIME)
+   | ZONED (TIME | DATETIME)
+   | TIME (WITHOUT TIMEZONE | WITH TIMEZONE)
+   | TIMESTAMP (WITHOUT TIMEZONE | WITH TIMEZONE)
+   | DURATION
+   | POINT
+   | NODE
+   | VERTEX
+   | RELATIONSHIP
+   | EDGE
+   | MAP
+   | (LIST | ARRAY) LT type GT
+   | PATH
+   | PROPERTY VALUE
+   | ANY (NODE | VERTEX | RELATIONSHIP | EDGE | MAP | PROPERTY VALUE | VALUE? LT type GT | VALUE)?
+   ;
+
+
+ typeNullability:
+    (NOT NULL | EXCLAMATION_MARK);
+
+ typeListSuffix:
+    (LIST | ARRAY) typeNullability?;
 
 constraintNodePattern:
    variable labelOrRelType RPAREN;
@@ -518,25 +619,25 @@ createConstraintRelCheck:
    (RELATIONSHIP | REL) (KEY | UNIQUE);
 
 dropConstraint:
-   CONSTRAINT (ON LPAREN (constraintNodePattern | constraintRelPattern) ASSERT (EXISTS propertyList | propertyList IS (dropConstraintNodeCheck | NOT NULL)) | symbolicNameString (IF EXISTS)?);
+   CONSTRAINT (ON LPAREN (constraintNodePattern | constraintRelPattern) ASSERT (EXISTS propertyList | propertyList IS (dropConstraintNodeCheck | NOT NULL)) | symbolicNameOrStringParameter (IF EXISTS)?);
 
 dropConstraintNodeCheck:
    UNIQUE | NODE KEY;
 
 createIndex:
-   (BTREE INDEX createIndex_ | RANGE INDEX createIndex_ | FULLTEXT INDEX createFulltextIndex | TEXT INDEX createIndex_ | POINT INDEX createIndex_ | LOOKUP INDEX createLookupIndex | INDEX (ON oldCreateIndex | createIndex_));
+   (BTREE INDEX createIndex_ | RANGE INDEX createIndex_ | FULLTEXT INDEX createFulltextIndex | TEXT INDEX createIndex_ | POINT INDEX createIndex_ | VECTOR INDEX createIndex_ | LOOKUP INDEX createLookupIndex | INDEX (ON oldCreateIndex | createIndex_));
 
 oldCreateIndex:
    labelOrRelType LPAREN symbolicNamePositions RPAREN;
 
 createIndex_:
-   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameString (IF NOT EXISTS)? FOR LPAREN) (variable labelOrRelType RPAREN | RPAREN leftArrow? arrowLine LBRACKET variable labelOrRelType RBRACKET arrowLine rightArrow? LPAREN RPAREN) ON propertyList (OPTIONS mapOrParameter)?;
+   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameOrStringParameter (IF NOT EXISTS)? FOR LPAREN) (variable labelOrRelType RPAREN | RPAREN leftArrow? arrowLine LBRACKET variable labelOrRelType RBRACKET arrowLine rightArrow? LPAREN RPAREN) ON propertyList (OPTIONS mapOrParameter)?;
 
 createFulltextIndex:
-   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameString (IF NOT EXISTS)? FOR LPAREN) (variable labelOrRelTypes RPAREN | RPAREN leftArrow? arrowLine LBRACKET variable labelOrRelTypes RBRACKET arrowLine rightArrow? LPAREN RPAREN) ON EACH LBRACKET variable property (COMMA variable property)* RBRACKET (OPTIONS mapOrParameter)?;
+   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameOrStringParameter (IF NOT EXISTS)? FOR LPAREN) (variable labelOrRelTypes RPAREN | RPAREN leftArrow? arrowLine LBRACKET variable labelOrRelTypes RBRACKET arrowLine rightArrow? LPAREN RPAREN) ON EACH LBRACKET variable property (COMMA variable property)* RBRACKET (OPTIONS mapOrParameter)?;
 
 createLookupIndex:
-   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameString (IF NOT EXISTS)? FOR LPAREN)
+   (FOR LPAREN | IF NOT EXISTS FOR LPAREN | symbolicNameOrStringParameter (IF NOT EXISTS)? FOR LPAREN)
         (
             variable RPAREN ON EACH |
             RPAREN leftArrow? arrowLine LBRACKET variable RBRACKET arrowLine rightArrow? LPAREN RPAREN ON EACH?
@@ -547,7 +648,7 @@ lookupIndexFunctionName:
    symbolicNameString;
 
 dropIndex:
-   INDEX (ON labelOrRelType LPAREN symbolicNamePositions RPAREN | symbolicNameString (IF EXISTS)?);
+   INDEX (ON labelOrRelType LPAREN symbolicNamePositions RPAREN | symbolicNameOrStringParameter (IF EXISTS)?);
 
 propertyList:
    (variable property | LPAREN variable property (COMMA variable property)* RPAREN);
@@ -622,7 +723,7 @@ setPassword:
    passwordExpression;
 
 passwordExpression:
-   (stringToken | parameter);
+   (stringLiteral | parameter["STRING"]);
 
 passwordChangeRequired:
    CHANGE NOT? REQUIRED;
@@ -631,7 +732,7 @@ userStatus:
    STATUS (SUSPENDED | ACTIVE);
 
 homeDatabase:
-   HOME DATABASE symbolicAliasName;
+   HOME DATABASE symbolicAliasNameOrParameter;
 
 showUsers:
    (yieldClause returnClause? | whereClause)?;
@@ -736,34 +837,34 @@ propertyResource:
    LCURLY (TIMES | symbolicNameList1) RCURLY;
 
 graphQualifier:
-   ((RELATIONSHIP | RELATIONSHIPS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (NODE | NODES) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (ELEMENT | ELEMENTS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | FOR LPAREN variable? labelOrRelTypes? (RPAREN WHERE expression | WHERE expression RPAREN | mapLiteral RPAREN))?;
+   ((RELATIONSHIP | RELATIONSHIPS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (NODE | NODES) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | (ELEMENT | ELEMENTS) (TIMES | symbolicNameString (COMMA symbolicNameString)*) | FOR LPAREN variable? labelOrRelTypes? (RPAREN WHERE expression | WHERE expression RPAREN | map RPAREN))?;
 
 createDatabase:
-   DATABASE symbolicAliasName (IF NOT EXISTS)? (TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+)? options_? waitClause?;
+   DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+)? options_? waitClause?;
 
 options_:
    OPTIONS mapOrParameter;
 
 createCompositeDatabase:
-   COMPOSITE DATABASE symbolicAliasName (IF NOT EXISTS)? options_? waitClause?;
+   COMPOSITE DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? options_? waitClause?;
 
 dropDatabase:
-   COMPOSITE? DATABASE symbolicAliasName (IF EXISTS)? ((DUMP | DESTROY) DATA)? waitClause?;
+   COMPOSITE? DATABASE symbolicAliasNameOrParameter (IF EXISTS)? ((DUMP | DESTROY) DATA)? waitClause?;
 
 alterDatabase:
-   DATABASE symbolicAliasName (IF EXISTS)? ((SET (ACCESS READ (ONLY | WRITE) | TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+ | OPTION symbolicNameString expression))+ | (REMOVE OPTION symbolicNameString)+) waitClause?;
+   DATABASE symbolicAliasNameOrParameter (IF EXISTS)? ((SET (ACCESS READ (ONLY | WRITE) | TOPOLOGY (UNSIGNED_DECIMAL_INTEGER ((PRIMARY | PRIMARIES) | (SECONDARY | SECONDARIES)))+ | OPTION symbolicNameString expression))+ | (REMOVE OPTION symbolicNameString)+) waitClause?;
 
 startDatabase:
-   START DATABASE symbolicAliasName waitClause?;
+   START DATABASE symbolicAliasNameOrParameter waitClause?;
 
 stopDatabase:
-   STOP DATABASE symbolicAliasName waitClause?;
+   STOP DATABASE symbolicAliasNameOrParameter waitClause?;
 
 waitClause:
    (WAIT (UNSIGNED_DECIMAL_INTEGER (SEC | SECOND | SECONDS)?)? | NOWAIT);
 
 showDatabase:
-   ((DATABASES | DATABASE) (symbolicAliasName (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | symbolicAliasName)? | (DEFAULT DATABASE | HOME DATABASE) (yieldClause returnClause? | whereClause)?);
+   ((DATABASES | DATABASE) (symbolicAliasNameOrParameter (yieldClause returnClause? | whereClause) | yieldClause returnClause? | whereClause | symbolicAliasNameOrParameter)? | (DEFAULT DATABASE | HOME DATABASE) (yieldClause returnClause? | whereClause)?);
 
 databaseScope:
    ((DATABASE | DATABASES) (TIMES | symbolicAliasNameList) | DEFAULT DATABASE | HOME DATABASE);
@@ -772,28 +873,31 @@ graphScope:
    ((GRAPH | GRAPHS) (TIMES | symbolicAliasNameList) | DEFAULT GRAPH | HOME GRAPH);
 
 createAlias:
-   ALIAS symbolicAliasName (IF NOT EXISTS)? FOR DATABASE symbolicAliasName (AT stringOrParameter USER symbolicNameOrStringParameter PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?;
+   ALIAS symbolicAliasNameOrParameter (IF NOT EXISTS)? FOR DATABASE symbolicAliasNameOrParameter (AT stringOrParameter USER symbolicNameOrStringParameter PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?;
 
 dropAlias:
-   ALIAS symbolicAliasName (IF EXISTS)? FOR DATABASE;
+   ALIAS symbolicAliasNameOrParameter (IF EXISTS)? FOR DATABASE;
 
 alterAlias:
-   ALIAS symbolicAliasName (IF EXISTS)? SET DATABASE (TARGET symbolicAliasName (AT stringOrParameter)? | USER symbolicNameOrStringParameter | PASSWORD passwordExpression | DRIVER mapOrParameter | PROPERTIES mapOrParameter)+;
+   ALIAS symbolicAliasNameOrParameter (IF EXISTS)? SET DATABASE (TARGET symbolicAliasNameOrParameter (AT stringOrParameter)? | USER symbolicNameOrStringParameter | PASSWORD passwordExpression | DRIVER mapOrParameter | PROPERTIES mapOrParameter)+;
 
 showAliases:
-   (ALIAS | ALIASES) symbolicAliasName? FOR (DATABASE | DATABASES) (yieldClause returnClause? | whereClause)?;
+   (ALIAS | ALIASES) symbolicAliasNameOrParameter? FOR (DATABASE | DATABASES) (yieldClause returnClause? | whereClause)?;
 
 symbolicAliasNameList:
-   symbolicAliasName (COMMA symbolicAliasName)*;
+   symbolicAliasNameOrParameter (COMMA symbolicAliasNameOrParameter)*;
+
+symbolicAliasNameOrParameter:
+   symbolicAliasName | parameter["STRING"];
 
 symbolicAliasName:
-   (symbolicNameString (DOT symbolicNameString)* | parameter);
+   symbolicNameString (DOT symbolicNameString)*;
 
 symbolicNameOrStringParameterList:
    symbolicNameOrStringParameter (COMMA symbolicNameOrStringParameter)*;
 
 symbolicNameOrStringParameter:
-   (symbolicNameString | parameter);
+   (symbolicNameString | parameter["STRING"]);
 
 glob:
    (escapedSymbolicNameString | escapedSymbolicNameString globRecursive | globRecursive);
@@ -804,23 +908,19 @@ globRecursive:
 globPart:
    (DOT escapedSymbolicNameString | QUESTION | TIMES | DOT | unescapedSymbolicNameString);
 
-stringImage:
-   stringToken;
-
 stringList:
-   stringImage (COMMA stringImage)*;
+   stringLiteral (COMMA stringLiteral)*;
 
-stringToken:
+stringLiteral:
    (STRING_LITERAL1 | STRING_LITERAL2);
 
 stringOrParameter:
-   (stringToken | parameter);
+   (stringLiteral | parameter["STRING"]);
 
 mapOrParameter:
-   (map | parameter);
+   (map | parameter["MAP"]);
 
-map:
-   LCURLY (symbolicNameString COLON expression (COMMA symbolicNameString COLON expression)*)? RCURLY;
+map: LCURLY (propertyKeyName COLON expression)? (COMMA propertyKeyName COLON expression)* RCURLY;
 
 symbolicNamePositions:
    symbolicNameString (COMMA symbolicNameString)*;
@@ -832,14 +932,13 @@ escapedSymbolicNameString:
    ESCAPED_SYMBOLIC_NAME;
 
 unescapedSymbolicNameString:
-   (unescapedLabelSymbolicNameString | NOT | NULL | TYPED);
+   (unescapedLabelSymbolicNameString | NOT | NULL | TYPED | NORMALIZED | NFC | NFD | NFKC | NFKD);
 
 symbolicLabelNameString:
    (escapedSymbolicNameString | unescapedLabelSymbolicNameString);
 
 unescapedLabelSymbolicNameString:
-   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | ARRAY | AS | ASC | ASSERT | ASSIGN | AT | BINDINGS | BOOL | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | CIDR | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT | DEFINED | DELETE | DENY | DESC | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | EDGE | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INF | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LIST | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MAP | MERGE | NAME | NAMES | NAN | NEW | NODE | NODES | NONE | NOTHING | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | URL | USE | USER | USERS | USING | VALUE | VARCHAR | VERBOSE | VERTEX | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
+   (IDENTIFIER | ACCESS | ACTIVE | ADMIN | ADMINISTRATOR | ALIAS | ALIASES | ALL_SHORTEST_PATH | ALL | ALTER | AND | ANY | ARRAY | AS | ASC | ASCENDING | ASSERT | ASSIGN | AT | BINDINGS | BOOLEAN | BOOSTED | BREAK | BRIEF | BTREE | BUILT | BY | CALL | CASE | CHANGE | CIDR | COLLECT | COMMAND | COMMANDS | COMMIT | COMPOSITE | CONCURRENT | CONSTRAINT | CONSTRAINTS | CONTAINS | CONTINUE | COPY | COUNT | CREATE | CSV | CURRENT | DATA | DATABASE | DATABASES | DATE | DATETIME | DBMS | DEALLOCATE | DEFAULT | DEFINED | DELETE | DENY | DESC | DESCENDING | DESTROY | DETACH | DIFFERENT | DISTINCT | DRIVER | DROP | DRYRUN | DUMP | DURATION | EACH | EDGE | ELEMENT | ELEMENTS | ELSE | ENABLE | ENCRYPTED | END | ENDS | ERROR | EXECUTABLE | EXECUTE | EXIST | EXISTENCE | EXISTS | FAIL | FALSE | FIELDTERMINATOR | FLOAT | FOREACH | FOR | FROM | FULLTEXT | FUNCTION | FUNCTIONS | GRANT | GRAPH | GRAPHS | GROUP | GROUPS | HEADERS | HOME | IF | IMMUTABLE | IN | INDEX | INDEXES | INFINITY | INT | INTEGER | IS | JOIN | KEY | LABEL | LABELS | LIMITROWS | LIST | LOAD | LOCAL | LOOKUP | MATCH | MANAGEMENT | MAP | MERGE | NAME | NAMES | NAN | NEW | NODE | NODETACH | NODES | NONE | NORMALIZE | NOTHING | NOWAIT | OF | ON | ONLY | OPTIONAL | OPTIONS | OPTION | OR | ORDER | OUTPUT | PASSWORD | PASSWORDS | PATH | PATHS | PERIODIC | PLAINTEXT | POINT | POPULATED | PRIMARY | PRIMARIES | PRIVILEGE | PRIVILEGES | PROCEDURE | PROCEDURES | PROPERTIES | PROPERTY | RANGE | READ | REALLOCATE | REDUCE | REL | RELATIONSHIP | RELATIONSHIPS | REMOVE | RENAME | REPEATABLE | REPLACE | REPORT | REQUIRE | REQUIRED | RETURN | REVOKE | ROLE | ROLES | ROW | ROWS | SCAN | SEC | SECOND | SECONDARY | SECONDARIES | SECONDS | SEEK | SERVER | SERVERS | SET | SETTING | SETTINGS | SHORTEST | SHORTEST_PATH | SHOW | SIGNED | SINGLE | SKIPROWS | START | STARTS | STATUS | STOP | STRING | SUPPORTED | SUSPENDED | TARGET | TERMINATE | TEXT | THEN | TIME | TIMESTAMP | TIMEZONE | TO | TOPOLOGY | TRANSACTION | TRANSACTIONS | TRAVERSE | TRUE | TYPE | TYPES | UNION | UNIQUE | UNIQUENESS | UNWIND | URL | USE | USER | USERS | USING | VALUE |  VECTOR | VERBOSE | VERTEX | WAIT | WHEN | WHERE | WITH | WITHOUT | WRITE | XOR | YIELD | ZONED);
 
 endOfFile:
    EOF;
-
