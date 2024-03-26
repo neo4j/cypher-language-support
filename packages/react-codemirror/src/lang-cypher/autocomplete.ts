@@ -37,12 +37,6 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c];
 };
 
-/**
- * Todo:
- * - e2e test for the automatic triggerings
- * - nonstandard symbols
- */
-
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
