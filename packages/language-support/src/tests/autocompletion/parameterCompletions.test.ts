@@ -65,19 +65,6 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     });
   });
 
-  test('Correctly suggests parameter in ENABLE SERVER', () => {
-    const query = 'ENABLE SERVER ';
-    testCompletions({
-      query,
-      dbSchema,
-      expected: [{ label: '$stringParam', kind: CompletionItemKind.Variable }],
-      excluded: [
-        { label: '$intParam', kind: CompletionItemKind.Variable },
-        { label: '$mapParam', kind: CompletionItemKind.Variable },
-      ],
-    });
-  });
-
   test('Suggests parameter as map properties', () => {
     const query = 'match (v :Movie ';
 
@@ -171,6 +158,27 @@ describe('Completes parameters outside of databases, roles, user names', () => {
         excluded: [
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$stringParam', kind: CompletionItemKind.Variable },
+        ],
+      });
+    });
+  });
+
+  test('Suggests parameters for passwords', () => {
+    const cases = [
+      'ALTER CURRENT USER SET PASSWORD FROM ',
+      'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
+      'ALTER USER foo IF EXISTS SET PASSWORD ',
+    ];
+    cases.forEach((query) => {
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+        ],
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
       });
     });

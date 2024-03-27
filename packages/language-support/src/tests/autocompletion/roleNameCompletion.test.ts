@@ -306,7 +306,7 @@ describe('Can complete role names', () => {
     );
   });
 
-  test('Correctly completes parameters and existing user names in GRANT database privilege', () => {
+  test('Correctly completes parameters and existing role names in GRANT database privilege', () => {
     const cases = [
       'GRANT TERMINATE TRANSACTION (user) ON DATABASE neo4j TO ',
       'GRANT TERMINATE TRANSACTION (user) ON DATABASE neo4j TO role, ',
@@ -321,7 +321,7 @@ describe('Can complete role names', () => {
           { label: 'foo', kind: CompletionItemKind.Value },
           { label: 'bar', kind: CompletionItemKind.Value },
         ],
-        // do not suggest non-string parameters or existing user names
+        // do not suggest non-string parameters or existing role names
         excluded: [
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },

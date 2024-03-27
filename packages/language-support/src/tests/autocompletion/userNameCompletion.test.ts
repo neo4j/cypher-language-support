@@ -126,27 +126,6 @@ describe('Can complete user names', () => {
     );
   });
 
-  test('Suggests parameters for passwords', () => {
-    const cases = [
-      'ALTER CURRENT USER SET PASSWORD FROM ',
-      'ALTER CURRENT USER SET PASSWORD FROM $pw to ',
-      'ALTER USER foo IF EXISTS SET PASSWORD ',
-    ];
-    cases.forEach((query) => {
-      testCompletions({
-        query,
-        dbSchema,
-        expected: [
-          { label: '$stringParam', kind: CompletionItemKind.Variable },
-        ],
-        excluded: [
-          { label: '$intParam', kind: CompletionItemKind.Variable },
-          { label: '$mapParam', kind: CompletionItemKind.Variable },
-        ],
-      });
-    });
-  });
-
   test('Correctly completes parameters and existing user names in GRANT ROLE TO USER', () => {
     const cases = ['GRANT ROLE abc TO ', 'GRANT ROLE abc TO user, '];
 

@@ -10,7 +10,7 @@ import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
-import { rulesDefiningVariables } from '../helpers';
+import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
 import {
   CypherTokenType,
   lexerKeywords,
@@ -571,21 +571,6 @@ function completeAliasName({
   ];
 }
 
-function findPreviousNonSpace(
-  tokens: Token[],
-  index: number,
-): Token | undefined {
-  let i = index;
-  while (i > 0) {
-    const token = tokens[--i];
-
-    if (token.type !== CypherParser.SPACE) {
-      return token;
-    }
-  }
-
-  return undefined;
-}
 function completeSymbolicName({
   candidateRule,
   dbSchema,
@@ -609,7 +594,7 @@ function completeSymbolicName({
   const afterToToken = previousToken.type === CypherParser.TO;
   const ruleList = candidateRule.ruleList;
 
-  // avoid suggesting existing database names when creating a new user or role
+  // avoid suggesting existing user names or role names when creating a new one
   if (
     rulesCreatingNewUserOrRole.some((rule) => ruleList.includes(rule)) ||
     // We are suggesting an user as target for the renaming
