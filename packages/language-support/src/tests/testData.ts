@@ -52725,6 +52725,7 @@ const mockSchema: DbSchema = {
     'Gym',
     'Stadium',
   ],
+  userNames: ['oskar', 'neo4j', 'admin'],
 };
 
 const largeQuery = `
