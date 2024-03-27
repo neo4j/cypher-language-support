@@ -1116,7 +1116,7 @@ describe('USE colouring', () => {
           startOffset: 11,
         },
         token: 'neo4j',
-        tokenType: 'variable',
+        tokenType: 'symbolicName',
       },
       {
         bracketInfo: undefined,

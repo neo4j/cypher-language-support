@@ -184,10 +184,7 @@ export const rulesDefiningVariables = [
   CypherParser.RULE_foreachClause,
   CypherParser.RULE_loadCSVClause,
   CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_allExpression,
-  CypherParser.RULE_anyExpression,
-  CypherParser.RULE_noneExpression,
-  CypherParser.RULE_singleExpression,
+  CypherParser.RULE_listItemsPredicate,
   CypherParser.RULE_listComprehension,
 ];
 
