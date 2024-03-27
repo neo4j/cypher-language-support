@@ -630,6 +630,9 @@ function completeSymbolicName({
     CypherParser.RULE_alterUser,
     CypherParser.RULE_showUserPrivileges,
     CypherParser.RULE_roleUser,
+    CypherParser.RULE_showPrivilege,
+    CypherParser.RULE_dbmsPrivilege,
+    CypherParser.RULE_databasePrivilege,
   ];
 
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {

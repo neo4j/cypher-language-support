@@ -141,7 +141,6 @@ describe('Can complete role names', () => {
     ];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -155,7 +154,6 @@ describe('Can complete role names', () => {
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
-        offset: 'SHOW ROLE '.length,
       }),
     );
   });
@@ -169,7 +167,6 @@ describe('Can complete role names', () => {
     ];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -183,7 +180,6 @@ describe('Can complete role names', () => {
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },
         ],
-        offset: 'SHOW ROLE '.length,
       }),
     );
   });
@@ -197,7 +193,6 @@ describe('Can complete role names', () => {
     ];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -222,7 +217,6 @@ describe('Can complete role names', () => {
     ];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -247,7 +241,6 @@ describe('Can complete role names', () => {
     ];
 
     cases.forEach((query) =>
-      // We are placing the caret after the SHOW ROLE
       testCompletions({
         query,
         dbSchema,
@@ -257,6 +250,78 @@ describe('Can complete role names', () => {
           { label: 'bar', kind: CompletionItemKind.Value },
         ],
         // do not suggest non-string parameters or existing role names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing role names in GRANT privilege', () => {
+    const cases = [
+      'GRANT SHOW TRANSACTION (user1, user2) ON DATABASE neo4j TO ',
+      'GRANT SHOW TRANSACTION (user1, user2) ON DATABASE neo4j TO role, ',
+    ];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing role names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing role names in GRANT dbms privilege', () => {
+    const cases = [
+      'GRANT IMPERSONATE (user) ON DBMS TO ',
+      'GRANT IMPERSONATE (user) ON DBMS TO role, ',
+    ];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing role names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing user names in GRANT database privilege', () => {
+    const cases = [
+      'GRANT TERMINATE TRANSACTION (user) ON DATABASE neo4j TO ',
+      'GRANT TERMINATE TRANSACTION (user) ON DATABASE neo4j TO role, ',
+    ];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing user names
         excluded: [
           { label: '$intParam', kind: CompletionItemKind.Variable },
           { label: '$mapParam', kind: CompletionItemKind.Variable },

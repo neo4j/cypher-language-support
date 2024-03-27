@@ -188,4 +188,73 @@ describe('Can complete user names', () => {
       }),
     );
   });
+
+  test('Correctly completes parameters and existing user names in GRANT SHOW', () => {
+    const cases = [
+      'GRANT SHOW TRANSACTION ( ',
+      'GRANT SHOW TRANSACTION (user, ',
+    ];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing user names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing user names in GRANT dbms privilege', () => {
+    const cases = ['GRANT IMPERSONATE (', 'GRANT IMPERSONATE (user, '];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing user names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
+
+  test('Correctly completes parameters and existing user names in GRANT database privilege', () => {
+    const cases = [
+      'GRANT TERMINATE TRANSACTION (',
+      'GRANT TERMINATE TRANSACTION (user, ',
+    ];
+
+    cases.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          { label: '$stringParam', kind: CompletionItemKind.Variable },
+          { label: 'foo', kind: CompletionItemKind.Value },
+          { label: 'bar', kind: CompletionItemKind.Value },
+        ],
+        // do not suggest non-string parameters or existing user names
+        excluded: [
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
+  });
 });
