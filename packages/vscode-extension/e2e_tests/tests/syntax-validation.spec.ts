@@ -115,8 +115,8 @@ suite('Syntax validation spec', () => {
   });
 
   test.only('Correctly validates a non cypher file when selecting cypher language mode', async () => {
-    // We pick a file without .cypher extension and
-    // change the language manually to Cypher
+    // We open a file that is not saved on disk
+    // and change the language manually to Cypher
     await newUntitledFileWithContent('MATCH (m)');
     const editor = vscode.window.activeTextEditor;
     await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
