@@ -239,7 +239,7 @@ test('can complete pattern snippet', async ({ page, mount }) => {
   await mount(<CypherEditor />);
   const textField = page.getByRole('textbox');
 
-  await textField.fill('MATCH ()-[]->()-');
+  await textField.fill('MATCH ()-[]->()');
 
   await page.locator('.cm-tooltip-autocomplete').getByText('-[]->()').click();
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
@@ -258,7 +258,7 @@ test('does not automatically open completion panel for expressions after snippet
   await mount(<CypherEditor />);
   const textField = page.getByRole('textbox');
 
-  await textField.fill('RETURN 1-');
+  await textField.fill('RETURN (1)');
 
   // expect the panel to not show up
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
