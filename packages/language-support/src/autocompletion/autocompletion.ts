@@ -9,6 +9,7 @@ export function autocomplete(
   query: string,
   dbSchema: DbSchema,
   caretPosition: number = query.length,
+  manual = false,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(query);
   /* We try to locate the latest statement by finding the latest available `;` 
@@ -26,7 +27,7 @@ export function autocomplete(
   const caret = findCaret(parsingResult, caretPosition);
   if (caret) {
     const statement = caret.statement;
-    return completionCoreCompletion(statement, dbSchema);
+    return completionCoreCompletion(statement, dbSchema, manual);
   }
 
   return [];

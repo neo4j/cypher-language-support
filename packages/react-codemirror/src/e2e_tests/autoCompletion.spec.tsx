@@ -234,3 +234,36 @@ test('completes allShortestPaths correctly', async ({ page, mount }) => {
     'MATCH (n) REURN n; MATCH allShortestPaths',
   );
 });
+
+test('can complete pattern snippet', async ({ page, mount }) => {
+  await mount(<CypherEditor />);
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('MATCH ()-[]->()');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('-[]->()').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await textField.press('Tab');
+  await textField.press('Tab');
+  await textField.press('Tab');
+
+  await expect(textField).toHaveText('MATCH ()-[]->()-[ ]->( )');
+});
+
+test('does not automatically open completion panel for expressions after snippet trigger char', async ({
+  page,
+  mount,
+}) => {
+  await mount(<CypherEditor />);
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('RETURN (1)');
+
+  // expect the panel to not show up
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  // unless manually triggered
+  await textField.press('Control+ ');
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+});

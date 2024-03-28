@@ -53,6 +53,9 @@ export const createCypherTheme = ({
       color: settings.foreground,
       fontVariantLigatures: 'none',
     },
+    '& .cm-snippetField': {
+      backgroundColor: settings.autoCompletionPanel.selectedColor,
+    },
     '&.cm-focused': {
       outline: 'none',
     },
