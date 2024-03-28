@@ -32,8 +32,6 @@ describe('snippet completions', () => {
     });
   });
 
-  // TODO test other places where snippets are suggested
-
   test('does not suggest snippets when path is started ', () => {
     testCompletions({
       query: 'MATCH ()<',
@@ -84,6 +82,102 @@ describe('snippet completions', () => {
   test('suggests path snippets after MATCH ()--()', () => {
     testCompletionsExactly({
       query: 'MATCH ()--()',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '-[${1: }]->(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+        {
+          label: '<-[]-()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '<-[${1: }]-(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets when creating indexes', () => {
+    testCompletionsExactly({
+      query: 'CREATE INDEX a FOR ()',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '-[${1: }]->(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+        {
+          label: '<-[]-()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '<-[${1: }]-(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets when creating lookup indexes', () => {
+    testCompletionsExactly({
+      query: 'create LOOKUP INDEX f FOR ()',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '-[${1: }]->(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+        {
+          label: '<-[]-()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '<-[${1: }]-(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets when creating fulltext indexes', () => {
+    testCompletionsExactly({
+      query: 'CREATE FULLTEXT INDEX IF NOT EXISTS FOR ()',
+      expected: [
+        {
+          label: '-[]->()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '-[${1: }]->(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+        {
+          label: '<-[]-()',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: InsertTextFormat.Snippet,
+          insertText: '<-[${1: }]-(${2: })',
+          filterText: '',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('suggests path snippets when creating constraint', () => {
+    testCompletionsExactly({
+      query: 'CREATE CONSTRAINT f for ()',
       expected: [
         {
           label: '-[]->()',
