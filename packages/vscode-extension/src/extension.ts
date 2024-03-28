@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext) {
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for Cypher text documents
-    documentSelector: [{ scheme: 'file', language: 'cypher' }],
+    documentSelector: [{ language: 'cypher' }],
     synchronize: {
       // Notify the server about file changes to '.clientrc files contained in the workspace
       fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
