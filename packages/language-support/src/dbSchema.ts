@@ -5,6 +5,8 @@ export interface DbSchema {
   relationshipTypes?: string[];
   databaseNames?: string[];
   aliasNames?: string[];
+  userNames?: string[];
+  roleNames?: string[];
   parameters?: Record<string, unknown>;
   propertyKeys?: string[];
   procedures?: Record<string, Neo4jProcedure>;

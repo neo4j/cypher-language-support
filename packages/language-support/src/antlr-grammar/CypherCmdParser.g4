@@ -1,12 +1,12 @@
 parser grammar CypherCmdParser;
 
-import CypherParser;
+import CypherPreParser;
 
 options { tokenVocab = CypherCmdLexer; }
 
 statementsOrCommands: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
 
-statementOrCommand: (statement | consoleCommand);
+statementOrCommand: (preparsedStatement | consoleCommand);
 
 consoleCommand: COLON (clearCmd | historyCmd | useCmd | paramsCmd);
 

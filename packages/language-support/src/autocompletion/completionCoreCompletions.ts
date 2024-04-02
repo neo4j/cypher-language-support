@@ -11,7 +11,7 @@ import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
-import { rulesDefiningVariables } from '../helpers';
+import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
 import {
   CypherTokenType,
   lexerKeywords,
@@ -216,12 +216,27 @@ enum ExpectedParameterType {
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   const parentRule = context.ruleList.at(-1);
+  const grandParentRule = context.ruleList.at(-2);
   if (
     [
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_symbolicNameOrStringParameter,
+      CypherParser.RULE_symbolicNameOrStringParameterList,
+      CypherParser.RULE_symbolicAliasNameOrParameter,
       CypherParser.RULE_passwordExpression,
-    ].includes(parentRule)
+      CypherParser.RULE_createUser,
+      CypherParser.RULE_dropUser,
+      CypherParser.RULE_alterUser,
+      CypherParser.RULE_renameUser,
+      CypherParser.RULE_createRole,
+      CypherParser.RULE_dropRole,
+      CypherParser.RULE_renameRole,
+      CypherParser.RULE_revokeRole,
+    ].includes(parentRule) ||
+    [
+      CypherParser.RULE_showUserPrivileges,
+      CypherParser.RULE_grantRole,
+    ].includes(grandParentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (
@@ -328,6 +343,8 @@ export function completionCoreCompletion(
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
     CypherParser.RULE_leftArrow,
+    // this rule is used for usernames and roles.
+    CypherParser.RULE_symbolicNameOrStringParameter,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -385,7 +402,7 @@ export function completionCoreCompletion(
         const parentRule = candidateRule.ruleList.at(-1);
         const grandParentRule = candidateRule.ruleList.at(-2);
         if (
-          parentRule === CypherParser.RULE_mapLiteral &&
+          parentRule === CypherParser.RULE_map &&
           grandParentRule === CypherParser.RULE_literal
         ) {
           return [];
@@ -399,7 +416,7 @@ export function completionCoreCompletion(
         // but it is likely to be a node/relationship
         if (
           parentRule === CypherParser.RULE_property &&
-          grandParentRule == CypherParser.RULE_postFix1 &&
+          grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
@@ -437,6 +454,10 @@ export function completionCoreCompletion(
         return completeAliasName({ candidateRule, dbSchema, parsingResult });
       }
 
+      if (ruleNumber === CypherParser.RULE_symbolicNameOrStringParameter) {
+        return completeSymbolicName({ candidateRule, dbSchema, parsingResult });
+      }
+
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
         const topExprIndex = candidateRule.ruleList.indexOf(
           CypherParser.RULE_labelExpression,
@@ -456,12 +477,7 @@ export function completionCoreCompletion(
           return reltypeCompletions(dbSchema);
         }
 
-        if (topExprParent === CypherParser.RULE_labelExpressionPredicate) {
-          return [
-            ...labelCompletions(dbSchema),
-            ...reltypeCompletions(dbSchema),
-          ];
-        }
+        return [...labelCompletions(dbSchema), ...reltypeCompletions(dbSchema)];
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
@@ -596,4 +612,83 @@ function completeAliasName({
         kind: CompletionItemKind.Value,
       })),
   ];
+}
+
+function completeSymbolicName({
+  candidateRule,
+  dbSchema,
+  parsingResult,
+}: CompletionHelperArgs): CompletionItem[] {
+  // parameters are valid values in all cases of symbolic name
+  const baseSuggestions = parameterCompletions(
+    dbSchema,
+    inferExpectedParameterTypeFromContext(candidateRule),
+  );
+
+  const rulesCreatingNewUserOrRole = [
+    CypherParser.RULE_createUser,
+    CypherParser.RULE_createRole,
+  ];
+
+  const previousToken = findPreviousNonSpace(
+    parsingResult.tokens,
+    candidateRule.startTokenIndex,
+  );
+  const afterToToken = previousToken.type === CypherParser.TO;
+  const ruleList = candidateRule.ruleList;
+
+  // avoid suggesting existing user names or role names when creating a new one
+  if (
+    rulesCreatingNewUserOrRole.some((rule) => ruleList.includes(rule)) ||
+    // We are suggesting an user as target for the renaming
+    //      RENAME USER existing TO target
+    // so target should be non-existent
+    (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
+  ) {
+    return baseSuggestions;
+  }
+
+  const rulesThatAcceptExistingUsers = [
+    CypherParser.RULE_dropUser,
+    CypherParser.RULE_renameUser,
+    CypherParser.RULE_alterUser,
+    CypherParser.RULE_showUserPrivileges,
+    CypherParser.RULE_roleUser,
+    CypherParser.RULE_showPrivilege,
+    CypherParser.RULE_dbmsPrivilege,
+    CypherParser.RULE_databasePrivilege,
+  ];
+
+  if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
+    return [
+      ...baseSuggestions,
+      ...(dbSchema?.userNames ?? []).map((userName) => ({
+        label: userName,
+        kind: CompletionItemKind.Value,
+      })),
+    ];
+  }
+
+  const rulesThatAcceptExistingRoles = [
+    CypherParser.RULE_grantRole,
+    CypherParser.RULE_revokeRole,
+    CypherParser.RULE_dropRole,
+    CypherParser.RULE_renameRole,
+    CypherParser.RULE_showRolePrivileges,
+    CypherParser.RULE_grantRoleManagement,
+    CypherParser.RULE_revokeRoleManagement,
+    CypherParser.RULE_grantPrivilege,
+    CypherParser.RULE_denyPrivilege,
+    CypherParser.RULE_revokePrivilege,
+  ];
+
+  if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {
+    return [
+      ...baseSuggestions,
+      ...(dbSchema?.roleNames ?? []).map((roleName) => ({
+        label: roleName,
+        kind: CompletionItemKind.Value,
+      })),
+    ];
+  }
 }
