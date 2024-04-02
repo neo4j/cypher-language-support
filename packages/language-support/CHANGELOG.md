@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.5
+
+### Patch Changes
+
+- 1f790d0: Adds auto-completion of usernames and roles
+
 ## 2.0.0-next.4
 
 ### Patch Changes
