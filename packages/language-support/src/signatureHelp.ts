@@ -15,6 +15,7 @@ import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
+import { Neo4jFunction, Neo4jProcedure } from './types';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -32,13 +33,28 @@ interface ParsedMethod {
   methodType: MethodType;
 }
 
+export function toSignatureInformation(
+  curr: Neo4jFunction | Neo4jProcedure,
+): SignatureInformation {
+  const { name, argumentDescription, description } = curr;
+
+  return SignatureInformation.create(
+    name,
+    description,
+    ...argumentDescription.map((arg) => ({
+      label: arg.name,
+      documentation: arg.description,
+    })),
+  );
+}
+
 function toSignatureHelp(
-  methodSignatures: Record<string, SignatureInformation>,
+  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure> = {},
   parsedMethod: ParsedMethod,
-) {
+): SignatureHelp {
   const methodName = parsedMethod.methodName;
   const method = methodSignatures[methodName];
-  const signatures = method ? [method] : [];
+  const signatures = method ? [toSignatureInformation(method)] : [];
 
   const signatureHelp: SignatureHelp = {
     signatures: signatures,
@@ -165,9 +181,9 @@ export function signatureHelp(
 
       if (method !== undefined) {
         if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(dbSchema.functionSignatures, method);
+          result = toSignatureHelp(dbSchema.functions, method);
         } else {
-          result = toSignatureHelp(dbSchema.procedureSignatures, method);
+          result = toSignatureHelp(dbSchema.procedures, method);
         }
       }
     }

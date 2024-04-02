@@ -1,5 +1,11 @@
 # @neo4j-cypher/vscode-extension
 
+## 2.0.0-next.5
+
+### Patch Changes
+
+- @neo4j-cypher/language-server@2.0.0-next.5
+
 ## 2.0.0-next.4
 
 ### Patch Changes

@@ -5,6 +5,6 @@ export type Neo4jSettings = {
   };
   connect?: boolean;
   password?: string;
-  URL?: string;
+  connectURL?: string;
   user?: string;
 };

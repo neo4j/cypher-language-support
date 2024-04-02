@@ -26,7 +26,7 @@ import { cleanupWorkers, lintDocument } from './linting';
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-const neo4jSdk = new Neo4jSchemaPoller();
+const neo4jSchemaPoller = new Neo4jSchemaPoller();
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -35,7 +35,7 @@ connection.onInitialize(() => {
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ['.'],
+        triggerCharacters: ['.', ':', '{', '$'],
       },
       semanticTokensProvider: {
         documentSelector: null,
@@ -74,12 +74,16 @@ connection.onInitialized(() => {
 });
 
 documents.onDidChangeContent((change) =>
-  lintDocument(change, (diagnostics: Diagnostic[]) => {
-    void connection.sendDiagnostics({
-      uri: change.document.uri,
-      diagnostics,
-    });
-  }),
+  lintDocument(
+    change,
+    (diagnostics: Diagnostic[]) => {
+      void connection.sendDiagnostics({
+        uri: change.document.uri,
+        diagnostics,
+      });
+    },
+    neo4jSchemaPoller,
+  ),
 );
 
 // Trigger the syntax colouring
@@ -88,24 +92,24 @@ connection.languages.semanticTokens.on(
 );
 
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents, neo4jSdk));
+connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents, neo4jSdk));
+connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { neo4j: Neo4jSettings } }) => {
-    neo4jSdk.disconnect();
+    neo4jSchemaPoller.disconnect();
 
     const neo4jConfig = params.settings.neo4j;
     if (
-      neo4jSdk.connection === undefined &&
+      neo4jSchemaPoller.connection === undefined &&
       neo4jConfig.connect &&
       neo4jConfig.password &&
-      neo4jConfig.URL &&
+      neo4jConfig.connectURL &&
       neo4jConfig.user
     ) {
-      void neo4jSdk.persistentConnect(
-        neo4jConfig.URL,
+      void neo4jSchemaPoller.persistentConnect(
+        neo4jConfig.connectURL,
         {
           username: neo4jConfig.user,
           password: neo4jConfig.password,

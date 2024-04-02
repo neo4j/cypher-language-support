@@ -1,15 +1,5 @@
 import type { QueryConfig, ResultSummary } from 'neo4j-driver';
 
-export type ReturnDescription = {
-  name: string;
-  description: string;
-  type: Neo4jStringType;
-};
-
-// we could parse this string for better types in the future
-export type Neo4jStringType = string;
-export type ArgumentDescription = ReturnDescription & { default?: string };
-
 export type DbType = 'system' | 'standard' | 'composite';
 
 export type QueryType =

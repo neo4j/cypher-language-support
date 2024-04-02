@@ -176,6 +176,22 @@ export function splitIntoStatements(
   return result;
 }
 
+export function findPreviousNonSpace(
+  tokens: Token[],
+  index: number,
+): Token | undefined {
+  let i = index;
+  while (i > 0) {
+    const token = tokens[--i];
+
+    if (token.type !== CypherParser.SPACE) {
+      return token;
+    }
+  }
+
+  return undefined;
+}
+
 export const rulesDefiningVariables = [
   CypherParser.RULE_returnItem,
   CypherParser.RULE_unwindClause,
@@ -184,10 +200,7 @@ export const rulesDefiningVariables = [
   CypherParser.RULE_foreachClause,
   CypherParser.RULE_loadCSVClause,
   CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_allExpression,
-  CypherParser.RULE_anyExpression,
-  CypherParser.RULE_noneExpression,
-  CypherParser.RULE_singleExpression,
+  CypherParser.RULE_listItemsPredicate,
   CypherParser.RULE_listComprehension,
 ];
 
