@@ -7,12 +7,11 @@
       "outputMode": "new-only"
     },
     "@neo4j-cypher/language-support#build": {
-      "outputs": ["src/generated-parser/**", "dist/**"]
+      "outputs": ["src/generated-parser/**", "dist/**"],
+      "dependsOn": ["antlr4#build", "antlr4-c3#build"]
     },
-    "@neo4j-cypher/react-codemirror-playground#dev": {
-      "outputs": [],
-      "dependsOn": ["^build"],
-      "persistent": true
+    "antlr4-c3#build": {
+      "dependsOn": ["antlr4#build"]
     },
     "clean": {
       "cache": false
@@ -22,24 +21,18 @@
     },
     "test": {
       "cache": false,
+      "persistent": true,
+      "dependsOn": ["build"]
+    },
+    "test:e2e": {
+      "cache": false,
+      "persistent": false,
+      "dependsOn": ["build"]
+    },
+    "@neo4j-cypher/react-codemirror-playground#dev": {
+      "outputs": [],
+      "dependsOn": ["^build"],
       "persistent": true
-    },
-    "@neo4j-cypher/react-codemirror#test:e2e": {
-      "cache": false,
-      "persistent": false,
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
-    },
-    "@neo4j-cypher/react-codemirror-playground#build": {
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
-    },
-    "neo4j-for-vscode#build": {
-      "persistent": false,
-      "dependsOn": ["@neo4j-cypher/language-server#build"]
-    },
-    "neo4j-for-vscode#test:e2e": {
-      "cache": false,
-      "persistent": false,
-      "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]
     },
     "benchmark": {
       "cache": false
