@@ -216,7 +216,7 @@ describe('snippet completions', () => {
     });
   });
 
-  test('typing snippet trigger character should not open completions automatically in expression..', () => {
+  test('typing snippet trigger character should not open completions automatically in expression..., () => {
     testCompletions({
       query: 'RETURN (1)',
       assertEmpty: true,
