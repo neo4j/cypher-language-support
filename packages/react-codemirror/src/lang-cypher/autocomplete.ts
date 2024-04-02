@@ -1,4 +1,4 @@
-import { CompletionSource } from '@codemirror/autocomplete';
+import { CompletionSource, snippet } from '@codemirror/autocomplete';
 import { autocomplete } from '@neo4j-cypher/language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
@@ -28,7 +28,7 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
     [CompletionItemKind.EnumMember]: 'EnumMember',
     [CompletionItemKind.Constant]: 'Constant',
     [CompletionItemKind.Struct]: 'Struct',
-    // we're missuing the enum here as there is no `Console` kind in the predefined list
+    // we're miss-using the enum here as there is no `Console` kind in the predefined list
     [CompletionItemKind.Event]: 'Console',
     [CompletionItemKind.Operator]: 'Operator',
     [CompletionItemKind.TypeParameter]: 'TypeParameter',
@@ -41,7 +41,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
 
-    const triggerCharacters = ['.', ':', '{', '$'];
+    const triggerCharacters = ['.', ':', '{', '$', ')'];
     const lastCharacter = textUntilCursor.slice(-1);
 
     const lastWord = context.matchBefore(/\w*/);
@@ -58,13 +58,24 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(textUntilCursor, config.schema ?? {});
+    const options = autocomplete(
+      textUntilCursor,
+      config.schema ?? {},
+      undefined,
+      context.explicit,
+    );
 
     return {
       from: context.matchBefore(/(\w|\$)*$/).from,
       options: options.map((o) => ({
         label: o.label,
         type: completionKindToCodemirrorIcon(o.kind),
+        apply:
+          o.kind === CompletionItemKind.Snippet
+            ? // codemirror requires an empty snippet space to be able to tab out of the completion
+              snippet((o.insertText ?? o.label) + '${}')
+            : undefined,
+        detail: o.detail,
       })),
     };
   };

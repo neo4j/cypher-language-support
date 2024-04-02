@@ -4,6 +4,7 @@ import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItem,
   CompletionItemKind,
+  InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
@@ -300,6 +301,7 @@ function calculateNamespacePrefix(
 export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
+  manualTrigger = false,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
@@ -319,10 +321,10 @@ export function completionCoreCompletion(
   }
 
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
-  // The identfier is finished when the last token is a SPACE or dot etc. etc.
+  // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
   // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
-  // When an identifer overlaps with a keyword, it's no longer treates as an identifier (although it's a valid identifier)
+  // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1]?.type;
   if (
@@ -340,6 +342,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_parameter,
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
+    CypherParser.RULE_leftArrow,
     // this rule is used for usernames and roles.
     CypherParser.RULE_symbolicNameOrStringParameter,
 
@@ -486,9 +489,49 @@ export function completionCoreCompletion(
         return [{ label: 'list', kind: CompletionItemKind.Event }];
       }
 
+      if (ruleNumber === CypherParser.RULE_leftArrow) {
+        return [
+          {
+            label: '-[]->()',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '-[${1: }]->(${2: })',
+            detail: 'path template',
+            // vscode does not call the completion provider for every single character
+            // after the second character is typed (i.e) `MATCH ()-[` the completion is no longer valid
+            // it'd insert `MATCH ()-[[]->()` which is not valid. Hence we filter it out by using the filterText
+            filterText: '',
+          },
+          {
+            label: '-[]-()',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '-[${1: }]-(${2: })',
+            detail: 'path template',
+            filterText: '',
+          },
+          {
+            label: '<-[]-()',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '<-[${1: }]-(${2: })',
+            detail: 'path template',
+            filterText: '',
+          },
+        ];
+      }
+
       return [];
     },
   );
+
+  // if the completion was automatically triggered by a snippet trigger character
+  // we should only return snippet completions
+  if (CypherLexer.RPAREN === previousToken && !manualTrigger) {
+    return ruleCompletions.filter(
+      (completion) => completion.kind === CompletionItemKind.Snippet,
+    );
+  }
 
   return [
     ...ruleCompletions,
