@@ -487,6 +487,14 @@ export function completionCoreCompletion(
             filterText: '',
           },
           {
+            label: '-[]-()',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '-[${1: }]-(${2: })',
+            detail: 'path template',
+            filterText: '',
+          },
+          {
             label: '<-[]-()',
             kind: CompletionItemKind.Snippet,
             insertTextFormat: InsertTextFormat.Snippet,
