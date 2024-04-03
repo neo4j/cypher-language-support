@@ -55,7 +55,6 @@
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
     "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",
-    "watch": "tsc -b -w",
     "test": "jest"
   },
   "devDependencies": {
