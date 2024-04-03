@@ -1,6 +1,7 @@
 import {
+  CompletionParams,
+  CompletionTriggerKind,
   Position,
-  TextDocumentPositionParams,
   TextDocuments,
 } from 'vscode-languageserver/node';
 
@@ -12,17 +13,18 @@ export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
   neo4j: Neo4jSchemaPoller,
 ) {
-  return (textDocumentPosition: TextDocumentPositionParams) => {
-    const textDocument = documents.get(textDocumentPosition.textDocument.uri);
+  return (completionParams: CompletionParams) => {
+    const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 
-    const position: Position = textDocumentPosition.position;
+    const position: Position = completionParams.position;
     const offset = textDocument.offsetAt(position);
 
     return autocomplete(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
       offset,
+      completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
     );
   };
 }
