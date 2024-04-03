@@ -691,4 +691,6 @@ function completeSymbolicName({
       })),
     ];
   }
+
+  return [];
 }
