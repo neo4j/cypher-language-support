@@ -14,6 +14,12 @@
       "dependsOn": ["antlr4#build"],
       "outputs": ["dist/**"]
     },
+    "@neo4j-cypher/language-server#build": {
+      "dependsOn": [
+        "@neo4j-cypher/language-support#build",
+        "@neo4j-cypher/schema-poller#build"
+      ]
+    },
     "clean": {
       "cache": false
     },
