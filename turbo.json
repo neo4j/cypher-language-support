@@ -11,12 +11,10 @@
       "dependsOn": ["antlr4#build", "antlr4-c3#build"]
     },
     "antlr4-c3#build": {
-      "dependsOn": ["antlr4#build"]
+      "dependsOn": ["antlr4#build"],
+      "outputs": ["dist/**"]
     },
     "clean": {
-      "cache": false
-    },
-    "watch": {
       "cache": false
     },
     "test": {
