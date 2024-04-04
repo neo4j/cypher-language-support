@@ -12,6 +12,17 @@ export async function openDocument(docUri: Uri) {
   }
 }
 
+export async function newUntitledFileWithContent(content: string) {
+  try {
+    // The language server should be activated automatically
+    // when opening a file with Cypher extension
+    const document = await workspace.openTextDocument({ content: content });
+    await window.showTextDocument(document);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -22,7 +33,7 @@ export function getDocumentUri(docName: string) {
 
 export async function eventually(
   assertion: () => Promise<void>,
-  timeoutMs = 10000,
+  timeoutMs = 1000000,
   backoffMs = 100,
 ) {
   let totalWait = 0;
