@@ -17,5 +17,11 @@
     <extensions defaultExtensionNs="com.intellij">
         <platform.lsp.serverSupportProvider
                 implementation="org.neo4j.intellij.lsp.cypherlspsupport.CypherLspServerSupportProvider"/>
+        <fileType
+                name="Cypher File"
+                implementationClass="org.neo4j.intellij.lsp.language.CypherFileType"
+                fieldName="INSTANCE"
+                language="Cypher"
+                extensions="cypher"/>
     </extensions>
 </idea-plugin>
