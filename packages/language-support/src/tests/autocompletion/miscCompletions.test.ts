@@ -1,5 +1,8 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { testCompletions } from './completionAssertionHelpers';
+import {
+  testCompletions,
+  testCompletionsExactly,
+} from './completionAssertionHelpers';
 
 describe('Misc auto-completion', () => {
   test('Correctly completes empty statement', () => {
@@ -187,6 +190,20 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       query,
       expected: [
         { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
+      ],
+    });
+  });
+
+  test("doesn't give invalid/undefined completion after CREATE INDEX", () => {
+    // CREATE INDEX uses symbolic name but has no valid completions
+    // there was a bug that allowed this situation to lead to an invalid completion
+    // hence this test
+    testCompletionsExactly({
+      query: 'CREATE INDEX ',
+      expected: [
+        { kind: 14, label: 'FOR' },
+        { kind: 14, label: 'IF NOT EXISTS FOR' },
+        { kind: 14, label: 'ON' },
       ],
     });
   });
