@@ -1,9 +1,14 @@
 import {
   acceptCompletion,
   autocompletion,
+  clearSnippet,
   closeBrackets,
   closeBracketsKeymap,
+  closeCompletion,
   completionKeymap,
+  nextSnippetField,
+  prevSnippetField,
+  snippetKeymap,
 } from '@codemirror/autocomplete';
 import {
   defaultKeymap,
@@ -22,11 +27,13 @@ import {
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { EditorState, Extension, StateCommand } from '@codemirror/state';
 import {
+  Command,
   crosshairCursor,
   drawSelection,
   dropCursor,
   EditorView,
   highlightSpecialChars,
+  KeyBinding,
   keymap,
   rectangularSelection,
 } from '@codemirror/view';
@@ -55,7 +62,7 @@ const insertTab: StateCommand = (cmd) => {
 };
 
 export const basicNeo4jSetup = (): Extension[] => {
-  const keymaps = [
+  const keymaps: KeyBinding[] = [
     closeBracketsKeymap,
     defaultKeymap,
     searchKeymap,
@@ -125,5 +132,48 @@ export const basicNeo4jSetup = (): Extension[] => {
 
   extensions.push(keymap.of(keymaps));
 
+  extensions.push(
+    snippetKeymap.of([
+      {
+        key: 'Tab',
+        run: acceptCompletionOrGotoNextSnippet,
+        shift: acceptCompletionOrGotoPrevSnippet,
+      },
+      { key: 'Escape', run: closeCompletionsOrClearSnippets },
+    ]),
+  );
+
   return extensions;
+};
+
+// The logic to check if there's a completion open is surprisingly complex
+// https://github.com/codemirror/autocomplete/blob/5ad2ebc861f2f61cdc943fc087a5bfb756a7d0fa/src/view.ts#L31
+// For example it respects an interaction delay, so we can't just check if the completion is open
+// instead we just run the acceptCompletion command which returns true if a completion was accepted
+// in that case we know that we shouldn't move to the next snippet field
+const acceptCompletionOrGotoNextSnippet: Command = (view: EditorView) => {
+  const didCompletion = acceptCompletion(view);
+  if (didCompletion) {
+    return true;
+  }
+
+  return nextSnippetField(view);
+};
+
+const acceptCompletionOrGotoPrevSnippet: Command = (view: EditorView) => {
+  const didCompletion = acceptCompletion(view);
+  if (didCompletion) {
+    return true;
+  }
+
+  return prevSnippetField(view);
+};
+
+const closeCompletionsOrClearSnippets: Command = (view: EditorView) => {
+  const closedCompletions = closeCompletion(view);
+  if (closedCompletions) {
+    return true;
+  }
+
+  return clearSnippet(view);
 };

@@ -6,7 +6,8 @@
       "command": "npm run dev-codemirror",
       "name": "Codemirror Playground",
       "request": "launch",
-      "type": "node-terminal"
+      "type": "node-terminal",
+      "preLaunchTask": "npm: watch"
     },
     {
       "type": "extensionHost",
@@ -22,7 +23,8 @@
         "${workspaceRoot}/packages/schema-poller/**/*.js"
       ],
       "autoAttachChildProcesses": true,
-      "sourceMaps": true
+      "sourceMaps": true,
+      "preLaunchTask": "npm: build-vscode"
     }
   ],
   "type": "pwa-node",

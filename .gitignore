@@ -18,3 +18,4 @@ generated
 *.npmrc
 benchmarks.txt
 .idea/
+vite.config.ts.timestamp*
