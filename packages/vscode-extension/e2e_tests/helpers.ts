@@ -14,8 +14,7 @@ export async function openDocument(docUri: Uri) {
 
 export async function newUntitledFileWithContent(content: string) {
   try {
-    // The language server should be activated automatically
-    // when opening a file with Cypher extension
+    // The language server will not be activated automatically
     const document = await workspace.openTextDocument({ content: content });
     await window.showTextDocument(document);
   } catch (e) {
