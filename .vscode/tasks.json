@@ -15,15 +15,34 @@
       "type": "npm",
       "script": "watch",
       "isBackground": true,
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
       "presentation": {
         "panel": "dedicated",
         "reveal": "never"
       },
-      "problemMatcher": ["$tsc-watch"]
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.*)(npm ERR!)(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "turbo run build",
+          "endsPattern": "Time: "
+        }
+      }
+    },
+    {
+      "type": "npm",
+      "script": "build-vscode",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build-vscode",
+      "detail": "npm run build-vscode"
     }
   ]
 }

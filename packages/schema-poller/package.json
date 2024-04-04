@@ -33,7 +33,6 @@
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
-    "clean": "rm -rf dist",
-    "watch": "tsc -b -w"
+    "clean": "rm -rf dist"
   }
 }
