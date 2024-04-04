@@ -38,7 +38,7 @@ connection.onInitialize(() => {
         triggerCharacters: ['.', ':', '{', '$', ')'],
       },
       semanticTokensProvider: {
-        documentSelector: null,
+        documentSelector: [{ language: 'cypher' }],
         legend: syntaxColouringLegend,
         range: false,
         full: {
@@ -60,7 +60,7 @@ connection.onInitialized(() => {
   });
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
-    documentSelector: null,
+    documentSelector: [{ language: 'cypher' }],
     legend: syntaxColouringLegend,
     range: false,
     full: {
