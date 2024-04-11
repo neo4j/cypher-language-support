@@ -366,7 +366,10 @@ export class CypherEditor extends Component<
       });
     }
 
-    if (prevProps.lineNumbers !== this.props.lineNumbers) {
+    if (
+      prevProps.lineNumbers !== this.props.lineNumbers ||
+      prevProps.prompt !== this.props.prompt
+    ) {
       this.editorView.current.dispatch({
         effects: lineNumbersCompartment.reconfigure(
           this.props.lineNumbers
