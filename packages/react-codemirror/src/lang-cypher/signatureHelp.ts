@@ -63,21 +63,45 @@ function getSignatureHelpTooltip(
             strictSide: true,
             arrow: true,
             create: () => {
-              const div = document.createElement('div');
-              const methodName = document.createElement('div');
-              const argPlusDescription = document.createElement('div');
-              const separator = document.createElement('hr');
-              const lineBreak = document.createElement('br');
+              const dom = document.createElement('div');
+              /**
+               * we want
+               * methodName(arg: Type, arg2: Type2)
+               * and bolding on the current arg
+               *
+               * function description on the next line
+               * if description is really long, we want to wrap it
+               *
+               * todo verify we don't get any XSS here
+               */
 
-              div.append(
-                ...[methodName, separator, lineBreak, argPlusDescription],
+              const signatureLabel = document.createElement('div');
+              signatureLabel.appendChild(
+                document.createTextNode(`${signature.label}(`),
               );
-              div.className = 'cm-tooltip-signature-help';
 
-              methodName.innerText = signature.label;
-              argPlusDescription.innerText = doc;
+              parameters.forEach((param, index) => {
+                if (typeof param.documentation === 'string') {
+                  const span = document.createElement('span');
+                  span.appendChild(
+                    document.createTextNode(param.documentation),
+                  );
+                  if (index !== parameters.length - 1) {
+                    span.appendChild(document.createTextNode(', '));
+                  }
 
-              return { dom: div };
+                  if (index === activeParameter) {
+                    span.style.fontWeight = 'bold';
+                  }
+                  signatureLabel.appendChild(span);
+                }
+              });
+
+              signatureLabel.appendChild(document.createTextNode(')'));
+
+              dom.appendChild(signatureLabel);
+
+              return { dom };
             },
           },
         ];
