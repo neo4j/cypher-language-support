@@ -45,16 +45,7 @@ function getSignatureHelpTooltip(
       ) {
         const signature = signatures[activeSignature];
         const parameters = signature.parameters;
-        let doc = signature.documentation.toString();
-
-        if (
-          activeParameter >= 0 &&
-          activeParameter <
-            (signatures[activeSignature].parameters?.length ?? 0)
-        ) {
-          doc =
-            parameters[activeParameter].documentation.toString() + '\n\n' + doc;
-        }
+        const doc = signature.documentation.toString();
 
         result = [
           {
@@ -64,6 +55,10 @@ function getSignatureHelpTooltip(
             arrow: true,
             create: () => {
               const dom = document.createElement('div');
+              // TODO description?
+              // todo deprecations
+              // todo scroll
+              // TODO e2e tests
               /**
                * we want
                * methodName(arg: Type, arg2: Type2)
@@ -76,6 +71,7 @@ function getSignatureHelpTooltip(
                */
 
               const signatureLabel = document.createElement('div');
+              signatureLabel.style.padding = '5px';
               signatureLabel.appendChild(
                 document.createTextNode(`${signature.label}(`),
               );
@@ -100,6 +96,18 @@ function getSignatureHelpTooltip(
               signatureLabel.appendChild(document.createTextNode(')'));
 
               dom.appendChild(signatureLabel);
+
+              const separator = document.createElement('div');
+              separator.style.border = '1px solid #ccc';
+              // TODO, do this with class names?
+
+              dom.appendChild(separator);
+
+              const description = document.createElement('div');
+              description.style.padding = '5px';
+              description.appendChild(document.createTextNode(doc));
+
+              dom.appendChild(description);
 
               return { dom };
             },
