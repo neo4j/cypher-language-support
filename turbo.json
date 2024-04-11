@@ -2,56 +2,42 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "outputs": ["out/**", "dist/**"],
-      "dependsOn": ["^build"]
-    },
-    "clean": {
-      "cache": false
-    },
-    "watch": {
-      "cache": false
-    },
-    "test": {
-      "cache": false,
-      "persistent": true
-    },
-    "antlr4-c3#build": {
-      "dependsOn": ["antlr4#build"]
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"],
+      "outputMode": "new-only"
     },
     "@neo4j-cypher/language-support#build": {
+      "outputs": ["src/generated-parser/**", "dist/**"],
       "dependsOn": ["antlr4#build", "antlr4-c3#build"]
     },
-    "@neo4j-cypher/schema-poller#build": {
-      "dependsOn": ["@neo4j-cypher/language-support#build"]
+    "antlr4-c3#build": {
+      "dependsOn": ["antlr4#build"],
+      "outputs": ["dist/**"]
     },
     "@neo4j-cypher/language-server#build": {
       "dependsOn": [
         "@neo4j-cypher/language-support#build",
         "@neo4j-cypher/schema-poller#build"
-      ]
+      ],
+      "outputs": ["dist/**"]
     },
-    "@neo4j-cypher/react-codemirror#build": {
-      "dependsOn": ["@neo4j-cypher/language-support#build"]
+    "clean": {
+      "cache": false
     },
-    "@neo4j-cypher/react-codemirror#test:e2e": {
+    "test": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["build"]
+    },
+    "test:e2e": {
       "cache": false,
       "persistent": false,
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
-    },
-    "@neo4j-cypher/react-codemirror-playground#build": {
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
+      "dependsOn": ["build"]
     },
     "@neo4j-cypher/react-codemirror-playground#dev": {
-      "dependsOn": ["@neo4j-cypher/react-codemirror#build"]
-    },
-    "neo4j-cypher-vscode-extension#build": {
-      "persistent": false,
-      "dependsOn": ["@neo4j-cypher/language-server#build"]
-    },
-    "neo4j-cypher-vscode-extension#test:e2e": {
-      "cache": false,
-      "persistent": false,
-      "dependsOn": ["@neo4j-cypher/react-codemirror#test:e2e"]
+      "outputs": [],
+      "dependsOn": ["^build"],
+      "persistent": true
     },
     "benchmark": {
       "cache": false

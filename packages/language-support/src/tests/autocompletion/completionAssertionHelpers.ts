@@ -2,20 +2,44 @@ import { CompletionItem } from 'vscode-languageserver-types';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 
+export function testCompletionsExactly({
+  query,
+  offset = query.length,
+  dbSchema = {},
+  expected = [],
+}: {
+  query: string;
+  offset?: number;
+  dbSchema?: DbSchema;
+  expected?: CompletionItem[];
+}) {
+  const actualCompletionList = autocomplete(query, dbSchema, offset);
+  expect(actualCompletionList).toEqual(expected);
+}
+
 export function testCompletions({
   query,
+  offset = query.length,
   dbSchema = {},
   excluded = [],
   expected = [],
   assertEmpty = false,
+  manualTrigger = false,
 }: {
   query: string;
+  offset?: number;
   dbSchema?: DbSchema;
   excluded?: Partial<CompletionItem>[];
   expected?: CompletionItem[];
   assertEmpty?: boolean;
+  manualTrigger?: boolean;
 }) {
-  const actualCompletionList = autocomplete(query, dbSchema);
+  const actualCompletionList = autocomplete(
+    query,
+    dbSchema,
+    offset,
+    manualTrigger,
+  );
 
   if (assertEmpty) {
     expect(actualCompletionList).toEqual([]);

@@ -4,33 +4,56 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherParser, {
+import {
   ClauseContext,
+  default as CypherParser,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  StatementOrCommandContext,
   StatementsOrCommandsContext,
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
   findParent,
   findStopNode,
-  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
   rulesDefiningOrUsingVariables,
+  splitIntoStatements,
 } from './helpers';
 import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
 } from './syntaxValidation/syntaxValidationHelpers';
 
-export interface ParsingResult {
-  query: string;
+export interface ParsedStatement {
+  command: ParsedCommand;
   parser: CypherParser;
   tokens: Token[];
-  result: StatementsOrCommandsContext;
+  // A statement needs to be parsed with the .statements() rule because
+  // it's the one that tries to parse until the EOF
+  ctx: StatementsOrCommandsContext;
+  diagnostics: SyntaxDiagnostic[];
+  stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
+  collectedVariables: string[];
+}
+
+export interface ParsingResult {
+  query: string;
+  statementsParsing: ParsedStatement[];
+}
+
+export interface ParsingScaffolding {
+  query: string;
+  statementsScaffolding: StatementParsingScaffolding[];
+}
+
+export interface StatementParsingScaffolding {
+  parser: CypherParser;
+  tokens: Token[];
 }
 
 export enum LabelType {
@@ -68,52 +91,79 @@ export type LabelOrRelType = {
   };
 };
 
-export interface EnrichedParsingResult extends ParsingResult {
-  diagnostics: SyntaxDiagnostic[];
-  stopNode: ParserRuleContext;
-  collectedLabelOrRelTypes: LabelOrRelType[];
-  collectedVariables: string[];
-  collectedCommands: ParsedCommand[];
-}
-
-export interface ParsingScaffolding {
-  query: string;
-  parser: CypherParser;
-  tokenStream: CommonTokenStream;
-}
-
 export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  parser.removeErrorListeners();
+  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
+
+  const statementsScaffolding: StatementParsingScaffolding[] =
+    stmTokenStreams.map((t) => {
+      const tokens = [...t.tokens];
+      const parser = new CypherParser(t);
+      parser.removeErrorListeners();
+
+      return {
+        parser: parser,
+        tokens: tokens,
+      };
+    });
 
   return {
     query: query,
-    parser: parser,
-    tokenStream: tokenStream,
+    statementsScaffolding: statementsScaffolding,
   };
 }
 
-export function parse(cypher: string) {
-  const parser = createParsingScaffolding(cypher).parser;
-  return parser.statementsOrCommands();
+export function parse(query: string): StatementOrCommandContext[] {
+  const statementScaffolding =
+    createParsingScaffolding(query).statementsScaffolding;
+  const result = statementScaffolding.map((statement) =>
+    statement.parser.statementOrCommand(),
+  );
+
+  return result;
 }
 
-export function createParsingResult(
-  parsingScaffolding: ParsingScaffolding,
-): ParsingResult {
-  const query = parsingScaffolding.query;
-  const parser = parsingScaffolding.parser;
-  const tokenStream = parsingScaffolding.tokenStream;
-  const result = parser.statementsOrCommands();
+export function createParsingResult(query: string): ParsingResult {
+  const parsingScaffolding = createParsingScaffolding(query);
+
+  const results: ParsedStatement[] =
+    parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
+      const { parser, tokens } = statementScaffolding;
+      const labelsCollector = new LabelAndRelTypesCollector();
+      const variableFinder = new VariableCollector();
+      const errorListener = new SyntaxErrorsListener();
+      parser._parseListeners = [labelsCollector, variableFinder];
+      parser.addErrorListener(errorListener);
+      const ctx = parser.statementsOrCommands();
+      // The statement is empty if we cannot find anything that is not EOF or a space
+      const isEmptyStatement =
+        tokens.find(
+          (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
+        ) === undefined;
+      const diagnostics = isEmptyStatement ? [] : errorListener.errors;
+      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
+
+      if (!consoleCommandEnabled()) {
+        diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
+      }
+
+      return {
+        command: collectedCommand,
+        parser: parser,
+        tokens: tokens,
+        diagnostics: diagnostics,
+        ctx: ctx,
+        stopNode: findStopNode(ctx),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+        collectedVariables: variableFinder.variables,
+      };
+    });
 
   const parsingResult: ParsingResult = {
     query: query,
-    parser: parser,
-    tokens: getTokens(tokenStream),
-    result: result,
+    statementsParsing: results,
   };
 
   return parsingResult;
@@ -224,7 +274,7 @@ type RuleTokens = {
 
 export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
-  | { type: 'cypher'; query: string }
+  | { type: 'cypher'; statement: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
   | { type: 'clear' }
   | { type: 'history' }
@@ -238,17 +288,27 @@ export type ParsedCommandNoPosition =
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
-function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
-  return stmts.statementOrCommand_list().map((stmt) => {
+function parseToCommand(
+  stmts: StatementsOrCommandsContext,
+  isEmptyStatement: boolean,
+): ParsedCommand {
+  const stmt = stmts.statementOrCommand_list().at(0);
+
+  if (stmt) {
     const { start, stop } = stmt;
 
-    const cypherStmt = stmt.statement();
+    const cypherStmt = stmt.preparsedStatement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
-      const inputstream = cypherStmt.start.getInputStream();
-      const query = inputstream.getText(start.start, stop.stop);
+      const inputstream = start.getInputStream();
+      const statement = inputstream.getText(start.start, stop.stop);
 
-      return { type: 'cypher', query, start, stop };
+      return { type: 'cypher', statement, start, stop };
+    }
+
+    if (isEmptyStatement) {
+      const { start } = stmts;
+      return { type: 'cypher', statement: '', start: start, stop: start };
     }
 
     const consoleCmd = stmt.consoleCommand();
@@ -285,7 +345,7 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            ?.symbolicNameString_list()
+            ?.propertyKeyName_list()
             .map((name) => name.getText());
           const expressions = cypherMap
             ?.expression_list()
@@ -330,7 +390,8 @@ function parseToCommands(stmts: StatementsOrCommandsContext): ParsedCommand[] {
       return { type: 'parse-error', start, stop };
     }
     return { type: 'parse-error', start, stop };
-  });
+  }
+  return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }
 
 function translateTokensToRange(
@@ -348,8 +409,8 @@ function translateTokensToRange(
     },
   };
 }
-function errorOnNonCypherCommands(commands: ParsedCommand[]) {
-  return commands
+function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
+  return [command]
     .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
@@ -361,48 +422,17 @@ function errorOnNonCypherCommands(commands: ParsedCommand[]) {
 }
 
 class ParserWrapper {
-  parsingResult?: EnrichedParsingResult;
+  parsingResult?: ParsingResult;
 
-  parse(query: string): EnrichedParsingResult {
+  parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingScaffolding = createParsingScaffolding(query);
-      const parser = parsingScaffolding.parser;
-      const tokenStream = parsingScaffolding.tokenStream;
-      const errorListener = new SyntaxErrorsListener();
-      parser.addErrorListener(errorListener);
+      const parsingResult = createParsingResult(query);
 
-      const labelsCollector = new LabelAndRelTypesCollector();
-      const variableFinder = new VariableCollector();
-      parser._parseListeners = [labelsCollector, variableFinder];
-
-      const result = createParsingResult(parsingScaffolding).result;
-
-      const diagnostics = errorListener.errors;
-
-      const collectedCommands = parseToCommands(result);
-
-      if (!consoleCommandEnabled()) {
-        diagnostics.push(...errorOnNonCypherCommands(collectedCommands));
-      }
-
-      const parsingResult: EnrichedParsingResult = {
-        query: query,
-        parser: parser,
-        tokens: getTokens(tokenStream),
-        diagnostics,
-        result: result,
-        stopNode: findStopNode(result),
-        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
-        collectedVariables: variableFinder.variables,
-        collectedCommands,
-      };
-
-      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }

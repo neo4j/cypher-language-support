@@ -15,6 +15,7 @@ Occasionally, we might also have logistical, commercial, or legal reasons why we
 Pre-requisites:
 
 - Node.js LTS (18.x)
+- [Git LFS](https://git-lfs.github.com/) easiest to install via package manager (e.g. `brew install git-lfs` on macOS)
 - [antlr4-tools](https://github.com/antlr/antlr4-tools) easiest to install with `pip install antlr4-tools` (python3 required)
 
 In the root folder of the project run:
@@ -26,4 +27,4 @@ From here you can start the `react-codemirror-playground` with:
 
 `npm run dev:codemirror`
 
-To run the VSCode extension, see the `vscode-extension` [README.md](./packages/vscode-extension/).
+To run the VS Code extension, choose `VSCode Playground` in the `Run & Debug` menu in VS Code.

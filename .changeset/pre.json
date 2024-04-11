@@ -7,7 +7,6 @@
     "@neo4j-cypher/react-codemirror": "1.0.0",
     "@neo4j-cypher/react-codemirror-playground": "1.0.0",
     "@neo4j-cypher/schema-poller": "1.0.0",
-    "neo4j-cypher-vscode-extension": "1.0.0",
     "antlr4": "4.13.1",
     "antlr4-c3": "3.0.1"
   },
@@ -16,10 +15,12 @@
     "fuzzy-rice-train",
     "hungry-beans-eat",
     "nervous-rabbits-greet",
+    "nice-elephants-prove",
     "pink-chefs-trade",
     "purple-buckets-applaud",
     "purple-suns-applaud",
     "quick-berries-report",
+    "silver-students-wait",
     "stale-donkeys-grow",
     "twelve-cycles-call",
     "violet-peas-float"

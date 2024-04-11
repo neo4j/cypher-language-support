@@ -13,8 +13,9 @@ import CypherParser, {
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
-import { isDefined } from './helpers';
+import { findCaret, isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
+import { Neo4jFunction, Neo4jProcedure } from './types';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -32,13 +33,28 @@ interface ParsedMethod {
   methodType: MethodType;
 }
 
+export function toSignatureInformation(
+  curr: Neo4jFunction | Neo4jProcedure,
+): SignatureInformation {
+  const { name, argumentDescription, description } = curr;
+
+  return SignatureInformation.create(
+    name,
+    description,
+    ...argumentDescription.map((arg) => ({
+      label: arg.name,
+      documentation: arg.description,
+    })),
+  );
+}
+
 function toSignatureHelp(
-  methodSignatures: Record<string, SignatureInformation>,
+  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure> = {},
   parsedMethod: ParsedMethod,
-) {
+): SignatureHelp {
   const methodName = parsedMethod.methodName;
   const method = methodSignatures[methodName];
-  const signatures = method ? [method] : [];
+  const signatures = method ? [toSignatureInformation(method)] : [];
 
   const signatureHelp: SignatureHelp = {
     signatures: signatures,
@@ -133,52 +149,44 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
-function findCaretToken(tokens: Token[], caretPosition: number): Token {
-  let i = 0;
-  let result: Token;
-  let keepLooking = true;
-
-  while (i < tokens.length && keepLooking) {
-    const currentToken = tokens[i];
-    keepLooking = currentToken.start < caretPosition;
-
-    if (currentToken.channel === 0 && keepLooking) {
-      result = currentToken;
-    }
-
-    i++;
-  }
-
-  return result;
-}
-
 export function signatureHelp(
-  fullQuery: string,
+  query: string,
   dbSchema: DbSchema,
-  caretPosition: number,
+  caretPosition: number = query.length,
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
+  /* We need the token immediately before the caret
+  
+      CALL something(
+                     ^
+     because in this case what gives us information on where we are 
+     in the procedure is not the space at the caret, but the opening (                
+  */
+  const prevCaretPosition = caretPosition - 1;
 
-  if (caretPosition > 0) {
-    const parserResult = parserWrapper.parse(fullQuery);
+  if (prevCaretPosition > 0) {
+    const parserResult = parserWrapper.parse(query);
+    const caret = findCaret(parserResult, prevCaretPosition);
 
-    const caretToken = findCaretToken(parserResult.tokens, caretPosition);
-    const signatureHelper = new SignatureHelper(
-      parserResult.tokens,
-      caretToken,
-    );
+    if (caret) {
+      const statement = caret.statement;
 
-    ParseTreeWalker.DEFAULT.walk(signatureHelper, parserResult.result);
-    const method = signatureHelper.result;
+      const signatureHelper = new SignatureHelper(
+        statement.tokens,
+        caret.token,
+      );
 
-    if (method !== undefined) {
-      if (method.methodType === MethodType.function) {
-        result = toSignatureHelp(dbSchema.functionSignatures, method);
-      } else {
-        result = toSignatureHelp(dbSchema.procedureSignatures, method);
+      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+      const method = signatureHelper.result;
+
+      if (method !== undefined) {
+        if (method.methodType === MethodType.function) {
+          result = toSignatureHelp(dbSchema.functions, method);
+        } else {
+          result = toSignatureHelp(dbSchema.procedures, method);
+        }
       }
     }
   }
-
   return result;
 }

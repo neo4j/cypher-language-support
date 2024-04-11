@@ -5,28 +5,37 @@ import {
   setConsoleCommandsEnabled,
 } from '../parserWrapper';
 import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
+import { testData } from './testData';
 
 function expectParsedCommands(
   query: string,
   toEqual: ParsedCommandNoPosition[],
 ) {
   const result = parserWrapper.parse(query);
-  expect(result.diagnostics).toEqual([]);
   expect(
-    result.collectedCommands.map((cmd) => {
-      const copy = { ...cmd };
-      // These data structures are recursive, so .toEqual doesn't work.
-      // We test the positions work properly in with the error position tests
-      delete copy.start;
-      delete copy.stop;
-      return copy;
-    }),
+    result.statementsParsing.flatMap((statement) => statement.diagnostics),
+  ).toEqual([]);
+  expect(
+    result.statementsParsing
+      .flatMap((statement) => [statement.command])
+      .map((cmd) => {
+        const copy = { ...cmd };
+        // These data structures are recursive, so .toEqual doesn't work.
+        // We test the positions work properly in with the error position tests
+        delete copy.start;
+        delete copy.stop;
+        return copy;
+      }),
   ).toEqual(toEqual);
 }
 
 function expectErrorMessage(query: string, msg: string) {
   const result = parserWrapper.parse(query);
-  expect(result.diagnostics.map((e) => e.message)).toContain(msg);
+  expect(
+    result.statementsParsing
+      .flatMap((statement) => statement.diagnostics)
+      .map((e) => e.message),
+  ).toContain(msg);
 }
 
 describe('sanity checks', () => {
@@ -99,7 +108,10 @@ describe('sanity checks', () => {
   });
 
   test('accepts trailing ; ', () => {
-    expectParsedCommands(':history;', [{ type: 'history' }]);
+    expectParsedCommands(':history;', [
+      { type: 'history' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('parses multiple cmds', () => {
@@ -111,11 +123,17 @@ describe('sanity checks', () => {
   });
 
   test('accepts upper case', () => {
-    expectParsedCommands(':HISTORY;', [{ type: 'history' }]);
+    expectParsedCommands(':HISTORY;', [
+      { type: 'history' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('accepts mixed case', () => {
-    expectParsedCommands(':cLeaR;', [{ type: 'clear' }]);
+    expectParsedCommands(':cLeaR;', [
+      { type: 'clear' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('handles misspelled or non-existing command', () => {
@@ -226,13 +244,19 @@ describe('parameters', () => {
 
   test('autocompletes expressions', () => {
     const arrowCompletions = autocomplete(':param foo => ', {
-      functionSignatures: {
-        'duration.inSeconds': { label: 'duration.inSeconds' },
+      functions: {
+        'duration.inSeconds': {
+          ...testData.emptyFunction,
+          name: 'duration.inSeconds',
+        },
       },
     });
     const mapCompletions = autocomplete(':param {a:  ', {
-      functionSignatures: {
-        'duration.inSeconds': { label: 'duration.inSeconds' },
+      functions: {
+        'duration.inSeconds': {
+          ...testData.emptyFunction,
+          name: 'duration.inSeconds',
+        },
       },
     });
 
@@ -259,10 +283,13 @@ describe('parameters', () => {
     expectErrorMessage(':param RETURN', "Expected '='");
     expectErrorMessage(':param RETURN b', "Expected '='");
     expectErrorMessage(':param b => ', 'Expected an expression');
-    expectErrorMessage(':param {', "Expected '}' or an identifier");
+    expectErrorMessage(':param {', "Expected any of '}', ',' or an identifier");
     expectErrorMessage(':param {x}', "Expected ':'");
     expectErrorMessage(':param {x: ', 'Expected an expression');
-    expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
+    expectErrorMessage(
+      ':param {: 4} ',
+      "Expected any of '}', ',' or an identifier",
+    );
   });
 
   test('highlights :params properly', () => {
@@ -396,7 +423,7 @@ describe('parameters', () => {
         length: 1,
         position: { line: 0, startCharacter: 9, startOffset: 9 },
         token: 'd',
-        tokenType: 'symbolicName',
+        tokenType: 'property',
       },
       {
         length: 1,
@@ -430,21 +457,21 @@ describe('command parser also handles cypher', () => {
   });
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [
-      { query: 'MATCH (n) RETURN n', type: 'cypher' },
+      { statement: 'MATCH (n) RETURN n', type: 'cypher' },
     ]);
   });
 
   test('preserves original whitespace', () => {
     expectParsedCommands('MATCH\n(n)\nRETURN n', [
-      { query: 'MATCH\n(n)\nRETURN n', type: 'cypher' },
+      { statement: 'MATCH\n(n)\nRETURN n', type: 'cypher' },
     ]);
   });
 
   test('can split cypher into statements', () => {
     expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
-      { query: 'CALL db.info()', type: 'cypher' },
-      { query: 'RETURN 123', type: 'cypher' },
-      { query: 'SHOW DATABASES', type: 'cypher' },
+      { statement: 'CALL db.info()', type: 'cypher' },
+      { statement: 'RETURN 123', type: 'cypher' },
+      { statement: 'SHOW DATABASES', type: 'cypher' },
     ]);
   });
 
@@ -457,9 +484,10 @@ describe('command parser also handles cypher', () => {
           parameters: [{ name: 'x', expression: '23' }],
           type: 'set-parameters',
         },
-        { query: 'RETURN $x', type: 'cypher' },
+        { statement: 'RETURN $x', type: 'cypher' },
         { database: 'system', type: 'use' },
-        { query: 'SHOW DATABASES', type: 'cypher' },
+        { statement: 'SHOW DATABASES', type: 'cypher' },
+        { statement: '', type: 'cypher' },
       ],
     );
   });

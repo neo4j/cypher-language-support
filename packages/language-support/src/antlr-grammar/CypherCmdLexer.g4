@@ -1,6 +1,6 @@
 lexer grammar CypherCmdLexer;
 
-import CypherLexer;
+import CypherPreLexer;
 
 PARAM : P A R A M S?;
 

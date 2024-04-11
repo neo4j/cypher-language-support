@@ -55,7 +55,13 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
 
     // we want to avoid the ANTLR4 reparse in the worker thread, this should hit our main thread cache
     const parse = parserWrapper.parse(query);
-    if (parse.diagnostics.length !== 0) {
+    const statements = parse.statementsParsing;
+
+    const anySyntacticError =
+      statements.filter((statement) => statement.diagnostics.length !== 0)
+        .length > 0;
+
+    if (anySyntacticError) {
       return [];
     }
 
@@ -65,7 +71,10 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.validateSemantics(query);
+      lastSemanticJob = proxyWorker.validateSemantics(
+        query,
+        config.schema ?? {},
+      );
       const result = await lastSemanticJob;
 
       return result.map((diag) => {

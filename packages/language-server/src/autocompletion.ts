@@ -1,10 +1,9 @@
 import {
+  CompletionParams,
+  CompletionTriggerKind,
   Position,
-  TextDocumentPositionParams,
   TextDocuments,
 } from 'vscode-languageserver/node';
-
-import { Range } from 'vscode-languageserver-types';
 
 import { autocomplete } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
@@ -14,21 +13,18 @@ export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
   neo4j: Neo4jSchemaPoller,
 ) {
-  return (textDocumentPosition: TextDocumentPositionParams) => {
-    const textDocument = documents.get(textDocumentPosition.textDocument.uri);
+  return (completionParams: CompletionParams) => {
+    const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 
-    const position: Position = textDocumentPosition.position;
-    const range: Range = {
-      // TODO Nacho: We are parsing from the begining of the file.
-      // Do we need to parse from the begining of the current query?
-      start: Position.create(0, 0),
-      end: position,
-    };
+    const position: Position = completionParams.position;
+    const offset = textDocument.offsetAt(position);
 
     return autocomplete(
-      textDocument.getText(range),
+      textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
+      offset,
+      completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
     );
   };
 }

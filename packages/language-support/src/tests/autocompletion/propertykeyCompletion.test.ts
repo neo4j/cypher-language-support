@@ -1,11 +1,17 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
+import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {
     propertyKeys: ['name', 'type', 'level'],
-    functionSignatures: { 'apoc.util.sleep': { label: 'apoc.util.sleep' } },
+    functions: {
+      'apoc.util.sleep': {
+        ...testData.emptyFunction,
+        name: 'apoc.util.sleep',
+      },
+    },
   };
 
   test('correctly completes property keys in WHERE', () => {

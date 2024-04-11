@@ -3,9 +3,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
+import { DbSchema } from '../dbSchema';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { semanticAnalysis } from './semanticAnalysis';
+import { semanticAnalysis, updateSignatureResolver } from './semanticAnalysis';
 
 export interface SemanticAnalysisResult {
   errors: SemanticAnalysisElement[];
@@ -26,9 +27,19 @@ type SemanticAnalysisElementNoSeverity = Omit<
   'severity'
 >;
 
-export function wrappedSemanticAnalysis(query: string): SemanticAnalysisResult {
+export function wrappedSemanticAnalysis(
+  query: string,
+  dbSchema: DbSchema,
+): SemanticAnalysisResult {
   try {
     let semanticErrorsResult = undefined;
+
+    if (dbSchema.functions && dbSchema.procedures) {
+      updateSignatureResolver({
+        procedures: Object.values(dbSchema.procedures),
+        functions: Object.values(dbSchema.functions),
+      });
+    }
     semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
