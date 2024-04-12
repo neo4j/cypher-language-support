@@ -18,7 +18,7 @@ export default defineConfig({
       interruptible: true,
       name: 'build',
       onChange: async ({ spawn }) => {
-        await spawn`npm run build`;
+        await spawn`npm run dev-codemirror`;
       },
       retry: {
         retries: 0,

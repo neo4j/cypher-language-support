@@ -55,23 +55,10 @@ function getSignatureHelpTooltip(
             arrow: true,
             create: () => {
               const dom = document.createElement('div');
-              // TODO description?
-              // todo deprecations
-              // todo scroll
-              // TODO e2e tests
-              /**
-               * we want
-               * methodName(arg: Type, arg2: Type2)
-               * and bolding on the current arg
-               *
-               * function description on the next line
-               * if description is really long, we want to wrap it
-               *
-               * todo verify we don't get any XSS here
-               */
+              dom.className = 'cm-signature-help-panel';
 
               const signatureLabel = document.createElement('div');
-              signatureLabel.style.padding = '5px';
+              signatureLabel.className = 'cm-signature-help-panel-name';
               signatureLabel.appendChild(
                 document.createTextNode(`${signature.label}(`),
               );
@@ -87,7 +74,7 @@ function getSignatureHelpTooltip(
                   }
 
                   if (index === activeParameter) {
-                    span.style.fontWeight = 'bold';
+                    span.className = 'cm-signature-help-panel-current-argument';
                   }
                   signatureLabel.appendChild(span);
                 }
@@ -98,13 +85,12 @@ function getSignatureHelpTooltip(
               dom.appendChild(signatureLabel);
 
               const separator = document.createElement('div');
-              separator.style.border = '1px solid #ccc';
-              // TODO, do this with class names?
+              separator.className = 'cm-signature-help-panel-separator';
 
               dom.appendChild(separator);
 
               const description = document.createElement('div');
-              description.style.padding = '5px';
+              description.className = 'cm-signature-help-panel-description';
               description.appendChild(document.createTextNode(doc));
 
               dom.appendChild(description);
