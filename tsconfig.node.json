@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "noEmit": true
   },
