@@ -5,9 +5,9 @@
 To update the `semanticAnalysis.js` file, follow this steps:
 
 - Copy `semanticAnalysis.js` we produce in the monorepo to `./packages/language-support/src/highlighting/syntaxValidation`.
-- Run `git apply semantic-analysis.patch`.
+- Perform the following modifications
 
-### Explanation
+### Modifications
 
 This patch will:
 
@@ -17,62 +17,56 @@ This patch will:
 ie. it will change:
 
 ```js
-function $rt_mainStarter(f) {
-  return function (args, callback) {
-    if (!args) {
-      args = [];
-    }
-    var javaArgs = $rt_createArray($rt_objcls(), args.length);
-    for (var i = 0; i < args.length; ++i) {
-      javaArgs.data[i] = $rt_str(args[i]);
-    }
-    $rt_startThread(function () {
-      f.call(null, javaArgs);
-    }, callback);
-  };
-}
+$rt_mainStarter = (f) => (args, callback) => {
+  if (!args) {
+    args = [];
+  }
+  let javaArgs = $rt_createArray($rt_objcls(), args.length);
+  for (let i = 0; i < args.length; ++i) {
+    javaArgs.data[i] = $rt_str(args[i]);
+  }
+  $rt_startThread(() => {
+    f.call(null, javaArgs);
+  }, callback);
+};
 ```
 
 by:
 
 ```js
-function $rt_mainStarter(f) {
-  return function (args, callback) {
-    if (!args) {
-      args = [];
-    }
-    var javaArgs = $rt_createArray($rt_objcls(), args.length);
-    for (var i = 0; i < args.length; ++i) {
-      javaArgs.data[i] = $rt_str(args[i]);
-    }
-    $rt_startThread(function () {
-      return f.call(null, javaArgs);
-    }, callback);
-  };
-}
+$rt_mainStarter = (f) => (args, callback) => {
+  if (!args) {
+    args = [];
+  }
+  let javaArgs = $rt_createArray($rt_objcls(), args.length);
+  for (let i = 0; i < args.length; ++i) {
+    javaArgs.data[i] = $rt_str(args[i]);
+  }
+  $rt_startThread(() => {
+    return f.call(null, javaArgs);
+  }, callback);
+};
 ```
 
 - Remove calling the `analyze` function from the `main` initialization method:
 
 ```js
-function ons_MainNodejs_main($args) {
-    ...
-    oncie_ListComprehension$__clinit_();
-    oncie_Ands$__clinit_();
-    $args = $args.data;
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery($args[0]);
-}
+cnsa_Main_main = (var$1) => {
+  cnsa_Main_$callClinit();
+  var$1 = var$1.data;
+  cnsa_Main_updateSignatureResolver(null);
+  cnsa_Main_analyzeQuery(var$1[0]);
+  cnsa_Main_updateSignatureResolver(null);
+  cnsa_Main_analyzeQuery(var$1[0]);
+};
 ```
 
 gets replaced by:
 
 ```js
-function ons_MainNodejs_main($args) {
-    ...
-    oncie_ListComprehension$__clinit_();
-    oncie_Ands$__clinit_();
-}
+cnsa_Main_main = (var$1) => {
+  cnsa_Main_$callClinit();
+};
 ```
 
 - Add, at the end of the file, a call to `main` and exports the analyze method as semantic analysis, which is what we are going to be able to call from the outside of this file:
@@ -87,4 +81,16 @@ function ons_MainNodejs_main($args) {
     // Export the analyze function as well
     $rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
 }));
+```
+
+- Replace the line:
+
+```
+"ÜǍÝǏÞǑßǓàǕáǗ\u0000Ǚ\u0000Ǜâǝ\u0000ǟãǡäǣåǥæǧçǩèǫéǭ\u0000ǯêǱëǳìǵíǷîǹïǻðǽñǿòȁóȃôȅõȇöȉ÷ȋøȍùȏúȑûȓüȕýȗþșÿțĀȝāȟĂȡăȣĄȥąȧĆȩćȫĈȭĉȯĊȱċȳČȵčȷĎȹďȻĐȽđȿĒɁēɃ\u0000ɅĔɇĕɉĖɋėɍĘɏęɑĚɓěɕĜɗĝəĞɛğɝĠɟġɡ\u0000ɣ\u0000ɥĢɧģɩĤɫ\u0000ɭ\u0000ɯ\u0000ɱ\u0000ɳ\u0000ɵ\u0000ɷ\u0000ɹ\u0000ɻ\u0000ɽ\u0000ɿ\u0000ʁ\u0000ʃ\u0000ʅ\u0000ʇ\u0000ʉ\u0000ʋ\u0000ʍ\u0000ʏ\u0000ʑ\u0000ʓ\u0000ʕ\u0000ʗ\u0000ʙ\u0000ʛ\u0000ʝ\u0000\u0001\u0000\'\t\u0000\t\r\u001c             　　\u0002\u0000\n\n\r\r\u0001\u000009\u0001\u000019\u0002\u0000EEee\u0002\u0000++--\u0002\u0000XXxx\u0001\u0000\'\'\u0001\u0000\"\"\u0001\u0000``ƃ\u0000AZ__azªªµµººÀÖØöøˁˆˑˠˤˬˬˮˮͰʹͶͷͺͽͿͿΆΆΈΊΌΌΎΡΣϵϷҁҊԯԱՖՙՙՠֈאתׯײؠيٮٯٱۓەەۥۦۮۯۺۼۿۿܐܐܒܯݍޥޱޱߊߪߴߵߺߺࠀࠕࠚࠚࠤࠤࠨࠨࡀࡘࡠࡪࢠࢴࢶࣇऄहऽऽॐॐक़ॡॱঀঅঌএঐওনপরললশহঽঽৎৎড়ঢ়য়ৡৰৱৼৼਅਊਏਐਓਨਪਰਲਲ਼ਵਸ਼ਸਹਖ਼ੜਫ਼ਫ਼ੲੴઅઍએઑઓનપરલળવહઽઽૐૐૠૡૹૹଅଌଏଐଓନପରଲଳଵହଽଽଡ଼ଢ଼ୟୡୱୱஃஃஅஊஎஐஒகஙசஜஜஞடணதநபமஹௐௐఅఌఎఐఒనపహఽఽౘౚ"
+```
+
+escaping the back quotes ` `` ` in the middle and wrapping the string in back quotes instead:
+
+```
+`ÜǍÝǏÞǑßǓàǕáǗ\u0000Ǚ\u0000Ǜâǝ\u0000ǟãǡäǣåǥæǧçǩèǫéǭ\u0000ǯêǱëǳìǵíǷîǹïǻðǽñǿòȁóȃôȅõȇöȉ÷ȋøȍùȏúȑûȓüȕýȗþșÿțĀȝāȟĂȡăȣĄȥąȧĆȩćȫĈȭĉȯĊȱċȳČȵčȷĎȹďȻĐȽđȿĒɁēɃ\u0000ɅĔɇĕɉĖɋėɍĘɏęɑĚɓěɕĜɗĝəĞɛğɝĠɟġɡ\u0000ɣ\u0000ɥĢɧģɩĤɫ\u0000ɭ\u0000ɯ\u0000ɱ\u0000ɳ\u0000ɵ\u0000ɷ\u0000ɹ\u0000ɻ\u0000ɽ\u0000ɿ\u0000ʁ\u0000ʃ\u0000ʅ\u0000ʇ\u0000ʉ\u0000ʋ\u0000ʍ\u0000ʏ\u0000ʑ\u0000ʓ\u0000ʕ\u0000ʗ\u0000ʙ\u0000ʛ\u0000ʝ\u0000\u0001\u0000\'\t\u0000\t\r\u001c             　　\u0002\u0000\n\n\r\r\u0001\u000009\u0001\u000019\u0002\u0000EEee\u0002\u0000++--\u0002\u0000XXxx\u0001\u0000\'\'\u0001\u0000\"\"\u0001\u0000\`\`ƃ\u0000AZ__azªªµµººÀÖØöøˁˆˑˠˤˬˬˮˮͰʹͶͷͺͽͿͿΆΆΈΊΌΌΎΡΣϵϷҁҊԯԱՖՙՙՠֈאתׯײؠيٮٯٱۓەەۥۦۮۯۺۼۿۿܐܐܒܯݍޥޱޱߊߪߴߵߺߺࠀࠕࠚࠚࠤࠤࠨࠨࡀࡘࡠࡪࢠࢴࢶࣇऄहऽऽॐॐक़ॡॱঀঅঌএঐওনপরললশহঽঽৎৎড়ঢ়য়ৡৰৱৼৼਅਊਏਐਓਨਪਰਲਲ਼ਵਸ਼ਸਹਖ਼ੜਫ਼ਫ਼ੲੴઅઍએઑઓનપરલળવહઽઽૐૐૠૡૹૹଅଌଏଐଓନପରଲଳଵହଽଽଡ଼ଢ଼ୟୡୱୱஃஃஅஊஎஐஒகஙசஜஜஞடணதநபமஹௐௐఅఌఎఐఒనపహఽఽౘౚ`
 ```

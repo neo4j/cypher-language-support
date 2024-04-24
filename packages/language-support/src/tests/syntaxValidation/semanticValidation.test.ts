@@ -139,7 +139,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 53,
           start: 0,
@@ -374,7 +374,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
+          'Query must conclude with a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD.',
         offsets: {
           end: 25,
           start: 19,
@@ -528,7 +528,7 @@ Attempted to access graph other`,
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 26,
           start: 17,
@@ -872,6 +872,9 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
     ]);
   });
 
+  // FIXME Nacho: This test returns both messages interchanged depending on whether we are just running
+  // a single test or whether we are running the whole semantic analysis tests suite
+  // Investigate whether something has changed at database level
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
 
@@ -1200,7 +1203,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
+          'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
         offsets: {
           end: 29,
           start: 22,
