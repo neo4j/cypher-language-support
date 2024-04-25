@@ -57,6 +57,10 @@ function getSignatureHelpTooltip(
               const dom = document.createElement('div');
               dom.className = 'cm-signature-help-panel';
 
+              const contents = document.createElement('div');
+              contents.className = 'cm-signature-help-panel-contents';
+              dom.appendChild(contents);
+
               const signatureLabel = document.createElement('div');
               signatureLabel.className = 'cm-signature-help-panel-name';
               signatureLabel.appendChild(
@@ -82,18 +86,18 @@ function getSignatureHelpTooltip(
 
               signatureLabel.appendChild(document.createTextNode(')'));
 
-              dom.appendChild(signatureLabel);
+              contents.appendChild(signatureLabel);
 
               const separator = document.createElement('div');
               separator.className = 'cm-signature-help-panel-separator';
 
-              dom.appendChild(separator);
+              contents.appendChild(separator);
 
               const description = document.createElement('div');
               description.className = 'cm-signature-help-panel-description';
               description.appendChild(document.createTextNode(doc));
 
-              dom.appendChild(description);
+              contents.appendChild(description);
 
               return { dom };
             },
