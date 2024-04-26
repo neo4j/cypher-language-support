@@ -44,7 +44,7 @@ test('Signature help works for functions', async ({ page, mount }) => {
     />,
   );
 
-  await expect(page.locator('.cm-tooltip-signature-help').last()).toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
     timeout: 2000,
   });
 });
@@ -60,7 +60,7 @@ test('Signature help works for procedures', async ({ page, mount }) => {
     />,
   );
 
-  await expect(page.locator('.cm-tooltip-signature-help').last()).toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
     timeout: 2000,
   });
 });
@@ -79,7 +79,7 @@ test('Signature help shows the description for the first argument', async ({
     />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -99,7 +99,7 @@ test('Signature help shows the description for the first argument when the curso
     <CypherEditor value={query} schema={testData.mockSchema} offset={21} />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -123,7 +123,7 @@ test('Signature help shows the description for the second argument', async ({
     />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -143,7 +143,7 @@ test('Signature help shows the description for the second argument when the curs
     <CypherEditor value={query} schema={testData.mockSchema} offset={27} />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -163,7 +163,7 @@ test('Signature help shows the description for the second argument when the curs
     <CypherEditor value={query} schema={testData.mockSchema} offset={28} />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -187,7 +187,7 @@ test('Signature help shows description for arguments with a space following a se
     />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -211,7 +211,7 @@ test('Signature help shows the description for the third argument', async ({
     />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -235,7 +235,7 @@ test('Signature help works on multiline queries', async ({ page, mount }) => {
     />,
   );
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
@@ -258,14 +258,15 @@ test('Signature help only shows the description past the last argument', async (
       autofocus={true}
     />,
   );
+  1;
 
-  const tooltip = page.locator('.cm-tooltip-signature-help').last();
+  const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
-      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+      'apoc.import.csv(nodes :: LIST<MAP>, rels :: LIST<MAP>, config :: MAP)',
+      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file.',
     ],
-    excludes: ['config :: MAP'],
   });
 });
 
@@ -283,9 +284,7 @@ test('Signature help does not show any help when method finished', async ({
     />,
   );
 
-  await expect(
-    page.locator('.cm-tooltip-signature-help').last(),
-  ).not.toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
     timeout: 2000,
   });
 });
@@ -304,9 +303,7 @@ test('Signature help does not blow up on empty query', async ({
     />,
   );
 
-  await expect(
-    page.locator('.cm-tooltip-signature-help').last(),
-  ).not.toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
     timeout: 2000,
   });
 });
