@@ -139,7 +139,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query cannot conclude with CALL (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 53,
           start: 0,
@@ -374,7 +374,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query must conclude with a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD',
+          'Query must conclude with a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD.',
         offsets: {
           end: 25,
           start: 19,
@@ -528,7 +528,7 @@ Attempted to access graph other`,
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 26,
           start: 17,
@@ -1096,7 +1096,7 @@ That is, neither of these is a quantified path pattern.`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
+In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
           end: 66,
           start: 6,
@@ -1121,8 +1121,7 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Variable length relationships cannot be part of a quantified path pattern.',
+        message: `Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.`,
         offsets: {
           end: 26,
           start: 8,

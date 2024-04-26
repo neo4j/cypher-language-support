@@ -201,8 +201,8 @@ describe('Inserts correct text when symbolic name is not display name', () => {
     testCompletionsExactly({
       query: 'CREATE INDEX ',
       expected: [
+        { kind: 14, label: 'IF NOT EXISTS' },
         { kind: 14, label: 'FOR' },
-        { kind: 14, label: 'IF NOT EXISTS FOR' },
         { kind: 14, label: 'ON' },
       ],
     });

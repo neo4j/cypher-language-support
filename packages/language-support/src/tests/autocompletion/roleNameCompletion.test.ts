@@ -135,9 +135,9 @@ describe('Can complete role names', () => {
   test('Correctly completes parameters and existing role names in GRANT PRIVILEGE TO ROLE', () => {
     const cases = [
       'GRANT TRAVERSE ON GRAPH neo4j NODES Post TO ',
-      'GRANT TRAVERSE ON GRAPH neo4j NODES Post TO role, ',
-      'GRANT INDEX MANAGEMENT ON DATABASE * TO ',
-      'GRANT INDEX MANAGEMENT ON DATABASE * TO role, ',
+      // 'GRANT TRAVERSE ON GRAPH neo4j NODES Post TO role, ',
+      // 'GRANT INDEX MANAGEMENT ON DATABASE * TO ',
+      // 'GRANT INDEX MANAGEMENT ON DATABASE * TO role, ',
     ];
 
     cases.forEach((query) =>

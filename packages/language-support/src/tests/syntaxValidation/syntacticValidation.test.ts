@@ -36,7 +36,7 @@ describe('Syntactic validation spec', () => {
           start: 0,
         },
         message:
-          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FOREACH, GRANT, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
+          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
         range: {
           end: {
             character: 3,
@@ -116,7 +116,7 @@ describe('Syntactic validation spec', () => {
           start: 113,
         },
         message:
-          "Expected any of '}', AND, CALL, CREATE, DELETE, DETACH, FOREACH, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, OR, REMOVE, RETURN, SET, UNION, UNWIND, USE, WITH, XOR or an expression",
+          "Expected any of '}', AND, CALL, CREATE, DELETE, DETACH, FINISH, FOREACH, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, OR, REMOVE, RETURN, SET, UNION, UNWIND, USE, WITH, XOR or an expression",
         range: {
           end: {
             character: 47,
@@ -490,7 +490,7 @@ describe('Syntactic validation spec', () => {
           start: 4,
         },
         message:
-          'Expected any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER, USERS or VECTOR',
+          'Expected any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER, USERS or VECTOR',
         range: {
           end: {
             character: 4,
@@ -724,7 +724,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected any of '}', ',' or an identifier",
+        message: "Expected '}' or an identifier",
         offsets: {
           end: 9,
           start: 8,
