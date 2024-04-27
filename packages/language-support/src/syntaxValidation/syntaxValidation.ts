@@ -156,11 +156,17 @@ function fixSemanticAnalysisPositions({
   });
 }
 
-export function sortByPosition(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
+export function sortByPositionAndMessage(
+  a: SyntaxDiagnostic,
+  b: SyntaxDiagnostic,
+) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
-  return a.range.start.character - b.range.start.character;
+  const columnDiff = a.range.start.character - b.range.start.character;
+  if (columnDiff !== 0) return columnDiff;
+
+  return a.message > b.message ? 1 : -1;
 }
 
 export function lintCypherQuery(
@@ -187,7 +193,7 @@ export function validateSyntax(
   const result = statements.statementsParsing.flatMap((statement) => {
     const diagnostics = statement.diagnostics;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    return diagnostics.concat(labelWarnings).sort(sortByPosition);
+    return diagnostics.concat(labelWarnings).sort(sortByPositionAndMessage);
   });
 
   return result;
@@ -216,7 +222,7 @@ export function validateSemantics(
           const result = fixSemanticAnalysisPositions({
             semanticElements: elements,
             parseResult: current,
-          }).sort(sortByPosition);
+          }).sort(sortByPositionAndMessage);
           return result;
         }
       }

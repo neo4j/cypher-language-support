@@ -91,7 +91,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 0),
             new vscode.Position(0, 9),
           ),
-          'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
           vscode.DiagnosticSeverity.Error,
         ),
       ],
@@ -114,7 +114,7 @@ suite('Syntax validation spec', () => {
     });
   });
 
-  test.only('Correctly validates a non cypher file when selecting cypher language mode', async () => {
+  test('Correctly validates a non cypher file when selecting cypher language mode', async () => {
     // We open a file that is not saved on disk
     // and change the language manually to Cypher
     await newUntitledFileWithContent('MATCH (m)');
@@ -131,7 +131,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 0),
             new vscode.Position(0, 9),
           ),
-          'Query cannot conclude with MATCH (must be a RETURN clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
           vscode.DiagnosticSeverity.Error,
         ),
       ],
