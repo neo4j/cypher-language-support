@@ -101,21 +101,24 @@ function fixSemanticAnalysisPositions({
     );
 
     const startOffset = e.position.offset + cmd.start.start;
-
-    const line = start.line + 1;
-    const column = start.character;
     const toExplore: ParseTree[] = [parseResult.ctx];
 
-    while (toExplore.length > 0 && !token) {
+    while (toExplore.length > 0) {
       const current: ParseTree = toExplore.pop();
 
       if (current instanceof ParserRuleContext) {
         const startToken = current.start;
-        if (startToken.line === line && startToken.column === column) {
-          token = current.stop;
-        }
-        if (current.children) {
-          current.children.forEach((child) => toExplore.push(child));
+        const stopToken = current.stop;
+
+        if (
+          startToken.start <= startOffset &&
+          stopToken &&
+          startOffset <= stopToken.stop
+        ) {
+          token = stopToken;
+          if (startToken.start < startOffset && current.children) {
+            current.children.forEach((child) => toExplore.push(child));
+          }
         }
       }
     }

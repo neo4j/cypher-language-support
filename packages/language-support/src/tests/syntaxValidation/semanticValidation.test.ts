@@ -560,6 +560,7 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
+  // This is returning errors in a different order
   test('Shows errors for COLLECT with updating subqueries', () => {
     const query = `MATCH (a)
       RETURN COLLECT { SET a.name = 1 }
@@ -942,12 +943,12 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
       {
         message: 'Quantified path patterns are not allowed to be nested.',
         offsets: {
-          end: 23,
+          end: 22,
           start: 16,
         },
         range: {
           end: {
-            character: 23,
+            character: 22,
             line: 0,
           },
           start: {
@@ -1124,7 +1125,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         message: `Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.`,
         offsets: {
           end: 26,
-          start: 8,
+          start: 21,
         },
         range: {
           end: {
@@ -1132,7 +1133,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
             line: 0,
           },
           start: {
-            character: 8,
+            character: 21,
             line: 0,
           },
         },
@@ -1140,10 +1141,10 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       },
       {
         message:
-          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
           end: 26,
-          start: 8,
+          start: 21,
         },
         range: {
           end: {
@@ -1151,7 +1152,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
             line: 0,
           },
           start: {
-            character: 8,
+            character: 21,
             line: 0,
           },
         },
@@ -1232,12 +1233,12 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       {
         message: "Label expressions are not allowed to contain '|:'.",
         offsets: {
-          end: 10,
+          end: 13,
           start: 10,
         },
         range: {
           end: {
-            character: 10,
+            character: 13,
             line: 0,
           },
           start: {
@@ -1258,12 +1259,12 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         message:
           "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS A&B.",
         offsets: {
-          end: 13,
+          end: 15,
           start: 13,
         },
         range: {
           end: {
-            character: 13,
+            character: 15,
             line: 0,
           },
           start: {

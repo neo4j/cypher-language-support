@@ -133,7 +133,7 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const errorListener = new SyntaxErrorsListener();
+      const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [labelsCollector, variableFinder];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
