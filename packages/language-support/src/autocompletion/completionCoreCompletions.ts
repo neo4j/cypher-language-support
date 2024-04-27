@@ -231,7 +231,8 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
       CypherParser.RULE_renameUser,
       CypherParser.RULE_createRole,
       CypherParser.RULE_dropRole,
-      CypherParser.RULE_roleUser,
+      CypherParser.RULE_userNames,
+      CypherParser.RULE_roleNames,
       CypherParser.RULE_renameRole,
       CypherParser.RULE_revokeRole,
     ].includes(parentRule) ||
@@ -658,6 +659,7 @@ function completeSymbolicName({
     CypherParser.RULE_showPrivilege,
     CypherParser.RULE_dbmsPrivilege,
     CypherParser.RULE_databasePrivilege,
+    CypherParser.RULE_userNames,
   ];
 
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
@@ -673,13 +675,13 @@ function completeSymbolicName({
   }
 
   const rulesThatAcceptExistingRoles = [
-    CypherParser.RULE_grantRole,
-    CypherParser.RULE_revokeRole,
+    CypherParser.RULE_roleNames,
+    CypherParser.RULE_denyCommand,
+    CypherParser.RULE_revokeCommand,
     CypherParser.RULE_dropRole,
     CypherParser.RULE_renameRole,
     CypherParser.RULE_showRolePrivileges,
     CypherParser.RULE_privilege,
-    CypherParser.RULE_roleUser,
   ];
 
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {

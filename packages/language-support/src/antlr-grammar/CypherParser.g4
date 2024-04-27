@@ -1153,16 +1153,20 @@ privilegeToken
 
 grantCommand
    : GRANT (
-      IMMUTABLE? privilege TO roleUser
+      IMMUTABLE? privilege TO roleNames
       | roleToken grantRole
    )
    ;
 
 grantRole
-   : symbolicNameOrStringParameterList TO roleUser
+   : roleNames TO userNames
    ;
 
-roleUser
+userNames
+   : symbolicNameOrStringParameterList
+   ;
+
+roleNames
    : symbolicNameOrStringParameterList
    ;
 
@@ -1178,7 +1182,7 @@ revokeCommand
    ;
 
 revokeRole
-   : symbolicNameOrStringParameterList FROM symbolicNameOrStringParameterList
+   : symbolicNameOrStringParameterList FROM userNames
    ;
 
 privilege
