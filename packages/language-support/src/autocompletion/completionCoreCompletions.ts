@@ -216,7 +216,7 @@ enum ExpectedParameterType {
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   const parentRule = context.ruleList.at(-1);
-  const grandParentRule = context.ruleList.at(-2);
+
   if (
     [
       CypherParser.RULE_stringOrParameter,
@@ -234,12 +234,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
       CypherParser.RULE_userNames,
       CypherParser.RULE_roleNames,
       CypherParser.RULE_renameRole,
-      CypherParser.RULE_revokeRole,
-    ].includes(parentRule) ||
-    [
-      CypherParser.RULE_showUserPrivileges,
-      CypherParser.RULE_grantRole,
-    ].includes(grandParentRule)
+    ].includes(parentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (
@@ -655,10 +650,6 @@ function completeSymbolicName({
     CypherParser.RULE_dropUser,
     CypherParser.RULE_renameUser,
     CypherParser.RULE_alterUser,
-    CypherParser.RULE_showUserPrivileges,
-    CypherParser.RULE_showPrivilege,
-    CypherParser.RULE_dbmsPrivilege,
-    CypherParser.RULE_databasePrivilege,
     CypherParser.RULE_userNames,
   ];
 
@@ -676,12 +667,8 @@ function completeSymbolicName({
 
   const rulesThatAcceptExistingRoles = [
     CypherParser.RULE_roleNames,
-    CypherParser.RULE_denyCommand,
-    CypherParser.RULE_revokeCommand,
     CypherParser.RULE_dropRole,
     CypherParser.RULE_renameRole,
-    CypherParser.RULE_showRolePrivileges,
-    CypherParser.RULE_privilege,
   ];
 
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {

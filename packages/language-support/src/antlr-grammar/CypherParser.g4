@@ -1135,11 +1135,11 @@ showSupportedPrivileges
    ;
 
 showRolePrivileges
-   : (ROLE | ROLES) symbolicNameOrStringParameterList privilegeToken privilegeAsCommand? showCommandYield?
+   : (ROLE | ROLES) roleNames privilegeToken privilegeAsCommand? showCommandYield?
    ;
 
 showUserPrivileges
-   : (USER | USERS) symbolicNameOrStringParameterList? privilegeToken privilegeAsCommand? showCommandYield?
+   : (USER | USERS) userNames? privilegeToken privilegeAsCommand? showCommandYield?
    ;
 
 privilegeAsCommand
@@ -1171,18 +1171,18 @@ roleNames
    ;
 
 denyCommand
-   : DENY IMMUTABLE? privilege TO symbolicNameOrStringParameterList
+   : DENY IMMUTABLE? privilege TO roleNames
    ;
 
 revokeCommand
    : REVOKE (
-      (DENY | GRANT)? IMMUTABLE? privilege FROM symbolicNameOrStringParameterList
+      (DENY | GRANT)? IMMUTABLE? privilege FROM roleNames
       | roleToken revokeRole
    )
    ;
 
 revokeRole
-   : symbolicNameOrStringParameterList FROM userNames
+   : roleNames FROM userNames
    ;
 
 privilege
@@ -1354,7 +1354,7 @@ transactionToken
    ;
 
 userQualifier
-   : LPAREN (TIMES | symbolicNameOrStringParameterList) RPAREN
+   : LPAREN (TIMES | userNames) RPAREN
    ;
 
 executeFunctionQualifier
