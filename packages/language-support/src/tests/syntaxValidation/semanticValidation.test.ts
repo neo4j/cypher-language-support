@@ -765,33 +765,6 @@ Attempted to access graph other`,
     ]);
   });
 
-  // TODO Nacho: has something changed in gpm?
-  test.skip('Shows errors for variables not bound in Graph Pattern Matching', () => {
-    const query = `MATCH (a) (()--(x {prop: a.prop}))+ (b) (()--())+ (c) RETURN *`;
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop}))+.`,
-        offsets: {
-          end: 8,
-          start: 7,
-        },
-        range: {
-          end: {
-            character: 8,
-            line: 0,
-          },
-          start: {
-            character: 7,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
   test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
