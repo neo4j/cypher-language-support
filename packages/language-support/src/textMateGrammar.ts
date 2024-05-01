@@ -13,6 +13,12 @@ export const textMateGrammar = {
     {
       include: '#strings',
     },
+    {
+      include: '#comments',
+    },
+    {
+      include: '#types',
+    },
   ],
   repository: {
     keywords: {
@@ -44,6 +50,35 @@ export const textMateGrammar = {
             {
               name: 'constant.character.escape.cypher',
               match: '\\\\.',
+            },
+          ],
+        },
+      ],
+    },
+    comments: {
+      patterns: [
+        {
+          begin: '//',
+          end: '$',
+          name: 'comment.line',
+        },
+        {
+          begin: '/\\*',
+          end: '\\*/',
+          name: 'comment.block',
+        },
+      ],
+    },
+    types: {
+      patterns: [
+        {
+          begin: ':',
+          end: '(?=\\s)',
+          patterns: [
+            {
+              begin: '\\w+',
+              end: '(?=\\s|$)',
+              name: 'storage.type',
             },
           ],
         },
