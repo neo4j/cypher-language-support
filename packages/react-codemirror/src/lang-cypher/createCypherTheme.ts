@@ -99,7 +99,32 @@ export const createCypherTheme = ({
       color: settings.autoCompletionPanel.matchingTextColor,
       textDecoration: 'none',
     },
+    '& .cm-signature-help-panel': {
+      backgroundColor: settings.autoCompletionPanel.backgroundColor,
+      maxWidth: '700px',
+      maxHeight: '250px',
+      fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+    },
+    '& .cm-signature-help-panel-contents': {
+      overflow: 'auto',
+      maxHeight: '100%',
+    },
+    '& .cm-signature-help-panel-current-argument': {
+      color: settings.autoCompletionPanel.matchingTextColor,
+      fontWeight: 'bold',
+    },
+    '& .cm-signature-help-panel-separator': {
+      borderBottom: '1px solid #ccc',
+    },
+    '& .cm-signature-help-panel-name': {
+      padding: '5px',
+    },
+    '& .cm-signature-help-panel-description': {
+      padding: '5px',
+    },
+
     '.cm-tooltip-autocomplete': {
+      maxWidth: '430px',
       '& > ul > li[aria-selected]': {
         backgroundColor: settings.autoCompletionPanel.selectedColor,
         color: settings.foreground,
