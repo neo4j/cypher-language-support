@@ -1,6 +1,7 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import { signatureHelp } from '@neo4j-cypher/language-support';
+import { SignatureInformation } from 'vscode-languageserver-types';
 import { CypherConfig } from './langCypher';
 
 function getTriggerCharacter(query: string, caretPosition: number) {
@@ -15,6 +16,61 @@ function getTriggerCharacter(query: string, caretPosition: number) {
 
   return triggerCharacter;
 }
+
+const createSignatureHelpElement =
+  ({
+    signature,
+    activeParameter,
+  }: {
+    signature: SignatureInformation;
+    activeParameter: number;
+  }) =>
+  () => {
+    const parameters = signature.parameters;
+    const doc = signature.documentation.toString();
+    const dom = document.createElement('div');
+    dom.className = 'cm-signature-help-panel';
+
+    const contents = document.createElement('div');
+    contents.className = 'cm-signature-help-panel-contents';
+    dom.appendChild(contents);
+
+    const signatureLabel = document.createElement('div');
+    signatureLabel.className = 'cm-signature-help-panel-name';
+    signatureLabel.appendChild(document.createTextNode(`${signature.label}(`));
+
+    parameters.forEach((param, index) => {
+      if (typeof param.documentation === 'string') {
+        const span = document.createElement('span');
+        span.appendChild(document.createTextNode(param.documentation));
+        if (index !== parameters.length - 1) {
+          span.appendChild(document.createTextNode(', '));
+        }
+
+        if (index === activeParameter) {
+          span.className = 'cm-signature-help-panel-current-argument';
+        }
+        signatureLabel.appendChild(span);
+      }
+    });
+
+    signatureLabel.appendChild(document.createTextNode(')'));
+
+    contents.appendChild(signatureLabel);
+
+    const separator = document.createElement('div');
+    separator.className = 'cm-signature-help-panel-separator';
+
+    contents.appendChild(separator);
+
+    const description = document.createElement('div');
+    description.className = 'cm-signature-help-panel-description';
+    description.appendChild(document.createTextNode(doc));
+
+    contents.appendChild(description);
+
+    return { dom };
+  };
 
 function getSignatureHelpTooltip(
   state: EditorState,
@@ -44,17 +100,6 @@ function getSignatureHelpTooltip(
         signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
-        const parameters = signature.parameters;
-        let doc = signature.documentation.toString();
-
-        if (
-          activeParameter >= 0 &&
-          activeParameter <
-            (signatures[activeSignature].parameters?.length ?? 0)
-        ) {
-          doc =
-            parameters[activeParameter].documentation.toString() + '\n\n' + doc;
-        }
 
         result = [
           {
@@ -62,23 +107,7 @@ function getSignatureHelpTooltip(
             above: true,
             strictSide: true,
             arrow: true,
-            create: () => {
-              const div = document.createElement('div');
-              const methodName = document.createElement('div');
-              const argPlusDescription = document.createElement('div');
-              const separator = document.createElement('hr');
-              const lineBreak = document.createElement('br');
-
-              div.append(
-                ...[methodName, separator, lineBreak, argPlusDescription],
-              );
-              div.className = 'cm-tooltip-signature-help';
-
-              methodName.innerText = signature.label;
-              argPlusDescription.innerText = doc;
-
-              return { dom: div };
-            },
+            create: createSignatureHelpElement({ signature, activeParameter }),
           },
         ];
       }

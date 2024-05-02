@@ -198,6 +198,7 @@ export function isCommentOpener(
 ): boolean {
   return thisToken.text === '/' && nextToken?.text === '*';
 }
+
 export const rulesDefiningVariables = [
   CypherParser.RULE_returnItem,
   CypherParser.RULE_unwindClause,

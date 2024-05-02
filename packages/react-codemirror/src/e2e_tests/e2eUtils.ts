@@ -71,11 +71,15 @@ export class CypherEditorPage {
     await this.page.getByText(queryChunk, { exact: true }).hover();
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible();
     await expect(this.page.getByText(expectedMsg)).toBeVisible();
-    /* Return the mouse to the beginning of the query
+    /* Return the mouse to the beginning of the query and
        This is because if for example we have an overlay with a 
        first interaction that covers the element we want to perform
        the second interaction on, we won't be able to see that second element
     */
-    await this.page.mouse.click(0, 0);
+    await this.page.mouse.move(0, 0);
+    // Make the sure the tooltip closed
+    await expect(
+      this.page.locator('.cm-tooltip-hover').last(),
+    ).not.toBeVisible();
   }
 }
