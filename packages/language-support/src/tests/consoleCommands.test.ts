@@ -283,13 +283,10 @@ describe('parameters', () => {
     expectErrorMessage(':param RETURN', "Expected '='");
     expectErrorMessage(':param RETURN b', "Expected '='");
     expectErrorMessage(':param b => ', 'Expected an expression');
-    expectErrorMessage(':param {', "Expected any of '}', ',' or an identifier");
+    expectErrorMessage(':param {', "Expected '}' or an identifier");
     expectErrorMessage(':param {x}', "Expected ':'");
     expectErrorMessage(':param {x: ', 'Expected an expression');
-    expectErrorMessage(
-      ':param {: 4} ',
-      "Expected any of '}', ',' or an identifier",
-    );
+    expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
   });
 
   test('highlights :params properly', () => {

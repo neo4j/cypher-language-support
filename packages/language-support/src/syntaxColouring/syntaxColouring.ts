@@ -9,6 +9,7 @@ import {
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  LabelTypeContext,
   LeftArrowContext,
   ListItemsPredicateContext,
   NumberLiteralContext,
@@ -30,6 +31,7 @@ import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
+import { CypherLexer } from '..';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
@@ -113,6 +115,13 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitLabelNameIs = (ctx: LabelNameIsContext) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
+  };
+
+  exitLabelType = (ctx: LabelTypeContext) => {
+    const labelName = ctx.symbolicNameString()?.start;
+    if (labelName) {
+      this.addToken(labelName, CypherTokenType.label, labelName.text);
+    }
   };
 
   exitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
@@ -269,25 +278,42 @@ function colourLexerTokens(tokens: Token[]) {
     [BracketType.parenthesis, -1],
   ]);
 
-  tokens.forEach((token) => {
-    if (shouldAssignTokenType(token)) {
-      const tokenType = getCypherTokenType(token);
-      const tokenPosition = getTokenPosition(token);
-      const tokenStr = token.text ?? '';
+  let i = 0;
+  let moreToProcess = true;
 
+  while (i < tokens.length && moreToProcess) {
+    const token = tokens.at(i);
+    const nextToken = tokens.at(i + 1);
+    if (shouldAssignTokenType(token)) {
+      const { tokenType, finished: tokenFinished } = getCypherTokenType(
+        token,
+        nextToken,
+      );
+      const tokenPosition = getTokenPosition(token);
+      let tokenStr = token.text ?? '';
+
+      if (!tokenFinished) {
+        tokens.slice(i + 1, tokens.length).forEach((nextToken) => {
+          if (nextToken.type !== CypherLexer.EOF) {
+            tokenStr += nextToken.text;
+          }
+        });
+        moreToProcess = false;
+      }
       toParsedTokens(
         tokenPosition,
         tokenType,
         tokenStr,
         token,
         bracketsLevel,
-      ).forEach((token) => {
-        const tokenPos = tokenPositionToString(token.position);
+      ).forEach((t) => {
+        const tokenPos = tokenPositionToString(t.position);
 
-        result.set(tokenPos, token);
+        result.set(tokenPos, t);
       });
     }
-  });
+    ++i;
+  }
 
   return result;
 }
