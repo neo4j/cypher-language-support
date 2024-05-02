@@ -162,6 +162,8 @@ describe('Can complete role names', () => {
     const cases = [
       'DENY TRAVERSE ON GRAPH neo4j NODES Post TO ',
       'DENY TRAVERSE ON GRAPH neo4j NODES Post TO role, ',
+      'DENY INDEX MANAGEMENT ON DATABASE * TO ',
+      'DENY INDEX MANAGEMENT ON DATABASE * TO role, ',
     ];
 
     cases.forEach((query) =>
