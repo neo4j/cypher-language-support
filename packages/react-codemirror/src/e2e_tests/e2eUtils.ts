@@ -71,5 +71,10 @@ export class CypherEditorPage {
     await this.page.getByText(queryChunk, { exact: true }).hover();
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible();
     await expect(this.page.getByText(expectedMsg)).toBeVisible();
+    // make the sure the tooltip closes
+    await this.page.mouse.move(0, 0);
+    await expect(
+      this.page.locator('.cm-tooltip-hover').last(),
+    ).not.toBeVisible();
   }
 }

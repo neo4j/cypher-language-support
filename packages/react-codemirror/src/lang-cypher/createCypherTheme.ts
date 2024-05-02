@@ -64,8 +64,9 @@ export const createCypherTheme = ({
       color: settings.gutterForeground,
       border: 'none',
     },
-    '&.cm-editor .cm-scroller': {
+    '&.cm-editor': {
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+      height: '100%',
     },
     '.cm-content': {
       caretColor: settings.cursor,
