@@ -12,6 +12,7 @@ import {
 } from 'vscode-languageserver-types';
 import { CypherLexer } from '..';
 import CypherParser from '../generated-parser/CypherCmdParser';
+import { isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 
 export type SyntaxDiagnostic = Diagnostic & {
@@ -29,16 +30,6 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     this.tokens = tokens;
   }
 
-  private isCommentOpener(offendingSymbol: Token): boolean {
-    if (offendingSymbol.text === '/') {
-      const tokenIndex = offendingSymbol.tokenIndex;
-      const nextTokenIndex = tokenIndex + 1;
-      return this.tokens.at(nextTokenIndex)?.text === '*';
-    }
-
-    return false;
-  }
-
   public syntaxError<T extends Token>(
     recognizer: Recognizer<T>,
     offendingSymbol: T,
@@ -53,7 +44,10 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const startColumn = charPositionInLine;
       const parser = recognizer as CypherParser;
       const ctx = parser._ctx as ParserRuleContext;
-      const unfinishedComment = this.isCommentOpener(offendingSymbol);
+      const tokenIndex = offendingSymbol.tokenIndex;
+      const nextTokenIndex = tokenIndex + 1;
+      const nextToken = this.tokens.at(nextTokenIndex);
+      const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
 
       if (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment) {
         let errorMessage: string | undefined = undefined;

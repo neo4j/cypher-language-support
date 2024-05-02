@@ -4,6 +4,7 @@ import { Token } from 'antlr4';
 
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 
+import { isCommentOpener } from '../helpers';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 
 export interface TokenPosition {
@@ -156,7 +157,6 @@ export function getCypherTokenType(
   finished: boolean;
 } {
   const tokenText = token.text;
-  const nextTokenText = nextToken?.text;
 
   if (token.type === CypherLexer.ErrorChar) {
     if (tokenText === '"' || tokenText === "'") {
@@ -166,7 +166,7 @@ export function getCypherTokenType(
     }
   }
 
-  if (tokenText === '/' && nextTokenText === '*') {
+  if (isCommentOpener(token, nextToken)) {
     return { tokenType: CypherTokenType.comment, finished: false };
   }
 
