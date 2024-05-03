@@ -8,9 +8,12 @@
     "@neo4j-cypher/react-codemirror-playground": "1.0.0",
     "@neo4j-cypher/schema-poller": "1.0.0",
     "antlr4": "4.13.1",
-    "antlr4-c3": "3.0.1"
+    "antlr4-c3": "3.0.1",
+    "neo4j-for-vscode": "1.0.1-next.0"
   },
   "changesets": [
+    "afraid-beans-juggle",
+    "brave-donuts-camp",
     "brown-ravens-obey",
     "fuzzy-rice-train",
     "hungry-beans-eat",

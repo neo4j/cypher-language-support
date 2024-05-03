@@ -100,7 +100,7 @@
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.6",
+    "@neo4j-cypher/language-server": "2.0.0-next.7",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

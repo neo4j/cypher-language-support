@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- e92d8c7: Corrects bug with semantic analysis and List of non-numeric types
+
 ## 2.0.0-next.5
 
 ### Patch Changes
