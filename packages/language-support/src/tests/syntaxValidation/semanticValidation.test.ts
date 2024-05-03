@@ -877,9 +877,8 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
   // Investigate whether something has changed at database level
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
-    const diagnostics = getDiagnosticsForQuery({ query })
+    const diagnostics = getDiagnosticsForQuery({ query });
 
-    console.log(diagnostics)
     expect(diagnostics).toEqual([
       {
         message:
