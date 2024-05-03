@@ -11,6 +11,8 @@
     "antlr4-c3": "3.0.1"
   },
   "changesets": [
+    "afraid-beans-juggle",
+    "brave-donuts-camp",
     "brown-ravens-obey",
     "fuzzy-rice-train",
     "hungry-beans-eat",
