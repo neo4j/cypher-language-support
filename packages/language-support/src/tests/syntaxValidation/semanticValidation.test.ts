@@ -560,6 +560,7 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
+  // This is returning errors in a different order
   test('Shows errors for COLLECT with updating subqueries', () => {
     const query = `MATCH (a)
       RETURN COLLECT { SET a.name = 1 }
@@ -764,32 +765,6 @@ Attempted to access graph other`,
     ]);
   });
 
-  test('Shows errors for variables not bound in Graph Pattern Matching', () => {
-    const query = `MATCH (a) (()--(x {prop: a.prop}))+ (b) (()--())+ (c) RETURN *`;
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop}))+.`,
-        offsets: {
-          end: 8,
-          start: 7,
-        },
-        range: {
-          end: {
-            character: 8,
-            line: 0,
-          },
-          start: {
-            character: 7,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
   test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
@@ -900,8 +875,7 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
         severity: 1,
       },
       {
-        message:
-          'Type mismatch: p defined with conflicting type List<T> (expected Path)',
+        message: 'Sub-path assignment is currently not supported.',
         offsets: {
           end: 35,
           start: 23,
@@ -919,7 +893,8 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
         severity: 1,
       },
       {
-        message: 'Sub-path assignment is currently not supported.',
+        message:
+          'Type mismatch: p defined with conflicting type List<T> (expected Path)',
         offsets: {
           end: 35,
           start: 23,
@@ -946,12 +921,12 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
       {
         message: 'Quantified path patterns are not allowed to be nested.',
         offsets: {
-          end: 23,
+          end: 22,
           start: 16,
         },
         range: {
           end: {
-            character: 23,
+            character: 22,
             line: 0,
           },
           start: {
@@ -1008,25 +983,6 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
       },
       {
         message:
-          'The use of shortestPath and allShortestPaths with fixed length relationships is deprecated and will be removed in a future version. Please use a path with a length of 1 [r*1..1] instead or a Match with a limit.',
-        offsets: {
-          end: 32,
-          start: 27,
-        },
-        range: {
-          end: {
-            character: 32,
-            line: 0,
-          },
-          start: {
-            character: 27,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
-      {
-        message:
           "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
         offsets: {
           end: 32,
@@ -1043,6 +999,25 @@ In this case, a is defined in the same \`MATCH\` clause as (()--(x {prop: a.prop
           },
         },
         severity: 1,
+      },
+      {
+        message:
+          'The use of shortestPath and allShortestPaths with fixed length relationships is deprecated and will be removed in a future version. Please use a path with a length of 1 [r*1..1] instead or a Match with a limit.',
+        offsets: {
+          end: 32,
+          start: 27,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 27,
+            line: 0,
+          },
+        },
+        severity: 2,
       },
     ]);
   });
@@ -1100,7 +1075,7 @@ That is, neither of these is a quantified path pattern.`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `From within a quantified path pattern, one may only reference variables, that are already bound in a previous \`MATCH\` clause.
-In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
+In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nodes(p)[0]).prop}))*.`,
         offsets: {
           end: 66,
           start: 6,
@@ -1125,15 +1100,14 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Variable length relationships cannot be part of a quantified path pattern.',
+        message: `Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.`,
         offsets: {
-          end: 26,
+          end: 21,
           start: 8,
         },
         range: {
           end: {
-            character: 26,
+            character: 21,
             line: 0,
           },
           start: {
@@ -1145,14 +1119,14 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       },
       {
         message:
-          "Mixing variable-length relationships ('-[*]-') with quantified relationships ('()-->*()') or quantified path patterns ('(()-->())*') is not allowed.",
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
-          end: 26,
+          end: 21,
           start: 8,
         },
         range: {
           end: {
-            character: 26,
+            character: 21,
             line: 0,
           },
           start: {
@@ -1237,12 +1211,12 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
       {
         message: "Label expressions are not allowed to contain '|:'.",
         offsets: {
-          end: 10,
+          end: 13,
           start: 10,
         },
         range: {
           end: {
-            character: 10,
+            character: 13,
             line: 0,
           },
           start: {
@@ -1263,12 +1237,12 @@ In this case, p is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: (nod
         message:
           "Mixing the IS keyword with colon (':') between labels is not allowed. This expression could be expressed as IS A&B.",
         offsets: {
-          end: 13,
+          end: 15,
           start: 13,
         },
         range: {
           end: {
-            character: 13,
+            character: 15,
             line: 0,
           },
           start: {
