@@ -19,6 +19,15 @@ export const textMateGrammar = {
     {
       include: '#types',
     },
+    {
+      include: '#properties',
+    },
+    {
+      include: '#numbers',
+    },
+    {
+      include: '#operators',
+    },
   ],
   repository: {
     keywords: {
@@ -32,24 +41,24 @@ export const textMateGrammar = {
     strings: {
       patterns: [
         {
-          name: 'string.quoted.double.cypher',
-          begin: '"',
-          end: '"',
+          begin: "'",
+          end: "'",
+          name: 'string.quoted.single',
           patterns: [
             {
-              name: 'constant.character.escape.cypher',
-              match: '\\\\.',
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
             },
           ],
         },
         {
-          name: 'string.quoted.single.cypher',
-          begin: "'",
-          end: "'",
+          begin: '"',
+          end: '"',
+          name: 'string.quoted.double',
           patterns: [
             {
-              name: 'constant.character.escape.cypher',
-              match: '\\\\.',
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
             },
           ],
         },
@@ -72,18 +81,35 @@ export const textMateGrammar = {
     types: {
       patterns: [
         {
-          begin: ':',
-          end: '(?=\\s)',
-          patterns: [
-            {
-              begin: '\\w+',
-              end: '(?=\\s|$)',
-              name: 'storage.type',
-            },
-          ],
+          match: ':[\\w\\&\\|]+',
+          name: 'entity.name.class',
         },
       ],
     },
+    properties: {
+      patterns: [
+        {
+          match: '\\.\\w+',
+          name: 'variable.property',
+        },
+      ],
+    },
+    numbers: {
+      patterns: [
+        {
+          match: '\\b\\d+\\b',
+          name: 'constant.numeric',
+        },
+      ],
+    },
+    operators: {
+      patterns: [
+        {
+          match: '[+\\-*/]|AND|OR|NOT|XOR',
+          name: 'keyword.operator',
+        },
+      ],
+    },
+    scopeName: 'source.cypher',
   },
-  scopeName: 'source.cypher',
 };
