@@ -1,14 +1,14 @@
-name: Publish packages to npm
+name: Publish canary packages to npm
 
+# configure manual trigger
 on:
-  push:
-    branches: ['main']
+  workflow_dispatch:
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
 
 jobs:
-  stable-release-to-npm:
+  canary-release-to-npm:
     name: 'Stable release to npm'
     environment: publish-npm
     runs-on: ubuntu-latest
@@ -26,11 +26,10 @@ jobs:
       - name: Install dependencies with frozen lock file and generate parser
         run: npm ci
 
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23 # v1.4.5
-        with:
-          publish: npm run release
+      - name: Build project
+        run: npm run build
+
+      - name: Release canary to npm
+        run: node ./release-canary.js
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

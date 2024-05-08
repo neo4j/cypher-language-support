@@ -9,3 +9,4 @@ index.html
 packages/language-support/src/highlighting/semanticAnalysis.js
 .eslintrc.js
 vendor/*
+release-canary.js
