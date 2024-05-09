@@ -847,9 +847,6 @@ Attempted to access graph other`,
     ]);
   });
 
-  // FIXME Nacho: This test returns both messages interchanged depending on whether we are just running
-  // a single test or whether we are running the whole semantic analysis tests suite
-  // Investigate whether something has changed at database level
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
     const diagnostics = getDiagnosticsForQuery({ query });

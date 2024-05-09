@@ -9,9 +9,6 @@ To update the `semanticAnalysis.js` file, follow this steps:
 
 ### Modifications
 
-This patch will:
-
-- Substitute `global` by `globalThis` in the code that sets the module scaffolding at the top, so the code can be used from both NodeJS and a web browser.
 - Provide a return inside the `rt_mainStarter` (the library does not do it by default since a `main` method in java is void).
 
 ie. it will change:
@@ -48,7 +45,7 @@ $rt_mainStarter = (f) => (args, callback) => {
 };
 ```
 
-- Remove calling the `analyze` function from the `main` initialization method:
+- Remove calling the `analyze` and `updateSignatureResolver` functions from the `main` initialization method:
 
 ```js
 cnsa_Main_main = (var$1) => {
@@ -69,9 +66,11 @@ cnsa_Main_main = (var$1) => {
 };
 ```
 
-- Add, at the end of the file, a call to `main` and exports the analyze method as semantic analysis, which is what we are going to be able to call from the outside of this file:
+- Add, at the end of the file, add a call to `main` and export the analyze method as semantic analysis, which is what we are going to be able to call from the outside of this file:
 
 ```js
+    $rt_exports.main = $rt_export_main;
+
     // Initialize everything
     $rt_exports.main([]);
 
@@ -82,6 +81,12 @@ cnsa_Main_main = (var$1) => {
     $rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
 }));
 ```
+
+### Historic of modifications
+
+We don't need to do these anymore, but best to keep a log of what we had to do at some point to make the transpiled file to work:
+
+- Substitute `global` by `globalThis` in the code that sets the module scaffolding at the top, so the code can be used from both NodeJS and a web browser.
 
 - Escape the    (\u2028 and \u2029) from the string (the need to be in a backtick quoted one) and escape the ` `` `:
 
