@@ -390,11 +390,19 @@ describe('Functions signature help', () => {
     testSignatureHelp(`CALL apoc.do.when`, {}, emptyResult);
   });
 
-  test('Provides signature help for functions inside procedures', () => {
+  test('Provides signature help for functions inside procedures, first argument', () => {
     testSignatureHelp(
       'CALL apoc.do.when(apoc.coll.combinations(',
       dbSchema,
       expectedArgIndex(0),
+    );
+  });
+
+  test('Provides signature help for functions inside procedures, second argument', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(apoc.coll.combinations(coll,',
+      dbSchema,
+      expectedArgIndex(1),
     );
   });
 });
