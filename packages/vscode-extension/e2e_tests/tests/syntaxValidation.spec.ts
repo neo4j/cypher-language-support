@@ -24,7 +24,12 @@ export async function testSyntaxValidation({
           const docUri = getDocumentUri(textFile);
           diagnostics = vscode.languages.getDiagnostics(docUri);
         } else {
-          diagnostics = vscode.languages.getDiagnostics().flatMap((d) => d[1]);
+          // We need to filter diagnostics for untitled files
+          // because there could be other opened files
+          diagnostics = vscode.languages
+            .getDiagnostics()
+            .filter(([uri]) => uri.scheme === 'untitled')
+            .flatMap(([, diagnostics]) => diagnostics);
         }
         try {
           // We need to test diagnostics one by one
