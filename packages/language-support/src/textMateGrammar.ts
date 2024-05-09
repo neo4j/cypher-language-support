@@ -17,7 +17,7 @@ export const textMateGrammar = {
       include: '#comments',
     },
     {
-      include: '#types',
+      include: '#labels',
     },
     {
       include: '#properties',
@@ -25,13 +25,14 @@ export const textMateGrammar = {
     {
       include: '#numbers',
     },
-    {
-      include: '#operators',
-    },
   ],
   repository: {
     keywords: {
       patterns: [
+        {
+          match: '[+\\-*/]|AND|OR|NOT|XOR',
+          name: 'keyword.operator',
+        },
         {
           name: 'keyword.control.cypher',
           match: `\\b(${keywordRegex})\\b`,
@@ -78,10 +79,10 @@ export const textMateGrammar = {
         },
       ],
     },
-    types: {
+    labels: {
       patterns: [
         {
-          match: ':[\\w\\&\\|]+',
+          match: '\\:\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
           name: 'entity.name.class',
         },
       ],
@@ -99,14 +100,6 @@ export const textMateGrammar = {
         {
           match: '\\b\\d+\\b',
           name: 'constant.numeric',
-        },
-      ],
-    },
-    operators: {
-      patterns: [
-        {
-          match: '[+\\-*/]|AND|OR|NOT|XOR',
-          name: 'keyword.operator',
         },
       ],
     },
