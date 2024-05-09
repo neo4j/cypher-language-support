@@ -1,5 +1,8 @@
 import { tags } from '@lezer/highlight';
-import { applySyntaxColouring } from '@neo4j-cypher/language-support';
+import {
+  applySyntaxColouring,
+  CypherTokenType,
+} from '@neo4j-cypher/language-support';
 import { tokenTypeToStyleTag } from './constants';
 
 const cypherQueryWithAllTokenTypes = `MATCH (variable :Label)-[:REL_TYPE]->() 
@@ -54,7 +57,7 @@ test('correctly parses all cypher token types to style tags', () => {
   ]);
 
   const styleTags = tokenTypes.map((tokenType) => {
-    if (tokenType === 'none') return undefined;
+    if (tokenType === CypherTokenType.none) return undefined;
     return tokenTypeToStyleTag[tokenType];
   });
   const correctTags = [
