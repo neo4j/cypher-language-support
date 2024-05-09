@@ -1,3 +1,10 @@
+/* Script to do all the heavy lifting of releasing canary packages on every merge to main for:
+
+  - language-support
+  - react-codemirror
+
+On every merge to main we will release a new version x.y.z-canary-{git commit hash} of those packages.
+*/
 const semver = require('semver');
 const fs = require('fs');
 const childProcess = require('child_process');
@@ -12,8 +19,7 @@ function exec(command) {
     console.log(`Executing: ${command}`);
     childProcess.execSync(command);
   } catch (error) {
-    console.log(`Error while executing ${command}\n` + error);
-    throw new Error();
+    throw new Error(`Error while executing ${command}\n` + error);
   }
 }
 
@@ -39,9 +45,10 @@ function replaceDependency(package, dependency, newVersion) {
   try {
     fs.writeFileSync(jsonFile, data);
   } catch (error) {
-    // logging the error
-    console.error(error);
-    throw new Error();
+    throw new Error(
+      `Error while updating dependency ${dependency} in ${package} to ${newVersion}\n` +
+        error,
+    );
   }
 }
 
@@ -74,12 +81,24 @@ const langSupportVersion = getCanaryVersion(langSupport);
 const reactCodemirrorVersion = getCanaryVersion(reactCodemirror);
 
 updateVersion(langSupport, langSupportVersion);
+/* We need to update the dependency on the language support for 
+   react-codemirror to the newly released canary package,
+   reading its package.json manually and replacing it
+
+   We tried to do this using 
+
+      npm i @neo4j-cypher/language-support@${langSupportVersion}
+  
+   but since npm seems eventually consistent, it wasn't setting the 
+   version to the correct one.
+*/
 replaceDependency(
   reactCodemirror,
   '@neo4j-cypher/language-support',
   langSupportVersion,
 );
 updateVersion(reactCodemirror, reactCodemirrorVersion);
+// We need to rebuild everything with the newly generated versions
 buildProject();
 publishCanaryVersion(langSupport);
 publishCanaryVersion(reactCodemirror);
