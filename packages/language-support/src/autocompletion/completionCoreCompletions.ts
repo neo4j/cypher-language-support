@@ -21,7 +21,7 @@ import {
 
 import { ParsedStatement } from '../parserWrapper';
 
-import { consoleCommandEnabled } from '../parserWrapper';
+import { _internalFeatureFlags } from '../featureFlags';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -346,7 +346,7 @@ export function completionCoreCompletion(
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(consoleCommandEnabled()
+    ...(_internalFeatureFlags.consoleCommands
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,

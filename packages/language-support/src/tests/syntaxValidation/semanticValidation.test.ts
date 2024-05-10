@@ -1,4 +1,4 @@
-import { setConsoleCommandsEnabled } from '../../parserWrapper';
+import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
@@ -1252,7 +1252,8 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
   });
 
   test('gives error on console commands when they are disabled', () => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
+
     expect(
       getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
     ).toEqual([
@@ -1293,11 +1294,11 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles multiple cypher statements in a single query', () => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
     expect(getDiagnosticsForQuery({ query: 'RETURN a; RETURN b;' })).toEqual([
       {
         message: 'Variable `a` not defined',
@@ -1336,11 +1337,11 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with client commands', () => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
         query: ':clear;RETURN a;:clear; RETURN b;:history;',
@@ -1383,11 +1384,11 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with complex client command', () => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
         query: `
@@ -1418,7 +1419,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Does not provide semantic validation for pluggeable functions when schema is not available', () => {
