@@ -36,4 +36,10 @@ jobs:
           cd packages/vscode-extension
           npx vsce package
           npx vsce publish
+      
+      - name: Publish to OpenVSX
+        env:
+          VSX_PAT: ${{ secrets.VSX_PAT }}: 
+        run: npx ovsx publish -p $VSX_PAT
+
  
