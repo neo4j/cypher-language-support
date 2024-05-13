@@ -561,8 +561,12 @@ extendedWhen
    | expression                                    # WhenEquals
    ;
 
+// Observe that this is not possible to write as:
+// (WHERE whereExp = expression)? (BAR barExp = expression)? RBRACKET
+// Due to an ambigouity with cases such as [node IN nodes WHERE node:A|B]
+// where |B will be interpreted as part of the whereExp, rather than as the expected barExp.
 listComprehension
-   : LBRACKET variable IN expression ((WHERE whereExp = expression)? BAR barExp = expression RBRACKET | (WHERE whereExp = expression)? RBRACKET)
+   : LBRACKET variable IN expression ((WHERE whereExp = expression)? BAR barExp = expression | (WHERE whereExp = expression)?) RBRACKET
    ;
 
 patternComprehension
@@ -651,10 +655,10 @@ propertyKeyName
    ;
 
 parameter[String paramType]
-   : DOLLAR parameterName
+   : DOLLAR parameterName[paramType]
    ;
 
-parameterName
+parameterName[String paramType]
    : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER)
    ;
 
@@ -1016,7 +1020,7 @@ createIndex_
    ;
 
 createFulltextIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (fulltextNodePattern | fulltextRelPattern) ON EACH LBRACKET variable property (COMMA variable property)* RBRACKET commandOptions?
+   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (fulltextNodePattern | fulltextRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
    ;
 
 fulltextNodePattern
@@ -1044,7 +1048,11 @@ dropIndex
    ;
 
 propertyList
-   : variable property | LPAREN variable property (COMMA variable property)* RPAREN
+   : variable property | LPAREN enclosedPropertyList RPAREN
+   ;
+
+enclosedPropertyList
+   : variable property (COMMA variable property)*
    ;
 
 enableServerCommand
