@@ -32,7 +32,7 @@ export function getDocumentUri(docName: string) {
 
 export async function eventually(
   assertion: () => Promise<void>,
-  timeoutMs = 1000000,
+  timeoutMs = 15000,
   backoffMs = 100,
 ) {
   let totalWait = 0;
@@ -46,7 +46,10 @@ export async function eventually(
     } catch (e) {
       totalWait += wait;
       if (totalWait > timeoutMs) {
-        throw e;
+        throw new Error(
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          `Timeout of ${timeoutMs} exceeded for test with last error: ${e}`,
+        );
       } else {
         wait *= 2;
         await sleep(wait);
