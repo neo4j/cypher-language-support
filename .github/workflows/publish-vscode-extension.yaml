@@ -1,8 +1,9 @@
 name: Publish VSCode extension to Marketplace and OpenVSX
 
 on:
-  # Only allow this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    tags:
+      - "neo4j-for-vscode@*.*.*"
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
