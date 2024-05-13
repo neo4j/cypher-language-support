@@ -218,6 +218,14 @@ describe('Procedures signature help', () => {
     testSignatureHelp(`CALL apoc.do.when`, undefined, emptyResult);
     testSignatureHelp(`CALL apoc.do.when`, {}, emptyResult);
   });
+
+  test('Provides signature help for procedures when another argument is a function', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(apoc.coll.combinations(coll, something), ',
+      dbSchema,
+      expectedArgIndex(1),
+    );
+  });
 });
 
 describe('Functions signature help', () => {
@@ -388,5 +396,21 @@ describe('Functions signature help', () => {
   test('Does not crash on missing schema', () => {
     testSignatureHelp(`CALL apoc.do.when`, undefined, emptyResult);
     testSignatureHelp(`CALL apoc.do.when`, {}, emptyResult);
+  });
+
+  test('Provides signature help for functions inside procedures, first argument', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(apoc.coll.combinations(',
+      dbSchema,
+      expectedArgIndex(0),
+    );
+  });
+
+  test('Provides signature help for functions inside procedures, second argument', () => {
+    testSignatureHelp(
+      'CALL apoc.do.when(apoc.coll.combinations(coll,',
+      dbSchema,
+      expectedArgIndex(1),
+    );
   });
 });
