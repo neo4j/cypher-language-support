@@ -69,7 +69,6 @@ export function wrappedSemanticAnalysis(
       })),
     };
   } catch (e) {
-    console.log(e)
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
     return { errors: [], notifications: [] };
   }

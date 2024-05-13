@@ -849,9 +849,8 @@ Attempted to access graph other`,
 
   test('Shows errors for type mismatch and subpath assignment in Graph Pattern Matching', () => {
     const query = 'MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p';
-    const diagnostics = getDiagnosticsForQuery({ query });
 
-    expect(diagnostics).toEqual([
+    expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
