@@ -108,7 +108,7 @@ export const createCypherTheme = ({
     },
     '& .cm-signature-help-panel-contents': {
       overflow: 'auto',
-      maxHeight: '100%',
+      maxHeight: '250px',
     },
     '& .cm-signature-help-panel-current-argument': {
       color: settings.autoCompletionPanel.matchingTextColor,

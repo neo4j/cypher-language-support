@@ -105,7 +105,6 @@ function getSignatureHelpTooltip(
           {
             pos: caretPosition,
             above: true,
-            strictSide: true,
             arrow: true,
             create: createSignatureHelpElement({ signature, activeParameter }),
           },
