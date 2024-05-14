@@ -5,6 +5,7 @@ import {
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
+import { CypherTokenType } from '@neo4j-cypher/language-support';
 import { StyleSpec } from 'style-mod';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 import {
@@ -230,7 +231,7 @@ export const createCypherTheme = ({
     ([token, color]: [HighlightedCypherTokenTypes, string]): TagStyle => ({
       tag: tokenTypeToStyleTag[token],
       color,
-      class: token === 'consoleCommand' ? 'cm-bold' : undefined,
+      class: token === CypherTokenType.consoleCommand ? 'cm-bold' : undefined,
     }),
   );
   const highlightStyle = HighlightStyle.define(styles);
