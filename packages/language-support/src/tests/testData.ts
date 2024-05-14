@@ -19,6 +19,7 @@ const mockSchema: DbSchema = {
       signature: 'abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT',
       returnDescription: 'INTEGER | FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     acos: {
       name: 'acos',
@@ -36,6 +37,7 @@ const mockSchema: DbSchema = {
       signature: 'acos(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     all: {
       name: 'all',
@@ -61,6 +63,7 @@ const mockSchema: DbSchema = {
         'all(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     any: {
       name: 'any',
@@ -86,6 +89,7 @@ const mockSchema: DbSchema = {
         'any(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.agg.first': {
       name: 'apoc.agg.first',
@@ -103,6 +107,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.agg.first(value :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.graph': {
       name: 'apoc.agg.graph',
@@ -121,6 +126,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.agg.graph(path :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.last': {
       name: 'apoc.agg.last',
@@ -138,6 +144,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.agg.last(value :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.maxItems': {
       name: 'apoc.agg.maxItems',
@@ -170,6 +177,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.maxItems(items :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.median': {
       name: 'apoc.agg.median',
@@ -188,6 +196,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.agg.median(value :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.minItems': {
       name: 'apoc.agg.minItems',
@@ -220,6 +229,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.minItems(items :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.nth': {
       name: 'apoc.agg.nth',
@@ -244,6 +254,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.agg.nth(value :: ANY, offset :: INTEGER) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.percentiles': {
       name: 'apoc.agg.percentiles',
@@ -272,6 +283,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.percentiles(value :: INTEGER | FLOAT, percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST<FLOAT>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.product': {
       name: 'apoc.agg.product',
@@ -291,6 +303,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.product(value :: INTEGER | FLOAT) :: INTEGER | FLOAT',
       returnDescription: 'INTEGER | FLOAT',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.slice': {
       name: 'apoc.agg.slice',
@@ -324,6 +337,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.slice(value :: ANY, from = 0 :: INTEGER, to = -1 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.agg.statistics': {
       name: 'apoc.agg.statistics',
@@ -352,6 +366,7 @@ const mockSchema: DbSchema = {
         'apoc.agg.statistics(value :: INTEGER | FLOAT, percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST<FLOAT>) :: MAP',
       returnDescription: 'MAP',
       aggregating: true,
+      isDeprecated: false,
     },
     'apoc.any.isDeleted': {
       name: 'apoc.any.isDeleted',
@@ -370,6 +385,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.any.isDeleted(object :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.any.properties': {
       name: 'apoc.any.properties',
@@ -396,6 +412,7 @@ const mockSchema: DbSchema = {
         'apoc.any.properties(object :: ANY, keys = null :: LIST<STRING>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.any.property': {
       name: 'apoc.any.property',
@@ -420,6 +437,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.any.property(object :: ANY, key :: STRING) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.bitwise.op': {
       name: 'apoc.bitwise.op',
@@ -450,6 +468,7 @@ const mockSchema: DbSchema = {
         'apoc.bitwise.op(a :: INTEGER, operator :: STRING, b :: INTEGER) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.avg': {
       name: 'apoc.coll.avg',
@@ -468,6 +487,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.avg(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.combinations': {
       name: 'apoc.coll.combinations',
@@ -500,6 +520,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.combinations(coll :: LIST<ANY>, minSelect :: INTEGER, maxSelect = -1 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.contains': {
       name: 'apoc.coll.contains',
@@ -525,6 +546,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.contains(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.containsAll': {
       name: 'apoc.coll.containsAll',
@@ -550,6 +572,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.containsAll(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.containsAllSorted': {
       name: 'apoc.coll.containsAllSorted',
@@ -575,6 +598,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.containsAllSorted(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.containsDuplicates': {
       name: 'apoc.coll.containsDuplicates',
@@ -592,6 +616,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.containsDuplicates(coll :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.containsSorted': {
       name: 'apoc.coll.containsSorted',
@@ -617,6 +642,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.containsSorted(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.different': {
       name: 'apoc.coll.different',
@@ -635,6 +661,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.different(coll :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.disjunction': {
       name: 'apoc.coll.disjunction',
@@ -659,6 +686,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.disjunction(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.dropDuplicateNeighbors': {
       name: 'apoc.coll.dropDuplicateNeighbors',
@@ -677,6 +705,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.dropDuplicateNeighbors(list :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.duplicates': {
       name: 'apoc.coll.duplicates',
@@ -695,6 +724,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.duplicates(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.duplicatesWithCount': {
       name: 'apoc.coll.duplicatesWithCount',
@@ -714,6 +744,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.duplicatesWithCount(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.fill': {
       name: 'apoc.coll.fill',
@@ -738,6 +769,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.fill(items :: STRING, count :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.flatten': {
       name: 'apoc.coll.flatten',
@@ -764,6 +796,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.flatten(coll :: LIST<ANY>, recursive = false :: BOOLEAN) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.frequencies': {
       name: 'apoc.coll.frequencies',
@@ -782,6 +815,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.frequencies(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.frequenciesAsMap': {
       name: 'apoc.coll.frequenciesAsMap',
@@ -800,6 +834,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.frequenciesAsMap(coll :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.indexOf': {
       name: 'apoc.coll.indexOf',
@@ -825,6 +860,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.indexOf(coll :: LIST<ANY>, value :: ANY) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.insert': {
       name: 'apoc.coll.insert',
@@ -856,6 +892,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.insert(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.insertAll': {
       name: 'apoc.coll.insertAll',
@@ -887,6 +924,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.insertAll(coll :: LIST<ANY>, index :: INTEGER, values :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.intersection': {
       name: 'apoc.coll.intersection',
@@ -912,6 +950,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.intersection(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.isEqualCollection': {
       name: 'apoc.coll.isEqualCollection',
@@ -937,6 +976,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.isEqualCollection(coll :: LIST<ANY>, values :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.max': {
       name: 'apoc.coll.max',
@@ -955,6 +995,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.max(values :: LIST<ANY>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.min': {
       name: 'apoc.coll.min',
@@ -973,6 +1014,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.min(values :: LIST<ANY>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.occurrences': {
       name: 'apoc.coll.occurrences',
@@ -997,6 +1039,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.occurrences(coll :: LIST<ANY>, item :: ANY) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.pairWithOffset': {
       name: 'apoc.coll.pairWithOffset',
@@ -1021,6 +1064,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.pairWithOffset(coll :: LIST<ANY>, offset :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.pairs': {
       name: 'apoc.coll.pairs',
@@ -1039,6 +1083,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.pairs(list :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.pairsMin': {
       name: 'apoc.coll.pairsMin',
@@ -1057,6 +1102,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.pairsMin(list :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.partition': {
       name: 'apoc.coll.partition',
@@ -1082,6 +1128,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.partition(coll :: LIST<ANY>, batchSize :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.randomItem': {
       name: 'apoc.coll.randomItem',
@@ -1100,6 +1147,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.randomItem(coll :: LIST<ANY>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.randomItems': {
       name: 'apoc.coll.randomItems',
@@ -1132,6 +1180,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.randomItems(coll :: LIST<ANY>, itemCount :: INTEGER, allowRepick = false :: BOOLEAN) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.remove': {
       name: 'apoc.coll.remove',
@@ -1164,6 +1213,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.remove(coll :: LIST<ANY>, index :: INTEGER, length = 1 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.removeAll': {
       name: 'apoc.coll.removeAll',
@@ -1189,6 +1239,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.removeAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.runningTotal': {
       name: 'apoc.coll.runningTotal',
@@ -1207,6 +1258,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.runningTotal(list :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.set': {
       name: 'apoc.coll.set',
@@ -1237,6 +1289,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.set(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.shuffle': {
       name: 'apoc.coll.shuffle',
@@ -1254,6 +1307,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.shuffle(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sort': {
       name: 'apoc.coll.sort',
@@ -1271,6 +1325,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.sort(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sortMaps': {
       name: 'apoc.coll.sortMaps',
@@ -1296,6 +1351,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.sortMaps(list :: LIST<MAP>, prop :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sortMulti': {
       name: 'apoc.coll.sortMulti',
@@ -1336,6 +1392,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.sortMulti(coll :: LIST<MAP>, orderFields = [] :: LIST<STRING>, limit = -1 :: INTEGER, skip = 0 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sortNodes': {
       name: 'apoc.coll.sortNodes',
@@ -1361,6 +1418,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.sortNodes(coll :: LIST<NODE>, prop :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sortText': {
       name: 'apoc.coll.sortText',
@@ -1386,6 +1444,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.sortText(coll :: LIST<STRING>, conf = {} :: MAP) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.stdev': {
       name: 'apoc.coll.stdev',
@@ -1412,6 +1471,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.stdev(list :: LIST<INTEGER | FLOAT>, isBiasCorrected = true :: BOOLEAN) :: INTEGER | FLOAT',
       returnDescription: 'INTEGER | FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.subtract': {
       name: 'apoc.coll.subtract',
@@ -1437,6 +1497,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.subtract(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sum': {
       name: 'apoc.coll.sum',
@@ -1455,6 +1516,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.sum(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.sumLongs': {
       name: 'apoc.coll.sumLongs',
@@ -1473,6 +1535,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.sumLongs(coll :: LIST<INTEGER | FLOAT>) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.toSet': {
       name: 'apoc.coll.toSet',
@@ -1490,6 +1553,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.coll.toSet(coll :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.union': {
       name: 'apoc.coll.union',
@@ -1515,6 +1579,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.union(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.unionAll': {
       name: 'apoc.coll.unionAll',
@@ -1540,6 +1605,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.unionAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.coll.zip': {
       name: 'apoc.coll.zip',
@@ -1565,6 +1631,7 @@ const mockSchema: DbSchema = {
         'apoc.coll.zip(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.fromJsonList': {
       name: 'apoc.convert.fromJsonList',
@@ -1597,6 +1664,7 @@ const mockSchema: DbSchema = {
         'apoc.convert.fromJsonList(list :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.fromJsonMap': {
       name: 'apoc.convert.fromJsonMap',
@@ -1629,6 +1697,7 @@ const mockSchema: DbSchema = {
         'apoc.convert.fromJsonMap(map :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.getJsonProperty': {
       name: 'apoc.convert.getJsonProperty',
@@ -1668,6 +1737,7 @@ const mockSchema: DbSchema = {
         'apoc.convert.getJsonProperty(node :: NODE, key :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.getJsonPropertyMap': {
       name: 'apoc.convert.getJsonPropertyMap',
@@ -1707,6 +1777,7 @@ const mockSchema: DbSchema = {
         'apoc.convert.getJsonPropertyMap(node :: NODE, key :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toJson': {
       name: 'apoc.convert.toJson',
@@ -1724,6 +1795,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toJson(value :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toList': {
       name: 'apoc.convert.toList',
@@ -1741,6 +1813,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toList(value :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toMap': {
       name: 'apoc.convert.toMap',
@@ -1758,6 +1831,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toMap(map :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toNode': {
       name: 'apoc.convert.toNode',
@@ -1775,6 +1849,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toNode(node :: ANY) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toNodeList': {
       name: 'apoc.convert.toNodeList',
@@ -1792,6 +1867,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toNodeList(list :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toRelationship': {
       name: 'apoc.convert.toRelationship',
@@ -1809,6 +1885,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toRelationship(rel :: ANY) :: RELATIONSHIP',
       returnDescription: 'RELATIONSHIP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toRelationshipList': {
       name: 'apoc.convert.toRelationshipList',
@@ -1826,6 +1903,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toRelationshipList(relList :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toSet': {
       name: 'apoc.convert.toSet',
@@ -1844,6 +1922,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.convert.toSet(list :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.convert.toSortedJsonMap': {
       name: 'apoc.convert.toSortedJsonMap',
@@ -1870,6 +1949,7 @@ const mockSchema: DbSchema = {
         'apoc.convert.toSortedJsonMap(value :: ANY, ignoreCase = true :: BOOLEAN) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.uuid': {
       name: 'apoc.create.uuid',
@@ -1880,6 +1960,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.create.uuid() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: true,
     },
     'apoc.create.uuidBase64': {
       name: 'apoc.create.uuidBase64',
@@ -1890,6 +1971,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.create.uuidBase64() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.uuidBase64ToHex': {
       name: 'apoc.create.uuidBase64ToHex',
@@ -1908,6 +1990,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.create.uuidBase64ToHex(base64Uuid :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.uuidHexToBase64': {
       name: 'apoc.create.uuidHexToBase64',
@@ -1926,6 +2009,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.create.uuidHexToBase64(uuid :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.vNode': {
       name: 'apoc.create.vNode',
@@ -1951,6 +2035,7 @@ const mockSchema: DbSchema = {
         'apoc.create.vNode(labels :: LIST<STRING>, props = {} :: MAP) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.vRelationship': {
       name: 'apoc.create.vRelationship',
@@ -1987,6 +2072,7 @@ const mockSchema: DbSchema = {
         'apoc.create.vRelationship(from :: NODE, relType :: STRING, props :: MAP, to :: NODE) :: RELATIONSHIP',
       returnDescription: 'RELATIONSHIP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.create.virtual.fromNode': {
       name: 'apoc.create.virtual.fromNode',
@@ -2012,6 +2098,7 @@ const mockSchema: DbSchema = {
         'apoc.create.virtual.fromNode(node :: NODE, propertyNames :: LIST<STRING>) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.cypher.runFirstColumnMany': {
       name: 'apoc.cypher.runFirstColumnMany',
@@ -2037,6 +2124,7 @@ const mockSchema: DbSchema = {
         'apoc.cypher.runFirstColumnMany(statement :: STRING, params :: MAP) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.cypher.runFirstColumnSingle': {
       name: 'apoc.cypher.runFirstColumnSingle',
@@ -2062,6 +2150,7 @@ const mockSchema: DbSchema = {
         'apoc.cypher.runFirstColumnSingle(statement :: STRING, params :: MAP) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.data.url': {
       name: 'apoc.data.url',
@@ -2079,6 +2168,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.data.url(url :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.add': {
       name: 'apoc.date.add',
@@ -2115,6 +2205,7 @@ const mockSchema: DbSchema = {
         'apoc.date.add(time :: INTEGER, unit :: STRING, addValue :: INTEGER, addUnit :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.convert': {
       name: 'apoc.date.convert',
@@ -2146,6 +2237,7 @@ const mockSchema: DbSchema = {
         'apoc.date.convert(time :: INTEGER, unit :: STRING, toUnit :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.convertFormat': {
       name: 'apoc.date.convertFormat',
@@ -2178,6 +2270,7 @@ const mockSchema: DbSchema = {
         'apoc.date.convertFormat(temporal :: STRING, currentFormat :: STRING, convertTo = yyyy-MM-dd :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.currentTimestamp': {
       name: 'apoc.date.currentTimestamp',
@@ -2188,6 +2281,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.date.currentTimestamp() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.field': {
       name: 'apoc.date.field',
@@ -2220,6 +2314,7 @@ const mockSchema: DbSchema = {
         'apoc.date.field(time :: INTEGER, unit = d :: STRING, timezone = UTC :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.fields': {
       name: 'apoc.date.fields',
@@ -2247,6 +2342,7 @@ const mockSchema: DbSchema = {
         'apoc.date.fields(date :: STRING, pattern = yyyy-MM-dd HH:mm:ss :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.format': {
       name: 'apoc.date.format',
@@ -2288,6 +2384,7 @@ const mockSchema: DbSchema = {
         'apoc.date.format(time :: INTEGER, unit = ms :: STRING, format = yyyy-MM-dd HH:mm:ss :: STRING, timezone =  :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.fromISO8601': {
       name: 'apoc.date.fromISO8601',
@@ -2306,6 +2403,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.date.fromISO8601(time :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.parse': {
       name: 'apoc.date.parse',
@@ -2347,6 +2445,7 @@ const mockSchema: DbSchema = {
         'apoc.date.parse(time :: STRING, unit = ms :: STRING, format = yyyy-MM-dd HH:mm:ss :: STRING, timezone =  :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.systemTimezone': {
       name: 'apoc.date.systemTimezone',
@@ -2358,6 +2457,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.date.systemTimezone() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.toISO8601': {
       name: 'apoc.date.toISO8601',
@@ -2384,6 +2484,7 @@ const mockSchema: DbSchema = {
         'apoc.date.toISO8601(time :: INTEGER, unit = ms :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.date.toYears': {
       name: 'apoc.date.toYears',
@@ -2411,6 +2512,7 @@ const mockSchema: DbSchema = {
         'apoc.date.toYears(value :: ANY, format = yyyy-MM-dd HH:mm:ss :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.diff.nodes': {
       name: 'apoc.diff.nodes',
@@ -2435,6 +2537,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.diff.nodes(leftNode :: NODE, rightNode :: NODE) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.hashing.fingerprint': {
       name: 'apoc.hashing.fingerprint',
@@ -2461,6 +2564,7 @@ const mockSchema: DbSchema = {
         'apoc.hashing.fingerprint(object :: ANY, excludedPropertyKeys = [] :: LIST<STRING>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.hashing.fingerprintGraph': {
       name: 'apoc.hashing.fingerprintGraph',
@@ -2481,6 +2585,7 @@ const mockSchema: DbSchema = {
         'apoc.hashing.fingerprintGraph(propertyExcludes = [] :: LIST<STRING>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.hashing.fingerprinting': {
       name: 'apoc.hashing.fingerprinting',
@@ -2507,6 +2612,7 @@ const mockSchema: DbSchema = {
         'apoc.hashing.fingerprinting(object :: ANY, config = {} :: MAP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.json.path': {
       name: 'apoc.json.path',
@@ -2539,6 +2645,7 @@ const mockSchema: DbSchema = {
         'apoc.json.path(json :: STRING, path = $ :: STRING, pathOptions = null :: LIST<STRING>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.label.exists': {
       name: 'apoc.label.exists',
@@ -2563,6 +2670,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.label.exists(node :: ANY, label :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.clean': {
       name: 'apoc.map.clean',
@@ -2594,6 +2702,7 @@ const mockSchema: DbSchema = {
         'apoc.map.clean(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.flatten': {
       name: 'apoc.map.flatten',
@@ -2619,6 +2728,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.flatten(map :: MAP, delimiter = . :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.fromLists': {
       name: 'apoc.map.fromLists',
@@ -2644,6 +2754,7 @@ const mockSchema: DbSchema = {
         'apoc.map.fromLists(keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.fromNodes': {
       name: 'apoc.map.fromNodes',
@@ -2668,6 +2779,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.fromNodes(label :: STRING, prop :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.fromPairs': {
       name: 'apoc.map.fromPairs',
@@ -2686,6 +2798,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.fromPairs(pairs :: LIST<LIST<ANY>>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.fromValues': {
       name: 'apoc.map.fromValues',
@@ -2704,6 +2817,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.fromValues(values :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.get': {
       name: 'apoc.map.get',
@@ -2743,6 +2857,7 @@ const mockSchema: DbSchema = {
         'apoc.map.get(map :: MAP, key :: STRING, value = null :: ANY, fail = true :: BOOLEAN) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.groupBy': {
       name: 'apoc.map.groupBy',
@@ -2767,6 +2882,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.groupBy(values :: LIST<ANY>, key :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.groupByMulti': {
       name: 'apoc.map.groupByMulti',
@@ -2792,6 +2908,7 @@ const mockSchema: DbSchema = {
         'apoc.map.groupByMulti(values :: LIST<ANY>, key :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.merge': {
       name: 'apoc.map.merge',
@@ -2815,6 +2932,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.merge(map1 :: MAP, map2 :: MAP) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.mergeList': {
       name: 'apoc.map.mergeList',
@@ -2833,6 +2951,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.mergeList(maps :: LIST<MAP>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.mget': {
       name: 'apoc.map.mget',
@@ -2872,6 +2991,7 @@ const mockSchema: DbSchema = {
         'apoc.map.mget(map :: MAP, keys :: LIST<STRING>, values = [] :: LIST<ANY>, fail = true :: BOOLEAN) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.removeKey': {
       name: 'apoc.map.removeKey',
@@ -2904,6 +3024,7 @@ const mockSchema: DbSchema = {
         'apoc.map.removeKey(map :: MAP, key :: STRING, config = {} :: MAP) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.removeKeys': {
       name: 'apoc.map.removeKeys',
@@ -2936,6 +3057,7 @@ const mockSchema: DbSchema = {
         'apoc.map.removeKeys(map :: MAP, keys :: LIST<STRING>, config = {} :: MAP) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.setEntry': {
       name: 'apoc.map.setEntry',
@@ -2966,6 +3088,7 @@ const mockSchema: DbSchema = {
         'apoc.map.setEntry(map :: MAP, key :: STRING, value :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.setKey': {
       name: 'apoc.map.setKey',
@@ -2996,6 +3119,7 @@ const mockSchema: DbSchema = {
         'apoc.map.setKey(map :: MAP, key :: STRING, value :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.setLists': {
       name: 'apoc.map.setLists',
@@ -3027,6 +3151,7 @@ const mockSchema: DbSchema = {
         'apoc.map.setLists(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.setPairs': {
       name: 'apoc.map.setPairs',
@@ -3052,6 +3177,7 @@ const mockSchema: DbSchema = {
         'apoc.map.setPairs(map :: MAP, pairs :: LIST<LIST<ANY>>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.setValues': {
       name: 'apoc.map.setValues',
@@ -3076,6 +3202,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.map.setValues(map :: MAP, pairs :: LIST<ANY>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.sortedProperties': {
       name: 'apoc.map.sortedProperties',
@@ -3102,6 +3229,7 @@ const mockSchema: DbSchema = {
         'apoc.map.sortedProperties(map :: MAP, ignoreCase = true :: BOOLEAN) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.submap': {
       name: 'apoc.map.submap',
@@ -3141,6 +3269,7 @@ const mockSchema: DbSchema = {
         'apoc.map.submap(map :: MAP, keys :: LIST<STRING>, values = [] :: LIST<ANY>, fail = true :: BOOLEAN) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.unflatten': {
       name: 'apoc.map.unflatten',
@@ -3167,6 +3296,7 @@ const mockSchema: DbSchema = {
         'apoc.map.unflatten(map :: MAP, delimiter = . :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.updateTree': {
       name: 'apoc.map.updateTree',
@@ -3198,6 +3328,7 @@ const mockSchema: DbSchema = {
         'apoc.map.updateTree(tree :: MAP, key :: STRING, data :: LIST<LIST<ANY>>) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.map.values': {
       name: 'apoc.map.values',
@@ -3231,6 +3362,7 @@ const mockSchema: DbSchema = {
         'apoc.map.values(map :: MAP, keys = [] :: LIST<STRING>, addNullsForMissing = false :: BOOLEAN) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.cosh': {
       name: 'apoc.math.cosh',
@@ -3248,6 +3380,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.cosh(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.coth': {
       name: 'apoc.math.coth',
@@ -3265,6 +3398,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.coth(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.csch': {
       name: 'apoc.math.csch',
@@ -3282,6 +3416,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.csch(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.maxByte': {
       name: 'apoc.math.maxByte',
@@ -3292,6 +3427,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.maxByte() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.maxDouble': {
       name: 'apoc.math.maxDouble',
@@ -3302,6 +3438,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.maxDouble() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.maxInt': {
       name: 'apoc.math.maxInt',
@@ -3312,6 +3449,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.maxInt() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.maxLong': {
       name: 'apoc.math.maxLong',
@@ -3322,6 +3460,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.maxLong() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.minByte': {
       name: 'apoc.math.minByte',
@@ -3332,6 +3471,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.minByte() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.minDouble': {
       name: 'apoc.math.minDouble',
@@ -3343,6 +3483,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.minDouble() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.minInt': {
       name: 'apoc.math.minInt',
@@ -3353,6 +3494,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.minInt() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.minLong': {
       name: 'apoc.math.minLong',
@@ -3363,6 +3505,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.minLong() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.sech': {
       name: 'apoc.math.sech',
@@ -3380,6 +3523,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.sech(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.sigmoid': {
       name: 'apoc.math.sigmoid',
@@ -3397,6 +3541,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.sigmoid(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.sigmoidPrime': {
       name: 'apoc.math.sigmoidPrime',
@@ -3415,6 +3560,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.sigmoidPrime(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.sinh': {
       name: 'apoc.math.sinh',
@@ -3432,6 +3578,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.sinh(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.math.tanh': {
       name: 'apoc.math.tanh',
@@ -3449,6 +3596,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.math.tanh(value :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.meta.cypher.isType': {
       name: 'apoc.meta.cypher.isType',
@@ -3473,6 +3621,7 @@ const mockSchema: DbSchema = {
         'apoc.meta.cypher.isType(value :: ANY, type :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.meta.cypher.type': {
       name: 'apoc.meta.cypher.type',
@@ -3490,6 +3639,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.meta.cypher.type(value :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.meta.cypher.types': {
       name: 'apoc.meta.cypher.types',
@@ -3508,6 +3658,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.meta.cypher.types(props :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.meta.nodes.count': {
       name: 'apoc.meta.nodes.count',
@@ -3535,6 +3686,7 @@ const mockSchema: DbSchema = {
         'apoc.meta.nodes.count(nodes = [] :: LIST<STRING>, config = {} :: MAP) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.degree': {
       name: 'apoc.node.degree',
@@ -3560,6 +3712,7 @@ const mockSchema: DbSchema = {
         'apoc.node.degree(node :: NODE, relTypes =  :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.degree.in': {
       name: 'apoc.node.degree.in',
@@ -3586,6 +3739,7 @@ const mockSchema: DbSchema = {
         'apoc.node.degree.in(node :: NODE, relTypes =  :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.degree.out': {
       name: 'apoc.node.degree.out',
@@ -3612,6 +3766,7 @@ const mockSchema: DbSchema = {
         'apoc.node.degree.out(node :: NODE, relTypes =  :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.id': {
       name: 'apoc.node.id',
@@ -3629,6 +3784,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.node.id(node :: NODE) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.labels': {
       name: 'apoc.node.labels',
@@ -3646,6 +3802,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.node.labels(node :: NODE) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.relationship.exists': {
       name: 'apoc.node.relationship.exists',
@@ -3672,6 +3829,7 @@ const mockSchema: DbSchema = {
         'apoc.node.relationship.exists(node :: NODE, relTypes =  :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.relationship.types': {
       name: 'apoc.node.relationship.types',
@@ -3698,6 +3856,7 @@ const mockSchema: DbSchema = {
         'apoc.node.relationship.types(node :: NODE, relTypes =  :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.node.relationships.exist': {
       name: 'apoc.node.relationships.exist',
@@ -3724,6 +3883,7 @@ const mockSchema: DbSchema = {
         'apoc.node.relationships.exist(node :: NODE, relTypes =  :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.nodes.connected': {
       name: 'apoc.nodes.connected',
@@ -3756,6 +3916,7 @@ const mockSchema: DbSchema = {
         'apoc.nodes.connected(startNode :: NODE, endNode :: NODE, types =  :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.nodes.isDense': {
       name: 'apoc.nodes.isDense',
@@ -3773,6 +3934,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.nodes.isDense(node :: NODE) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.nodes.relationship.types': {
       name: 'apoc.nodes.relationship.types',
@@ -3799,6 +3961,7 @@ const mockSchema: DbSchema = {
         'apoc.nodes.relationship.types(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.nodes.relationships.exist': {
       name: 'apoc.nodes.relationships.exist',
@@ -3825,6 +3988,7 @@ const mockSchema: DbSchema = {
         'apoc.nodes.relationships.exist(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.arabicToRoman': {
       name: 'apoc.number.arabicToRoman',
@@ -3842,6 +4006,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.number.arabicToRoman(number :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.add': {
       name: 'apoc.number.exact.add',
@@ -3867,6 +4032,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.add(stringA :: STRING, stringB :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.div': {
       name: 'apoc.number.exact.div',
@@ -3906,6 +4072,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.div(stringA :: STRING, stringB :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.mul': {
       name: 'apoc.number.exact.mul',
@@ -3945,6 +4112,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.mul(stringA :: STRING, stringB :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.sub': {
       name: 'apoc.number.exact.sub',
@@ -3970,6 +4138,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.sub(stringA :: STRING, stringB :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.toExact': {
       name: 'apoc.number.exact.toExact',
@@ -3988,6 +4157,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.number.exact.toExact(number :: INTEGER) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.toFloat': {
       name: 'apoc.number.exact.toFloat',
@@ -4021,6 +4191,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.toFloat(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.exact.toInteger': {
       name: 'apoc.number.exact.toInteger',
@@ -4054,6 +4225,7 @@ const mockSchema: DbSchema = {
         'apoc.number.exact.toInteger(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.format': {
       name: 'apoc.number.format',
@@ -4087,6 +4259,7 @@ const mockSchema: DbSchema = {
         'apoc.number.format(number :: ANY, pattern =  :: STRING, language =  :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.parseFloat': {
       name: 'apoc.number.parseFloat',
@@ -4120,6 +4293,7 @@ const mockSchema: DbSchema = {
         'apoc.number.parseFloat(text :: STRING, pattern =  :: STRING, language =  :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.parseInt': {
       name: 'apoc.number.parseInt',
@@ -4153,6 +4327,7 @@ const mockSchema: DbSchema = {
         'apoc.number.parseInt(text :: STRING, pattern =  :: STRING, language =  :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.number.romanToArabic': {
       name: 'apoc.number.romanToArabic',
@@ -4171,6 +4346,7 @@ const mockSchema: DbSchema = {
         'apoc.number.romanToArabic(romanNumber :: STRING) :: INTEGER | FLOAT',
       returnDescription: 'INTEGER | FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.path.combine': {
       name: 'apoc.path.combine',
@@ -4194,6 +4370,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.path.combine(path1 :: PATH, path2 :: PATH) :: PATH',
       returnDescription: 'PATH',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.path.create': {
       name: 'apoc.path.create',
@@ -4220,6 +4397,7 @@ const mockSchema: DbSchema = {
         'apoc.path.create(startNode :: NODE, rels = [] :: LIST<RELATIONSHIP>) :: PATH',
       returnDescription: 'PATH',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.path.elements': {
       name: 'apoc.path.elements',
@@ -4238,6 +4416,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.path.elements(path :: PATH) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.path.slice': {
       name: 'apoc.path.slice',
@@ -4271,6 +4450,7 @@ const mockSchema: DbSchema = {
         'apoc.path.slice(path :: PATH, offset = 0 :: INTEGER, length = -1 :: INTEGER) :: PATH',
       returnDescription: 'PATH',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.rel.endNode': {
       name: 'apoc.rel.endNode',
@@ -4289,6 +4469,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.rel.endNode(rel :: RELATIONSHIP) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.rel.id': {
       name: 'apoc.rel.id',
@@ -4306,6 +4487,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.rel.id(rel :: RELATIONSHIP) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.rel.startNode': {
       name: 'apoc.rel.startNode',
@@ -4324,6 +4506,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.rel.startNode(rel :: RELATIONSHIP) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.rel.type': {
       name: 'apoc.rel.type',
@@ -4341,6 +4524,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.rel.type(rel :: RELATIONSHIP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.schema.node.constraintExists': {
       name: 'apoc.schema.node.constraintExists',
@@ -4366,6 +4550,7 @@ const mockSchema: DbSchema = {
         'apoc.schema.node.constraintExists(labelName :: STRING, propertyName :: LIST<STRING>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.schema.node.indexExists': {
       name: 'apoc.schema.node.indexExists',
@@ -4391,6 +4576,7 @@ const mockSchema: DbSchema = {
         'apoc.schema.node.indexExists(labelName :: STRING, propertyName :: LIST<STRING>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.schema.relationship.constraintExists': {
       name: 'apoc.schema.relationship.constraintExists',
@@ -4416,6 +4602,7 @@ const mockSchema: DbSchema = {
         'apoc.schema.relationship.constraintExists(type :: STRING, propertyName :: LIST<STRING>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.schema.relationship.indexExists': {
       name: 'apoc.schema.relationship.indexExists',
@@ -4441,6 +4628,7 @@ const mockSchema: DbSchema = {
         'apoc.schema.relationship.indexExists(type :: STRING, propertyName :: LIST<STRING>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.scoring.existence': {
       name: 'apoc.scoring.existence',
@@ -4465,6 +4653,7 @@ const mockSchema: DbSchema = {
         'apoc.scoring.existence(score :: INTEGER, exists :: BOOLEAN) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.scoring.pareto': {
       name: 'apoc.scoring.pareto',
@@ -4502,6 +4691,7 @@ const mockSchema: DbSchema = {
         'apoc.scoring.pareto(minimumThreshold :: INTEGER, eightyPercentValue :: INTEGER, maximumValue :: INTEGER, score :: INTEGER) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.temporal.format': {
       name: 'apoc.temporal.format',
@@ -4528,6 +4718,7 @@ const mockSchema: DbSchema = {
         'apoc.temporal.format(temporal :: ANY, format = yyyy-MM-dd :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.temporal.formatDuration': {
       name: 'apoc.temporal.formatDuration',
@@ -4552,6 +4743,7 @@ const mockSchema: DbSchema = {
         'apoc.temporal.formatDuration(input :: ANY, format :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.temporal.toZonedTemporal': {
       name: 'apoc.temporal.toZonedTemporal',
@@ -4586,6 +4778,7 @@ const mockSchema: DbSchema = {
         'apoc.temporal.toZonedTemporal(time :: STRING, format = yyyy-MM-dd HH:mm:ss :: STRING, timezone = UTC :: STRING) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.base64Decode': {
       name: 'apoc.text.base64Decode',
@@ -4603,6 +4796,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.base64Decode(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.base64Encode': {
       name: 'apoc.text.base64Encode',
@@ -4620,6 +4814,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.base64Encode(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.base64UrlDecode': {
       name: 'apoc.text.base64UrlDecode',
@@ -4637,6 +4832,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.base64UrlDecode(url :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.base64UrlEncode': {
       name: 'apoc.text.base64UrlEncode',
@@ -4654,6 +4850,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.base64UrlEncode(url :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.byteCount': {
       name: 'apoc.text.byteCount',
@@ -4679,6 +4876,7 @@ const mockSchema: DbSchema = {
         'apoc.text.byteCount(text :: STRING, charset = UTF-8 :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.bytes': {
       name: 'apoc.text.bytes',
@@ -4704,6 +4902,7 @@ const mockSchema: DbSchema = {
         'apoc.text.bytes(text :: STRING, charset = UTF-8 :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.camelCase': {
       name: 'apoc.text.camelCase',
@@ -4721,6 +4920,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.camelCase(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.capitalize': {
       name: 'apoc.text.capitalize',
@@ -4738,6 +4938,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.capitalize(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.capitalizeAll': {
       name: 'apoc.text.capitalizeAll',
@@ -4756,6 +4957,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.capitalizeAll(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.charAt': {
       name: 'apoc.text.charAt',
@@ -4781,6 +4983,7 @@ const mockSchema: DbSchema = {
         'apoc.text.charAt(text :: STRING, index :: INTEGER) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.clean': {
       name: 'apoc.text.clean',
@@ -4799,6 +5002,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.clean(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.code': {
       name: 'apoc.text.code',
@@ -4816,6 +5020,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.code(codepoint :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.compareCleaned': {
       name: 'apoc.text.compareCleaned',
@@ -4841,6 +5046,7 @@ const mockSchema: DbSchema = {
         'apoc.text.compareCleaned(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.decapitalize': {
       name: 'apoc.text.decapitalize',
@@ -4859,6 +5065,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.decapitalize(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.decapitalizeAll': {
       name: 'apoc.text.decapitalizeAll',
@@ -4877,6 +5084,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.decapitalizeAll(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.distance': {
       name: 'apoc.text.distance',
@@ -4902,6 +5110,7 @@ const mockSchema: DbSchema = {
         'apoc.text.distance(text1 :: STRING, text2 :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.doubleMetaphone': {
       name: 'apoc.text.doubleMetaphone',
@@ -4920,6 +5129,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.doubleMetaphone(value :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.format': {
       name: 'apoc.text.format',
@@ -4951,6 +5161,7 @@ const mockSchema: DbSchema = {
         'apoc.text.format(text :: STRING, params :: LIST<ANY>, language = en :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.fuzzyMatch': {
       name: 'apoc.text.fuzzyMatch',
@@ -4976,6 +5187,7 @@ const mockSchema: DbSchema = {
         'apoc.text.fuzzyMatch(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.hammingDistance': {
       name: 'apoc.text.hammingDistance',
@@ -5001,6 +5213,7 @@ const mockSchema: DbSchema = {
         'apoc.text.hammingDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.hexCharAt': {
       name: 'apoc.text.hexCharAt',
@@ -5026,6 +5239,7 @@ const mockSchema: DbSchema = {
         'apoc.text.hexCharAt(text :: STRING, index :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.hexValue': {
       name: 'apoc.text.hexValue',
@@ -5043,6 +5257,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.hexValue(value :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.indexOf': {
       name: 'apoc.text.indexOf',
@@ -5082,6 +5297,7 @@ const mockSchema: DbSchema = {
         'apoc.text.indexOf(text :: STRING, lookup :: STRING, from = 0 :: INTEGER, to = -1 :: INTEGER) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.indexesOf': {
       name: 'apoc.text.indexesOf',
@@ -5121,6 +5337,7 @@ const mockSchema: DbSchema = {
         'apoc.text.indexesOf(text :: STRING, lookup :: STRING, from = 0 :: INTEGER, to = -1 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.jaroWinklerDistance': {
       name: 'apoc.text.jaroWinklerDistance',
@@ -5146,6 +5363,7 @@ const mockSchema: DbSchema = {
         'apoc.text.jaroWinklerDistance(text1 :: STRING, text2 :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.join': {
       name: 'apoc.text.join',
@@ -5170,6 +5388,7 @@ const mockSchema: DbSchema = {
         'apoc.text.join(texts :: LIST<STRING>, delimiter :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.levenshteinDistance': {
       name: 'apoc.text.levenshteinDistance',
@@ -5195,6 +5414,7 @@ const mockSchema: DbSchema = {
         'apoc.text.levenshteinDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.levenshteinSimilarity': {
       name: 'apoc.text.levenshteinSimilarity',
@@ -5220,6 +5440,7 @@ const mockSchema: DbSchema = {
         'apoc.text.levenshteinSimilarity(text1 :: STRING, text2 :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.lpad': {
       name: 'apoc.text.lpad',
@@ -5251,6 +5472,7 @@ const mockSchema: DbSchema = {
         'apoc.text.lpad(text :: STRING, count :: INTEGER, delimiter =   :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.phonetic': {
       name: 'apoc.text.phonetic',
@@ -5269,6 +5491,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.phonetic(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.random': {
       name: 'apoc.text.random',
@@ -5295,6 +5518,7 @@ const mockSchema: DbSchema = {
         'apoc.text.random(length :: INTEGER, valid = A-Za-z0-9 :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.regexGroups': {
       name: 'apoc.text.regexGroups',
@@ -5320,6 +5544,7 @@ const mockSchema: DbSchema = {
         'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.regreplace': {
       name: 'apoc.text.regreplace',
@@ -5351,6 +5576,7 @@ const mockSchema: DbSchema = {
         'apoc.text.regreplace(text :: STRING, regex :: STRING, replacement :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.repeat': {
       name: 'apoc.text.repeat',
@@ -5375,6 +5601,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.repeat(item :: STRING, count :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.replace': {
       name: 'apoc.text.replace',
@@ -5406,6 +5633,7 @@ const mockSchema: DbSchema = {
         'apoc.text.replace(text :: STRING, regex :: STRING, replacement :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.rpad': {
       name: 'apoc.text.rpad',
@@ -5437,6 +5665,7 @@ const mockSchema: DbSchema = {
         'apoc.text.rpad(text :: STRING, count :: INTEGER, delimiter =   :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.slug': {
       name: 'apoc.text.slug',
@@ -5463,6 +5692,7 @@ const mockSchema: DbSchema = {
         'apoc.text.slug(text :: STRING, delimiter = - :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.snakeCase': {
       name: 'apoc.text.snakeCase',
@@ -5480,6 +5710,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.snakeCase(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.sorensenDiceSimilarity': {
       name: 'apoc.text.sorensenDiceSimilarity',
@@ -5512,6 +5743,7 @@ const mockSchema: DbSchema = {
         'apoc.text.sorensenDiceSimilarity(text1 :: STRING, text2 :: STRING, languageTag = en :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.split': {
       name: 'apoc.text.split',
@@ -5544,6 +5776,7 @@ const mockSchema: DbSchema = {
         'apoc.text.split(text :: STRING, regex :: STRING, limit = 0 :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.swapCase': {
       name: 'apoc.text.swapCase',
@@ -5561,6 +5794,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.swapCase(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.toCypher': {
       name: 'apoc.text.toCypher',
@@ -5586,6 +5820,7 @@ const mockSchema: DbSchema = {
         'apoc.text.toCypher(value :: ANY, config = {} :: MAP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.toUpperCase': {
       name: 'apoc.text.toUpperCase',
@@ -5603,6 +5838,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.toUpperCase(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.upperCamelCase': {
       name: 'apoc.text.upperCamelCase',
@@ -5620,6 +5856,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.upperCamelCase(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.urldecode': {
       name: 'apoc.text.urldecode',
@@ -5637,6 +5874,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.urldecode(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.text.urlencode': {
       name: 'apoc.text.urlencode',
@@ -5654,6 +5892,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.text.urlencode(text :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.compress': {
       name: 'apoc.util.compress',
@@ -5679,6 +5918,7 @@ const mockSchema: DbSchema = {
         'apoc.util.compress(data :: STRING, config = {} :: MAP) :: BYTEARRAY',
       returnDescription: 'BYTEARRAY',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.decompress': {
       name: 'apoc.util.decompress',
@@ -5704,6 +5944,7 @@ const mockSchema: DbSchema = {
         'apoc.util.decompress(data :: BYTEARRAY, config = {} :: MAP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.md5': {
       name: 'apoc.util.md5',
@@ -5722,6 +5963,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.util.md5(values :: LIST<ANY>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.sha1': {
       name: 'apoc.util.sha1',
@@ -5740,6 +5982,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.util.sha1(values :: LIST<ANY>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.sha256': {
       name: 'apoc.util.sha256',
@@ -5758,6 +6001,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.util.sha256(values :: LIST<ANY>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.sha384': {
       name: 'apoc.util.sha384',
@@ -5776,6 +6020,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.util.sha384(values :: LIST<ANY>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.sha512': {
       name: 'apoc.util.sha512',
@@ -5794,6 +6039,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.util.sha512(values :: LIST<ANY>) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.util.validatePredicate': {
       name: 'apoc.util.validatePredicate',
@@ -5825,6 +6071,7 @@ const mockSchema: DbSchema = {
         'apoc.util.validatePredicate(predicate :: BOOLEAN, message :: STRING, params :: LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.version': {
       name: 'apoc.version',
@@ -5835,6 +6082,7 @@ const mockSchema: DbSchema = {
       signature: 'apoc.version() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     'apoc.xml.parse': {
       name: 'apoc.xml.parse',
@@ -5874,6 +6122,7 @@ const mockSchema: DbSchema = {
         'apoc.xml.parse(data :: STRING, path = / :: STRING, config = {} :: MAP, simple = false :: BOOLEAN) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     asin: {
       name: 'asin',
@@ -5891,6 +6140,7 @@ const mockSchema: DbSchema = {
       signature: 'asin(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     atan: {
       name: 'atan',
@@ -5908,6 +6158,7 @@ const mockSchema: DbSchema = {
       signature: 'atan(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     atan2: {
       name: 'atan2',
@@ -5932,6 +6183,7 @@ const mockSchema: DbSchema = {
       signature: 'atan2(y :: FLOAT, x :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     avg: {
       name: 'avg',
@@ -5951,6 +6203,7 @@ const mockSchema: DbSchema = {
         'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
       returnDescription: 'INTEGER | FLOAT | DURATION',
       aggregating: true,
+      isDeprecated: false,
     },
     ceil: {
       name: 'ceil',
@@ -5969,6 +6222,7 @@ const mockSchema: DbSchema = {
       signature: 'ceil(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     char_length: {
       name: 'char_length',
@@ -5986,6 +6240,7 @@ const mockSchema: DbSchema = {
       signature: 'char_length(input :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     character_length: {
       name: 'character_length',
@@ -6003,6 +6258,7 @@ const mockSchema: DbSchema = {
       signature: 'character_length(input :: STRING) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     coalesce: {
       name: 'coalesce',
@@ -6020,6 +6276,7 @@ const mockSchema: DbSchema = {
       signature: 'coalesce(input :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     collect: {
       name: 'collect',
@@ -6038,6 +6295,7 @@ const mockSchema: DbSchema = {
       signature: 'collect(input :: ANY) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: true,
+      isDeprecated: false,
     },
     cos: {
       name: 'cos',
@@ -6055,6 +6313,7 @@ const mockSchema: DbSchema = {
       signature: 'cos(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     cot: {
       name: 'cot',
@@ -6072,6 +6331,7 @@ const mockSchema: DbSchema = {
       signature: 'cot(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     count: {
       name: 'count',
@@ -6089,6 +6349,7 @@ const mockSchema: DbSchema = {
       signature: 'count(input :: ANY) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: true,
+      isDeprecated: false,
     },
     date: {
       name: 'date',
@@ -6108,6 +6369,7 @@ const mockSchema: DbSchema = {
       signature: 'date(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
       returnDescription: 'DATE',
       aggregating: false,
+      isDeprecated: false,
     },
     'date.realtime': {
       name: 'date.realtime',
@@ -6129,6 +6391,7 @@ const mockSchema: DbSchema = {
         'date.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
       returnDescription: 'DATE',
       aggregating: false,
+      isDeprecated: false,
     },
     'date.statement': {
       name: 'date.statement',
@@ -6150,6 +6413,7 @@ const mockSchema: DbSchema = {
         'date.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
       returnDescription: 'DATE',
       aggregating: false,
+      isDeprecated: false,
     },
     'date.transaction': {
       name: 'date.transaction',
@@ -6171,6 +6435,7 @@ const mockSchema: DbSchema = {
         'date.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
       returnDescription: 'DATE',
       aggregating: false,
+      isDeprecated: false,
     },
     'date.truncate': {
       name: 'date.truncate',
@@ -6205,6 +6470,7 @@ const mockSchema: DbSchema = {
         'date.truncate(unit :: STRING, input = DEFAULT_TEMPORAL_ARGUMENT :: ANY, fields = null :: MAP) :: DATE',
       returnDescription: 'DATE',
       aggregating: false,
+      isDeprecated: false,
     },
     datetime: {
       name: 'datetime',
@@ -6225,6 +6491,7 @@ const mockSchema: DbSchema = {
         'datetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.fromepoch': {
       name: 'datetime.fromepoch',
@@ -6250,6 +6517,7 @@ const mockSchema: DbSchema = {
         'datetime.fromepoch(seconds :: INTEGER | FLOAT, nanoseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.fromepochmillis': {
       name: 'datetime.fromepochmillis',
@@ -6269,6 +6537,7 @@ const mockSchema: DbSchema = {
         'datetime.fromepochmillis(milliseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.realtime': {
       name: 'datetime.realtime',
@@ -6290,6 +6559,7 @@ const mockSchema: DbSchema = {
         'datetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.statement': {
       name: 'datetime.statement',
@@ -6311,6 +6581,7 @@ const mockSchema: DbSchema = {
         'datetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.transaction': {
       name: 'datetime.transaction',
@@ -6332,6 +6603,7 @@ const mockSchema: DbSchema = {
         'datetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'datetime.truncate': {
       name: 'datetime.truncate',
@@ -6366,6 +6638,7 @@ const mockSchema: DbSchema = {
         'datetime.truncate(unit :: STRING, input = DEFAULT_TEMPORAL_ARGUMENT :: ANY, fields = null :: MAP) :: ZONED DATETIME',
       returnDescription: 'ZONED DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'db.nameFromElementId': {
       name: 'db.nameFromElementId',
@@ -6383,6 +6656,7 @@ const mockSchema: DbSchema = {
       signature: 'db.nameFromElementId(elementId :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     degrees: {
       name: 'degrees',
@@ -6400,6 +6674,7 @@ const mockSchema: DbSchema = {
       signature: 'degrees(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     duration: {
       name: 'duration',
@@ -6417,6 +6692,7 @@ const mockSchema: DbSchema = {
       signature: 'duration(input :: ANY) :: DURATION',
       returnDescription: 'DURATION',
       aggregating: false,
+      isDeprecated: false,
     },
     'duration.between': {
       name: 'duration.between',
@@ -6441,6 +6717,7 @@ const mockSchema: DbSchema = {
       signature: 'duration.between(from :: ANY, to :: ANY) :: DURATION',
       returnDescription: 'DURATION',
       aggregating: false,
+      isDeprecated: false,
     },
     'duration.inDays': {
       name: 'duration.inDays',
@@ -6465,6 +6742,7 @@ const mockSchema: DbSchema = {
       signature: 'duration.inDays(from :: ANY, to :: ANY) :: DURATION',
       returnDescription: 'DURATION',
       aggregating: false,
+      isDeprecated: false,
     },
     'duration.inMonths': {
       name: 'duration.inMonths',
@@ -6489,6 +6767,7 @@ const mockSchema: DbSchema = {
       signature: 'duration.inMonths(from :: ANY, to :: ANY) :: DURATION',
       returnDescription: 'DURATION',
       aggregating: false,
+      isDeprecated: false,
     },
     'duration.inSeconds': {
       name: 'duration.inSeconds',
@@ -6513,6 +6792,7 @@ const mockSchema: DbSchema = {
       signature: 'duration.inSeconds(from :: ANY, to :: ANY) :: DURATION',
       returnDescription: 'DURATION',
       aggregating: false,
+      isDeprecated: false,
     },
     e: {
       name: 'e',
@@ -6523,6 +6803,7 @@ const mockSchema: DbSchema = {
       signature: 'e() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     elementId: {
       name: 'elementId',
@@ -6540,6 +6821,7 @@ const mockSchema: DbSchema = {
       signature: 'elementId(input :: NODE | RELATIONSHIP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     endNode: {
       name: 'endNode',
@@ -6557,6 +6839,7 @@ const mockSchema: DbSchema = {
       signature: 'endNode(input :: RELATIONSHIP) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     exists: {
       name: 'exists',
@@ -6575,6 +6858,7 @@ const mockSchema: DbSchema = {
       signature: 'exists(input :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     exp: {
       name: 'exp',
@@ -6593,6 +6877,7 @@ const mockSchema: DbSchema = {
       signature: 'exp(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     file: {
       name: 'file',
@@ -6604,6 +6889,7 @@ const mockSchema: DbSchema = {
       signature: 'file() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     floor: {
       name: 'floor',
@@ -6622,6 +6908,7 @@ const mockSchema: DbSchema = {
       signature: 'floor(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.adamicAdar': {
       name: 'gds.alpha.linkprediction.adamicAdar',
@@ -6653,6 +6940,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.adamicAdar(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.commonNeighbors': {
       name: 'gds.alpha.linkprediction.commonNeighbors',
@@ -6684,6 +6972,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.commonNeighbors(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.preferentialAttachment': {
       name: 'gds.alpha.linkprediction.preferentialAttachment',
@@ -6715,6 +7004,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.preferentialAttachment(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.resourceAllocation': {
       name: 'gds.alpha.linkprediction.resourceAllocation',
@@ -6746,6 +7036,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.resourceAllocation(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.sameCommunity': {
       name: 'gds.alpha.linkprediction.sameCommunity',
@@ -6777,6 +7068,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.sameCommunity(node1 :: NODE, node2 :: NODE, communityProperty = community :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.linkprediction.totalNeighbors': {
       name: 'gds.alpha.linkprediction.totalNeighbors',
@@ -6808,6 +7100,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.linkprediction.totalNeighbors(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.alpha.ml.oneHotEncoding': {
       name: 'gds.alpha.ml.oneHotEncoding',
@@ -6833,6 +7126,7 @@ const mockSchema: DbSchema = {
         'gds.alpha.ml.oneHotEncoding(availableValues :: LIST<ANY>, selectedValues :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.graph.exists': {
       name: 'gds.graph.exists',
@@ -6850,6 +7144,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.graph.exists(graphName :: STRING) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.graph.project': {
       name: 'gds.graph.project',
@@ -6903,6 +7198,7 @@ const mockSchema: DbSchema = {
         'gds.graph.project(graphName :: STRING, sourceNode :: ANY, targetNode = null :: ANY, dataConfig = null :: ANY, configuration = null :: ANY, alphaMigrationConfig = null :: ANY) :: MAP',
       returnDescription: 'MAP',
       aggregating: true,
+      isDeprecated: false,
     },
     'gds.isLicensed': {
       name: 'gds.isLicensed',
@@ -6914,6 +7210,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.isLicensed() :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.cosine': {
       name: 'gds.similarity.cosine',
@@ -6939,6 +7236,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.cosine(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.euclidean': {
       name: 'gds.similarity.euclidean',
@@ -6964,6 +7262,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.euclidean(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.euclideanDistance': {
       name: 'gds.similarity.euclideanDistance',
@@ -6989,6 +7288,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.euclideanDistance(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.jaccard': {
       name: 'gds.similarity.jaccard',
@@ -7014,6 +7314,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.jaccard(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.overlap': {
       name: 'gds.similarity.overlap',
@@ -7039,6 +7340,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.overlap(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.similarity.pearson': {
       name: 'gds.similarity.pearson',
@@ -7064,6 +7366,7 @@ const mockSchema: DbSchema = {
         'gds.similarity.pearson(vector1 :: LIST<INTEGER | FLOAT>, vector2 :: LIST<INTEGER | FLOAT>) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.NaN': {
       name: 'gds.util.NaN',
@@ -7074,6 +7377,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.util.NaN() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.asNode': {
       name: 'gds.util.asNode',
@@ -7092,6 +7396,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.util.asNode(nodeId :: INTEGER | FLOAT) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.asNodes': {
       name: 'gds.util.asNodes',
@@ -7111,6 +7416,7 @@ const mockSchema: DbSchema = {
         'gds.util.asNodes(nodeIds :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.infinity': {
       name: 'gds.util.infinity',
@@ -7122,6 +7428,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.util.infinity() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.isFinite': {
       name: 'gds.util.isFinite',
@@ -7140,6 +7447,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.util.isFinite(value :: INTEGER | FLOAT) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.isInfinite': {
       name: 'gds.util.isInfinite',
@@ -7158,6 +7466,7 @@ const mockSchema: DbSchema = {
       signature: 'gds.util.isInfinite(value :: INTEGER | FLOAT) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.util.nodeProperty': {
       name: 'gds.util.nodeProperty',
@@ -7196,6 +7505,7 @@ const mockSchema: DbSchema = {
         'gds.util.nodeProperty(graphName :: STRING, nodeId :: ANY, propertyKey :: STRING, nodeLabel = * :: STRING) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     'gds.version': {
       name: 'gds.version',
@@ -7207,6 +7517,45 @@ const mockSchema: DbSchema = {
       signature: 'gds.version() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
+    },
+    'graph.byElementId': {
+      name: 'graph.byElementId',
+      category: 'Graph',
+      description:
+        'Returns the graph reference with the given element id. It is only supported in the `USE` clause, on composite databases.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'elementId :: STRING',
+          name: 'elementId',
+          type: 'STRING',
+        },
+      ],
+      signature: 'graph.byElementId(elementId :: STRING) :: GRAPH',
+      returnDescription: 'GRAPH',
+      aggregating: false,
+      isDeprecated: false,
+    },
+    'graph.byName': {
+      name: 'graph.byName',
+      category: 'Graph',
+      description:
+        'Returns the graph reference of the given name. It is only supported in the `USE` clause, on composite databases.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'name :: STRING',
+          name: 'name',
+          type: 'STRING',
+        },
+      ],
+      signature: 'graph.byName(name :: STRING) :: GRAPH',
+      returnDescription: 'GRAPH',
+      aggregating: false,
+      isDeprecated: false,
     },
     'graph.names': {
       name: 'graph.names',
@@ -7217,6 +7566,7 @@ const mockSchema: DbSchema = {
       signature: 'graph.names() :: LIST<STRING>',
       returnDescription: 'LIST<STRING>',
       aggregating: false,
+      isDeprecated: false,
     },
     'graph.propertiesByName': {
       name: 'graph.propertiesByName',
@@ -7234,6 +7584,7 @@ const mockSchema: DbSchema = {
       signature: 'graph.propertiesByName(graphName :: STRING) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     haversin: {
       name: 'haversin',
@@ -7251,6 +7602,7 @@ const mockSchema: DbSchema = {
       signature: 'haversin(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     head: {
       name: 'head',
@@ -7268,6 +7620,7 @@ const mockSchema: DbSchema = {
       signature: 'head(list :: LIST<ANY>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     id: {
       name: 'id',
@@ -7285,6 +7638,7 @@ const mockSchema: DbSchema = {
       signature: 'id(input :: NODE | RELATIONSHIP) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     isEmpty: {
       name: 'isEmpty',
@@ -7302,6 +7656,7 @@ const mockSchema: DbSchema = {
       signature: 'isEmpty(input :: STRING | MAP | LIST<ANY>) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     isNaN: {
       name: 'isNaN',
@@ -7319,6 +7674,7 @@ const mockSchema: DbSchema = {
       signature: 'isNaN(input :: INTEGER | FLOAT) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     keys: {
       name: 'keys',
@@ -7337,6 +7693,7 @@ const mockSchema: DbSchema = {
       signature: 'keys(input :: NODE | RELATIONSHIP | MAP) :: LIST<STRING>',
       returnDescription: 'LIST<STRING>',
       aggregating: false,
+      isDeprecated: false,
     },
     labels: {
       name: 'labels',
@@ -7355,6 +7712,7 @@ const mockSchema: DbSchema = {
       signature: 'labels(input :: NODE) :: LIST<STRING>',
       returnDescription: 'LIST<STRING>',
       aggregating: false,
+      isDeprecated: false,
     },
     last: {
       name: 'last',
@@ -7372,6 +7730,7 @@ const mockSchema: DbSchema = {
       signature: 'last(list :: LIST<ANY>) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     left: {
       name: 'left',
@@ -7396,6 +7755,7 @@ const mockSchema: DbSchema = {
       signature: 'left(original :: STRING, length :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     length: {
       name: 'length',
@@ -7413,6 +7773,7 @@ const mockSchema: DbSchema = {
       signature: 'length(input :: PATH) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     linenumber: {
       name: 'linenumber',
@@ -7423,6 +7784,7 @@ const mockSchema: DbSchema = {
       signature: 'linenumber() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     localdatetime: {
       name: 'localdatetime',
@@ -7443,6 +7805,7 @@ const mockSchema: DbSchema = {
         'localdatetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
       returnDescription: 'LOCAL DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localdatetime.realtime': {
       name: 'localdatetime.realtime',
@@ -7464,6 +7827,7 @@ const mockSchema: DbSchema = {
         'localdatetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
       returnDescription: 'LOCAL DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localdatetime.statement': {
       name: 'localdatetime.statement',
@@ -7485,6 +7849,7 @@ const mockSchema: DbSchema = {
         'localdatetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
       returnDescription: 'LOCAL DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localdatetime.transaction': {
       name: 'localdatetime.transaction',
@@ -7506,6 +7871,7 @@ const mockSchema: DbSchema = {
         'localdatetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
       returnDescription: 'LOCAL DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localdatetime.truncate': {
       name: 'localdatetime.truncate',
@@ -7540,6 +7906,7 @@ const mockSchema: DbSchema = {
         'localdatetime.truncate(unit :: STRING, input = DEFAULT_TEMPORAL_ARGUMENT :: ANY, fields = null :: MAP) :: LOCAL DATETIME',
       returnDescription: 'LOCAL DATETIME',
       aggregating: false,
+      isDeprecated: false,
     },
     localtime: {
       name: 'localtime',
@@ -7560,6 +7927,7 @@ const mockSchema: DbSchema = {
         'localtime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
       returnDescription: 'LOCAL TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localtime.realtime': {
       name: 'localtime.realtime',
@@ -7581,6 +7949,7 @@ const mockSchema: DbSchema = {
         'localtime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
       returnDescription: 'LOCAL TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localtime.statement': {
       name: 'localtime.statement',
@@ -7602,6 +7971,7 @@ const mockSchema: DbSchema = {
         'localtime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
       returnDescription: 'LOCAL TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localtime.transaction': {
       name: 'localtime.transaction',
@@ -7623,6 +7993,7 @@ const mockSchema: DbSchema = {
         'localtime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
       returnDescription: 'LOCAL TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'localtime.truncate': {
       name: 'localtime.truncate',
@@ -7657,6 +8028,7 @@ const mockSchema: DbSchema = {
         'localtime.truncate(unit :: STRING, input = DEFAULT_TEMPORAL_ARGUMENT :: ANY, fields = null :: MAP) :: LOCAL TIME',
       returnDescription: 'LOCAL TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     log: {
       name: 'log',
@@ -7674,6 +8046,7 @@ const mockSchema: DbSchema = {
       signature: 'log(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     log10: {
       name: 'log10',
@@ -7691,6 +8064,7 @@ const mockSchema: DbSchema = {
       signature: 'log10(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     ltrim: {
       name: 'ltrim',
@@ -7709,6 +8083,7 @@ const mockSchema: DbSchema = {
       signature: 'ltrim(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     max: {
       name: 'max',
@@ -7726,6 +8101,7 @@ const mockSchema: DbSchema = {
       signature: 'max(input :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     min: {
       name: 'min',
@@ -7743,6 +8119,7 @@ const mockSchema: DbSchema = {
       signature: 'min(input :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
+      isDeprecated: false,
     },
     nodes: {
       name: 'nodes',
@@ -7761,6 +8138,7 @@ const mockSchema: DbSchema = {
       signature: 'nodes(input :: PATH) :: LIST<NODE>',
       returnDescription: 'LIST<NODE>',
       aggregating: false,
+      isDeprecated: false,
     },
     none: {
       name: 'none',
@@ -7786,6 +8164,33 @@ const mockSchema: DbSchema = {
         'none(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
+    },
+    normalize: {
+      name: 'normalize',
+      category: 'String',
+      description:
+        'Normalize a `STRING`. The `STRING` will be normalized according to the specified normalization form.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'input :: STRING',
+          name: 'input',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'normalForm :: [NFC, NFD, NFKC, NFKD]',
+          name: 'normalForm',
+          type: '[NFC, NFD, NFKC, NFKD]',
+        },
+      ],
+      signature:
+        'normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING',
+      returnDescription: 'STRING',
+      aggregating: false,
+      isDeprecated: false,
     },
     nullIf: {
       name: 'nullIf',
@@ -7810,6 +8215,7 @@ const mockSchema: DbSchema = {
       signature: 'nullIf(v1 :: ANY, v2 :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     percentileCont: {
       name: 'percentileCont',
@@ -7834,6 +8240,7 @@ const mockSchema: DbSchema = {
       signature: 'percentileCont(input :: FLOAT, percentile :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: true,
+      isDeprecated: false,
     },
     percentileDisc: {
       name: 'percentileDisc',
@@ -7859,6 +8266,7 @@ const mockSchema: DbSchema = {
         'percentileDisc(input :: INTEGER | FLOAT, percentile :: FLOAT) :: INTEGER | FLOAT',
       returnDescription: 'INTEGER | FLOAT',
       aggregating: true,
+      isDeprecated: false,
     },
     pi: {
       name: 'pi',
@@ -7869,6 +8277,7 @@ const mockSchema: DbSchema = {
       signature: 'pi() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     point: {
       name: 'point',
@@ -7887,6 +8296,7 @@ const mockSchema: DbSchema = {
       signature: 'point(input :: MAP) :: POINT',
       returnDescription: 'POINT',
       aggregating: false,
+      isDeprecated: false,
     },
     'point.distance': {
       name: 'point.distance',
@@ -7911,6 +8321,7 @@ const mockSchema: DbSchema = {
       signature: 'point.distance(from :: POINT, to :: POINT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     'point.withinBBox': {
       name: 'point.withinBBox',
@@ -7942,6 +8353,7 @@ const mockSchema: DbSchema = {
         'point.withinBBox(point :: POINT, lowerLeft :: POINT, upperRight :: POINT) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     properties: {
       name: 'properties',
@@ -7960,6 +8372,7 @@ const mockSchema: DbSchema = {
       signature: 'properties(input :: NODE | RELATIONSHIP | MAP) :: MAP',
       returnDescription: 'MAP',
       aggregating: false,
+      isDeprecated: false,
     },
     radians: {
       name: 'radians',
@@ -7977,6 +8390,7 @@ const mockSchema: DbSchema = {
       signature: 'radians(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     rand: {
       name: 'rand',
@@ -7988,6 +8402,7 @@ const mockSchema: DbSchema = {
       signature: 'rand() :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     randomUUID: {
       name: 'randomUUID',
@@ -7998,6 +8413,7 @@ const mockSchema: DbSchema = {
       signature: 'randomUUID() :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     range: {
       name: 'range',
@@ -8029,6 +8445,7 @@ const mockSchema: DbSchema = {
         'range(start :: INTEGER, end :: INTEGER, step :: INTEGER) :: LIST<INTEGER>',
       returnDescription: 'LIST<INTEGER>',
       aggregating: false,
+      isDeprecated: false,
     },
     reduce: {
       name: 'reduce',
@@ -8054,6 +8471,7 @@ const mockSchema: DbSchema = {
         'reduce(accumulator :: VARIABLE = initial :: ANY, variable :: VARIABLE IN list :: LIST<ANY> | expression :: ANY) :: ANY',
       returnDescription: 'ANY',
       aggregating: false,
+      isDeprecated: false,
     },
     relationships: {
       name: 'relationships',
@@ -8072,6 +8490,7 @@ const mockSchema: DbSchema = {
       signature: 'relationships(input :: PATH) :: LIST<RELATIONSHIP>',
       returnDescription: 'LIST<RELATIONSHIP>',
       aggregating: false,
+      isDeprecated: false,
     },
     replace: {
       name: 'replace',
@@ -8103,6 +8522,7 @@ const mockSchema: DbSchema = {
         'replace(original :: STRING, search :: STRING, replace :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     reverse: {
       name: 'reverse',
@@ -8121,6 +8541,7 @@ const mockSchema: DbSchema = {
       signature: 'reverse(input :: STRING | LIST<ANY>) :: STRING | LIST<ANY>',
       returnDescription: 'STRING | LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     right: {
       name: 'right',
@@ -8145,6 +8566,7 @@ const mockSchema: DbSchema = {
       signature: 'right(original :: STRING, length :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     round: {
       name: 'round',
@@ -8176,6 +8598,7 @@ const mockSchema: DbSchema = {
         'round(value :: FLOAT, precision :: INTEGER | FLOAT, mode :: STRING) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     rtrim: {
       name: 'rtrim',
@@ -8194,6 +8617,7 @@ const mockSchema: DbSchema = {
       signature: 'rtrim(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     sign: {
       name: 'sign',
@@ -8212,6 +8636,7 @@ const mockSchema: DbSchema = {
       signature: 'sign(input :: INTEGER | FLOAT) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     sin: {
       name: 'sin',
@@ -8229,6 +8654,7 @@ const mockSchema: DbSchema = {
       signature: 'sin(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     single: {
       name: 'single',
@@ -8254,6 +8680,7 @@ const mockSchema: DbSchema = {
         'single(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     size: {
       name: 'size',
@@ -8272,6 +8699,7 @@ const mockSchema: DbSchema = {
       signature: 'size(input :: STRING | LIST<ANY>) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     split: {
       name: 'split',
@@ -8297,6 +8725,7 @@ const mockSchema: DbSchema = {
         'split(original :: STRING, splitDelimiters :: STRING | LIST<STRING>) :: LIST<STRING>',
       returnDescription: 'LIST<STRING>',
       aggregating: false,
+      isDeprecated: false,
     },
     sqrt: {
       name: 'sqrt',
@@ -8314,6 +8743,7 @@ const mockSchema: DbSchema = {
       signature: 'sqrt(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     startNode: {
       name: 'startNode',
@@ -8331,6 +8761,7 @@ const mockSchema: DbSchema = {
       signature: 'startNode(input :: RELATIONSHIP) :: NODE',
       returnDescription: 'NODE',
       aggregating: false,
+      isDeprecated: false,
     },
     stdev: {
       name: 'stdev',
@@ -8349,6 +8780,7 @@ const mockSchema: DbSchema = {
       signature: 'stdev(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: true,
+      isDeprecated: false,
     },
     stdevp: {
       name: 'stdevp',
@@ -8367,6 +8799,7 @@ const mockSchema: DbSchema = {
       signature: 'stdevp(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: true,
+      isDeprecated: false,
     },
     substring: {
       name: 'substring',
@@ -8398,6 +8831,7 @@ const mockSchema: DbSchema = {
         'substring(original :: STRING, start :: INTEGER, length :: INTEGER) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     sum: {
       name: 'sum',
@@ -8417,6 +8851,7 @@ const mockSchema: DbSchema = {
         'sum(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
       returnDescription: 'INTEGER | FLOAT | DURATION',
       aggregating: true,
+      isDeprecated: false,
     },
     tail: {
       name: 'tail',
@@ -8434,6 +8869,7 @@ const mockSchema: DbSchema = {
       signature: 'tail(input :: LIST<ANY>) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
+      isDeprecated: false,
     },
     tan: {
       name: 'tan',
@@ -8451,6 +8887,7 @@ const mockSchema: DbSchema = {
       signature: 'tan(input :: FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     time: {
       name: 'time',
@@ -8470,6 +8907,7 @@ const mockSchema: DbSchema = {
       signature: 'time(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
       returnDescription: 'ZONED TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'time.realtime': {
       name: 'time.realtime',
@@ -8491,6 +8929,7 @@ const mockSchema: DbSchema = {
         'time.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
       returnDescription: 'ZONED TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'time.statement': {
       name: 'time.statement',
@@ -8512,6 +8951,7 @@ const mockSchema: DbSchema = {
         'time.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
       returnDescription: 'ZONED TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'time.transaction': {
       name: 'time.transaction',
@@ -8533,6 +8973,7 @@ const mockSchema: DbSchema = {
         'time.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
       returnDescription: 'ZONED TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     'time.truncate': {
       name: 'time.truncate',
@@ -8567,6 +9008,7 @@ const mockSchema: DbSchema = {
         'time.truncate(unit :: STRING, input = DEFAULT_TEMPORAL_ARGUMENT :: ANY, fields = null :: MAP) :: ZONED TIME',
       returnDescription: 'ZONED TIME',
       aggregating: false,
+      isDeprecated: false,
     },
     timestamp: {
       name: 'timestamp',
@@ -8578,6 +9020,7 @@ const mockSchema: DbSchema = {
       signature: 'timestamp() :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     toBoolean: {
       name: 'toBoolean',
@@ -8596,6 +9039,7 @@ const mockSchema: DbSchema = {
       signature: 'toBoolean(input :: BOOLEAN | STRING | INTEGER) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     toBooleanList: {
       name: 'toBooleanList',
@@ -8614,6 +9058,7 @@ const mockSchema: DbSchema = {
       signature: 'toBooleanList(input :: LIST<ANY>) :: LIST<BOOLEAN>',
       returnDescription: 'LIST<BOOLEAN>',
       aggregating: false,
+      isDeprecated: false,
     },
     toBooleanOrNull: {
       name: 'toBooleanOrNull',
@@ -8632,6 +9077,7 @@ const mockSchema: DbSchema = {
       signature: 'toBooleanOrNull(input :: ANY) :: BOOLEAN',
       returnDescription: 'BOOLEAN',
       aggregating: false,
+      isDeprecated: false,
     },
     toFloat: {
       name: 'toFloat',
@@ -8650,6 +9096,7 @@ const mockSchema: DbSchema = {
       signature: 'toFloat(input :: STRING | INTEGER | FLOAT) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     toFloatList: {
       name: 'toFloatList',
@@ -8668,6 +9115,7 @@ const mockSchema: DbSchema = {
       signature: 'toFloatList(input :: LIST<ANY>) :: LIST<FLOAT>',
       returnDescription: 'LIST<FLOAT>',
       aggregating: false,
+      isDeprecated: false,
     },
     toFloatOrNull: {
       name: 'toFloatOrNull',
@@ -8686,6 +9134,7 @@ const mockSchema: DbSchema = {
       signature: 'toFloatOrNull(input :: ANY) :: FLOAT',
       returnDescription: 'FLOAT',
       aggregating: false,
+      isDeprecated: false,
     },
     toInteger: {
       name: 'toInteger',
@@ -8705,6 +9154,7 @@ const mockSchema: DbSchema = {
         'toInteger(input :: BOOLEAN | STRING | INTEGER | FLOAT) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     toIntegerList: {
       name: 'toIntegerList',
@@ -8723,6 +9173,7 @@ const mockSchema: DbSchema = {
       signature: 'toIntegerList(input :: LIST<ANY>) :: LIST<INTEGER>',
       returnDescription: 'LIST<INTEGER>',
       aggregating: false,
+      isDeprecated: false,
     },
     toIntegerOrNull: {
       name: 'toIntegerOrNull',
@@ -8741,6 +9192,7 @@ const mockSchema: DbSchema = {
       signature: 'toIntegerOrNull(input :: ANY) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
+      isDeprecated: false,
     },
     toLower: {
       name: 'toLower',
@@ -8758,6 +9210,7 @@ const mockSchema: DbSchema = {
       signature: 'toLower(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     toString: {
       name: 'toString',
@@ -8776,6 +9229,7 @@ const mockSchema: DbSchema = {
       signature: 'toString(input :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     toStringList: {
       name: 'toStringList',
@@ -8794,6 +9248,7 @@ const mockSchema: DbSchema = {
       signature: 'toStringList(input :: LIST<ANY>) :: LIST<STRING>',
       returnDescription: 'LIST<STRING>',
       aggregating: false,
+      isDeprecated: false,
     },
     toStringOrNull: {
       name: 'toStringOrNull',
@@ -8812,6 +9267,7 @@ const mockSchema: DbSchema = {
       signature: 'toStringOrNull(input :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     toUpper: {
       name: 'toUpper',
@@ -8829,6 +9285,7 @@ const mockSchema: DbSchema = {
       signature: 'toUpper(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     trim: {
       name: 'trim',
@@ -8847,6 +9304,7 @@ const mockSchema: DbSchema = {
       signature: 'trim(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     type: {
       name: 'type',
@@ -8865,6 +9323,7 @@ const mockSchema: DbSchema = {
       signature: 'type(input :: RELATIONSHIP) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
     },
     valueType: {
       name: 'valueType',
@@ -8883,6 +9342,59 @@ const mockSchema: DbSchema = {
       signature: 'valueType(input :: ANY) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
+      isDeprecated: false,
+    },
+    'vector.similarity.cosine': {
+      name: 'vector.similarity.cosine',
+      category: 'Vector',
+      description:
+        'Returns a `FLOAT` representing the similarity between the argument vectors based on their cosine.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'a :: LIST<INTEGER | FLOAT>',
+          name: 'a',
+          type: 'LIST<INTEGER | FLOAT>',
+        },
+        {
+          isDeprecated: false,
+          description: 'b :: LIST<INTEGER | FLOAT>',
+          name: 'b',
+          type: 'LIST<INTEGER | FLOAT>',
+        },
+      ],
+      signature:
+        'vector.similarity.cosine(a :: LIST<INTEGER | FLOAT>, b :: LIST<INTEGER | FLOAT>) :: FLOAT',
+      returnDescription: 'FLOAT',
+      aggregating: false,
+      isDeprecated: false,
+    },
+    'vector.similarity.euclidean': {
+      name: 'vector.similarity.euclidean',
+      category: 'Vector',
+      description:
+        'Returns a `FLOAT` representing the similarity between the argument vectors based on their Euclidean distance.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'a :: LIST<INTEGER | FLOAT>',
+          name: 'a',
+          type: 'LIST<INTEGER | FLOAT>',
+        },
+        {
+          isDeprecated: false,
+          description: 'b :: LIST<INTEGER | FLOAT>',
+          name: 'b',
+          type: 'LIST<INTEGER | FLOAT>',
+        },
+      ],
+      signature:
+        'vector.similarity.euclidean(a :: LIST<INTEGER | FLOAT>, b :: LIST<INTEGER | FLOAT>) :: FLOAT',
+      returnDescription: 'FLOAT',
+      aggregating: false,
+      isDeprecated: false,
     },
   },
   procedures: {
@@ -20616,7 +21128,7 @@ const mockSchema: DbSchema = {
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'cdc.earliest': {
@@ -20637,7 +21149,7 @@ const mockSchema: DbSchema = {
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'cdc.query': {
@@ -20698,7 +21210,7 @@ const mockSchema: DbSchema = {
       ],
       admin: true,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'db.awaitIndex': {
@@ -20748,6 +21260,109 @@ const mockSchema: DbSchema = {
       signature: 'db.awaitIndexes(timeOutSeconds = 300 :: INTEGER)',
       returnDescription: [],
       admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'db.cdc.current': {
+      name: 'db.cdc.current',
+      description:
+        'Returns the current change identifier that can be used to stream changes from.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [],
+      signature: 'db.cdc.current() :: (id :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'id :: STRING',
+          name: 'id',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'db.cdc.earliest': {
+      name: 'db.cdc.earliest',
+      description:
+        'Returns the earliest change identifier that can be used to stream changes from.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [],
+      signature: 'db.cdc.earliest() :: (id :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'id :: STRING',
+          name: 'id',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'db.cdc.query': {
+      name: 'db.cdc.query',
+      description:
+        'Query changes happened from the provided change identifier.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=, type=STRING}',
+          description: 'from =  :: STRING',
+          name: 'from',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=[], type=LIST<MAP>}',
+          description: 'selectors = [] :: LIST<MAP>',
+          name: 'selectors',
+          type: 'LIST<MAP>',
+        },
+      ],
+      signature:
+        'db.cdc.query(from =  :: STRING, selectors = [] :: LIST<MAP>) :: (id :: STRING, txId :: INTEGER, seq :: INTEGER, metadata :: MAP, event :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'id :: STRING',
+          name: 'id',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'txId :: INTEGER',
+          name: 'txId',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'seq :: INTEGER',
+          name: 'seq',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'metadata :: MAP',
+          name: 'metadata',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'event :: MAP',
+          name: 'event',
+          type: 'MAP',
+        },
+      ],
+      admin: true,
       option: {
         deprecated: false,
       },
@@ -20820,13 +21435,47 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'vector :: LIST<FLOAT>',
+          description: 'vector :: ANY',
           name: 'vector',
-          type: 'LIST<FLOAT>',
+          type: 'ANY',
         },
       ],
       signature:
-        'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: LIST<FLOAT>)',
+        'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: ANY)',
+      returnDescription: [],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'db.create.setRelationshipVectorProperty': {
+      name: 'db.create.setRelationshipVectorProperty',
+      description:
+        "Set a vector property on a given relationship in a more space efficient representation than Cypher's SET.",
+      mode: 'WRITE',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'relationship :: RELATIONSHIP',
+          name: 'relationship',
+          type: 'RELATIONSHIP',
+        },
+        {
+          isDeprecated: false,
+          description: 'key :: STRING',
+          name: 'key',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'vector :: ANY',
+          name: 'vector',
+          type: 'ANY',
+        },
+      ],
+      signature:
+        'db.create.setRelationshipVectorProperty(relationship :: RELATIONSHIP, key :: STRING, vector :: ANY)',
       returnDescription: [],
       admin: false,
       option: {
@@ -20854,13 +21503,13 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'vector :: LIST<FLOAT>',
+          description: 'vector :: ANY',
           name: 'vector',
-          type: 'LIST<FLOAT>',
+          type: 'ANY',
         },
       ],
       signature:
-        'db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: LIST<FLOAT>) :: (node :: NODE)',
+        'db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: (node :: NODE)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -20985,7 +21634,7 @@ const mockSchema: DbSchema = {
     'db.index.fulltext.queryNodes': {
       name: 'db.index.fulltext.queryNodes',
       description:
-        "Query the given full-text index. Returns the matching nodes, and their Lucene query score, ordered by score. Valid keys for the options map are: 'skip' to skip the top N results; 'limit' to limit the number of results returned; 'analyzer' to use the specified analyzer as a search analyzer for this query.",
+        "Query the given full-text index. Returns the matching nodes and their Lucene query score, ordered by score.\nValid _key: value_ pairs for the `options` map are:\n\n* 'skip' -- to skip the top N results.\n* 'limit' -- to limit the number of results returned.\n* 'analyzer' -- to use the specified analyzer as a search analyzer for this query.\n\nThe `options` map and any of the keys are optional.\nAn example of the `options` map: `{skip: 30, limit: 10, analyzer: 'whitespace'}`\n",
       mode: 'READ',
       worksOnSystem: true,
       argumentDescription: [
@@ -21033,7 +21682,7 @@ const mockSchema: DbSchema = {
     'db.index.fulltext.queryRelationships': {
       name: 'db.index.fulltext.queryRelationships',
       description:
-        "Query the given full-text index. Returns the matching relationships, and their Lucene query score, ordered by score. Valid keys for the options map are: 'skip' to skip the top N results; 'limit' to limit the number of results returned; 'analyzer' to use the specified analyzer as search analyzer for this query.",
+        "Query the given full-text index. Returns the matching relationships and their Lucene query score, ordered by score.\nValid _key: value_ pairs for the `options` map are:\n\n* 'skip' -- to skip the top N results.\n* 'limit' -- to limit the number of results returned.\n* 'analyzer' -- to use the specified analyzer as a search analyzer for this query.\n\nThe `options` map and any of the keys are optional.\nAn example of the `options` map: `{skip: 30, limit: 10, analyzer: 'whitespace'}`\n",
       mode: 'READ',
       worksOnSystem: true,
       argumentDescription: [
@@ -21081,7 +21730,7 @@ const mockSchema: DbSchema = {
     'db.index.vector.createNodeIndex': {
       name: 'db.index.vector.createNodeIndex',
       description:
-        "Create a named node vector index for the given label and property for a specified vector dimensionality.\nValid similarity functions are 'EUCLIDEAN' and 'COSINE', and are case-insensitive.\nUse the `db.index.vector.queryNodes` procedure to query the named index.\n",
+        'Create a named node vector index for the specified label and property with the given vector dimensionality using either the EUCLIDEAN or COSINE similarity function.\nBoth similarity functions are case-insensitive.\nUse the `db.index.vector.queryNodes` procedure to query the named index.\n',
       mode: 'SCHEMA',
       worksOnSystem: false,
       argumentDescription: [
@@ -21127,7 +21776,7 @@ const mockSchema: DbSchema = {
     'db.index.vector.queryNodes': {
       name: 'db.index.vector.queryNodes',
       description:
-        'Query the given vector index.\nReturns requested number of nearest neighbors to the provided query vector,\nand their similarity score to that query vector, based on the configured similarity function for the index.\nThe similarity score is a value between [0, 1]; where 0 indicates least similar, 1 most similar.\n',
+        'Query the given node vector index.\nReturns requested number of nearest neighbors to the provided query vector,\nand their similarity score to that query vector, based on the configured similarity function for the index.\nThe similarity score is a value between [0, 1]; where 0 indicates least similar, 1 most similar.\n',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -21145,19 +21794,66 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'query :: LIST<FLOAT>',
+          description: 'query :: ANY',
           name: 'query',
-          type: 'LIST<FLOAT>',
+          type: 'ANY',
         },
       ],
       signature:
-        'db.index.vector.queryNodes(indexName :: STRING, numberOfNearestNeighbours :: INTEGER, query :: LIST<FLOAT>) :: (node :: NODE, score :: FLOAT)',
+        'db.index.vector.queryNodes(indexName :: STRING, numberOfNearestNeighbours :: INTEGER, query :: ANY) :: (node :: NODE, score :: FLOAT)',
       returnDescription: [
         {
           isDeprecated: false,
           description: 'node :: NODE',
           name: 'node',
           type: 'NODE',
+        },
+        {
+          isDeprecated: false,
+          description: 'score :: FLOAT',
+          name: 'score',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'db.index.vector.queryRelationships': {
+      name: 'db.index.vector.queryRelationships',
+      description:
+        'Query the given relationship vector index.\nReturns requested number of nearest neighbors to the provided query vector,\nand their similarity score to that query vector, based on the configured similarity function for the index.\nThe similarity score is a value between [0, 1]; where 0 indicates least similar, 1 most similar.\n',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'indexName :: STRING',
+          name: 'indexName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'numberOfNearestNeighbours :: INTEGER',
+          name: 'numberOfNearestNeighbours',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'query :: ANY',
+          name: 'query',
+          type: 'ANY',
+        },
+      ],
+      signature:
+        'db.index.vector.queryRelationships(indexName :: STRING, numberOfNearestNeighbours :: INTEGER, query :: ANY) :: (relationship :: RELATIONSHIP, score :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'relationship :: RELATIONSHIP',
+          name: 'relationship',
+          type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
@@ -28795,7 +29491,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.mutate.estimate': {
       name: 'gds.betweenness.mutate.estimate',
       description:
-        'Betweenness centrality measures the relative information flow that passes through a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -28878,7 +29574,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.stats': {
       name: 'gds.betweenness.stats',
       description:
-        'Betweenness centrality measures the relative information flow that passes through a node.',
+        'Executes the algorithm and returns result statistics without writing the result.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -28938,7 +29634,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.stats.estimate': {
       name: 'gds.betweenness.stats.estimate',
       description:
-        'Betweenness centrality measures the relative information flow that passes through a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -29063,7 +29759,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.stream.estimate': {
       name: 'gds.betweenness.stream.estimate',
       description:
-        'Betweenness centrality measures the relative information flow that passes through a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -29218,7 +29914,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.write.estimate': {
       name: 'gds.betweenness.write.estimate',
       description:
-        'Betweenness centrality measures the relative information flow that passes through a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -29738,7 +30434,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.closeness.harmonic.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, centralityDistribution :: MAP, mutateMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+        'gds.closeness.harmonic.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, mutateMillis :: INTEGER, centralityDistribution :: MAP, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -29748,15 +30444,15 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'centralityDistribution :: MAP',
-          name: 'centralityDistribution',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
           description: 'mutateMillis :: INTEGER',
           name: 'mutateMillis',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'centralityDistribution :: MAP',
+          name: 'centralityDistribution',
+          type: 'MAP',
         },
         {
           isDeprecated: false,
@@ -29984,7 +30680,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.closeness.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, centralityDistribution :: MAP, mutateMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+        'gds.closeness.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, mutateMillis :: INTEGER, centralityDistribution :: MAP, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -29994,15 +30690,15 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'centralityDistribution :: MAP',
-          name: 'centralityDistribution',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
           description: 'mutateMillis :: INTEGER',
           name: 'mutateMillis',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'centralityDistribution :: MAP',
+          name: 'centralityDistribution',
+          type: 'MAP',
         },
         {
           isDeprecated: false,
@@ -30158,7 +30854,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.closeness.write(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, centralityDistribution :: MAP, writeMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+        'gds.closeness.write(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, writeMillis :: INTEGER, centralityDistribution :: MAP, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -30168,15 +30864,15 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'centralityDistribution :: MAP',
-          name: 'centralityDistribution',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
           description: 'writeMillis :: INTEGER',
           name: 'writeMillis',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'centralityDistribution :: MAP',
+          name: 'centralityDistribution',
+          type: 'MAP',
         },
         {
           isDeprecated: false,
@@ -30576,7 +31272,7 @@ const mockSchema: DbSchema = {
       worksOnSystem: true,
       argumentDescription: [],
       signature:
-        'gds.debug.arrow() :: (running :: BOOLEAN, enabled :: BOOLEAN, listenAddress :: STRING, advertisedListenAddress :: STRING, serverLocation :: STRING, batchSize :: INTEGER, abortionTimeout :: DURATION)',
+        'gds.debug.arrow() :: (running :: BOOLEAN, enabled :: BOOLEAN, versions :: LIST<STRING>, listenAddress :: STRING, advertisedListenAddress :: STRING, serverLocation :: STRING, batchSize :: INTEGER, abortionTimeout :: DURATION)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -30589,6 +31285,12 @@ const mockSchema: DbSchema = {
           description: 'enabled :: BOOLEAN',
           name: 'enabled',
           type: 'BOOLEAN',
+        },
+        {
+          isDeprecated: false,
+          description: 'versions :: LIST<STRING>',
+          name: 'versions',
+          type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
@@ -30674,7 +31376,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.degree.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, centralityDistribution :: MAP, mutateMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+        'gds.degree.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, mutateMillis :: INTEGER, centralityDistribution :: MAP, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -30684,15 +31386,15 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'centralityDistribution :: MAP',
-          name: 'centralityDistribution',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
           description: 'mutateMillis :: INTEGER',
           name: 'mutateMillis',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'centralityDistribution :: MAP',
+          name: 'centralityDistribution',
+          type: 'MAP',
         },
         {
           isDeprecated: false,
@@ -31097,7 +31799,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.degree.write(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, centralityDistribution :: MAP, writeMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+        'gds.degree.write(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, writeMillis :: INTEGER, centralityDistribution :: MAP, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -31107,15 +31809,15 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          description: 'centralityDistribution :: MAP',
-          name: 'centralityDistribution',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
           description: 'writeMillis :: INTEGER',
           name: 'writeMillis',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'centralityDistribution :: MAP',
+          name: 'centralityDistribution',
+          type: 'MAP',
         },
         {
           isDeprecated: false,
@@ -32168,7 +32870,7 @@ const mockSchema: DbSchema = {
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'gds.ephemeral.database.drop': {
@@ -32202,7 +32904,7 @@ const mockSchema: DbSchema = {
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'gds.fastRP.mutate': {
@@ -32801,7 +33503,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.drop(graphName :: ANY, failIfMissing = true :: BOOLEAN, dbName =  :: STRING, username =  :: STRING) :: (graphName :: STRING, database :: STRING, memoryUsage :: STRING, sizeInBytes :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, configuration :: MAP, density :: FLOAT, creationTime :: ZONED DATETIME, modificationTime :: ZONED DATETIME, schema :: MAP, schemaWithOrientation :: MAP)',
+        'gds.graph.drop(graphName :: ANY, failIfMissing = true :: BOOLEAN, dbName =  :: STRING, username =  :: STRING) :: (graphName :: STRING, database :: STRING, databaseLocation :: STRING, memoryUsage :: STRING, sizeInBytes :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, configuration :: MAP, density :: FLOAT, creationTime :: ZONED DATETIME, modificationTime :: ZONED DATETIME, schema :: MAP, schemaWithOrientation :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -32813,6 +33515,12 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           description: 'database :: STRING',
           name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'databaseLocation :: STRING',
+          name: 'databaseLocation',
           type: 'STRING',
         },
         {
@@ -33445,7 +34153,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.list(graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING) :: (degreeDistribution :: MAP, graphName :: STRING, database :: STRING, memoryUsage :: STRING, sizeInBytes :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, configuration :: MAP, density :: FLOAT, creationTime :: ZONED DATETIME, modificationTime :: ZONED DATETIME, schema :: MAP, schemaWithOrientation :: MAP)',
+        'gds.graph.list(graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING) :: (degreeDistribution :: MAP, graphName :: STRING, database :: STRING, databaseLocation :: STRING, memoryUsage :: STRING, sizeInBytes :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, configuration :: MAP, density :: FLOAT, creationTime :: ZONED DATETIME, modificationTime :: ZONED DATETIME, schema :: MAP, schemaWithOrientation :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -33463,6 +34171,12 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           description: 'database :: STRING',
           name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'databaseLocation :: STRING',
+          name: 'databaseLocation',
           type: 'STRING',
         },
         {
@@ -37209,7 +37923,8 @@ const mockSchema: DbSchema = {
     },
     'gds.kcore.mutate.estimate': {
       name: 'gds.kcore.mutate.estimate',
-      description: 'It computes the k-core values in a network',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -37473,7 +38188,8 @@ const mockSchema: DbSchema = {
     },
     'gds.kcore.stream.estimate': {
       name: 'gds.kcore.stream.estimate',
-      description: 'It computes the k-core values in a network',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -40500,7 +41216,7 @@ const mockSchema: DbSchema = {
     'gds.leiden.stats': {
       name: 'gds.leiden.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'Executes the algorithm and returns result statistics without writing the result.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -41308,7 +42024,7 @@ const mockSchema: DbSchema = {
     'gds.localClusteringCoefficient.stats': {
       name: 'gds.localClusteringCoefficient.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'Executes the algorithm and returns result statistics without writing the result.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -41922,7 +42638,7 @@ const mockSchema: DbSchema = {
     'gds.louvain.stats': {
       name: 'gds.louvain.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'Executes the algorithm and returns result statistics without writing the result.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -42596,7 +43312,7 @@ const mockSchema: DbSchema = {
     'gds.maxkcut.stream.estimate': {
       name: 'gds.maxkcut.stream.estimate',
       description:
-        'Approximate Maximum k-cut maps each node into one of k disjoint communities trying to maximize the sum of weights of relationships between these communities.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -51607,7 +52323,7 @@ const mockSchema: DbSchema = {
     'gds.triangleCount.write.estimate': {
       name: 'gds.triangleCount.write.estimate',
       description:
-        'Triangle counting is a community detection graph algorithm that is used to determine the number of triangles passing through each node in the graph.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -52420,63 +53136,6 @@ const mockSchema: DbSchema = {
       mode: 'DBMS',
       worksOnSystem: false,
       argumentDescription: [
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-      ],
-      signature: 'tx.setMetaData(data :: MAP)',
-      returnDescription: [],
-      admin: false,
-      option: {
-        deprecated: false,
-      },
-    },
-    'fake.procedure.with.lots.of.data': {
-      name: 'fake.procedure.with.lots.of.data',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-      mode: 'DBMS',
-      worksOnSystem: false,
-      argumentDescription: [
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
-        {
-          isDeprecated: false,
-          description: 'data :: MAP',
-          name: 'data',
-          type: 'MAP',
-        },
         {
           isDeprecated: false,
           description: 'data :: MAP',
@@ -53312,6 +53971,7 @@ export const testData: {
     returnDescription: '',
     signature: '',
     aggregating: false,
+    isDeprecated: false,
   },
   emptyProcedure: {
     name: '',
@@ -53322,6 +53982,8 @@ export const testData: {
     returnDescription: [],
     signature: '',
     admin: false,
-    option: { deprecated: false },
+    option: {
+      deprecated: false,
+    },
   },
 };

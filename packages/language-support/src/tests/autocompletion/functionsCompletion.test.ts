@@ -1,10 +1,14 @@
-import { CompletionItemKind } from 'vscode-languageserver-types';
+import {
+  CompletionItemKind,
+  CompletionItemTag,
+} from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('function invocations', () => {
   const dbSchema: DbSchema = testData.mockSchema;
+  const functions = dbSchema.functions;
 
   test('Correctly completes unstarted function name in left hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE ';
@@ -15,7 +19,8 @@ describe('function invocations', () => {
         {
           label: 'acos',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['acos'].signature,
+          documentation: functions['acos'].description,
         },
         {
           label: 'apoc',
@@ -25,12 +30,21 @@ describe('function invocations', () => {
         {
           label: 'apoc.agg.graph',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.graph'].signature,
+          documentation: functions['apoc.agg.graph'].description,
         },
         {
           label: 'apoc.coll.pairs',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.coll.pairs'].signature,
+          documentation: functions['apoc.coll.pairs'].description,
+        },
+        {
+          label: 'apoc.create.uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function) ' + functions['apoc.create.uuid'].signature,
+          documentation: functions['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
         },
       ],
     });
@@ -45,17 +59,27 @@ describe('function invocations', () => {
         {
           label: 'acos',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['acos'].signature,
+          documentation: functions['acos'].description,
         },
         {
           label: 'apoc.agg.graph',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.graph'].signature,
+          documentation: functions['apoc.agg.graph'].description,
         },
         {
           label: 'apoc.coll.pairs',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.coll.pairs'].signature,
+          documentation: functions['apoc.coll.pairs'].description,
+        },
+        {
+          label: 'apoc.create.uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function) ' + functions['apoc.create.uuid'].signature,
+          documentation: functions['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
         },
       ],
     });
@@ -78,7 +102,13 @@ describe('function invocations', () => {
           detail: '(namespace)',
         },
       ],
-      excluded: [{ label: 'acos', kind: CompletionItemKind.Function }],
+      excluded: [
+        { label: 'acos', kind: CompletionItemKind.Function },
+        {
+          label: 'agg.graph',
+          kind: CompletionItemKind.Function,
+        },
+      ],
     });
   });
 
@@ -91,17 +121,20 @@ describe('function invocations', () => {
         {
           label: 'first',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.first'].signature,
+          documentation: functions['apoc.agg.first'].description,
         },
         {
           label: 'last',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.last'].signature,
+          documentation: functions['apoc.agg.last'].description,
         },
         {
           label: 'slice',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.slice'].signature,
+          documentation: functions['apoc.agg.slice'].description,
         },
       ],
       excluded: [
@@ -133,17 +166,20 @@ describe('function invocations', () => {
         {
           label: 'first',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.first'].signature,
+          documentation: functions['apoc.agg.first'].description,
         },
         {
-          label: 'first',
+          label: 'last',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.last'].signature,
+          documentation: functions['apoc.agg.last'].description,
         },
         {
-          label: 'first',
+          label: 'slice',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.slice'].signature,
+          documentation: functions['apoc.agg.slice'].description,
         },
       ],
       excluded: [
@@ -255,12 +291,14 @@ describe('function invocations', () => {
         {
           label: 'apoc.agg.percentiles',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.percentiles'].signature,
+          documentation: functions['apoc.agg.percentiles'].description,
         },
         {
           label: 'acos',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['acos'].signature,
+          documentation: functions['acos'].description,
         },
       ],
     });
@@ -275,7 +313,8 @@ describe('function invocations', () => {
         {
           label: 'apoc.agg.percentiles',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['apoc.agg.percentiles'].signature,
+          documentation: functions['apoc.agg.percentiles'].description,
         },
         {
           label: 'apoc',
@@ -285,7 +324,8 @@ describe('function invocations', () => {
         {
           label: 'acos',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ' + functions['acos'].signature,
+          documentation: functions['acos'].description,
         },
       ],
     });
@@ -310,7 +350,25 @@ describe('function invocations', () => {
         {
           label: 'math',
           kind: CompletionItemKind.Function,
-          detail: '(function)',
+          detail: '(function) ',
+          documentation: '',
+        },
+      ],
+    });
+  });
+
+  test('Correctly completes deprecated functions when namespace started', () => {
+    const query = 'RETURN apoc.create.';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: 'uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function) ' + functions['apoc.create.uuid'].signature,
+          documentation: functions['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
         },
       ],
     });

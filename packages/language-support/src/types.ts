@@ -34,4 +34,5 @@ export type Neo4jFunction = {
   returnDescription: string;
   signature: string;
   aggregating: boolean;
+  isDeprecated: boolean;
 };

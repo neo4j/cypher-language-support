@@ -259,7 +259,13 @@ describe('parameters', () => {
 
     const expected = [
       { detail: '(namespace)', kind: 3, label: 'duration' },
-      { detail: '(function)', kind: 3, label: 'duration.inSeconds' },
+      {
+        detail: '(function) ',
+        kind: 3,
+        tags: [],
+        label: 'duration.inSeconds',
+        documentation: '',
+      },
       { kind: 14, label: 'TRUE' },
       { kind: 14, label: 'FALSE' },
     ];
