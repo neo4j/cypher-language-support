@@ -66,11 +66,13 @@ describe('Procedures auto-completion', () => {
           label: 'tx.getMetaData',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'jwt.security.requestAccess',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
       ],
     });
@@ -91,6 +93,7 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
       ],
       excluded: [
@@ -111,16 +114,19 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
       ],
       excluded: [
@@ -153,16 +159,19 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
       ],
       excluded: [
@@ -234,6 +243,7 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
         },
         {
           label: 'stats',

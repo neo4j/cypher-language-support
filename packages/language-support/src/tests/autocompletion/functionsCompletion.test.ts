@@ -350,7 +350,7 @@ describe('function invocations', () => {
         {
           label: 'math',
           kind: CompletionItemKind.Function,
-          detail: '(function) ',
+          detail: '(function)',
           documentation: '',
         },
       ],

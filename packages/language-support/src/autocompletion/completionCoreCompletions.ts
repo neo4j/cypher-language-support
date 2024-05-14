@@ -86,13 +86,15 @@ function getMethodCompletionItem(
   const maybeTags: { tags?: CompletionItemTag[] } = deprecated
     ? { tags: [CompletionItemTag.Deprecated] }
     : {};
+  const signature = maybeSignature.signature ?? '';
+  const detail = typeDetail + (signature.length > 0 ? ' ' + signature : '');
 
   return {
     ...maybeTags,
     label,
     kind,
-    detail: typeDetail + ' ' + maybeSignature?.signature,
-    documentation: maybeSignature?.description,
+    detail: detail,
+    documentation: maybeSignature?.description ?? '',
   };
 }
 

@@ -262,7 +262,6 @@ describe('parameters', () => {
       {
         detail: '(function) ',
         kind: 3,
-        tags: [],
         label: 'duration.inSeconds',
         documentation: '',
       },
