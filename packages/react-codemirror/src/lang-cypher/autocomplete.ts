@@ -3,6 +3,7 @@ import { autocomplete } from '@neo4j-cypher/language-support';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
+import { getDocString } from './utils';
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {
@@ -67,15 +68,21 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
 
     return {
       from: context.matchBefore(/(\w|\$)*$/).from,
-      options: options.map((o) => ({
-        label: o.label,
-        type: completionKindToCodemirrorIcon(o.kind),
-        apply:
-          o.kind === CompletionItemKind.Snippet
-            ? // codemirror requires an empty snippet space to be able to tab out of the completion
-              snippet((o.insertText ?? o.label) + '${}')
-            : undefined,
-        detail: o.detail,
-      })),
+      options: options.map((o) => {
+        const maybeInfo = o.documentation
+          ? { info: getDocString(o.documentation) }
+          : {};
+        return {
+          label: o.label,
+          type: completionKindToCodemirrorIcon(o.kind),
+          apply:
+            o.kind === CompletionItemKind.Snippet
+              ? // codemirror requires an empty snippet space to be able to tab out of the completion
+                snippet((o.insertText ?? o.label) + '${}')
+              : undefined,
+          detail: o.detail,
+          ...maybeInfo,
+        };
+      }),
     };
   };
