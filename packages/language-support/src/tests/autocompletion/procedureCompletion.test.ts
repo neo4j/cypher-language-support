@@ -1,4 +1,7 @@
-import { CompletionItemKind } from 'vscode-languageserver-types';
+import {
+  CompletionItemKind,
+  CompletionItemTag,
+} from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
@@ -15,6 +18,7 @@ describe('Procedures auto-completion', () => {
       'db.stats.retrieve': procedures['db.stats.retrieve'],
       'db.stats.collect': procedures['db.stats.collect'],
       'db.stats.clear': procedures['db.stats.clear'],
+      'cdc.current': procedures['cdc.current'],
       'jwt.security.requestAccess': {
         ...testData.emptyProcedure,
         name: 'jwt.security.requestAccess',
@@ -61,6 +65,13 @@ describe('Procedures auto-completion', () => {
           kind: CompletionItemKind.Method,
           detail: '(procedure) ' + procedures['tx.getMetaData'].signature,
           documentation: procedures['tx.getMetaData'].description,
+        },
+        {
+          label: 'cdc.current',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure) ' + procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
+          tags: [CompletionItemTag.Deprecated],
         },
         {
           label: 'jwt.security.requestAccess',
@@ -246,6 +257,23 @@ describe('Procedures auto-completion', () => {
         },
       ],
       excluded: [{ label: 'db' }, { label: 'db.ping' }],
+    });
+  });
+
+  test('Correctly completes deprecated procedures when namespace started', () => {
+    const query = 'CALL cdc.';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: 'current',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure) ' + procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
     });
   });
 });
