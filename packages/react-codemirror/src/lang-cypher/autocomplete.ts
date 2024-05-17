@@ -1,6 +1,13 @@
-import { CompletionSource, snippet } from '@codemirror/autocomplete';
+import {
+  Completion,
+  CompletionSource,
+  snippet,
+} from '@codemirror/autocomplete';
 import { autocomplete } from '@neo4j-cypher/language-support';
-import { CompletionItemKind } from 'vscode-languageserver-types';
+import {
+  CompletionItemKind,
+  CompletionItemTag,
+} from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
@@ -38,6 +45,16 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c];
 };
 
+export const completionStyles: (
+  completion: Completion & { deprecated?: boolean },
+) => string = (completion) => {
+  if (completion.deprecated) {
+    return 'cm-drepecated-completion';
+  } else {
+    return null;
+  }
+};
+
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
@@ -73,7 +90,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
         const newDiv = document.createElement('div');
 
         if (o.signature) {
-          const header = document.createElement('h1');
+          const header = document.createElement('p');
           header.setAttribute('class', 'cm-completionInfo-signature');
           header.textContent = o.signature;
           newDiv.appendChild(header);
@@ -92,6 +109,14 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
             }),
         };
 
+        const deprecated =
+          o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
+        // The negative boost moves the deprecation down the list so we
+        // offer the user the completions that are deprecated the last
+        const maybeDeprecated = deprecated
+          ? { boost: -99, deprecated: true }
+          : {};
+
         return {
           label: o.label,
           type: completionKindToCodemirrorIcon(o.kind),
@@ -101,6 +126,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
                 snippet((o.insertText ?? o.label) + '${}')
               : undefined,
           detail: o.detail,
+          ...maybeDeprecated,
           ...maybeInfo,
         };
       }),
