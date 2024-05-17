@@ -2,7 +2,6 @@ import { Token } from 'antlr4';
 import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
-  CompletionItem,
   CompletionItemKind,
   CompletionItemTag,
   InsertTextFormat,
@@ -23,7 +22,7 @@ import {
 import { ParsedStatement } from '../parserWrapper';
 
 import { _internalFeatureFlags } from '../featureFlags';
-import { Neo4jFunction, Neo4jProcedure } from '../types';
+import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -86,14 +85,16 @@ function getMethodCompletionItem(
   const maybeTags: { tags?: CompletionItemTag[] } = deprecated
     ? { tags: [CompletionItemTag.Deprecated] }
     : {};
-  const signature = maybeSignature.signature ?? '';
-  const detail = typeDetail + (signature.length > 0 ? ' ' + signature : '');
+  const maybeMethodSignature = maybeSignature
+    ? { signature: maybeSignature.signature }
+    : {};
 
   return {
     ...maybeTags,
+    ...maybeMethodSignature,
     label,
     kind,
-    detail: detail,
+    detail: typeDetail,
     documentation: maybeSignature?.description ?? '',
   };
 }

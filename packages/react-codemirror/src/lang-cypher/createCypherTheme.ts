@@ -124,7 +124,10 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
-
+    // Makes the info content inside the info element in auto-completions render the line breaks
+    '.cm-completionInfo-signature': {
+      color: 'darkgrey',
+    },
     '.cm-tooltip-autocomplete': {
       maxWidth: '430px',
       '& > ul > li[aria-selected]': {

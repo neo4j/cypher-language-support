@@ -69,9 +69,29 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     return {
       from: context.matchBefore(/(\w|\$)*$/).from,
       options: options.map((o) => {
-        const maybeInfo = o.documentation
-          ? { info: getDocString(o.documentation) }
-          : {};
+        let maybeInfo = {};
+        const newDiv = document.createElement('div');
+
+        if (o.signature) {
+          const header = document.createElement('h1');
+          header.setAttribute('class', 'cm-completionInfo-signature');
+          header.textContent = o.signature;
+          newDiv.appendChild(header);
+        }
+
+        if (o.documentation) {
+          const paragraph = document.createElement('p');
+          paragraph.textContent = getDocString(o.documentation);
+          newDiv.appendChild(paragraph);
+        }
+
+        maybeInfo = {
+          info: () =>
+            new Promise((resolve) => {
+              resolve(newDiv);
+            }),
+        };
+
         return {
           label: o.label,
           type: completionKindToCodemirrorIcon(o.kind),

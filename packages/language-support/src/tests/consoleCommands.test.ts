@@ -260,9 +260,10 @@ describe('parameters', () => {
     const expected = [
       { detail: '(namespace)', kind: 3, label: 'duration' },
       {
-        detail: '(function) ',
+        detail: '(function)',
         kind: 3,
         label: 'duration.inSeconds',
+        signature: '',
         documentation: '',
       },
       { kind: 14, label: 'TRUE' },
