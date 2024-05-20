@@ -2,8 +2,6 @@ import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 
-test.use({ viewport: { width: 500, height: 500 } });
-
 test('hello world end 2 end test', async ({ mount }) => {
   const component = await mount(<CypherEditor value="hello world" />);
   await expect(component).toContainText('hello world');
@@ -233,4 +231,94 @@ test('completes allShortestPaths correctly', async ({ page, mount }) => {
   expect(await textField.textContent()).toEqual(
     'MATCH (n) REURN n; MATCH allShortestPaths',
   );
+});
+
+test('shows signature help information on auto-completion for procedures', async ({
+  page,
+  mount,
+}) => {
+  await mount(<CypherEditor schema={testData.mockSchema} />);
+  const procName = 'apoc.periodic.iterate';
+  const procedure = testData.mockSchema.procedures[procName];
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('CALL apoc.periodic.');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+
+  const infoTooltip = page.locator('.cm-completionInfo');
+
+  while (!(await infoTooltip.getByText(procName).isVisible())) {
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(100);
+  }
+
+  await expect(infoTooltip).toContainText(procedure.signature);
+  await expect(infoTooltip).toContainText(procedure.description);
+});
+
+test('shows signature help information on auto-completion for functions', async ({
+  page,
+  mount,
+}) => {
+  await mount(<CypherEditor schema={testData.mockSchema} />);
+  const fnName = 'apoc.coll.combinations';
+  const fn = testData.mockSchema.functions[fnName];
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('RETURN apoc.coll.');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+
+  const infoTooltip = page.locator('.cm-completionInfo');
+
+  while (!(await infoTooltip.getByText(fnName).isVisible())) {
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(100);
+  }
+
+  await expect(infoTooltip).toContainText(fn.signature);
+  await expect(infoTooltip).toContainText(fn.description);
+});
+
+test('shows deprecated procedures as strikethrough on auto-completion', async ({
+  page,
+  mount,
+}) => {
+  const procName = 'apoc.trigger.resume';
+
+  await mount(
+    <CypherEditor
+      schema={{
+        procedures: { [procName]: testData.mockSchema.procedures[procName] },
+      }}
+    />,
+  );
+  const textField = page.getByRole('textbox');
+  await textField.fill('CALL apoc.trigger.');
+
+  // We need to assert on the element having the right class
+  // and trusting the CSS is making this truly strikethrough
+  await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
+});
+
+test('shows deprecated function as strikethrough on auto-completion', async ({
+  page,
+  mount,
+}) => {
+  const fnName = 'apoc.create.uuid';
+
+  await mount(
+    <CypherEditor
+      schema={{
+        functions: { [fnName]: testData.mockSchema.functions[fnName] },
+      }}
+    />,
+  );
+  const textField = page.getByRole('textbox');
+  await textField.fill('RETURN apoc.create.');
+
+  // We need to assert on the element having the right class
+  // and trusting the CSS is making this truly strikethrough
+  await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
 });

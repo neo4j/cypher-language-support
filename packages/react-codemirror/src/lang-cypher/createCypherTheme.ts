@@ -128,7 +128,7 @@ export const createCypherTheme = ({
     '.cm-completionInfo-signature': {
       color: 'darkgrey',
     },
-    '.cm-drepecated-completion': {
+    '.cm-deprecated-completion': {
       'text-decoration': 'line-through',
     },
     '.cm-tooltip-autocomplete': {
