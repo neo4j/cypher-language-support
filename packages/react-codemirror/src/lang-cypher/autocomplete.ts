@@ -83,42 +83,61 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       context.explicit,
     );
 
-    return {
-      from: context.matchBefore(/(\w|\$)*$/).from,
-      options: options.map((o) => {
-        let maybeInfo = {};
-        const newDiv = document.createElement('div');
+    if (config.featureFlags.signatureInfoOnAutoCompletions) {
+      return {
+        from: context.matchBefore(/(\w|\$)*$/).from,
+        options: options.map((o) => {
+          let maybeInfo = {};
+          const newDiv = document.createElement('div');
 
-        if (o.signature) {
-          const header = document.createElement('p');
-          header.setAttribute('class', 'cm-completionInfo-signature');
-          header.textContent = o.signature;
-          newDiv.appendChild(header);
-        }
+          if (o.signature) {
+            const header = document.createElement('p');
+            header.setAttribute('class', 'cm-completionInfo-signature');
+            header.textContent = o.signature;
+            newDiv.appendChild(header);
+          }
 
-        if (o.documentation) {
-          const paragraph = document.createElement('p');
-          paragraph.textContent = getDocString(o.documentation);
-          newDiv.appendChild(paragraph);
-        }
+          if (o.documentation) {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = getDocString(o.documentation);
+            newDiv.appendChild(paragraph);
+          }
 
-        maybeInfo = {
-          info: () =>
-            new Promise((resolve) => {
-              resolve(newDiv);
-            }),
-        };
+          maybeInfo = {
+            info: () =>
+              new Promise((resolve) => {
+                resolve(newDiv);
+              }),
+          };
 
-        const deprecated =
-          o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
-        // The negative boost moves the deprecation down the list
-        // so we offer the user the completions that are
-        // deprecated the last
-        const maybeDeprecated = deprecated
-          ? { boost: -99, deprecated: true }
-          : {};
+          const deprecated =
+            o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ??
+            false;
+          // The negative boost moves the deprecation down the list
+          // so we offer the user the completions that are
+          // deprecated the last
+          const maybeDeprecated = deprecated
+            ? { boost: -99, deprecated: true }
+            : {};
 
-        return {
+          return {
+            label: o.label,
+            type: completionKindToCodemirrorIcon(o.kind),
+            apply:
+              o.kind === CompletionItemKind.Snippet
+                ? // codemirror requires an empty snippet space to be able to tab out of the completion
+                  snippet((o.insertText ?? o.label) + '${}')
+                : undefined,
+            detail: o.detail,
+            ...maybeDeprecated,
+            ...maybeInfo,
+          };
+        }),
+      };
+    } else {
+      return {
+        from: context.matchBefore(/(\w|\$)*$/).from,
+        options: options.map((o) => ({
           label: o.label,
           type: completionKindToCodemirrorIcon(o.kind),
           apply:
@@ -127,9 +146,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
                 snippet((o.insertText ?? o.label) + '${}')
               : undefined,
           detail: o.detail,
-          ...maybeDeprecated,
-          ...maybeInfo,
-        };
-      }),
-    };
+        })),
+      };
+    }
   };

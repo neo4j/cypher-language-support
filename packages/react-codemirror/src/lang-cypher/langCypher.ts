@@ -20,13 +20,22 @@ const facet = defineLanguageFacet({
 
 export type CypherConfig = {
   lint?: boolean;
+  featureFlags?: {
+    signatureInfoOnAutoCompletions?: boolean;
+    consoleCommands?: boolean;
+  };
   schema?: DbSchema;
   useLightVersion: boolean;
   setUseLightVersion?: (useLightVersion: boolean) => void;
 };
 
 export function cypher(config: CypherConfig) {
-  _internalFeatureFlags.consoleCommands = true;
+  const featureFlags = config.featureFlags;
+  // We allow to override the consoleCommands feature flag
+  if (featureFlags.consoleCommands !== undefined) {
+    _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
+  }
+
   const parserAdapter = new ParserAdapter(facet, config);
 
   const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');

@@ -237,7 +237,14 @@ test('shows signature help information on auto-completion for procedures', async
   page,
   mount,
 }) => {
-  await mount(<CypherEditor schema={testData.mockSchema} />);
+  await mount(
+    <CypherEditor
+      schema={testData.mockSchema}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
+    />,
+  );
   const procName = 'apoc.periodic.iterate';
   const procedure = testData.mockSchema.procedures[procName];
 
@@ -261,7 +268,14 @@ test('shows signature help information on auto-completion for functions', async 
   page,
   mount,
 }) => {
-  await mount(<CypherEditor schema={testData.mockSchema} />);
+  await mount(
+    <CypherEditor
+      schema={testData.mockSchema}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
+    />,
+  );
   const fnName = 'apoc.coll.combinations';
   const fn = testData.mockSchema.functions[fnName];
 
@@ -292,6 +306,9 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
       schema={{
         procedures: { [procName]: testData.mockSchema.procedures[procName] },
       }}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
     />,
   );
   const textField = page.getByRole('textbox');
@@ -313,6 +330,9 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
       schema={{
         functions: { [fnName]: testData.mockSchema.functions[fnName] },
       }}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
     />,
   );
   const textField = page.getByRole('textbox');
@@ -321,4 +341,17 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
   // We need to assert on the element having the right class
   // and trusting the CSS is making this truly strikethrough
   await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
+});
+
+test('does not signature help information on auto-completion if flag not enabled explicitly', async ({
+  page,
+  mount,
+}) => {
+  await mount(<CypherEditor schema={testData.mockSchema} />);
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('CALL apoc.periodic.');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+  await expect(page.locator('.cm-completionInfo')).not.toBeVisible();
 });
