@@ -111,8 +111,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
 
         const deprecated =
           o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
-        // The negative boost moves the deprecation down the list so we
-        // offer the user the completions that are deprecated the last
+        // The negative boost moves the deprecation down the list
+        // so we offer the user the completions that are
+        // deprecated the last
         const maybeDeprecated = deprecated
           ? { boost: -99, deprecated: true }
           : {};
