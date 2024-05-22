@@ -95,3 +95,25 @@ test('can set/unset onFocus/onBlur', async ({ mount, page }) => {
     expect(blurFireCount).toBe(1);
   }).toPass();
 });
+
+test('aria-label is not set by default', async ({ mount, page }) => {
+  await mount(<CypherEditor />);
+
+  const textField = page.getByRole('textbox');
+
+  await expect(async () => {
+    expect(await textField.getAttribute('aria-label')).toBeNull();
+  }).toPass();
+});
+
+test('can set aria-label', async ({ mount, page }) => {
+  const ariaLabel = 'Cypher Editor';
+
+  await mount(<CypherEditor ariaLabel={ariaLabel} />);
+
+  const textField = page.getByRole('textbox');
+
+  await expect(async () => {
+    expect(await textField.getAttribute('aria-label')).toEqual(ariaLabel);
+  }).toPass();
+});
