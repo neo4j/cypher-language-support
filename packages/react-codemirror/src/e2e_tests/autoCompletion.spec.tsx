@@ -1,5 +1,6 @@
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
+import type { Page } from '@playwright/test';
 import { CypherEditor } from '../CypherEditor';
 
 test('hello world end 2 end test', async ({ mount }) => {
@@ -233,6 +234,22 @@ test('completes allShortestPaths correctly', async ({ page, mount }) => {
   );
 });
 
+async function getInfoTooltip(page: Page, methodName: string) {
+  const infoTooltip = page.locator('.cm-completionInfo');
+  const firstOption = page.locator('li[aria-selected="true"]');
+  let selectedOption = firstOption;
+
+  while (!(await infoTooltip.textContent()).includes(methodName)) {
+    await page.keyboard.press('ArrowDown');
+    const currentSelected = page.locator('li[aria-selected="true"]');
+    expect(currentSelected).not.toBe(selectedOption);
+    expect(currentSelected).not.toBe(firstOption);
+    selectedOption = currentSelected;
+  }
+
+  return infoTooltip;
+}
+
 test('shows signature help information on auto-completion for procedures', async ({
   page,
   mount,
@@ -253,13 +270,7 @@ test('shows signature help information on auto-completion for procedures', async
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
 
-  const infoTooltip = page.locator('.cm-completionInfo');
-
-  while (!(await infoTooltip.getByText(procName).isVisible())) {
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(100);
-  }
-
+  const infoTooltip = await getInfoTooltip(page, procName);
   await expect(infoTooltip).toContainText(procedure.signature);
   await expect(infoTooltip).toContainText(procedure.description);
 });
@@ -284,13 +295,7 @@ test('shows signature help information on auto-completion for functions', async 
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
 
-  const infoTooltip = page.locator('.cm-completionInfo');
-
-  while (!(await infoTooltip.getByText(fnName).isVisible())) {
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(100);
-  }
-
+  const infoTooltip = await getInfoTooltip(page, fnName);
   await expect(infoTooltip).toContainText(fn.signature);
   await expect(infoTooltip).toContainText(fn.description);
 });
@@ -354,4 +359,82 @@ test('does not signature help information on auto-completion if flag not enabled
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
   await expect(page.locator('.cm-completionInfo')).not.toBeVisible();
+});
+
+test('does not signature help information on auto-completion if docs and signature are empty', async ({
+  page,
+  mount,
+}) => {
+  await mount(
+    <CypherEditor
+      schema={testData.mockSchema}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('C');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+  await expect(page.locator('.cm-completionInfo')).not.toBeVisible();
+});
+
+test('shows signature help information on auto-completion if description is not empty, signature is', async ({
+  page,
+  mount,
+}) => {
+  await mount(
+    <CypherEditor
+      schema={{
+        procedures: {
+          'db.ping': {
+            ...testData.emptyProcedure,
+            description: 'foo',
+            signature: '',
+            name: 'db.ping',
+          },
+        },
+      }}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('CALL db.');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+  await expect(page.locator('.cm-completionInfo')).toBeVisible();
+});
+
+test('shows signature help information on auto-completion if signature is not empty, description is', async ({
+  page,
+  mount,
+}) => {
+  await mount(
+    <CypherEditor
+      schema={{
+        procedures: {
+          'db.ping': {
+            ...testData.emptyProcedure,
+            description: '',
+            signature: 'foo',
+            name: 'db.ping',
+          },
+        },
+      }}
+      featureFlags={{
+        signatureInfoOnAutoCompletions: true,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('CALL db.');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
+  await expect(page.locator('.cm-completionInfo')).toBeVisible();
 });
