@@ -3,7 +3,7 @@ name: Publish VSCode extension to Marketplace and OpenVSX
 on:
   push:
     tags:
-      - "neo4j-for-vscode@*.*.*"
+      - 'neo4j-for-vscode@*.*.*'
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
@@ -32,15 +32,13 @@ jobs:
 
       - name: Publish to VSCode Marketplace
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           cd packages/vscode-extension
           npx vsce package
           npx vsce publish
-      
+
       - name: Publish to OpenVSX
         env:
-          VSX_PAT: ${{ secrets.VSX_PAT }}: 
+          VSX_PAT: ${{ secrets.VSX_PAT }}
         run: npx ovsx publish -p $VSX_PAT
-
- 
