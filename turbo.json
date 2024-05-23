@@ -18,7 +18,8 @@
       "dependsOn": [
         "@neo4j-cypher/language-support#build",
         "@neo4j-cypher/schema-poller#build"
-      ]
+      ],
+      "outputs": ["dist/**"]
     },
     "clean": {
       "cache": false

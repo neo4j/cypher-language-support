@@ -15,7 +15,7 @@ jobs:
     name: Run eslint and check formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
@@ -40,7 +40,7 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
@@ -48,10 +48,7 @@ jobs:
       - name: Install dependencies with frozen lock file and generate parser
         run: npm ci
 
-      - name: Build project
-        run: npm run build
-
-      - name: Run tests
+      - name: Builds and run tests
         # Tests with the same flags that VSCode does
         run: |
           npm test -- --filter=!antlr4 -- --passWithNoTests --testLocationInResults
@@ -62,7 +59,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
@@ -81,7 +78,7 @@ jobs:
         # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
         run: xvfb-run -a npm run test:e2e
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report

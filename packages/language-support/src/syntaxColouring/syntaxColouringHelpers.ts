@@ -4,9 +4,10 @@ import { Token } from 'antlr4';
 
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 
+import { isCommentOpener } from '../helpers';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
 
-interface TokenPosition {
+export interface TokenPosition {
   line: number;
   startCharacter: number;
   startOffset: number;
@@ -148,27 +149,31 @@ export function toParsedTokens(
   });
 }
 
-export function getCypherTokenType(token: Token): CypherTokenType {
-  const tokenNumber = token.type;
+export function getCypherTokenType(
+  token: Token,
+  nextToken: Token | undefined,
+): {
+  tokenType: CypherTokenType;
+  finished: boolean;
+} {
+  const tokenText = token.text;
 
-  if (tokenNumber === CypherLexer.EOF && token.text !== '<EOF>') {
-    const tokenText = token.text;
-    if (tokenText.startsWith('"') || tokenText.startsWith("'")) {
-      return CypherTokenType.stringLiteral;
-    } else if (tokenText.startsWith('/*')) {
-      return CypherTokenType.comment;
+  if (token.type === CypherLexer.ErrorChar) {
+    if (tokenText === '"' || tokenText === "'") {
+      return { tokenType: CypherTokenType.stringLiteral, finished: false };
     } else if (tokenText.startsWith('`')) {
-      return CypherTokenType.symbolicName;
+      return { tokenType: CypherTokenType.symbolicName, finished: false };
     }
   }
-  if (
-    tokenNumber === CypherLexer.SINGLE_LINE_COMMENT ||
-    tokenNumber === CypherLexer.MULTI_LINE_COMMENT
-  ) {
-    return CypherTokenType.comment;
-  } else {
-    return lexerSymbols[tokenNumber] ?? CypherTokenType.none;
+
+  if (isCommentOpener(token, nextToken)) {
+    return { tokenType: CypherTokenType.comment, finished: false };
   }
+
+  return {
+    tokenType: lexerSymbols[token.type] ?? CypherTokenType.none,
+    finished: true,
+  };
 }
 
 export function shouldAssignTokenType(token: Token): boolean {

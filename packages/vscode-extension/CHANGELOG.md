@@ -1,5 +1,12 @@
 # @neo4j-cypher/vscode-extension
 
+## 1.1.1
+
+### Patch Changes
+
+- Updates grammar and semantic analysis
+- Corrects bug with semantic analysis and List of non-numeric types
+
 ## 1.1.0
 
 ### Minor Changes

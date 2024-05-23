@@ -45,7 +45,7 @@
     "@typescript-eslint/parser": "5.56.0",
     "eslint": "8.36.0",
     "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-jsdoc": "40.0.1",
+    "eslint-plugin-jsdoc": "48.2.4",
     "eslint-plugin-prefer-arrow": "1.2.3",
     "ts-jest": "^29.1.1",
     "ts-node": "10.9.1",

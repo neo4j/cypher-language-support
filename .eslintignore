@@ -11,3 +11,4 @@ packages/language-support/src/highlighting/semanticAnalysis.js
 vendor/*
 turbowatch.ts
 packages/vscode-extension/genTextMate.js
+release-canary.js

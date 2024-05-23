@@ -5,6 +5,7 @@ import {
 } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
+import { CypherTokenType } from '@neo4j-cypher/language-support';
 import { StyleSpec } from 'style-mod';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 import {
@@ -64,8 +65,9 @@ export const createCypherTheme = ({
       color: settings.gutterForeground,
       border: 'none',
     },
-    '&.cm-editor .cm-scroller': {
+    '&.cm-editor': {
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+      height: '100%',
     },
     '.cm-content': {
       caretColor: settings.cursor,
@@ -99,7 +101,32 @@ export const createCypherTheme = ({
       color: settings.autoCompletionPanel.matchingTextColor,
       textDecoration: 'none',
     },
+    '& .cm-signature-help-panel': {
+      backgroundColor: settings.autoCompletionPanel.backgroundColor,
+      maxWidth: '700px',
+      maxHeight: '250px',
+      fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+    },
+    '& .cm-signature-help-panel-contents': {
+      overflow: 'auto',
+      maxHeight: '250px',
+    },
+    '& .cm-signature-help-panel-current-argument': {
+      color: settings.autoCompletionPanel.matchingTextColor,
+      fontWeight: 'bold',
+    },
+    '& .cm-signature-help-panel-separator': {
+      borderBottom: '1px solid #ccc',
+    },
+    '& .cm-signature-help-panel-name': {
+      padding: '5px',
+    },
+    '& .cm-signature-help-panel-description': {
+      padding: '5px',
+    },
+
     '.cm-tooltip-autocomplete': {
+      maxWidth: '430px',
       '& > ul > li[aria-selected]': {
         backgroundColor: settings.autoCompletionPanel.selectedColor,
         color: settings.foreground,
@@ -204,7 +231,7 @@ export const createCypherTheme = ({
     ([token, color]: [HighlightedCypherTokenTypes, string]): TagStyle => ({
       tag: tokenTypeToStyleTag[token],
       color,
-      class: token === 'consoleCommand' ? 'cm-bold' : undefined,
+      class: token === CypherTokenType.consoleCommand ? 'cm-bold' : undefined,
     }),
   );
   const highlightStyle = HighlightStyle.define(styles);

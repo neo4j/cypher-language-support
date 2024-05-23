@@ -70,7 +70,7 @@ class SignatureHelper extends CypherCmdParserListener {
     super();
   }
 
-  exitExpression = (ctx: ExpressionContext) => {
+  enterExpression = (ctx: ExpressionContext) => {
     // If the caret is at (
     if (this.caretToken.type === CypherParser.LPAREN) {
       /* We need to compute the next token that is not 
@@ -106,7 +106,7 @@ class SignatureHelper extends CypherCmdParserListener {
     }
   };
 
-  exitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+  enterFunctionInvocation = (ctx: FunctionInvocationContext) => {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&
@@ -127,7 +127,7 @@ class SignatureHelper extends CypherCmdParserListener {
     }
   };
 
-  exitCallClause = (ctx: CallClauseContext) => {
+  enterCallClause = (ctx: CallClauseContext) => {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&

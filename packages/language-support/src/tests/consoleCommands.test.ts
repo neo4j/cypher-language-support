@@ -1,9 +1,6 @@
 import { autocomplete } from '../autocompletion/autocompletion';
-import {
-  ParsedCommandNoPosition,
-  parserWrapper,
-  setConsoleCommandsEnabled,
-} from '../parserWrapper';
+import { _internalFeatureFlags } from '../featureFlags';
+import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
 import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
 import { testData } from './testData';
 
@@ -40,10 +37,10 @@ function expectErrorMessage(query: string, msg: string) {
 
 describe('sanity checks', () => {
   beforeAll(() => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('parses simple commands without args ', () => {
@@ -145,10 +142,10 @@ describe('sanity checks', () => {
 
 describe(':use', () => {
   beforeAll(() => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
@@ -211,10 +208,10 @@ describe(':use', () => {
 
 describe('parameters', () => {
   beforeAll(() => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
@@ -283,13 +280,10 @@ describe('parameters', () => {
     expectErrorMessage(':param RETURN', "Expected '='");
     expectErrorMessage(':param RETURN b', "Expected '='");
     expectErrorMessage(':param b => ', 'Expected an expression');
-    expectErrorMessage(':param {', "Expected any of '}', ',' or an identifier");
+    expectErrorMessage(':param {', "Expected '}' or an identifier");
     expectErrorMessage(':param {x}', "Expected ':'");
     expectErrorMessage(':param {x: ', 'Expected an expression');
-    expectErrorMessage(
-      ':param {: 4} ',
-      "Expected any of '}', ',' or an identifier",
-    );
+    expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
   });
 
   test('highlights :params properly', () => {
@@ -450,10 +444,10 @@ describe('parameters', () => {
 
 describe('command parser also handles cypher', () => {
   beforeAll(() => {
-    setConsoleCommandsEnabled(true);
+    _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    setConsoleCommandsEnabled(false);
+    _internalFeatureFlags.consoleCommands = false;
   });
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [

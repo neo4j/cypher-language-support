@@ -21,7 +21,7 @@ import {
 
 import { ParsedStatement } from '../parserWrapper';
 
-import { consoleCommandEnabled } from '../parserWrapper';
+import { _internalFeatureFlags } from '../featureFlags';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -216,10 +216,11 @@ enum ExpectedParameterType {
 
 const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   const parentRule = context.ruleList.at(-1);
-  const grandParentRule = context.ruleList.at(-2);
+
   if (
     [
       CypherParser.RULE_stringOrParameter,
+      CypherParser.RULE_commandNameExpression,
       CypherParser.RULE_symbolicNameOrStringParameter,
       CypherParser.RULE_symbolicNameOrStringParameterList,
       CypherParser.RULE_symbolicAliasNameOrParameter,
@@ -230,13 +231,10 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
       CypherParser.RULE_renameUser,
       CypherParser.RULE_createRole,
       CypherParser.RULE_dropRole,
+      CypherParser.RULE_userNames,
+      CypherParser.RULE_roleNames,
       CypherParser.RULE_renameRole,
-      CypherParser.RULE_revokeRole,
-    ].includes(parentRule) ||
-    [
-      CypherParser.RULE_showUserPrivileges,
-      CypherParser.RULE_grantRole,
-    ].includes(grandParentRule)
+    ].includes(parentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (
@@ -344,11 +342,11 @@ export function completionCoreCompletion(
     CypherParser.RULE_variable,
     CypherParser.RULE_leftArrow,
     // this rule is used for usernames and roles.
-    CypherParser.RULE_symbolicNameOrStringParameter,
+    CypherParser.RULE_commandNameExpression,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(consoleCommandEnabled()
+    ...(_internalFeatureFlags.consoleCommands
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
@@ -454,7 +452,7 @@ export function completionCoreCompletion(
         return completeAliasName({ candidateRule, dbSchema, parsingResult });
       }
 
-      if (ruleNumber === CypherParser.RULE_symbolicNameOrStringParameter) {
+      if (ruleNumber === CypherParser.RULE_commandNameExpression) {
         return completeSymbolicName({ candidateRule, dbSchema, parsingResult });
       }
 
@@ -652,34 +650,25 @@ function completeSymbolicName({
     CypherParser.RULE_dropUser,
     CypherParser.RULE_renameUser,
     CypherParser.RULE_alterUser,
-    CypherParser.RULE_showUserPrivileges,
-    CypherParser.RULE_roleUser,
-    CypherParser.RULE_showPrivilege,
-    CypherParser.RULE_dbmsPrivilege,
-    CypherParser.RULE_databasePrivilege,
+    CypherParser.RULE_userNames,
   ];
 
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
-    return [
+    const result = [
       ...baseSuggestions,
       ...(dbSchema?.userNames ?? []).map((userName) => ({
         label: userName,
         kind: CompletionItemKind.Value,
       })),
     ];
+
+    return result;
   }
 
   const rulesThatAcceptExistingRoles = [
-    CypherParser.RULE_grantRole,
-    CypherParser.RULE_revokeRole,
+    CypherParser.RULE_roleNames,
     CypherParser.RULE_dropRole,
     CypherParser.RULE_renameRole,
-    CypherParser.RULE_showRolePrivileges,
-    CypherParser.RULE_grantRoleManagement,
-    CypherParser.RULE_revokeRoleManagement,
-    CypherParser.RULE_grantPrivilege,
-    CypherParser.RULE_denyPrivilege,
-    CypherParser.RULE_revokePrivilege,
   ];
 
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {

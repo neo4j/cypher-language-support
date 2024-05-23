@@ -2,6 +2,7 @@ import { Token } from 'antlr4';
 import type { ParserRuleContext } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
+import { _internalFeatureFlags } from '../featureFlags';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import {
@@ -10,7 +11,6 @@ import {
   lexerSymbols,
   tokenNames,
 } from '../lexerSymbols';
-import { consoleCommandEnabled } from '../parserWrapper';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -46,7 +46,7 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(consoleCommandEnabled()
+    ...(_internalFeatureFlags.consoleCommands
       ? {
           [CypherParser.RULE_useCompletionRule]: 'use',
           [CypherParser.RULE_listCompletionRule]: 'list',

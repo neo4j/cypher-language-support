@@ -4,7 +4,6 @@
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "out",
-    "declaration": true,
-    "allowJs": true
+    "declaration": true
   }
 }

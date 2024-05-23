@@ -192,6 +192,13 @@ export function findPreviousNonSpace(
   return undefined;
 }
 
+export function isCommentOpener(
+  thisToken: Token,
+  nextToken: Token | undefined,
+): boolean {
+  return thisToken.text === '/' && nextToken?.text === '*';
+}
+
 export const rulesDefiningVariables = [
   CypherParser.RULE_returnItem,
   CypherParser.RULE_unwindClause,

@@ -44,9 +44,9 @@ export function wrappedSemanticAnalysis(
       semanticErrorsResult = a;
     });
     const errors: SemanticAnalysisElementNoSeverity[] =
-      semanticErrorsResult.$errors.data;
+      semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElementNoSeverity[] =
-      semanticErrorsResult.$notifications.data;
+      semanticErrorsResult.notifications;
 
     return {
       errors: errors.map(({ message, position }) => ({

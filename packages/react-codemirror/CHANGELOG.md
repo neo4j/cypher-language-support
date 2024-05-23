@@ -1,5 +1,13 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.8
+
+### Patch Changes
+
+- 6cc9022: Adds more props to the CypherEditor component
+- Updated dependencies [e92d8c7]
+  - @neo4j-cypher/language-support@2.0.0-next.6
+
 ## 2.0.0-next.7
 
 ### Patch Changes

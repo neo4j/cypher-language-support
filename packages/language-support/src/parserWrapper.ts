@@ -4,6 +4,7 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
   default as CypherParser,
@@ -133,7 +134,7 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const errorListener = new SyntaxErrorsListener();
+      const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [labelsCollector, variableFinder];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -145,7 +146,7 @@ export function createParsingResult(query: string): ParsingResult {
       const diagnostics = isEmptyStatement ? [] : errorListener.errors;
       const collectedCommand = parseToCommand(ctx, isEmptyStatement);
 
-      if (!consoleCommandEnabled()) {
+      if (!_internalFeatureFlags.consoleCommands) {
         diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
@@ -440,22 +441,6 @@ class ParserWrapper {
   clearCache() {
     this.parsingResult = undefined;
   }
-}
-
-/* 
- Because the parserWrapper is done as a single-ton global variable, the setting for 
- console commands was also easiest to do as a global variable as it avoid messing with the cache
-
-It would make sense for the client to initialize and own the ParserWrapper, then each editor can have
-it's own cache and preference on if console commands are enabled or not.
-
-*/
-let enableConsoleCommands = false;
-export function setConsoleCommandsEnabled(enabled: boolean) {
-  enableConsoleCommands = enabled;
-}
-export function consoleCommandEnabled() {
-  return enableConsoleCommands;
 }
 
 export const parserWrapper = new ParserWrapper();

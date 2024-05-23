@@ -1,13 +1,10 @@
 export type { ParserRuleContext } from 'antlr4';
 export { autocomplete } from './autocompletion/autocompletion';
 export type { DbSchema } from './dbSchema';
+export { _internalFeatureFlags } from './featureFlags';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export {
-  parse,
-  parserWrapper,
-  setConsoleCommandsEnabled,
-} from './parserWrapper';
+export { parse, parserWrapper } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

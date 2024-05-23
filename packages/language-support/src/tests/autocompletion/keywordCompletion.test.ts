@@ -74,10 +74,7 @@ describe('Auto completion of back to back keywords', () => {
 
     testCompletions({
       query,
-      expected: [
-        { label: 'UNION', kind: CompletionItemKind.Keyword },
-        { label: 'UNION ALL', kind: CompletionItemKind.Keyword },
-      ],
+      expected: [{ label: 'UNION', kind: CompletionItemKind.Keyword }],
     });
   });
 
