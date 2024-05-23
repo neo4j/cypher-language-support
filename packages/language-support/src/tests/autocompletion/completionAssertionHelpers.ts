@@ -1,6 +1,6 @@
-import { CompletionItem } from 'vscode-languageserver-types';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
+import { CompletionItem } from '../../types';
 
 export function testCompletionsExactly({
   query,

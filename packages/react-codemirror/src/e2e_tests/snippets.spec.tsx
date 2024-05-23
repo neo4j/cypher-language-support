@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 
-test.use({ viewport: { width: 500, height: 500 } });
-
 test('can complete pattern snippet', async ({ page, mount }) => {
   await mount(<CypherEditor />);
   const textField = page.getByRole('textbox');
