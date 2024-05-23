@@ -138,7 +138,6 @@ export interface CypherEditorProps {
 
   /**
    * String value to assign to the aria-label attribute of the editor
-   *
    */
   ariaLabel?: string;
 }
