@@ -1,0 +1,48 @@
+>MATCH (u1:CommerceUser{user_id:$seller_id}),
+#^^^^^ source.cypher keyword.control.cypher
+#     ^^^^ source.cypher
+#         ^^^^^^^^^^^^^ source.cypher entity.name.class
+#                      ^^^^^^^^^^^^^^^^^^^^^^^ source.cypher
+>      (u2:CommerceUser{user_id:$customer_id}),
+#^^^^^^^^^ source.cypher
+#         ^^^^^^^^^^^^^ source.cypher entity.name.class
+#                      ^^^^^^^^^^^^^^^^^^^^^^^^^ source.cypher
+>p = allShortestPaths((u1)-[:PURCHASE*..{{depth}}]->(u2))
+#^^^^ source.cypher
+#    ^^^^^^^^^^^^^^^^ source.cypher keyword.control.cypher
+#                    ^^^^^ source.cypher
+#                         ^ source.cypher keyword.operator
+#                          ^ source.cypher
+#                           ^^^^^^^^^ source.cypher entity.name.class
+#                                    ^ source.cypher keyword.operator
+#                                     ^^^^^^^^^^^^ source.cypher
+#                                                 ^ source.cypher keyword.operator
+#                                                  ^^^^^^^ source.cypher
+>WHERE u1 <> u2
+#^^^^^ source.cypher keyword.control.cypher
+#     ^^^^^^^^^^ source.cypher
+>WITH
+#^^^^ source.cypher keyword.control.cypher
+>reduce(output = [], n IN relationships(p) | output + n.create_time.epochMillis ) as relsDate,
+#^^^^^^^^^^^^^^^^^^^^^^ source.cypher
+#                      ^^ source.cypher keyword.control.cypher
+#                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.cypher
+#                                                   ^ source.cypher keyword.operator
+#                                                    ^^ source.cypher
+#                                                      ^^^^^^^^^^^^ source.cypher variable.property
+#                                                                  ^^^^^^^^^^^^ source.cypher variable.property
+#                                                                              ^^^^^^^^^^^^^^^^ source.cypher
+>reduce(output = [], n IN nodes(p) | output + n ) as nodes
+#^^^^^^^^^^^^^^^^^^^^^^ source.cypher
+#                      ^^ source.cypher keyword.control.cypher
+#                        ^^^^^^^^^^^^^^^^^^^ source.cypher
+#                                           ^ source.cypher keyword.operator
+#                                            ^^^^^^^^^^^^^^ source.cypher
+>
+>RETURN relsDate, nodes
+#^^^^^^ source.cypher keyword.control.cypher
+#      ^^^^^^^^^^^^^^^^^ source.cypher
+>LIMIT $limit
+#^^^^^ source.cypher keyword.control.cypher
+#     ^^^^^^^^ source.cypher
+>
