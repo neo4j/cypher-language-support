@@ -110,6 +110,7 @@ export function App() {
               history={Object.values(demos)}
               schema={schema}
               featureFlags={{ signatureInfoOnAutoCompletions: true }}
+              ariaLabel="Cypher Editor"
             />
 
             {commandRanCount > 0 && (
