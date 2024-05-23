@@ -135,6 +135,11 @@ export interface CypherEditorProps {
    * @default false
    */
   readonly?: boolean;
+
+  /**
+   * String value to assign to the aria-label attribute of the editor
+   */
+  ariaLabel?: string;
 }
 
 const executeKeybinding = (onExecute?: (cmd: string) => void) =>
@@ -311,6 +316,11 @@ export class CypherEditor extends Component<
             ? EditorView.domEventHandlers(this.props.domEventHandlers)
             : [],
         ),
+        this.props.ariaLabel
+          ? EditorView.contentAttributes.of({
+              'aria-label': this.props.ariaLabel,
+            })
+          : [],
       ],
       doc: this.props.value,
     });
