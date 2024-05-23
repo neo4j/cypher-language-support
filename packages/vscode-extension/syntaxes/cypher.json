@@ -97,7 +97,7 @@
           "name": "constant.numeric"
         }
       ]
-    },
-    "scopeName": "source.cypher"
-  }
+    }
+  },
+  "scopeName": "source.cypher"
 }

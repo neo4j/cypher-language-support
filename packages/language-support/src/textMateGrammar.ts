@@ -103,6 +103,6 @@ export const textMateGrammar = {
         },
       ],
     },
-    scopeName: 'source.cypher',
   },
+  scopeName: 'source.cypher',
 };
