@@ -100,10 +100,7 @@ test('aria-label is not set by default', async ({ mount, page }) => {
   await mount(<CypherEditor />);
 
   const textField = page.getByRole('textbox');
-
-  await expect(async () => {
-    expect(await textField.getAttribute('aria-label')).toBeNull();
-  }).toPass();
+  expect(await textField.getAttribute('aria-label')).toBeNull();
 });
 
 test('can set aria-label', async ({ mount, page }) => {
@@ -112,8 +109,5 @@ test('can set aria-label', async ({ mount, page }) => {
   await mount(<CypherEditor ariaLabel={ariaLabel} />);
 
   const textField = page.getByRole('textbox');
-
-  await expect(async () => {
-    expect(await textField.getAttribute('aria-label')).toEqual(ariaLabel);
-  }).toPass();
+  expect(await textField.getAttribute('aria-label')).toEqual(ariaLabel);
 });
