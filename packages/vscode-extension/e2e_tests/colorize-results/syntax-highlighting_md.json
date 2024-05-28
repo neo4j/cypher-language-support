@@ -1,0 +1,58 @@
+[
+  {
+    "character": "#",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown"
+  },
+  {
+    "character": "Example",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "cypher",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.control.cypher"
+  },
+  {
+    "character": " (n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ":Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.control.cypher"
+  },
+  {
+    "character": " method(n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ".property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  }
+]
