@@ -15,32 +15,28 @@ export function run(): Promise<void> {
 
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    glob(
-      '**/syntaxHighlightingMarkdown.spec.js',
-      { cwd: testsRoot },
-      (err, files) => {
-        if (err) {
-          return reject(err);
-        }
+    glob('**/*.spec.js', { cwd: testsRoot }, (err, files) => {
+      if (err) {
+        return reject(err);
+      }
 
-        // Add files to the test suite
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
-        files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+      // Add files to the test suite
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
+      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
 
-        try {
-          // Run the mocha test
-          mocha.run((failures) => {
-            if (failures > 0) {
-              reject(new Error(`${failures} tests failed.`));
-            } else {
-              resolve();
-            }
-          });
-        } catch (err) {
-          console.error(err);
-          reject(err);
-        }
-      },
-    );
+      try {
+        // Run the mocha test
+        mocha.run((failures) => {
+          if (failures > 0) {
+            reject(new Error(`${failures} tests failed.`));
+          } else {
+            resolve();
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        reject(err);
+      }
+    });
   });
 }
