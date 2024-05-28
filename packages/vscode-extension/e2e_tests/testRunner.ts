@@ -16,7 +16,7 @@ export function run(): Promise<void> {
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     glob(
-      '**/markdownHighlighting.spec.js',
+      '**/syntaxHighlightingMarkdown.spec.js',
       { cwd: testsRoot },
       (err, files) => {
         if (err) {
