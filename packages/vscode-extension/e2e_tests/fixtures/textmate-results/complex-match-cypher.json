@@ -1,5 +1,21 @@
 [
   {
+    "character": "/*",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " This is a ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "multiline comment",
+    "type": "source.cypher"
+  },
+  {
+    "character": "*/",
+    "type": "source.cypher keyword.operator"
+  },
+  {
     "character": "MATCH",
     "type": "source.cypher keyword.control.cypher"
   },
@@ -81,6 +97,18 @@
   },
   {
     "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "    ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "//",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " This is a single line comment",
     "type": "source.cypher"
   },
   {
