@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License.
- *  Taken from https://github.com/microsoft/vscode-markdown-tm-grammar/blob/8c84fff4a2e93858b6e453ee270fe6eb3c65ebe8/test/colorization.test.js
+ *  Taken and modified from
+ *  https://github.com/microsoft/vscode-markdown-tm-grammar/blob/8c84fff4a2e93858b6e453ee270fe6eb3c65ebe8/test/colorization.test.js
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
 import fs from 'fs';
@@ -31,14 +32,14 @@ function assertUnchangedTokens(testFixurePath: string) {
 
       const resultsFolderPath = join(
         dirname(dirname(testFixurePath)),
-        'colorize-results',
+        'textmate-results',
       );
       if (!fs.existsSync(resultsFolderPath)) {
         fs.mkdirSync(resultsFolderPath);
       }
       const resultPath = join(
         resultsFolderPath,
-        fileName.replace('.', '_') + '.json',
+        fileName.replace('.', '-') + '.json',
       );
       if (fs.existsSync(resultPath)) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -49,23 +50,8 @@ function assertUnchangedTokens(testFixurePath: string) {
           fs.writeFileSync(resultPath, JSON.stringify(data, null, '\t'), {
             flag: 'w',
           });
-          if (
-            Array.isArray(data) &&
-            Array.isArray(previousData) &&
-            data.length === previousData.length
-          ) {
-            for (let i = 0; i < data.length; i++) {
-              const d: SyntaxToken = data[i];
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              const p: SyntaxToken = previousData[i];
-              if (d.character !== p.character) {
-                throw e;
-              }
-            }
-            // different but no tokenization or color change: no failure
-          } else {
-            throw e;
-          }
+
+          throw e;
         }
       } else {
         fs.writeFileSync(resultPath, JSON.stringify(data, null, '\t'));
@@ -73,10 +59,10 @@ function assertUnchangedTokens(testFixurePath: string) {
     });
 }
 
-suite('colorization', () => {
+suite('Textmate highlighting', () => {
   const extensionColorizeFixturePath = path.resolve(
     __dirname,
-    '../../../e2e_tests/colorize-fixtures',
+    '../../../e2e_tests/fixtures/textmate',
   );
 
   if (fs.existsSync(extensionColorizeFixturePath)) {
