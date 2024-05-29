@@ -462,6 +462,7 @@ export class CypherEditor extends Component<
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
+    this.schemaRef.current.featureFlags = this.props.featureFlags;
   }
 
   componentWillUnmount(): void {
