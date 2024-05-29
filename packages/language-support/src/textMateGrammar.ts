@@ -8,13 +8,13 @@ export const textMateGrammar = {
   name: 'Cypher',
   patterns: [
     {
-      include: '#keywords',
-    },
-    {
       include: '#strings',
     },
     {
       include: '#comments',
+    },
+    {
+      include: '#keywords',
     },
     {
       include: '#labels',
