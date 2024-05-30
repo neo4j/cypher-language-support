@@ -1,0 +1,98 @@
+[
+  {
+    "character": "MATCH",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " p = ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "allShortestPaths",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": "((u1)",
+    "type": "source.cypher"
+  },
+  {
+    "character": "-",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "[",
+    "type": "source.cypher"
+  },
+  {
+    "character": ":PURCHASE",
+    "type": "source.cypher entity.name.class"
+  },
+  {
+    "character": "*",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": ".",
+    "type": "source.cypher"
+  },
+  {
+    "character": ".5",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": "]",
+    "type": "source.cypher"
+  },
+  {
+    "character": "-",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": ">(u2))",
+    "type": "source.cypher"
+  },
+  {
+    "character": "WITH",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": "    reduce(output = [], n ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "IN",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " relationships(p) | output ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "+",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " n",
+    "type": "source.cypher"
+  },
+  {
+    "character": ".create_time.epochMillis",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": " ) as relsDate",
+    "type": "source.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " relsDate, nodes",
+    "type": "source.cypher"
+  },
+  {
+    "character": ".foo.bar",
+    "type": "source.cypher variable.property"
+  }
+]

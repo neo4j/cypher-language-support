@@ -1,0 +1,34 @@
+[
+  {
+    "character": "MATCH",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " (n",
+    "type": "source.cypher"
+  },
+  {
+    "character": ":Label",
+    "type": "source.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " function(n",
+    "type": "source.cypher"
+  },
+  {
+    "character": ".property",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cypher"
+  }
+]

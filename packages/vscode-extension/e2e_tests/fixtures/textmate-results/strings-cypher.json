@@ -1,0 +1,46 @@
+[
+  {
+    "character": "RETURN",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "\"double quoted string\"",
+    "type": "source.cypher string.quoted.double"
+  },
+  {
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "AS",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " a,",
+    "type": "source.cypher"
+  },
+  {
+    "character": "       ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "'single quoted string'",
+    "type": "source.cypher string.quoted.single"
+  },
+  {
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "AS",
+    "type": "source.cypher keyword.control.cypher"
+  },
+  {
+    "character": " b",
+    "type": "source.cypher"
+  }
+]
