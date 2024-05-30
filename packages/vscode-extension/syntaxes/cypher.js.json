@@ -1,0 +1,107 @@
+{
+  "scopeName": "inline.cypher",
+  "injectionSelector": "L:(meta.embedded.block.javascript | meta.embedded.block.typescript | source.js | source.ts | source.tsx | source.vue | source.svelte | source.astro) -source.cypher -inline.cypher -string -comment",
+  "patterns": [
+    {
+      "begin": "\\s*(cypher)\\s*\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "1": {
+          "name": "variable.other.class.js"
+        },
+        "2": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "3": {
+          "name": "entity.name.function.tagged-template.js"
+        }
+      },
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.cypher",
+          "begin": "(`|')",
+          "end": "(`|')",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.template.begin.js"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.template.end.js"
+            }
+          },
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        },
+        {
+          "patterns": [
+            { "include": "source.js" },
+            { "include": "source.ts" },
+            { "include": "source.js.jsx" },
+            { "include": "source.tsx" }
+          ]
+        }
+      ]
+    },
+    {
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "\\s*(([cC]ypher)\\s*\\`)|(/\\* [cC]ypher \\*/)\\s*`",
+      "beginCaptures": {
+        "1": {
+          "name": "variable.other.class.js"
+        },
+        "2": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "3": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "4": {
+          "name": "comment.cypher.js"
+        },
+        "5": {
+          "name": "punctuation.definition.string.template.begin.js"
+        }
+      },
+      "end": "`",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "taggedTemplates",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "`(//cypher)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.template.begin.js"
+        },
+        "2": {
+          "name": "comment.line.cypher.js"
+        }
+      },
+      "end": "`",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}
