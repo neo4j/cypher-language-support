@@ -28,7 +28,11 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
   },
   {
-    "character": ":Label",
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
   },
   {
@@ -44,7 +48,11 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
   },
   {
-    "character": ".property",
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable.property"
   },
   {

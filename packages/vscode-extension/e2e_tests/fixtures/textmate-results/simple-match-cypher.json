@@ -8,7 +8,11 @@
     "type": "source.cypher"
   },
   {
-    "character": ":Label",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
     "type": "source.cypher entity.name.class"
   },
   {
@@ -24,7 +28,11 @@
     "type": "source.cypher"
   },
   {
-    "character": ".property",
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "property",
     "type": "source.cypher variable.property"
   },
   {

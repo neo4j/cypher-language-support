@@ -20,7 +20,11 @@
     "type": "source.cypher"
   },
   {
-    "character": ":CommerceUser",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "CommerceUser",
     "type": "source.cypher entity.name.class"
   },
   {
@@ -28,7 +32,11 @@
     "type": "source.cypher"
   },
   {
-    "character": ": CommerceUser",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " CommerceUser",
     "type": "source.cypher entity.name.class"
   },
   {
@@ -40,7 +48,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " u1 <> u2",
+    "character": " u1 ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "<>",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " u2",
     "type": "source.cypher"
   },
   {
@@ -68,7 +84,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " $limit",
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "$",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "limit",
     "type": "source.cypher"
   }
 ]

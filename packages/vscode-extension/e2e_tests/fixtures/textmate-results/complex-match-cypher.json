@@ -20,11 +20,31 @@
     "type": "source.cypher"
   },
   {
-    "character": ":CommerceUser",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "CommerceUser",
     "type": "source.cypher entity.name.class"
   },
   {
-    "character": "{user_id:$seller_id}),",
+    "character": "{user_id",
+    "type": "source.cypher"
+  },
+  {
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "$",
+    "type": "source.cypher"
+  },
+  {
+    "character": "seller_id",
+    "type": "source.cypher entity.name.class"
+  },
+  {
+    "character": "}),",
     "type": "source.cypher"
   },
   {
@@ -32,15 +52,43 @@
     "type": "source.cypher"
   },
   {
-    "character": ":CommerceUser",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "CommerceUser",
     "type": "source.cypher entity.name.class"
   },
   {
-    "character": "{user_id:$customer_id}), ",
+    "character": "{user_id",
     "type": "source.cypher"
   },
   {
-    "character": "    p = ",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "$",
+    "type": "source.cypher"
+  },
+  {
+    "character": "customer_id",
+    "type": "source.cypher entity.name.class"
+  },
+  {
+    "character": "}), ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "    p ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "=",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " ",
     "type": "source.cypher"
   },
   {
@@ -60,23 +108,35 @@
     "type": "source.cypher"
   },
   {
-    "character": ":PURCHASE",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "PURCHASE",
     "type": "source.cypher entity.name.class"
   },
   {
-    "character": "*",
+    "character": "*.",
     "type": "source.cypher keyword.operator"
   },
   {
-    "character": "..{{depth}}]",
+    "character": ".{{",
     "type": "source.cypher"
   },
   {
-    "character": "-",
+    "character": "depth",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": "}}]",
+    "type": "source.cypher"
+  },
+  {
+    "character": "->",
     "type": "source.cypher keyword.operator"
   },
   {
-    "character": ">(u2))",
+    "character": "(u2))",
     "type": "source.cypher"
   },
   {
@@ -84,7 +144,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " u1 <> u2",
+    "character": " u1 ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "<>",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " u2",
     "type": "source.cypher"
   },
   {
@@ -104,7 +172,15 @@
     "type": "source.cypher comment.line"
   },
   {
-    "character": "    reduce(output = [], n ",
+    "character": "    reduce(output ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "=",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " [], n ",
     "type": "source.cypher"
   },
   {
@@ -112,7 +188,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " relationships(p) | output ",
+    "character": " relationships(p) ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "|",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " output ",
     "type": "source.cypher"
   },
   {
@@ -124,7 +208,19 @@
     "type": "source.cypher"
   },
   {
-    "character": ".create_time.epochMillis",
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "create_time",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "epochMillis",
     "type": "source.cypher variable.property"
   },
   {
@@ -132,7 +228,15 @@
     "type": "source.cypher"
   },
   {
-    "character": "    reduce(output = [], n ",
+    "character": "    reduce(output ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "=",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " [], n ",
     "type": "source.cypher"
   },
   {
@@ -140,7 +244,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " nodes(p) | output ",
+    "character": " nodes(p) ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "|",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " output ",
     "type": "source.cypher"
   },
   {
@@ -188,7 +300,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " $limit",
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "$",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "limit",
     "type": "source.cypher"
   }
 ]

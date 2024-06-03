@@ -45,7 +45,7 @@ function assertUnchangedTokens(testFixurePath: string) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const previousData = JSON.parse(fs.readFileSync(resultPath).toString());
         try {
-          assert.deepEqual(data, previousData);
+          assert.deepEqual(previousData, data);
         } catch (e) {
           fs.writeFileSync(resultPath, JSON.stringify(data, null, '\t'), {
             flag: 'w',

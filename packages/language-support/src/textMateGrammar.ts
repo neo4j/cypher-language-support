@@ -85,16 +85,36 @@ export const textMateGrammar = {
     labels: {
       patterns: [
         {
-          match: '\\:\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
-          name: 'entity.name.class',
+          begin: '\\:',
+          end: '\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
+          beginCaptures: {
+            '0': {
+              name: 'keyword.operator',
+            },
+          },
+          endCaptures: {
+            '0': {
+              name: 'entity.name.class',
+            },
+          },
         },
       ],
     },
     properties: {
       patterns: [
         {
-          match: '\\.\\w+',
-          name: 'variable.property',
+          begin: '\\.',
+          end: '\\w+',
+          beginCaptures: {
+            '0': {
+              name: 'keyword.operator',
+            },
+          },
+          endCaptures: {
+            '0': {
+              name: 'variable.property',
+            },
+          },
         },
       ],
     },

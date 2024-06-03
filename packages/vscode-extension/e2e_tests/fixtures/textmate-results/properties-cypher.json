@@ -4,7 +4,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " p = ",
+    "character": " p ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "=",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " ",
     "type": "source.cypher"
   },
   {
@@ -24,11 +32,15 @@
     "type": "source.cypher"
   },
   {
-    "character": ":PURCHASE",
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "PURCHASE",
     "type": "source.cypher entity.name.class"
   },
   {
-    "character": "*",
+    "character": "*.",
     "type": "source.cypher keyword.operator"
   },
   {
@@ -36,7 +48,7 @@
     "type": "source.cypher"
   },
   {
-    "character": ".5",
+    "character": "5",
     "type": "source.cypher variable.property"
   },
   {
@@ -44,11 +56,11 @@
     "type": "source.cypher"
   },
   {
-    "character": "-",
+    "character": "->",
     "type": "source.cypher keyword.operator"
   },
   {
-    "character": ">(u2))",
+    "character": "(u2))",
     "type": "source.cypher"
   },
   {
@@ -56,7 +68,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": "    reduce(output = [], n ",
+    "character": "    reduce(output ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "=",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " [], n ",
     "type": "source.cypher"
   },
   {
@@ -64,7 +84,15 @@
     "type": "source.cypher keyword.control.cypher"
   },
   {
-    "character": " relationships(p) | output ",
+    "character": " relationships(p) ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "|",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": " output ",
     "type": "source.cypher"
   },
   {
@@ -76,7 +104,19 @@
     "type": "source.cypher"
   },
   {
-    "character": ".create_time.epochMillis",
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "create_time",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "epochMillis",
     "type": "source.cypher variable.property"
   },
   {
@@ -92,7 +132,19 @@
     "type": "source.cypher"
   },
   {
-    "character": ".foo.bar",
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "foo",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "bar",
     "type": "source.cypher variable.property"
   }
 ]
