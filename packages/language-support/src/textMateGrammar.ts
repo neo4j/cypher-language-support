@@ -1,6 +1,9 @@
-import { keywordNames } from './lexerSymbols';
+import { keywordNames, operatorSymbols } from './lexerSymbols';
 
 const keywordRegex = new Array(...keywordNames.values()).join('|');
+const operatorsRegex = new Array(...operatorSymbols.values())
+  .map((v) => v.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'))
+  .join('|');
 
 export const textMateGrammar = {
   $schema:
@@ -14,23 +17,23 @@ export const textMateGrammar = {
       include: '#comments',
     },
     {
-      include: '#keywords',
+      include: '#properties',
+    },
+    {
+      include: '#numbers',
     },
     {
       include: '#labels',
     },
     {
-      include: '#properties',
-    },
-    {
-      include: '#numbers',
+      include: '#keywords',
     },
   ],
   repository: {
     keywords: {
       patterns: [
         {
-          match: '[+\\-*/]|AND|OR|NOT|XOR',
+          match: `${operatorsRegex}`,
           name: 'keyword.operator',
         },
         {

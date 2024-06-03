@@ -9,23 +9,23 @@
       "include": "#comments"
     },
     {
-      "include": "#keywords"
+      "include": "#properties"
+    },
+    {
+      "include": "#numbers"
     },
     {
       "include": "#labels"
     },
     {
-      "include": "#properties"
-    },
-    {
-      "include": "#numbers"
+      "include": "#keywords"
     }
   ],
   "repository": {
     "keywords": {
       "patterns": [
         {
-          "match": "[+\\-*/]|AND|OR|NOT|XOR",
+          "match": "&|\\||:|::|\\/|\\$|\\.|\\.\\.|\\|\\||=|!|>=|>|<=|<|-|<>|!=|%|\\+|\\+=|\\^|\\?|=~|\\*",
           "name": "keyword.operator"
         },
         {
