@@ -98,25 +98,14 @@ connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onDidChangeConfiguration(
   (params: { settings: { neo4j: Neo4jSettings } }) => {
-    neo4jSchemaPoller.disconnect();
+    changeConnection(params.settings.neo4j);
+  },
+);
 
-    const neo4jConfig = params.settings.neo4j;
-    if (
-      neo4jSchemaPoller.connection === undefined &&
-      neo4jConfig.connect &&
-      neo4jConfig.password &&
-      neo4jConfig.connectURL &&
-      neo4jConfig.user
-    ) {
-      void neo4jSchemaPoller.persistentConnect(
-        neo4jConfig.connectURL,
-        {
-          username: neo4jConfig.user,
-          password: neo4jConfig.password,
-        },
-        { appName: 'cypher-language-server' },
-      );
-    }
+connection.onNotification(
+  'connectionChanged',
+  (connectionSettings: Neo4jSettings) => {
+    changeConnection(connectionSettings);
   },
 );
 
@@ -127,3 +116,24 @@ connection.listen();
 connection.onExit(() => {
   cleanupWorkers();
 });
+
+const changeConnection = (connectionSettings: Neo4jSettings) => {
+  neo4jSchemaPoller.disconnect();
+
+  if (
+    neo4jSchemaPoller.connection === undefined &&
+    connectionSettings.connect &&
+    connectionSettings.password &&
+    connectionSettings.connectURL &&
+    connectionSettings.user
+  ) {
+    void neo4jSchemaPoller.persistentConnect(
+      connectionSettings.connectURL,
+      {
+        username: connectionSettings.user,
+        password: connectionSettings.password,
+      },
+      { appName: 'cypher-language-server' },
+    );
+  }
+};

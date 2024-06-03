@@ -34,6 +34,32 @@
     "vscode": "^1.75.0"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "neo4j.connect",
+        "category": "Neo4j",
+        "title": "Connect"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "neo4j-connection-explorer",
+          "title": "Neo4j",
+          "icon": "media/database.svg"
+        }
+      ]
+    },
+    "views": {
+      "neo4j-connection-explorer": [
+        {
+          "type": "tree",
+          "id": "neo4j-connections",
+          "name": "Connections",
+          "icon": "media/database.svg"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "cypher",
@@ -102,6 +128,7 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.7",
+    "@neo4j-cypher/schema-poller": "2.0.0-next.6",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

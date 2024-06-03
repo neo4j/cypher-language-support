@@ -1,4 +1,4 @@
-import neo4j, { Config } from 'neo4j-driver';
+import neo4j, { Config, Driver } from 'neo4j-driver';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
@@ -8,24 +8,34 @@ export class Neo4jSchemaPoller {
   public metadata?: MetadataPoller;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
+  // TODO - Create a transient connection class to test connections
+  async testConnection(
+    url: string,
+    credentials: { username: string; password: string },
+    config: { driverConfig?: Config; appName: string },
+  ): Promise<boolean> {
+    let driver: Driver | undefined = undefined;
+
+    try {
+      driver = this.initializeDriver(url, credentials, config);
+      await this.ensureConnection(driver);
+    } catch {
+      return false;
+    } finally {
+      await driver?.close();
+    }
+
+    return true;
+  }
+
   async connect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
   ) {
-    const driver = neo4j.driver(
-      url,
-      neo4j.auth.basic(credentials.username, credentials.password),
-      { userAgent: config.appName, ...config.driverConfig },
-    );
+    const driver = this.initializeDriver(url, credentials, config);
 
-    await driver.verifyConnectivity();
-
-    if (await driver.supportsSessionAuth()) {
-      if (!(await driver.verifyAuthentication())) {
-        throw new Error('Invalid credentials');
-      }
-    }
+    await this.ensureConnection(driver);
 
     const { query, queryConfig } = listDatabases();
     const { databases, summary } = await driver.executeQuery(
@@ -86,5 +96,27 @@ export class Neo4jSchemaPoller {
     this.connection = undefined;
     this.metadata = undefined;
     clearTimeout(this.reconnectionTimeout);
+  }
+
+  private async ensureConnection(driver: Driver): Promise<void> {
+    await driver.verifyConnectivity();
+
+    if (await driver.supportsSessionAuth()) {
+      if (!(await driver.verifyAuthentication())) {
+        throw new Error('Invalid credentials');
+      }
+    }
+  }
+
+  private initializeDriver(
+    url: string,
+    credentials: { username: string; password: string },
+    config: { driverConfig?: Config; appName: string },
+  ): Driver {
+    return neo4j.driver(
+      url,
+      neo4j.auth.basic(credentials.username, credentials.password),
+      { userAgent: config.appName, ...config.driverConfig },
+    );
   }
 }

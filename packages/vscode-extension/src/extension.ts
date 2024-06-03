@@ -1,11 +1,16 @@
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import { commands, ExtensionContext, window, workspace } from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
+import { ConnectionManager } from './ConnectionManager';
+import { ConnectionPanel } from './ConnectionPanel';
+import { ConnectionTreeDataProvider } from './ConnectionTreeDataProvider';
+import { LangugageClientManager } from './LanguageClientManager';
+import { SecretsManager } from './SecretsManager';
 
 let client: LanguageClient;
 
@@ -44,6 +49,22 @@ export function activate(context: ExtensionContext) {
     'Cypher Language Client',
     serverOptions,
     clientOptions,
+  );
+
+  ConnectionManager.globalState = context.globalState;
+  SecretsManager.secrets = context.secrets;
+  LangugageClientManager.globalClient = client;
+
+  const connectionTreeDataProvider = new ConnectionTreeDataProvider();
+  window.registerTreeDataProvider(
+    'neo4j-connections',
+    connectionTreeDataProvider,
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand('neo4j.connect', () => {
+      ConnectionPanel.createOrShow(context.extensionUri);
+    }),
   );
 
   // Start the client. This will also launch the server
