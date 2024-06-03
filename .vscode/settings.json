@@ -11,5 +11,8 @@
   },
   "jest.autoRun": "off",
   "jest.jestCommandLine": "npm test -- --filter=language-support -- --passWithNoTests",
-  "jest.rootPath": "./"
+  "jest.rootPath": "./",
+  "playwright.env": {
+    "NODE_OPTIONS": "--max_old_space_size=8192"
+  }
 }

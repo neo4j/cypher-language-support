@@ -1,14 +1,81 @@
 import { Neo4jProcedure } from '@neo4j-cypher/language-support';
+import Ajv, { JSONSchemaType } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
+import { cleanTypeDescription } from '../data-transforms/clean-type';
 import type { ExecuteQueryArgs } from '../types/sdkTypes';
 
-type ListFunctionArgs = { executableByMe: boolean };
+type ListProcedureArgs = { executableByMe: boolean };
+
+export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
+  type: 'object',
+  properties: {
+    admin: { type: 'boolean' },
+    argumentDescription: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          description: { type: 'string' },
+          type: { type: 'string' },
+          default: { type: 'string', nullable: true },
+          isDeprecated: { type: 'boolean', default: false },
+        },
+        required: ['name', 'description', 'type', 'isDeprecated'],
+      },
+    },
+    description: { type: 'string' },
+    mode: { type: 'string' },
+    name: { type: 'string' },
+    option: { type: 'object' },
+    returnDescription: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          description: { type: 'string' },
+          type: { type: 'string' },
+          isDeprecated: { type: 'boolean', default: false },
+        },
+        required: ['name', 'description', 'type', 'isDeprecated'],
+      },
+    },
+    signature: { type: 'string' },
+    worksOnSystem: { type: 'boolean' },
+  },
+  required: [
+    'admin',
+    'argumentDescription',
+    'description',
+    'mode',
+    'name',
+    'option',
+    'returnDescription',
+    'signature',
+    'worksOnSystem',
+  ],
+  additionalProperties: true,
+};
+
+const validateProcedure = new Ajv({ useDefaults: true }).compile(
+  procedureSchema,
+);
+
+function cleanTypes(result: Neo4jProcedure): Neo4jProcedure {
+  return {
+    ...result,
+    argumentDescription: result.argumentDescription.map(cleanTypeDescription),
+    returnDescription: result.returnDescription.map(cleanTypeDescription),
+  };
+}
+
 /**
  * Gets available procedures on your database
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
 export function listProcedures(
-  { executableByMe }: ListFunctionArgs = { executableByMe: false },
+  { executableByMe }: ListProcedureArgs = { executableByMe: false },
 ): ExecuteQueryArgs<{
   procedures: Neo4jProcedure[];
 }> {
@@ -19,7 +86,13 @@ YIELD name, description, mode, worksOnSystem, argumentDescription, signature, re
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
-      return record.toObject() as Neo4jProcedure;
+      // Assign default values (e.g. isDeprecated) in case they are not present
+      const objResult = record.toObject();
+      validateProcedure(objResult);
+      // Type is verified in integration tests
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const result = cleanTypes(objResult as Neo4jProcedure);
+      return result;
     },
     collect(procedures, summary) {
       return { procedures, summary };

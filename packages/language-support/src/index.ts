@@ -20,7 +20,7 @@ export {
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidationHelpers';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
-export type { Neo4jFunction, Neo4jProcedure } from './types';
+export type { CompletionItem, Neo4jFunction, Neo4jProcedure } from './types';
 export { CypherLexer, CypherParser };
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';

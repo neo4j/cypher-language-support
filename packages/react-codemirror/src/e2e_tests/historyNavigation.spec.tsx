@@ -2,8 +2,6 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
-test.use({ viewport: { width: 500, height: 500 } });
-
 test('respects preloaded history', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
 
