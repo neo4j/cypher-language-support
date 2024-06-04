@@ -1,4 +1,5 @@
-import neo4j, { Config, Driver } from 'neo4j-driver';
+import { Config } from 'neo4j-driver';
+import { initializeDriver } from './initializers/driverIntializer';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
@@ -8,35 +9,13 @@ export class Neo4jSchemaPoller {
   public metadata?: MetadataPoller;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
-  // TODO - Create a transient connection class to test connections
-  async testConnection(
-    url: string,
-    credentials: { username: string; password: string },
-    config: { driverConfig?: Config; appName: string },
-  ): Promise<boolean> {
-    let driver: Driver | undefined = undefined;
-
-    try {
-      driver = this.initializeDriver(url, credentials, config);
-      await this.ensureConnection(driver);
-    } catch {
-      return false;
-    } finally {
-      await driver?.close();
-    }
-
-    return true;
-  }
-
   async connect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
+    database?: string,
   ) {
-    const driver = this.initializeDriver(url, credentials, config);
-
-    await this.ensureConnection(driver);
-
+    const driver = await initializeDriver(url, credentials, config);
     const { query, queryConfig } = listDatabases();
     const { databases, summary } = await driver.executeQuery(
       query,
@@ -52,6 +31,7 @@ export class Neo4jSchemaPoller {
       protocolVersion,
       databases,
       driver,
+      database,
     );
 
     this.metadata = new MetadataPoller(databases, this.connection);
@@ -62,6 +42,7 @@ export class Neo4jSchemaPoller {
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
+    database?: string,
   ) {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
@@ -73,7 +54,7 @@ export class Neo4jSchemaPoller {
       }
 
       try {
-        await this.connect(url, credentials, config);
+        await this.connect(url, credentials, config, database);
         // eslint-disable-next-line no-console
         console.log('Established connection to Neo4j');
       } catch (error) {
@@ -86,7 +67,7 @@ export class Neo4jSchemaPoller {
     }
 
     this.reconnectionTimeout = setTimeout(() => {
-      void this.persistentConnect(url, credentials, config);
+      void this.persistentConnect(url, credentials, config, database);
     }, 30000);
   }
 
@@ -96,27 +77,5 @@ export class Neo4jSchemaPoller {
     this.connection = undefined;
     this.metadata = undefined;
     clearTimeout(this.reconnectionTimeout);
-  }
-
-  private async ensureConnection(driver: Driver): Promise<void> {
-    await driver.verifyConnectivity();
-
-    if (await driver.supportsSessionAuth()) {
-      if (!(await driver.verifyAuthentication())) {
-        throw new Error('Invalid credentials');
-      }
-    }
-  }
-
-  private initializeDriver(
-    url: string,
-    credentials: { username: string; password: string },
-    config: { driverConfig?: Config; appName: string },
-  ): Driver {
-    return neo4j.driver(
-      url,
-      neo4j.auth.basic(credentials.username, credentials.password),
-      { userAgent: config.appName, ...config.driverConfig },
-    );
   }
 }

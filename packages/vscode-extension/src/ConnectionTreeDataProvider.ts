@@ -1,47 +1,93 @@
 import {
   Command,
-  ProviderResult,
+  commands,
+  Event,
+  EventEmitter,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { ConnectionManager } from './ConnectionManager';
+import { GlobalStateManager } from './globalStateManager';
+import { PersistentConnectionManager } from './persistentConnectionManager';
 
-// TODO - Finish this implementation
-// - Show a list of databases belonging to a connection
-// - Show a tree view of nodes and relatioships for each database
-// - Implement a new connection manager to achieve this or can we share the same connection with the schema poller?F
+type TreeItemType = 'connection' | 'label' | 'relationship';
+
 export class ConnectionTreeDataProvider
   implements TreeDataProvider<Connection>
 {
+  private _onDidChangeTreeData: EventEmitter<Connection | undefined | void> =
+    new EventEmitter<Connection | undefined | void>();
+  readonly onDidChangeTreeData: Event<Connection | undefined | void> =
+    this._onDidChangeTreeData.event;
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
   getTreeItem(element: Connection): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
-  getChildren(element?: Connection): ProviderResult<Connection[]> {
+  async getChildren(element?: Connection): Promise<Connection[]> {
     if (element) {
-      return Promise.resolve([]);
+      if (element.type === 'connection') {
+        await commands.executeCommand(
+          'neo4j.connect-to-database',
+          element.label,
+        );
+
+        return [
+          new Connection('label', 'Labels', TreeItemCollapsibleState.Collapsed),
+          new Connection(
+            'relationship',
+            'Relationships',
+            TreeItemCollapsibleState.Collapsed,
+          ),
+        ];
+      } else if (element.type === 'label') {
+        const summary =
+          await PersistentConnectionManager.instance.getDatabaseDataSummary();
+        return summary.labels.map(
+          (l) => new Connection('label', l, TreeItemCollapsibleState.None),
+        );
+      } else if (element.type === 'relationship') {
+        const summary =
+          await PersistentConnectionManager.instance.getDatabaseDataSummary();
+        return summary.relationshipTypes.map(
+          (l) =>
+            new Connection('relationship', l, TreeItemCollapsibleState.None),
+        );
+      }
     } else {
-      const connections = ConnectionManager.getConnections();
-      return connections.map((connection) => {
-        return new Connection(connection, TreeItemCollapsibleState.Collapsed, {
-          command: '',
-          title: 'Connect',
-          arguments: [],
-        });
-      });
+      // Artificially limit this to one connection for now
+      const connections = Array<Connection>();
+      const connectionName =
+        GlobalStateManager.instance.getConnectionNames()[0];
+      connections.push(
+        new Connection(
+          'connection',
+          connectionName,
+          TreeItemCollapsibleState.Collapsed,
+          {
+            command: 'neo4j.connect-to-database',
+            title: 'Connect',
+            arguments: [connectionName],
+          },
+        ),
+      );
+      return connections;
     }
   }
 }
 
-export class Connection extends TreeItem {
+class Connection extends TreeItem {
   constructor(
+    public readonly type: TreeItemType,
     public readonly label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly command?: Command,
   ) {
     super(label, collapsibleState);
-
     this.tooltip = this.label;
   }
 }

@@ -134,6 +134,7 @@ const changeConnection = (connectionSettings: Neo4jSettings) => {
         password: connectionSettings.password,
       },
       { appName: 'cypher-language-server' },
+      connectionSettings.database,
     );
   }
 };

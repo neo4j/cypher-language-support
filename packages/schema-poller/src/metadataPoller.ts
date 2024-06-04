@@ -126,7 +126,7 @@ export class MetadataPoller {
 
     this.dataSummary = new QueryPoller({
       connection,
-      queryArgs: getDataSummary(),
+      queryArgs: getDataSummary(connection.currentDb),
       onRefetchDone: (result) => {
         if (result.success) {
           const { labels, propertyKeys, relationshipTypes } = result.data;

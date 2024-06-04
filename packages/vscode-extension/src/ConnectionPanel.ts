@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { TransientConnection } from '@neo4j-cypher/schema-poller';
 import {
+  commands,
   Disposable,
   Uri,
   ViewColumn,
   Webview,
   WebviewPanel,
   window,
-  workspace,
 } from 'vscode';
-import { ConnectionManager } from './ConnectionManager';
 import { getNonce } from './getNonce';
-import { LangugageClientManager } from './LanguageClientManager';
-import { SecretsManager } from './SecretsManager';
+import { GlobalStateManager } from './globalStateManager';
+import { SecretStorageManager } from './secretStorageManager';
+import { Settings } from './types/settings';
+
+type Data = {
+  command: string;
+  settings: Settings;
+};
 
 export class ConnectionPanel {
   public static currentPanel: ConnectionPanel | undefined;
@@ -21,11 +26,20 @@ export class ConnectionPanel {
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionUri: Uri;
+  private readonly _connection: Settings | undefined;
   private _disposables: Disposable[] = [];
 
   private constructor(panel: WebviewPanel, extensionUri: Uri) {
     this._panel = panel;
     this._extensionUri = extensionUri;
+
+    // Aritificially limit the number of connections to 1 for now
+    // If we already have a connection, edit it.. otherwise create a new one
+    const connectionName = GlobalStateManager.instance.getConnectionNames()[0];
+    if (connectionName) {
+      this._connection =
+        GlobalStateManager.instance.getConnection(connectionName);
+    }
 
     this.update();
 
@@ -43,10 +57,9 @@ export class ConnectionPanel {
       return;
     }
 
-    // TODO - this panel could be used to create OR edit a connection
     const panel = window.createWebviewPanel(
       ConnectionPanel.viewType,
-      'Create New Connection',
+      'Manage Connection',
       column || window.activeTextEditor?.viewColumn || ViewColumn.One,
       {
         enableScripts: true,
@@ -72,102 +85,67 @@ export class ConnectionPanel {
   private update(): void {
     const webview = this._panel.webview;
     this._panel.webview.html = this.getHtmlForWebview(webview);
-    // TODO - add a type for connection
-    webview.onDidReceiveMessage(
-      async (data: {
-        command: string;
-        settings: {
-          connectionName: string;
-          scheme: string;
-          host: string;
-          port: string;
-          user: string;
-          password: string;
-          database: string;
-        };
-      }) => {
-        switch (data.command) {
-          case 'onTestConnection': {
-            await this.testConnection(data.settings);
-            break;
-          }
-          case 'onAddConnection': {
-            // TODO - make this a function
-            const success = await this.testConnection(data.settings);
-            if (success) {
-              await ConnectionManager.setConnection(
-                data.settings.connectionName,
-                data.settings,
-              );
-              await SecretsManager.setPasswordForConnection(
-                data.settings.connectionName,
-                data.settings.password,
-              );
 
-              const connect =
-                workspace.getConfiguration('neo4j').get<boolean>('connect') ??
-                false;
-              const trace = workspace
-                .getConfiguration('neo4j')
-                .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-                server: 'off',
-              };
-              const credentials = this.getCredentials(data.settings);
-              await LangugageClientManager.globalClient.sendNotification(
-                'connectionChanged',
-                {
-                  trace: trace,
-                  connect: connect,
-                  connectUrl: this.getConnectionString(data.settings),
-                  user: credentials.username,
-                  password: credentials.password,
-                },
-              );
-            }
-            break;
-          }
+    webview.onDidReceiveMessage(async (data: Data) => {
+      switch (data.command) {
+        case 'onTestConnection': {
+          await this.testConnection(data.settings);
+          break;
         }
-      },
-    );
+        case 'onAddConnection': {
+          const success = await this.testConnection(data.settings);
+          if (success) {
+            await this.addConnection(data.settings);
+            this.dispose();
+          }
+          break;
+        }
+      }
+    });
   }
 
-  // TODO - add a type for settings
-  private async testConnection(settings: {
-    connectionName: string;
-    scheme: string;
-    host: string;
-    port: string;
-    user: string;
-    password: string;
-    database: string;
-  }): Promise<boolean> {
+  private async testConnection(settings: Settings): Promise<boolean> {
     const url = this.getConnectionString(settings);
     const credentials = this.getCredentials(settings);
-    // TODO - Change this to use a transient connection manager
-    const neo4jSchemaPoller = new Neo4jSchemaPoller();
-    const success = await neo4jSchemaPoller.testConnection(url, credentials, {
+    const transientConnection = new TransientConnection();
+    const success = await transientConnection.testConnection(url, credentials, {
       appName: 'vscode-extension',
     });
     if (success) {
-      await window.showInformationMessage('Connection successful');
+      void window.showInformationMessage('Connection successful');
     } else {
-      await window.showErrorMessage('Connection failed');
+      void window.showErrorMessage('Connection failed');
     }
 
     return success;
   }
 
-  // TODO - add a type for settings
-  private getConnectionString(settings: {
-    scheme: string;
-    host: string;
-    port: string;
-  }): string {
+  private async addConnection(settings: Settings): Promise<void> {
+    const { password } = this.getCredentials(settings);
+    this.updateState(settings, password);
+    await commands.executeCommand(
+      'neo4j.connect-to-database',
+      settings.connectionName,
+    );
+    await commands.executeCommand(
+      'workbench.actions.treeView.neo4j-connections.collapseAll',
+    );
+    await commands.executeCommand('neo4j.refresh-connections');
+  }
+
+  private updateState(settings: Settings, password: string) {
+    GlobalStateManager.instance.setConnection(settings);
+    SecretStorageManager.instance.setPasswordForConnection(
+      settings.connectionName,
+      password,
+    );
+  }
+
+  private getConnectionString(settings: Settings): string {
     return `${settings.scheme}${settings.host}:${settings.port}`;
   }
 
-  // TODO - add a type for settings
-  private getCredentials(settings: { user: string; password: string }): {
+  private getCredentials(settings: Settings): {
     username: string;
     password: string;
   } {
@@ -205,7 +183,9 @@ export class ConnectionPanel {
           Use a content security policy to only allow loading images from https or from our extension directory,
           and only allow scripts that have a specific nonce.
           -->
-          <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
+          <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
+            webview.cspSource
+          }; script-src 'nonce-${nonce}';">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${resetCssUri}" rel="stylesheet">
           <link href="${vscodeCssUri}" rel="stylesheet">
@@ -214,27 +194,45 @@ export class ConnectionPanel {
           </script>
         </head>
         <body>
-          <h1>Create New Connection</h1>
+          <h1>${
+            this._connection ? 'Edit Connection' : 'Add New Connection'
+          }</h1>
           <form>
             <label for="connection-name">Connection name</label>
-            <input type="text" id="connection-name" placeholder="Default connection" />
+            <input type="text" id="connection-name" placeholder="Default connection" value="${
+              this._connection?.connectionName
+            }" />
             <label for="scheme">Scheme</label>
             <select id="scheme">
-              <option value="bolt://">bolt://</option>
-              <option value="neo4j://">neo4j://</option>
+              <option value="bolt://" ${
+                this._connection?.scheme === 'bolt://' ? 'selected' : ''
+              }>bolt://</option>
+              <option value="neo4j://" ${
+                this._connection?.scheme === 'neo4j://' ? 'selected' : ''
+              }>neo4j://</option>
             </select>
             <label for="host">Host</label>
-            <input type="text" id="host" placeholder="localhost" />
+            <input type="text" id="host" placeholder="localhost" value="${
+              this._connection?.host
+            }"/>
             <label for="port">Port</label>
-            <input type="text" id="port" placeholder="7687" />
+            <input type="text" id="port" placeholder="7687" value="${
+              this._connection?.port
+            }"/>
             <label for="database">Database</label>
-            <input type="text" id="database" placeholder="neo4j" />
+            <input type="text" id="database" placeholder="neo4j" value="${
+              this._connection?.database
+            }"/>
             <label for="user">User</label>
-            <input type="text" id="user" placeholder="neo4j" />
+            <input type="text" id="user" placeholder="neo4j" value="${
+              this._connection?.user
+            }"/>
             <label for="password">password</label>
             <input type="password" id="password" />
             <button type="button" id="test-connection">Test connection</button>
-            <button type="button" id="add-connection">Add connection</button>
+            <button type="button" id="add-connection">${
+              this._connection ? 'Edit Connection' : 'Add Connection'
+            }</button>
           </form>
           <script nonce="${nonce}" src="${connectionPanelJsUri}"></script>
         </body>
