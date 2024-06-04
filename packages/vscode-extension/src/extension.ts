@@ -7,6 +7,7 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
+import { connectToDatabase } from './commands';
 import { ConnectionPanel } from './connectionPanel';
 import { ConnectionTreeDataProvider } from './connectionTreeDataProvider';
 import { GlobalStateManager } from './globalStateManager';
@@ -53,6 +54,7 @@ export function activate(context: ExtensionContext) {
     clientOptions,
   );
 
+  // Initialize singletons
   GlobalStateManager.instance = new GlobalStateManager(context.globalState);
   SecretStorageManager.instance = new SecretStorageManager(context.secrets);
   LangugageClientManager.instance = new LangugageClientManager(client);
@@ -60,51 +62,22 @@ export function activate(context: ExtensionContext) {
     new PersistentConnection(),
   );
 
+  // Register our tree view provider to render connections in the sidebar
   const connectionTreeDataProvider = new ConnectionTreeDataProvider();
-  window.registerTreeDataProvider(
-    'neo4j-connections',
-    connectionTreeDataProvider,
-  );
 
+  // Register commands
   context.subscriptions.push(
+    window.registerTreeDataProvider(
+      'neo4j-connections',
+      connectionTreeDataProvider,
+    ),
     commands.registerCommand('neo4j.connect', () => {
       ConnectionPanel.createOrShow(context.extensionUri);
     }),
     commands.registerCommand(
       'neo4j.connect-to-database',
       async (connectionName: string) => {
-        const { scheme, host, port, database, user } =
-          GlobalStateManager.instance.getConnection(connectionName);
-
-        const currentDatabase =
-          PersistentConnectionManager.instance.currentDatabase();
-
-        if (currentDatabase === database) {
-          return;
-        }
-
-        const password =
-          await SecretStorageManager.instance.getPasswordForConnection(
-            connectionName,
-          );
-
-        const url = `${scheme}${host}:${port}}`;
-        const credentials = { username: user, password };
-        await PersistentConnectionManager.instance.connect(
-          url,
-          credentials,
-          {
-            appName: 'vscode-extension',
-          },
-          database,
-        );
-
-        await updateConnection(
-          url,
-          database,
-          credentials.username,
-          credentials.password,
-        );
+        await connectToDatabase(connectionName);
       },
     ),
     commands.registerCommand('neo4j.refresh-connections', () => {
@@ -117,33 +90,11 @@ export function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Promise<void> | undefined {
+  PersistentConnectionManager.instance.disconnect();
+
   if (!client) {
     return undefined;
   }
+
   return client.stop();
-}
-
-async function updateConnection(
-  url: string,
-  database: string,
-  username: string,
-  password: string,
-) {
-  const connect =
-    workspace.getConfiguration('neo4j').get<boolean>('connect') ?? false;
-
-  const trace = workspace
-    .getConfiguration('neo4j')
-    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-    server: 'off',
-  };
-
-  await LangugageClientManager.instance.sendNotification('connectionChanged', {
-    trace: trace,
-    connect: connect,
-    connectUrl: url,
-    user: username,
-    password: password,
-    database: database,
-  });
 }

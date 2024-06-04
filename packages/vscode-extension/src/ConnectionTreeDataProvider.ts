@@ -1,8 +1,8 @@
 import {
-  Command,
   commands,
   Event,
   EventEmitter,
+  ProviderResult,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
@@ -10,82 +10,105 @@ import {
 import { GlobalStateManager } from './globalStateManager';
 import { PersistentConnectionManager } from './persistentConnectionManager';
 
-type TreeItemType = 'connection' | 'label' | 'relationship';
+type ConnectionItemType = 'connection' | 'label' | 'relationship';
 
 export class ConnectionTreeDataProvider
-  implements TreeDataProvider<Connection>
+  implements TreeDataProvider<ConnectionItem>
 {
-  private _onDidChangeTreeData: EventEmitter<Connection | undefined | void> =
-    new EventEmitter<Connection | undefined | void>();
-  readonly onDidChangeTreeData: Event<Connection | undefined | void> =
+  private _onDidChangeTreeData: EventEmitter<
+    ConnectionItem | undefined | void
+  > = new EventEmitter<ConnectionItem | undefined | void>();
+  readonly onDidChangeTreeData: Event<ConnectionItem | undefined | void> =
     this._onDidChangeTreeData.event;
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: Connection): TreeItem | Thenable<TreeItem> {
+  getTreeItem(element: ConnectionItem): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
-  async getChildren(element?: Connection): Promise<Connection[]> {
-    if (element) {
-      if (element.type === 'connection') {
-        await commands.executeCommand(
-          'neo4j.connect-to-database',
-          element.label,
-        );
+  getParent(element: ConnectionItem): ProviderResult<ConnectionItem> {
+    return element;
+  }
 
-        return [
-          new Connection('label', 'Labels', TreeItemCollapsibleState.Collapsed),
-          new Connection(
-            'relationship',
-            'Relationships',
-            TreeItemCollapsibleState.Collapsed,
-          ),
-        ];
-      } else if (element.type === 'label') {
-        const summary =
-          await PersistentConnectionManager.instance.getDatabaseDataSummary();
-        return summary.labels.map(
-          (l) => new Connection('label', l, TreeItemCollapsibleState.None),
-        );
-      } else if (element.type === 'relationship') {
-        const summary =
-          await PersistentConnectionManager.instance.getDatabaseDataSummary();
-        return summary.relationshipTypes.map(
-          (l) =>
-            new Connection('relationship', l, TreeItemCollapsibleState.None),
-        );
-      }
-    } else {
-      // Artificially limit this to one connection for now
-      const connections = Array<Connection>();
-      const connectionName =
-        GlobalStateManager.instance.getConnectionNames()[0];
+  async getChildren(element?: ConnectionItem): Promise<ConnectionItem[]> {
+    if (!element) {
+      return this.getTopLevelConnections();
+    }
+
+    switch (element.type) {
+      case 'connection':
+        return await this.getConnectionElement(element);
+      case 'label':
+        return await this.getLabelElement();
+      case 'relationship':
+        return await this.getRelationshipElement();
+    }
+  }
+
+  private async getConnectionElement(
+    element: ConnectionItem,
+  ): Promise<ConnectionItem[]> {
+    await commands.executeCommand(
+      'neo4j.connect-to-database',
+      element.label,
+      element,
+    );
+
+    return [
+      new ConnectionItem('label', 'Labels', TreeItemCollapsibleState.Collapsed),
+      new ConnectionItem(
+        'relationship',
+        'Relationships',
+        TreeItemCollapsibleState.Collapsed,
+      ),
+    ];
+  }
+
+  private async getLabelElement(): Promise<ConnectionItem[]> {
+    const summary =
+      await PersistentConnectionManager.instance.getDatabaseDataSummary();
+    return summary.labels.map(
+      (l) => new ConnectionItem('label', l, TreeItemCollapsibleState.None),
+    );
+  }
+
+  private async getRelationshipElement(): Promise<ConnectionItem[]> {
+    const summary =
+      await PersistentConnectionManager.instance.getDatabaseDataSummary();
+    return summary.relationshipTypes.map(
+      (r) =>
+        new ConnectionItem('relationship', r, TreeItemCollapsibleState.None),
+    );
+  }
+
+  private getTopLevelConnections(): ConnectionItem[] {
+    const connections = Array<ConnectionItem>();
+    // Artificially limit this to one connection for now
+    const connectionNames = [
+      GlobalStateManager.instance.getConnectionNames()[0],
+    ];
+
+    for (const connectionName of connectionNames) {
       connections.push(
-        new Connection(
+        new ConnectionItem(
           'connection',
           connectionName,
           TreeItemCollapsibleState.Collapsed,
-          {
-            command: 'neo4j.connect-to-database',
-            title: 'Connect',
-            arguments: [connectionName],
-          },
         ),
       );
-      return connections;
     }
+    return connections;
   }
 }
 
-class Connection extends TreeItem {
+export class ConnectionItem extends TreeItem {
   constructor(
-    public readonly type: TreeItemType,
-    public readonly label: string,
+    public readonly type: ConnectionItemType,
+    public label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
-    public readonly command?: Command,
   ) {
     super(label, collapsibleState);
     this.tooltip = this.label;

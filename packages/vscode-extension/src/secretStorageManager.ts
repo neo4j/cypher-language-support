@@ -1,5 +1,10 @@
 import { SecretStorage } from 'vscode';
 
+/**
+ * Singleton class to manage secret storage
+ *
+ * Wraps a SecretStorage instance and exposes functions to store, retrieve, and delete passwords for connections
+ */
 export class SecretStorageManager {
   private static _instance: SecretStorageManager;
   private readonly _secretStorage: SecretStorage;
@@ -16,15 +21,14 @@ export class SecretStorageManager {
     return SecretStorageManager._instance;
   }
 
-  setPasswordForConnection(connectionName: string, password: string) {
-    void this._secretStorage.store(connectionName, password);
+  async setPasswordForConnection(
+    connectionName: string,
+    password: string,
+  ): Promise<void> {
+    await this._secretStorage.store(connectionName, password);
   }
 
-  getPasswordForConnection(connectionName: string) {
-    return this._secretStorage.get(connectionName);
-  }
-
-  deletePasswordForConnection(connectionName: string) {
-    void this._secretStorage.delete(connectionName);
+  async getPasswordForConnection(connectionName: string): Promise<string> {
+    return await this._secretStorage.get(connectionName);
   }
 }

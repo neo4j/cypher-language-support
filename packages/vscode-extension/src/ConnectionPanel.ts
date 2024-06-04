@@ -12,6 +12,7 @@ import {
 import { getNonce } from './getNonce';
 import { GlobalStateManager } from './globalStateManager';
 import { SecretStorageManager } from './secretStorageManager';
+import { getConnectionString, getCredentials } from './settingsHelpers';
 import { Settings } from './types/settings';
 
 type Data = {
@@ -20,13 +21,14 @@ type Data = {
 };
 
 export class ConnectionPanel {
-  public static currentPanel: ConnectionPanel | undefined;
+  private static _currentPanel: ConnectionPanel | undefined;
 
-  public static readonly viewType = 'connection';
+  private static readonly _viewType = 'connection';
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionUri: Uri;
   private readonly _connection: Settings | undefined;
+
   private _disposables: Disposable[] = [];
 
   private constructor(panel: WebviewPanel, extensionUri: Uri) {
@@ -42,7 +44,6 @@ export class ConnectionPanel {
     }
 
     this.update();
-
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
@@ -51,14 +52,14 @@ export class ConnectionPanel {
       ? window.activeTextEditor.viewColumn
       : undefined;
 
-    if (ConnectionPanel.currentPanel) {
-      ConnectionPanel.currentPanel._panel.reveal(column);
-      ConnectionPanel.currentPanel.update();
+    if (ConnectionPanel._currentPanel) {
+      ConnectionPanel._currentPanel._panel.reveal(column);
+      ConnectionPanel._currentPanel.update();
       return;
     }
 
     const panel = window.createWebviewPanel(
-      ConnectionPanel.viewType,
+      ConnectionPanel._viewType,
       'Manage Connection',
       column || window.activeTextEditor?.viewColumn || ViewColumn.One,
       {
@@ -66,11 +67,11 @@ export class ConnectionPanel {
       },
     );
 
-    ConnectionPanel.currentPanel = new ConnectionPanel(panel, extensionUri);
+    ConnectionPanel._currentPanel = new ConnectionPanel(panel, extensionUri);
   }
 
-  public dispose() {
-    ConnectionPanel.currentPanel = undefined;
+  private dispose() {
+    ConnectionPanel._currentPanel = undefined;
 
     this._panel.dispose();
 
@@ -86,73 +87,59 @@ export class ConnectionPanel {
     const webview = this._panel.webview;
     this._panel.webview.html = this.getHtmlForWebview(webview);
 
-    webview.onDidReceiveMessage(async (data: Data) => {
-      switch (data.command) {
-        case 'onTestConnection': {
-          await this.testConnection(data.settings);
-          break;
-        }
-        case 'onAddConnection': {
-          const success = await this.testConnection(data.settings);
-          if (success) {
-            await this.addConnection(data.settings);
-            this.dispose();
+    webview.onDidReceiveMessage(
+      async (data: Data) => {
+        switch (data.command) {
+          case 'onTestConnection': {
+            await this.testConnection(data.settings);
+            break;
           }
-          break;
+          case 'onAddConnection': {
+            const success = await this.testConnection(data.settings);
+            if (success) {
+              await this.addConnection(data.settings);
+              this.dispose();
+            }
+            break;
+          }
         }
-      }
-    });
+      },
+      null,
+      this._disposables,
+    );
   }
 
   private async testConnection(settings: Settings): Promise<boolean> {
-    const url = this.getConnectionString(settings);
-    const credentials = this.getCredentials(settings);
+    const url = getConnectionString(settings);
+    const credentials = getCredentials(settings);
     const transientConnection = new TransientConnection();
     const success = await transientConnection.testConnection(url, credentials, {
       appName: 'vscode-extension',
     });
-    if (success) {
-      void window.showInformationMessage('Connection successful');
-    } else {
-      void window.showErrorMessage('Connection failed');
-    }
+
+    success
+      ? void window.showInformationMessage('Connection successful')
+      : void window.showErrorMessage('Connection failed');
 
     return success;
   }
 
   private async addConnection(settings: Settings): Promise<void> {
-    const { password } = this.getCredentials(settings);
-    this.updateState(settings, password);
+    const { password } = getCredentials(settings);
+    await this.updateState(settings, password);
     await commands.executeCommand(
       'neo4j.connect-to-database',
       settings.connectionName,
     );
-    await commands.executeCommand(
-      'workbench.actions.treeView.neo4j-connections.collapseAll',
-    );
     await commands.executeCommand('neo4j.refresh-connections');
   }
 
-  private updateState(settings: Settings, password: string) {
-    GlobalStateManager.instance.setConnection(settings);
-    SecretStorageManager.instance.setPasswordForConnection(
+  private async updateState(settings: Settings, password: string) {
+    await GlobalStateManager.instance.setConnection(settings);
+    await SecretStorageManager.instance.setPasswordForConnection(
       settings.connectionName,
       password,
     );
-  }
-
-  private getConnectionString(settings: Settings): string {
-    return `${settings.scheme}${settings.host}:${settings.port}`;
-  }
-
-  private getCredentials(settings: Settings): {
-    username: string;
-    password: string;
-  } {
-    return {
-      username: settings.user,
-      password: settings.password,
-    };
   }
 
   private getHtmlForWebview(webview: Webview): string {

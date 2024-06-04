@@ -1,5 +1,12 @@
 import { LanguageClient } from 'vscode-languageclient/node';
 
+/**
+ * Singleton class to dispatch notifications to the language client
+ *
+ * Wraps a LanguageClient instance and exposes a function to send notifications
+ */
+type MethodName = 'connectionChanged';
+
 export class LangugageClientManager {
   private static _instance: LangugageClientManager;
   private readonly _languageClient: LanguageClient;
@@ -16,7 +23,7 @@ export class LangugageClientManager {
     return LangugageClientManager._instance;
   }
 
-  async sendNotification(eventName: string, payload: object) {
-    await this._languageClient.sendNotification(eventName, payload);
+  async dispatchNotification(methodName: MethodName, payload: object) {
+    await this._languageClient.sendNotification(methodName, payload);
   }
 }

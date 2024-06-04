@@ -13,7 +13,8 @@ export class PersistentConnection {
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
     database: string,
-  ) {
+    firstAttempt: boolean = true,
+  ): Promise<boolean> {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
 
@@ -28,17 +29,20 @@ export class PersistentConnection {
         // eslint-disable-next-line no-console
         console.log('Established connection to Neo4j');
       } catch (error) {
-        console.error(
-          `Unable to connect to Neo4j: ${String(
-            error,
-          )}. Retrying in 30 seconds.`,
-        );
+        const errorMessage = `Unable to connect to Neo4j: ${String(error)}.`;
+        if (firstAttempt) {
+          console.error(errorMessage);
+          return false;
+        }
+        console.error(`${errorMessage}. Retrying in 30 seconds.`);
       }
     }
 
     this.reconnectionTimeout = setTimeout(() => {
-      void this.connect(url, credentials, config, database);
+      void this.connect(url, credentials, config, database, false);
     }, 30000);
+
+    return true;
   }
 
   async getDatabaseDataSummary(): Promise<{

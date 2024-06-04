@@ -1,6 +1,12 @@
 import { Memento } from 'vscode';
 import { Settings } from './types/settings';
 
+/**
+ * Singleton class to manage global state
+ *
+ * Wraps a Memento instance and exposes a number of functions to
+ * get and update connections stored in the global workspace
+ */
 export class GlobalStateManager {
   private static _instance: GlobalStateManager;
   private readonly _globalState: Memento;
@@ -25,7 +31,7 @@ export class GlobalStateManager {
     return this._globalState.get(connectionName);
   }
 
-  setConnection(settings: Settings): void {
-    void this._globalState.update(settings.connectionName, settings);
+  async setConnection(settings: Settings): Promise<void> {
+    await this._globalState.update(settings.connectionName, settings);
   }
 }
