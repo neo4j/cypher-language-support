@@ -64,7 +64,7 @@ async function notifiyLanguageClient(
     {
       trace: trace,
       connect: connect,
-      connectUrl: url,
+      connectURL: url,
       user: username,
       password: password,
       database: database,
