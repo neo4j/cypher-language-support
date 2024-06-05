@@ -53,7 +53,7 @@ export class ConnectionTreeDataProvider
   ): Promise<ConnectionItem[]> {
     await commands.executeCommand(
       'neo4j.connect-to-database',
-      element.label,
+      element.id,
       element,
     );
 
@@ -85,32 +85,37 @@ export class ConnectionTreeDataProvider
   }
 
   private getTopLevelConnections(): ConnectionItem[] {
-    const connections = Array<ConnectionItem>();
+    const connectionItems = Array<ConnectionItem>();
     // Artificially limit this to one connection for now
-    const connectionNames = [
-      GlobalStateManager.instance.getConnectionNames()[0],
-    ];
+    const connections = [GlobalStateManager.instance.getConnections()[0]];
 
-    for (const connectionName of connectionNames) {
-      connections.push(
-        new ConnectionItem(
-          'connection',
-          connectionName,
-          TreeItemCollapsibleState.Collapsed,
-        ),
-      );
+    for (const connection of connections) {
+      if (connection) {
+        connectionItems.push(
+          new ConnectionItem(
+            'connection',
+            connection.name,
+            TreeItemCollapsibleState.Collapsed,
+            connection.key,
+          ),
+        );
+      }
     }
-    return connections;
+    return connectionItems;
   }
 }
 
 export class ConnectionItem extends TreeItem {
   constructor(
     public readonly type: ConnectionItemType,
-    public label: string,
+    public readonly label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
+    public readonly key?: string,
   ) {
     super(label, collapsibleState);
     this.tooltip = this.label;
+    if (key) {
+      this.id = key;
+    }
   }
 }

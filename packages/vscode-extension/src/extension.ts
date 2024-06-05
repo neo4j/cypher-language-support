@@ -1,13 +1,22 @@
 import { PersistentConnection } from '@neo4j-cypher/schema-poller';
 import * as path from 'path';
-import { commands, ExtensionContext, window, workspace } from 'vscode';
+import {
+  commands,
+  ConfigurationChangeEvent,
+  ExtensionContext,
+  window,
+  workspace,
+} from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { connectToDatabase } from './commands';
+import {
+  changeDatabaseConnection,
+  updateLanguageClientConfig,
+} from './commands';
 import { ConnectionPanel } from './connectionPanel';
 import { ConnectionTreeDataProvider } from './connectionTreeDataProvider';
 import { GlobalStateManager } from './globalStateManager';
@@ -76,14 +85,29 @@ export function activate(context: ExtensionContext) {
     }),
     commands.registerCommand(
       'neo4j.connect-to-database',
-      async (connectionName: string) => {
-        await connectToDatabase(connectionName);
+      async (key: string) => {
+        await changeDatabaseConnection(key);
       },
     ),
     commands.registerCommand('neo4j.refresh-connections', () => {
       connectionTreeDataProvider.refresh();
     }),
   );
+
+  workspace.onDidChangeConfiguration(
+    async (event: ConfigurationChangeEvent) => {
+      if (
+        event.affectsConfiguration('neo4j.connect') ||
+        event.affectsConfiguration('neo4j.trace.server')
+      ) {
+        const getCurretConnection =
+          GlobalStateManager.instance.getCurrentConnection();
+        await updateLanguageClientConfig(getCurretConnection.key);
+      }
+    },
+  );
+
+  // TODO - Create "Default connection" if the extension has pre-existing settings
 
   // Start the client. This will also launch the server
   void client.start();
