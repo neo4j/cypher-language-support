@@ -26,6 +26,9 @@ export const textMateGrammar = {
       include: '#labels',
     },
     {
+      include: '#procedures',
+    },
+    {
       include: '#keywords',
     },
   ],
@@ -37,8 +40,8 @@ export const textMateGrammar = {
           name: 'keyword.operator',
         },
         {
-          name: 'keyword.control.cypher',
           match: `\\b(${keywordRegex})\\b`,
+          name: 'keyword.control.cypher',
         },
       ],
     },
@@ -125,6 +128,28 @@ export const textMateGrammar = {
           name: 'constant.numeric',
         },
       ],
+    },
+    procedures: {
+      patterns: [
+        {
+          begin: 'CALL',
+          end: '\\s*((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*|(\\`(\\w|\\s|\\.)*\\`))',
+          beginCaptures: {
+            '0': {
+              name: 'keyword.control.cypher',
+            },
+          },
+          endCaptures: {
+            '0': {
+              name: 'entity.name.function',
+            },
+          },
+        },
+      ],
+    },
+    identifier: {
+      match: '(\\`\\w+\\`)|(\\w+)',
+      name: 'variable',
     },
   },
   scopeName: 'source.cypher',
