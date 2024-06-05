@@ -26,8 +26,8 @@ export async function testConnection(connection: Connection): Promise<boolean> {
 export async function addConnection(connection: Connection): Promise<void> {
   const { password } = getCredentials(connection);
   await updateState(connection, password);
-  await commands.executeCommand('neo4j.connect-to-database', connection.key);
-  await commands.executeCommand('neo4j.refresh-connections');
+  await commands.executeCommand('neo4j.connectToDatabase', connection.key);
+  await commands.executeCommand('neo4j.refreshConnections');
 }
 
 export async function updateLanguageClientConfig(key: string): Promise<void> {

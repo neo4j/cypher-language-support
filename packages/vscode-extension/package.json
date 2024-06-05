@@ -36,21 +36,55 @@
   "contributes": {
     "commands": [
       {
-        "command": "neo4j.connect",
+        "command": "neo4j.manageConnection",
         "category": "Neo4j",
-        "title": "Manage Connection"
+        "title": "Manage Connection",
+        "icon": {
+          "light": "media/light/add.svg",
+          "dark": "media/dark/add.svg"
+        }
       },
       {
-        "command": "neo4j.connect-to-database",
-        "category": "Neo4j",
+        "command": "neo4j.deleteConnection",
+        "category": "",
+        "title": "Delete Connection..."
+      },
+      {
+        "command": "neo4j.connectToDatabase",
+        "category": "",
         "title": "Connect"
       },
       {
-        "command": "neo4j.refresh-connections",
-        "category": "Neo4j",
+        "command": "neo4j.refreshConnections",
+        "category": "",
         "title": "Refresh Connections"
       }
     ],
+    "viewsWelcome": [
+      {
+        "view": "neo4jConnections",
+        "contents": "No connections.\n[Add New Connection](command:neo4j.manageConnection)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "neo4j.manageConnection",
+          "when": "view == neo4jConnections",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "neo4j.manageConnection",
+          "when": "view == neo4jConnections && viewItem == connection"
+        },
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "view == neo4jConnections && viewItem == connection"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -64,7 +98,7 @@
       "neo4j-connection-explorer": [
         {
           "type": "tree",
-          "id": "neo4j-connections",
+          "id": "neo4jConnections",
           "name": "Connections",
           "icon": "media/database.svg"
         }

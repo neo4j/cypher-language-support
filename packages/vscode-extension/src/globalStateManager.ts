@@ -6,6 +6,29 @@ import { Connection } from './types/connection';
  *
  * Wraps a Memento instance and exposes a number of functions to
  * get and update connections stored in the global workspace
+ *
+ * Connections are stored in the following format:
+ *
+ * 'connections': {
+ *  'connection1': {
+ *    key: 'connection1',
+ *    scheme: 'bolt',
+ *    host: 'localhost',
+ *    port: 7687,
+ *    database: 'neo4j',
+ *    user: 'neo4j',
+ *    connected: true,
+ *  },
+ *  'connection2': {
+ *    key: 'connection2',
+ *    scheme: 'bolt',
+ *    host: 'localhost',
+ *    port: 7687,
+ *    database: 'neo4j',
+ *    user: 'neo4j',
+ *    connected: false,
+ *  }
+ * }
  */
 type Connections = {
   [key: string]: Connection;

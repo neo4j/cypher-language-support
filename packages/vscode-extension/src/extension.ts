@@ -18,7 +18,10 @@ import {
   updateLanguageClientConfig,
 } from './commands';
 import { ConnectionPanel } from './connectionPanel';
-import { ConnectionTreeDataProvider } from './connectionTreeDataProvider';
+import {
+  ConnectionItem,
+  ConnectionTreeDataProvider,
+} from './connectionTreeDataProvider';
 import { GlobalStateManager } from './globalStateManager';
 import { LangugageClientManager } from './languageClientManager';
 import { PersistentConnectionManager } from './persistentConnectionManager';
@@ -77,34 +80,44 @@ export function activate(context: ExtensionContext) {
   // Register commands
   context.subscriptions.push(
     window.registerTreeDataProvider(
-      'neo4j-connections',
+      'neo4jConnections',
       connectionTreeDataProvider,
     ),
-    commands.registerCommand('neo4j.connect', () => {
+    commands.registerCommand('neo4j.manageConnection', () => {
       ConnectionPanel.createOrShow(context.extensionUri);
     }),
     commands.registerCommand(
-      'neo4j.connect-to-database',
-      async (key: string) => {
-        await changeDatabaseConnection(key);
+      'neo4j.deleteConnection',
+      async (connection: ConnectionItem) => {
+        const result = await window.showWarningMessage(
+          `Are you sure you want to delete connection ${connection.label}?`,
+          { modal: true },
+          'Yes',
+        );
+
+        if (result === 'Yes') {
+          // TODO - Delete connection
+        }
       },
     ),
-    commands.registerCommand('neo4j.refresh-connections', () => {
+    commands.registerCommand('neo4j.connectToDatabase', async (key: string) => {
+      await changeDatabaseConnection(key);
+    }),
+    commands.registerCommand('neo4j.refreshConnections', () => {
       connectionTreeDataProvider.refresh();
     }),
-  );
-
-  workspace.onDidChangeConfiguration(
-    async (event: ConfigurationChangeEvent) => {
-      if (
-        event.affectsConfiguration('neo4j.connect') ||
-        event.affectsConfiguration('neo4j.trace.server')
-      ) {
-        const getCurretConnection =
-          GlobalStateManager.instance.getCurrentConnection();
-        await updateLanguageClientConfig(getCurretConnection.key);
-      }
-    },
+    workspace.onDidChangeConfiguration(
+      async (event: ConfigurationChangeEvent) => {
+        if (
+          event.affectsConfiguration('neo4j.connect') ||
+          event.affectsConfiguration('neo4j.trace.server')
+        ) {
+          const getCurretConnection =
+            GlobalStateManager.instance.getCurrentConnection();
+          await updateLanguageClientConfig(getCurretConnection.key);
+        }
+      },
+    ),
   );
 
   // TODO - Create "Default connection" if the extension has pre-existing settings

@@ -52,7 +52,7 @@ export class ConnectionTreeDataProvider
     element: ConnectionItem,
   ): Promise<ConnectionItem[]> {
     await commands.executeCommand(
-      'neo4j.connect-to-database',
+      'neo4j.connectToDatabase',
       element.id,
       element,
     );
@@ -117,5 +117,7 @@ export class ConnectionItem extends TreeItem {
     if (key) {
       this.id = key;
     }
+
+    this.contextValue = this.type;
   }
 }
