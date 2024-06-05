@@ -32,7 +32,7 @@ export async function addConnection(connection: Connection): Promise<void> {
 
 export async function updateLanguageClientConfig(key: string): Promise<void> {
   const settings = await getNeo4jSettings(key);
-  await notifiyLanguageClient(settings);
+  await notifyLanguageClient(settings);
 }
 
 export async function changeDatabaseConnection(key: string): Promise<void> {
@@ -53,7 +53,7 @@ export async function changeDatabaseConnection(key: string): Promise<void> {
   );
 
   if (successful) {
-    await notifiyLanguageClient(neo4jSettings);
+    await notifyLanguageClient(neo4jSettings);
     if (neo4jSettings.connect) {
       void window.showInformationMessage('Established connection to Neo4j');
     }
@@ -92,7 +92,7 @@ async function getNeo4jSettings(key: string): Promise<Neo4jSettings> {
   };
 }
 
-async function notifiyLanguageClient(settings: Neo4jSettings) {
+async function notifyLanguageClient(settings: Neo4jSettings) {
   await LangugageClientManager.instance.dispatchNotification(
     'connectionChanged',
     settings,
