@@ -124,7 +124,12 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
-
+    '.cm-completionInfo-signature': {
+      color: 'darkgrey',
+    },
+    '.cm-deprecated-completion': {
+      'text-decoration': 'line-through',
+    },
     '.cm-tooltip-autocomplete': {
       maxWidth: '430px',
       '& > ul > li[aria-selected]': {
