@@ -1,11 +1,16 @@
 import { initializeDriver } from '@neo4j-cypher/schema-poller';
 import { Driver } from 'neo4j-driver';
-import { getConnectionString, getCredentials } from '../helpers';
-import { Connection } from '../types';
+import { Connection, getConnectionString } from '../types/connection';
 
+/**
+ * Singleton class that manages the database driver
+ *
+ * Persists a driver for a given connection to avoid reinitializing.
+ * Reinitializes the driver if the connection changes.
+ */
 export class DatabaseDriverManager {
   private static _instance: DatabaseDriverManager;
-  private _driver: Driver | undefined;
+  private _driver: Driver | undefined | null;
   private _currentDriverConnection: string | undefined;
 
   public static set instance(value: DatabaseDriverManager) {
@@ -16,47 +21,55 @@ export class DatabaseDriverManager {
     return DatabaseDriverManager._instance;
   }
 
+  public async ensureDriver(
+    connection: Connection,
+    password: string,
+  ): Promise<boolean> {
+    const driver = await this.acquireDriver(connection, password);
+    return !!driver;
+  }
+
   public async acquireDriver(
     connection: Connection,
-  ): Promise<Driver | undefined> {
+    password: string,
+  ): Promise<Driver | null> {
     const url = getConnectionString(connection);
-    const credentials = getCredentials(connection);
-    let success: boolean = true;
+    const credentials = { username: connection.user, password };
 
     if (
       !this._driver ||
       this.driverRequiresReinitialization(url, credentials)
     ) {
-      success = await this.initializeDriver(url, credentials);
+      return await this.initializeDriver(url, credentials);
     }
 
-    return success ? this._driver : undefined;
+    return this._driver;
   }
 
-  public async updateDriver(connection: Connection): Promise<void> {
+  public async updateDriver(
+    connection: Connection,
+    password: string,
+  ): Promise<void> {
     const url = getConnectionString(connection);
-    const credentials = getCredentials(connection);
+    const credentials = { username: connection.user, password };
 
     if (this.driverRequiresReinitialization(url, credentials)) {
-      await this.initializeDriver(url, credentials);
+      this._driver = await this.initializeDriver(url, credentials);
     }
   }
 
   private async initializeDriver(
     url: string,
     credentials: { username: string; password: string },
-  ): Promise<boolean> {
+  ): Promise<Driver | null> {
     try {
-      this._driver = await initializeDriver(url, credentials, {
+      this._currentDriverConnection = `${url}:${credentials.username}`;
+      return await initializeDriver(url, credentials, {
         appName: 'vscode-extension',
       });
-      this._currentDriverConnection = `${url}:${credentials.username}`;
     } catch {
-      this._driver = undefined;
-      return false;
+      return null;
     }
-
-    return true;
   }
 
   private driverRequiresReinitialization(

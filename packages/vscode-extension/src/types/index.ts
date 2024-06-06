@@ -1,2 +1,2 @@
-export type { Connection } from './connection';
+export type { Credentials } from './credentials';
 export { MethodName } from './methodName';

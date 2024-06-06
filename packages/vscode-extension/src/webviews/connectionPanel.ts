@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {
+  commands,
   Disposable,
   Uri,
   ViewColumn,
@@ -7,14 +8,22 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { getNonce } from '../helpers';
-import { GlobalStateManager } from '../managers';
-import { addConnection, testConnection } from '../queries/connectionCommands';
-import { Connection } from '../types';
+import { ConnectionRepository } from '../repositories/connectionRepository';
+import {
+  addOrUpdateConnection,
+  testConnection,
+} from '../services/connectionService';
+import { Connection } from '../types/connection';
+import {
+  CONNECTION_FAILED_MESSAGE,
+  REFRESH_CONNECTIONS_COMMAND,
+} from '../util/constants';
+import { getNonce } from '../util/getNonce';
 
 type Data = {
   command: string;
   connection: Connection;
+  password: string;
 };
 
 export class ConnectionPanel {
@@ -34,7 +43,7 @@ export class ConnectionPanel {
 
     // Aritificially limit the number of connections to 1 for now
     // If we already have a connection, edit it.. otherwise create a new one
-    this._connection = GlobalStateManager.instance.getConnections()[0];
+    this._connection = ConnectionRepository.instance.getConnections()[0];
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -84,12 +93,20 @@ export class ConnectionPanel {
       async (data: Data) => {
         switch (data.command) {
           case 'onTestConnection': {
-            await testConnection(data.connection);
+            if (await testConnection(data.connection, data.password)) {
+              void window.showInformationMessage('Connection successful');
+            } else {
+              void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
+            }
             break;
           }
           case 'onAddConnection': {
-            await addConnection(data.connection);
-            this.dispose();
+            if (await addOrUpdateConnection(data.connection, data.password)) {
+              this.dispose();
+              await commands.executeCommand(REFRESH_CONNECTIONS_COMMAND);
+            } else {
+              void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
+            }
             break;
           }
         }

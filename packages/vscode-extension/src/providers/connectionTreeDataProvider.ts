@@ -1,13 +1,11 @@
 import {
   Event,
   EventEmitter,
-  ProviderResult,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { GlobalStateManager } from '../managers';
-import { getConnectionProperties } from '../queries/connectionCommands';
+import { ConnectionRepository } from '../repositories/connectionRepository';
 
 type ConnectionItemType =
   | 'connection'
@@ -29,10 +27,6 @@ export class ConnectionTreeDataProvider
   }
 
   getTreeItem(element: ConnectionItem): TreeItem | Thenable<TreeItem> {
-    return element;
-  }
-
-  getParent(element: ConnectionItem): ProviderResult<ConnectionItem> {
     return element;
   }
 
@@ -71,7 +65,8 @@ export class ConnectionTreeDataProvider
   private async getPropertyElements(
     element: ConnectionItem,
   ): Promise<ConnectionItem[]> {
-    const summary = await getConnectionProperties(element.key);
+    const summary =
+      await ConnectionRepository.instance.getConnectionDataSummary(element.key);
     if (element.type === 'label') {
       return this.mapConnectionItemsForType(element.type, summary.labels);
     } else {
@@ -94,7 +89,7 @@ export class ConnectionTreeDataProvider
   private getTopLevelConnections(): ConnectionItem[] {
     const connectionItems = Array<ConnectionItem>();
     // Artificially limit this to one connection for now
-    const connections = [GlobalStateManager.instance.getConnections()[0]];
+    const connections = [ConnectionRepository.instance.getConnections()[0]];
 
     for (const connection of connections) {
       if (connection) {

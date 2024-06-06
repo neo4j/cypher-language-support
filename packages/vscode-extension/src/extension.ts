@@ -12,21 +12,27 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import {
-  DatabaseDriverManager,
-  GlobalStateManager,
-  LangugageClientManager,
-  SecretStorageManager,
-} from './managers';
+import { DatabaseDriverManager } from './managers/databaseDriverManager';
+import { LangugageClientManager } from './managers/languageClientManager';
 import {
   ConnectionItem,
   ConnectionTreeDataProvider,
 } from './providers/connectionTreeDataProvider';
+import { ConnectionRepository } from './repositories/connectionRepository';
 import {
   deleteConnection,
+  notifyLanguageClient,
   toggleConnection,
-  updateLanguageClientConfig,
-} from './queries/connectionCommands';
+} from './services/connectionService';
+import { MethodName } from './types';
+import {
+  CONNECTION_FAILED_MESSAGE,
+  CONNECT_COMMAND,
+  DELETE_CONNECTION_COMMAND,
+  DISCONNECT_COMMAND,
+  MANAGE_CONNECTION_COMMAND,
+  REFRESH_CONNECTIONS_COMMAND,
+} from './util/constants';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
 let client: LanguageClient;
@@ -69,12 +75,14 @@ export async function activate(context: ExtensionContext) {
   );
 
   // Initialize singletons
-  GlobalStateManager.instance = new GlobalStateManager(context.globalState);
-  SecretStorageManager.instance = new SecretStorageManager(context.secrets);
   LangugageClientManager.instance = new LangugageClientManager(client);
   DatabaseDriverManager.instance = new DatabaseDriverManager();
+  ConnectionRepository.instance = new ConnectionRepository(
+    context.globalState,
+    context.secrets,
+  );
 
-  await GlobalStateManager.instance.resetConnections();
+  await ConnectionRepository.instance.resetConnections();
 
   // Register our tree view provider to render connections in the sidebar
   const connectionTreeDataProvider = new ConnectionTreeDataProvider();
@@ -85,12 +93,12 @@ export async function activate(context: ExtensionContext) {
       'neo4jConnections',
       connectionTreeDataProvider,
     ),
-    commands.registerCommand('neo4j.manageConnection', () => {
+    commands.registerCommand(MANAGE_CONNECTION_COMMAND, () => {
       ConnectionPanel.createOrShow(context.extensionUri);
     }),
 
     commands.registerCommand(
-      'neo4j.deleteConnection',
+      DELETE_CONNECTION_COMMAND,
       async (connection: ConnectionItem) => {
         const result = await window.showWarningMessage(
           `Are you sure you want to delete connection ${connection.label}?`,
@@ -101,32 +109,42 @@ export async function activate(context: ExtensionContext) {
         if (result === 'Yes') {
           await deleteConnection(connection.key);
           connectionTreeDataProvider.refresh();
+          void window.showInformationMessage('Connection deleted');
         }
       },
     ),
     commands.registerCommand(
-      'neo4j.connect',
+      CONNECT_COMMAND,
       async (connection: ConnectionItem) => {
-        await toggleConnection(connection.key, true);
-        connectionTreeDataProvider.refresh();
+        if (await toggleConnection(connection.key, true)) {
+          connectionTreeDataProvider.refresh();
+        } else {
+          void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
+        }
       },
     ),
     commands.registerCommand(
-      'neo4j.disconnect',
+      DISCONNECT_COMMAND,
       async (connection: ConnectionItem) => {
-        await toggleConnection(connection.key, false);
-        connectionTreeDataProvider.refresh();
+        if (await toggleConnection(connection.key, false)) {
+          connectionTreeDataProvider.refresh();
+        } else {
+          void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
+        }
       },
     ),
-    commands.registerCommand('neo4j.refreshConnections', () => {
+    commands.registerCommand(REFRESH_CONNECTIONS_COMMAND, () => {
       connectionTreeDataProvider.refresh();
     }),
     workspace.onDidChangeConfiguration(
       async (event: ConfigurationChangeEvent) => {
         if (event.affectsConfiguration('neo4j.trace.server')) {
           const getCurretConnection =
-            GlobalStateManager.instance.getCurrentConnection();
-          await updateLanguageClientConfig(getCurretConnection.key);
+            ConnectionRepository.instance.getCurrentConnection();
+          await notifyLanguageClient(
+            getCurretConnection.key,
+            MethodName.ConnectionUpdated,
+          );
         }
       },
     ),
@@ -137,7 +155,7 @@ export async function activate(context: ExtensionContext) {
 }
 
 export async function deactivate(): Promise<void> | undefined {
-  await GlobalStateManager.instance.resetConnections();
+  await ConnectionRepository.instance.resetConnections();
 
   if (!client) {
     return undefined;

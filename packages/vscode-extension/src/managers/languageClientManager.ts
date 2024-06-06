@@ -6,7 +6,6 @@ import { MethodName } from '../types';
  *
  * Wraps a LanguageClient instance and exposes a function to send notifications
  */
-
 export class LangugageClientManager {
   private static _instance: LangugageClientManager;
   private readonly _languageClient: LanguageClient;
@@ -23,7 +22,7 @@ export class LangugageClientManager {
     return LangugageClientManager._instance;
   }
 
-  async dispatchNotification(methodName: MethodName, payload: object) {
+  async sendNotification(methodName: MethodName, payload: object) {
     await this._languageClient.sendNotification(methodName, payload);
   }
 }

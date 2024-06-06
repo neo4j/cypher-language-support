@@ -3,6 +3,7 @@
     vscode.postMessage({
       command: 'onTestConnection',
       connection: this.getConnection(),
+      password: this.getPassword(),
     });
   });
 
@@ -10,6 +11,7 @@
     vscode.postMessage({
       command: 'onAddConnection',
       connection: this.getConnection(),
+      password: this.getPassword(),
     });
   });
 
@@ -25,9 +27,12 @@
       host: document.getElementById('host').value,
       port: document.getElementById('port').value,
       user: document.getElementById('user').value,
-      password: document.getElementById('password').value,
       database: document.getElementById('database').value,
       connected: document.getElementById('connected').value === 'true',
     };
+  };
+
+  getPassword = () => {
+    return document.getElementById('password').value;
   };
 })();

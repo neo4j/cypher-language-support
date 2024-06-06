@@ -5,7 +5,10 @@ export type Connection = {
   host: string;
   port: string;
   user: string;
-  password: string;
   database: string;
   connected: boolean;
 };
+
+export function getConnectionString(connection: Connection): string {
+  return `${connection.scheme}${connection.host}:${connection.port}`;
+}
