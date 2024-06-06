@@ -139,10 +139,10 @@ export async function activate(context: ExtensionContext) {
     workspace.onDidChangeConfiguration(
       async (event: ConfigurationChangeEvent) => {
         if (event.affectsConfiguration('neo4j.trace.server')) {
-          const getCurretConnection =
+          const currentConnection =
             ConnectionRepository.instance.getCurrentConnection();
           await notifyLanguageClient(
-            getCurretConnection.key,
+            currentConnection,
             MethodName.ConnectionUpdated,
           );
         }

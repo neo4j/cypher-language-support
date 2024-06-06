@@ -24,7 +24,7 @@ export async function addOrUpdateConnection(
     await ConnectionRepository.instance.setConnection(connection, password);
     if (connection.connected) {
       await DatabaseDriverManager.instance.updateDriver(connection, password);
-      await notifyLanguageClient(connection.key, MethodName.ConnectionUpdated);
+      await notifyLanguageClient(connection, MethodName.ConnectionUpdated);
     }
     return true;
   }
@@ -42,27 +42,29 @@ export async function toggleConnection(
   );
   if (await DatabaseDriverManager.instance.ensureDriver(connection, password)) {
     await ConnectionRepository.instance.toggleConnection(key, connected);
-    await notifyLanguageClient(key, MethodName.ConnectionUpdated);
+    await notifyLanguageClient(connection, MethodName.ConnectionUpdated);
     return true;
   }
   return false;
 }
 
 export async function deleteConnection(key: string): Promise<void> {
+  const connection = ConnectionRepository.instance.getConnection(key);
   await ConnectionRepository.instance.deleteConnection(key);
-  await notifyLanguageClient(key, MethodName.ConnectionDeleted);
+  await notifyLanguageClient(connection, MethodName.ConnectionDeleted);
 }
 
-export async function notifyLanguageClient(key: string, method: MethodName) {
-  const settings = await getLanguageClientConnectionSettings(key);
+export async function notifyLanguageClient(
+  connection: Connection,
+  method: MethodName,
+) {
+  const settings = await getLanguageClientConnectionSettings(connection);
   await LangugageClientManager.instance.sendNotification(method, settings);
 }
 
 async function getLanguageClientConnectionSettings(
-  key: string,
+  connection: Connection,
 ): Promise<Neo4jSettings> {
-  const connection = ConnectionRepository.instance.getConnection(key);
-
   const trace = workspace
     .getConfiguration('neo4j')
     .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
@@ -70,7 +72,7 @@ async function getLanguageClientConnectionSettings(
   };
 
   const password = await ConnectionRepository.instance.getPasswordForConnection(
-    key,
+    connection.key,
   );
 
   return {
