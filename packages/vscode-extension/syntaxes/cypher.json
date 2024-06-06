@@ -86,6 +86,20 @@
         }
       ]
     },
+    "labels": {
+      "begin": "(?<!\\{.*)\\:",
+      "end": "\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+",
+      "beginCaptures": {
+        "0": {
+          "name": "keyword.operator"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "entity.name.class"
+        }
+      }
+    },
     "properties": {
       "begin": "\\.",
       "end": "\\w+",

@@ -22,6 +22,7 @@ export const textMateGrammar = {
     {
       include: '#properties',
     },
+    // TODO Nacho should we include more literals like TRUE / FALSE?
     {
       include: '#numbers',
     },
@@ -97,7 +98,8 @@ export const textMateGrammar = {
       ],
     },
     labels: {
-      begin: '\\:',
+      // Prevents this rule to apply to maps {key: value}
+      begin: '(?<!\\{.*)\\:',
       end: '\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
       beginCaptures: {
         '0': {
