@@ -27,6 +27,7 @@
       user: document.getElementById('user').value,
       password: document.getElementById('password').value,
       database: document.getElementById('database').value,
+      connected: document.getElementById('connected').value === 'true',
     };
   };
 })();

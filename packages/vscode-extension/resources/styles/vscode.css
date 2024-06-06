@@ -78,7 +78,7 @@ textarea,
 select {
   display: block;
   width: 100%;
-  border: none;
+  border: 1px solid var(--vscode-input-border, transparent);
   font-family: var(--vscode-font-family);
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   color: var(--vscode-input-foreground);

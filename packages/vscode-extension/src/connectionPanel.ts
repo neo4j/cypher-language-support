@@ -53,7 +53,7 @@ export class ConnectionPanel {
 
     const panel = window.createWebviewPanel(
       ConnectionPanel._viewType,
-      'Manage Connection',
+      'Neo4j',
       column || window.activeTextEditor?.viewColumn || ViewColumn.One,
       {
         enableScripts: true,
@@ -112,6 +112,12 @@ export class ConnectionPanel {
       'styles',
       'vscode.css',
     );
+    const connectionPanelCssPath = Uri.joinPath(
+      this._extensionUri,
+      'resources',
+      'styles',
+      'connectionPanel.css',
+    );
 
     const connectionPanelJsPath = Uri.joinPath(
       this._extensionUri,
@@ -122,6 +128,7 @@ export class ConnectionPanel {
 
     const resetCssUri = webview.asWebviewUri(resetCssPath);
     const vscodeCssUri = webview.asWebviewUri(vscodeCssPath);
+    const connectionPanelCssUri = webview.asWebviewUri(connectionPanelCssPath);
     const connectionPanelJsUri = webview.asWebviewUri(connectionPanelJsPath);
 
     const nonce = getNonce();
@@ -140,57 +147,82 @@ export class ConnectionPanel {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${resetCssUri}" rel="stylesheet">
           <link href="${vscodeCssUri}" rel="stylesheet">
+          <link href="${connectionPanelCssUri}" rel="stylesheet">
           <script nonce="${nonce}">
             const vscode = acquireVsCodeApi();
           </script>
         </head>
         <body>
-          <h1>${
-            this._connection ? 'Edit Connection' : 'Add New Connection'
-          }</h1>
-          <form>
-            <input type="hidden" id="key" value="${
-              this._connection?.key ?? ''
-            }" />
-            <label for="name">Connection name</label>
-            <input type="text" id="name" placeholder="Default connection" value="${
-              this._connection?.name ?? 'Default connection'
-            }" />
-            <label for="scheme">Scheme</label>
-            <select id="scheme">
-              <option value="bolt://" ${
-                this._connection?.scheme === 'bolt://' ? 'selected' : ''
-              }>bolt://</option>
-              <option value="neo4j://" ${
-                this._connection?.scheme === 'neo4j://' || !this._connection
-                  ? 'selected'
-                  : ''
-              }>neo4j://</option>
-            </select>
-            <label for="host">Host</label>
-            <input type="text" id="host" placeholder="localhost" value="${
-              this._connection?.host ?? 'localhost'
-            }"/>
-            <label for="port">Port</label>
-            <input type="text" id="port" placeholder="7687" value="${
-              this._connection?.port ?? '7687'
-            }"/>
-            <label for="database">Database</label>
-            <input type="text" id="database" placeholder="neo4j" value="${
-              this._connection?.database ?? 'neo4j'
-            }"/>
-            <label for="user">User</label>
-            <input type="text" id="user" placeholder="neo4j" value="${
-              this._connection?.user ?? 'neo4j'
-            }"/>
-            <label for="password">password</label>
-            <input type="password" id="password" />
-            <button type="button" id="test-connection">Test connection</button>
-            <button type="button" id="add-connection">${
-              this._connection ? 'Edit Connection' : 'Add Connection'
-            }</button>
-          </form>
-          <script nonce="${nonce}" src="${connectionPanelJsUri}"></script>
+          <div class="container">
+            <div>
+              <h1>${
+                this._connection ? 'Edit Connection' : 'Add New Connection'
+              }</h1>
+              <form class="form">
+                <input type="hidden" id="key" value="${
+                  this._connection?.key ?? ''
+                }" />
+                <input type="hidden" id="connected" value="${
+                  this._connection?.connected ?? 'false'
+                }" />
+                <div class="form--input-wrapper">
+                  <label for="name">Connection name</label>
+                  <input type="text" id="name" placeholder="Default connection" value="${
+                    this._connection?.name ?? 'Default connection'
+                  }" />
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="scheme">Scheme</label>
+                  <select id="scheme">
+                    <option value="bolt://" ${
+                      this._connection?.scheme === 'bolt://' ? 'selected' : ''
+                    }>bolt://</option>
+                    <option value="neo4j://" ${
+                      this._connection?.scheme === 'neo4j://' ||
+                      !this._connection
+                        ? 'selected'
+                        : ''
+                    }>neo4j://</option>
+                  </select>
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="host">Host</label>
+                  <input type="text" id="host" placeholder="localhost" value="${
+                    this._connection?.host ?? 'localhost'
+                  }"/>
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="port">Port</label>
+                  <input type="text" id="port" placeholder="7687" value="${
+                    this._connection?.port ?? '7687'
+                  }"/>
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="database">Database</label>
+                  <input type="text" id="database" placeholder="neo4j" value="${
+                    this._connection?.database ?? 'neo4j'
+                  }"/>
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="user">User</label>
+                  <input type="text" id="user" placeholder="neo4j" value="${
+                    this._connection?.user ?? 'neo4j'
+                  }"/>
+                </div>
+                <div class="form--input-wrapper">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" />
+                </div>
+                <div class="form--actions">
+                  <button type="button" id="test-connection">Test connection</button>
+                  <button type="button" id="add-connection">${
+                    this._connection ? 'Edit Connection' : 'Add Connection'
+                  }</button>
+                </div>
+              </form>
+            </div>
+            <script nonce="${nonce}" src="${connectionPanelJsUri}"></script>
+          </div>
         </body>
       </html>`;
   }

@@ -39,10 +39,7 @@
         "command": "neo4j.manageConnection",
         "category": "Neo4j",
         "title": "Manage Connection",
-        "icon": {
-          "light": "resources/images/light/add.svg",
-          "dark": "resources/images/dark/add.svg"
-        }
+        "icon": "$(add)"
       },
       {
         "command": "neo4j.deleteConnection",

@@ -35,6 +35,9 @@ async function addConnection(connection: Connection): Promise<void> {
   const { password } = getCredentials(connection);
   await updateState(connection, password);
   await commands.executeCommand('neo4j.refreshConnections');
+  if (connection.connected) {
+    await updateLanguageClientConfig(connection.key);
+  }
 }
 
 async function toggleConnection(

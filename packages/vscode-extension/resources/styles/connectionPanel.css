@@ -1,0 +1,39 @@
+.container {
+  display: grid;
+  place-items: center;
+  margin-top: 2rem;
+}
+
+.container > div {
+  border: 1px solid var(--vscode-input-border, transparent);
+  padding: 1rem;
+  width: 80vw;
+}
+
+.form {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.form--input-wrapper {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin: 0 0 1rem 0;
+}
+
+.form--actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  justify-items: end;
+  margin: 1rem 0 0 0;
+}
+
+.form--actions button {
+  width: auto;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
