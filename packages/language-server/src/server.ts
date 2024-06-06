@@ -97,11 +97,15 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onNotification(
-  'connectionChanged',
+  'connectionUpdated',
   (connectionSettings: Neo4jSettings) => {
     changeConnection(connectionSettings);
   },
 );
+
+connection.onNotification('connectionDeleted', () => {
+  disconnect();
+});
 
 documents.listen(connection);
 
@@ -112,7 +116,7 @@ connection.onExit(() => {
 });
 
 const changeConnection = (connectionSettings: Neo4jSettings) => {
-  neo4jSchemaPoller.disconnect();
+  disconnect();
 
   if (
     neo4jSchemaPoller.connection === undefined &&
@@ -131,4 +135,8 @@ const changeConnection = (connectionSettings: Neo4jSettings) => {
       connectionSettings.database,
     );
   }
+};
+
+const disconnect = () => {
+  neo4jSchemaPoller.disconnect();
 };

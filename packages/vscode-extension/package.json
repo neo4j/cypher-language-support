@@ -40,8 +40,8 @@
         "category": "Neo4j",
         "title": "Manage Connection",
         "icon": {
-          "light": "media/light/add.svg",
-          "dark": "media/dark/add.svg"
+          "light": "resources/images/light/add.svg",
+          "dark": "resources/images/dark/add.svg"
         }
       },
       {
@@ -53,6 +53,16 @@
         "command": "neo4j.connectToDatabase",
         "category": "",
         "title": "Connect"
+      },
+      {
+        "command": "neo4j.activateConnection",
+        "category": "",
+        "title": "Connect"
+      },
+      {
+        "command": "neo4j.deactivateConnection",
+        "category": "",
+        "title": "Disconnect"
       },
       {
         "command": "neo4j.refreshConnections",
@@ -77,11 +87,19 @@
       "view/item/context": [
         {
           "command": "neo4j.manageConnection",
-          "when": "view == neo4jConnections && viewItem == connection"
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection"
         },
         {
           "command": "neo4j.deleteConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection"
+        },
+        {
+          "command": "neo4j.activateConnection",
           "when": "view == neo4jConnections && viewItem == connection"
+        },
+        {
+          "command": "neo4j.deactivateConnection",
+          "when": "view == neo4jConnections && viewItem == activeConnection"
         }
       ]
     },
@@ -90,7 +108,7 @@
         {
           "id": "neo4j-connection-explorer",
           "title": "Neo4j",
-          "icon": "media/database.svg"
+          "icon": "resources/images/neo4j.svg"
         }
       ]
     },
@@ -100,7 +118,7 @@
           "type": "tree",
           "id": "neo4jConnections",
           "name": "Connections",
-          "icon": "media/database.svg"
+          "icon": "resources/images/neo4j.svg"
         }
       ]
     },
@@ -134,25 +152,29 @@
           "order": 1,
           "type": "boolean",
           "default": true,
-          "description": "Whether to connect to Neo4j for database aware completions."
+          "description": "Whether to connect to Neo4j for database aware completions.",
+          "deprecationMessage": "You can now use the connection panel to connect/disconnect from a database."
         },
         "neo4j.connectURL": {
           "order": 2,
           "type": "string",
           "default": "neo4j://localhost:7687",
-          "description": "URL of the Neo4j instance to poll data from, `bolt` & `neo4j` protocols supported."
+          "description": "URL of the Neo4j instance to poll data from, `bolt` & `neo4j` protocols supported.",
+          "deprecationMessage": "You can now use the connection panel to manage connections."
         },
         "neo4j.user": {
           "order": 3,
           "type": "string",
           "default": "neo4j",
-          "description": "Username for the database connection."
+          "description": "Username for the database connection.",
+          "deprecationMessage": "You can now use the connection panel to manage connections."
         },
         "neo4j.password": {
           "order": 4,
           "type": "string",
           "default": "password",
-          "description": "Password for the database connection."
+          "description": "Password for the database connection.",
+          "deprecationMessage": "You can now use the connection panel to manage connections."
         }
       }
     },

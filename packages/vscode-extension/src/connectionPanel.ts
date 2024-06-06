@@ -7,7 +7,7 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { addConnection, testConnection } from './commands';
+import { addConnection, testConnection } from './connectionCommands';
 import { getNonce } from './getNonce';
 import { GlobalStateManager } from './globalStateManager';
 import { Connection } from './types/connection';
@@ -88,11 +88,8 @@ export class ConnectionPanel {
             break;
           }
           case 'onAddConnection': {
-            const success = await testConnection(data.connection);
-            if (success) {
-              await addConnection(data.connection);
-              this.dispose();
-            }
+            await addConnection(data.connection);
+            this.dispose();
             break;
           }
         }
@@ -103,16 +100,23 @@ export class ConnectionPanel {
   }
 
   private getHtmlForWebview(webview: Webview): string {
-    const resetCssPath = Uri.joinPath(this._extensionUri, 'media', 'reset.css');
+    const resetCssPath = Uri.joinPath(
+      this._extensionUri,
+      'resources',
+      'styles',
+      'reset.css',
+    );
     const vscodeCssPath = Uri.joinPath(
       this._extensionUri,
-      'media',
+      'resources',
+      'styles',
       'vscode.css',
     );
 
     const connectionPanelJsPath = Uri.joinPath(
       this._extensionUri,
-      'media',
+      'resources',
+      'scripts',
       'connectionPanel.js',
     );
 
@@ -150,7 +154,7 @@ export class ConnectionPanel {
             }" />
             <label for="name">Connection name</label>
             <input type="text" id="name" placeholder="Default connection" value="${
-              this._connection?.name ?? ''
+              this._connection?.name ?? 'Default connection'
             }" />
             <label for="scheme">Scheme</label>
             <select id="scheme">
@@ -158,24 +162,26 @@ export class ConnectionPanel {
                 this._connection?.scheme === 'bolt://' ? 'selected' : ''
               }>bolt://</option>
               <option value="neo4j://" ${
-                this._connection?.scheme === 'neo4j://' ? 'selected' : ''
+                this._connection?.scheme === 'neo4j://' || !this._connection
+                  ? 'selected'
+                  : ''
               }>neo4j://</option>
             </select>
             <label for="host">Host</label>
             <input type="text" id="host" placeholder="localhost" value="${
-              this._connection?.host ?? ''
+              this._connection?.host ?? 'localhost'
             }"/>
             <label for="port">Port</label>
             <input type="text" id="port" placeholder="7687" value="${
-              this._connection?.port ?? ''
+              this._connection?.port ?? '7687'
             }"/>
             <label for="database">Database</label>
             <input type="text" id="database" placeholder="neo4j" value="${
-              this._connection?.database ?? ''
+              this._connection?.database ?? 'neo4j'
             }"/>
             <label for="user">User</label>
             <input type="text" id="user" placeholder="neo4j" value="${
-              this._connection?.user ?? ''
+              this._connection?.user ?? 'neo4j'
             }"/>
             <label for="password">password</label>
             <input type="password" id="password" />

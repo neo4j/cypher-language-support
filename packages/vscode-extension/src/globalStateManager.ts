@@ -65,10 +65,33 @@ export class GlobalStateManager {
     return connections[key];
   }
 
+  async resetConnections(): Promise<void> {
+    const connections = this.getConnectionsInternal();
+    Object.keys(connections).forEach((key: string) => {
+      if (key) {
+        const connection = connections[key];
+        connections[key] = { ...connection, connected: false };
+      }
+    });
+    await this._globalState.update(this.CONNECTIONS_KEY, connections);
+  }
+
+  async deleteConnection(key: string): Promise<void> {
+    const connections = this.getConnectionsInternal();
+    delete connections[key];
+    await this._globalState.update(this.CONNECTIONS_KEY, connections);
+  }
+
   async setConnection(connection: Connection): Promise<void> {
     const connections = this.getConnectionsInternal();
-    connections[connection.key] = { connected: true, ...connection };
+    connections[connection.key] = { ...connection };
     await this._globalState.update(this.CONNECTIONS_KEY, connections);
+  }
+
+  async toggleConnection(key: string, connected: boolean): Promise<void> {
+    const connection = this.getConnection(key);
+    connection.connected = connected;
+    await this.setConnection(connection);
   }
 
   private getConnectionsInternal(): Connections {

@@ -5,7 +5,10 @@ import { LanguageClient } from 'vscode-languageclient/node';
  *
  * Wraps a LanguageClient instance and exposes a function to send notifications
  */
-type MethodName = 'connectionChanged';
+export enum MethodName {
+  ConnectionUpdated = 'connectionUpdated',
+  ConnectionDeleted = 'connectionDeleted',
+}
 
 export class LangugageClientManager {
   private static _instance: LangugageClientManager;

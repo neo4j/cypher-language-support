@@ -77,5 +77,7 @@ export class Neo4jSchemaPoller {
     this.connection = undefined;
     this.metadata = undefined;
     clearTimeout(this.reconnectionTimeout);
+    // eslint-disable-next-line no-console
+    console.log('Disconnected from Neo4j');
   }
 }

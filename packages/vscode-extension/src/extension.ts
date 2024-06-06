@@ -1,4 +1,3 @@
-import { PersistentConnection } from '@neo4j-cypher/schema-poller';
 import * as path from 'path';
 import {
   commands,
@@ -14,9 +13,10 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import {
-  changeDatabaseConnection,
+  deleteConnection,
+  toggleConnection,
   updateLanguageClientConfig,
-} from './commands';
+} from './connectionCommands';
 import { ConnectionPanel } from './connectionPanel';
 import {
   ConnectionItem,
@@ -24,12 +24,12 @@ import {
 } from './connectionTreeDataProvider';
 import { GlobalStateManager } from './globalStateManager';
 import { LangugageClientManager } from './languageClientManager';
-import { PersistentConnectionManager } from './persistentConnectionManager';
 import { SecretStorageManager } from './secretStorageManager';
+import { TransientConnectionManager } from './transientConnectionManager';
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const runServer = context.asAbsolutePath(
     path.join('dist', 'cypher-language-server.js'),
@@ -70,9 +70,9 @@ export function activate(context: ExtensionContext) {
   GlobalStateManager.instance = new GlobalStateManager(context.globalState);
   SecretStorageManager.instance = new SecretStorageManager(context.secrets);
   LangugageClientManager.instance = new LangugageClientManager(client);
-  PersistentConnectionManager.instance = new PersistentConnectionManager(
-    new PersistentConnection(),
-  );
+  TransientConnectionManager.instance = new TransientConnectionManager();
+
+  await GlobalStateManager.instance.resetConnections();
 
   // Register our tree view provider to render connections in the sidebar
   const connectionTreeDataProvider = new ConnectionTreeDataProvider();
@@ -86,6 +86,7 @@ export function activate(context: ExtensionContext) {
     commands.registerCommand('neo4j.manageConnection', () => {
       ConnectionPanel.createOrShow(context.extensionUri);
     }),
+
     commands.registerCommand(
       'neo4j.deleteConnection',
       async (connection: ConnectionItem) => {
@@ -96,22 +97,31 @@ export function activate(context: ExtensionContext) {
         );
 
         if (result === 'Yes') {
-          // TODO - Delete connection
+          await deleteConnection(connection.key);
+          connectionTreeDataProvider.refresh();
         }
       },
     ),
-    commands.registerCommand('neo4j.connectToDatabase', async (key: string) => {
-      await changeDatabaseConnection(key);
-    }),
+    commands.registerCommand(
+      'neo4j.activateConnection',
+      async (connection: ConnectionItem) => {
+        await toggleConnection(connection.key, true);
+        connectionTreeDataProvider.refresh();
+      },
+    ),
+    commands.registerCommand(
+      'neo4j.deactivateConnection',
+      async (connection: ConnectionItem) => {
+        await toggleConnection(connection.key, false);
+        connectionTreeDataProvider.refresh();
+      },
+    ),
     commands.registerCommand('neo4j.refreshConnections', () => {
       connectionTreeDataProvider.refresh();
     }),
     workspace.onDidChangeConfiguration(
       async (event: ConfigurationChangeEvent) => {
-        if (
-          event.affectsConfiguration('neo4j.connect') ||
-          event.affectsConfiguration('neo4j.trace.server')
-        ) {
+        if (event.affectsConfiguration('neo4j.trace.server')) {
           const getCurretConnection =
             GlobalStateManager.instance.getCurrentConnection();
           await updateLanguageClientConfig(getCurretConnection.key);
@@ -120,14 +130,12 @@ export function activate(context: ExtensionContext) {
     ),
   );
 
-  // TODO - Create "Default connection" if the extension has pre-existing settings
-
   // Start the client. This will also launch the server
   void client.start();
 }
 
-export function deactivate(): Promise<void> | undefined {
-  PersistentConnectionManager.instance.disconnect();
+export async function deactivate(): Promise<void> | undefined {
+  await GlobalStateManager.instance.resetConnections();
 
   if (!client) {
     return undefined;

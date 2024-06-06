@@ -1,0 +1,1 @@
+export { getDataSummary } from './dataSummary';

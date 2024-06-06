@@ -1,5 +1,4 @@
 import {
-  commands,
   Event,
   EventEmitter,
   ProviderResult,
@@ -7,10 +6,14 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
+import { listConnectionProperties } from './connectionCommands';
 import { GlobalStateManager } from './globalStateManager';
-import { PersistentConnectionManager } from './persistentConnectionManager';
 
-type ConnectionItemType = 'connection' | 'label' | 'relationship';
+type ConnectionItemType =
+  | 'connection'
+  | 'activeConnection'
+  | 'label'
+  | 'relationship';
 
 export class ConnectionTreeDataProvider
   implements TreeDataProvider<ConnectionItem>
@@ -40,47 +43,51 @@ export class ConnectionTreeDataProvider
 
     switch (element.type) {
       case 'connection':
-        return await this.getConnectionElement(element);
+      case 'activeConnection':
+        return this.getConnectionElement(element);
       case 'label':
-        return await this.getLabelElement();
       case 'relationship':
-        return await this.getRelationshipElement();
+        return await this.getPropertyElements(element);
     }
   }
 
-  private async getConnectionElement(
-    element: ConnectionItem,
-  ): Promise<ConnectionItem[]> {
-    await commands.executeCommand(
-      'neo4j.connectToDatabase',
-      element.id,
-      element,
-    );
-
+  private getConnectionElement(element: ConnectionItem): ConnectionItem[] {
     return [
-      new ConnectionItem('label', 'Labels', TreeItemCollapsibleState.Collapsed),
+      new ConnectionItem(
+        'label',
+        'Labels',
+        TreeItemCollapsibleState.Collapsed,
+        element.key,
+      ),
       new ConnectionItem(
         'relationship',
         'Relationships',
         TreeItemCollapsibleState.Collapsed,
+        element.key,
       ),
     ];
   }
 
-  private async getLabelElement(): Promise<ConnectionItem[]> {
-    const summary =
-      await PersistentConnectionManager.instance.getDatabaseDataSummary();
-    return summary.labels.map(
-      (l) => new ConnectionItem('label', l, TreeItemCollapsibleState.None),
-    );
+  private async getPropertyElements(
+    element: ConnectionItem,
+  ): Promise<ConnectionItem[]> {
+    const summary = await listConnectionProperties(element.key);
+    if (element.type === 'label') {
+      return this.mapConnectionItemsForType(element.type, summary.labels);
+    } else {
+      return this.mapConnectionItemsForType(
+        element.type,
+        summary.relationshipTypes,
+      );
+    }
   }
 
-  private async getRelationshipElement(): Promise<ConnectionItem[]> {
-    const summary =
-      await PersistentConnectionManager.instance.getDatabaseDataSummary();
-    return summary.relationshipTypes.map(
-      (r) =>
-        new ConnectionItem('relationship', r, TreeItemCollapsibleState.None),
+  private mapConnectionItemsForType(
+    type: ConnectionItemType,
+    properties: string[],
+  ): ConnectionItem[] {
+    return properties.map(
+      (r) => new ConnectionItem(type, r, TreeItemCollapsibleState.None),
     );
   }
 
@@ -93,7 +100,7 @@ export class ConnectionTreeDataProvider
       if (connection) {
         connectionItems.push(
           new ConnectionItem(
-            'connection',
+            connection.connected ? 'activeConnection' : 'connection',
             connection.name,
             TreeItemCollapsibleState.Collapsed,
             connection.key,
@@ -114,9 +121,11 @@ export class ConnectionItem extends TreeItem {
   ) {
     super(label, collapsibleState);
     this.tooltip = this.label;
-    if (key) {
-      this.id = key;
-    }
+    this.description = this.type === 'activeConnection' ? 'connected' : '';
+    this.id =
+      this.type === 'activeConnection' || this.type === 'connection'
+        ? key
+        : undefined;
 
     this.contextValue = this.type;
   }
