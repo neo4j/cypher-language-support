@@ -17,6 +17,9 @@ export const textMateGrammar = {
       include: '#comments',
     },
     {
+      include: '#parameters',
+    },
+    {
       include: '#properties',
     },
     {
@@ -29,7 +32,13 @@ export const textMateGrammar = {
       include: '#procedures',
     },
     {
+      include: '#functions',
+    },
+    {
       include: '#keywords',
+    },
+    {
+      include: '#variables',
     },
   ],
   repository: {
@@ -40,7 +49,9 @@ export const textMateGrammar = {
           name: 'keyword.operator',
         },
         {
-          match: `\\b(${keywordRegex})\\b`,
+          // The (?i) makes the pattern case insensitive
+          match: `(?i)\\b(${keywordRegex})\\b`,
+          // TODO Nacho Is this
           name: 'keyword.control.cypher',
         },
       ],
@@ -86,69 +97,83 @@ export const textMateGrammar = {
       ],
     },
     labels: {
-      patterns: [
-        {
-          begin: '\\:',
-          end: '\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
-          beginCaptures: {
-            '0': {
-              name: 'keyword.operator',
-            },
-          },
-          endCaptures: {
-            '0': {
-              name: 'entity.name.class',
-            },
-          },
+      begin: '\\:',
+      end: '\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
+      beginCaptures: {
+        '0': {
+          name: 'keyword.operator',
         },
-      ],
+      },
+      endCaptures: {
+        '0': {
+          name: 'entity.name.class',
+        },
+      },
     },
     properties: {
-      patterns: [
-        {
-          begin: '\\.',
-          end: '\\w+',
-          beginCaptures: {
-            '0': {
-              name: 'keyword.operator',
-            },
-          },
-          endCaptures: {
-            '0': {
-              name: 'variable.property',
-            },
-          },
+      begin: '\\.',
+      end: '\\w+',
+      beginCaptures: {
+        '0': {
+          name: 'keyword.operator',
         },
-      ],
+      },
+      endCaptures: {
+        '0': {
+          name: 'variable.property',
+        },
+      },
     },
     numbers: {
-      patterns: [
-        {
-          match: '\\b\\d+\\b',
-          name: 'constant.numeric',
-        },
-      ],
+      match: '\\b\\d+\\b',
+      name: 'constant.numeric',
     },
     procedures: {
-      patterns: [
-        {
-          begin: 'CALL',
-          end: '\\s*((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*|(\\`(\\w|\\s|\\.)*\\`))',
-          beginCaptures: {
-            '0': {
-              name: 'keyword.control.cypher',
-            },
-          },
-          endCaptures: {
-            '0': {
-              name: 'entity.name.function',
-            },
-          },
+      begin: 'CALL',
+      /* 
+          The procedure name is too flexible in Cypher, hence this cumbersome 
+          regular expression that allows for individually namespace 
+          elements to be backticked or the whole name to be backticked:
+           
+             CALL apoc.coll.elements
+             CALL apoc   . coll . elements
+             CALL `apoc` . coll . `elements`
+             CALL `apoc.coll.elements`
+          */
+      end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))',
+      beginCaptures: {
+        '0': {
+          name: 'keyword.control.cypher',
         },
-      ],
+      },
+      endCaptures: {
+        '0': {
+          name: 'entity.name.function.procedure',
+        },
+      },
     },
-    identifier: {
-      match: '(\\`\\w+\\`)|(\\w+)',
+    functions: {
+      // The function name is too flexible in Cypher, refer to comment on procedure names
+      match:
+        '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
+      name: 'entity.name.function',
+    },
+    parameters: {
+      begin: '\\$',
+      end: '\\w+',
+      beginCaptures: {
+        '0': {
+          name: 'entity.name.namespace',
+        },
+      },
+      endCaptures: {
+        '0': {
+          name: 'variable',
+        },
+      },
+    },
+    variables: {
+      match: '\\w+',
       name: 'variable',
     },
   },
