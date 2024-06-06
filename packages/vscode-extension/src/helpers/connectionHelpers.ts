@@ -1,4 +1,4 @@
-import { Connection } from './types/connection';
+import { Connection } from '../types';
 
 export function getConnectionString(connection: Connection): string {
   return `${connection.scheme}${connection.host}:${connection.port}`;

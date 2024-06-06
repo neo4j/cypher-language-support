@@ -7,10 +7,10 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { addConnection, testConnection } from './connectionCommands';
-import { getNonce } from './getNonce';
-import { GlobalStateManager } from './globalStateManager';
-import { Connection } from './types/connection';
+import { getNonce } from '../helpers';
+import { GlobalStateManager } from '../managers';
+import { addConnection, testConnection } from '../queries/connectionCommands';
+import { Connection } from '../types';
 
 type Data = {
   command: string;

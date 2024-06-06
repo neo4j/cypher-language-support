@@ -6,8 +6,8 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { listConnectionProperties } from './connectionCommands';
-import { GlobalStateManager } from './globalStateManager';
+import { GlobalStateManager } from '../managers';
+import { getConnectionProperties } from '../queries/connectionCommands';
 
 type ConnectionItemType =
   | 'connection'
@@ -71,7 +71,7 @@ export class ConnectionTreeDataProvider
   private async getPropertyElements(
     element: ConnectionItem,
   ): Promise<ConnectionItem[]> {
-    const summary = await listConnectionProperties(element.key);
+    const summary = await getConnectionProperties(element.key);
     if (element.type === 'label') {
       return this.mapConnectionItemsForType(element.type, summary.labels);
     } else {

@@ -1,5 +1,5 @@
 import { Memento } from 'vscode';
-import { Connection } from './types/connection';
+import { Connection } from '../types';
 
 /**
  * Singleton class to manage global state

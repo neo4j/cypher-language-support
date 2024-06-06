@@ -1,14 +1,11 @@
 import { LanguageClient } from 'vscode-languageclient/node';
+import { MethodName } from '../types';
 
 /**
  * Singleton class to dispatch notifications to the language client
  *
  * Wraps a LanguageClient instance and exposes a function to send notifications
  */
-export enum MethodName {
-  ConnectionUpdated = 'connectionUpdated',
-  ConnectionDeleted = 'connectionDeleted',
-}
 
 export class LangugageClientManager {
   private static _instance: LangugageClientManager;

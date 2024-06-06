@@ -13,19 +13,21 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import {
-  deleteConnection,
-  toggleConnection,
-  updateLanguageClientConfig,
-} from './connectionCommands';
-import { ConnectionPanel } from './connectionPanel';
+  DatabaseDriverManager,
+  GlobalStateManager,
+  LangugageClientManager,
+  SecretStorageManager,
+} from './managers';
 import {
   ConnectionItem,
   ConnectionTreeDataProvider,
-} from './connectionTreeDataProvider';
-import { GlobalStateManager } from './globalStateManager';
-import { LangugageClientManager } from './languageClientManager';
-import { SecretStorageManager } from './secretStorageManager';
-import { TransientConnectionManager } from './transientConnectionManager';
+} from './providers/connectionTreeDataProvider';
+import {
+  deleteConnection,
+  toggleConnection,
+  updateLanguageClientConfig,
+} from './queries/connectionCommands';
+import { ConnectionPanel } from './webviews/connectionPanel';
 
 let client: LanguageClient;
 
@@ -70,7 +72,7 @@ export async function activate(context: ExtensionContext) {
   GlobalStateManager.instance = new GlobalStateManager(context.globalState);
   SecretStorageManager.instance = new SecretStorageManager(context.secrets);
   LangugageClientManager.instance = new LangugageClientManager(client);
-  TransientConnectionManager.instance = new TransientConnectionManager();
+  DatabaseDriverManager.instance = new DatabaseDriverManager();
 
   await GlobalStateManager.instance.resetConnections();
 
