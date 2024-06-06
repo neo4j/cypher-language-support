@@ -71,10 +71,6 @@
           "when": "false"
         },
         {
-          "command": "neo4j.connectToDatabase",
-          "when": "false"
-        },
-        {
           "command": "neo4j.connect",
           "when": "false"
         },
