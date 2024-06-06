@@ -43,27 +43,18 @@
       },
       {
         "command": "neo4j.deleteConnection",
-        "category": "",
         "title": "Delete Connection..."
       },
       {
-        "command": "neo4j.connectToDatabase",
-        "category": "",
+        "command": "neo4j.connect",
         "title": "Connect"
       },
       {
-        "command": "neo4j.activateConnection",
-        "category": "",
-        "title": "Connect"
-      },
-      {
-        "command": "neo4j.deactivateConnection",
-        "category": "",
+        "command": "neo4j.disconnect",
         "title": "Disconnect"
       },
       {
         "command": "neo4j.refreshConnections",
-        "category": "",
         "title": "Refresh Connections"
       }
     ],
@@ -74,6 +65,28 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.connectToDatabase",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.connect",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.disconnect",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.refreshConnections",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "neo4j.manageConnection",
@@ -91,11 +104,11 @@
           "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection"
         },
         {
-          "command": "neo4j.activateConnection",
+          "command": "neo4j.connect",
           "when": "view == neo4jConnections && viewItem == connection"
         },
         {
-          "command": "neo4j.deactivateConnection",
+          "command": "neo4j.disconnect",
           "when": "view == neo4jConnections && viewItem == activeConnection"
         }
       ]

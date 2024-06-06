@@ -11,7 +11,6 @@ export {
   testConnection,
   addConnection,
   deleteConnection,
-  updateConnection,
   toggleConnection,
   listConnectionProperties,
   updateLanguageClientConfig,
@@ -46,12 +45,6 @@ async function toggleConnection(
 ): Promise<void> {
   await GlobalStateManager.instance.toggleConnection(key, connected);
   const neo4jSettings = await getNeo4jSettings(key);
-  await notifyLanguageClient(neo4jSettings, MethodName.ConnectionUpdated);
-}
-
-async function updateConnection(key: string): Promise<void> {
-  const neo4jSettings = await getNeo4jSettings(key);
-  // only refresh the language client if we've updated the current connection?
   await notifyLanguageClient(neo4jSettings, MethodName.ConnectionUpdated);
 }
 

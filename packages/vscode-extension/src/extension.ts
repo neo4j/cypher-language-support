@@ -103,14 +103,14 @@ export async function activate(context: ExtensionContext) {
       },
     ),
     commands.registerCommand(
-      'neo4j.activateConnection',
+      'neo4j.connect',
       async (connection: ConnectionItem) => {
         await toggleConnection(connection.key, true);
         connectionTreeDataProvider.refresh();
       },
     ),
     commands.registerCommand(
-      'neo4j.deactivateConnection',
+      'neo4j.disconnect',
       async (connection: ConnectionItem) => {
         await toggleConnection(connection.key, false);
         connectionTreeDataProvider.refresh();
