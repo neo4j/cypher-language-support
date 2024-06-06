@@ -1,5 +1,5 @@
 import { LanguageClient } from 'vscode-languageclient/node';
-import { MethodName } from '../types';
+import { MethodName } from '../types/methodName';
 
 /**
  * Singleton class to dispatch notifications to the language client
@@ -14,11 +14,11 @@ export class LangugageClientManager {
     this._languageClient = languageClient;
   }
 
-  public static set instance(value: LangugageClientManager) {
+  static set instance(value: LangugageClientManager) {
     LangugageClientManager._instance = value;
   }
 
-  public static get instance(): LangugageClientManager {
+  static get instance(): LangugageClientManager {
     return LangugageClientManager._instance;
   }
 

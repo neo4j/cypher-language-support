@@ -13,15 +13,15 @@ export class DatabaseDriverManager {
   private _driver: Driver | undefined | null;
   private _currentDriverConnection: string | undefined;
 
-  public static set instance(value: DatabaseDriverManager) {
+  static set instance(value: DatabaseDriverManager) {
     DatabaseDriverManager._instance = value;
   }
 
-  public static get instance(): DatabaseDriverManager {
+  static get instance(): DatabaseDriverManager {
     return DatabaseDriverManager._instance;
   }
 
-  public async ensureDriver(
+  async ensureDriver(
     connection: Connection,
     password: string,
   ): Promise<boolean> {
@@ -29,7 +29,7 @@ export class DatabaseDriverManager {
     return !!driver;
   }
 
-  public async acquireDriver(
+  async acquireDriver(
     connection: Connection,
     password: string,
   ): Promise<Driver | null> {
@@ -46,16 +46,17 @@ export class DatabaseDriverManager {
     return this._driver;
   }
 
-  public async updateDriver(
-    connection: Connection,
-    password: string,
-  ): Promise<void> {
+  async updateDriver(connection: Connection, password: string): Promise<void> {
     const url = getConnectionString(connection);
     const credentials = { username: connection.user, password };
 
     if (this.driverRequiresReinitialization(url, credentials)) {
       this._driver = await this.initializeDriver(url, credentials);
     }
+  }
+
+  async closeDriver(): Promise<void> {
+    await this._driver?.close();
   }
 
   private async initializeDriver(

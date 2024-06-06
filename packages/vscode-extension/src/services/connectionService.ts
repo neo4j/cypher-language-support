@@ -3,8 +3,8 @@ import { workspace } from 'vscode';
 import { DatabaseDriverManager } from '../managers/databaseDriverManager';
 import { LangugageClientManager } from '../managers/languageClientManager';
 import { ConnectionRepository } from '../repositories/connectionRepository';
-import { MethodName } from '../types';
 import { Connection, getConnectionString } from '../types/connection';
+import { MethodName } from '../types/methodName';
 
 export async function testConnection(
   connection: Connection,

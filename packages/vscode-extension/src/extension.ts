@@ -24,7 +24,7 @@ import {
   notifyLanguageClient,
   toggleConnection,
 } from './services/connectionService';
-import { MethodName } from './types';
+import { MethodName } from './types/methodName';
 import {
   CONNECTION_FAILED_MESSAGE,
   CONNECT_COMMAND,
@@ -156,6 +156,7 @@ export async function activate(context: ExtensionContext) {
 
 export async function deactivate(): Promise<void> | undefined {
   await ConnectionRepository.instance.resetConnections();
+  await DatabaseDriverManager.instance.closeDriver();
 
   if (!client) {
     return undefined;
