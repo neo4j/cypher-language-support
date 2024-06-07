@@ -65,6 +65,7 @@ export async function deleteConnection(key: string): Promise<void> {
   const connection = ConnectionRepository.instance.getConnection(key);
   await ConnectionRepository.instance.deleteConnection(key);
   await notifyLanguageClient(connection, MethodName.ConnectionDeleted);
+  await PersistentConnectionManager.instance.closeConnection();
 }
 
 export async function notifyLanguageClient(

@@ -17,7 +17,7 @@ export class PersistentConnection {
       !this._driver ||
       this.driverRequiresReinitialization(url, credentials)
     ) {
-      await this.initializeDriver(url, credentials);
+      this._driver = await this.initializeDriver(url, credentials);
     }
 
     return !!this._driver;
@@ -42,6 +42,8 @@ export class PersistentConnection {
 
   async closeConnection(): Promise<void> {
     await this._driver?.close();
+    this._driver = undefined;
+    this._driverKey = undefined;
   }
 
   private async initializeDriver(
