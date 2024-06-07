@@ -1,4 +1,7 @@
-/* This is a 
+# Comments test
+
+```cypher
+/* This is a
 multiline comment
 */
 MATCH (u1:CommerceUser), (u2: CommerceUser)
@@ -8,3 +11,4 @@ RETURN relsDate, nodes
 /* Another multiline
 comment */
 LIMIT $limit
+```

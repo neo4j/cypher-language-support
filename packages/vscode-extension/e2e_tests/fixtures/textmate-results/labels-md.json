@@ -24,7 +24,7 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
   },
   {
-    "character": " (",
+    "character": "(",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
   },
   {
@@ -40,32 +40,36 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
   },
   {
-    "character": ") ",
+    "character": "), (",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
   },
   {
-    "character": "RETURN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
-  },
-  {
-    "character": " ",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
-  },
-  {
-    "character": "function(",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
-  },
-  {
-    "character": "n",
+    "character": "m",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
   },
   {
-    "character": ".",
+    "character": ":",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
   },
   {
-    "character": "property",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable.property"
+    "character": "Label1&Label2",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": "), (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "k",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label1|Label2&Label3",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ")",

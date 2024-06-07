@@ -53,7 +53,7 @@ export const textMateGrammar = {
           // The (?i) makes the pattern case insensitive
           match: `(?i)\\b(${keywordRegex})\\b`,
           // TODO Nacho Is this
-          name: 'keyword.control.cypher',
+          name: 'keyword.cypher',
         },
       ],
     },
@@ -145,7 +145,7 @@ export const textMateGrammar = {
       end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))',
       beginCaptures: {
         '0': {
-          name: 'keyword.control.cypher',
+          name: 'keyword.cypher',
         },
       },
       endCaptures: {

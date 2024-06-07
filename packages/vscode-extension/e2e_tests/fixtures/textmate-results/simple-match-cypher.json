@@ -1,11 +1,15 @@
 [
   {
     "character": "MATCH",
-    "type": "source.cypher keyword.control.cypher"
+    "type": "source.cypher keyword.cypher"
   },
   {
-    "character": " (n",
+    "character": " (",
     "type": "source.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cypher variable"
   },
   {
     "character": ":",
@@ -21,11 +25,19 @@
   },
   {
     "character": "RETURN",
-    "type": "source.cypher keyword.control.cypher"
+    "type": "source.cypher keyword.cypher"
   },
   {
-    "character": " function(n",
+    "character": " ",
     "type": "source.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cypher variable"
   },
   {
     "character": ".",
