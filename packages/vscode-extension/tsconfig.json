@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src", "e2e_tests"],
-  "compilerOptions": { "outDir": "dist" }
+  "compilerOptions": { "outDir": "dist", "types": ["sinon"] }
 }

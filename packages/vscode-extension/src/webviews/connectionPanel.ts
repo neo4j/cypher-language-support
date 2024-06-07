@@ -9,14 +9,10 @@ import {
   window,
 } from 'vscode';
 import { ConnectionRepository } from '../repositories/connectionRepository';
-import {
-  addOrUpdateConnection,
-  testConnection,
-} from '../services/connectionService';
 import { Connection } from '../types/connection';
 import {
-  CONNECTION_FAILED_MESSAGE,
-  REFRESH_CONNECTIONS_COMMAND,
+  CREATE_CONNECTION_COMMAND,
+  TEST_CONNECTION_COMMAND,
 } from '../util/constants';
 import { getNonce } from '../util/getNonce';
 
@@ -93,19 +89,22 @@ export class ConnectionPanel {
       async (data: Data) => {
         switch (data.command) {
           case 'onTestConnection': {
-            if (await testConnection(data.connection, data.password)) {
-              void window.showInformationMessage('Connection successful');
-            } else {
-              void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
-            }
+            await commands.executeCommand(
+              TEST_CONNECTION_COMMAND,
+              data.connection,
+              data.password,
+            );
             break;
           }
           case 'onAddConnection': {
-            if (await addOrUpdateConnection(data.connection, data.password)) {
+            if (
+              await commands.executeCommand(
+                CREATE_CONNECTION_COMMAND,
+                data.connection,
+                data.password,
+              )
+            ) {
               this.dispose();
-              await commands.executeCommand(REFRESH_CONNECTIONS_COMMAND);
-            } else {
-              void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
             }
             break;
           }
