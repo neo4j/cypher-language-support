@@ -64,10 +64,9 @@ export class ConnectionRepository {
 
   async toggleConnection(key: string, connected: boolean): Promise<Connection> {
     const connections = this.getConnectionsInternal();
-    const connection = connections[key];
-    connections[key] = { ...connection, connect: connected };
+    connections[key] = { ...connections[key], connect: connected };
     await this._globalState.update(this.CONNECTIONS_KEY, connections);
-    return connection;
+    return connections[key];
   }
 
   async getPasswordForConnection(key: string): Promise<string> {
