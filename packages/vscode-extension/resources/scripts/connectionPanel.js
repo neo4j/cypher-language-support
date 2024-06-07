@@ -24,7 +24,7 @@
       port: document.getElementById('port').value,
       user: document.getElementById('user').value,
       database: document.getElementById('database').value,
-      connected: document.getElementById('connected').value === 'true',
+      connect: document.getElementById('connect').value === 'true',
     };
   };
 

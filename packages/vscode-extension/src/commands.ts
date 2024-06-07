@@ -13,13 +13,16 @@ import {
 } from './providers/connectionTreeDataProvider';
 import { ConnectionRepository } from './repositories/connectionRepository';
 import {
+  addOrUpdateConnection,
   deleteConnection,
   toggleConnection,
 } from './services/connectionService';
+import { Connection } from './types/connection';
 import { MethodName } from './types/methodName';
 import {
   CONNECTION_FAILED_MESSAGE,
   CONNECT_COMMAND,
+  CREATE_CONNECTION_COMMAND,
   DELETE_CONNECTION_COMMAND,
   DISCONNECT_COMMAND,
   MANAGE_CONNECTION_COMMAND,
@@ -35,6 +38,12 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
     window.registerTreeDataProvider(
       'neo4jConnections',
       connectionTreeDataProvider,
+    ),
+    commands.registerCommand(
+      CREATE_CONNECTION_COMMAND,
+      async (connection: Connection, password: string) => {
+        await addOrUpdateConnection(connection, password);
+      },
     ),
     commands.registerCommand(MANAGE_CONNECTION_COMMAND, () => {
       ConnectionPanel.createOrShow(extensionUri);

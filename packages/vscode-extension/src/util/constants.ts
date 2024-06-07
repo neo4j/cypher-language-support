@@ -1,3 +1,4 @@
+export const CREATE_CONNECTION_COMMAND: string = 'neo4j.createConnection';
 export const MANAGE_CONNECTION_COMMAND: string = 'neo4j.manageConnection';
 export const DELETE_CONNECTION_COMMAND: string = 'neo4j.deleteConnection';
 export const REFRESH_CONNECTIONS_COMMAND: string = 'neo4j.refreshConnections';

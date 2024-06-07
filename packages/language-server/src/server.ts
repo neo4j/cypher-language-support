@@ -96,12 +96,6 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
-connection.onDidChangeConfiguration(
-  (params: { settings: { neo4j: Neo4jSettings } }) => {
-    changeConnection(params.settings.neo4j);
-  },
-);
-
 connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jSettings) => {

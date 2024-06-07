@@ -56,6 +56,10 @@
       {
         "command": "neo4j.refreshConnections",
         "title": "Refresh Connections"
+      },
+      {
+        "command": "neo4j.createConnection",
+        "title": "Create Connection..."
       }
     ],
     "viewsWelcome": [
@@ -80,6 +84,10 @@
         },
         {
           "command": "neo4j.refreshConnections",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.createConnection",
           "when": "false"
         }
       ],
@@ -201,6 +209,7 @@
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.7",
     "@neo4j-cypher/schema-poller": "2.0.0-next.6",
+    "dotenv": "^16.4.5",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

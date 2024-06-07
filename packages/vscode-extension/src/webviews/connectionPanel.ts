@@ -179,7 +179,7 @@ export class ConnectionPanel {
                 <input type="hidden" id="key" value="${
                   this._connection?.key ?? getNonce(16)
                 }" />
-                <input type="hidden" id="connected" value="${
+                <input type="hidden" id="connect" value="${
                   this._connection?.connect ?? 'false'
                 }" />
                 <div class="form--input-wrapper">
