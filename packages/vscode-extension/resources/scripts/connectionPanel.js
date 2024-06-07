@@ -16,13 +16,9 @@
   });
 
   getConnection = () => {
-    const name = document.getElementById('name').value;
-    let key = document.getElementById('key').value;
-    key = !key ? name.toLowerCase().replace(/\s/g, '-') : key;
-
     return {
-      key: key,
-      name: name,
+      key: document.getElementById('key').value,
+      name: document.getElementById('name').value,
       scheme: document.getElementById('scheme').value,
       host: document.getElementById('host').value,
       port: document.getElementById('port').value,

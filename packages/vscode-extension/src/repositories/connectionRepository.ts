@@ -1,6 +1,7 @@
 import { queries } from '@neo4j-cypher/schema-poller';
+import { DataSummary } from '@neo4j-cypher/schema-poller/dist/cjs/src/queries/dataSummary';
 import { Memento, SecretStorage } from 'vscode';
-import { DatabaseDriverManager } from '../managers/databaseDriverManager';
+import { PersistentConnectionManager } from '../managers/persistentConnectionManager';
 import { Connection } from '../types/connection';
 
 type Connections = {
@@ -84,24 +85,17 @@ export class ConnectionRepository {
   ): Promise<{ labels: string[]; relationshipTypes: string[] }> {
     const connection = this.getConnection(key);
     const password = await this.getPasswordForConnection(key);
-    const driver = await DatabaseDriverManager.instance.acquireDriver(
-      connection,
-      password,
-    );
 
-    if (driver) {
-      const { query, queryConfig } = queries.getDataSummary(
-        connection.database,
+    const result =
+      await PersistentConnectionManager.instance.executeQuery<DataSummary>(
+        connection,
+        password,
+        () => queries.getDataSummary(connection.database),
       );
-      const { labels, relationshipTypes } = await driver.executeQuery(
-        query,
-        {},
-        queryConfig,
-      );
-      return { labels, relationshipTypes };
-    }
 
-    return { labels: [], relationshipTypes: [] };
+    return result
+      ? { labels: result.labels, relationshipTypes: result.relationshipTypes }
+      : { labels: [], relationshipTypes: [] };
   }
 
   private async setPassword(key: string, password: string): Promise<void> {

@@ -177,7 +177,7 @@ export class ConnectionPanel {
               }</h1>
               <form class="form">
                 <input type="hidden" id="key" value="${
-                  this._connection?.key ?? ''
+                  this._connection?.key ?? getNonce(16)
                 }" />
                 <input type="hidden" id="connected" value="${
                   this._connection?.connected ?? 'false'

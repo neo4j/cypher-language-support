@@ -1,39 +1,15 @@
 import * as path from 'path';
-import {
-  commands,
-  ConfigurationChangeEvent,
-  ExtensionContext,
-  window,
-  workspace,
-} from 'vscode';
+import { ExtensionContext, workspace } from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { DatabaseDriverManager } from './managers/databaseDriverManager';
+import { registerCommands } from './commands';
 import { LangugageClientManager } from './managers/languageClientManager';
-import {
-  ConnectionItem,
-  ConnectionTreeDataProvider,
-} from './providers/connectionTreeDataProvider';
+import { PersistentConnectionManager } from './managers/persistentConnectionManager';
 import { ConnectionRepository } from './repositories/connectionRepository';
-import {
-  deleteConnection,
-  notifyLanguageClient,
-  toggleConnection,
-} from './services/connectionService';
-import { MethodName } from './types/methodName';
-import {
-  CONNECTION_FAILED_MESSAGE,
-  CONNECT_COMMAND,
-  DELETE_CONNECTION_COMMAND,
-  DISCONNECT_COMMAND,
-  MANAGE_CONNECTION_COMMAND,
-  REFRESH_CONNECTIONS_COMMAND,
-} from './util/constants';
-import { ConnectionPanel } from './webviews/connectionPanel';
 
 let client: LanguageClient;
 
@@ -76,79 +52,17 @@ export async function activate(context: ExtensionContext) {
 
   // Initialize singletons
   LangugageClientManager.instance = new LangugageClientManager(client);
-  DatabaseDriverManager.instance = new DatabaseDriverManager();
+  PersistentConnectionManager.instance = new PersistentConnectionManager();
   ConnectionRepository.instance = new ConnectionRepository(
     context.globalState,
     context.secrets,
   );
 
+  // Ensure any connections are reset - set the connected flag to false
   await ConnectionRepository.instance.resetConnections();
 
-  // Register our tree view provider to render connections in the sidebar
-  const connectionTreeDataProvider = new ConnectionTreeDataProvider();
-
   // Register commands
-  context.subscriptions.push(
-    window.registerTreeDataProvider(
-      'neo4jConnections',
-      connectionTreeDataProvider,
-    ),
-    commands.registerCommand(MANAGE_CONNECTION_COMMAND, () => {
-      ConnectionPanel.createOrShow(context.extensionUri);
-    }),
-
-    commands.registerCommand(
-      DELETE_CONNECTION_COMMAND,
-      async (connection: ConnectionItem) => {
-        const result = await window.showWarningMessage(
-          `Are you sure you want to delete connection ${connection.label}?`,
-          { modal: true },
-          'Yes',
-        );
-
-        if (result === 'Yes') {
-          await deleteConnection(connection.key);
-          connectionTreeDataProvider.refresh();
-          void window.showInformationMessage('Connection deleted');
-        }
-      },
-    ),
-    commands.registerCommand(
-      CONNECT_COMMAND,
-      async (connection: ConnectionItem) => {
-        if (await toggleConnection(connection.key, true)) {
-          connectionTreeDataProvider.refresh();
-        } else {
-          void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
-        }
-      },
-    ),
-    commands.registerCommand(
-      DISCONNECT_COMMAND,
-      async (connection: ConnectionItem) => {
-        if (await toggleConnection(connection.key, false)) {
-          connectionTreeDataProvider.refresh();
-        } else {
-          void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
-        }
-      },
-    ),
-    commands.registerCommand(REFRESH_CONNECTIONS_COMMAND, () => {
-      connectionTreeDataProvider.refresh();
-    }),
-    workspace.onDidChangeConfiguration(
-      async (event: ConfigurationChangeEvent) => {
-        if (event.affectsConfiguration('neo4j.trace.server')) {
-          const currentConnection =
-            ConnectionRepository.instance.getCurrentConnection();
-          await notifyLanguageClient(
-            currentConnection,
-            MethodName.ConnectionUpdated,
-          );
-        }
-      },
-    ),
-  );
+  context.subscriptions.push(...registerCommands(context.extensionUri));
 
   // Start the client. This will also launch the server
   void client.start();
@@ -156,7 +70,7 @@ export async function activate(context: ExtensionContext) {
 
 export async function deactivate(): Promise<void> | undefined {
   await ConnectionRepository.instance.resetConnections();
-  await DatabaseDriverManager.instance.closeDriver();
+  await PersistentConnectionManager.instance.closeConnection();
 
   if (!client) {
     return undefined;

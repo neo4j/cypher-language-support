@@ -1,7 +1,7 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { workspace } from 'vscode';
-import { DatabaseDriverManager } from '../managers/databaseDriverManager';
 import { LangugageClientManager } from '../managers/languageClientManager';
+import { PersistentConnectionManager } from '../managers/persistentConnectionManager';
 import { ConnectionRepository } from '../repositories/connectionRepository';
 import { Connection, getConnectionString } from '../types/connection';
 import { MethodName } from '../types/methodName';
@@ -10,7 +10,7 @@ export async function testConnection(
   connection: Connection,
   password: string,
 ): Promise<boolean> {
-  return await DatabaseDriverManager.instance.ensureDriver(
+  return await PersistentConnectionManager.instance.connectionIsSuccessful(
     connection,
     password,
   );
@@ -20,10 +20,18 @@ export async function addOrUpdateConnection(
   connection: Connection,
   password: string,
 ): Promise<boolean> {
-  if (await DatabaseDriverManager.instance.ensureDriver(connection, password)) {
+  if (
+    await PersistentConnectionManager.instance.connectionIsSuccessful(
+      connection,
+      password,
+    )
+  ) {
     await ConnectionRepository.instance.setConnection(connection, password);
     if (connection.connected) {
-      await DatabaseDriverManager.instance.updateDriver(connection, password);
+      await PersistentConnectionManager.instance.updateConnection(
+        connection,
+        password,
+      );
       await notifyLanguageClient(connection, MethodName.ConnectionUpdated);
     }
     return true;
@@ -40,7 +48,12 @@ export async function toggleConnection(
   const password = await ConnectionRepository.instance.getPasswordForConnection(
     key,
   );
-  if (await DatabaseDriverManager.instance.ensureDriver(connection, password)) {
+  if (
+    await PersistentConnectionManager.instance.connectionIsSuccessful(
+      connection,
+      password,
+    )
+  ) {
     await ConnectionRepository.instance.toggleConnection(key, connected);
     await notifyLanguageClient(connection, MethodName.ConnectionUpdated);
     return true;
