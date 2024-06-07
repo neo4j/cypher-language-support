@@ -6,7 +6,7 @@ export type Connection = {
   port: string;
   user: string;
   database: string;
-  connected: boolean;
+  connect: boolean;
 };
 
 export function getConnectionString(connection: Connection): string {

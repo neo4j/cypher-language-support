@@ -6,6 +6,7 @@ import {
   window,
   workspace,
 } from 'vscode';
+import { LangugageClientManager } from './managers/languageClientManager';
 import {
   ConnectionItem,
   ConnectionTreeDataProvider,
@@ -13,7 +14,6 @@ import {
 import { ConnectionRepository } from './repositories/connectionRepository';
 import {
   deleteConnection,
-  notifyLanguageClient,
   toggleConnection,
 } from './services/connectionService';
 import { MethodName } from './types/methodName';
@@ -83,9 +83,9 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
         if (event.affectsConfiguration('neo4j.trace.server')) {
           const currentConnection =
             ConnectionRepository.instance.getCurrentConnection();
-          await notifyLanguageClient(
+          await LangugageClientManager.instance.sendNotification(
+            MethodName.ConnectionDeleted,
             currentConnection,
-            MethodName.ConnectionUpdated,
           );
         }
       },

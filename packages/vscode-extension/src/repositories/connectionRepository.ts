@@ -29,9 +29,9 @@ export class ConnectionRepository {
     return ConnectionRepository._instance;
   }
 
-  getCurrentConnection(): Connection {
+  getCurrentConnection(): Connection | null {
     return Object.values(this.getConnectionsInternal()).find(
-      (connection) => connection.connected,
+      (connection) => connection.connect,
     );
   }
 
@@ -44,17 +44,6 @@ export class ConnectionRepository {
     return connections[key];
   }
 
-  async resetConnections(): Promise<void> {
-    const connections = this.getConnectionsInternal();
-    Object.keys(connections).forEach((key: string) => {
-      if (key) {
-        const connection = connections[key];
-        connections[key] = { ...connection, connected: false };
-      }
-    });
-    await this._globalState.update(this.CONNECTIONS_KEY, connections);
-  }
-
   async deleteConnection(key: string): Promise<void> {
     const connections = this.getConnectionsInternal();
     delete connections[key];
@@ -62,18 +51,23 @@ export class ConnectionRepository {
     await this.deletePassword(key);
   }
 
-  async setConnection(connection: Connection, password: string): Promise<void> {
+  async setConnection(
+    connection: Connection,
+    password: string,
+  ): Promise<Connection> {
     const connections = this.getConnectionsInternal();
     connections[connection.key] = { ...connection };
     await this._globalState.update(this.CONNECTIONS_KEY, connections);
     await this.setPassword(connection.key, password);
+    return connections[connection.key];
   }
 
-  async toggleConnection(key: string, connected: boolean): Promise<void> {
+  async toggleConnection(key: string, connected: boolean): Promise<Connection> {
     const connections = this.getConnectionsInternal();
     const connection = connections[key];
-    connections[key] = { ...connection, connected: connected };
+    connections[key] = { ...connection, connect: connected };
     await this._globalState.update(this.CONNECTIONS_KEY, connections);
+    return connection;
   }
 
   async getPasswordForConnection(key: string): Promise<string> {

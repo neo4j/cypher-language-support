@@ -10,6 +10,7 @@ import { registerCommands } from './commands';
 import { LangugageClientManager } from './managers/languageClientManager';
 import { PersistentConnectionManager } from './managers/persistentConnectionManager';
 import { ConnectionRepository } from './repositories/connectionRepository';
+import { MethodName } from './types/methodName';
 
 let client: LanguageClient;
 
@@ -58,18 +59,17 @@ export async function activate(context: ExtensionContext) {
     context.secrets,
   );
 
-  // Ensure any connections are reset - set the connected flag to false
-  await ConnectionRepository.instance.resetConnections();
-
   // Register commands
   context.subscriptions.push(...registerCommands(context.extensionUri));
 
   // Start the client. This will also launch the server
-  void client.start();
+  await client.start();
+
+  // Reconnect to a connection if there is one
+  await reconnectConnection();
 }
 
 export async function deactivate(): Promise<void> | undefined {
-  await ConnectionRepository.instance.resetConnections();
   await PersistentConnectionManager.instance.closeConnection();
 
   if (!client) {
@@ -77,4 +77,22 @@ export async function deactivate(): Promise<void> | undefined {
   }
 
   return client.stop();
+}
+
+async function reconnectConnection(): Promise<void> {
+  const connection = ConnectionRepository.instance.getCurrentConnection();
+  if (connection) {
+    const password =
+      await ConnectionRepository.instance.getPasswordForConnection(
+        connection.key,
+      );
+    await PersistentConnectionManager.instance.updateConnection(
+      connection,
+      password,
+    );
+    await LangugageClientManager.instance.sendNotification(
+      MethodName.ConnectionUpdated,
+      connection,
+    );
+  }
 }

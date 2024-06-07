@@ -95,7 +95,7 @@ export class ConnectionTreeDataProvider
       if (connection) {
         connectionItems.push(
           new ConnectionItem(
-            connection.connected ? 'activeConnection' : 'connection',
+            connection.connect ? 'activeConnection' : 'connection',
             connection.name,
             TreeItemCollapsibleState.Collapsed,
             connection.key,
