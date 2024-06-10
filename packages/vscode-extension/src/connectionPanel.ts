@@ -100,13 +100,15 @@ export class ConnectionPanel {
             break;
           }
           case 'onSaveConnection': {
-            await commands.executeCommand(
+            const result = await commands.executeCommand(
               SAVE_CONNECTION_COMMAND,
               data.connection,
               data.password,
               !this._connection,
             );
-            this.dispose();
+            if (result) {
+              this.dispose();
+            }
             break;
           }
           case 'onValidationError': {

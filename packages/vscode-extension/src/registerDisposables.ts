@@ -57,7 +57,7 @@ export function registerDisposables(extensionUri: Uri): Disposable[] {
         connection: Connection,
         password: string,
         isNew: boolean,
-      ): Promise<void> => {
+      ): Promise<boolean> => {
         if (await testConnection(connection, password)) {
           await saveConnection(connection, password, isNew);
           connectionTreeDataProvider.refresh();
@@ -66,8 +66,10 @@ export function registerDisposables(extensionUri: Uri): Disposable[] {
               ? constants.CONNECTION_CREATED_SUCCESSFULLY_MESSAGE
               : constants.CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
           );
+          return true;
         } else {
           void window.showErrorMessage(constants.CONNECTION_FAILED_MESSAGE);
+          return false;
         }
       },
     ),

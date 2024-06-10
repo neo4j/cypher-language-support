@@ -78,12 +78,14 @@ export class Neo4jSchemaPoller {
   }
 
   disconnect() {
+    if (this.connection) {
+      // eslint-disable-next-line no-console
+      console.log('Disconnected from Neo4j');
+    }
     this.connection?.dispose();
     this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
     this.metadata = undefined;
     clearTimeout(this.reconnectionTimeout);
-    // eslint-disable-next-line no-console
-    console.log('Disconnected from Neo4j');
   }
 }
