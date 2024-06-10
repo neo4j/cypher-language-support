@@ -21,12 +21,14 @@ import {
 import { Connection } from './types/connection';
 import { MethodName } from './types/methodName';
 import {
+  CONNECTED_MESSAGE,
   CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
   CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
   CONNECTION_FAILED_MESSAGE,
   CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
   CONNECT_COMMAND,
   DELETE_CONNECTION_COMMAND,
+  DISCONNECTED_MESSAGE,
   DISCONNECT_COMMAND,
   MANAGE_CONNECTION_COMMAND,
   REFRESH_CONNECTIONS_COMMAND,
@@ -103,6 +105,7 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
       CONNECT_COMMAND,
       async (connection: ConnectionItem) => {
         if (await toggleConnection(connection.key, true)) {
+          void window.showInformationMessage(CONNECTED_MESSAGE);
           connectionTreeDataProvider.refresh();
         } else {
           void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
@@ -113,6 +116,7 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
       DISCONNECT_COMMAND,
       async (connection: ConnectionItem) => {
         if (await toggleConnection(connection.key, false)) {
+          void window.showInformationMessage(DISCONNECTED_MESSAGE);
           connectionTreeDataProvider.refresh();
         } else {
           void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);

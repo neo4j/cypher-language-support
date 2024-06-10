@@ -43,28 +43,36 @@ export async function toggleConnection(
   connected: boolean,
 ): Promise<boolean> {
   let connection = ConnectionRepository.instance.getConnection(key);
+
+  if (!connection) {
+    return false;
+  }
+
   const password = await ConnectionRepository.instance.getPasswordForConnection(
     key,
   );
+
   const hasConnection =
     await PersistentConnectionManager.instance.ensureConnection(
       connection,
       password,
     );
 
-  if (hasConnection) {
-    connection = await ConnectionRepository.instance.toggleConnection(
-      key,
-      connected,
-    );
-    await LangugageClientManager.instance.sendNotification(
-      MethodName.ConnectionUpdated,
-      connection,
-    );
-    return true;
+  if (!hasConnection) {
+    return false;
   }
 
-  return false;
+  connection = await ConnectionRepository.instance.toggleConnection(
+    key,
+    connected,
+  );
+
+  await LangugageClientManager.instance.sendNotification(
+    MethodName.ConnectionUpdated,
+    connection,
+  );
+
+  return true;
 }
 
 export async function deleteConnection(key: string): Promise<void> {

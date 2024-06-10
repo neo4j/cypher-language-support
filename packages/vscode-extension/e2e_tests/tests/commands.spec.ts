@@ -3,17 +3,21 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import {
+  CONNECTED_MESSAGE,
   CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
   CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
   CONNECTION_FAILED_MESSAGE,
   CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+  CONNECT_COMMAND,
   DELETE_CONNECTION_COMMAND,
+  DISCONNECTED_MESSAGE,
+  DISCONNECT_COMMAND,
   SAVE_CONNECTION_COMMAND,
   TEST_CONNECTION_COMMAND,
   TEST_CONNECTION_SUCCESFUL_MESSAGE,
 } from '../../src/util/constants';
 
-suite('Extension spec', () => {
+suite('Commands spec', () => {
   let showErrorMessageStub: sinon.SinonStub;
   let showInformationMessageStub: sinon.SinonStub;
 
@@ -128,7 +132,7 @@ suite('Extension spec', () => {
     stub.resolves(undefined);
 
     await vscode.commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-      key: 'test',
+      key: 'test-2',
       label: 'test',
     });
 
@@ -147,7 +151,7 @@ suite('Extension spec', () => {
     stub.resolves('Yes');
 
     await vscode.commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-      key: 'test',
+      key: 'test-2',
       label: 'test',
     });
 
@@ -157,5 +161,57 @@ suite('Extension spec', () => {
     );
 
     stub.restore();
+  });
+
+  test('Connecting to a valid connection should show a success message', async () => {
+    await vscode.commands.executeCommand(
+      CONNECT_COMMAND,
+      { key: 'test' },
+      true,
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      showInformationMessageStub,
+      CONNECTED_MESSAGE,
+    );
+  });
+
+  test('Connecting to an invalid connection should show an error message', async () => {
+    await vscode.commands.executeCommand(
+      CONNECT_COMMAND,
+      { key: 'invalid' },
+      true,
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      CONNECTION_FAILED_MESSAGE,
+    );
+  });
+
+  test('Disconnecting from a valid connection should show a success message', async () => {
+    await vscode.commands.executeCommand(
+      DISCONNECT_COMMAND,
+      { key: 'test' },
+      false,
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      showInformationMessageStub,
+      DISCONNECTED_MESSAGE,
+    );
+  });
+
+  test('Disconnecting from an invalid connection should show an error message', async () => {
+    await vscode.commands.executeCommand(
+      DISCONNECT_COMMAND,
+      { key: 'invalid' },
+      false,
+    );
+
+    sinon.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      CONNECTION_FAILED_MESSAGE,
+    );
   });
 });
