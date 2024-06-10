@@ -18,17 +18,13 @@ export class PersistentConnectionManager {
     return PersistentConnectionManager._instance;
   }
 
-  async connectionIsSuccessful(
+  async ensureConnection(
     connection: Connection,
     password: string,
   ): Promise<boolean> {
-    try {
-      await this.ensureConnection(connection, password);
-    } catch {
-      return false;
-    }
-
-    return true;
+    const url = getConnectionString(connection);
+    const credentials = { username: connection.user, password };
+    return await this._persistentConnection.ensureConnection(url, credentials);
   }
 
   async executeQuery<T>(
@@ -36,14 +32,13 @@ export class PersistentConnectionManager {
     password: string,
     queryFn: (database?: string) => ExecuteQueryArgs<T>,
   ) {
-    try {
-      await this.ensureConnection(connection, password);
+    if (await this.ensureConnection(connection, password)) {
       return await this._persistentConnection.executeQuery<T>(
         queryFn(connection.database),
       );
-    } catch {
-      return null;
     }
+
+    return null;
   }
 
   async updateConnection(
@@ -57,21 +52,5 @@ export class PersistentConnectionManager {
 
   async closeConnection(): Promise<void> {
     await this._persistentConnection.closeConnection();
-  }
-
-  private async ensureConnection(
-    connection: Connection,
-    password: string,
-  ): Promise<void> {
-    const url = getConnectionString(connection);
-    const credentials = { username: connection.user, password };
-    const connected = await this._persistentConnection.ensureConnection(
-      url,
-      credentials,
-    );
-
-    if (!connected) {
-      throw new Error('Failed to connect to database');
-    }
   }
 }

@@ -13,23 +13,25 @@ import {
 } from './providers/connectionTreeDataProvider';
 import { ConnectionRepository } from './repositories/connectionRepository';
 import {
-  addOrUpdateConnection,
   deleteConnection,
+  saveConnection,
   testConnection,
   toggleConnection,
 } from './services/connectionService';
 import { Connection } from './types/connection';
 import { MethodName } from './types/methodName';
 import {
+  CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
   CONNECTION_FAILED_MESSAGE,
-  CONNECTION_SUCCESFUL_MESSAGE,
+  CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
   CONNECT_COMMAND,
-  CREATE_CONNECTION_COMMAND,
   DELETE_CONNECTION_COMMAND,
   DISCONNECT_COMMAND,
   MANAGE_CONNECTION_COMMAND,
   REFRESH_CONNECTIONS_COMMAND,
+  SAVE_CONNECTION_COMMAND,
   TEST_CONNECTION_COMMAND,
+  TEST_CONNECTION_SUCCESFUL_MESSAGE,
 } from './util/constants';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
@@ -46,19 +48,28 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
       TEST_CONNECTION_COMMAND,
       async (connection: Connection, password: string) => {
         if (await testConnection(connection, password)) {
-          void window.showInformationMessage(CONNECTION_SUCCESFUL_MESSAGE);
+          void window.showInformationMessage(TEST_CONNECTION_SUCCESFUL_MESSAGE);
         } else {
           void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
         }
       },
     ),
     commands.registerCommand(
-      CREATE_CONNECTION_COMMAND,
-      async (connection: Connection, password: string): Promise<boolean> => {
-        const result = await addOrUpdateConnection(connection, password);
+      SAVE_CONNECTION_COMMAND,
+      async (
+        connection: Connection,
+        password: string,
+        isNew: boolean,
+      ): Promise<boolean> => {
+        const result = await saveConnection(connection, password);
 
         if (result) {
           connectionTreeDataProvider.refresh();
+          void window.showInformationMessage(
+            isNew
+              ? CONNECTION_CREATED_SUCCESSFULLY_MESSAGE
+              : CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+          );
         } else {
           void window.showErrorMessage(CONNECTION_FAILED_MESSAGE);
         }

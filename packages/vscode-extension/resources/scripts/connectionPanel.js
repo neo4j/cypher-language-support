@@ -7,9 +7,9 @@
     });
   });
 
-  document.getElementById('add-connection').addEventListener('click', () => {
+  document.getElementById('save-connection').addEventListener('click', () => {
     vscode.postMessage({
-      command: 'onAddConnection',
+      command: 'onSaveConnection',
       connection: this.getConnection(),
       password: this.getPassword(),
     });

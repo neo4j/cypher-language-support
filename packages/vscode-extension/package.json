@@ -58,7 +58,7 @@
         "title": "Refresh Connections"
       },
       {
-        "command": "neo4j.createConnection",
+        "command": "neo4j.saveConnection",
         "title": "Create Connection..."
       }
     ],
@@ -87,7 +87,7 @@
           "when": "false"
         },
         {
-          "command": "neo4j.createConnection",
+          "command": "neo4j.saveConnection",
           "when": "false"
         }
       ],

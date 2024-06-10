@@ -51,14 +51,14 @@ export class ConnectionRepository {
     await this.deletePassword(key);
   }
 
-  async setConnection(
+  async saveConnection(
     connection: Connection,
     password: string,
   ): Promise<Connection> {
     const connections = this.getConnectionsInternal();
     connections[connection.key] = { ...connection };
     await this._globalState.update(this.CONNECTIONS_KEY, connections);
-    await this.setPassword(connection.key, password);
+    await this._secretStorage.store(connection.key, password);
     return connections[connection.key];
   }
 
@@ -89,10 +89,6 @@ export class ConnectionRepository {
     return result
       ? { labels: result.labels, relationshipTypes: result.relationshipTypes }
       : { labels: [], relationshipTypes: [] };
-  }
-
-  private async setPassword(key: string, password: string): Promise<void> {
-    await this._secretStorage.store(key, password);
   }
 
   private async deletePassword(key: string): Promise<void> {

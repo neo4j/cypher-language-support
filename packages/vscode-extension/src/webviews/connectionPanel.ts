@@ -11,7 +11,7 @@ import {
 import { ConnectionRepository } from '../repositories/connectionRepository';
 import { Connection } from '../types/connection';
 import {
-  CREATE_CONNECTION_COMMAND,
+  SAVE_CONNECTION_COMMAND,
   TEST_CONNECTION_COMMAND,
 } from '../util/constants';
 import { getNonce } from '../util/getNonce';
@@ -96,12 +96,13 @@ export class ConnectionPanel {
             );
             break;
           }
-          case 'onAddConnection': {
+          case 'onSaveConnection': {
             if (
               await commands.executeCommand(
-                CREATE_CONNECTION_COMMAND,
+                SAVE_CONNECTION_COMMAND,
                 data.connection,
                 data.password,
+                !this._connection,
               )
             ) {
               this.dispose();
@@ -230,10 +231,8 @@ export class ConnectionPanel {
                   <input type="password" id="password" />
                 </div>
                 <div class="form--actions">
-                  <button type="button" id="test-connection">Test connection</button>
-                  <button type="button" id="add-connection">${
-                    this._connection ? 'Edit Connection' : 'Add Connection'
-                  }</button>
+                  <button type="button" id="test-connection">Test Connection</button>
+                  <button type="button" id="save-connection">Save Connection</button>
                 </div>
               </form>
             </div>

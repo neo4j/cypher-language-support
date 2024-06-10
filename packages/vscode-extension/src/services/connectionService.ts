@@ -8,27 +8,27 @@ export async function testConnection(
   connection: Connection,
   password: string,
 ): Promise<boolean> {
-  return await PersistentConnectionManager.instance.connectionIsSuccessful(
+  return await PersistentConnectionManager.instance.ensureConnection(
     connection,
     password,
   );
 }
 
-export async function addOrUpdateConnection(
+export async function saveConnection(
   connection: Connection,
   password: string,
 ): Promise<boolean> {
-  const successful =
-    await PersistentConnectionManager.instance.connectionIsSuccessful(
+  const hasConnection =
+    await PersistentConnectionManager.instance.ensureConnection(
       connection,
       password,
     );
 
-  if (!successful) {
+  if (!hasConnection) {
     return false;
   }
 
-  connection = await ConnectionRepository.instance.setConnection(
+  connection = await ConnectionRepository.instance.saveConnection(
     connection,
     password,
   );
@@ -46,12 +46,13 @@ export async function toggleConnection(
   const password = await ConnectionRepository.instance.getPasswordForConnection(
     key,
   );
-  if (
-    await PersistentConnectionManager.instance.connectionIsSuccessful(
+  const hasConnection =
+    await PersistentConnectionManager.instance.ensureConnection(
       connection,
       password,
-    )
-  ) {
+    );
+
+  if (hasConnection) {
     connection = await ConnectionRepository.instance.toggleConnection(
       key,
       connected,
@@ -62,6 +63,7 @@ export async function toggleConnection(
     );
     return true;
   }
+
   return false;
 }
 

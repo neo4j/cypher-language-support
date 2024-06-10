@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { CREATE_CONNECTION_COMMAND } from '../src/util/constants';
+import { SAVE_CONNECTION_COMMAND } from '../src/util/constants';
 
 export async function activateExtension(): Promise<void> {
   await vscode.extensions
@@ -9,7 +9,7 @@ export async function activateExtension(): Promise<void> {
 
 export async function createConnection(): Promise<void> {
   await vscode.commands.executeCommand(
-    CREATE_CONNECTION_COMMAND,
+    SAVE_CONNECTION_COMMAND,
     {
       name: 'test',
       key: 'test',
