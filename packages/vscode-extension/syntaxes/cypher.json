@@ -12,10 +12,10 @@
       "include": "#parameters"
     },
     {
-      "include": "#properties"
+      "include": "#constants"
     },
     {
-      "include": "#numbers"
+      "include": "#properties"
     },
     {
       "include": "#labels"
@@ -42,7 +42,7 @@
         },
         {
           "match": "(?i)\\b(ACCESS|ACTIVE|ADMIN|ADMINISTRATOR|ALIAS|ALIASES|ALL|allShortestPaths|ALTER|AND|ANY|ARRAY|AS|ASC|ASCENDING|ASSERT|ASSIGN|AT|BINDINGS|BOOL|BOOLEAN|BOOSTED|BOTH|BREAK|BRIEF|BTREE|BUILT|BY|CALL|CASE|CIDR|CHANGE|COLLECT|COMMAND|COMMANDS|COMMIT|COMPOSITE|CONSTRAINT|CONSTRAINTS|CONTAINS|CONTINUE|COPY|COUNT|CREATE|CSV|CONCURRENT|CURRENT|DATA|DATABASE|DATABASES|DATE|DATETIME|DBMS|DEALLOCATE|DEFAULT|DEFINED|DELETE|DENY|DESC|DESCENDING|DESTROY|DETACH|DIFFERENT|DISTINCT|DRIVER|DROP|DRYRUN|DUMP|DURATION|EACH|EDGE|ELEMENT|ELEMENTS|ELSE|ENABLE|ENCRYPTED|END|ENDS|ERROR|EXECUTABLE|EXECUTE|EXIST|EXISTENCE|EXISTS|FAIL|FALSE|FIELDTERMINATOR|FINISH|FLOAT|FOR|FOREACH|FROM|FULLTEXT|FUNCTION|FUNCTIONS|GRANT|GRAPH|GRAPHS|GROUP|GROUPS|HEADERS|HOME|IF|IMMUTABLE|IMPERSONATE|IN|INDEX|INDEXES|INF|INFINITY|INSERT|INT|INTEGER|IS|JOIN|KEY|LABEL|LABELS|LEADING|LIMIT|LIST|LOAD|LOCAL|LOOKUP|MANAGEMENT|MAP|MATCH|MERGE|NAME|NAMES|NAN|NEW|NFC|NFD|NFKC|NFKD|NODE|NODETACH|NODES|NONE|NORMALIZE|NORMALIZED|NOT|NOTHING|NOWAIT|NULL|OF|ON|ONLY|OPTION|OPTIONAL|OPTIONS|OR|ORDER|OUTPUT|PASSWORD|PASSWORDS|PATH|PATHS|PERIODIC|PLAINTEXT|POINT|POPULATED|PRIMARY|PRIMARIES|PRIVILEGE|PRIVILEGES|PROCEDURE|PROCEDURES|PROPERTIES|PROPERTY|RANGE|READ|REALLOCATE|REDUCE|REL|RELATIONSHIP|RELATIONSHIPS|REMOVE|RENAME|REPEATABLE|REPLACE|REPORT|REQUIRE|REQUIRED|RETURN|REVOKE|ROLE|ROLES|ROW|ROWS|SCAN|SECONDARY|SECONDARIES|SEC|SECOND|SECONDS|SEEK|SERVER|SERVERS|SET|SETTING|SETTINGS|SHORTEST|shortestPath|SHOW|SIGNED|SINGLE|SKIP|START|STARTS|STATUS|STOP|VARCHAR|STRING|SUPPORTED|SUSPENDED|TARGET|TERMINATE|TEXT|THEN|TIME|TIMESTAMP|TIMEZONE|TO|TOPOLOGY|TRAILING|TRANSACTION|TRANSACTIONS|TRAVERSE|TRIM|TRUE|TYPE|TYPED|TYPES|UNION|UNIQUE|UNIQUENESS|UNWIND|URL|USE|USER|USERS|USING|VALUE|VECTOR|VERBOSE|VERTEX|WAIT|WHEN|WHERE|WITH|WITHOUT|WRITE|XOR|YIELD|ZONED|EXPLAIN|PROFILE)\\b",
-          "name": "keyword.cypher"
+          "name": "keyword"
         }
       ]
     },
@@ -88,7 +88,7 @@
     },
     "labels": {
       "begin": "(?<!\\{.*)\\:",
-      "end": "\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+",
+      "end": "(\\s|\\`.+?\\`|\\w|&|\\||\\(.+?\\)|\\!)+",
       "beginCaptures": {
         "0": {
           "name": "keyword.operator"
@@ -96,7 +96,16 @@
       },
       "endCaptures": {
         "0": {
-          "name": "entity.name.class"
+          "patterns": [
+            {
+              "match": "[&|!]",
+              "name": "keyword.operator"
+            },
+            {
+              "match": "\\`.+?\\`|\\w+",
+              "name": "entity.name.class"
+            }
+          ]
         }
       }
     },
@@ -110,20 +119,36 @@
       },
       "endCaptures": {
         "0": {
-          "name": "variable.property"
+          "patterns": [
+            {
+              "match": "\\w*[a-zA-Z]\\w*",
+              "name": "variable.property"
+            },
+            {
+              "include": "#constants"
+            }
+          ]
         }
       }
     },
-    "numbers": {
-      "match": "\\b\\d+\\b",
-      "name": "constant.numeric"
+    "constants": {
+      "patterns": [
+        {
+          "match": "\\b\\d*(\\.)?\\d+\\b",
+          "name": "constant.numeric"
+        },
+        {
+          "match": "(?i)\\b(TRUE|FALSE)\\b",
+          "name": "constant.numeric"
+        }
+      ]
     },
     "procedures": {
       "begin": "CALL",
-      "end": "\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))",
+      "end": "\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))",
       "beginCaptures": {
         "0": {
-          "name": "keyword.cypher"
+          "name": "keyword"
         }
       },
       "endCaptures": {
@@ -133,7 +158,7 @@
       }
     },
     "functions": {
-      "match": "(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))\\s*\\(",
+      "match": "(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(",
       "name": "entity.name.function"
     },
     "parameters": {

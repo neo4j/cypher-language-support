@@ -20,11 +20,10 @@ export const textMateGrammar = {
       include: '#parameters',
     },
     {
-      include: '#properties',
+      include: '#constants',
     },
-    // TODO Nacho should we include more literals like TRUE / FALSE?
     {
-      include: '#numbers',
+      include: '#properties',
     },
     {
       include: '#labels',
@@ -52,8 +51,7 @@ export const textMateGrammar = {
         {
           // The (?i) makes the pattern case insensitive
           match: `(?i)\\b(${keywordRegex})\\b`,
-          // TODO Nacho Is this
-          name: 'keyword.cypher',
+          name: 'keyword',
         },
       ],
     },
@@ -100,7 +98,7 @@ export const textMateGrammar = {
     labels: {
       // Prevents this rule to apply to maps {key: value}
       begin: '(?<!\\{.*)\\:',
-      end: '\\s*(\\`.+\\`|\\w|\\_|\\s*\\&\\s*|\\s*\\|\\s*)+',
+      end: '(\\s|\\`.+?\\`|\\w|&|\\||\\(.+?\\)|\\!)+',
       beginCaptures: {
         '0': {
           name: 'keyword.operator',
@@ -108,7 +106,16 @@ export const textMateGrammar = {
       },
       endCaptures: {
         '0': {
-          name: 'entity.name.class',
+          patterns: [
+            {
+              match: '[&|!]',
+              name: 'keyword.operator',
+            },
+            {
+              match: '\\`.+?\\`|\\w+',
+              name: 'entity.name.class',
+            },
+          ],
         },
       },
     },
@@ -122,13 +129,31 @@ export const textMateGrammar = {
       },
       endCaptures: {
         '0': {
-          name: 'variable.property',
+          patterns: [
+            // Avoid the matched property to be only numbers
+            // otherwise we could match float numbers like .1234
+            {
+              match: '\\w*[a-zA-Z]\\w*',
+              name: 'variable.property',
+            },
+            {
+              include: '#constants',
+            },
+          ],
         },
       },
     },
-    numbers: {
-      match: '\\b\\d+\\b',
-      name: 'constant.numeric',
+    constants: {
+      patterns: [
+        {
+          match: '\\b\\d*(\\.)?\\d+\\b',
+          name: 'constant.numeric',
+        },
+        {
+          match: '(?i)\\b(TRUE|FALSE)\\b',
+          name: 'constant.numeric',
+        },
+      ],
     },
     procedures: {
       begin: 'CALL',
@@ -142,10 +167,10 @@ export const textMateGrammar = {
              CALL `apoc` . coll . `elements`
              CALL `apoc.coll.elements`
           */
-      end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))',
+      end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))',
       beginCaptures: {
         '0': {
-          name: 'keyword.cypher',
+          name: 'keyword',
         },
       },
       endCaptures: {
@@ -157,7 +182,7 @@ export const textMateGrammar = {
     functions: {
       // The function name is too flexible in Cypher, refer to comment on procedure names
       match:
-        '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+ (\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
+        '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
       name: 'entity.name.function',
     },
     parameters: {

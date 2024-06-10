@@ -21,7 +21,7 @@
   },
   {
     "character": "MATCH",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -77,7 +77,7 @@
   },
   {
     "character": "WHERE",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -125,7 +125,7 @@
   },
   {
     "character": "AND",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -157,11 +157,11 @@
   },
   {
     "character": "TRUE",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
   },
   {
     "character": "WITH",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": "    ",
@@ -173,7 +173,7 @@
   },
   {
     "character": "output",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -197,7 +197,7 @@
   },
   {
     "character": "IN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -225,7 +225,7 @@
   },
   {
     "character": "output",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -265,7 +265,7 @@
   },
   {
     "character": "as",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -285,7 +285,7 @@
   },
   {
     "character": "RETURN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",

@@ -33,7 +33,7 @@
   },
   {
     "character": "MATCH",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
@@ -64,7 +64,11 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
   },
   {
-    "character": " CommerceUser",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "CommerceUser",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
   },
   {
@@ -73,7 +77,7 @@
   },
   {
     "character": "WHERE",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -105,7 +109,7 @@
   },
   {
     "character": "RETURN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -121,7 +125,7 @@
   },
   {
     "character": "nodes",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": "/* Another multiline",
@@ -133,7 +137,7 @@
   },
   {
     "character": "LIMIT",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",

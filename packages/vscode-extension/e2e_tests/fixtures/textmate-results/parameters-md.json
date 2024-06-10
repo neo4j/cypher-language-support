@@ -21,7 +21,7 @@
   },
   {
     "character": "MATCH",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": "   ",
@@ -144,7 +144,7 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
   },
   {
-    "character": " Label1&Label2",
+    "character": "Label",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
   },
   {
@@ -177,7 +177,7 @@
   },
   {
     "character": "RETURN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
@@ -225,7 +225,7 @@
   },
   {
     "character": "key",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": ":",

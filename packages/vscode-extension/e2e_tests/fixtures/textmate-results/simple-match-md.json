@@ -21,7 +21,7 @@
   },
   {
     "character": "MATCH",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
@@ -45,7 +45,7 @@
   },
   {
     "character": "RETURN",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.cypher"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
