@@ -1,5 +1,5 @@
 import { Config } from 'neo4j-driver';
-import { initializeDriver } from './initializers/driverIntializer';
+import { initializeDriver } from './initializers/driverInitializer';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';

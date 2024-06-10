@@ -1,6 +1,6 @@
 import sha256 from 'crypto-js/sha256';
 import { Driver } from 'neo4j-driver';
-import { initializeDriver } from './initializers/driverIntializer';
+import { initializeDriver } from './initializers/driverInitializer';
 import { ExecuteQueryArgs } from './types/sdkTypes';
 
 export class PersistentConnection {
