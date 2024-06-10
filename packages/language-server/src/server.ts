@@ -13,7 +13,16 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import {
+  Neo4jDatabases,
+  Neo4jDataSummary,
+  Neo4jFunctions,
+  Neo4jProcedures,
+  Neo4jRoles,
+  Neo4jSchemaPoller,
+  Neo4jUsers,
+  PollingEvent,
+} from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
@@ -114,6 +123,21 @@ connection.listen();
 connection.onExit(() => {
   cleanupWorkers();
 });
+
+neo4jSchemaPoller.connectionEvents.on(
+  PollingEvent.POLLING_REFETCHED_DONE,
+  (
+    data:
+      | Neo4jDataSummary
+      | Neo4jDatabases
+      | Neo4jFunctions
+      | Neo4jProcedures
+      | Neo4jRoles
+      | Neo4jUsers,
+  ) => {
+    void connection.sendNotification(PollingEvent.POLLING_REFETCHED_DONE, data);
+  },
+);
 
 const changeConnection = (connectionSettings: Neo4jSettings) => {
   disconnect();

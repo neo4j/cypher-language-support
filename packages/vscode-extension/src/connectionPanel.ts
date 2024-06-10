@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {
   commands,
   Disposable,
@@ -8,15 +7,11 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { ConnectionRepository } from '../repositories/connectionRepository';
-import { Connection } from '../types/connection';
-import {
-  SAVE_CONNECTION_COMMAND,
-  TEST_CONNECTION_COMMAND,
-} from '../util/constants';
-import { getNonce } from '../util/getNonce';
+import { Connection, getAllConnections } from './connection';
+import { SAVE_CONNECTION_COMMAND, TEST_CONNECTION_COMMAND } from './constants';
+import { getNonce } from './getNonce';
 
-type Data = {
+type WebViewConnectionInfo = {
   command: string;
   connection: Connection;
   password: string;
@@ -33,19 +28,23 @@ export class ConnectionPanel {
 
   private _disposables: Disposable[] = [];
 
-  private constructor(panel: WebviewPanel, extensionUri: Uri) {
+  private constructor(
+    panel: WebviewPanel,
+    extensionUri: Uri,
+    connection?: Connection,
+  ) {
     this._panel = panel;
     this._extensionUri = extensionUri;
 
-    // Aritificially limit the number of connections to 1 for now
-    // If we already have a connection, edit it.. otherwise create a new one
-    this._connection = ConnectionRepository.instance.getConnections()[0];
+    // Ordinarily, if the connection was undefined, we would create a new one
+    // We want to limit this to a single connection for now
+    this._connection = connection ?? getAllConnections()[0];
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
-  public static createOrShow(extensionUri: Uri) {
+  public static createOrShow(extensionUri: Uri, connection?: Connection) {
     const column = window.activeTextEditor
       ? window.activeTextEditor.viewColumn
       : undefined;
@@ -65,7 +64,11 @@ export class ConnectionPanel {
       },
     );
 
-    ConnectionPanel._currentPanel = new ConnectionPanel(panel, extensionUri);
+    ConnectionPanel._currentPanel = new ConnectionPanel(
+      panel,
+      extensionUri,
+      connection,
+    );
   }
 
   private dispose() {
@@ -86,7 +89,7 @@ export class ConnectionPanel {
     this._panel.webview.html = this.getHtmlForWebview(webview);
 
     webview.onDidReceiveMessage(
-      async (data: Data) => {
+      async (data: WebViewConnectionInfo) => {
         switch (data.command) {
           case 'onTestConnection': {
             await commands.executeCommand(
@@ -97,16 +100,17 @@ export class ConnectionPanel {
             break;
           }
           case 'onSaveConnection': {
-            if (
-              await commands.executeCommand(
-                SAVE_CONNECTION_COMMAND,
-                data.connection,
-                data.password,
-                !this._connection,
-              )
-            ) {
-              this.dispose();
-            }
+            await commands.executeCommand(
+              SAVE_CONNECTION_COMMAND,
+              data.connection,
+              data.password,
+              !this._connection,
+            );
+            this.dispose();
+            break;
+          }
+          case 'onValidationError': {
+            void window.showErrorMessage('Please fill in all required fields');
             break;
           }
         }
@@ -162,9 +166,9 @@ export class ConnectionPanel {
             webview.cspSource
           }; script-src 'nonce-${nonce}';">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link href="${resetCssUri}" rel="stylesheet">
-          <link href="${vscodeCssUri}" rel="stylesheet">
-          <link href="${connectionPanelCssUri}" rel="stylesheet">
+          <link href="${resetCssUri.toString()}" rel="stylesheet">
+          <link href="${vscodeCssUri.toString()}" rel="stylesheet">
+          <link href="${connectionPanelCssUri.toString()}" rel="stylesheet">
           <script nonce="${nonce}">
             const vscode = acquireVsCodeApi();
           </script>
@@ -175,7 +179,7 @@ export class ConnectionPanel {
               <h1>${
                 this._connection ? 'Edit Connection' : 'Add New Connection'
               }</h1>
-              <form class="form">
+              <form class="form" action="" novalidate method="post">
                 <input type="hidden" id="key" value="${
                   this._connection?.key ?? getNonce(16)
                 }" />
@@ -184,7 +188,7 @@ export class ConnectionPanel {
                 }" />
                 <div class="form--input-wrapper">
                   <label for="name">Connection name</label>
-                  <input type="text" id="name" placeholder="Default connection" value="${
+                  <input type="text" id="name" required placeholder="Default connection" value="${
                     this._connection?.name ?? 'Default connection'
                   }" />
                 </div>
@@ -204,39 +208,39 @@ export class ConnectionPanel {
                 </div>
                 <div class="form--input-wrapper">
                   <label for="host">Host</label>
-                  <input type="text" id="host" placeholder="localhost" value="${
+                  <input type="text" id="host" required placeholder="localhost" value="${
                     this._connection?.host ?? 'localhost'
                   }"/>
                 </div>
                 <div class="form--input-wrapper">
                   <label for="port">Port</label>
-                  <input type="text" id="port" placeholder="7687" value="${
+                  <input type="text" id="port" required placeholder="7687" value="${
                     this._connection?.port ?? '7687'
                   }"/>
                 </div>
                 <div class="form--input-wrapper">
                   <label for="database">Database</label>
-                  <input type="text" id="database" placeholder="neo4j" value="${
+                  <input type="text" id="database" required placeholder="neo4j" value="${
                     this._connection?.database ?? 'neo4j'
                   }"/>
                 </div>
                 <div class="form--input-wrapper">
                   <label for="user">User</label>
-                  <input type="text" id="user" placeholder="neo4j" value="${
+                  <input type="text" id="user" required placeholder="neo4j" value="${
                     this._connection?.user ?? 'neo4j'
                   }"/>
                 </div>
                 <div class="form--input-wrapper">
                   <label for="password">Password</label>
-                  <input type="password" id="password" />
+                  <input type="password" id="password" required />
                 </div>
                 <div class="form--actions">
                   <button type="button" id="test-connection">Test Connection</button>
-                  <button type="button" id="save-connection">Save Connection</button>
+                  <input type="submit" value="Save Connection" />
                 </div>
               </form>
             </div>
-            <script nonce="${nonce}" src="${connectionPanelJsUri}"></script>
+            <script nonce="${nonce}" src="${connectionPanelJsUri.toString()}"></script>
           </div>
         </body>
       </html>`;

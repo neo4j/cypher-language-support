@@ -3,16 +3,25 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
+import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';
-import { Database, listDatabases } from './queries/databases.js';
-import { DataSummary, getDataSummary } from './queries/dataSummary.js';
-import { listFunctions } from './queries/functions.js';
-import { listProcedures } from './queries/procedures.js';
-import { listRoles, Neo4jRole } from './queries/roles.js';
-import { listUsers, Neo4jUser } from './queries/users.js';
+import {
+  Database,
+  listDatabases,
+  Neo4jDatabases,
+} from './queries/databases.js';
+import { getDataSummary, Neo4jDataSummary } from './queries/dataSummary.js';
+import { listFunctions, Neo4jFunctions } from './queries/functions.js';
+import { listProcedures, Neo4jProcedures } from './queries/procedures.js';
+import { listRoles, Neo4jRoles } from './queries/roles.js';
+import { listUsers, Neo4jUsers } from './queries/users.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
 
-type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
+export type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
+
+export enum PollingEvent {
+  POLLING_REFETCHED_DONE = 'POLLING_REFETCHED_DONE',
+}
 
 type FetchCallback<T> = (
   result: { success: true; data: T } | { success: false; errorMessage: string },
@@ -22,8 +31,10 @@ type PollerConfig<T> = {
   queryArgs: ExecuteQueryArgs<T>;
   connection: Neo4jConnection;
   prefetchedData?: T;
+  eventEmitter: EventEmitter;
   onRefetchDone?: FetchCallback<T>;
   database?: string;
+  eventName?: string;
 };
 
 class QueryPoller<T> {
@@ -32,6 +43,7 @@ class QueryPoller<T> {
   public lastFetchStart?: number;
   public errorMessage?: string;
   private connection: Neo4jConnection;
+  private eventEmitter: EventEmitter;
   private onRefetchDone?: FetchCallback<T>;
   private queryArgs: ExecuteQueryArgs<T>;
 
@@ -39,10 +51,12 @@ class QueryPoller<T> {
     prefetchedData,
     queryArgs,
     connection,
+    eventEmitter,
     onRefetchDone,
   }: PollerConfig<T>) {
     this.connection = connection;
     this.queryArgs = queryArgs;
+    this.eventEmitter = eventEmitter;
     this.onRefetchDone = onRefetchDone;
 
     if (prefetchedData) {
@@ -66,6 +80,7 @@ class QueryPoller<T> {
       this.data = data;
       this.status = 'fetched';
       this.onRefetchDone?.({ success: true, data });
+      this.eventEmitter.emit(PollingEvent.POLLING_REFETCHED_DONE, data);
     } catch (e) {
       const errorMessage = String(e);
       this.errorMessage = errorMessage;
@@ -77,21 +92,26 @@ class QueryPoller<T> {
 }
 
 export class MetadataPoller {
-  private databases: QueryPoller<{ databases: Database[] }>;
-  private dataSummary: QueryPoller<DataSummary>;
-  private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
-  private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
-  private users: QueryPoller<{ users: Neo4jUser[] }>;
-  private roles: QueryPoller<{ roles: Neo4jRole[] }>;
+  private databases: QueryPoller<Neo4jDatabases>;
+  private dataSummary: QueryPoller<Neo4jDataSummary>;
+  private functions: QueryPoller<Neo4jFunctions>;
+  private procedures: QueryPoller<Neo4jProcedures>;
+  private users: QueryPoller<Neo4jUsers>;
+  private roles: QueryPoller<Neo4jRoles>;
   private dbPollingInterval: NodeJS.Timer | undefined;
 
   public dbSchema: DbSchema = {};
 
-  constructor(databases: Database[], connection: Neo4jConnection) {
+  constructor(
+    databases: Database[],
+    connection: Neo4jConnection,
+    eventEmitter: EventEmitter,
+  ) {
     this.databases = new QueryPoller({
       connection,
       queryArgs: listDatabases(),
       prefetchedData: { databases },
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           this.dbSchema.databaseNames = result.data.databases.flatMap(
@@ -107,6 +127,7 @@ export class MetadataPoller {
     this.users = new QueryPoller({
       connection,
       queryArgs: listUsers(),
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           this.dbSchema.userNames = result.data.users.map((user) => user.user);
@@ -117,6 +138,7 @@ export class MetadataPoller {
     this.roles = new QueryPoller({
       connection,
       queryArgs: listRoles(),
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           this.dbSchema.roleNames = result.data.roles.map((role) => role.role);
@@ -127,6 +149,7 @@ export class MetadataPoller {
     this.dataSummary = new QueryPoller({
       connection,
       queryArgs: getDataSummary(connection.currentDb),
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           const { labels, propertyKeys, relationshipTypes } = result.data;
@@ -140,6 +163,7 @@ export class MetadataPoller {
     this.functions = new QueryPoller({
       connection,
       queryArgs: listFunctions({ executableByMe: true }),
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           const functions = result.data.functions.reduce<
@@ -157,6 +181,7 @@ export class MetadataPoller {
     this.procedures = new QueryPoller({
       connection,
       queryArgs: listProcedures({ executableByMe: true }),
+      eventEmitter: eventEmitter,
       onRefetchDone: (result) => {
         if (result.success) {
           const procedures = result.data.procedures.reduce<

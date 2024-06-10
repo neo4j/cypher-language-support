@@ -58,6 +58,10 @@ export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
   additionalProperties: true,
 };
 
+export type Neo4jProcedures = {
+  procedures: Neo4jProcedure[];
+};
+
 const validateProcedure = new Ajv({ useDefaults: true }).compile(
   procedureSchema,
 );
@@ -76,9 +80,7 @@ function cleanTypes(result: Neo4jProcedure): Neo4jProcedure {
  */
 export function listProcedures(
   { executableByMe }: ListProcedureArgs = { executableByMe: false },
-): ExecuteQueryArgs<{
-  procedures: Neo4jProcedure[];
-}> {
+): ExecuteQueryArgs<Neo4jProcedures> {
   const query = `SHOW PROCEDURES ${
     executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
   }

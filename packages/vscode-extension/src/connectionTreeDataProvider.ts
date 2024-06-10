@@ -5,7 +5,7 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { ConnectionRepository } from '../repositories/connectionRepository';
+import { getAllConnections, getConnectionDataSummary } from './connection';
 
 type ConnectionItemType =
   | 'connection'
@@ -30,7 +30,7 @@ export class ConnectionTreeDataProvider
     return element;
   }
 
-  async getChildren(element?: ConnectionItem): Promise<ConnectionItem[]> {
+  getChildren(element?: ConnectionItem): ConnectionItem[] {
     if (!element) {
       return this.getTopLevelConnections();
     }
@@ -41,32 +41,31 @@ export class ConnectionTreeDataProvider
         return this.getConnectionElement(element);
       case 'label':
       case 'relationship':
-        return await this.getPropertyElements(element);
+        return this.getPropertyElements(element);
     }
   }
 
   private getConnectionElement(element: ConnectionItem): ConnectionItem[] {
-    return [
-      new ConnectionItem(
-        'label',
-        'Labels',
-        TreeItemCollapsibleState.Collapsed,
-        element.key,
-      ),
-      new ConnectionItem(
-        'relationship',
-        'Relationships',
-        TreeItemCollapsibleState.Collapsed,
-        element.key,
-      ),
-    ];
+    if (element.type === 'activeConnection') {
+      return [
+        new ConnectionItem(
+          'label',
+          'Labels',
+          TreeItemCollapsibleState.Collapsed,
+          element.key,
+        ),
+        new ConnectionItem(
+          'relationship',
+          'Relationships',
+          TreeItemCollapsibleState.Collapsed,
+          element.key,
+        ),
+      ];
+    }
   }
 
-  private async getPropertyElements(
-    element: ConnectionItem,
-  ): Promise<ConnectionItem[]> {
-    const summary =
-      await ConnectionRepository.instance.getConnectionDataSummary(element.key);
+  private getPropertyElements(element: ConnectionItem): ConnectionItem[] {
+    const summary = getConnectionDataSummary(element.key);
     if (element.type === 'label') {
       return this.mapConnectionItemsForType(element.type, summary.labels);
     } else {
@@ -81,15 +80,14 @@ export class ConnectionTreeDataProvider
     type: ConnectionItemType,
     properties: string[],
   ): ConnectionItem[] {
-    return properties.map(
+    return properties?.map(
       (r) => new ConnectionItem(type, r, TreeItemCollapsibleState.None),
     );
   }
 
   private getTopLevelConnections(): ConnectionItem[] {
     const connectionItems = Array<ConnectionItem>();
-    // Artificially limit this to one connection for now
-    const connections = [ConnectionRepository.instance.getConnections()[0]];
+    const connections = getAllConnections();
 
     for (const connection of connections) {
       if (connection) {
@@ -97,7 +95,9 @@ export class ConnectionTreeDataProvider
           new ConnectionItem(
             connection.connect ? 'activeConnection' : 'connection',
             connection.name,
-            TreeItemCollapsibleState.Collapsed,
+            connection.connect
+              ? TreeItemCollapsibleState.Collapsed
+              : TreeItemCollapsibleState.None,
             connection.key,
           ),
         );

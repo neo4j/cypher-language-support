@@ -31,7 +31,8 @@
   margin: 1rem 0 0 0;
 }
 
-.form--actions button {
+.form--actions button,
+.form--actions input[type='submit'] {
   width: auto;
   margin-left: 1rem;
   padding-left: 1rem;

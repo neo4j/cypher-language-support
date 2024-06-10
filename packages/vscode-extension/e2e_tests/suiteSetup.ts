@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SAVE_CONNECTION_COMMAND } from '../src/util/constants';
+import { SAVE_CONNECTION_COMMAND } from '../src/constants';
 
 export async function activateExtension(): Promise<void> {
   await vscode.extensions

@@ -44,7 +44,8 @@ code {
   font-family: var(--vscode-editor-font-family);
 }
 
-button {
+button,
+input[type='submit'] {
   border: none;
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   width: 100%;
@@ -55,25 +56,18 @@ button {
   background: var(--vscode-button-background);
 }
 
-button:hover {
+button:hover,
+input[type='submit']:hover {
   cursor: pointer;
   background: var(--vscode-button-hoverBackground);
 }
 
-button:focus {
+button:focus,
+input[type='submit']:focus {
   outline-color: var(--vscode-focusBorder);
 }
 
-button.secondary {
-  color: var(--vscode-button-secondaryForeground);
-  background: var(--vscode-button-secondaryBackground);
-}
-
-button.secondary:hover {
-  background: var(--vscode-button-secondaryHoverBackground);
-}
-
-input:not([type='checkbox']),
+input:not([type='submit']),
 textarea,
 select {
   display: block;

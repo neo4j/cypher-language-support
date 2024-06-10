@@ -6,11 +6,13 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { registerCommands } from './commands';
-import { LangugageClientManager } from './managers/languageClientManager';
-import { PersistentConnectionManager } from './managers/persistentConnectionManager';
-import { ConnectionRepository } from './repositories/connectionRepository';
-import { MethodName } from './types/methodName';
+import { setAppContext } from './appContext';
+import { getCurrentConnection } from './connection';
+import {
+  MethodName,
+  sendNotificationToLanguageClient,
+} from './languageClientService';
+import { registerDisposables } from './registerDisposables';
 
 let client: LanguageClient;
 
@@ -51,16 +53,10 @@ export async function activate(context: ExtensionContext) {
     clientOptions,
   );
 
-  // Initialize singletons
-  LangugageClientManager.instance = new LangugageClientManager(client);
-  PersistentConnectionManager.instance = new PersistentConnectionManager();
-  ConnectionRepository.instance = new ConnectionRepository(
-    context.globalState,
-    context.secrets,
-  );
+  setAppContext(context, client);
 
   // Register commands
-  context.subscriptions.push(...registerCommands(context.extensionUri));
+  context.subscriptions.push(...registerDisposables(context.extensionUri));
 
   // Start the client. This will also launch the server
   await client.start();
@@ -70,8 +66,6 @@ export async function activate(context: ExtensionContext) {
 }
 
 export async function deactivate(): Promise<void> | undefined {
-  await PersistentConnectionManager.instance.closeConnection();
-
   if (!client) {
     return undefined;
   }
@@ -80,17 +74,9 @@ export async function deactivate(): Promise<void> | undefined {
 }
 
 async function reconnectConnection(): Promise<void> {
-  const connection = ConnectionRepository.instance.getCurrentConnection();
+  const connection = getCurrentConnection();
   if (connection) {
-    const password =
-      await ConnectionRepository.instance.getPasswordForConnection(
-        connection.key,
-      );
-    await PersistentConnectionManager.instance.updateConnection(
-      connection,
-      password,
-    );
-    await LangugageClientManager.instance.sendNotification(
+    await sendNotificationToLanguageClient(
       MethodName.ConnectionUpdated,
       connection,
     );

@@ -42,16 +42,16 @@
         "icon": "$(add)"
       },
       {
-        "command": "neo4j.deleteConnection",
-        "title": "Delete Connection..."
-      },
-      {
         "command": "neo4j.connect",
         "title": "Connect"
       },
       {
         "command": "neo4j.disconnect",
         "title": "Disconnect"
+      },
+      {
+        "command": "neo4j.deleteConnection",
+        "title": "Delete Connection..."
       },
       {
         "command": "neo4j.refreshConnections",
@@ -100,20 +100,24 @@
       ],
       "view/item/context": [
         {
-          "command": "neo4j.manageConnection",
-          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection"
-        },
-        {
-          "command": "neo4j.deleteConnection",
-          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection"
-        },
-        {
           "command": "neo4j.connect",
-          "when": "view == neo4jConnections && viewItem == connection"
+          "when": "view == neo4jConnections && viewItem == connection",
+          "group": "00_connection@1"
         },
         {
           "command": "neo4j.disconnect",
-          "when": "view == neo4jConnections && viewItem == activeConnection"
+          "when": "view == neo4jConnections && viewItem == activeConnection",
+          "group": "00_connection@1"
+        },
+        {
+          "command": "neo4j.manageConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "01_management@1"
+        },
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "01_management@2"
         }
       ]
     },

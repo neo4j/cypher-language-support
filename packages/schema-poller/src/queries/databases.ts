@@ -32,13 +32,15 @@ export type Database = {
   constituents?: string[];
 };
 
+export type Neo4jDatabases = {
+  databases: Database[];
+};
+
 /**
  * List available databases in your dbms
  * https://neo4j.com/docs/cypher-manual/current/administration/databases/#administration-databases-show-databases
  */
-export function listDatabases(): ExecuteQueryArgs<{
-  databases: Database[];
-}> {
+export function listDatabases(): ExecuteQueryArgs<Neo4jDatabases> {
   const query = 'SHOW DATABASES';
 
   const resultTransformer = resultTransformers.mappedResultTransformer({

@@ -10,13 +10,15 @@ export type Neo4jUser = {
   home?: string;
 };
 
+export type Neo4jUsers = {
+  users: Neo4jUser[];
+};
+
 /**
  * Gets available users in your database
  * https://neo4j.com/docs/cypher-manual/current/administration/access-control/manage-users/#access-control-list-users
  */
-export function listUsers(): ExecuteQueryArgs<{
-  users: Neo4jUser[];
-}> {
+export function listUsers(): ExecuteQueryArgs<Neo4jUsers> {
   const query = `SHOW USERS`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({

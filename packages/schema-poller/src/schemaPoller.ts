@@ -1,5 +1,6 @@
+import { EventEmitter } from 'events';
 import { Config } from 'neo4j-driver';
-import { initializeDriver } from './initializers/driverInitializer';
+import { initializeDriver } from './driverInitializer';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
@@ -7,6 +8,7 @@ import { listDatabases } from './queries/databases.js';
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
+  public connectionEvents = new EventEmitter();
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
   async connect(
@@ -34,7 +36,11 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    this.metadata = new MetadataPoller(databases, this.connection);
+    this.metadata = new MetadataPoller(
+      databases,
+      this.connection,
+      this.connectionEvents,
+    );
     this.metadata.startBackgroundPolling();
   }
 

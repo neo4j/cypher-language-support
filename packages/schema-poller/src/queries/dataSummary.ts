@@ -1,7 +1,7 @@
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
-export type DataSummary = {
+export type Neo4jDataSummary = {
   labels: string[];
   relationshipTypes: string[];
   propertyKeys: string[];
@@ -11,7 +11,7 @@ const ITEM_LIMIT = 1000;
 
 export function getDataSummary(
   database?: string,
-): ExecuteQueryArgs<DataSummary> {
+): ExecuteQueryArgs<Neo4jDataSummary> {
   const query = `CALL db.labels() YIELD label
 RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
 UNION ALL

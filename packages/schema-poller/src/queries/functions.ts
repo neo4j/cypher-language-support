@@ -54,6 +54,10 @@ export const functionSchema: JSONSchemaType<Neo4jFunction> = {
   additionalProperties: true,
 };
 
+export type Neo4jFunctions = {
+  functions: Neo4jFunction[];
+};
+
 const validateFunction = new Ajv({ useDefaults: true }).compile(functionSchema);
 
 /**
@@ -62,9 +66,7 @@ const validateFunction = new Ajv({ useDefaults: true }).compile(functionSchema);
  */
 export function listFunctions(
   { executableByMe }: ListFunctionArgs = { executableByMe: false },
-): ExecuteQueryArgs<{
-  functions: Neo4jFunction[];
-}> {
+): ExecuteQueryArgs<Neo4jFunctions> {
   const query = `SHOW FUNCTIONS ${
     executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
   }

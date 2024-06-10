@@ -1,19 +1,16 @@
 (() => {
-  document.getElementById('test-connection').addEventListener('click', () => {
-    vscode.postMessage({
-      command: 'onTestConnection',
-      connection: this.getConnection(),
-      password: this.getPassword(),
-    });
-  });
-
-  document.getElementById('save-connection').addEventListener('click', () => {
-    vscode.postMessage({
-      command: 'onSaveConnection',
-      connection: this.getConnection(),
-      password: this.getPassword(),
-    });
-  });
+  validateConnection = (connection, password) => {
+    return (
+      connection.key &&
+      connection.name &&
+      connection.scheme &&
+      connection.host &&
+      connection.port &&
+      connection.user &&
+      connection.database &&
+      password
+    );
+  };
 
   getConnection = () => {
     return {
@@ -25,10 +22,50 @@
       user: document.getElementById('user').value,
       database: document.getElementById('database').value,
       connect: document.getElementById('connect').value === 'true',
+      default: true,
     };
   };
 
   getPassword = () => {
     return document.getElementById('password').value;
   };
+
+  onSubmit = (event) => {
+    event.preventDefault();
+
+    const connection = this.getConnection();
+    const password = this.getPassword();
+
+    if (!this.validateConnection(connection, password)) {
+      vscode.postMessage({
+        command: 'onValidationError',
+      });
+      return false;
+    } else {
+      vscode.postMessage({
+        command: 'onSaveConnection',
+        connection: connection,
+        password: password,
+      });
+    }
+  };
+
+  addEventListener('submit', (event) => this.onSubmit(event));
+
+  document.getElementById('test-connection').addEventListener('click', () => {
+    const connection = this.getConnection();
+    const password = this.getPassword();
+
+    if (!this.validateConnection(connection, password)) {
+      vscode.postMessage({
+        command: 'onError',
+      });
+    } else {
+      vscode.postMessage({
+        command: 'onTestConnection',
+        connection: connection,
+        password: password,
+      });
+    }
+  });
 })();
