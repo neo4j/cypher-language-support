@@ -13,3 +13,5 @@ export const CONNECTION_CREATED_SUCCESSFULLY_MESSAGE: string =
   'Connection created successfully';
 export const CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE: string =
   'Connection updated successfully';
+export const CONNECTION_DELETED_SUCCESSFULLY_MESSAGE: string =
+  'Connection deleted successfully';

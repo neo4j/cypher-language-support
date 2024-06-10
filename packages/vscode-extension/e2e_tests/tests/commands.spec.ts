@@ -4,8 +4,10 @@ import * as sinon from 'sinon';
 import * as vscode from 'vscode';
 import {
   CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
+  CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
   CONNECTION_FAILED_MESSAGE,
   CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+  DELETE_CONNECTION_COMMAND,
   SAVE_CONNECTION_COMMAND,
   TEST_CONNECTION_COMMAND,
   TEST_CONNECTION_SUCCESFUL_MESSAGE,
@@ -119,5 +121,41 @@ suite('Extension spec', () => {
       showInformationMessageStub,
       CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
     );
+  });
+
+  test('Dismissing the connection deletion modal should not show a message', async () => {
+    const stub = sinon.stub(vscode.window, 'showWarningMessage');
+    stub.resolves(undefined);
+
+    await vscode.commands.executeCommand(DELETE_CONNECTION_COMMAND, {
+      key: 'test',
+      label: 'test',
+    });
+
+    sinon.assert.notCalled(showInformationMessageStub);
+
+    stub.restore();
+  });
+
+  test('Deleting a connection should show a success message', async () => {
+    // The following line is necessary because the showWarningMessage method
+    // used in commands.ts is using one of the overloads with the <T extends string>
+    // generic argument, but the stubbed type resolves to the non-generic version of the method
+    // which uses the MessageItem type.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stub = sinon.stub(vscode.window, 'showWarningMessage' as any);
+    stub.resolves('Yes');
+
+    await vscode.commands.executeCommand(DELETE_CONNECTION_COMMAND, {
+      key: 'test',
+      label: 'test',
+    });
+
+    sinon.assert.calledOnceWithExactly(
+      showInformationMessageStub,
+      CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
+    );
+
+    stub.restore();
   });
 });

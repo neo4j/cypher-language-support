@@ -22,6 +22,7 @@ import { Connection } from './types/connection';
 import { MethodName } from './types/methodName';
 import {
   CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
+  CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
   CONNECTION_FAILED_MESSAGE,
   CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
   CONNECT_COMMAND,
@@ -92,7 +93,9 @@ export function registerCommands(extensionUri: Uri): Disposable[] {
         if (result === 'Yes') {
           await deleteConnection(connection.key);
           connectionTreeDataProvider.refresh();
-          void window.showInformationMessage('Connection deleted');
+          void window.showInformationMessage(
+            CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
+          );
         }
       },
     ),
