@@ -6,10 +6,17 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
+import { setAppContext } from './appContext';
+import { getCurrentConnection } from './connection';
+import {
+  MethodName,
+  sendNotificationToLanguageClient,
+} from './languageClientService';
+import { registerDisposables } from './registerDisposables';
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const runServer = context.asAbsolutePath(
     path.join('dist', 'cypher-language-server.js'),
@@ -17,7 +24,6 @@ export function activate(context: ExtensionContext) {
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
-
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -27,7 +33,6 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.ipc,
     },
   };
-
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for Cypher text documents
@@ -37,7 +42,6 @@ export function activate(context: ExtensionContext) {
       fileEvents: workspace.createFileSystemWatcher('**/.clientrc'),
     },
   };
-
   // Create the language client and start the client.
   client = new LanguageClient(
     'neo4j',
@@ -46,13 +50,32 @@ export function activate(context: ExtensionContext) {
     clientOptions,
   );
 
+  setAppContext(context, client);
+
+  // Register commands
+  context.subscriptions.push(...registerDisposables(context.extensionUri));
+
   // Start the client. This will also launch the server
-  void client.start();
+  await client.start();
+
+  // Reconnect to a connection if there is one
+  await reconnectConnection();
 }
 
-export function deactivate(): Promise<void> | undefined {
+export async function deactivate(): Promise<void> | undefined {
   if (!client) {
     return undefined;
   }
+
   return client.stop();
+}
+
+async function reconnectConnection(): Promise<void> {
+  const connection = getCurrentConnection();
+  if (connection) {
+    await sendNotificationToLanguageClient(
+      MethodName.ConnectionUpdated,
+      connection,
+    );
+  }
 }

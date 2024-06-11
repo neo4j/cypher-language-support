@@ -96,29 +96,16 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
-connection.onDidChangeConfiguration(
-  (params: { settings: { neo4j: Neo4jSettings } }) => {
-    neo4jSchemaPoller.disconnect();
-
-    const neo4jConfig = params.settings.neo4j;
-    if (
-      neo4jSchemaPoller.connection === undefined &&
-      neo4jConfig.connect &&
-      neo4jConfig.password &&
-      neo4jConfig.connectURL &&
-      neo4jConfig.user
-    ) {
-      void neo4jSchemaPoller.persistentConnect(
-        neo4jConfig.connectURL,
-        {
-          username: neo4jConfig.user,
-          password: neo4jConfig.password,
-        },
-        { appName: 'cypher-language-server' },
-      );
-    }
+connection.onNotification(
+  'connectionUpdated',
+  (connectionSettings: Neo4jSettings) => {
+    changeConnection(connectionSettings);
   },
 );
+
+connection.onNotification('connectionDeleted', () => {
+  disconnect();
+});
 
 documents.listen(connection);
 
@@ -127,3 +114,29 @@ connection.listen();
 connection.onExit(() => {
   cleanupWorkers();
 });
+
+const changeConnection = (connectionSettings: Neo4jSettings) => {
+  disconnect();
+
+  if (
+    neo4jSchemaPoller.connection === undefined &&
+    connectionSettings.connect &&
+    connectionSettings.password &&
+    connectionSettings.connectURL &&
+    connectionSettings.user
+  ) {
+    void neo4jSchemaPoller.persistentConnect(
+      connectionSettings.connectURL,
+      {
+        username: connectionSettings.user,
+        password: connectionSettings.password,
+      },
+      { appName: 'cypher-language-server' },
+      connectionSettings.database,
+    );
+  }
+};
+
+const disconnect = () => {
+  neo4jSchemaPoller.disconnect();
+};
