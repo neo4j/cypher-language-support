@@ -17,8 +17,7 @@ export type Connection = {
   user: string;
   database: string;
   connect: boolean;
-  default: boolean;
-  dataSummary: Neo4jDataSummary;
+  dataSummary?: Neo4jDataSummary;
 };
 
 type Connections = {
@@ -51,7 +50,8 @@ export function getCurrentConnection(): Connection | null {
 
 // Artificially limit this to a single connection for now
 export function getAllConnections(): Connection[] {
-  return [Object.values(getConnections() || [])[0]];
+  const connections = Object.values(getConnections());
+  return connections.length ? [connections[0]] : [];
 }
 
 export function getConnection(key: string): Connection | null {

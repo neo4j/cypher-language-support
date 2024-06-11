@@ -33,7 +33,6 @@ async function getLanguageClientConnectionSettings(
   const password = await getPasswordForConnection(connection.key);
 
   return {
-    connectionKey: connection.key,
     trace: trace,
     connect: connection.connect,
     connectURL: getConnectionString(connection),
