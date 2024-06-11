@@ -61,24 +61,6 @@
         "embeddedLanguages": {
           "meta.embedded.block.cypher": "cypher"
         }
-      },
-      {
-        "injectTo": [
-          "source.js",
-          "source.ts",
-          "source.js.jsx",
-          "source.tsx",
-          "source.vue",
-          "source.svelte",
-          "source.astro",
-          "text.html.markdown",
-          "text.html.derivative"
-        ],
-        "scopeName": "inline.cypher",
-        "path": "./syntaxes/cypher.js.json",
-        "embeddedLanguages": {
-          "meta.embedded.block.cypher": "cypher"
-        }
       }
     ],
     "configuration": {

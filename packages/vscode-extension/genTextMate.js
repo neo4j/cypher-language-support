@@ -4,5 +4,5 @@ const textMateGrammar = languageSupport.textMateGrammar;
 
 fs.writeFileSync(
   './syntaxes/cypher.json',
-  JSON.stringify(textMateGrammar, undefined, 4),
+  JSON.stringify(textMateGrammar, undefined, 2),
 );
