@@ -167,17 +167,22 @@ export const textMateGrammar = {
              CALL `apoc` . coll . `elements`
              CALL `apoc.coll.elements`
           */
-      end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))',
+      end: '\\(',
       beginCaptures: {
         '0': {
           name: 'keyword',
         },
       },
-      endCaptures: {
-        '0': {
+      patterns: [
+        {
+          match: '`\\w+\\`|\\w+',
           name: 'entity.name.function.procedure',
         },
-      },
+        {
+          match: '\\.',
+          name: 'keyword.operator',
+        },
+      ],
     },
     functions: {
       // The function name is too flexible in Cypher, refer to comment on procedure names

@@ -24,7 +24,27 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " apoc.periodic.iterate",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "periodic",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "iterate",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {
@@ -140,7 +160,27 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " apoc.coll.elements",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "elements",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {
@@ -152,7 +192,43 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " apoc   . coll . elements",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": "   ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "elements",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {
@@ -164,7 +240,43 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " `apoc` . coll . `elements`",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "`apoc`",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "`elements`",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {
@@ -176,7 +288,123 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " `apoc.coll.elements`",
+    "character": " `",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "elements",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": "`()",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "CALL",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " `",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "elements",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": "`()",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "CALL",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "coll",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "elements",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": "()",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "CALL",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "`apoc`",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "`coll`",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "`elements`",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {

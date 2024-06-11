@@ -64,7 +64,19 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " some.procedure",
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "some",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "procedure",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
   },
   {

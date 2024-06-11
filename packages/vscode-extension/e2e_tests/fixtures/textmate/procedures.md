@@ -13,4 +13,16 @@ CALL apoc.coll.elements()
 CALL apoc   . coll . elements()
 CALL `apoc` . coll . `elements`()
 CALL `apoc.coll.elements`()
+
+CALL `apoc.
+coll.
+elements`()
+
+CALL apoc
+.coll
+.elements()
+
+CALL `apoc`
+.`coll`
+.`elements`()
 ```
