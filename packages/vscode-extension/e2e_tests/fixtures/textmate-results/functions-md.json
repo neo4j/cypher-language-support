@@ -37,7 +37,7 @@
   },
   {
     "character": "1",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
   },
   {
     "character": ",",
@@ -45,7 +45,7 @@
   },
   {
     "character": "3",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
   },
   {
     "character": ",",
@@ -53,7 +53,7 @@
   },
   {
     "character": "5",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
   },
   {
     "character": "]))",
@@ -64,11 +64,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
   },
   {
-    "character": " ",
+    "character": " some.procedure",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function.procedure"
+  },
+  {
+    "character": "(",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
   },
   {
-    "character": "some.procedure(function(",
+    "character": "function(",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
   },
   {

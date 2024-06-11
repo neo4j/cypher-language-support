@@ -11,10 +11,25 @@ export const textMateGrammar = {
   name: 'Cypher',
   patterns: [
     {
+      include: '#strings',
+    },
+    {
+      include: '#comments',
+    },
+    {
+      include: '#parameters',
+    },
+    {
+      include: '#constants',
+    },
+    {
       include: '#properties',
     },
     {
       include: '#labels',
+    },
+    {
+      include: '#procedures',
     },
     {
       include: '#functions',
@@ -37,6 +52,46 @@ export const textMateGrammar = {
           // The (?i) makes the pattern case insensitive
           match: `(?i)\\b(${keywordRegex})\\b`,
           name: 'keyword',
+        },
+      ],
+    },
+    strings: {
+      patterns: [
+        {
+          begin: "'",
+          end: "'",
+          name: 'string.quoted.single',
+          patterns: [
+            {
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
+            },
+          ],
+        },
+        {
+          begin: '"',
+          end: '"',
+          name: 'string.quoted.double',
+          patterns: [
+            {
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
+            },
+          ],
+        },
+      ],
+    },
+    comments: {
+      patterns: [
+        {
+          begin: '//',
+          end: '$',
+          name: 'comment.line',
+        },
+        {
+          begin: '/\\*',
+          end: '\\*/',
+          name: 'comment.block',
         },
       ],
     },
@@ -88,11 +143,61 @@ export const textMateGrammar = {
         },
       },
     },
+    constants: {
+      patterns: [
+        {
+          match: '\\b\\d*(\\.)?\\d+\\b',
+          name: 'constant.numeric',
+        },
+        {
+          match: '(?i)\\b(TRUE|FALSE)\\b',
+          name: 'constant.numeric',
+        },
+      ],
+    },
+    procedures: {
+      begin: 'CALL',
+      /* 
+          The procedure name is too flexible in Cypher, hence this cumbersome 
+          regular expression that allows for individually namespace 
+          elements to be backticked or the whole name to be backticked:
+           
+             CALL apoc.coll.elements
+             CALL apoc   . coll . elements
+             CALL `apoc` . coll . `elements`
+             CALL `apoc.coll.elements`
+          */
+      end: '\\s*(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))',
+      beginCaptures: {
+        '0': {
+          name: 'keyword',
+        },
+      },
+      endCaptures: {
+        '0': {
+          name: 'entity.name.function.procedure',
+        },
+      },
+    },
     functions: {
       // The function name is too flexible in Cypher, refer to comment on procedure names
       match:
         '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
       name: 'entity.name.function',
+    },
+    parameters: {
+      begin: '\\$',
+      end: '\\w+',
+      beginCaptures: {
+        '0': {
+          name: 'entity.name.namespace',
+        },
+      },
+      endCaptures: {
+        '0': {
+          name: 'variable',
+        },
+      },
     },
     variables: {
       match: '\\w+',
