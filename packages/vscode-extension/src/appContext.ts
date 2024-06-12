@@ -12,7 +12,7 @@ export function setAppContext(
   _languageClient = languageClient;
 }
 
-export function getContext(): ExtensionContext {
+export function getExtensionContext(): ExtensionContext {
   if (!_context) {
     throw new Error('Context is undefined');
   }

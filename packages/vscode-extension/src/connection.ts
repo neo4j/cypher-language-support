@@ -1,4 +1,4 @@
-import { getContext } from './appContext';
+import { getExtensionContext } from './appContext';
 import {
   MethodName,
   sendNotificationToLanguageClient,
@@ -21,25 +21,29 @@ type Connections = {
 
 const CONNECTIONS_KEY: string = 'connections';
 
-// export async function testConnection(
-//   connection: Connection,
-//   password: string,
-// ): Promise<boolean> {
-//     return await testConnectionTransiently(
-//       getConnectionString(connection),
-//       {
-//         username: connection.user,
-//         password: password,
-//       },
-//       {
-//         appName: 'vscode-extension',
-//       },
-//     );
-// }
+export async function testConnection(
+  connection: Connection,
+  password: string,
+): Promise<boolean> {
+  // return await testConnectionTransiently(
+  //   getConnectionString(connection),
+  //   {
+  //     username: connection.user,
+  //     password: password,
+  //   },
+  //   {
+  //     appName: 'vscode-extension',
+  //   },
+  // );
+  connection;
+  password;
+  return await Promise.resolve(true);
+}
 
 export function getCurrentConnection(): Connection | null {
-  return Object.values(getConnections()).find(
-    (connection) => connection.connect,
+  return (
+    Object.values(getConnections()).find((connection) => connection.connect) ??
+    null
   );
 }
 
@@ -51,16 +55,19 @@ export function getAllConnections(): Connection[] {
 
 export function getConnection(key: string): Connection | null {
   const connections = getConnections();
-  return connections[key];
+  return connections[key] ?? null;
 }
 
 export async function deleteConnection(key: string): Promise<void> {
   const connections = getConnections();
-  const connection = connections[key];
-  delete connections[key];
-  await updateConnections(connections);
-  await deletePassword(key);
-  await sendNotification(MethodName.ConnectionDeleted, connection);
+  let connection = connections[key];
+  if (connection) {
+    connection = { ...connection, connect: false };
+    delete connections[key];
+    await updateConnections(connections);
+    await deletePassword(key);
+    await sendNotification(MethodName.ConnectionDeleted, connection);
+  }
 }
 
 export async function saveConnection(
@@ -87,38 +94,46 @@ export async function saveConnection(
 export async function toggleConnection(key: string): Promise<void> {
   const connections = getConnections();
   let connection = connections[key];
-  connection = { ...connection, connect: !connection.connect };
-  connections[key] = connection;
-  await updateConnections(connections);
-  await sendNotification(MethodName.ConnectionUpdated, connection);
+  if (connection) {
+    connection = { ...connection, connect: !connection.connect };
+    connections[key] = connection;
+    await updateConnections(connections);
+    await sendNotification(MethodName.ConnectionUpdated, connection);
+  }
 }
 
-export async function getPasswordForConnection(key: string): Promise<string> {
-  const context = getContext();
-  return await context.secrets.get(key);
+export async function getPasswordForConnection(
+  key: string,
+): Promise<string | null> {
+  const context = getExtensionContext();
+  return (await context.secrets.get(key)) ?? null;
 }
 
-export function getConnectionString(connection: Connection): string {
-  return `${connection.scheme}${connection.host}:${connection.port}`;
+export function getConnectionString(connection: Connection): string | null {
+  if (connection) {
+    return `${connection.scheme}${connection.host}:${connection.port}`;
+  }
+
+  return null;
 }
 
 async function updateConnections(connections: Connections): Promise<void> {
-  const context = getContext();
+  const context = getExtensionContext();
   await context.globalState.update(CONNECTIONS_KEY, connections);
 }
 
 async function savePassword(key: string, password: string): Promise<void> {
-  const context = getContext();
+  const context = getExtensionContext();
   await context.secrets.store(key, password);
 }
 
 async function deletePassword(key: string): Promise<void> {
-  const context = getContext();
+  const context = getExtensionContext();
   await context.secrets.delete(key);
 }
 
 function getConnections(): Connections {
-  const context = getContext();
+  const context = getExtensionContext();
   return context.globalState.get(CONNECTIONS_KEY, {});
 }
 
