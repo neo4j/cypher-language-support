@@ -1,11 +1,11 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { workspace } from 'vscode';
-import { getLanguageClient } from './appContext';
 import {
   Connection,
   getConnectionString,
   getPasswordForConnection,
-} from './connection';
+} from './connectionService';
+import { getLanguageClient } from './contextService';
 
 export enum MethodName {
   ConnectionUpdated = 'connectionUpdated',

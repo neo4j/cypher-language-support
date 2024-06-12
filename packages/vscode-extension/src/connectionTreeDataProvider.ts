@@ -5,7 +5,7 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { getAllConnections } from './connection';
+import { getAllConnections } from './connectionService';
 
 type ConnectionItemType = 'connection' | 'activeConnection';
 

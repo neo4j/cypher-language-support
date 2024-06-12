@@ -8,7 +8,7 @@ type Neo4jLanguageClient = {
 let _context: ExtensionContext | undefined;
 let _languageClient: Neo4jLanguageClient | undefined;
 
-export function setAppContext(
+export function setContext(
   context: ExtensionContext,
   languageClient: Neo4jLanguageClient,
 ) {

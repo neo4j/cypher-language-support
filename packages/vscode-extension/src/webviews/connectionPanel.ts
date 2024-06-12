@@ -7,7 +7,7 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { Connection, getAllConnections } from '../connection';
+import { Connection, getAllConnections } from '../connectionService';
 import { SAVE_CONNECTION_COMMAND, TEST_CONNECTION_COMMAND } from '../constants';
 import { getNonce } from '../getNonce';
 

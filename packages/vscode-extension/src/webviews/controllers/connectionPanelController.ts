@@ -1,4 +1,4 @@
-import { Connection } from '../../connection';
+import { Connection } from '../../connectionService';
 import { WebViewMessage } from '../connectionPanel';
 
 interface vscode {
