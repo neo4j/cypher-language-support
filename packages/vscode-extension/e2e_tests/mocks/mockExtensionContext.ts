@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Extension,
   ExtensionContext,
@@ -12,7 +10,7 @@ import { InMemoryMemento } from './inMemoryMemento';
 import { InMemorySecretStorage } from './inMemorySecretStorage';
 
 export class MockExtensionContext implements ExtensionContext {
-  subscriptions: { dispose(): any }[] = [];
+  subscriptions: { dispose(): unknown }[] = [];
   workspaceState: Memento;
   globalState = new InMemoryMemento();
   secrets = new InMemorySecretStorage();
@@ -20,7 +18,7 @@ export class MockExtensionContext implements ExtensionContext {
   extensionPath: string;
   environmentVariableCollection: GlobalEnvironmentVariableCollection;
   asAbsolutePath(relativePath: string): string {
-    throw new Error('Method not implemented.');
+    return relativePath;
   }
   storageUri: Uri;
   storagePath: string;
@@ -29,5 +27,5 @@ export class MockExtensionContext implements ExtensionContext {
   logUri: Uri;
   logPath: string;
   extensionMode: ExtensionMode;
-  extension: Extension<any>;
+  extension: Extension<unknown>;
 }
