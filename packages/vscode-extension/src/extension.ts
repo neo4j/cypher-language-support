@@ -52,8 +52,9 @@ export async function activate(context: ExtensionContext) {
 
   setAppContext(context, client);
 
-  // Register commands
-  context.subscriptions.push(...registerDisposables(context.extensionUri));
+  // Register disposables
+  // Command handlers and view registrations
+  context.subscriptions.push(...registerDisposables());
 
   // Start the client. This will also launch the server
   await client.start();
