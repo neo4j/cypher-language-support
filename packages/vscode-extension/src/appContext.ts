@@ -1,12 +1,16 @@
+import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { ExtensionContext } from 'vscode';
-import { LanguageClient } from 'vscode-languageclient/node';
+
+type Neo4jLanguageClient = {
+  sendNotification: (method: string, settings: Neo4jSettings) => Promise<void>;
+};
 
 let _context: ExtensionContext | undefined;
-let _languageClient: LanguageClient | undefined;
+let _languageClient: Neo4jLanguageClient | undefined;
 
 export function setAppContext(
   context: ExtensionContext,
-  languageClient: LanguageClient,
+  languageClient: Neo4jLanguageClient,
 ) {
   _context = context;
   _languageClient = languageClient;
@@ -19,7 +23,7 @@ export function getExtensionContext(): ExtensionContext {
   return _context;
 }
 
-export function getLanguageClient(): LanguageClient {
+export function getLanguageClient(): Neo4jLanguageClient {
   if (!_languageClient) {
     throw new Error('Language client is undefined');
   }

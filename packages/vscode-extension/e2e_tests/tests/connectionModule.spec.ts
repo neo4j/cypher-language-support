@@ -1,33 +1,32 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { LanguageClient } from 'vscode-languageclient/node';
 import * as appContext from '../../src/appContext';
 import * as connection from '../../src/connection';
 import { MethodName } from '../../src/languageClientService';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
+import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
 suite('Connection', () => {
+  let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
-  let getContextStub: sinon.SinonStub;
-  const mockLanguageClient = sinon.createStubInstance(LanguageClient);
-  const setAppContextStub = sinon.stub(appContext, 'setAppContext');
-
-  sinon.stub(appContext, 'getLanguageClient').returns(mockLanguageClient);
+  let mockLanguageClient: MockLanguageClient;
 
   beforeEach(() => {
+    sandbox = sinon.createSandbox();
     mockContext = new MockExtensionContext();
-    getContextStub = sinon
-      .stub(appContext, 'getExtensionContext')
-      .returns(mockContext);
+    mockLanguageClient = new MockLanguageClient();
+
+    sandbox.stub(appContext, 'getExtensionContext').returns(mockContext);
+    sandbox.stub(appContext, 'getLanguageClient').returns(mockLanguageClient);
+
+    const setAppContextStub = sandbox.stub(appContext, 'setAppContext');
+
     setAppContextStub(mockContext, mockLanguageClient);
   });
 
   afterEach(() => {
-    getContextStub.restore();
-    getContextStub.reset();
-    mockLanguageClient.sendNotification.reset();
+    sandbox.restore();
   });
 
   suite('testConnection', () => {});
@@ -124,13 +123,17 @@ suite('Connection', () => {
     test('should handle non-existent connection', () => {
       const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
       const storeSecretsSpy = sinon.spy(mockContext.secrets, 'store');
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
 
       const promise = connection.deleteConnection('does-not-exist');
 
       assert.doesNotThrow(async () => await promise);
       sinon.assert.notCalled(updateGlobalStateSpy);
       sinon.assert.notCalled(storeSecretsSpy);
-      sinon.assert.notCalled(mockLanguageClient.sendNotification);
+      sinon.assert.notCalled(sendNotificationSpy);
     });
 
     test('should delete connection', async () => {
@@ -154,13 +157,17 @@ suite('Connection', () => {
     });
 
     test('should send notification when deleting a connection', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection();
       await connection.saveConnection(newConnection, 'password', true);
 
       await connection.deleteConnection(newConnection.key);
 
       sinon.assert.calledWith(
-        mockLanguageClient.sendNotification,
+        sendNotificationSpy,
         MethodName.ConnectionDeleted,
         {
           trace: { server: 'off' },
@@ -197,12 +204,16 @@ suite('Connection', () => {
     });
 
     test('should notify language server when adding a new connection', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection();
 
       await connection.saveConnection(newConnection, 'dummy-password', true);
 
       sinon.assert.calledOnceWithExactly(
-        mockLanguageClient.sendNotification,
+        sendNotificationSpy,
         MethodName.ConnectionUpdated,
         {
           trace: { server: 'off' },
@@ -216,20 +227,28 @@ suite('Connection', () => {
     });
 
     test('should not notify language server if connection.connect is false', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection();
 
       await connection.saveConnection(newConnection, 'dummy-password', false);
 
-      sinon.assert.notCalled(mockLanguageClient.sendNotification);
+      sinon.assert.notCalled(sendNotificationSpy);
     });
 
     test('should only notify language server only if connection.connect is true', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection('dummy-key', true);
 
       await connection.saveConnection(newConnection, 'dummy-password', false);
 
       sinon.assert.calledOnceWithExactly(
-        mockLanguageClient.sendNotification,
+        sendNotificationSpy,
         MethodName.ConnectionUpdated,
         {
           trace: { server: 'off' },
@@ -245,13 +264,17 @@ suite('Connection', () => {
 
   suite('toggleConnection', () => {
     test('should handle non-existent connection', () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
       const promise = connection.toggleConnection('does-not-exist');
 
       assert.doesNotThrow(async () => await promise);
 
       sinon.assert.notCalled(updateGlobalStateSpy);
-      sinon.assert.notCalled(mockLanguageClient.sendNotification);
+      sinon.assert.notCalled(sendNotificationSpy);
     });
 
     test('should toggle disconnected connection to connected', async () => {
@@ -279,13 +302,17 @@ suite('Connection', () => {
     });
 
     test('should notify language server when toggling connection to connected', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection();
       await connection.saveConnection(newConnection, 'dummy-password', false);
 
       await connection.toggleConnection(newConnection.key);
 
       sinon.assert.calledWith(
-        mockLanguageClient.sendNotification,
+        sendNotificationSpy,
         MethodName.ConnectionUpdated,
         {
           trace: { server: 'off' },
@@ -299,13 +326,17 @@ suite('Connection', () => {
     });
 
     test('should notify language server when toggling connection to disconnected', async () => {
+      const sendNotificationSpy = sinon.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
       const newConnection = getNewConnection('dummy-key', true);
       await connection.saveConnection(newConnection, 'dummy-password', false);
 
       await connection.toggleConnection(newConnection.key);
 
       sinon.assert.calledWith(
-        mockLanguageClient.sendNotification,
+        sendNotificationSpy,
         MethodName.ConnectionUpdated,
         {
           trace: { server: 'off' },
