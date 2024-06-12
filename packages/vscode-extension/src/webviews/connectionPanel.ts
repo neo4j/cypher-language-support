@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import {
   commands,
   Disposable,
@@ -10,6 +9,7 @@ import {
 } from 'vscode';
 import { Connection, getAllConnections } from '../connection';
 import { SAVE_CONNECTION_COMMAND, TEST_CONNECTION_COMMAND } from '../constants';
+import { getNonce } from '../getNonce';
 
 export type WebViewMessage = {
   command: string;
@@ -126,10 +126,6 @@ export class ConnectionPanel {
     );
   }
 
-  private getNonce() {
-    return crypto.randomBytes(16).toString('base64');
-  }
-
   private getHtmlForWebview(webview: Webview): string {
     const resetCssPath = Uri.joinPath(
       this._extensionUri,
@@ -161,7 +157,7 @@ export class ConnectionPanel {
     const vscodeCssUri = webview.asWebviewUri(vscodeCssPath);
     const connectionPanelCssUri = webview.asWebviewUri(connectionPanelCssPath);
     const connectionPanelJsUri = webview.asWebviewUri(connectionPanelJsPath);
-    const nonce = this.getNonce();
+    const nonce = getNonce();
 
     return `
         <!DOCTYPE html>
@@ -191,8 +187,7 @@ export class ConnectionPanel {
                 }</h1>
                 <form class="form" action="" novalidate method="post">
                   <input type="hidden" id="key" value="${
-                    this._connection?.key ??
-                    crypto.randomBytes(16).toString('utf8')
+                    this._connection?.key ?? getNonce(16)
                   }" />
                   <input type="hidden" id="connect" value="${
                     this._connection?.connect ?? 'false'
