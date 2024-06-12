@@ -1,12 +1,6 @@
 import * as vscode from 'vscode';
 import { SAVE_CONNECTION_COMMAND } from '../src/constants';
 
-export async function activateExtension(): Promise<void> {
-  await vscode.extensions
-    .getExtension('neo4j-extensions.neo4j-for-vscode')
-    .activate();
-}
-
 export async function createConnection(): Promise<void> {
   await vscode.commands.executeCommand(
     SAVE_CONNECTION_COMMAND,

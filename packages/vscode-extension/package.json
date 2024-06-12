@@ -203,8 +203,7 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.7",
-    "vscode-languageclient": "^8.1.0",
-    "crypto-js": "^4.2.0"
+    "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
     "@testcontainers/neo4j": "^10.4.0",
