@@ -1,19 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Memento } from 'vscode';
+import { Connections } from '../../src/connectionService';
 
 export class InMemoryMemento implements Memento {
-  private _storage: { [keyName: string]: any } = {};
+  private _storage: { [keyName: string]: Connections } = {};
 
   get<T>(key: string): T | undefined;
   get<T>(key: string, defaultValue: T): T;
-  get(key: string, defaultValue?: any) {
+  get(key: string, defaultValue?: null) {
     return this._storage[key] || defaultValue;
   }
 
-  update(key: string, value: any): Thenable<void> {
+  update(key: string, value: Connections): Thenable<void> {
     this._storage[key] = value;
     return Promise.resolve();
   }
@@ -22,5 +19,7 @@ export class InMemoryMemento implements Memento {
     return Object.keys(this._storage);
   }
 
-  setKeysForSync(keys: string[]): void {}
+  setKeysForSync(keys: string[]): void {
+    keys;
+  }
 }

@@ -15,7 +15,7 @@ export type Connection = {
   connect: boolean;
 };
 
-type Connections = {
+export type Connections = {
   [key: string]: Connection | null;
 };
 

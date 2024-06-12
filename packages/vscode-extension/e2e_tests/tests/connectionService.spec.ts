@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import * as connection from '../../src/connectionService';
 import * as contextService from '../../src/contextService';
 import { MethodName } from '../../src/languageClientService';
+import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
@@ -35,18 +36,9 @@ suite('Connection service', () => {
 
   suite('getCurrentConnection', () => {
     test('should return null if there are no current connections', async () => {
-      const newConnection: connection.Connection = {
-        key: 'dummy-key',
-        name: 'name',
-        database: 'database',
-        connect: false,
-        user: 'user',
-        host: 'host',
-        scheme: 'scheme://',
-        port: 'port',
-      };
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
       const currentConnection = connection.getCurrentConnection();
 
@@ -54,68 +46,49 @@ suite('Connection service', () => {
     });
 
     test('should return current connection', async () => {
-      const newConnection: connection.Connection = {
-        key: 'dummy-key',
-        name: 'name',
-        database: 'database',
-        connect: true,
-        user: 'user',
-        host: 'host',
-        scheme: 'scheme://',
-        port: 'port',
-      };
+      const mockConnection = getMockConnection('mock-key', true);
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
-
+      await connection.saveConnection(mockConnection, 'mock-password', false);
       const currentConnection = connection.getCurrentConnection();
 
-      assert.deepStrictEqual(currentConnection, newConnection);
+      assert.deepStrictEqual(currentConnection, mockConnection);
     });
   });
 
   suite('getAllConnections', () => {
     test('should return empty array when there are no connections', () => {
       const connections = connection.getAllConnections();
+
       assert.notStrictEqual(connections, []);
     });
 
     test('should return an array of connections when connections exist', async () => {
-      const newConnection: connection.Connection = {
-        key: 'dummy-key',
-        name: 'name',
-        database: 'database',
-        connect: false,
-        user: 'user',
-        host: 'host',
-        scheme: 'scheme://',
-        port: 'port',
-      };
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
-
+      await connection.saveConnection(mockConnection, 'mock-password', false);
       const connections = connection.getAllConnections();
 
-      assert.deepStrictEqual(connections, [newConnection]);
+      assert.deepStrictEqual(connections, [mockConnection]);
     });
   });
 
   suite('getConnection', () => {
     test('should return connection by key', async () => {
-      const newConnection = getNewConnection();
-      const newConnection2 = getNewConnection('dummy-key-2');
-      await connection.saveConnection(newConnection, 'dummy-password', false);
-      await connection.saveConnection(newConnection2, 'dummy-password', false);
+      const mockConnection = getMockConnection();
+      const mockConnection2 = getMockConnection('mock-key-2');
+      await connection.saveConnection(mockConnection, 'mock-password', false);
+      await connection.saveConnection(mockConnection2, 'mock-password', false);
 
-      const returnedConnection = connection.getConnection('dummy-key');
+      const returnedConnection = connection.getConnection('mock-key');
 
-      assert.deepStrictEqual(newConnection, returnedConnection);
+      assert.deepStrictEqual(mockConnection, returnedConnection);
     });
 
     test('should return null when connection does not exist', async () => {
-      const newConnection = getNewConnection();
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
-      const returnedConnection = connection.getConnection('dummy-key-two');
+      await connection.saveConnection(mockConnection, 'mock-password', false);
+      const returnedConnection = connection.getConnection('mock-key-two');
 
       assert.strictEqual(returnedConnection, null);
     });
@@ -139,23 +112,23 @@ suite('Connection service', () => {
     });
 
     test('should delete connection', async () => {
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'password', true);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'password', true);
 
-      await connection.deleteConnection(newConnection.key);
-      const returnedConnection = connection.getConnection(newConnection.key);
+      await connection.deleteConnection(mockConnection.key);
+      const returnedConnection = connection.getConnection(mockConnection.key);
 
       assert.strictEqual(returnedConnection, null);
     });
 
     test('should delete password when deleting a connection', async () => {
       const deleteSecretsSpy = sinon.spy(mockContext.secrets, 'delete');
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'password', true);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'password', true);
 
-      await connection.deleteConnection(newConnection.key);
+      await connection.deleteConnection(mockConnection.key);
 
-      sinon.assert.calledOnceWithExactly(deleteSecretsSpy, 'dummy-key');
+      sinon.assert.calledOnceWithExactly(deleteSecretsSpy, 'mock-key');
     });
 
     test('should send notification when deleting a connection', async () => {
@@ -163,10 +136,10 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'password', true);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'password', true);
 
-      await connection.deleteConnection(newConnection.key);
+      await connection.deleteConnection(mockConnection.key);
 
       sinon.assert.calledWith(
         sendNotificationSpy,
@@ -174,9 +147,9 @@ suite('Connection service', () => {
         {
           trace: { server: 'off' },
           connect: false,
-          connectURL: 'scheme://host:port',
-          database: 'database',
-          user: 'user',
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
           password: null,
         },
       );
@@ -187,22 +160,22 @@ suite('Connection service', () => {
     test('should save connection', async () => {
       const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
       const storeSecretsSpy = sinon.spy(mockContext.secrets, 'store');
-      const newConnection = getNewConnection();
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
-      const storedConnection = connection.getConnection('dummy-key');
+      await connection.saveConnection(mockConnection, 'mock-password', false);
+      const storedConnection = connection.getConnection('mock-key');
 
       sinon.assert.calledOnceWithExactly(updateGlobalStateSpy, 'connections', {
-        'dummy-key': newConnection,
+        'mock-key': mockConnection,
       });
 
       sinon.assert.calledOnceWithExactly(
         storeSecretsSpy,
-        'dummy-key',
-        'dummy-password',
+        'mock-key',
+        'mock-password',
       );
 
-      assert.deepStrictEqual(storedConnection, newConnection);
+      assert.deepStrictEqual(storedConnection, mockConnection);
     });
 
     test('should notify language server when adding a new connection', async () => {
@@ -210,9 +183,9 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection();
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', true);
+      await connection.saveConnection(mockConnection, 'mock-password', true);
 
       sinon.assert.calledOnceWithExactly(
         sendNotificationSpy,
@@ -220,10 +193,10 @@ suite('Connection service', () => {
         {
           trace: { server: 'off' },
           connect: true,
-          connectURL: 'scheme://host:port',
-          database: 'database',
-          user: 'user',
-          password: 'dummy-password',
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
         },
       );
     });
@@ -233,9 +206,9 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection();
+      const mockConnection = getMockConnection();
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
       sinon.assert.notCalled(sendNotificationSpy);
     });
@@ -245,9 +218,9 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection('dummy-key', true);
+      const mockConnection = getMockConnection('mock-key', true);
 
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
       sinon.assert.calledOnceWithExactly(
         sendNotificationSpy,
@@ -255,10 +228,10 @@ suite('Connection service', () => {
         {
           trace: { server: 'off' },
           connect: true,
-          connectURL: 'scheme://host:port',
-          database: 'database',
-          user: 'user',
-          password: 'dummy-password',
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
         },
       );
     });
@@ -281,25 +254,25 @@ suite('Connection service', () => {
 
     test('should toggle disconnected connection to connected', async () => {
       const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
-      await connection.toggleConnection(newConnection.key);
+      await connection.toggleConnection(mockConnection.key);
 
       sinon.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        'dummy-key': { ...newConnection, connect: true },
+        'mock-key': { ...mockConnection, connect: true },
       });
     });
 
     test('should toggle connected connection to disconnected', async () => {
       const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
-      const newConnection = getNewConnection('dummy-key', true);
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      const mockConnection = getMockConnection('mock-key', true);
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
-      await connection.toggleConnection(newConnection.key);
+      await connection.toggleConnection(mockConnection.key);
 
       sinon.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        'dummy-key': { ...newConnection, connect: false },
+        'mock-key': { ...mockConnection, connect: false },
       });
     });
 
@@ -308,10 +281,10 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
-      await connection.toggleConnection(newConnection.key);
+      await connection.toggleConnection(mockConnection.key);
 
       sinon.assert.calledWith(
         sendNotificationSpy,
@@ -319,10 +292,10 @@ suite('Connection service', () => {
         {
           trace: { server: 'off' },
           connect: true,
-          connectURL: 'scheme://host:port',
-          database: 'database',
-          user: 'user',
-          password: 'dummy-password',
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
         },
       );
     });
@@ -332,10 +305,10 @@ suite('Connection service', () => {
         mockLanguageClient,
         'sendNotification',
       );
-      const newConnection = getNewConnection('dummy-key', true);
-      await connection.saveConnection(newConnection, 'dummy-password', false);
+      const mockConnection = getMockConnection('mock-key', true);
+      await connection.saveConnection(mockConnection, 'mock-password', false);
 
-      await connection.toggleConnection(newConnection.key);
+      await connection.toggleConnection(mockConnection.key);
 
       sinon.assert.calledWith(
         sendNotificationSpy,
@@ -343,10 +316,10 @@ suite('Connection service', () => {
         {
           trace: { server: 'off' },
           connect: false,
-          connectURL: 'scheme://host:port',
-          database: 'database',
-          user: 'user',
-          password: 'dummy-password',
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
         },
       );
     });
@@ -359,10 +332,10 @@ suite('Connection service', () => {
     });
 
     test('should return password for existing connection', async () => {
-      const newConnection = getNewConnection();
-      await connection.saveConnection(newConnection, 'super-secret', false);
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'super-secret', false);
 
-      const password = await connection.getPasswordForConnection('dummy-key');
+      const password = await connection.getPasswordForConnection('mock-key');
 
       assert.strictEqual(password, 'super-secret');
     });
@@ -377,33 +350,17 @@ suite('Connection service', () => {
 
     test('should handle connection with undefined property', () => {
       const result = connection.getConnectionString({
-        scheme: 'scheme://',
+        scheme: 'neo4j://',
         connect: false,
-        database: 'database',
+        database: 'neo4j',
         host: undefined,
-        port: 'port',
-        key: 'key',
-        name: 'name',
-        user: 'user',
+        port: '7687',
+        key: 'mock-key',
+        name: 'mock-connection',
+        user: 'neo4j',
       });
 
-      assert.strictEqual(result, 'scheme://undefined:port');
+      assert.strictEqual(result, 'neo4j://undefined:7687');
     });
   });
-
-  function getNewConnection(
-    key: string = 'dummy-key',
-    connect: boolean = false,
-  ): connection.Connection {
-    return {
-      key: key,
-      name: 'name',
-      database: 'database',
-      connect: connect,
-      user: 'user',
-      host: 'host',
-      scheme: 'scheme://',
-      port: 'port',
-    };
-  }
 });

@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { Uri, window, workspace } from 'vscode';
+import { Connection } from '../src/connectionService';
 
 export async function openDocument(docUri: Uri) {
   try {
@@ -56,4 +57,20 @@ export async function eventually(
       }
     }
   }
+}
+
+export function getMockConnection(
+  key: string = 'mock-key',
+  connect: boolean = false,
+): Connection {
+  return {
+    key: key,
+    name: 'mock-connection',
+    database: 'neo4j',
+    connect: connect,
+    user: 'neo4j',
+    host: 'localhost',
+    scheme: 'neo4j://',
+    port: '7687',
+  };
 }
