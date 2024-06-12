@@ -1,5 +1,4 @@
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
-import { getExtensionContext } from './appContext';
 import {
   Connection,
   deleteConnection,
@@ -8,9 +7,10 @@ import {
   saveConnection,
   testConnection,
   toggleConnection,
-} from './connection';
+} from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import * as constants from './constants';
+import { getExtensionContext } from './contextService';
 import {
   MethodName,
   sendNotificationToLanguageClient,

@@ -6,13 +6,13 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { setAppContext } from './appContext';
-import { getCurrentConnection } from './connection';
+import { getCurrentConnection } from './connectionService';
+import { setContext } from './contextService';
 import {
   MethodName,
   sendNotificationToLanguageClient,
 } from './languageClientService';
-import { registerDisposables } from './registerDisposables';
+import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
 
@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext) {
     clientOptions,
   );
 
-  setAppContext(context, client);
+  setContext(context, client);
 
   // Register disposables
   // Command handlers and view registrations

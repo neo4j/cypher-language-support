@@ -1,4 +1,4 @@
-import { getExtensionContext } from './appContext';
+import { getExtensionContext } from './contextService';
 import {
   MethodName,
   sendNotificationToLanguageClient,

@@ -1,13 +1,13 @@
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import * as appContext from '../../src/appContext';
-import * as connection from '../../src/connection';
+import * as connection from '../../src/connectionService';
+import * as contextService from '../../src/contextService';
 import { MethodName } from '../../src/languageClientService';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
-suite('Connection', () => {
+suite('Connection service', () => {
   let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
@@ -17,12 +17,14 @@ suite('Connection', () => {
     mockContext = new MockExtensionContext();
     mockLanguageClient = new MockLanguageClient();
 
-    sandbox.stub(appContext, 'getExtensionContext').returns(mockContext);
-    sandbox.stub(appContext, 'getLanguageClient').returns(mockLanguageClient);
+    sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
+    sandbox
+      .stub(contextService, 'getLanguageClient')
+      .returns(mockLanguageClient);
 
-    const setAppContextStub = sandbox.stub(appContext, 'setAppContext');
+    const setContextStub = sandbox.stub(contextService, 'setContext');
 
-    setAppContextStub(mockContext, mockLanguageClient);
+    setContextStub(mockContext, mockLanguageClient);
   });
 
   afterEach(() => {
