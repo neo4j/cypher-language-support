@@ -19,7 +19,7 @@
     "database",
     "completions"
   ],
-  "icon": "images/logo.png",
+  "icon": "resources/images/logo.png",
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
