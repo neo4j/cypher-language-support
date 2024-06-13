@@ -156,8 +156,36 @@ export const textMateGrammar = {
       ],
     },
     procedures: {
-      begin: 'CALL',
-      /* 
+      patterns: [
+        /* 
+        This rule is to recognize the CALL subquery independently, otherwise the
+        next rule would recognize CALL and then anything that is in between CALL
+        and the (. Example:
+
+        CALL {
+          CALL {
+              UNWIND range(
+
+        would paint the inner CALL as a procedure as well because it's between 
+        the outer CALL and the range(
+        */
+        {
+          begin: 'CALL',
+          end: '\\{',
+          beginCaptures: {
+            '0': {
+              name: 'keyword',
+            },
+          },
+          endCaptures: {
+            '0': {
+              name: 'keyword.operator',
+            },
+          },
+        },
+        {
+          begin: 'CALL',
+          /* 
           The procedure name is too flexible in Cypher, hence this cumbersome 
           regular expression that allows for individually namespace 
           elements to be backticked or the whole name to be backticked:
@@ -167,27 +195,37 @@ export const textMateGrammar = {
              CALL `apoc` . coll . `elements`
              CALL `apoc.coll.elements`
           */
-      end: '\\(',
-      beginCaptures: {
-        '0': {
-          name: 'keyword',
-        },
-      },
-      patterns: [
-        {
-          match: '`\\w+\\`|\\w+',
-          name: 'entity.name.function.procedure',
-        },
-        {
-          match: '\\.',
-          name: 'keyword.operator',
+          end: '\\(',
+          beginCaptures: {
+            '0': {
+              name: 'keyword',
+            },
+          },
+          patterns: [
+            {
+              match: '`\\w+\\`|\\w+',
+              name: 'entity.name.function.procedure',
+            },
+            {
+              match: '\\.',
+              name: 'keyword.operator',
+            },
+          ],
         },
       ],
     },
     functions: {
-      // The function name is too flexible in Cypher, refer to comment on procedure names
+      /* 
+      The function name is too flexible in Cypher, refer to comment on procedure names
+      We don't want to recognize as functions:
+      
+        MATCH (n:Label)
+        AND (openEnded = 1 AND candidate <> end)
+        OR  (openEnded = 2 AND candidate <> start)
+
+      */
       match:
-        '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
+        '(?i:(?!\\b(match|and|or|xor)\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
       name: 'entity.name.function',
     },
     parameters: {

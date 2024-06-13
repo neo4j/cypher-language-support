@@ -144,26 +144,44 @@
       ]
     },
     "procedures": {
-      "begin": "CALL",
-      "end": "\\(",
-      "beginCaptures": {
-        "0": {
-          "name": "keyword"
-        }
-      },
       "patterns": [
         {
-          "match": "`\\w+\\`|\\w+",
-          "name": "entity.name.function.procedure"
+          "begin": "CALL",
+          "end": "\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "keyword.operator"
+            }
+          }
         },
         {
-          "match": "\\.",
-          "name": "keyword.operator"
+          "begin": "CALL",
+          "end": "\\(",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword"
+            }
+          },
+          "patterns": [
+            {
+              "match": "`\\w+\\`|\\w+",
+              "name": "entity.name.function.procedure"
+            },
+            {
+              "match": "\\.",
+              "name": "keyword.operator"
+            }
+          ]
         }
       ]
     },
     "functions": {
-      "match": "(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(",
+      "match": "(?i:(?!\\b(match|and|or|xor)\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(",
       "name": "entity.name.function"
     },
     "parameters": {
