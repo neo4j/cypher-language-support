@@ -24,6 +24,12 @@
   margin: 0 0 1rem 0;
 }
 
+.form--input-wrapper input.invalid,
+.form--input-wrapper select.invalid {
+  border-color: var(--vscode-inputValidation-errorBorder, transparent);
+  outline-color: var(--vscode-inputValidation-errorBorder, transparent);
+}
+
 .form--actions {
   display: grid;
   grid-template-columns: 1fr auto;

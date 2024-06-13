@@ -4,12 +4,14 @@ import {
   sendNotificationToLanguageClient,
 } from './languageClientService';
 
+export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
+
 export type Connection = {
   key: string;
   name: string;
-  scheme: string;
+  scheme: Scheme;
   host: string;
-  port: string;
+  port?: string | undefined;
   user: string;
   database: string;
   connect: boolean;
@@ -20,25 +22,6 @@ export type Connections = {
 };
 
 const CONNECTIONS_KEY: string = 'connections';
-
-export async function testConnection(
-  connection: Connection,
-  password: string,
-): Promise<boolean> {
-  // return await testConnectionTransiently(
-  //   getConnectionString(connection),
-  //   {
-  //     username: connection.user,
-  //     password: password,
-  //   },
-  //   {
-  //     appName: 'vscode-extension',
-  //   },
-  // );
-  connection;
-  password;
-  return await Promise.resolve(true);
-}
 
 export function getCurrentConnection(): Connection | null {
   return (
@@ -111,7 +94,9 @@ export async function getPasswordForConnection(
 
 export function getConnectionString(connection: Connection): string | null {
   if (connection) {
-    return `${connection.scheme}${connection.host}:${connection.port}`;
+    return connection.port
+      ? `${connection.scheme}://${connection.host}:${connection.port}`
+      : `${connection.scheme}://${connection.host}`;
   }
 
   return null;

@@ -8,7 +8,7 @@ import {
   window,
 } from 'vscode';
 import { Connection, getAllConnections } from '../connectionService';
-import { SAVE_CONNECTION_COMMAND, TEST_CONNECTION_COMMAND } from '../constants';
+import { SAVE_CONNECTION_COMMAND } from '../constants';
 import { getNonce } from '../getNonce';
 
 export type WebViewMessage = {
@@ -95,24 +95,14 @@ export class ConnectionPanel {
     webview.onDidReceiveMessage(
       async (data: WebViewMessage) => {
         switch (data.command) {
-          case 'onTestConnection': {
-            await commands.executeCommand(
-              TEST_CONNECTION_COMMAND,
-              data.connection,
-              data.password,
-            );
-            break;
-          }
           case 'onSaveConnection': {
-            const result = await commands.executeCommand(
+            await commands.executeCommand(
               SAVE_CONNECTION_COMMAND,
               data.connection,
               data.password,
               !this._connection,
             );
-            if (result) {
-              this.dispose();
-            }
+            this.dispose();
             break;
           }
           case 'onValidationError': {
@@ -193,61 +183,58 @@ export class ConnectionPanel {
                     this._connection?.connect ?? 'false'
                   }" />
                   <div class="form--input-wrapper">
-                    <label for="scheme">Scheme</label>
+                    <label for="scheme">Scheme *</label>
                     <select id="scheme">
-                        <option value="bolt://" ${
-                          this._connection?.scheme === 'bolt://'
-                            ? 'selected'
-                            : ''
+                        <option value="bolt" ${
+                          this._connection?.scheme === 'bolt' ? 'selected' : ''
                         }>bolt://</option>
-                        <option value="bolt+s://" ${
-                          this._connection?.scheme === 'bolt+s://'
+                        <option value="bolt+s" ${
+                          this._connection?.scheme === 'bolt+s'
                             ? 'selected'
                             : ''
                         }>bolt+s://</option>
-                        <option value="neo4j://" ${
-                          this._connection?.scheme === 'neo4j://' ||
+                        <option value="neo4j" ${
+                          this._connection?.scheme === 'neo4j' ||
                           !this._connection
                             ? 'selected'
                             : ''
                         }>neo4j://</option>
-                        <option value="neo4j+s://" ${
-                          this._connection?.scheme === 'neo4j+s://'
+                        <option value="neo4j+s" ${
+                          this._connection?.scheme === 'neo4j+s'
                             ? 'selected'
                             : ''
                         }>neo4j+s://</option>
                     </select>
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="host">Host</label>
+                    <label for="host">Host *</label>
                     <input type="text" id="host" required placeholder="localhost" value="${
                       this._connection?.host ?? 'localhost'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
-                    <input type="text" id="port" required placeholder="7687" value="${
+                    <input type="text" id="port" placeholder="7687" value="${
                       this._connection?.port ?? '7687'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="database">Database</label>
+                    <label for="database">Database *</label>
                     <input type="text" id="database" required placeholder="neo4j" value="${
                       this._connection?.database ?? 'neo4j'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="user">User</label>
+                    <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
                       this._connection?.user ?? 'neo4j'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="password">Password</label>
+                    <label for="password">Password *</label>
                     <input type="password" id="password" required />
                   </div>
                   <div class="form--actions">
-                    <button type="button" id="test-connection">Test Connection</button>
                     <input type="submit" value="Save Connection" />
                   </div>
                 </form>

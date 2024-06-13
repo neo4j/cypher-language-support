@@ -5,27 +5,20 @@ import {
   CONNECTED_MESSAGE,
   CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
   CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
-  CONNECTION_FAILED_MESSAGE,
   CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
   CONNECT_COMMAND,
   DELETE_CONNECTION_COMMAND,
   DISCONNECTED_MESSAGE,
   DISCONNECT_COMMAND,
   SAVE_CONNECTION_COMMAND,
-  TEST_CONNECTION_COMMAND,
-  TEST_CONNECTION_SUCCESFUL_MESSAGE,
 } from '../../src/constants';
 
 suite('Execute commands', () => {
   let sandbox: sinon.SinonSandbox;
-
-  let showErrorMessageStub: sinon.SinonStub;
   let showInformationMessageStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-
-    showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
     showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
   });
 
@@ -33,49 +26,7 @@ suite('Execute commands', () => {
     sandbox.restore();
   });
 
-  suite.skip('testConnectionCommand', () => {
-    test('should show a success message for a valid connection', async () => {
-      await commands.executeCommand(
-        TEST_CONNECTION_COMMAND,
-        {
-          name: 'mock-connection',
-          key: 'mock-key',
-          scheme: process.env.NEO4J_SCHEME || 'neo4j',
-          host: process.env.NEO4J_HOST || 'localhost',
-          port: process.env.NEO4J_PORT || '7687',
-          user: process.env.NEO4J_USER || 'neo4j',
-          database: process.env.NEO4J_DATABASE || 'neo4j',
-          connect: true,
-        },
-        process.env.NEO4J_PASSWORD || 'password',
-      );
-
-      sinon.assert.calledOnceWithExactly(
-        showInformationMessageStub,
-        TEST_CONNECTION_SUCCESFUL_MESSAGE,
-      );
-    });
-
-    test('should show a failure message for an invalid connection', async () => {
-      await commands.executeCommand(TEST_CONNECTION_COMMAND, {}, '');
-
-      sinon.assert.calledOnceWithExactly(
-        showErrorMessageStub,
-        CONNECTION_FAILED_MESSAGE,
-      );
-    });
-  });
-
   suite('saveConnectionCommand', () => {
-    test.skip('Creating an invalid connection should show a failure message', async () => {
-      await commands.executeCommand(SAVE_CONNECTION_COMMAND, {}, '', false);
-
-      sinon.assert.calledOnceWithExactly(
-        showErrorMessageStub,
-        CONNECTION_FAILED_MESSAGE,
-      );
-    });
-
     test('Creating a valid connection should show a success message', async () => {
       await commands.executeCommand(
         SAVE_CONNECTION_COMMAND,
