@@ -1,7 +1,7 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
-import { configurationChangedEventHandler } from '../../src/commandHandlers';
+import { configurationChangedHandler } from '../../src/commandHandlers';
 import * as connectionService from '../../src/connectionService';
 import * as contextService from '../../src/contextService';
 import { MethodName } from '../../src/languageClientService';
@@ -47,7 +47,7 @@ suite('Command handlers', () => {
       .stub(connectionService, 'getCurrentConnection')
       .returns(getMockConnection('mock-key', true));
 
-    await configurationChangedEventHandler({
+    await configurationChangedHandler({
       affectsConfiguration: () => true,
     } as vscode.ConfigurationChangeEvent);
 
@@ -75,7 +75,7 @@ suite('Command handlers', () => {
       .stub(connectionService, 'getCurrentConnection')
       .returns(null);
 
-    await configurationChangedEventHandler({
+    await configurationChangedHandler({
       affectsConfiguration: () => true,
     } as vscode.ConfigurationChangeEvent);
 
@@ -92,7 +92,7 @@ suite('Command handlers', () => {
       .stub(connectionService, 'getCurrentConnection')
       .returns(null);
 
-    await configurationChangedEventHandler({
+    await configurationChangedHandler({
       affectsConfiguration: () => false,
     } as vscode.ConfigurationChangeEvent);
 

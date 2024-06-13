@@ -1,4 +1,4 @@
-import { Connection } from '../../connectionService';
+import { Connection, Scheme } from '../../connectionService';
 import { WebViewMessage } from '../connectionPanel';
 
 interface vscode {
@@ -8,22 +8,38 @@ interface vscode {
 declare const vscode: vscode;
 
 export function validateConnection(
-  connection: Connection,
+  connection: Connection | null,
   password: string,
 ): boolean {
+  highlightInvalidFields();
   return (
-    !!connection.key &&
-    !!connection.name &&
-    !!connection.scheme &&
-    !!connection.host &&
-    !!connection.port &&
-    !!connection.user &&
-    !!connection.database &&
-    !!password
+    !!connection ||
+    (!!connection.scheme &&
+      !!connection.host &&
+      !!connection.database &&
+      !!connection.user &&
+      !!password)
   );
 }
 
-export function getConnection(): Connection {
+export function highlightInvalidFields(): void {
+  const scheme = document.getElementById('scheme') as HTMLInputElement;
+  const host = document.getElementById('host') as HTMLInputElement;
+  const user = document.getElementById('user') as HTMLInputElement;
+  const database = document.getElementById('database') as HTMLInputElement;
+  const password = document.getElementById('password') as HTMLInputElement;
+
+  scheme.classList.toggle(
+    'invalid',
+    !scheme.value || !isValidScheme(scheme.value),
+  );
+  host.classList.toggle('invalid', !host.value);
+  database.classList.toggle('invalid', !database.value);
+  user.classList.toggle('invalid', !user.value);
+  password.classList.toggle('invalid', !password.value);
+}
+
+export function getConnection(): Connection | null {
   const key = document.getElementById('key') as HTMLInputElement;
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
@@ -31,6 +47,10 @@ export function getConnection(): Connection {
   const user = document.getElementById('user') as HTMLInputElement;
   const database = document.getElementById('database') as HTMLInputElement;
   const connect = document.getElementById('connect') as HTMLInputElement;
+
+  if (!isValidScheme(scheme.value)) {
+    return null;
+  }
 
   return {
     key: key.value,
@@ -42,6 +62,10 @@ export function getConnection(): Connection {
     database: database.value,
     connect: connect.value === 'true',
   };
+}
+
+export function isValidScheme(scheme: string): scheme is Scheme {
+  return ['neo4j', 'neo4j+s', 'bolt', 'bolt+s'].includes(scheme);
 }
 
 export function getPassword(): string {
@@ -70,20 +94,3 @@ export function onSubmit(event: Event): boolean {
 }
 
 addEventListener('submit', (event) => onSubmit(event));
-
-document.getElementById('test-connection').addEventListener('click', () => {
-  const connection = getConnection();
-  const password = getPassword();
-
-  if (!validateConnection(connection, password)) {
-    vscode.postMessage({
-      command: 'onValidationError',
-    });
-  } else {
-    vscode.postMessage({
-      command: 'onTestConnection',
-      connection: connection,
-      password: password,
-    });
-  }
-});

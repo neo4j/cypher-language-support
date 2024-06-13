@@ -70,7 +70,7 @@ export function getMockConnection(
     connect: connect,
     user: 'neo4j',
     host: 'localhost',
-    scheme: 'neo4j://',
+    scheme: 'neo4j',
     port: '7687',
   };
 }

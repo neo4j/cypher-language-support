@@ -32,8 +32,6 @@ suite('Connection service', () => {
     sandbox.restore();
   });
 
-  suite('testConnection', () => {});
-
   suite('getCurrentConnection', () => {
     test('should return null if there are no current connections', async () => {
       const mockConnection = getMockConnection();
@@ -350,7 +348,7 @@ suite('Connection service', () => {
 
     test('should handle connection with undefined property', () => {
       const result = connection.getConnectionString({
-        scheme: 'neo4j://',
+        scheme: 'neo4j',
         connect: false,
         database: 'neo4j',
         host: undefined,
