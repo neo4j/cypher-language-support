@@ -23,10 +23,11 @@ function updateDotenvFile(port: number, password: string) {
 async function main() {
   const password = 'password';
 
-  const container = await new Neo4jContainer('neo4j:5')
+  const container = await new Neo4jContainer('neo4j:5-enterprise')
     .withExposedPorts(7474, 7687)
     .withApoc()
     .withPassword(password)
+    .withEnvironment({ NEO4J_ACCEPT_LICENSE_AGREEMENT: 'yes' })
     // Giving it a name prevents us from spinning up a different
     // container every time we run the tests and allows us
     // closing a lingering one when the tests finish

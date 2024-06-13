@@ -37,7 +37,7 @@ suite('Command handlers', () => {
     sandbox.restore();
   });
 
-  test('should send a notification if the configuration change affects neo4j settings', async () => {
+  test('Should notify language server on configuration change event affecting neo4j settings', async () => {
     const sendNotificationSpy = sinon.spy(
       mockLanguageClient,
       'sendNotification',
@@ -65,24 +65,7 @@ suite('Command handlers', () => {
     );
   });
 
-  test('should not send a notification if there is no current connection', async () => {
-    const sendNotificationSpy = sinon.spy(
-      mockLanguageClient,
-      'sendNotification',
-    );
-
-    getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
-      .returns(null);
-
-    await configurationChangedHandler({
-      affectsConfiguration: () => true,
-    } as vscode.ConfigurationChangeEvent);
-
-    sinon.assert.notCalled(sendNotificationSpy);
-  });
-
-  test('should not send a notification if the configuration change does not affect neo4j settings', async () => {
+  test('Should not notify language server on configuration change event not affecting neo4j settings', async () => {
     const sendNotificationSpy = sinon.spy(
       mockLanguageClient,
       'sendNotification',
@@ -98,5 +81,22 @@ suite('Command handlers', () => {
 
     sinon.assert.notCalled(sendNotificationSpy);
     sinon.assert.notCalled(getCurrentConnectionStub);
+  });
+
+  test('Should not notify language server on configuration change event if there is no current connection', async () => {
+    const sendNotificationSpy = sinon.spy(
+      mockLanguageClient,
+      'sendNotification',
+    );
+
+    getCurrentConnectionStub = sandbox
+      .stub(connectionService, 'getCurrentConnection')
+      .returns(null);
+
+    await configurationChangedHandler({
+      affectsConfiguration: () => true,
+    } as vscode.ConfigurationChangeEvent);
+
+    sinon.assert.notCalled(sendNotificationSpy);
   });
 });
