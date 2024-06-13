@@ -1,0 +1,1 @@
+MATCH q=(p:Person)-[:ACTED_IN]->(m:Movie { title: "The Matrix" }) RETURN q;

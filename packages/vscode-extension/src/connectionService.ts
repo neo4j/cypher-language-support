@@ -58,13 +58,20 @@ export async function saveConnection(
   password: string,
   isNew: boolean,
 ): Promise<void> {
-  const connections = getConnections();
+  let connections = getConnections();
 
   if (isNew) {
     connection.connect = true;
   }
 
-  connections[connection.key] = { ...connection };
+  connections = connection.connect
+    ? resetAllConnections(connections)
+    : connections;
+
+  connections = {
+    ...connections,
+    [connection.key]: connection,
+  };
 
   await updateConnections(connections);
   await savePassword(connection.key, password);
@@ -75,14 +82,29 @@ export async function saveConnection(
 }
 
 export async function toggleConnection(key: string): Promise<void> {
-  const connections = getConnections();
+  let connections = getConnections();
   let connection = connections[key];
-  if (connection) {
-    connection = { ...connection, connect: !connection.connect };
-    connections[key] = connection;
-    await updateConnections(connections);
-    await sendNotification(MethodName.ConnectionUpdated, connection);
+
+  if (!connection) {
+    return;
   }
+
+  const connect = !connection.connect;
+
+  connections = Object.fromEntries(
+    Object.entries(connections).map(([connectionKey, connectionValue]) => [
+      connectionKey,
+      {
+        ...connectionValue,
+        connect: connectionKey === key ? connect : !connect,
+      },
+    ]),
+  );
+
+  connection = connections[key];
+
+  await updateConnections(connections);
+  await sendNotification(MethodName.ConnectionUpdated, connection);
 }
 
 export async function getPasswordForConnection(
@@ -100,6 +122,15 @@ export function getConnectionString(connection: Connection): string | null {
   }
 
   return null;
+}
+
+function resetAllConnections(connections: Connections): Connections {
+  return Object.fromEntries(
+    Object.entries(connections).map(([key, connection]) => [
+      key,
+      { ...connection, connect: false },
+    ]),
+  );
 }
 
 async function updateConnections(connections: Connections): Promise<void> {

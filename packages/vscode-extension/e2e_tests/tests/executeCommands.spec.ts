@@ -75,21 +75,7 @@ suite('Execute commands', () => {
   });
 
   suite('deleteConnectionCommand', () => {
-    test('should not show a message when dismissing prompt', async () => {
-      const stub = sinon.stub(window, 'showWarningMessage');
-      stub.resolves(undefined);
-
-      await commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-        key: 'mock-key-2',
-        label: 'mock-connection-2-update',
-      });
-
-      sinon.assert.notCalled(showInformationMessageStub);
-
-      stub.restore();
-    });
-
-    test('should show a success message when deleting a connection', async () => {
+    test('Deleting a connection should show a success message', async () => {
       // The following line is necessary because the showWarningMessage method
       // used in commands.ts is using one of the overloads with the <T extends string>
       // generic argument, but the stubbed type resolves to the non-generic version of the method
@@ -111,7 +97,21 @@ suite('Execute commands', () => {
       stub.restore();
     });
 
-    test('should not show a success message when prompt resolves with anything other than Yes', async () => {
+    test('Dismissing delete connection prompt should not show any messages', async () => {
+      const stub = sinon.stub(window, 'showWarningMessage');
+      stub.resolves(undefined);
+
+      await commands.executeCommand(DELETE_CONNECTION_COMMAND, {
+        key: 'mock-key-2',
+        label: 'mock-connection-2-update',
+      });
+
+      sinon.assert.notCalled(showInformationMessageStub);
+
+      stub.restore();
+    });
+
+    test('Any other response from delete connection prompt should not show any messages', async () => {
       // The following line is necessary because the showWarningMessage method
       // used in commands.ts is using one of the overloads with the <T extends string>
       // generic argument, but the stubbed type resolves to the non-generic version of the method
@@ -132,7 +132,7 @@ suite('Execute commands', () => {
   });
 
   suite('connectCommand', () => {
-    test('should show a success message connecting to a connection', async () => {
+    test('Connecting to a connection should show a success message', async () => {
       await commands.executeCommand(CONNECT_COMMAND, {
         key: 'mock-key',
         connect: true,
@@ -146,7 +146,7 @@ suite('Execute commands', () => {
   });
 
   suite('disconnectCommand', () => {
-    test('should show a success message disconnecting from a connection', async () => {
+    test('Disconnecting from a connection should show a success message', async () => {
       await commands.executeCommand(DISCONNECT_COMMAND, {
         key: 'mock-key',
         connect: false,
