@@ -13,7 +13,7 @@ Our extension preview provides a rich set of features for working with Cypher, t
 - Autocompletion for Cypher keywords, functions, labels, properties, database names and more
 - Signature help for functions - shows the signature of the function while typing
 
-![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/images/demo.gif?raw=true)
+![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo.gif?raw=true)
 
 ## Upcoming features
 
