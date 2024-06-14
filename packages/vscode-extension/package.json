@@ -126,7 +126,7 @@
         {
           "id": "neo4j-connection-explorer",
           "title": "Neo4j",
-          "icon": "resources/images/neo4j.svg"
+          "icon": "resources/images/neo4j.png"
         }
       ]
     },
@@ -136,7 +136,7 @@
           "type": "tree",
           "id": "neo4jConnections",
           "name": "Connections",
-          "icon": "resources/images/neo4j.svg"
+          "icon": "resources/images/neo4j.png"
         }
       ]
     },

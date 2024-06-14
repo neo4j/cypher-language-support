@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   commands,
   Disposable,
@@ -25,18 +26,18 @@ export class ConnectionPanel {
   private static readonly _viewType = 'connection';
 
   private readonly _panel: WebviewPanel;
-  private readonly _extensionUri: Uri;
+  private readonly _extensionPath: string;
   private readonly _connection: Connection | undefined;
 
   private _disposables: Disposable[] = [];
 
   private constructor(
     panel: WebviewPanel,
-    extensionUri: Uri,
+    extensionPath: string,
     connection?: Connection,
   ) {
     this._panel = panel;
-    this._extensionUri = extensionUri;
+    this._extensionPath = extensionPath;
 
     // Ordinarily, if the connection was undefined, we would create a new one
     // We want to limit this to a single connection for now
@@ -46,7 +47,7 @@ export class ConnectionPanel {
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
-  public static createOrShow(extensionUri: Uri, connection?: Connection) {
+  public static createOrShow(extensionPath: string, connection?: Connection) {
     const column = window.activeTextEditor
       ? window.activeTextEditor.viewColumn
       : undefined;
@@ -63,8 +64,8 @@ export class ConnectionPanel {
       column || window.activeTextEditor?.viewColumn || ViewColumn.One,
       {
         localResourceRoots: [
-          Uri.joinPath(extensionUri, 'dist', 'webviews'),
-          Uri.joinPath(extensionUri, 'resources'),
+          Uri.file(path.join(extensionPath, 'dist', 'webviews')),
+          Uri.file(path.join(extensionPath, 'resources')),
         ],
         enableScripts: true,
       },
@@ -72,7 +73,7 @@ export class ConnectionPanel {
 
     ConnectionPanel._currentPanel = new ConnectionPanel(
       panel,
-      extensionUri,
+      extensionPath,
       connection,
     );
   }
@@ -120,30 +121,28 @@ export class ConnectionPanel {
   }
 
   private getHtmlForWebview(webview: Webview): string {
-    const resetCssPath = Uri.joinPath(
-      this._extensionUri,
-      'resources',
-      'styles',
-      'reset.css',
+    const resetCssPath = Uri.file(
+      path.join(this._extensionPath, 'resources', 'styles', 'reset.css'),
     );
-    const vscodeCssPath = Uri.joinPath(
-      this._extensionUri,
-      'resources',
-      'styles',
-      'vscode.css',
+    const vscodeCssPath = Uri.file(
+      path.join(this._extensionPath, 'resources', 'styles', 'vscode.css'),
     );
-    const connectionPanelCssPath = Uri.joinPath(
-      this._extensionUri,
-      'resources',
-      'styles',
-      'connectionPanel.css',
+    const connectionPanelCssPath = Uri.file(
+      path.join(
+        this._extensionPath,
+        'resources',
+        'styles',
+        'connectionPanel.css',
+      ),
     );
 
-    const connectionPanelJsPath = Uri.joinPath(
-      this._extensionUri,
-      'dist',
-      'webviews',
-      'connectionPanelController.js',
+    const connectionPanelJsPath = Uri.file(
+      path.join(
+        this._extensionPath,
+        'dist',
+        'webviews',
+        'connectionPanelController.js',
+      ),
     );
 
     const resetCssUri = webview.asWebviewUri(resetCssPath);
