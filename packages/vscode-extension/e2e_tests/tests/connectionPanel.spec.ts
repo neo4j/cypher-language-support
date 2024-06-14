@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { commands, Uri, WebviewPanel, window } from 'vscode';
+import { commands, WebviewPanel, window } from 'vscode';
 import * as connectionService from '../../src/connectionService';
 import { constants } from '../../src/constants';
 import * as contextService from '../../src/contextService';
@@ -58,7 +58,7 @@ suite('Connection panel', () => {
       dispose: () => '',
     } as unknown as WebviewPanel);
 
-    ConnectionPanel.createOrShow(Uri.parse(''));
+    ConnectionPanel.createOrShow('');
 
     const mockConnection = getMockConnection();
 
@@ -98,7 +98,7 @@ suite('Connection panel', () => {
       dispose: () => '',
     } as unknown as WebviewPanel);
 
-    ConnectionPanel.createOrShow(Uri.parse(''));
+    ConnectionPanel.createOrShow('');
 
     messageReceived({
       command: 'onValidationError',
@@ -129,7 +129,7 @@ suite('Connection panel', () => {
       dispose: disposeSpy,
     } as unknown as WebviewPanel);
 
-    ConnectionPanel.createOrShow(Uri.parse(''));
+    ConnectionPanel.createOrShow('');
 
     messageReceived({
       command: 'onSaveConnection',
@@ -157,7 +157,7 @@ suite('Connection panel', () => {
       dispose: disposeSpy,
     } as unknown as WebviewPanel);
 
-    ConnectionPanel.createOrShow(Uri.parse(''));
+    ConnectionPanel.createOrShow('');
 
     messageReceived({
       command: 'onValidationError',

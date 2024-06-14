@@ -43,7 +43,7 @@ export function manageConnectionCommandHandler(
 ): void {
   const context = getExtensionContext();
   const connection = connectionItem ? getConnection(connectionItem.key) : null;
-  ConnectionPanel.createOrShow(context.extensionUri, connection);
+  ConnectionPanel.createOrShow(context.extensionPath, connection);
 }
 
 export async function deleteConnectionCommandHandler(
