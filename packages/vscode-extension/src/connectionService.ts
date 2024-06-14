@@ -59,12 +59,8 @@ export async function saveConnection(
 ): Promise<void> {
   let connections = getConnections();
 
-  connections = connection.connect
-    ? resetAllConnections(connections)
-    : connections;
-
   connections = {
-    ...connections,
+    ...resetAllConnections(connections),
     [connection.key]: connection,
   };
 
@@ -84,17 +80,10 @@ export async function toggleConnection(key: string): Promise<void> {
     return;
   }
 
-  const connect = !connection.connect;
-
-  connections = Object.fromEntries(
-    Object.entries(connections).map(([connectionKey, connectionValue]) => [
-      connectionKey,
-      {
-        ...connectionValue,
-        connect: connectionKey === key ? connect : !connect,
-      },
-    ]),
-  );
+  connections = {
+    ...resetAllConnections(connections),
+    [connection.key]: { ...connection, connect: !connection.connect },
+  };
 
   connection = connections[key];
 
