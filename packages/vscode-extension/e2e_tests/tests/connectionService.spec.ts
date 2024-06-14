@@ -3,7 +3,6 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as connection from '../../src/connectionService';
 import * as contextService from '../../src/contextService';
-import { MethodName } from '../../src/languageClientService';
 import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
@@ -149,18 +148,14 @@ suite('Connection service', () => {
 
       await connection.deleteConnection(mockConnection.key);
 
-      sinon.assert.calledWith(
-        sendNotificationSpy,
-        MethodName.ConnectionDeleted,
-        {
-          trace: { server: 'off' },
-          connect: false,
-          connectURL: 'neo4j://localhost:7687',
-          database: 'neo4j',
-          user: 'neo4j',
-          password: null,
-        },
-      );
+      sinon.assert.calledWith(sendNotificationSpy, 'connectionDeleted', {
+        trace: { server: 'off' },
+        connect: false,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: null,
+      });
     });
   });
 
@@ -198,7 +193,7 @@ suite('Connection service', () => {
       sinon.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should only notify language server only if connection.connect is true', async () => {
+    test('Should notify language server when connection.connect is true', async () => {
       const sendNotificationSpy = sinon.spy(
         mockLanguageClient,
         'sendNotification',
@@ -209,7 +204,7 @@ suite('Connection service', () => {
 
       sinon.assert.calledOnceWithExactly(
         sendNotificationSpy,
-        MethodName.ConnectionUpdated,
+        'connectionUpdated',
         {
           trace: { server: 'off' },
           connect: true,
@@ -282,18 +277,14 @@ suite('Connection service', () => {
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(
-        sendNotificationSpy,
-        MethodName.ConnectionUpdated,
-        {
-          trace: { server: 'off' },
-          connect: true,
-          connectURL: 'neo4j://localhost:7687',
-          database: 'neo4j',
-          user: 'neo4j',
-          password: 'mock-password',
-        },
-      );
+      sinon.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+        trace: { server: 'off' },
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      });
     });
 
     test('Should notify language server when toggling a connection to disconnected', async () => {
@@ -306,18 +297,14 @@ suite('Connection service', () => {
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(
-        sendNotificationSpy,
-        MethodName.ConnectionUpdated,
-        {
-          trace: { server: 'off' },
-          connect: false,
-          connectURL: 'neo4j://localhost:7687',
-          database: 'neo4j',
-          user: 'neo4j',
-          password: 'mock-password',
-        },
-      );
+      sinon.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+        trace: { server: 'off' },
+        connect: false,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      });
     });
 
     test('Should reset all connections when toggling a connection to connected', async () => {

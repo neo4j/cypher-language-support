@@ -7,10 +7,7 @@ import {
 } from './connectionService';
 import { getLanguageClient } from './contextService';
 
-export enum MethodName {
-  ConnectionUpdated = 'connectionUpdated',
-  ConnectionDeleted = 'connectionDeleted',
-}
+export type MethodName = 'connectionUpdated' | 'connectionDeleted';
 
 export async function sendNotificationToLanguageClient(
   methodName: MethodName,

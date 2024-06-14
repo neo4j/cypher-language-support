@@ -49,7 +49,7 @@ export async function deleteConnection(key: string): Promise<void> {
     delete connections[key];
     await updateConnections(connections);
     await deletePassword(key);
-    await sendNotification(MethodName.ConnectionDeleted, connection);
+    await sendNotification('connectionDeleted', connection);
   }
 }
 
@@ -69,7 +69,7 @@ export async function saveConnection(
   await savePassword(connection.key, password);
 
   if (connection.connect) {
-    await sendNotification(MethodName.ConnectionUpdated, connection);
+    await sendNotification('connectionUpdated', connection);
   }
 }
 
@@ -85,7 +85,7 @@ export async function toggleConnection(key: string): Promise<void> {
   connections = resetConnectionsAndUpsert(connections, connection);
 
   await updateConnections(connections);
-  await sendNotification(MethodName.ConnectionUpdated, connection);
+  await sendNotification('connectionUpdated', connection);
 }
 
 export async function getPasswordForConnection(

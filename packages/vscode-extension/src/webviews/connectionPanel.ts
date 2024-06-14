@@ -7,7 +7,7 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { Connection } from '../connectionService';
+import { Connection, getAllConnections } from '../connectionService';
 import { constants } from '../constants';
 import { getNonce } from '../getNonce';
 
@@ -40,7 +40,7 @@ export class ConnectionPanel {
 
     // Ordinarily, if the connection was undefined, we would create a new one
     // We want to limit this to a single connection for now
-    this._connection = connection ?? undefined; //getAllConnections()[0];
+    this._connection = connection ?? getAllConnections()[0];
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
