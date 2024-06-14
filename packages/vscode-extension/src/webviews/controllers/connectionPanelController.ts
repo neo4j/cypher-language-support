@@ -13,7 +13,7 @@ export function validateConnection(
 ): boolean {
   highlightInvalidFields();
   return (
-    !!connection ||
+    !connection ||
     (!!connection.scheme &&
       !!connection.host &&
       !!connection.database &&

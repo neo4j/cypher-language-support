@@ -7,7 +7,7 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { Connection, getAllConnections } from '../connectionService';
+import { Connection } from '../connectionService';
 import { constants } from '../constants';
 import { getNonce } from '../getNonce';
 
@@ -40,7 +40,7 @@ export class ConnectionPanel {
 
     // Ordinarily, if the connection was undefined, we would create a new one
     // We want to limit this to a single connection for now
-    this._connection = connection ?? getAllConnections()[0];
+    this._connection = connection ?? undefined; //getAllConnections()[0];
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -213,25 +213,25 @@ export class ConnectionPanel {
                   <div class="form--input-wrapper">
                     <label for="host">Host *</label>
                     <input type="text" id="host" required placeholder="localhost" value="${
-                      this._connection?.host ?? 'localhost'
+                      this._connection?.host ?? ''
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
                     <input type="text" id="port" placeholder="7687" value="${
-                      this._connection?.port ?? '7687'
+                      this._connection?.port ?? ''
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="database">Database *</label>
                     <input type="text" id="database" required placeholder="neo4j" value="${
-                      this._connection?.database ?? 'neo4j'
+                      this._connection?.database ?? ''
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
-                      this._connection?.user ?? 'neo4j'
+                      this._connection?.user ?? ''
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
