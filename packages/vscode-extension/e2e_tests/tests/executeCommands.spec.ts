@@ -34,7 +34,7 @@ suite('Execute commands', () => {
         true,
       );
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
@@ -57,7 +57,7 @@ suite('Execute commands', () => {
         false,
       );
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
@@ -82,7 +82,7 @@ suite('Execute commands', () => {
         },
       );
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
       );
@@ -102,7 +102,7 @@ suite('Execute commands', () => {
         },
       );
 
-      sinon.assert.notCalled(showInformationMessageStub);
+      sandbox.assert.notCalled(showInformationMessageStub);
 
       stub.restore();
     });
@@ -124,7 +124,7 @@ suite('Execute commands', () => {
         },
       );
 
-      sinon.assert.notCalled(showInformationMessageStub);
+      sandbox.assert.notCalled(showInformationMessageStub);
 
       stub.restore();
     });
@@ -137,7 +137,7 @@ suite('Execute commands', () => {
         connect: true,
       });
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTED_MESSAGE,
       );
@@ -151,7 +151,7 @@ suite('Execute commands', () => {
         connect: false,
       });
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
         constants.MESSAGES.DISCONNECTED_MESSAGE,
       );

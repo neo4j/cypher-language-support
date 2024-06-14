@@ -68,14 +68,14 @@ suite('Connection panel', () => {
       password: 'mock-password',
     });
 
-    sinon.assert.calledOnceWithExactly(
+    sandbox.assert.calledOnceWithExactly(
       executeCommandStub,
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       mockConnection,
       'mock-password',
     );
 
-    sinon.assert.calledOnceWithExactly(
+    sandbox.assert.calledOnceWithExactly(
       saveConnectionStub,
       mockConnection,
       'mock-password',
@@ -104,12 +104,12 @@ suite('Connection panel', () => {
       command: 'onValidationError',
     });
 
-    sinon.assert.calledOnceWithExactly(
+    sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
       constants.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
     );
-    sinon.assert.notCalled(executeCommandStub);
-    sinon.assert.notCalled(saveConnectionStub);
+    sandbox.assert.notCalled(executeCommandStub);
+    sandbox.assert.notCalled(saveConnectionStub);
   });
 
   test('Should dispose the panel when receiving an onSaveConnection command', (done) => {
@@ -137,7 +137,7 @@ suite('Connection panel', () => {
       password: 'mock-password',
     });
 
-    sinon.assert.calledOnce(disposeSpy);
+    sandbox.assert.calledOnce(disposeSpy);
   });
 
   test('Should not dispose the panel when receiving an onValidationError command', (done) => {
@@ -163,6 +163,6 @@ suite('Connection panel', () => {
       command: 'onValidationError',
     });
 
-    sinon.assert.notCalled(disposeSpy);
+    sandbox.assert.notCalled(disposeSpy);
   });
 });

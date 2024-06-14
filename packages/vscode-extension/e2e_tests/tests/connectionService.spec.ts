@@ -93,9 +93,12 @@ suite('Connection service', () => {
 
   suite('deleteConnection', () => {
     test('Should handle non-existent connection key', () => {
-      const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
-      const storeSecretsSpy = sinon.spy(mockContext.secrets, 'store');
-      const sendNotificationSpy = sinon.spy(
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
+      const storeSecretsSpy = sandbox.spy(mockContext.secrets, 'store');
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -103,9 +106,9 @@ suite('Connection service', () => {
       const promise = connection.deleteConnection('does-not-exist');
 
       assert.doesNotThrow(async () => await promise);
-      sinon.assert.notCalled(updateGlobalStateSpy);
-      sinon.assert.notCalled(storeSecretsSpy);
-      sinon.assert.notCalled(sendNotificationSpy);
+      sandbox.assert.notCalled(updateGlobalStateSpy);
+      sandbox.assert.notCalled(storeSecretsSpy);
+      sandbox.assert.notCalled(sendNotificationSpy);
     });
 
     test('Should delete a connection by a given key', async () => {
@@ -123,7 +126,7 @@ suite('Connection service', () => {
     });
 
     test('Should delete a password by a given key when a connection is deleted', async () => {
-      const deleteSecretsSpy = sinon.spy(mockContext.secrets, 'delete');
+      const deleteSecretsSpy = sandbox.spy(mockContext.secrets, 'delete');
       const mockConnection = getMockConnection();
       const mockConnection2 = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
@@ -134,12 +137,15 @@ suite('Connection service', () => {
         mockConnection2.key,
       );
 
-      sinon.assert.calledOnceWithExactly(deleteSecretsSpy, mockConnection.key);
+      sandbox.assert.calledOnceWithExactly(
+        deleteSecretsSpy,
+        mockConnection.key,
+      );
       assert.strictEqual(returnedPassword2, 'mock-password-2');
     });
 
     test('Should notify language server when a connection is deleted', async () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -148,7 +154,7 @@ suite('Connection service', () => {
 
       await connection.deleteConnection(mockConnection.key);
 
-      sinon.assert.calledWith(sendNotificationSpy, 'connectionDeleted', {
+      sandbox.assert.calledWith(sendNotificationSpy, 'connectionDeleted', {
         trace: { server: 'off' },
         connect: false,
         connectURL: 'neo4j://localhost:7687',
@@ -161,18 +167,25 @@ suite('Connection service', () => {
 
   suite('saveConnection', () => {
     test('Should store connection and password in global state and secret storage', async () => {
-      const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
-      const storeSecretsSpy = sinon.spy(mockContext.secrets, 'store');
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
+      const storeSecretsSpy = sandbox.spy(mockContext.secrets, 'store');
       const mockConnection = getMockConnection();
 
       await connection.saveConnection(mockConnection, 'mock-password');
       const storedConnection = connection.getConnection(mockConnection.key);
 
-      sinon.assert.calledOnceWithExactly(updateGlobalStateSpy, 'connections', {
-        [mockConnection.key]: mockConnection,
-      });
+      sandbox.assert.calledOnceWithExactly(
+        updateGlobalStateSpy,
+        'connections',
+        {
+          [mockConnection.key]: mockConnection,
+        },
+      );
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         storeSecretsSpy,
         mockConnection.key,
         'mock-password',
@@ -182,7 +195,7 @@ suite('Connection service', () => {
     });
 
     test('Should not notify language server if connection.connect is false', async () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -190,11 +203,11 @@ suite('Connection service', () => {
 
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      sinon.assert.notCalled(sendNotificationSpy);
+      sandbox.assert.notCalled(sendNotificationSpy);
     });
 
     test('Should notify language server when connection.connect is true', async () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -202,7 +215,7 @@ suite('Connection service', () => {
 
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      sinon.assert.calledOnceWithExactly(
+      sandbox.assert.calledOnceWithExactly(
         sendNotificationSpy,
         'connectionUpdated',
         {
@@ -230,45 +243,54 @@ suite('Connection service', () => {
 
   suite('toggleConnection', () => {
     test('Should handle non-existent connection key', () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
-      const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
       const promise = connection.toggleConnection('does-not-exist');
 
       assert.doesNotThrow(async () => await promise);
 
-      sinon.assert.notCalled(updateGlobalStateSpy);
-      sinon.assert.notCalled(sendNotificationSpy);
+      sandbox.assert.notCalled(updateGlobalStateSpy);
+      sandbox.assert.notCalled(sendNotificationSpy);
     });
 
     test('Should toggle a disconnected connection to connected', async () => {
-      const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(updateGlobalStateSpy, 'connections', {
+      sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: { ...mockConnection, connect: true },
       });
     });
 
     test('Should toggle a connected connection to disconnected', async () => {
-      const updateGlobalStateSpy = sinon.spy(mockContext.globalState, 'update');
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(updateGlobalStateSpy, 'connections', {
+      sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: { ...mockConnection, connect: false },
       });
     });
 
     test('Should notify language server when toggling a connection to connected', async () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -277,7 +299,7 @@ suite('Connection service', () => {
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+      sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
         connect: true,
         connectURL: 'neo4j://localhost:7687',
@@ -288,7 +310,7 @@ suite('Connection service', () => {
     });
 
     test('Should notify language server when toggling a connection to disconnected', async () => {
-      const sendNotificationSpy = sinon.spy(
+      const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
       );
@@ -297,7 +319,7 @@ suite('Connection service', () => {
 
       await connection.toggleConnection(mockConnection.key);
 
-      sinon.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+      sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
         connect: false,
         connectURL: 'neo4j://localhost:7687',
