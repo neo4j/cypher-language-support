@@ -11,3 +11,4 @@
 !dist/lintWorker.js
 !dist/cypher-language-server.js
 !cypher-language-configuration.json
+!syntaxes/

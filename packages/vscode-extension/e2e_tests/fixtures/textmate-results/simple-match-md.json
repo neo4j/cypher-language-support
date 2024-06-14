@@ -1,0 +1,78 @@
+[
+  {
+    "character": "#",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown"
+  },
+  {
+    "character": "Simple match test",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "cypher",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  }
+]

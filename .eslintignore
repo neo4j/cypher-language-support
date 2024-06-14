@@ -9,4 +9,5 @@ index.html
 packages/language-support/src/highlighting/semanticAnalysis.js
 .eslintrc.js
 vendor/*
+packages/vscode-extension/genTextMate.js
 release-canary.js
