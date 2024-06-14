@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { commands, window } from 'vscode';
+import { commands, MessageOptions, window } from 'vscode';
 import { constants } from '../../src/constants';
 
 suite('Execute commands', () => {
@@ -66,13 +66,17 @@ suite('Execute commands', () => {
 
   suite('deleteConnectionCommand', () => {
     test('Deleting a connection should show a success message', async () => {
-      // The following line is necessary because the showWarningMessage method
-      // used in commands.ts is using one of the overloads with the <T extends string>
-      // generic argument, but the stubbed type resolves to the non-generic version of the method
-      // which uses the MessageItem type.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const stub = sinon.stub(window, 'showWarningMessage' as any);
-      stub.resolves('Yes');
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('Yes');
 
       await commands.executeCommand(
         constants.COMMANDS.DELETE_CONNECTION_COMMAND,
@@ -86,13 +90,10 @@ suite('Execute commands', () => {
         showInformationMessageStub,
         constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
       );
-
-      stub.restore();
     });
 
     test('Dismissing delete connection prompt should not show any messages', async () => {
-      const stub = sinon.stub(window, 'showWarningMessage');
-      stub.resolves(undefined);
+      sandbox.stub(window, 'showWarningMessage').resolves(undefined);
 
       await commands.executeCommand(
         constants.COMMANDS.DELETE_CONNECTION_COMMAND,
@@ -103,18 +104,20 @@ suite('Execute commands', () => {
       );
 
       sandbox.assert.notCalled(showInformationMessageStub);
-
-      stub.restore();
     });
 
     test('Any other response from delete connection prompt should not show any messages', async () => {
-      // The following line is necessary because the showWarningMessage method
-      // used in commands.ts is using one of the overloads with the <T extends string>
-      // generic argument, but the stubbed type resolves to the non-generic version of the method
-      // which uses the MessageItem type.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const stub = sinon.stub(window, 'showWarningMessage' as any);
-      stub.resolves('No');
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('No');
 
       await commands.executeCommand(
         constants.COMMANDS.DELETE_CONNECTION_COMMAND,
@@ -125,8 +128,6 @@ suite('Execute commands', () => {
       );
 
       sandbox.assert.notCalled(showInformationMessageStub);
-
-      stub.restore();
     });
   });
 

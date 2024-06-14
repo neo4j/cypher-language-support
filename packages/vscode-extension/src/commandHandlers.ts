@@ -49,7 +49,7 @@ export function manageConnectionCommandHandler(
 export async function deleteConnectionCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
-  const result = await window.showWarningMessage(
+  const result = await window.showWarningMessage<string>(
     `Are you sure you want to delete connection ${connectionItem.label}?`,
     { modal: true },
     'Yes',
