@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { SAVE_CONNECTION_COMMAND } from '../../src/constants';
+import { constants } from '../../src/constants';
 import {
   eventually,
   getDocumentUri,
@@ -195,7 +195,7 @@ suite('Syntax validation spec', () => {
 
     // update connection to switch to movies database
     await vscode.commands.executeCommand(
-      SAVE_CONNECTION_COMMAND,
+      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       connection,
       process.env.NEO4J_PASSWORD,
     );
@@ -218,7 +218,7 @@ suite('Syntax validation spec', () => {
 
     // tidy up - reset connection to default database
     await vscode.commands.executeCommand(
-      SAVE_CONNECTION_COMMAND,
+      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       { ...connection, database: process.env.NEO4J_DATABASE || 'neo4j' },
       process.env.NEO4J_PASSWORD,
     );

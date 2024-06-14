@@ -54,15 +54,16 @@ export async function deleteConnection(key: string): Promise<void> {
 }
 
 export async function saveConnection(
-  connection: Connection,
+  connection: Connection | null,
   password: string,
 ): Promise<void> {
+  if (!connection) {
+    return;
+  }
+
   let connections = getConnections();
 
-  connections = {
-    ...resetAllConnections(connections),
-    [connection.key]: connection,
-  };
+  connections = resetConnectionsAndUpsert(connections, connection);
 
   await updateConnections(connections);
   await savePassword(connection.key, password);
@@ -80,12 +81,8 @@ export async function toggleConnection(key: string): Promise<void> {
     return;
   }
 
-  connections = {
-    ...resetAllConnections(connections),
-    [connection.key]: { ...connection, connect: !connection.connect },
-  };
-
-  connection = connections[key];
+  connection = { ...connection, connect: !connection.connect };
+  connections = resetConnectionsAndUpsert(connections, connection);
 
   await updateConnections(connections);
   await sendNotification(MethodName.ConnectionUpdated, connection);
@@ -108,13 +105,19 @@ export function getConnectionString(connection: Connection): string | null {
   return null;
 }
 
-function resetAllConnections(connections: Connections): Connections {
-  return Object.fromEntries(
-    Object.entries(connections).map(([key, connection]) => [
-      key,
-      { ...connection, connect: false },
-    ]),
-  );
+function resetConnectionsAndUpsert(
+  connections: Connections,
+  connection: Connection,
+): Connections {
+  return {
+    ...Object.fromEntries(
+      Object.entries(connections).map(([key, connection]) => [
+        key,
+        { ...connection, connect: false },
+      ]),
+    ),
+    [connection.key]: connection,
+  };
 }
 
 async function updateConnections(connections: Connections): Promise<void> {

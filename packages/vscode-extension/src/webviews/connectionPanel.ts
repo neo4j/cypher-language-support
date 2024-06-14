@@ -8,14 +8,16 @@ import {
   window,
 } from 'vscode';
 import { Connection, getAllConnections } from '../connectionService';
-import { SAVE_CONNECTION_COMMAND } from '../constants';
+import { constants } from '../constants';
 import { getNonce } from '../getNonce';
 
-export type WebViewMessage = {
-  command: string;
+export type ConnectionPanelMessage = {
+  command: ConnectionPanelMessageCommand;
   connection?: Connection;
   password?: string;
 };
+
+type ConnectionPanelMessageCommand = 'onSaveConnection' | 'onValidationError';
 
 export class ConnectionPanel {
   private static _currentPanel: ConnectionPanel | undefined;
@@ -93,19 +95,21 @@ export class ConnectionPanel {
     this._panel.webview.html = this.getHtmlForWebview(webview);
 
     webview.onDidReceiveMessage(
-      async (data: WebViewMessage) => {
-        switch (data.command) {
+      async (message: ConnectionPanelMessage) => {
+        switch (message.command) {
           case 'onSaveConnection': {
             await commands.executeCommand(
-              SAVE_CONNECTION_COMMAND,
-              data.connection,
-              data.password,
+              constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+              message.connection,
+              message.password,
             );
             this.dispose();
             break;
           }
           case 'onValidationError': {
-            void window.showErrorMessage('Please fill in all required fields');
+            void window.showErrorMessage(
+              constants.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
+            );
             break;
           }
         }
