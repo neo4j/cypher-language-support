@@ -1,8 +1,8 @@
 import { Connection, Scheme } from '../../connectionService';
-import { WebViewMessage } from '../connectionPanel';
+import { ConnectionPanelMessage } from '../connectionPanel';
 
 interface vscode {
-  postMessage(message: WebViewMessage): void;
+  postMessage(message: ConnectionPanelMessage): void;
 }
 
 declare const vscode: vscode;

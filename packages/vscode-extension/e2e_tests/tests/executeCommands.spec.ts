@@ -1,16 +1,7 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, window } from 'vscode';
-import {
-  CONNECTED_MESSAGE,
-  CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
-  CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
-  CONNECT_COMMAND,
-  DELETE_CONNECTION_COMMAND,
-  DISCONNECTED_MESSAGE,
-  DISCONNECT_COMMAND,
-  SAVE_CONNECTION_COMMAND,
-} from '../../src/constants';
+import { constants } from '../../src/constants';
 
 suite('Execute commands', () => {
   let sandbox: sinon.SinonSandbox;
@@ -28,7 +19,7 @@ suite('Execute commands', () => {
   suite('saveConnectionCommand', () => {
     test('Creating a valid connection should show a success message', async () => {
       await commands.executeCommand(
-        SAVE_CONNECTION_COMMAND,
+        constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
@@ -45,13 +36,13 @@ suite('Execute commands', () => {
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
+        constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
     });
 
     test('Updating a valid connection should show a success message', async () => {
       await commands.executeCommand(
-        SAVE_CONNECTION_COMMAND,
+        constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2-update',
           key: 'mock-key-2',
@@ -68,7 +59,7 @@ suite('Execute commands', () => {
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
+        constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
     });
   });
@@ -83,14 +74,17 @@ suite('Execute commands', () => {
       const stub = sinon.stub(window, 'showWarningMessage' as any);
       stub.resolves('Yes');
 
-      await commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-        key: 'mock-key-2',
-        label: 'mock-connection-2-update',
-      });
+      await commands.executeCommand(
+        constants.COMMANDS.DELETE_CONNECTION_COMMAND,
+        {
+          key: 'mock-key-2',
+          label: 'mock-connection-2-update',
+        },
+      );
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
+        constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
       );
 
       stub.restore();
@@ -100,10 +94,13 @@ suite('Execute commands', () => {
       const stub = sinon.stub(window, 'showWarningMessage');
       stub.resolves(undefined);
 
-      await commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-        key: 'mock-key-2',
-        label: 'mock-connection-2-update',
-      });
+      await commands.executeCommand(
+        constants.COMMANDS.DELETE_CONNECTION_COMMAND,
+        {
+          key: 'mock-key-2',
+          label: 'mock-connection-2-update',
+        },
+      );
 
       sinon.assert.notCalled(showInformationMessageStub);
 
@@ -119,10 +116,13 @@ suite('Execute commands', () => {
       const stub = sinon.stub(window, 'showWarningMessage' as any);
       stub.resolves('No');
 
-      await commands.executeCommand(DELETE_CONNECTION_COMMAND, {
-        key: 'mock-key-2',
-        label: 'mock-connection-2-update',
-      });
+      await commands.executeCommand(
+        constants.COMMANDS.DELETE_CONNECTION_COMMAND,
+        {
+          key: 'mock-key-2',
+          label: 'mock-connection-2-update',
+        },
+      );
 
       sinon.assert.notCalled(showInformationMessageStub);
 
@@ -132,28 +132,28 @@ suite('Execute commands', () => {
 
   suite('connectCommand', () => {
     test('Connecting to a connection should show a success message', async () => {
-      await commands.executeCommand(CONNECT_COMMAND, {
+      await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
         key: 'mock-key',
         connect: true,
       });
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTED_MESSAGE,
+        constants.MESSAGES.CONNECTED_MESSAGE,
       );
     });
   });
 
   suite('disconnectCommand', () => {
     test('Disconnecting from a connection should show a success message', async () => {
-      await commands.executeCommand(DISCONNECT_COMMAND, {
+      await commands.executeCommand(constants.COMMANDS.DISCONNECT_COMMAND, {
         key: 'mock-key',
         connect: false,
       });
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        DISCONNECTED_MESSAGE,
+        constants.MESSAGES.DISCONNECTED_MESSAGE,
       );
     });
   });

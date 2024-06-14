@@ -1,10 +1,10 @@
 import neo4j from 'neo4j-driver';
 import * as vscode from 'vscode';
-import { SAVE_CONNECTION_COMMAND } from '../src/constants';
+import { constants } from '../src/constants';
 
 export async function createConnection(): Promise<void> {
   await vscode.commands.executeCommand(
-    SAVE_CONNECTION_COMMAND,
+    constants.COMMANDS.SAVE_CONNECTION_COMMAND,
     {
       name: 'test',
       key: 'test',

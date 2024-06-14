@@ -8,7 +8,7 @@ import {
   saveConnectionCommandHandler,
 } from './commandHandlers';
 import { ConnectionTreeDataProvider } from './connectionTreeDataProvider';
-import * as constants from './constants';
+import { constants } from './constants';
 
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
@@ -21,25 +21,31 @@ export function registerDisposables(): Disposable[] {
     ),
     workspace.onDidChangeConfiguration(configurationChangedHandler),
     commands.registerCommand(
-      constants.SAVE_CONNECTION_COMMAND,
+      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       saveConnectionCommandHandler,
     ),
     commands.registerCommand(
-      constants.MANAGE_CONNECTION_COMMAND,
+      constants.COMMANDS.MANAGE_CONNECTION_COMMAND,
       manageConnectionCommandHandler,
     ),
     commands.registerCommand(
-      constants.DELETE_CONNECTION_COMMAND,
+      constants.COMMANDS.DELETE_CONNECTION_COMMAND,
       deleteConnectionCommandHandler,
     ),
-    commands.registerCommand(constants.CONNECT_COMMAND, connectCommandHandler),
     commands.registerCommand(
-      constants.DISCONNECT_COMMAND,
+      constants.COMMANDS.CONNECT_COMMAND,
+      connectCommandHandler,
+    ),
+    commands.registerCommand(
+      constants.COMMANDS.DISCONNECT_COMMAND,
       disconnectCommandHandler,
     ),
-    commands.registerCommand(constants.REFRESH_CONNECTIONS_COMMAND, () => {
-      connectionTreeDataProvider.refresh();
-    }),
+    commands.registerCommand(
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      () => {
+        connectionTreeDataProvider.refresh();
+      },
+    ),
   );
 
   return disposables;

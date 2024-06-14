@@ -8,7 +8,7 @@ import {
   toggleConnection,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
-import * as constants from './constants';
+import { constants } from './constants';
 import { getExtensionContext } from './contextService';
 import {
   MethodName,
@@ -35,9 +35,9 @@ export async function saveConnectionCommandHandler(
   password: string,
 ): Promise<void> {
   await saveConnection(connection, password);
-  void commands.executeCommand(constants.REFRESH_CONNECTIONS_COMMAND);
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
   void window.showInformationMessage(
-    constants.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
+    constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
   );
 }
 
@@ -60,9 +60,11 @@ export async function deleteConnectionCommandHandler(
 
   if (result === 'Yes') {
     await deleteConnection(connectionItem.key);
-    void commands.executeCommand(constants.REFRESH_CONNECTIONS_COMMAND);
+    void commands.executeCommand(
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
     void window.showInformationMessage(
-      constants.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
+      constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
     );
   }
 }
@@ -71,14 +73,14 @@ export async function connectCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
   await toggleConnection(connectionItem.key);
-  void window.showInformationMessage(constants.CONNECTED_MESSAGE);
-  void commands.executeCommand(constants.REFRESH_CONNECTIONS_COMMAND);
+  void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
 
 export async function disconnectCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
   await toggleConnection(connectionItem.key);
-  void window.showInformationMessage(constants.DISCONNECTED_MESSAGE);
-  void commands.executeCommand(constants.REFRESH_CONNECTIONS_COMMAND);
+  void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
