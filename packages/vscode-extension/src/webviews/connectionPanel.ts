@@ -100,7 +100,6 @@ export class ConnectionPanel {
               SAVE_CONNECTION_COMMAND,
               data.connection,
               data.password,
-              !this._connection,
             );
             this.dispose();
             break;
@@ -149,6 +148,9 @@ export class ConnectionPanel {
     const connectionPanelJsUri = webview.asWebviewUri(connectionPanelJsPath);
     const nonce = getNonce();
 
+    // Connect by default if this is a new connection
+    const connect = this._connection?.connect ?? true;
+
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -179,9 +181,7 @@ export class ConnectionPanel {
                   <input type="hidden" id="key" value="${
                     this._connection?.key ?? getNonce(16)
                   }" />
-                  <input type="hidden" id="connect" value="${
-                    this._connection?.connect ?? 'false'
-                  }" />
+                  <input type="hidden" id="connect" value="${connect}" />
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
                     <select id="scheme">

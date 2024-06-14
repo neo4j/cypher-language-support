@@ -33,14 +33,11 @@ export async function configurationChangedHandler(
 export async function saveConnectionCommandHandler(
   connection: Connection,
   password: string,
-  isNew: boolean,
 ): Promise<void> {
-  await saveConnection(connection, password, isNew);
+  await saveConnection(connection, password);
   void commands.executeCommand(constants.REFRESH_CONNECTIONS_COMMAND);
   void window.showInformationMessage(
-    isNew
-      ? constants.CONNECTION_CREATED_SUCCESSFULLY_MESSAGE
-      : constants.CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+    constants.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
   );
 }
 
