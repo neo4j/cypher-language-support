@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import { configurationChangedHandler } from '../../src/commandHandlers';
 import * as connectionService from '../../src/connectionService';
 import * as contextService from '../../src/contextService';
-import { MethodName } from '../../src/languageClientService';
 import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
@@ -53,7 +52,7 @@ suite('Command handlers', () => {
 
     sinon.assert.calledOnceWithExactly(
       sendNotificationSpy,
-      MethodName.ConnectionUpdated,
+      'connectionUpdated',
       {
         trace: { server: 'off' },
         connect: true,

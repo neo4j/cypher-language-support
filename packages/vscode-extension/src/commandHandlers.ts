@@ -10,10 +10,7 @@ import {
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
 import { getExtensionContext } from './contextService';
-import {
-  MethodName,
-  sendNotificationToLanguageClient,
-} from './languageClientService';
+import { sendNotificationToLanguageClient } from './languageClientService';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
 export async function configurationChangedHandler(
@@ -23,7 +20,7 @@ export async function configurationChangedHandler(
     const currentConnection = getCurrentConnection();
     if (currentConnection) {
       await sendNotificationToLanguageClient(
-        MethodName.ConnectionUpdated,
+        'connectionUpdated',
         currentConnection,
       );
     }

@@ -8,10 +8,7 @@ import {
 } from 'vscode-languageclient/node';
 import { getCurrentConnection } from './connectionService';
 import { setContext } from './contextService';
-import {
-  MethodName,
-  sendNotificationToLanguageClient,
-} from './languageClientService';
+import { sendNotificationToLanguageClient } from './languageClientService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
@@ -74,9 +71,6 @@ export async function deactivate(): Promise<void> | undefined {
 async function reconnectConnection(): Promise<void> {
   const connection = getCurrentConnection();
   if (connection) {
-    await sendNotificationToLanguageClient(
-      MethodName.ConnectionUpdated,
-      connection,
-    );
+    await sendNotificationToLanguageClient('connectionUpdated', connection);
   }
 }
