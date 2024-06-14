@@ -10,10 +10,7 @@ export const TEST_CONNECTION_SUCCESFUL_MESSAGE: string =
   'Connection successful';
 export const CONNECTED_MESSAGE: string = 'Connected to Neo4j';
 export const DISCONNECTED_MESSAGE: string = 'Disconnected from Neo4j';
-export const CONNECTION_FAILED_MESSAGE: string = 'Connection to Neo4j failed';
-export const CONNECTION_CREATED_SUCCESSFULLY_MESSAGE: string =
-  'Connection created successfully';
-export const CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE: string =
-  'Connection updated successfully';
+export const CONNECTION_SAVED_SUCCESSFULLY_MESSAGE: string =
+  'Connection saved successfully';
 export const CONNECTION_DELETED_SUCCESSFULLY_MESSAGE: string =
   'Connection deleted successfully';

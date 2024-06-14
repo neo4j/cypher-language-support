@@ -56,13 +56,8 @@ export async function deleteConnection(key: string): Promise<void> {
 export async function saveConnection(
   connection: Connection,
   password: string,
-  isNew: boolean,
 ): Promise<void> {
   let connections = getConnections();
-
-  if (isNew) {
-    connection.connect = true;
-  }
 
   connections = connection.connect
     ? resetAllConnections(connections)

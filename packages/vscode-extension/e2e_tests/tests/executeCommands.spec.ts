@@ -3,9 +3,8 @@ import * as sinon from 'sinon';
 import { commands, window } from 'vscode';
 import {
   CONNECTED_MESSAGE,
-  CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
   CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
-  CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+  CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
   CONNECT_COMMAND,
   DELETE_CONNECTION_COMMAND,
   DISCONNECTED_MESSAGE,
@@ -46,7 +45,7 @@ suite('Execute commands', () => {
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTION_CREATED_SUCCESSFULLY_MESSAGE,
+        CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
     });
 
@@ -69,7 +68,7 @@ suite('Execute commands', () => {
 
       sinon.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        CONNECTION_UPDATED_SUCCESSFULLY_MESSAGE,
+        CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
       );
     });
   });

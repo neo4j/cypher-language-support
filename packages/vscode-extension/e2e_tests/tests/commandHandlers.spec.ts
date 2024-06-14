@@ -45,7 +45,7 @@ suite('Command handlers', () => {
 
     getCurrentConnectionStub = sandbox
       .stub(connectionService, 'getCurrentConnection')
-      .returns(getMockConnection('mock-key', true));
+      .returns(getMockConnection(true));
 
     await configurationChangedHandler({
       affectsConfiguration: () => true,
