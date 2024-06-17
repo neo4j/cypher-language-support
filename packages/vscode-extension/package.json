@@ -61,6 +61,40 @@
         "embeddedLanguages": {
           "meta.embedded.block.cypher": "cypher"
         }
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.js",
+        "path": "./syntaxes/cypher.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.java",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.java",
+        "path": "./syntaxes/cypher.java.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.python",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.python",
+        "path": "./syntaxes/cypher.python.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
       }
     ],
     "configuration": {

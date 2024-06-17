@@ -1,0 +1,28 @@
+{
+  "scopeName": "inline.cypher.java",
+  "injectionSelector": "L:(meta.embedded.block.java | source.java) -source.cypher -inline.cypher.java -string -comment",
+  "patterns": [
+    {
+      "name": "singleLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "\"\"\"//\\s?cypher",
+      "end": "\"\"\"",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multiLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "\"\"\"/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "\"\"\"",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "scopeName": "inline.cypher.js",
+  "injectionSelector": "L:(meta.embedded.block.javascript | meta.embedded.block.typescript | source.js | source.ts) -source.cypher -inline.cypher.js -string -comment",
+  "patterns": [
+    {
+      "contentName": "taggedTemplate",
+      "begin": "/\\*\\s?cypher\\s?\\*/\\s*`",
+      "end": "`",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "`//\\s?cypher",
+      "end": "`",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multiLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "`/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "`",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}

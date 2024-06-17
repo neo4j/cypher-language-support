@@ -1,0 +1,510 @@
+[
+  {
+    "character": "/*",
+    "type": "source.ts comment.block.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": " eslint-disable @typescript-eslint/no-unused-vars ",
+    "type": "source.ts comment.block.ts"
+  },
+  {
+    "character": "*/",
+    "type": "source.ts comment.block.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "a",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " /* cypher */ `",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "b",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " /*cypher*/ `",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "  ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "c",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`//cypher",
+    "type": "source.ts meta.var.expr.ts singleLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts singleLineComment"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "e",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`/* cypher */",
+    "type": "source.ts meta.var.expr.ts multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineComment"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "f",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`/*cypher*/",
+    "type": "source.ts meta.var.expr.ts multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineComment"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  }
+]

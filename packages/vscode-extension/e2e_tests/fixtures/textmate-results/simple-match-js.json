@@ -1,0 +1,478 @@
+[
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "a",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " /* cypher */`",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.js meta.var.expr.js taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "b",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " /*cypher*/`",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "  ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.js meta.var.expr.js taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "c",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "`//cypher",
+    "type": "source.js meta.var.expr.js singleLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.js meta.var.expr.js singleLineComment"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "e",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "`/* cypher */",
+    "type": "source.js meta.var.expr.js multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.js meta.var.expr.js multiLineComment"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "f",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "`/*cypher*/",
+    "type": "source.js meta.var.expr.js multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.js meta.var.expr.js multiLineComment"
+  }
+]

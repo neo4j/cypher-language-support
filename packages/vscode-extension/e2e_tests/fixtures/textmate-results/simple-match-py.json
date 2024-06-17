@@ -1,0 +1,338 @@
+[
+  {
+    "character": "a ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"\"\"//cypher",
+    "type": "source.python singleLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python singleLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python singleLineComment"
+  },
+  {
+    "character": "b ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"\"\"/* cypher */",
+    "type": "source.python multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python multiLineComment"
+  },
+  {
+    "character": "d ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'''//cypher",
+    "type": "source.python singleLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python singleLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python singleLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python singleLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "'''",
+    "type": "source.python singleLineComment"
+  },
+  {
+    "character": "d ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'''/* cypher */",
+    "type": "source.python multiLineComment"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multiLineComment meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multiLineComment meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multiLineComment meta.embedded.block.cypher"
+  },
+  {
+    "character": "'''",
+    "type": "source.python multiLineComment"
+  }
+]

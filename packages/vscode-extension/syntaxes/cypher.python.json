@@ -1,0 +1,50 @@
+{
+  "scopeName": "inline.cypher.python",
+  "injectionSelector": "L:(meta.embedded.block.python | source.python) -source.cypher -inline.cypher.python -string -comment",
+  "patterns": [
+    {
+      "name": "singleLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "\"\"\"//\\s?cypher",
+      "end": "\"\"\"",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multiLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "\"\"\"/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "\"\"\"",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "'''//\\s?cypher",
+      "end": "'''",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multiLineComment",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "'''/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "'''",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}
