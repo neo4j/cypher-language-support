@@ -1,10 +1,18 @@
-import { getExtensionContext } from './contextService';
+import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { workspace } from 'vscode';
+import { getConnectionManager, getExtensionContext } from './contextService';
 import {
   MethodName,
   sendNotificationToLanguageClient,
 } from './languageClientService';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
+
+export type State =
+  | 'connected'
+  | 'connecting'
+  | 'reconnecting'
+  | 'disconnected';
 
 export type Connection = {
   key: string;
@@ -15,6 +23,7 @@ export type Connection = {
   user: string;
   database: string;
   connect: boolean;
+  state: State;
 };
 
 export type Connections = {
@@ -48,7 +57,7 @@ export async function deleteConnection(key: string): Promise<void> {
     delete connections[key];
     await updateConnections(connections);
     await deletePassword(key);
-    await sendNotification('connectionDeleted', {
+    await updateDbmsConnection('connectionDeleted', {
       ...connection,
       connect: false,
     });
@@ -63,15 +72,31 @@ export async function saveConnection(
     return;
   }
 
-  const connections = disconnectAllAndGetConnections();
+  const connections = connection.connect
+    ? disconnectAllAndGetConnections()
+    : getConnections();
+
   connections[connection.key] = connection;
 
   await updateConnections(connections);
   await savePassword(connection.key, password);
 
   if (connection.connect) {
-    await sendNotification('connectionUpdated', connection);
+    await updateDbmsConnection('connectionUpdated', connection);
   }
+}
+
+export async function updateConnectionState(
+  connection: Connection,
+): Promise<void> {
+  if (!connection) {
+    return;
+  }
+
+  const connections = getConnections();
+  connections[connection.key] = connection;
+
+  await updateConnections(connections);
 }
 
 export async function toggleConnection(
@@ -79,17 +104,24 @@ export async function toggleConnection(
   connect: boolean,
 ): Promise<void> {
   const connections = disconnectAllAndGetConnections();
+
   const connection = connections[key];
 
   if (!connection) {
     return;
   }
 
-  const toggledConnection = { ...connection, connect: connect };
+  const state: State = connect ? 'connecting' : 'disconnected';
+
+  const toggledConnection = {
+    ...connection,
+    connect: connect,
+    state: state,
+  };
   connections[key] = toggledConnection;
 
   await updateConnections(connections);
-  await sendNotification('connectionUpdated', toggledConnection);
+  await updateDbmsConnection('connectionUpdated', toggledConnection);
 }
 
 export async function getPasswordForConnection(
@@ -109,12 +141,53 @@ export function getConnectionString(connection: Connection): string | null {
   return null;
 }
 
+export async function updateDbmsConnection(
+  methodName: MethodName,
+  connection: Connection,
+): Promise<void> {
+  const settings = await getConnectionSettings(connection);
+  const connectionManager = getConnectionManager();
+
+  await sendNotificationToLanguageClient(methodName, settings);
+
+  connectionManager.disconnect();
+
+  if (connection.connect) {
+    await connectionManager.connect(settings);
+  }
+}
+
+export async function getConnectionSettings(
+  connection: Connection,
+): Promise<Neo4jSettings> {
+  const trace = workspace
+    .getConfiguration('neo4j')
+    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
+    server: 'off',
+  };
+
+  const password = await getPasswordForConnection(connection.key);
+
+  return {
+    trace: trace,
+    connect: connection.connect,
+    connectURL: getConnectionString(connection),
+    database: connection.database,
+    user: connection.user,
+    password: password,
+  };
+}
+
 function disconnectAllAndGetConnections(): Connections {
   const connections = getConnections();
 
   for (const key in connections) {
     if (connections[key].connect) {
-      connections[key] = { ...connections[key], connect: false };
+      connections[key] = {
+        ...connections[key],
+        connect: false,
+        state: 'disconnected',
+      };
     }
   }
 
@@ -139,11 +212,4 @@ async function deletePassword(key: string): Promise<void> {
 function getConnections(): Connections {
   const context = getExtensionContext();
   return context.globalState.get(CONNECTIONS_KEY, {});
-}
-
-async function sendNotification(
-  methodName: MethodName,
-  connection: Connection,
-): Promise<void> {
-  await sendNotificationToLanguageClient(methodName, connection);
 }

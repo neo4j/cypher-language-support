@@ -1,9 +1,11 @@
+import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as connection from '../../src/connectionService';
 import * as contextService from '../../src/contextService';
 import { getMockConnection } from '../helpers';
+import { MockConnectionManager } from '../mocks/mockConnectionManager';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
@@ -11,16 +13,21 @@ suite('Connection service', () => {
   let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
+  let mockConnectionManager: MockConnectionManager;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     mockContext = new MockExtensionContext();
     mockLanguageClient = new MockLanguageClient();
+    mockConnectionManager = new MockConnectionManager();
 
     sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
     sandbox
       .stub(contextService, 'getLanguageClient')
       .returns(mockLanguageClient);
+    sandbox
+      .stub(contextService, 'getConnectionManager')
+      .returns(mockConnectionManager);
 
     const setContextStub = sandbox.stub(contextService, 'setContext');
 
@@ -229,6 +236,36 @@ suite('Connection service', () => {
       );
     });
 
+    test('Should call connect on connection manager when connection.connect is true', async () => {
+      const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'mock-password');
+
+      await connection.toggleConnection(mockConnection.key, true);
+
+      const settings: Neo4jSettings = {
+        trace: { server: 'off' },
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      };
+
+      sandbox.assert.calledWithExactly(connectSpy, settings);
+    });
+
+    test('Should not call through to connection manager when connection.connect is false', async () => {
+      const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
+      const disconnectSpy = sandbox.spy(mockConnectionManager, 'disconnect');
+      const mockConnection = getMockConnection();
+
+      await connection.saveConnection(mockConnection, 'mock-password');
+
+      sandbox.assert.notCalled(connectSpy);
+      sandbox.assert.notCalled(disconnectSpy);
+    });
+
     test('Should reset all connections when saving a connection with connected flag set to true', async () => {
       const mockConnection = getMockConnection(true);
       const mockConnection2 = getMockConnection(true);
@@ -270,7 +307,11 @@ suite('Connection service', () => {
       await connection.toggleConnection(mockConnection.key, true);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        [mockConnection.key]: { ...mockConnection, connect: true },
+        [mockConnection.key]: {
+          ...mockConnection,
+          connect: true,
+          state: 'connecting',
+        },
       });
     });
 
@@ -285,7 +326,11 @@ suite('Connection service', () => {
       await connection.toggleConnection(mockConnection.key, false);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        [mockConnection.key]: { ...mockConnection, connect: false },
+        [mockConnection.key]: {
+          ...mockConnection,
+          connect: false,
+          state: 'disconnected',
+        },
       });
     });
 
@@ -329,6 +374,35 @@ suite('Connection service', () => {
       });
     });
 
+    test('Should call connect on connection manager when toggling a connection to connected', async () => {
+      const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
+      const mockConnection = getMockConnection();
+      await connection.saveConnection(mockConnection, 'mock-password');
+
+      await connection.toggleConnection(mockConnection.key, true);
+
+      const settings: Neo4jSettings = {
+        trace: { server: 'off' },
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      };
+
+      sandbox.assert.calledWithExactly(connectSpy, settings);
+    });
+
+    test('Should call disconnect on connection manager when toggling a connection to disconnected', async () => {
+      const disconnectSpy = sandbox.spy(mockConnectionManager, 'disconnect');
+      const mockConnection = getMockConnection(true);
+      await connection.saveConnection(mockConnection, 'mock-password');
+
+      await connection.toggleConnection(mockConnection.key, false);
+
+      sandbox.assert.called(disconnectSpy);
+    });
+
     test('Should reset all connections when toggling a connection to connected', async () => {
       const mockConnection = getMockConnection(true);
       const mockConnection2 = getMockConnection(false);
@@ -336,11 +410,19 @@ suite('Connection service', () => {
       await connection.saveConnection(mockConnection2, 'mock-password-2');
 
       await connection.toggleConnection(mockConnection2.key, true);
-      const connectedConnection = connection.getCurrentConnection();
+      const connectionOne = connection.getConnection(mockConnection.key);
+      const connectionTwo = connection.getConnection(mockConnection2.key);
 
-      assert.deepStrictEqual(connectedConnection, {
+      assert.deepStrictEqual(connectionOne, {
+        ...mockConnection,
+        connect: false,
+        state: 'disconnected',
+      });
+
+      assert.deepStrictEqual(connectionTwo, {
         ...mockConnection2,
         connect: true,
+        state: 'connecting',
       });
     });
   });
@@ -380,6 +462,7 @@ suite('Connection service', () => {
         key: 'mock-key',
         name: 'mock-connection',
         user: 'neo4j',
+        state: 'disconnected',
       });
 
       assert.strictEqual(result, 'neo4j://undefined:7687');

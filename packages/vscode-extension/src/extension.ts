@@ -1,14 +1,18 @@
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import { commands, ExtensionContext, workspace } from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { getCurrentConnection } from './connectionService';
-import { setContext } from './contextService';
-import { sendNotificationToLanguageClient } from './languageClientService';
+import {
+  getCurrentConnection,
+  updateConnectionState,
+  updateDbmsConnection,
+} from './connectionService';
+import { constants } from './constants';
+import { getConnectionManager, setContext } from './contextService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
@@ -61,6 +65,9 @@ export async function activate(context: ExtensionContext) {
 }
 
 export async function deactivate(): Promise<void> | undefined {
+  const connectionManager = getConnectionManager();
+  connectionManager.disconnect();
+
   if (!client) {
     return undefined;
   }
@@ -71,6 +78,10 @@ export async function deactivate(): Promise<void> | undefined {
 async function reconnectConnection(): Promise<void> {
   const connection = getCurrentConnection();
   if (connection) {
-    await sendNotificationToLanguageClient('connectionUpdated', connection);
+    await updateConnectionState({ ...connection, state: 'connecting' });
+    void commands.executeCommand(
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
+    await updateDbmsConnection('connectionUpdated', connection);
   }
 }

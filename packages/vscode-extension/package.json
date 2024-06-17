@@ -196,6 +196,7 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.7",
+    "@neo4j-cypher/schema-poller": "2.0.0-next.6",
     "vscode-languageclient": "^8.1.0",
     "neo4j-driver": "^5.12.0"
   },

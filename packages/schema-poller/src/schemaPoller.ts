@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import neo4j, { Config } from 'neo4j-driver';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
@@ -6,6 +7,7 @@ import { listDatabases } from './queries/databases.js';
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
+  public events: EventEmitter = new EventEmitter();
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
   async connect(
@@ -67,14 +69,18 @@ export class Neo4jSchemaPoller {
 
       try {
         await this.connect(url, credentials, config, database);
+        this.events.emit('schemaPoller.persistentConnect.connected');
         // eslint-disable-next-line no-console
         console.log('Established connection to Neo4j');
       } catch (error) {
-        console.error(
-          `Unable to connect to Neo4j: ${String(
-            error,
-          )}. Retrying in 30 seconds.`,
+        const errorMessage = `Unable to connect to Neo4j: ${String(
+          error,
+        )}. Retrying in 30 seconds.`;
+        this.events.emit(
+          'schemaPoller.persistentConnect.reconnecting',
+          errorMessage,
         );
+        console.error(errorMessage);
       }
     }
 
