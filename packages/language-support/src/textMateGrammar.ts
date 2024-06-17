@@ -11,13 +11,25 @@ export const textMateGrammar = {
   name: 'Cypher',
   patterns: [
     {
+      include: '#strings',
+    },
+    {
+      include: '#comments',
+    },
+    {
+      include: '#parameters',
+    },
+    {
+      include: '#constants',
+    },
+    {
       include: '#properties',
     },
     {
       include: '#labels',
     },
     {
-      include: '#functions',
+      include: '#callables',
     },
     {
       include: '#keywords',
@@ -37,6 +49,46 @@ export const textMateGrammar = {
           // The (?i) makes the pattern case insensitive
           match: `(?i)\\b(${keywordRegex})\\b`,
           name: 'keyword',
+        },
+      ],
+    },
+    strings: {
+      patterns: [
+        {
+          begin: "'",
+          end: "'",
+          name: 'string.quoted.single',
+          patterns: [
+            {
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
+            },
+          ],
+        },
+        {
+          begin: '"',
+          end: '"',
+          name: 'string.quoted.double',
+          patterns: [
+            {
+              match: '\\\\(?:.|$)',
+              name: 'constant.character.escape',
+            },
+          ],
+        },
+      ],
+    },
+    comments: {
+      patterns: [
+        {
+          begin: '//',
+          end: '$',
+          name: 'comment.line',
+        },
+        {
+          begin: '/\\*',
+          end: '\\*/',
+          name: 'comment.block',
         },
       ],
     },
@@ -88,11 +140,43 @@ export const textMateGrammar = {
         },
       },
     },
-    functions: {
-      // The function name is too flexible in Cypher, refer to comment on procedure names
+    constants: {
+      patterns: [
+        {
+          match: '\\b\\d*(\\.)?\\d+\\b',
+          name: 'constant.numeric',
+        },
+        {
+          match: '(?i)\\b(TRUE|FALSE)\\b',
+          name: 'constant.numeric',
+        },
+      ],
+    },
+    callables: {
+      /* 
+      The function name is too flexible in Cypher, refer to comment on procedure names
+      We don't want to recognize as functions:
+      
+        MATCH (n:Label)
+        AND (openEnded = 1 AND candidate <> end)
+        OR  (openEnded = 2 AND candidate <> start)
+
+      This rule will coulour procedure names as well
+      */
       match:
-        '(?i:(?!\\bmatch\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
+        '(?i:(?!\\b(match|and|or|xor)\\b))(((\\`\\w+\\`|\\w+)(\\s*\\.\\s*(\\`\\w+\\`|\\w+))*)|(\\`\\w+(\\s*\\.\\s*\\w+)*\\`))\\s*\\(',
       name: 'entity.name.function',
+    },
+    parameters: {
+      match: '(\\$)(\\w+)',
+      captures: {
+        '1': {
+          name: 'entity.name.namespace',
+        },
+        '2': {
+          name: 'variable',
+        },
+      },
     },
     variables: {
       match: '\\w+',
