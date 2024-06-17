@@ -43,13 +43,15 @@ export function getConnection(key: string): Connection | null {
 
 export async function deleteConnection(key: string): Promise<void> {
   const connections = getConnections();
-  let connection = connections[key];
+  const connection = connections[key];
   if (connection) {
-    connection = { ...connection, connect: false };
     delete connections[key];
     await updateConnections(connections);
     await deletePassword(key);
-    await sendNotification('connectionDeleted', connection);
+    await sendNotification('connectionDeleted', {
+      ...connection,
+      connect: false,
+    });
   }
 }
 
@@ -61,9 +63,8 @@ export async function saveConnection(
     return;
   }
 
-  let connections = getConnections();
-
-  connections = resetConnectionsAndUpsert(connections, connection);
+  const connections = disconnectAllAndGetConnections();
+  connections[connection.key] = connection;
 
   await updateConnections(connections);
   await savePassword(connection.key, password);
@@ -73,19 +74,22 @@ export async function saveConnection(
   }
 }
 
-export async function toggleConnection(key: string): Promise<void> {
-  let connections = getConnections();
-  let connection = connections[key];
+export async function toggleConnection(
+  key: string,
+  connect: boolean,
+): Promise<void> {
+  const connections = disconnectAllAndGetConnections();
+  const connection = connections[key];
 
   if (!connection) {
     return;
   }
 
-  connection = { ...connection, connect: !connection.connect };
-  connections = resetConnectionsAndUpsert(connections, connection);
+  const toggledConnection = { ...connection, connect: connect };
+  connections[key] = toggledConnection;
 
   await updateConnections(connections);
-  await sendNotification('connectionUpdated', connection);
+  await sendNotification('connectionUpdated', toggledConnection);
 }
 
 export async function getPasswordForConnection(
@@ -105,19 +109,16 @@ export function getConnectionString(connection: Connection): string | null {
   return null;
 }
 
-function resetConnectionsAndUpsert(
-  connections: Connections,
-  connection: Connection,
-): Connections {
-  return {
-    ...Object.fromEntries(
-      Object.entries(connections).map(([key, connection]) => [
-        key,
-        { ...connection, connect: false },
-      ]),
-    ),
-    [connection.key]: connection,
-  };
+function disconnectAllAndGetConnections(): Connections {
+  const connections = getConnections();
+
+  for (const key in connections) {
+    if (connections[key].connect) {
+      connections[key] = { ...connections[key], connect: false };
+    }
+  }
+
+  return connections;
 }
 
 async function updateConnections(connections: Connections): Promise<void> {
