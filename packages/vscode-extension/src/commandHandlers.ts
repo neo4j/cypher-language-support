@@ -69,7 +69,7 @@ export async function deleteConnectionCommandHandler(
 export async function connectCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
-  await toggleConnection(connectionItem.key);
+  await toggleConnection(connectionItem.key, true);
   void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
   void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
@@ -77,7 +77,7 @@ export async function connectCommandHandler(
 export async function disconnectCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
-  await toggleConnection(connectionItem.key);
+  await toggleConnection(connectionItem.key, false);
   void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
   void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }

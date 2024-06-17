@@ -251,7 +251,7 @@ suite('Connection service', () => {
         mockContext.globalState,
         'update',
       );
-      const promise = connection.toggleConnection('does-not-exist');
+      const promise = connection.toggleConnection('does-not-exist', false);
 
       assert.doesNotThrow(async () => await promise);
 
@@ -267,7 +267,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key);
+      await connection.toggleConnection(mockConnection.key, true);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: { ...mockConnection, connect: true },
@@ -282,7 +282,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key);
+      await connection.toggleConnection(mockConnection.key, false);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: { ...mockConnection, connect: false },
@@ -297,7 +297,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key);
+      await connection.toggleConnection(mockConnection.key, true);
 
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
@@ -317,7 +317,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key);
+      await connection.toggleConnection(mockConnection.key, false);
 
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
@@ -335,7 +335,7 @@ suite('Connection service', () => {
       await connection.saveConnection(mockConnection, 'mock-password');
       await connection.saveConnection(mockConnection2, 'mock-password-2');
 
-      await connection.toggleConnection(mockConnection2.key);
+      await connection.toggleConnection(mockConnection2.key, true);
       const connectedConnection = connection.getCurrentConnection();
 
       assert.deepStrictEqual(connectedConnection, {
