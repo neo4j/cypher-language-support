@@ -3,9 +3,11 @@ import {
   Connection,
   deleteConnection,
   getConnection,
+  getConnectionSettings,
   getCurrentConnection,
   saveConnection,
   toggleConnection,
+  updateConnectionState,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
@@ -19,10 +21,8 @@ export async function configurationChangedHandler(
   if (event.affectsConfiguration('neo4j.trace.server')) {
     const currentConnection = getCurrentConnection();
     if (currentConnection) {
-      await sendNotificationToLanguageClient(
-        'connectionUpdated',
-        currentConnection,
-      );
+      const settings = await getConnectionSettings(currentConnection);
+      await sendNotificationToLanguageClient('connectionUpdated', settings);
     }
   }
 }
@@ -33,9 +33,6 @@ export async function saveConnectionCommandHandler(
 ): Promise<void> {
   await saveConnection(connection, password);
   void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
-  void window.showInformationMessage(
-    constants.MESSAGES.CONNECTION_SAVED_SUCCESSFULLY_MESSAGE,
-  );
 }
 
 export function manageConnectionCommandHandler(
@@ -72,16 +69,35 @@ export async function toggleConnectionCommandHandler(
 ): Promise<void> {
   await toggleConnection(connectionItem.key, connect);
 
-  connect
-    ? void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE)
-    : void window.showInformationMessage(
-        constants.MESSAGES.DISCONNECTED_MESSAGE,
-      );
-  connect
-    ? void commands.executeCommand(
-        constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
-      )
-    : void commands.executeCommand(
-        constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
-      );
+  if (!connect) {
+    void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
+  }
+
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+}
+
+export async function connectionConnectedHandler(): Promise<void> {
+  const connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  await updateConnectionState({ ...connection, state: 'connected' });
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
+}
+
+export async function connectionReconnectingHandler(
+  error: string,
+): Promise<void> {
+  const connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  await updateConnectionState({ ...connection, state: 'reconnecting' });
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  void window.showErrorMessage(error);
 }

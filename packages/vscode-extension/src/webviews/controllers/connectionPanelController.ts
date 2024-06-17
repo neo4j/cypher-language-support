@@ -61,6 +61,7 @@ export function getConnection(): Connection | null {
     user: user.value,
     database: database.value,
     connect: connect.value === 'true',
+    state: 'disconnected',
   };
 }
 

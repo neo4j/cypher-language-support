@@ -5,9 +5,7 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { getAllConnections } from './connectionService';
-
-type ConnectionItemType = 'connection' | 'activeConnection';
+import { getAllConnections, State } from './connectionService';
 
 export class ConnectionTreeDataProvider
   implements TreeDataProvider<ConnectionItem>
@@ -41,7 +39,7 @@ export class ConnectionTreeDataProvider
         connectionItems.push(
           new ConnectionItem(
             connection.key,
-            connection.connect ? 'activeConnection' : 'connection',
+            connection.state,
             connection.name,
             TreeItemCollapsibleState.None,
           ),
@@ -55,14 +53,30 @@ export class ConnectionTreeDataProvider
 export class ConnectionItem extends TreeItem {
   constructor(
     public readonly key: string,
-    public readonly type: ConnectionItemType,
+    public readonly state: State,
     public readonly label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
   ) {
     super(label, collapsibleState);
     this.id = key;
     this.tooltip = this.label;
-    this.description = this.type === 'activeConnection' ? 'connected' : '';
-    this.contextValue = this.type;
+    switch (state) {
+      case 'connected':
+        this.description = 'connected';
+        break;
+      case 'connecting':
+        this.description = 'connecting...';
+        break;
+      case 'reconnecting':
+        this.description = 'reconnecting...';
+        break;
+      default:
+        this.description = '';
+        break;
+    }
+    this.contextValue =
+      this.state === 'connected' || this.state === 'reconnecting'
+        ? 'activeConnection'
+        : 'connection';
   }
 }

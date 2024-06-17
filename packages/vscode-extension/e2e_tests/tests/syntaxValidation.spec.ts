@@ -7,6 +7,7 @@ import {
   newUntitledFileWithContent,
   openDocument,
 } from '../helpers';
+import { testDatabaseKey } from '../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;
@@ -149,8 +150,8 @@ suite('Syntax validation spec', () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
     const connection = {
-      name: 'test',
-      key: 'test',
+      name: testDatabaseKey,
+      key: testDatabaseKey,
       scheme: process.env.NEO4J_SCHEME,
       host: process.env.NEO4J_HOST,
       port: process.env.NEO4J_PORT,
