@@ -91,13 +91,6 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
-          "command": "neo4j.manageConnection",
-          "when": "view == neo4jConnections",
-          "group": "navigation"
-        }
-      ],
       "view/item/context": [
         {
           "command": "neo4j.connect",
