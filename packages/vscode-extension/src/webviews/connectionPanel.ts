@@ -27,8 +27,8 @@ export class ConnectionPanel {
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
-  private readonly _connection: Connection | undefined;
 
+  private _connection: Connection | undefined;
   private _disposables: Disposable[] = [];
 
   private constructor(
@@ -53,6 +53,7 @@ export class ConnectionPanel {
       : undefined;
 
     if (ConnectionPanel._currentPanel) {
+      ConnectionPanel._currentPanel._connection = connection;
       ConnectionPanel._currentPanel._panel.reveal(column);
       ConnectionPanel._currentPanel.update();
       return;
