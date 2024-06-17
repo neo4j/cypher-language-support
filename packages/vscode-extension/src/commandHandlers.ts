@@ -66,18 +66,22 @@ export async function deleteConnectionCommandHandler(
   }
 }
 
-export async function connectCommandHandler(
+export async function toggleConnectionCommandHandler(
   connectionItem: ConnectionItem,
+  connect: boolean,
 ): Promise<void> {
-  await toggleConnection(connectionItem.key, true);
-  void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
-}
+  await toggleConnection(connectionItem.key, connect);
 
-export async function disconnectCommandHandler(
-  connectionItem: ConnectionItem,
-): Promise<void> {
-  await toggleConnection(connectionItem.key, false);
-  void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  connect
+    ? void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE)
+    : void window.showInformationMessage(
+        constants.MESSAGES.DISCONNECTED_MESSAGE,
+      );
+  connect
+    ? void commands.executeCommand(
+        constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      )
+    : void commands.executeCommand(
+        constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      );
 }

@@ -40,10 +40,10 @@ export class ConnectionTreeDataProvider
       if (connection) {
         connectionItems.push(
           new ConnectionItem(
+            connection.key,
             connection.connect ? 'activeConnection' : 'connection',
             connection.name,
             TreeItemCollapsibleState.None,
-            connection.key,
           ),
         );
       }
@@ -54,19 +54,15 @@ export class ConnectionTreeDataProvider
 
 export class ConnectionItem extends TreeItem {
   constructor(
+    public readonly key: string,
     public readonly type: ConnectionItemType,
     public readonly label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
-    public readonly key?: string,
   ) {
     super(label, collapsibleState);
+    this.id = key;
     this.tooltip = this.label;
     this.description = this.type === 'activeConnection' ? 'connected' : '';
-    this.id =
-      this.type === 'activeConnection' || this.type === 'connection'
-        ? key
-        : undefined;
-
     this.contextValue = this.type;
   }
 }

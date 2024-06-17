@@ -1,13 +1,15 @@
 import { commands, Disposable, window, workspace } from 'vscode';
 import {
   configurationChangedHandler,
-  connectCommandHandler,
   deleteConnectionCommandHandler,
-  disconnectCommandHandler,
   manageConnectionCommandHandler,
   saveConnectionCommandHandler,
+  toggleConnectionCommandHandler,
 } from './commandHandlers';
-import { ConnectionTreeDataProvider } from './connectionTreeDataProvider';
+import {
+  ConnectionItem,
+  ConnectionTreeDataProvider,
+} from './connectionTreeDataProvider';
 import { constants } from './constants';
 
 export function registerDisposables(): Disposable[] {
@@ -34,11 +36,13 @@ export function registerDisposables(): Disposable[] {
     ),
     commands.registerCommand(
       constants.COMMANDS.CONNECT_COMMAND,
-      connectCommandHandler,
+      (connectionItem: ConnectionItem) =>
+        toggleConnectionCommandHandler(connectionItem, true),
     ),
     commands.registerCommand(
       constants.COMMANDS.DISCONNECT_COMMAND,
-      disconnectCommandHandler,
+      (connectionItem: ConnectionItem) =>
+        toggleConnectionCommandHandler(connectionItem, false),
     ),
     commands.registerCommand(
       constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
