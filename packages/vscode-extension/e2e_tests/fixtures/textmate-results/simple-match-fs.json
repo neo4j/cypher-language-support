@@ -1,0 +1,318 @@
+[
+  {
+    "character": "let",
+    "type": "source.fsharp binding.fsharp keyword.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "a",
+    "type": "source.fsharp binding.fsharp variable.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "=",
+    "type": "source.fsharp binding.fsharp keyword.symbol.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp"
+  },
+  {
+    "character": "\"//cypher",
+    "type": "source.fsharp multiLineString"
+  },
+  {
+    "character": "    ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.fsharp multiLineString"
+  },
+  {
+    "character": "let",
+    "type": "source.fsharp binding.fsharp keyword.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "b",
+    "type": "source.fsharp binding.fsharp variable.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "=",
+    "type": "source.fsharp binding.fsharp keyword.symbol.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp"
+  },
+  {
+    "character": "\"/* cypher */",
+    "type": "source.fsharp multiLineString"
+  },
+  {
+    "character": "    ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.fsharp multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.fsharp multiLineString"
+  },
+  {
+    "character": "let",
+    "type": "source.fsharp binding.fsharp keyword.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "c",
+    "type": "source.fsharp binding.fsharp variable.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "=",
+    "type": "source.fsharp binding.fsharp keyword.symbol.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp"
+  },
+  {
+    "character": "\"/*cypher*/ ",
+    "type": "source.fsharp singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.fsharp singleLineString"
+  },
+  {
+    "character": "// This one shouldn't highglight",
+    "type": "source.fsharp comment.line.double-slash.fsharp"
+  },
+  {
+    "character": "let",
+    "type": "source.fsharp binding.fsharp keyword.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "d",
+    "type": "source.fsharp binding.fsharp variable.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp binding.fsharp"
+  },
+  {
+    "character": "=",
+    "type": "source.fsharp binding.fsharp keyword.symbol.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "source.fsharp"
+  },
+  {
+    "character": "\"",
+    "type": "source.fsharp string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.fsharp string.quoted.double.fsharp"
+  },
+  {
+    "character": "\"",
+    "type": "source.fsharp string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
+  }
+]

@@ -1,6 +1,6 @@
 {
-  "scopeName": "inline.cypher.java",
-  "injectionSelector": "L:(meta.embedded.block.java | source.java) -source.cypher -inline.cypher.java -string -comment",
+  "scopeName": "inline.cypher.csharp",
+  "injectionSelector": "L:(meta.embedded.block.csharp | source.cs) -source.cypher -inline.cypher.csharp -string -comment",
   "patterns": [
     {
       "name": "multiLineString",

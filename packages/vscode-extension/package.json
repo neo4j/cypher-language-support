@@ -95,6 +95,39 @@
         "embeddedLanguages": {
           "meta.embedded.block.cypher": "cypher"
         }
+      },
+      {
+        "injectTo": [
+          "source.go",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.go",
+        "path": "./syntaxes/cypher.go.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.cs",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.csharp",
+        "path": "./syntaxes/cypher.csharp.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.fsharp",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.fsharp",
+        "path": "./syntaxes/cypher.fsharp.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
       }
     ],
     "configuration": {

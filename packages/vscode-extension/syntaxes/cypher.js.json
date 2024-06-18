@@ -13,9 +13,9 @@
       ]
     },
     {
-      "name": "singleLineComment",
+      "name": "multiLineString",
       "contentName": "meta.embedded.block.cypher",
-      "begin": "`//\\s?cypher",
+      "begin": "`((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
       "end": "`",
       "patterns": [
         {
@@ -24,10 +24,21 @@
       ]
     },
     {
-      "name": "multiLineComment",
+      "name": "singleLineDoubleQuotedString",
       "contentName": "meta.embedded.block.cypher",
-      "begin": "`/\\*\\s?cypher\\s?\\*/\\s*",
-      "end": "`",
+      "begin": "\"/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineSingleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "'/\\*\\s?cypher\\s?\\*/\\s*",
+      "end": "'",
       "patterns": [
         {
           "include": "source.cypher"

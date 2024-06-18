@@ -1,0 +1,334 @@
+[
+  {
+    "character": "package",
+    "type": "source.go keyword.package.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "main",
+    "type": "source.go entity.name.type.package.go"
+  },
+  {
+    "character": "var",
+    "type": "source.go keyword.var.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "a",
+    "type": "source.go variable.other.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "=",
+    "type": "source.go keyword.operator.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "`//cypher",
+    "type": "source.go multiLineString"
+  },
+  {
+    "character": "    ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.go multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.go multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.go multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.go multiLineString"
+  },
+  {
+    "character": "var",
+    "type": "source.go keyword.var.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "b",
+    "type": "source.go variable.other.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "=",
+    "type": "source.go keyword.operator.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "`/* cypher */",
+    "type": "source.go multiLineString"
+  },
+  {
+    "character": "    ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.go multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.go multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.go multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.go multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.go multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.go multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.go multiLineString"
+  },
+  {
+    "character": "var",
+    "type": "source.go keyword.var.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "c",
+    "type": "source.go variable.other.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "=",
+    "type": "source.go keyword.operator.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "\"/*cypher*/ ",
+    "type": "source.go singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.go singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.go singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.go singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.go singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.go singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.go singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.go singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.go singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.go singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.go singleLineString"
+  },
+  {
+    "character": "//",
+    "type": "source.go comment.line.double-slash.go punctuation.definition.comment.go"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.go comment.line.double-slash.go"
+  },
+  {
+    "character": "var",
+    "type": "source.go keyword.var.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "d",
+    "type": "source.go variable.other.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "=",
+    "type": "source.go keyword.operator.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "source.go"
+  },
+  {
+    "character": "\"",
+    "type": "source.go string.quoted.double.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.go string.quoted.double.go"
+  },
+  {
+    "character": "\"",
+    "type": "source.go string.quoted.double.go punctuation.definition.string.end.go"
+  }
+]

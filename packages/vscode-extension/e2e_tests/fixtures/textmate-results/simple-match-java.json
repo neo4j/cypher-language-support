@@ -25,75 +25,75 @@
   },
   {
     "character": "\"\"\"//cypher",
-    "type": "source.java singleLineComment"
+    "type": "source.java multiLineString"
   },
   {
     "character": "    ",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.java singleLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.java multiLineString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.java singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.java singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.java singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.java singleLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.java multiLineString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.java singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.java singleLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.java multiLineString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.java singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.java singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.java singleLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.java singleLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "\"\"\"",
-    "type": "source.java singleLineComment"
+    "type": "source.java multiLineString"
   },
   {
     "character": "String",
@@ -121,74 +121,202 @@
   },
   {
     "character": "\"\"\"/* cypher */",
-    "type": "source.java multiLineComment"
+    "type": "source.java multiLineString"
   },
   {
     "character": "    ",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.java multiLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.java multiLineString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.java multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.java multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.java multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.java multiLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.java multiLineString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.java multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.java multiLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.java multiLineString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.java multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.java multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.java multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.java multiLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.java multiLineString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.java multiLineComment meta.embedded.block.cypher"
+    "type": "source.java multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "\"\"\"",
-    "type": "source.java multiLineComment"
+    "type": "source.java multiLineString"
+  },
+  {
+    "character": "String",
+    "type": "source.java meta.definition.variable.java storage.type.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java meta.definition.variable.java"
+  },
+  {
+    "character": "c",
+    "type": "source.java meta.definition.variable.java variable.other.definition.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java meta.definition.variable.java"
+  },
+  {
+    "character": "=",
+    "type": "source.java keyword.operator.assignment.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java"
+  },
+  {
+    "character": "\"/*cypher*/ ",
+    "type": "source.java singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.java singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.java singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.java singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.java singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.java singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.java singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.java singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.java singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.java singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.java singleLineString"
+  },
+  {
+    "character": "//",
+    "type": "source.java comment.line.double-slash.java punctuation.definition.comment.java"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.java comment.line.double-slash.java"
+  },
+  {
+    "character": "String",
+    "type": "source.java meta.definition.variable.java storage.type.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java meta.definition.variable.java"
+  },
+  {
+    "character": "d",
+    "type": "source.java meta.definition.variable.java variable.other.definition.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java meta.definition.variable.java"
+  },
+  {
+    "character": "=",
+    "type": "source.java keyword.operator.assignment.java"
+  },
+  {
+    "character": " ",
+    "type": "source.java"
+  },
+  {
+    "character": "\"",
+    "type": "source.java string.quoted.double.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.java string.quoted.double.java"
+  },
+  {
+    "character": "\"",
+    "type": "source.java string.quoted.double.java punctuation.definition.string.end.java"
   }
 ]

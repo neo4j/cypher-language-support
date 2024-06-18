@@ -13,75 +13,75 @@
   },
   {
     "character": "\"\"\"//cypher",
-    "type": "source.python singleLineComment"
+    "type": "source.python multilineDoubleQuotedString"
   },
   {
     "character": "    ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.python singleLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "\"\"\"",
-    "type": "source.python singleLineComment"
+    "type": "source.python multilineDoubleQuotedString"
   },
   {
     "character": "b ",
@@ -97,75 +97,75 @@
   },
   {
     "character": "\"\"\"/* cypher */",
-    "type": "source.python multiLineComment"
+    "type": "source.python multilineDoubleQuotedString"
   },
   {
     "character": "    ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.python multiLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "\"\"\"",
-    "type": "source.python multiLineComment"
+    "type": "source.python multilineDoubleQuotedString"
   },
   {
     "character": "d ",
@@ -181,75 +181,75 @@
   },
   {
     "character": "'''//cypher",
-    "type": "source.python singleLineComment"
+    "type": "source.python multilineSingleQuotedString"
   },
   {
     "character": "    ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.python singleLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.python singleLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.python singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.python singleLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.python singleLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "'''",
-    "type": "source.python singleLineComment"
+    "type": "source.python multilineSingleQuotedString"
   },
   {
     "character": "d ",
@@ -265,74 +265,162 @@
   },
   {
     "character": "'''/* cypher */",
-    "type": "source.python multiLineComment"
+    "type": "source.python multilineSingleQuotedString"
   },
   {
     "character": "    ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.python multiLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.python multiLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.python multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.python multiLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.python multiLineComment meta.embedded.block.cypher"
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
   },
   {
     "character": "'''",
-    "type": "source.python multiLineComment"
+    "type": "source.python multilineSingleQuotedString"
+  },
+  {
+    "character": "e ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"/*cypher*/ ",
+    "type": "source.python singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": "\"",
+    "type": "source.python singleLineDoubleQuotedString"
+  },
+  {
+    "character": "#",
+    "type": "source.python comment.line.number-sign.python punctuation.definition.comment.python"
+  },
+  {
+    "character": " This one shouldn't highlight",
+    "type": "source.python comment.line.number-sign.python"
+  },
+  {
+    "character": "f ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN n",
+    "type": "source.python string.quoted.single.python"
+  },
+  {
+    "character": "\"",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.end.python"
   }
 ]

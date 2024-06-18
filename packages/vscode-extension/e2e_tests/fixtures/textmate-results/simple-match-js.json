@@ -213,75 +213,75 @@
   },
   {
     "character": "`//cypher",
-    "type": "source.js meta.var.expr.js singleLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.js meta.var.expr.js singleLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "`",
-    "type": "source.js meta.var.expr.js singleLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
   },
   {
     "character": "const",
@@ -309,75 +309,75 @@
   },
   {
     "character": "`/* cypher */",
-    "type": "source.js meta.var.expr.js multiLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "`",
-    "type": "source.js meta.var.expr.js multiLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
   },
   {
     "character": "const",
@@ -405,74 +405,330 @@
   },
   {
     "character": "`/*cypher*/",
-    "type": "source.js meta.var.expr.js multiLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "// This is a comment",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher comment.line"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher comment.line"
   },
   {
     "character": "    ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "MATCH",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " (",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ":",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "Label",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.class"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.class"
   },
   {
     "character": ") ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "RETURN",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword"
   },
   {
     "character": " ",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "function(",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher entity.name.function"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher entity.name.function"
   },
   {
     "character": "n",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable"
   },
   {
     "character": ".",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher keyword.operator"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher keyword.operator"
   },
   {
     "character": "property",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher variable.property"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher variable.property"
   },
   {
     "character": ")",
-    "type": "source.js meta.var.expr.js multiLineComment meta.embedded.block.cypher"
+    "type": "source.js meta.var.expr.js multiLineString meta.embedded.block.cypher"
   },
   {
     "character": "`",
-    "type": "source.js meta.var.expr.js multiLineComment"
+    "type": "source.js meta.var.expr.js multiLineString"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "g",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "\"/*cypher*/ ",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.js meta.var.expr.js singleLineDoubleQuotedString"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "h",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "'/*cypher*/ ",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "'",
+    "type": "source.js meta.var.expr.js singleLineSingleQuotedString"
+  },
+  {
+    "character": "//",
+    "type": "source.js comment.line.double-slash.js punctuation.definition.comment.js"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.js comment.line.double-slash.js"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "i",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "\"",
+    "type": "source.js meta.var.expr.js string.quoted.double.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.js meta.var.expr.js string.quoted.double.js"
+  },
+  {
+    "character": "\"",
+    "type": "source.js meta.var.expr.js string.quoted.double.js punctuation.definition.string.end.js"
+  },
+  {
+    "character": "//",
+    "type": "source.js comment.line.double-slash.js punctuation.definition.comment.js"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.js comment.line.double-slash.js"
+  },
+  {
+    "character": "const",
+    "type": "source.js meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "j",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "source.js meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "source.js meta.var.expr.js"
+  },
+  {
+    "character": "'",
+    "type": "source.js meta.var.expr.js string.quoted.single.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.js meta.var.expr.js string.quoted.single.js"
+  },
+  {
+    "character": "'",
+    "type": "source.js meta.var.expr.js string.quoted.single.js punctuation.definition.string.end.js"
   }
 ]
