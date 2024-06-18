@@ -67,15 +67,15 @@ export class ConnectionItem extends TreeItem {
       case 'connecting':
         this.description = 'connecting...';
         break;
-      case 'reconnecting':
-        this.description = 'reconnecting...';
+      case 'error':
+        this.description = 'error';
         break;
       default:
         this.description = '';
         break;
     }
     this.contextValue =
-      this.state === 'connected' || this.state === 'reconnecting'
+      this.state === 'connected' || this.state === 'error'
         ? 'activeConnection'
         : 'connection';
   }

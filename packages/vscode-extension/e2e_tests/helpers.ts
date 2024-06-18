@@ -70,6 +70,6 @@ export function getMockConnection(connect: boolean = false): Connection {
     host: 'localhost',
     scheme: 'neo4j',
     port: '7687',
-    state: 'disconnected',
+    state: connect ? 'connecting' : 'disconnected',
   };
 }

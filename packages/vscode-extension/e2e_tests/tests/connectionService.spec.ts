@@ -55,7 +55,10 @@ suite('Connection service', () => {
       await connection.saveConnection(mockConnection, 'mock-password');
       const currentConnection = connection.getCurrentConnection();
 
-      assert.deepStrictEqual(currentConnection, mockConnection);
+      assert.deepStrictEqual(currentConnection, {
+        ...mockConnection,
+        state: 'connected',
+      });
     });
   });
 
@@ -173,6 +176,23 @@ suite('Connection service', () => {
   });
 
   suite('saveConnection', () => {
+    test('Should handle non-existent connection key', () => {
+      const sendNotificationSpy = sandbox.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
+      const updateGlobalStateSpy = sandbox.spy(
+        mockContext.globalState,
+        'update',
+      );
+      const promise = connection.saveConnection(undefined);
+
+      assert.doesNotThrow(async () => await promise);
+
+      sandbox.assert.notCalled(updateGlobalStateSpy);
+      sandbox.assert.notCalled(sendNotificationSpy);
+    });
+
     test('Should store connection and password in global state and secret storage', async () => {
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
@@ -201,7 +221,7 @@ suite('Connection service', () => {
       assert.deepStrictEqual(storedConnection, mockConnection);
     });
 
-    test('Should not notify language server if connection.connect is false', async () => {
+    test('Should notify language server with correct payload when connection.connect is false', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -210,10 +230,21 @@ suite('Connection service', () => {
 
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      sandbox.assert.notCalled(sendNotificationSpy);
+      sandbox.assert.calledOnceWithExactly(
+        sendNotificationSpy,
+        'connectionUpdated',
+        {
+          trace: { server: 'off' },
+          connect: false,
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
+        },
+      );
     });
 
-    test('Should notify language server when connection.connect is true', async () => {
+    test('Should notify language server with correct payload when connection.connect is true', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -236,12 +267,11 @@ suite('Connection service', () => {
       );
     });
 
-    test('Should call connect on connection manager when connection.connect is true', async () => {
+    test('Should call connectionManager.connect when connection.connect is true', async () => {
       const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
-      const mockConnection = getMockConnection();
-      await connection.saveConnection(mockConnection, 'mock-password');
+      const mockConnection = getMockConnection(true);
 
-      await connection.toggleConnection(mockConnection.key, true);
+      await connection.saveConnection(mockConnection, 'mock-password');
 
       const settings: Neo4jSettings = {
         trace: { server: 'off' },
@@ -255,15 +285,13 @@ suite('Connection service', () => {
       sandbox.assert.calledWithExactly(connectSpy, settings);
     });
 
-    test('Should not call through to connection manager when connection.connect is false', async () => {
+    test('Should not call connectionManager.connect when connection.connect is false', async () => {
       const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
-      const disconnectSpy = sandbox.spy(mockConnectionManager, 'disconnect');
-      const mockConnection = getMockConnection();
+      const mockConnection = getMockConnection(false);
 
       await connection.saveConnection(mockConnection, 'mock-password');
 
       sandbox.assert.notCalled(connectSpy);
-      sandbox.assert.notCalled(disconnectSpy);
     });
 
     test('Should reset all connections when saving a connection with connected flag set to true', async () => {
@@ -274,7 +302,10 @@ suite('Connection service', () => {
       await connection.saveConnection(mockConnection2, 'mock-password-2');
       const connectedConnection = connection.getCurrentConnection();
 
-      assert.deepStrictEqual(connectedConnection, mockConnection2);
+      assert.deepStrictEqual(connectedConnection, {
+        ...mockConnection2,
+        state: 'connected',
+      });
     });
   });
 
@@ -288,7 +319,7 @@ suite('Connection service', () => {
         mockContext.globalState,
         'update',
       );
-      const promise = connection.toggleConnection('does-not-exist', false);
+      const promise = connection.toggleConnection(undefined);
 
       assert.doesNotThrow(async () => await promise);
 
@@ -304,13 +335,13 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, true);
+      await connection.toggleConnection(mockConnection);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: {
           ...mockConnection,
           connect: true,
-          state: 'connecting',
+          state: 'connected',
         },
       });
     });
@@ -323,7 +354,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, false);
+      await connection.toggleConnection(mockConnection);
 
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: {
@@ -342,7 +373,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, true);
+      await connection.toggleConnection(mockConnection);
 
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
@@ -362,7 +393,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, false);
+      await connection.toggleConnection(mockConnection);
 
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
         trace: { server: 'off' },
@@ -379,7 +410,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection();
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, true);
+      await connection.toggleConnection(mockConnection);
 
       const settings: Neo4jSettings = {
         trace: { server: 'off' },
@@ -398,7 +429,7 @@ suite('Connection service', () => {
       const mockConnection = getMockConnection(true);
       await connection.saveConnection(mockConnection, 'mock-password');
 
-      await connection.toggleConnection(mockConnection.key, false);
+      await connection.toggleConnection(mockConnection);
 
       sandbox.assert.called(disconnectSpy);
     });
@@ -409,7 +440,7 @@ suite('Connection service', () => {
       await connection.saveConnection(mockConnection, 'mock-password');
       await connection.saveConnection(mockConnection2, 'mock-password-2');
 
-      await connection.toggleConnection(mockConnection2.key, true);
+      await connection.toggleConnection(mockConnection2);
       const connectionOne = connection.getConnection(mockConnection.key);
       const connectionTwo = connection.getConnection(mockConnection2.key);
 
@@ -422,7 +453,7 @@ suite('Connection service', () => {
       assert.deepStrictEqual(connectionTwo, {
         ...mockConnection2,
         connect: true,
-        state: 'connecting',
+        state: 'connected',
       });
     });
   });

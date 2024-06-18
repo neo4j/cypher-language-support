@@ -1,4 +1,5 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
 import { ExtensionContext } from 'vscode';
 import { SchemaPollerConnectionManager } from './schemaPollerConnectionManager';
 
@@ -7,7 +8,7 @@ type Neo4jLanguageClient = {
 };
 
 type ConnectionManager = {
-  connect: (settings: Neo4jSettings) => Promise<void>;
+  connect: (settings: Neo4jSettings) => Promise<ConnnectionResult>;
   disconnect: () => void;
 };
 

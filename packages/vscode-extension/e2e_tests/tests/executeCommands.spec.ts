@@ -2,10 +2,9 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { constants } from '../../src/constants';
-import { eventually } from '../helpers';
 import { testDatabaseKey } from '../suiteSetup';
 
-suite.skip('Execute commands', () => {
+suite('Execute commands', () => {
   let sandbox: sinon.SinonSandbox;
   let showInformationMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
@@ -16,9 +15,9 @@ suite.skip('Execute commands', () => {
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Ensure we reconnect back to the default connection
-    void commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
+    await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
       key: testDatabaseKey,
       connect: true,
     });
@@ -43,13 +42,10 @@ suite.skip('Execute commands', () => {
         process.env.NEO4J_PASSWORD || 'password',
       );
 
-      await eventually(async () => {
-        sandbox.assert.calledOnceWithExactly(
-          showInformationMessageStub,
-          constants.MESSAGES.CONNECTED_MESSAGE,
-        );
-        await Promise.resolve();
-      });
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        constants.MESSAGES.CONNECTED_MESSAGE,
+      );
     });
 
     test('Saving a connection with invalid credentials shows an error', async () => {
@@ -68,13 +64,10 @@ suite.skip('Execute commands', () => {
         'bad',
       );
 
-      await eventually(async () => {
-        sandbox.assert.calledOnceWithExactly(
-          showErrorMessageStub,
-          'Unable to connect to Neo4j: Neo4jError: The client is unauthorized due to authentication failure.. Retrying in 30 seconds.',
-        );
-        await Promise.resolve();
-      });
+      sandbox.assert.calledWith(
+        showErrorMessageStub,
+        'Neo4jError: The client is unauthorized due to authentication failure.',
+      );
     });
   });
 
@@ -100,7 +93,7 @@ suite.skip('Execute commands', () => {
         },
       );
 
-      sandbox.assert.calledOnceWithExactly(
+      sandbox.assert.calledWith(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
       );
@@ -164,16 +157,12 @@ suite.skip('Execute commands', () => {
 
       await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
         key: 'mock-key-2',
-        connect: true,
       });
 
-      await eventually(async () => {
-        sandbox.assert.calledOnceWithExactly(
-          showInformationMessageStub,
-          constants.MESSAGES.CONNECTED_MESSAGE,
-        );
-        await Promise.resolve();
-      });
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        constants.MESSAGES.CONNECTED_MESSAGE,
+      );
     });
   });
 
@@ -196,7 +185,6 @@ suite.skip('Execute commands', () => {
 
       await commands.executeCommand(constants.COMMANDS.DISCONNECT_COMMAND, {
         key: 'mock-key-2',
-        connect: false,
       });
 
       sandbox.assert.calledWith(

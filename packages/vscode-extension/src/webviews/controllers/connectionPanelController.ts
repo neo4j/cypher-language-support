@@ -46,7 +46,6 @@ export function getConnection(): Connection | null {
   const port = document.getElementById('port') as HTMLInputElement;
   const user = document.getElementById('user') as HTMLInputElement;
   const database = document.getElementById('database') as HTMLInputElement;
-  const connect = document.getElementById('connect') as HTMLInputElement;
 
   if (!isValidScheme(scheme.value)) {
     return null;
@@ -60,8 +59,8 @@ export function getConnection(): Connection | null {
     port: port.value,
     user: user.value,
     database: database.value,
-    connect: connect.value === 'true',
-    state: 'disconnected',
+    connect: true,
+    state: 'connecting',
   };
 }
 

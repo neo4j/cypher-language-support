@@ -1,5 +1,7 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { workspace } from 'vscode';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
+import { commands, workspace } from 'vscode';
+import { constants } from './constants';
 import { getConnectionManager, getExtensionContext } from './contextService';
 import {
   MethodName,
@@ -8,11 +10,7 @@ import {
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
 
-export type State =
-  | 'connected'
-  | 'connecting'
-  | 'reconnecting'
-  | 'disconnected';
+export type State = 'disconnected' | 'connecting' | 'connected' | 'error';
 
 export type Connection = {
   key: string;
@@ -53,21 +51,31 @@ export function getConnection(key: string): Connection | null {
 export async function deleteConnection(key: string): Promise<void> {
   const connections = getConnections();
   const connection = connections[key];
-  if (connection) {
-    delete connections[key];
-    await updateConnections(connections);
-    await deletePassword(key);
-    await updateDbmsConnection('connectionDeleted', {
-      ...connection,
-      connect: false,
-    });
+  if (!connection) {
+    return;
   }
+
+  delete connections[key];
+  await updateConnections(connections);
+  await deletePassword(key);
+  await updateDbmsConnection('connectionDeleted', {
+    ...connection,
+    connect: false,
+  });
 }
+
+export function saveConnection(
+  connection: Connection | null,
+): Promise<ConnnectionResult>;
+export function saveConnection(
+  connection: Connection | null,
+  password: string,
+): Promise<ConnnectionResult>;
 
 export async function saveConnection(
   connection: Connection | null,
-  password: string,
-): Promise<void> {
+  password?: string,
+): Promise<ConnnectionResult> {
   if (!connection) {
     return;
   }
@@ -79,11 +87,30 @@ export async function saveConnection(
   connections[connection.key] = connection;
 
   await updateConnections(connections);
-  await savePassword(connection.key, password);
 
-  if (connection.connect) {
-    await updateDbmsConnection('connectionUpdated', connection);
+  if (password) {
+    await savePassword(connection.key, password);
   }
+
+  return await updateDbmsConnection('connectionUpdated', connection);
+}
+
+export async function toggleConnection(
+  connection: Connection | null,
+): Promise<{ result: ConnnectionResult; connection: Connection }> {
+  if (!connection) {
+    return { result: { success: false }, connection };
+  }
+
+  connection = {
+    ...connection,
+    connect: !connection.connect,
+    state: !connection.connect ? 'connecting' : 'disconnected',
+  };
+
+  const result = await saveConnection(connection);
+
+  return { result, connection };
 }
 
 export async function updateConnectionState(
@@ -97,31 +124,6 @@ export async function updateConnectionState(
   connections[connection.key] = connection;
 
   await updateConnections(connections);
-}
-
-export async function toggleConnection(
-  key: string,
-  connect: boolean,
-): Promise<void> {
-  const connections = disconnectAllAndGetConnections();
-
-  const connection = connections[key];
-
-  if (!connection) {
-    return;
-  }
-
-  const state: State = connect ? 'connecting' : 'disconnected';
-
-  const toggledConnection = {
-    ...connection,
-    connect: connect,
-    state: state,
-  };
-  connections[key] = toggledConnection;
-
-  await updateConnections(connections);
-  await updateDbmsConnection('connectionUpdated', toggledConnection);
 }
 
 export async function getPasswordForConnection(
@@ -141,20 +143,27 @@ export function getConnectionString(connection: Connection): string | null {
   return null;
 }
 
-export async function updateDbmsConnection(
+async function updateDbmsConnection(
   methodName: MethodName,
   connection: Connection,
-): Promise<void> {
+): Promise<ConnnectionResult> {
   const settings = await getConnectionSettings(connection);
   const connectionManager = getConnectionManager();
+  let result: ConnnectionResult = { success: true };
 
   await sendNotificationToLanguageClient(methodName, settings);
 
   connectionManager.disconnect();
 
   if (connection.connect) {
-    await connectionManager.connect(settings);
+    result = await connectionManager.connect(settings);
+    await updateConnectionState({
+      ...connection,
+      state: result.success ? 'connected' : 'error',
+    });
   }
+
+  return result;
 }
 
 export async function getConnectionSettings(
@@ -197,6 +206,7 @@ function disconnectAllAndGetConnections(): Connections {
 async function updateConnections(connections: Connections): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(CONNECTIONS_KEY, connections);
+  await commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
 
 async function savePassword(key: string, password: string): Promise<void> {

@@ -1,17 +1,13 @@
 import * as path from 'path';
-import { commands, ExtensionContext, workspace } from 'vscode';
+import { ExtensionContext, workspace } from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import {
-  getCurrentConnection,
-  updateConnectionState,
-  updateDbmsConnection,
-} from './connectionService';
-import { constants } from './constants';
+import { handleConnectionResult } from './commandHandlers';
+import { getCurrentConnection, saveConnection } from './connectionService';
 import { getConnectionManager, setContext } from './contextService';
 import { registerDisposables } from './registrationService';
 
@@ -61,10 +57,11 @@ export async function activate(context: ExtensionContext) {
   await client.start();
 
   // Reconnect to a connection if there is one
-  await reconnectConnection();
+  await handleCurrentConnection(true);
 }
 
 export async function deactivate(): Promise<void> | undefined {
+  await handleCurrentConnection(false);
   const connectionManager = getConnectionManager();
   connectionManager.disconnect();
 
@@ -75,13 +72,14 @@ export async function deactivate(): Promise<void> | undefined {
   return client.stop();
 }
 
-async function reconnectConnection(): Promise<void> {
-  const connection = getCurrentConnection();
+async function handleCurrentConnection(connect: boolean): Promise<void> {
+  let connection = getCurrentConnection();
   if (connection) {
-    await updateConnectionState({ ...connection, state: 'connecting' });
-    void commands.executeCommand(
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
-    );
-    await updateDbmsConnection('connectionUpdated', connection);
+    connection = {
+      ...connection,
+      state: connect ? 'connecting' : 'disconnected',
+    };
+    const result = await saveConnection(connection);
+    handleConnectionResult(connection, result);
   }
 }

@@ -1,14 +1,9 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 
-import { commands, ConfigurationChangeEvent, window } from 'vscode';
-import {
-  configurationChangedHandler,
-  connectionConnectedHandler,
-  connectionReconnectingHandler,
-} from '../../src/commandHandlers';
+import { ConfigurationChangeEvent } from 'vscode';
+import { configurationChangedHandler } from '../../src/commandHandlers';
 import * as connectionService from '../../src/connectionService';
-import { constants } from '../../src/constants';
 import * as contextService from '../../src/contextService';
 import { getMockConnection } from '../helpers';
 import { MockConnectionManager } from '../mocks/mockConnectionManager';
@@ -23,9 +18,6 @@ suite('Command handlers', () => {
   let mockConnectionManager: MockConnectionManager;
 
   let getCurrentConnectionStub: sinon.SinonStub;
-  let showInformationMessageStub: sinon.SinonStub;
-  let showErrorMessageStub: sinon.SinonStub;
-  let executeCommandStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -45,9 +37,6 @@ suite('Command handlers', () => {
     const setContextStub = sandbox.stub(contextService, 'setContext');
 
     setContextStub(mockContext, mockLanguageClient);
-    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
-    showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
-    executeCommandStub = sandbox.stub(commands, 'executeCommand');
   });
 
   afterEach(() => {
@@ -115,54 +104,5 @@ suite('Command handlers', () => {
     } as ConfigurationChangeEvent);
 
     sandbox.assert.notCalled(sendNotificationSpy);
-  });
-
-  test('Should call updateConnectionState with connected state when handling a connected event', async () => {
-    const updateConnectionStateSpy = sandbox.spy(
-      connectionService,
-      'updateConnectionState',
-    );
-    const mockConnection = getMockConnection(true);
-    await connectionService.saveConnection(mockConnection, 'password');
-
-    await connectionConnectedHandler();
-
-    sandbox.assert.calledOnceWithExactly(updateConnectionStateSpy, {
-      ...mockConnection,
-      state: 'connected',
-    });
-
-    sandbox.assert.calledOnceWithExactly(
-      showInformationMessageStub,
-      constants.MESSAGES.CONNECTED_MESSAGE,
-    );
-
-    sandbox.assert.calledOnceWithExactly(
-      executeCommandStub,
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
-    );
-  });
-
-  test('Should call updateConnectionState with reconnecting state when handling a reconnecting event', async () => {
-    const updateConnectionStateSpy = sandbox.spy(
-      connectionService,
-      'updateConnectionState',
-    );
-    const mockConnection = getMockConnection(true);
-    await connectionService.saveConnection(mockConnection, 'password');
-
-    await connectionReconnectingHandler('error');
-
-    sandbox.assert.calledOnceWithExactly(updateConnectionStateSpy, {
-      ...mockConnection,
-      state: 'reconnecting',
-    });
-
-    sandbox.assert.calledOnceWithExactly(showErrorMessageStub, 'error');
-
-    sandbox.assert.calledOnceWithExactly(
-      executeCommandStub,
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
-    );
   });
 });

@@ -3,7 +3,7 @@ import {
   configurationChangedHandler,
   deleteConnectionCommandHandler,
   manageConnectionCommandHandler,
-  saveConnectionCommandHandler,
+  saveAndConnectCommandHandler,
   toggleConnectionCommandHandler,
 } from './commandHandlers';
 import {
@@ -24,7 +24,7 @@ export function registerDisposables(): Disposable[] {
     workspace.onDidChangeConfiguration(configurationChangedHandler),
     commands.registerCommand(
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
-      saveConnectionCommandHandler,
+      saveAndConnectCommandHandler,
     ),
     commands.registerCommand(
       constants.COMMANDS.MANAGE_CONNECTION_COMMAND,
@@ -37,12 +37,12 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       constants.COMMANDS.CONNECT_COMMAND,
       (connectionItem: ConnectionItem) =>
-        toggleConnectionCommandHandler(connectionItem, true),
+        toggleConnectionCommandHandler(connectionItem),
     ),
     commands.registerCommand(
       constants.COMMANDS.DISCONNECT_COMMAND,
       (connectionItem: ConnectionItem) =>
-        toggleConnectionCommandHandler(connectionItem, false),
+        toggleConnectionCommandHandler(connectionItem),
     ),
     commands.registerCommand(
       constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,

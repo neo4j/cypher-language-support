@@ -1,3 +1,4 @@
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   Connection,
@@ -7,7 +8,6 @@ import {
   getCurrentConnection,
   saveConnection,
   toggleConnection,
-  updateConnectionState,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
@@ -27,12 +27,16 @@ export async function configurationChangedHandler(
   }
 }
 
-export async function saveConnectionCommandHandler(
+export async function saveAndConnectCommandHandler(
   connection: Connection,
   password: string,
 ): Promise<void> {
-  await saveConnection(connection, password);
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  if (!connection) {
+    return;
+  }
+
+  const result = await saveConnection(connection, password);
+  handleConnectionResult(connection, result);
 }
 
 export function manageConnectionCommandHandler(
@@ -65,39 +69,22 @@ export async function deleteConnectionCommandHandler(
 
 export async function toggleConnectionCommandHandler(
   connectionItem: ConnectionItem,
-  connect: boolean,
 ): Promise<void> {
-  await toggleConnection(connectionItem.key, connect);
+  const connectionToToggle = getConnection(connectionItem.key);
+  const { result, connection } = await toggleConnection(connectionToToggle);
+  handleConnectionResult(connection, result);
+}
 
-  if (!connect) {
+export function handleConnectionResult(
+  connection: Connection,
+  result: ConnnectionResult,
+): void {
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  if (result.success && connection.connect) {
+    void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
+  } else if (result.success && !connection.connect) {
     void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
+  } else if (!result.success) {
+    void window.showErrorMessage(result.error);
   }
-
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
-}
-
-export async function connectionConnectedHandler(): Promise<void> {
-  const connection = getCurrentConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  await updateConnectionState({ ...connection, state: 'connected' });
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
-  void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
-}
-
-export async function connectionReconnectingHandler(
-  error: string,
-): Promise<void> {
-  const connection = getCurrentConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  await updateConnectionState({ ...connection, state: 'reconnecting' });
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
-  void window.showErrorMessage(error);
 }
