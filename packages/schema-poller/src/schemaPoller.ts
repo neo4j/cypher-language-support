@@ -20,7 +20,7 @@ export class Neo4jSchemaPoller {
       { userAgent: config.appName, ...config.driverConfig },
     );
 
-    await driver.verifyConnectivity();
+    await driver.verifyConnectivity({ database: database });
 
     if (await driver.supportsSessionAuth()) {
       if (!(await driver.verifyAuthentication())) {

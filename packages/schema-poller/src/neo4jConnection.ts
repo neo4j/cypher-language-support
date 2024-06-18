@@ -11,12 +11,9 @@ const METADATA_BASE = {
 function resolveInitialDatabase(
   databases: Database[],
   database?: string,
-): string {
+): string | undefined {
   if (database) {
-    const resolvedDatabase = databases.find((d) => d.name === database);
-    if (resolvedDatabase) {
-      return resolvedDatabase.name;
-    }
+    return databases.find((d) => d.name === database)?.name;
   }
 
   const home = databases.find((d) => d.home);
@@ -31,7 +28,7 @@ type SdkQueryArgs = {
   abortSignal?: AbortSignal;
 };
 export class Neo4jConnection {
-  public currentDb: string;
+  public currentDb: string | undefined;
 
   constructor(
     public connectedUser: string,
