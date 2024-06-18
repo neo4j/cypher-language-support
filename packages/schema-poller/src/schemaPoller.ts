@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import neo4j, { Config } from 'neo4j-driver';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
@@ -12,7 +11,6 @@ export type ConnnectionResult = {
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
-  public events: EventEmitter = new EventEmitter();
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
 
   async persistentConnect(
