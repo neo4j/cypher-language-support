@@ -14,7 +14,6 @@ export class Neo4jSchemaPoller {
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
-  private connectionAttempt: number = 0;
 
   async persistentConnect(
     url: string,
@@ -107,23 +106,13 @@ export class Neo4jSchemaPoller {
   private handleConnection(): void {
     // eslint-disable-next-line no-console
     console.log('Established connection to Neo4j');
-
-    if (this.connectionAttempt > 1) {
-      this.events.emit('connectionReconnected');
-    }
-
-    this.connectionAttempt = 0;
+    this.events.emit('connectionConnected');
   }
 
   private handleConnectionError(errorMessage: string): void {
     console.error(
       `Unable to connect to Neo4j: ${errorMessage}. Retrying in 30 seconds.`,
     );
-
-    if (this.connectionAttempt >= 1) {
-      this.events.emit('connectionErrored', errorMessage);
-    }
-
-    this.connectionAttempt += 1;
+    this.events.emit('connectionErrored', errorMessage);
   }
 }

@@ -11,19 +11,11 @@ export class SchemaPollerConnectionManager {
 
   constructor() {
     this._schemaPoller = new Neo4jSchemaPoller();
-    this._schemaPoller.events.on(
-      'connectionErrored',
-      (errorMessage: string) => void onConnectionErroredHandler(errorMessage),
-    );
-    this._schemaPoller.events.on(
-      'connectionReconnected',
-      () => void onConnectionReconnectedHandler(),
-    );
   }
 
   async connect(connectionSettings: Neo4jSettings): Promise<ConnnectionResult> {
     this.disconnect();
-    return await this._schemaPoller.persistentConnect(
+    const result = await this._schemaPoller.persistentConnect(
       connectionSettings.connectURL,
       {
         username: connectionSettings.user,
@@ -32,15 +24,41 @@ export class SchemaPollerConnectionManager {
       { appName: 'vscode-extension' },
       connectionSettings.database,
     );
+
+    if (result.success) {
+      this.attachErrorEventListener();
+    } else {
+      this.attachReconnectionEventListener();
+    }
+
+    return result;
   }
 
-  disconnect() {
+  disconnect(): void {
     this._schemaPoller.disconnect();
+    this._schemaPoller.events.removeAllListeners();
   }
 
-  dispose() {
-    this.disconnect();
-    this._schemaPoller.events.removeAllListeners();
-    this._schemaPoller = undefined;
+  private attachErrorEventListener(): void {
+    this._schemaPoller.events.once(
+      'connectionErrored',
+      (errorMessage: string) => this.handleConnectionError(errorMessage),
+    );
+  }
+
+  private handleConnectionError(errorMessage: string): void {
+    void onConnectionErroredHandler(errorMessage);
+    this.attachReconnectionEventListener();
+  }
+
+  private attachReconnectionEventListener(): void {
+    this._schemaPoller.events.once('connectionConnected', () =>
+      this.handleConnectionReconnected(),
+    );
+  }
+
+  private handleConnectionReconnected(): void {
+    void onConnectionReconnectedHandler();
+    this.attachErrorEventListener();
   }
 }

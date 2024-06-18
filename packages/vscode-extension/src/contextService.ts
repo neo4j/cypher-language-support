@@ -10,7 +10,6 @@ type Neo4jLanguageClient = {
 type ConnectionManager = {
   connect: (settings: Neo4jSettings) => Promise<ConnnectionResult>;
   disconnect: () => void;
-  dispose: () => void;
 };
 
 let _context: ExtensionContext | undefined;
