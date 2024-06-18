@@ -3,7 +3,7 @@ import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/sche
 import { ExtensionContext } from 'vscode';
 import { SchemaPollerConnectionManager } from './schemaPollerConnectionManager';
 
-type Neo4jLanguageClient = {
+type LanguageClient = {
   sendNotification: (method: string, settings: Neo4jSettings) => Promise<void>;
 };
 
@@ -13,12 +13,12 @@ type ConnectionManager = {
 };
 
 let _context: ExtensionContext | undefined;
-let _languageClient: Neo4jLanguageClient | undefined;
+let _languageClient: LanguageClient | undefined;
 let _connectionManager: ConnectionManager | undefined;
 
 export function setContext(
   context: ExtensionContext,
-  languageClient: Neo4jLanguageClient,
+  languageClient: LanguageClient,
 ) {
   _context = context;
   _languageClient = languageClient;
@@ -32,7 +32,7 @@ export function getExtensionContext(): ExtensionContext {
   return _context;
 }
 
-export function getLanguageClient(): Neo4jLanguageClient {
+export function getLanguageClient(): LanguageClient {
   if (!_languageClient) {
     throw new Error('Language client is undefined');
   }

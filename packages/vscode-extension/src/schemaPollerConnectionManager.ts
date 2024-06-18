@@ -25,11 +25,9 @@ export class SchemaPollerConnectionManager {
       connectionSettings.database,
     );
 
-    if (result.success) {
-      this.attachErrorEventListener();
-    } else {
-      this.attachReconnectionEventListener();
-    }
+    result.success
+      ? this.attachErrorEventListener()
+      : this.attachReconnectionEventListener();
 
     return result;
   }
