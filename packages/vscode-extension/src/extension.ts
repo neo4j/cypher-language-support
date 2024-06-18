@@ -63,7 +63,7 @@ export async function activate(context: ExtensionContext) {
 export async function deactivate(): Promise<void> | undefined {
   await handleCurrentConnection(false);
   const connectionManager = getConnectionManager();
-  connectionManager.disconnect();
+  connectionManager.dispose();
 
   if (!client) {
     return undefined;

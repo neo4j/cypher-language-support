@@ -11,4 +11,6 @@ export class MockConnectionManager {
   }
 
   disconnect() {}
+
+  dispose() {}
 }

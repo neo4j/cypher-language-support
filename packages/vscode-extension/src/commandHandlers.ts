@@ -8,6 +8,7 @@ import {
   getCurrentConnection,
   saveConnection,
   toggleConnection,
+  updateConnectionState,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
@@ -73,6 +74,32 @@ export async function toggleConnectionCommandHandler(
   const connectionToToggle = getConnection(connectionItem.key);
   const { result, connection } = await toggleConnection(connectionToToggle);
   handleConnectionResult(connection, result);
+}
+
+export async function onConnectionErroredHandler(
+  errorMessage: string,
+): Promise<void> {
+  const connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  await updateConnectionState({ ...connection, state: 'error' });
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  void window.showErrorMessage(errorMessage);
+}
+
+export async function onConnectionReconnectedHandler(): Promise<void> {
+  const connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  await updateConnectionState({ ...connection, state: 'connected' });
+  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
 }
 
 export function handleConnectionResult(

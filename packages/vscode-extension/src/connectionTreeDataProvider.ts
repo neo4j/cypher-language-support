@@ -68,7 +68,7 @@ export class ConnectionItem extends TreeItem {
         this.description = 'connecting...';
         break;
       case 'error':
-        this.description = 'error';
+        this.description = 'reconnecting...';
         break;
       default:
         this.description = '';

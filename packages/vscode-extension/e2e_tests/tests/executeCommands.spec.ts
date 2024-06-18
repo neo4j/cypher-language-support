@@ -48,7 +48,7 @@ suite('Execute commands', () => {
       );
     });
 
-    test('Saving a connection with invalid credentials shows an error', async () => {
+    test('Saving a connection with invalid credentials should show an error message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {

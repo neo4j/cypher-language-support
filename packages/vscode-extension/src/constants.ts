@@ -10,6 +10,7 @@ export const constants = {
   MESSAGES: {
     CONNECTED_MESSAGE: 'Connected to Neo4j.',
     DISCONNECTED_MESSAGE: 'Disconnected from Neo4j.',
+    RECONNECTED_MESSAGE: 'Reconnected to Neo4j.',
     CONNECTION_DELETED_SUCCESSFULLY_MESSAGE: 'Neo4j connection deleted.',
     CONNECTION_VALIDATION_MESSAGE: 'Please fill in all required fields.',
   },

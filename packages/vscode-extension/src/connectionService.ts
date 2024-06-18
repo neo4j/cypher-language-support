@@ -143,6 +143,27 @@ export function getConnectionString(connection: Connection): string | null {
   return null;
 }
 
+export async function getConnectionSettings(
+  connection: Connection,
+): Promise<Neo4jSettings> {
+  const trace = workspace
+    .getConfiguration('neo4j')
+    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
+    server: 'off',
+  };
+
+  const password = await getPasswordForConnection(connection.key);
+
+  return {
+    trace: trace,
+    connect: connection.connect,
+    connectURL: getConnectionString(connection),
+    database: connection.database,
+    user: connection.user,
+    password: password,
+  };
+}
+
 async function updateDbmsConnection(
   methodName: MethodName,
   connection: Connection,
@@ -164,27 +185,6 @@ async function updateDbmsConnection(
   }
 
   return result;
-}
-
-export async function getConnectionSettings(
-  connection: Connection,
-): Promise<Neo4jSettings> {
-  const trace = workspace
-    .getConfiguration('neo4j')
-    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-    server: 'off',
-  };
-
-  const password = await getPasswordForConnection(connection.key);
-
-  return {
-    trace: trace,
-    connect: connection.connect,
-    connectURL: getConnectionString(connection),
-    database: connection.database,
-    user: connection.user,
-    password: password,
-  };
 }
 
 function disconnectAllAndGetConnections(): Connections {
