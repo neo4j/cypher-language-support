@@ -5,8 +5,25 @@
     {
       "name": "multiLineString",
       "contentName": "meta.embedded.block.cypher",
-      "begin": "\"\"\"((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
-      "end": "\"\"\"",
+      "begin": "(\"\"\")((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
+      "end": "(\"\"\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.double.cs punctuation.definition.string.begin.cs"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.cs punctuation.definition.string.end.cs"
+        }
+      },
       "patterns": [
         {
           "include": "source.cypher"
@@ -16,8 +33,25 @@
     {
       "name": "singleLineString",
       "contentName": "meta.embedded.block.cypher",
-      "begin": "\"/\\*\\s?cypher\\s?\\*/\\s*",
-      "end": "\"",
+      "begin": "(\")(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.double.cs punctuation.definition.string.begin.cs"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.cs punctuation.definition.string.end.cs"
+        }
+      },
       "patterns": [
         {
           "include": "source.cypher"

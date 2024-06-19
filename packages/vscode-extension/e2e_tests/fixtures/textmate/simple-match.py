@@ -20,5 +20,10 @@ d = '''/* cypher */
 
 e = "/*cypher*/ MATCH (n:Label) RETURN n"
 
+f = '/*cypher*/ MATCH (n:Label) RETURN n'
+
 # This one shouldn't highlight
-f = "//cypher MATCH (n:Label) RETURN n"
+g = "//cypher MATCH (n:Label) RETURN n"
+
+# This one shouldn't highlight
+h = '//cypher MATCH (n:Label) RETURN n'

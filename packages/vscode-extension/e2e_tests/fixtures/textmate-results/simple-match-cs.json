@@ -24,8 +24,12 @@
     "type": "source.cs"
   },
   {
-    "character": "\"\"\"//cypher",
-    "type": "source.cs multiLineString"
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.cs multiLineString comment.line"
   },
   {
     "character": "    ",
@@ -93,7 +97,7 @@
   },
   {
     "character": "\"\"\"",
-    "type": "source.cs multiLineString"
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
     "character": "var",
@@ -120,8 +124,12 @@
     "type": "source.cs"
   },
   {
-    "character": "\"\"\"/* cypher */",
-    "type": "source.cs multiLineString"
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.cs multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -189,7 +197,7 @@
   },
   {
     "character": "\"\"\"",
-    "type": "source.cs multiLineString"
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
     "character": "var",
@@ -216,7 +224,15 @@
     "type": "source.cs"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "source.cs singleLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.cs singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.cs singleLineString"
   },
   {
@@ -273,7 +289,7 @@
   },
   {
     "character": "\"",
-    "type": "source.cs singleLineString"
+    "type": "source.cs singleLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
     "character": "//",

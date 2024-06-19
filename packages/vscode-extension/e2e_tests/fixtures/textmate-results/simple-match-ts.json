@@ -32,7 +32,15 @@
     "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
   },
   {
-    "character": " /* cypher */ `",
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "/* cypher */ ",
+    "type": "source.ts meta.var.expr.ts comment.block.js"
+  },
+  {
+    "character": "`",
     "type": "source.ts meta.var.expr.ts"
   },
   {
@@ -101,7 +109,7 @@
   },
   {
     "character": "`",
-    "type": "source.ts meta.var.expr.ts"
+    "type": "source.ts meta.var.expr.ts string.template.js punctuation.definition.string.template.end.js"
   },
   {
     "character": ";",
@@ -128,7 +136,15 @@
     "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
   },
   {
-    "character": " /*cypher*/ `",
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "/*cypher*/ ",
+    "type": "source.ts meta.var.expr.ts comment.block.js"
+  },
+  {
+    "character": "`",
     "type": "source.ts meta.var.expr.ts"
   },
   {
@@ -201,7 +217,7 @@
   },
   {
     "character": "`",
-    "type": "source.ts meta.var.expr.ts"
+    "type": "source.ts meta.var.expr.ts string.template.js punctuation.definition.string.template.end.js"
   },
   {
     "character": ";",
@@ -232,8 +248,12 @@
     "type": "source.ts meta.var.expr.ts"
   },
   {
-    "character": "`//cypher",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.line"
   },
   {
     "character": "    ",
@@ -301,7 +321,7 @@
   },
   {
     "character": "`",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
   },
   {
     "character": ";",
@@ -332,8 +352,12 @@
     "type": "source.ts meta.var.expr.ts"
   },
   {
-    "character": "`/* cypher */",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -401,7 +425,7 @@
   },
   {
     "character": "`",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
   },
   {
     "character": ";",
@@ -432,8 +456,12 @@
     "type": "source.ts meta.var.expr.ts"
   },
   {
-    "character": "`/*cypher*/",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -501,7 +529,7 @@
   },
   {
     "character": "`",
-    "type": "source.ts meta.var.expr.ts multiLineString"
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
   },
   {
     "character": ";",
@@ -532,7 +560,15 @@
     "type": "source.ts meta.var.expr.ts"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString"
   },
   {
@@ -589,7 +625,7 @@
   },
   {
     "character": "\"",
-    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString"
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
   },
   {
     "character": "const",
@@ -616,7 +652,15 @@
     "type": "source.ts meta.var.expr.ts"
   },
   {
-    "character": "'/*cypher*/ ",
+    "character": "'",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString string.quoted.single.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString"
   },
   {
@@ -673,7 +717,7 @@
   },
   {
     "character": "'",
-    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString"
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString string.quoted.single.js punctuation.definition.string.end.js"
   },
   {
     "character": "//",

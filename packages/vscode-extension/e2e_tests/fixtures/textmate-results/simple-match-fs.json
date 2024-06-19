@@ -24,8 +24,12 @@
     "type": "source.fsharp"
   },
   {
-    "character": "\"//cypher",
-    "type": "source.fsharp multiLineString"
+    "character": "\"",
+    "type": "source.fsharp multiLineString string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.fsharp multiLineString comment.line"
   },
   {
     "character": "    ",
@@ -93,7 +97,7 @@
   },
   {
     "character": "\"",
-    "type": "source.fsharp multiLineString"
+    "type": "source.fsharp multiLineString string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
   },
   {
     "character": "let",
@@ -120,8 +124,12 @@
     "type": "source.fsharp"
   },
   {
-    "character": "\"/* cypher */",
-    "type": "source.fsharp multiLineString"
+    "character": "\"",
+    "type": "source.fsharp multiLineString string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.fsharp multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -189,7 +197,7 @@
   },
   {
     "character": "\"",
-    "type": "source.fsharp multiLineString"
+    "type": "source.fsharp multiLineString string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
   },
   {
     "character": "let",
@@ -216,7 +224,15 @@
     "type": "source.fsharp"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "source.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.fsharp singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.fsharp singleLineString"
   },
   {
@@ -273,7 +289,7 @@
   },
   {
     "character": "\"",
-    "type": "source.fsharp singleLineString"
+    "type": "source.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
   },
   {
     "character": "// This one shouldn't highglight",

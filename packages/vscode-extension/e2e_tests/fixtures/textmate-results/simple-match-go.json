@@ -36,8 +36,12 @@
     "type": "source.go"
   },
   {
-    "character": "`//cypher",
-    "type": "source.go multiLineString"
+    "character": "`",
+    "type": "source.go multiLineString string.quoted.raw.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.go multiLineString comment.line"
   },
   {
     "character": "    ",
@@ -105,7 +109,7 @@
   },
   {
     "character": "`",
-    "type": "source.go multiLineString"
+    "type": "source.go multiLineString string.quoted.raw.go punctuation.definition.string.end.go"
   },
   {
     "character": "var",
@@ -132,8 +136,12 @@
     "type": "source.go"
   },
   {
-    "character": "`/* cypher */",
-    "type": "source.go multiLineString"
+    "character": "`",
+    "type": "source.go multiLineString string.quoted.raw.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.go multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -201,7 +209,7 @@
   },
   {
     "character": "`",
-    "type": "source.go multiLineString"
+    "type": "source.go multiLineString string.quoted.raw.go punctuation.definition.string.end.go"
   },
   {
     "character": "var",
@@ -228,7 +236,15 @@
     "type": "source.go"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "source.go singleLineString string.quoted.double.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.go singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.go singleLineString"
   },
   {
@@ -285,7 +301,7 @@
   },
   {
     "character": "\"",
-    "type": "source.go singleLineString"
+    "type": "source.go singleLineString string.quoted.double.go punctuation.definition.string.end.go"
   },
   {
     "character": "//",

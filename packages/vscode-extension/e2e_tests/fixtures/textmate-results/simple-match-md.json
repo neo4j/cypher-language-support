@@ -132,7 +132,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString"
   },
   {
@@ -189,7 +197,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
   },
   {
     "character": "```",
@@ -228,7 +236,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString"
   },
   {
@@ -285,7 +301,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
   },
   {
     "character": "```",
@@ -336,7 +352,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString string.quoted.double.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString"
   },
   {
@@ -393,7 +417,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString string.quoted.double.java punctuation.definition.string.end.java"
   },
   {
     "character": "```",
@@ -432,7 +456,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString"
   },
   {
@@ -489,7 +521,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.end.python"
   },
   {
     "character": "```",
@@ -540,7 +572,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString string.quoted.double.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString"
   },
   {
@@ -597,7 +637,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString string.quoted.double.go punctuation.definition.string.end.go"
   },
   {
     "character": "```",
@@ -648,7 +688,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString"
   },
   {
@@ -705,7 +753,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
     "character": "```",
@@ -744,7 +792,15 @@
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString"
   },
   {
@@ -801,7 +857,7 @@
   },
   {
     "character": "\"",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
   },
   {
     "character": "```",

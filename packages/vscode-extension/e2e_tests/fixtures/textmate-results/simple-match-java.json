@@ -24,8 +24,12 @@
     "type": "source.java"
   },
   {
-    "character": "\"\"\"//cypher",
-    "type": "source.java multiLineString"
+    "character": "\"\"\"",
+    "type": "source.java multiLineString string.quoted.triple.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.java multiLineString comment.line"
   },
   {
     "character": "    ",
@@ -93,7 +97,7 @@
   },
   {
     "character": "\"\"\"",
-    "type": "source.java multiLineString"
+    "type": "source.java multiLineString string.quoted.triple.java punctuation.definition.string.end.java"
   },
   {
     "character": "String",
@@ -120,8 +124,12 @@
     "type": "source.java"
   },
   {
-    "character": "\"\"\"/* cypher */",
-    "type": "source.java multiLineString"
+    "character": "\"\"\"",
+    "type": "source.java multiLineString string.quoted.triple.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.java multiLineString comment.block"
   },
   {
     "character": "    ",
@@ -189,7 +197,7 @@
   },
   {
     "character": "\"\"\"",
-    "type": "source.java multiLineString"
+    "type": "source.java multiLineString string.quoted.triple.java punctuation.definition.string.end.java"
   },
   {
     "character": "String",
@@ -216,7 +224,15 @@
     "type": "source.java"
   },
   {
-    "character": "\"/*cypher*/ ",
+    "character": "\"",
+    "type": "source.java singleLineString string.quoted.double.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.java singleLineString comment.block"
+  },
+  {
+    "character": " ",
     "type": "source.java singleLineString"
   },
   {
@@ -273,7 +289,7 @@
   },
   {
     "character": "\"",
-    "type": "source.java singleLineString"
+    "type": "source.java singleLineString string.quoted.double.java punctuation.definition.string.end.java"
   },
   {
     "character": "//",
