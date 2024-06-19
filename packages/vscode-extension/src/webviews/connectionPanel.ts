@@ -29,6 +29,7 @@ export class ConnectionPanel {
   private readonly _extensionPath: string;
 
   private _connection: Connection | undefined;
+  private _password: string | undefined;
   private _disposables: Disposable[] = [];
 
   private constructor(
@@ -47,13 +48,18 @@ export class ConnectionPanel {
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
-  public static createOrShow(extensionPath: string, connection?: Connection) {
+  public static createOrShow(
+    extensionPath: string,
+    connection?: Connection,
+    password?: string,
+  ) {
     const column = window.activeTextEditor
       ? window.activeTextEditor.viewColumn
       : undefined;
 
     if (ConnectionPanel._currentPanel) {
       ConnectionPanel._currentPanel._connection = connection;
+      ConnectionPanel._currentPanel._password = password;
       ConnectionPanel._currentPanel._panel.reveal(column);
       ConnectionPanel._currentPanel.update();
       return;
@@ -209,30 +215,32 @@ export class ConnectionPanel {
                   <div class="form--input-wrapper">
                     <label for="host">Host *</label>
                     <input type="text" id="host" required placeholder="localhost" value="${
-                      this._connection?.host ?? ''
+                      this._connection?.host ?? 'localhost'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
                     <input type="text" id="port" placeholder="7687" value="${
-                      this._connection?.port ?? ''
+                      this._connection?.port ?? '7687'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="database">Database *</label>
-                    <input type="text" id="database" required placeholder="neo4j" value="${
+                    <label for="database">Database</label>
+                    <input type="text" id="database" placeholder="neo4j" value="${
                       this._connection?.database ?? ''
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
-                      this._connection?.user ?? ''
+                      this._connection?.user ?? 'neo4j'
                     }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="password">Password *</label>
-                    <input type="password" id="password" required />
+                    <input type="password" id="password" required value="${
+                      this._password ?? ''
+                    }" />
                   </div>
                   <div class="form--actions">
                     <input type="submit" value="Save Connection" />

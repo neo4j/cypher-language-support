@@ -16,7 +16,6 @@ export function validateConnection(
     !connection ||
     (!!connection.scheme &&
       !!connection.host &&
-      !!connection.database &&
       !!connection.user &&
       !!password)
   );
@@ -26,7 +25,6 @@ export function highlightInvalidFields(): void {
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
   const user = document.getElementById('user') as HTMLInputElement;
-  const database = document.getElementById('database') as HTMLInputElement;
   const password = document.getElementById('password') as HTMLInputElement;
 
   scheme.classList.toggle(
@@ -34,7 +32,6 @@ export function highlightInvalidFields(): void {
     !scheme.value || !isValidScheme(scheme.value),
   );
   host.classList.toggle('invalid', !host.value);
-  database.classList.toggle('invalid', !database.value);
   user.classList.toggle('invalid', !user.value);
   password.classList.toggle('invalid', !password.value);
 }

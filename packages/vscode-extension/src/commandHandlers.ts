@@ -6,6 +6,7 @@ import {
   getConnection,
   getConnectionSettings,
   getCurrentConnection,
+  getPasswordForConnection,
   saveConnection,
   toggleConnection,
   updateConnectionState,
@@ -40,12 +41,15 @@ export async function saveAndConnectCommandHandler(
   handleConnectionResult(connection, result);
 }
 
-export function manageConnectionCommandHandler(
+export async function manageConnectionCommandHandler(
   connectionItem?: ConnectionItem,
-): void {
+): Promise<void> {
   const context = getExtensionContext();
   const connection = connectionItem ? getConnection(connectionItem.key) : null;
-  ConnectionPanel.createOrShow(context.extensionPath, connection);
+  const password = connection
+    ? await getPasswordForConnection(connection.key)
+    : '';
+  ConnectionPanel.createOrShow(context.extensionPath, connection, password);
 }
 
 export async function deleteConnectionCommandHandler(

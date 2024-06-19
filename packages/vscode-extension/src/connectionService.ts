@@ -19,7 +19,7 @@ export type Connection = {
   host: string;
   port?: string | undefined;
   user: string;
-  database: string;
+  database?: string | undefined;
   connect: boolean;
   state: State;
 };
