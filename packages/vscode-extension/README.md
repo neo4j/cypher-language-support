@@ -15,11 +15,58 @@ Our extension preview provides a rich set of features for working with Cypher, t
 
 ![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/images/demo.gif?raw=true)
 
+It also provides a basic database connection management pane and syntax highlighting embedded in other languages, namely Markdown, Java, Python, Javascriopt, .NET and Go. This is possible having a multiline string that starts with `//cypher` or `/*cypher*/` or a single line string starting with `/*cypher*/`. We also support a templated string `/*cypher*/`{{query here}}` in Javascript. Examples:
+
+### Markdown
+
+````
+```cypher
+MATCH (n) RETURN n
+```
+````
+
+### Java
+
+```java
+String a = """//cypher
+    MATCH (n)
+    RETURN n
+"""
+
+String b = """/*cypher*/
+    MATCH (n)
+    RETURN n
+"""
+
+String c = "/*cypher*/ MATCH (n:Label) RETURN function(n.property)"
+```
+
+### Javascript / Typescript
+
+```typescript
+const a = /* cypher */ `
+    MATCH (n)
+    RETURN n
+`;
+
+const b = `//cypher
+    MATCH (n)
+    RETURN n
+`;
+
+const c = `/*cypher*/
+    MATCH (n)
+    RETURN n
+`;
+
+const d = '/*cypher*/ MATCH (n) RETURN n';
+```
+
 ## Upcoming features
 
 We're working on adding more features to the extension, such as:
 
-- Easier database connection management
+- Improved database connection management
 - Embedded cypher support in other file types
 - Query exectution and result visualization
 - Automatic query formatting
@@ -42,3 +89,7 @@ The following settings are available in VS Code once the plugin is installed, wh
 We welcome your suggestions, ideas, bug reports and contributions on our [github](https://github.com/neo4j/cypher-language-support).
 
 To build the project locally, see the [CONTRIBUTING.md](https://github.com/neo4j/cypher-language-support/blob/main/CONTRIBUTING.md) file at the root of the git repository.
+
+```
+
+```

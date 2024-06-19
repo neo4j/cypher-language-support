@@ -1,6 +1,7 @@
 name: Publish VSCode extension to Marketplace and OpenVSX
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'neo4j-for-vscode@*.*.*'
