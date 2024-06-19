@@ -86,7 +86,6 @@ export async function onConnectionErroredHandler(
   }
 
   await updateConnectionState({ ...connection, state: 'error' });
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
   void window.showErrorMessage(errorMessage);
 }
 
@@ -98,7 +97,6 @@ export async function onConnectionReconnectedHandler(): Promise<void> {
   }
 
   await updateConnectionState({ ...connection, state: 'connected' });
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
   void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
 }
 
@@ -106,7 +104,6 @@ export function handleConnectionResult(
   connection: Connection,
   result: ConnnectionResult,
 ): void {
-  void commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
   if (result.success && connection.connect) {
     void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
   } else if (result.success && !connection.connect) {

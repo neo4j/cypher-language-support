@@ -1,16 +1,21 @@
+import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-
-import { ConfigurationChangeEvent } from 'vscode';
-import { configurationChangedHandler } from '../../src/commandHandlers';
-import * as connectionService from '../../src/connectionService';
+import { commands, ConfigurationChangeEvent, window } from 'vscode';
+import {
+  configurationChangedHandler,
+  onConnectionErroredHandler,
+  onConnectionReconnectedHandler,
+} from '../../src/commandHandlers';
+import * as connection from '../../src/connectionService';
+import { constants } from '../../src/constants';
 import * as contextService from '../../src/contextService';
 import { getMockConnection } from '../helpers';
 import { MockConnectionManager } from '../mocks/mockConnectionManager';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
-suite('Command handlers', () => {
+suite('Command handlers spec', () => {
   let sandbox: sinon.SinonSandbox;
 
   let mockContext: MockExtensionContext;
@@ -18,6 +23,9 @@ suite('Command handlers', () => {
   let mockConnectionManager: MockConnectionManager;
 
   let getCurrentConnectionStub: sinon.SinonStub;
+  let executeCommandStub: sinon.SinonStub;
+  let showErrorMessageStub: sinon.SinonStub;
+  let showInformationMessageStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -25,6 +33,10 @@ suite('Command handlers', () => {
     mockContext = new MockExtensionContext();
     mockLanguageClient = new MockLanguageClient();
     mockConnectionManager = new MockConnectionManager();
+
+    executeCommandStub = sandbox.stub(commands, 'executeCommand');
+    showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
+    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
 
     sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
     sandbox
@@ -50,7 +62,7 @@ suite('Command handlers', () => {
     );
 
     getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+      .stub(connection, 'getCurrentConnection')
       .returns(getMockConnection(true));
 
     await configurationChangedHandler({
@@ -78,7 +90,7 @@ suite('Command handlers', () => {
     );
 
     getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+      .stub(connection, 'getCurrentConnection')
       .returns(null);
 
     await configurationChangedHandler({
@@ -96,7 +108,7 @@ suite('Command handlers', () => {
     );
 
     getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+      .stub(connection, 'getCurrentConnection')
       .returns(null);
 
     await configurationChangedHandler({
@@ -104,5 +116,41 @@ suite('Command handlers', () => {
     } as ConfigurationChangeEvent);
 
     sandbox.assert.notCalled(sendNotificationSpy);
+  });
+
+  test('onConnectionReconnectedHandler should update a connection state to connected', async () => {
+    const mockConnection = getMockConnection(true);
+    await connection.updateConnectionState({
+      ...mockConnection,
+      state: 'error',
+    });
+
+    await onConnectionReconnectedHandler();
+    const updatedConnection = connection.getConnection(mockConnection.key);
+
+    assert.strictEqual(updatedConnection.state, 'connected');
+    sandbox.assert.calledOnceWithExactly(
+      showInformationMessageStub,
+      constants.MESSAGES.RECONNECTED_MESSAGE,
+    );
+    sandbox.assert.calledWithExactly(
+      executeCommandStub,
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
+  });
+
+  test('onConnectionErroredHandler should update a connection state to error', async () => {
+    const mockConnection = getMockConnection(true);
+    await connection.updateConnectionState(mockConnection);
+
+    await onConnectionErroredHandler('error message');
+    const updatedConnection = connection.getConnection(mockConnection.key);
+
+    assert.strictEqual(updatedConnection.state, 'error');
+    sandbox.assert.calledOnceWithExactly(showErrorMessageStub, 'error message');
+    sandbox.assert.calledWithExactly(
+      executeCommandStub,
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
   });
 });
