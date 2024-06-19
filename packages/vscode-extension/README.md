@@ -89,7 +89,3 @@ The following settings are available in VS Code once the plugin is installed, wh
 We welcome your suggestions, ideas, bug reports and contributions on our [github](https://github.com/neo4j/cypher-language-support).
 
 To build the project locally, see the [CONTRIBUTING.md](https://github.com/neo4j/cypher-language-support/blob/main/CONTRIBUTING.md) file at the root of the git repository.
-
-```
-
-```
