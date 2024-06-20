@@ -273,7 +273,7 @@
     "@types/sinon": "^17.0.3",
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^2.24.0",
+    "@vscode/vsce": "^2.29.0",
     "dotenv": "^16.4.5",
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
