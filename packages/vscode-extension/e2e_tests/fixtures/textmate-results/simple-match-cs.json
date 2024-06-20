@@ -1,0 +1,338 @@
+[
+  {
+    "character": "var",
+    "type": "source.cs storage.type.var.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "a",
+    "type": "source.cs entity.name.variable.local.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "=",
+    "type": "source.cs keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.cs multiLineString comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.cs multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.cs multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cs multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": "var",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "b",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "=",
+    "type": "source.cs keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.cs multiLineString comment.block"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.cs multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.cs multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cs multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.cs multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.cs multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cs multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": "var",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "c",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "=",
+    "type": "source.cs keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "\"",
+    "type": "source.cs singleLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.cs singleLineString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "source.cs singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.cs singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.cs singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cs singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.cs singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.cs singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cs singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cs singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.cs singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cs singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cs singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.cs singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.cs singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cs singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.cs singleLineString string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": "//",
+    "type": "source.cs comment.line.double-slash.cs punctuation.definition.comment.cs"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.cs comment.line.double-slash.cs"
+  },
+  {
+    "character": "var",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "d",
+    "type": "source.cs variable.other.readwrite.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "=",
+    "type": "source.cs keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "\"",
+    "type": "source.cs string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.cs string.quoted.double.cs"
+  },
+  {
+    "character": "\"",
+    "type": "source.cs string.quoted.double.cs punctuation.definition.string.end.cs"
+  }
+]

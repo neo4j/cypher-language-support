@@ -1,0 +1,62 @@
+{
+  "scopeName": "inline.cypher.fsharp",
+  "injectionSelector": "L:(meta.embedded.block.fsharp | source.fsharp) -source.cypher -inline.cypher.fsharp -string -comment",
+  "patterns": [
+    {
+      "name": "multiLineString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(\")((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))\\n",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(\")(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}
