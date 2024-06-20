@@ -4,7 +4,8 @@ export type Neo4jSettings = {
     server: 'off' | 'messages' | 'verbose';
   };
   connect?: boolean;
+  user?: string;
   password?: string;
   connectURL?: string;
-  user?: string;
+  database?: string;
 };

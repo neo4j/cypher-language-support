@@ -8,10 +8,18 @@ const METADATA_BASE = {
   version: version,
 };
 
-function resolveInitialDatabase(databases: Database[]): string {
+function resolveInitialDatabase(
+  databases: Database[],
+  database?: string,
+): string | undefined {
+  if (database) {
+    return databases.find((d) => d.name === database)?.name;
+  }
+
   const home = databases.find((d) => d.home);
   const def = databases.find((d) => d.default);
   const system = databases.find((d) => d.name === 'system');
+
   return home?.name ?? def?.name ?? system?.name ?? databases[0]?.name;
 }
 
@@ -20,15 +28,16 @@ type SdkQueryArgs = {
   abortSignal?: AbortSignal;
 };
 export class Neo4jConnection {
-  public currentDb: string;
+  public currentDb: string | undefined;
 
   constructor(
     public connectedUser: string,
     public protocolVersion: string,
     databases: Database[],
     public driver: Driver,
+    database?: string,
   ) {
-    this.currentDb = resolveInitialDatabase(databases);
+    this.currentDb = resolveInitialDatabase(databases, database);
   }
 
   async runSdkQuery<T>(

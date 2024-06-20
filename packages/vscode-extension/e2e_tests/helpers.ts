@@ -1,5 +1,7 @@
 import * as path from 'path';
 import { Uri, window, workspace } from 'vscode';
+import { Connection } from '../src/connectionService';
+import { getNonce } from '../src/getNonce';
 
 export async function openDocument(docUri: Uri) {
   try {
@@ -56,4 +58,17 @@ export async function eventually(
       }
     }
   }
+}
+
+export function getMockConnection(connect: boolean = false): Connection {
+  return {
+    key: getNonce(16),
+    name: 'mock-connection',
+    database: 'neo4j',
+    connect: connect,
+    user: 'neo4j',
+    host: 'localhost',
+    scheme: 'neo4j',
+    port: '7687',
+  };
 }
