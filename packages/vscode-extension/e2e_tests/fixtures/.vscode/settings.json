@@ -1,0 +1,7 @@
+{
+  "neo4j.connect": true,
+  "neo4j.password": "password",
+  "neo4j.connectURL": "neo4j://localhost:55007",
+  "neo4j.user": "neo4j",
+  "neo4j.trace.server": "off"
+}
