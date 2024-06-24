@@ -1,0 +1,866 @@
+[
+  {
+    "character": "#",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown"
+  },
+  {
+    "character": "Simple match test",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": "Cypher blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "cypher",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": "Js/Ts blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "ts",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "const",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.typescript meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "js",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "const",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js storage.type.js"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js meta.var-single-variable.expr.js meta.definition.variable.js variable.other.constant.js"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js meta.var-single-variable.expr.js"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js keyword.operator.assignment.js"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.javascript meta.var.expr.js singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": "Java blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "java",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "String",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java meta.definition.variable.java storage.type.java"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java meta.definition.variable.java"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java meta.definition.variable.java variable.other.definition.java"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java meta.definition.variable.java"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java keyword.operator.assignment.java"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString string.quoted.double.java punctuation.definition.string.begin.java"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.java singleLineString string.quoted.double.java punctuation.definition.string.end.java"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": "Python blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "python",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "a ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": "Golang blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "go",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "var",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go keyword.var.go"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go variable.other.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go keyword.operator.assignment.go"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString string.quoted.double.go punctuation.definition.string.begin.go"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.go singleLineString string.quoted.double.go punctuation.definition.string.end.go"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "##",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown"
+  },
+  {
+    "character": ".NET blocks",
+    "type": "text.html.markdown markup.heading.markdown heading.2.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "cs",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "var",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp storage.type.var.cs"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp entity.name.variable.local.cs"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.csharp singleLineString string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "fsharp",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "let",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp binding.fsharp keyword.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp binding.fsharp"
+  },
+  {
+    "character": "a",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp binding.fsharp variable.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp binding.fsharp"
+  },
+  {
+    "character": "=",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp binding.fsharp keyword.symbol.fsharp"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.begin.fsharp"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString"
+  },
+  {
+    "character": "MATCH",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.fsharp singleLineString string.quoted.double.fsharp punctuation.definition.string.end.fsharp"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  }
+]

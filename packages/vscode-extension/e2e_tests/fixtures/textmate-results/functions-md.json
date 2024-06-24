@@ -1,0 +1,154 @@
+[
+  {
+    "character": "#",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown punctuation.definition.heading.markdown"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown"
+  },
+  {
+    "character": "Functions test",
+    "type": "text.html.markdown markup.heading.markdown heading.1.markdown entity.name.section.markdown"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  },
+  {
+    "character": "cypher",
+    "type": "text.html.markdown markup.fenced_code.block.markdown fenced_code.block.language.markdown"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc.agg.first(apoc.agg.first(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "[",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "1",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
+  },
+  {
+    "character": ",",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "3",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
+  },
+  {
+    "character": ",",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "5",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher constant.numeric"
+  },
+  {
+    "character": "]))",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "CALL",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "some.procedure(function(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "), ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "other(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "))",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc.coll.elements(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": ") ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "apoc   . coll . elements(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "`apoc` . coll . `elements`(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "`apoc.coll.elements`(",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": ")",
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher"
+  },
+  {
+    "character": "```",
+    "type": "text.html.markdown markup.fenced_code.block.markdown punctuation.definition.markdown"
+  }
+]

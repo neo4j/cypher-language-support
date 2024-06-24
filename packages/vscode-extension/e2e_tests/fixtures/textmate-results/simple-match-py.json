@@ -1,0 +1,546 @@
+[
+  {
+    "character": "a ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python multilineDoubleQuotedString string.quoted.multi.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.python multilineDoubleQuotedString comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python multilineDoubleQuotedString string.quoted.multi.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "b ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python multilineDoubleQuotedString string.quoted.multi.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.python multilineDoubleQuotedString comment.block"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multilineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"\"\"",
+    "type": "source.python multilineDoubleQuotedString string.quoted.multi.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "d ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'''",
+    "type": "source.python multilineSingleQuotedString string.quoted.multi.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.python multilineSingleQuotedString comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "'''",
+    "type": "source.python multilineSingleQuotedString string.quoted.multi.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "d ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'''",
+    "type": "source.python multilineSingleQuotedString string.quoted.multi.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.python multilineSingleQuotedString comment.block"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.python multilineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "'''",
+    "type": "source.python multilineSingleQuotedString string.quoted.multi.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "e ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"",
+    "type": "source.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.python singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": "\"",
+    "type": "source.python singleLineDoubleQuotedString string.quoted.single.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "f ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'",
+    "type": "source.python singleLineSingleQuotedString string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.python singleLineSingleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineSingleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.python singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": "'",
+    "type": "source.python singleLineSingleQuotedString string.quoted.single.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "#",
+    "type": "source.python comment.line.number-sign.python punctuation.definition.comment.python"
+  },
+  {
+    "character": " This one shouldn't highlight",
+    "type": "source.python comment.line.number-sign.python"
+  },
+  {
+    "character": "g ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "\"",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN n",
+    "type": "source.python string.quoted.single.python"
+  },
+  {
+    "character": "\"",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.end.python"
+  },
+  {
+    "character": "#",
+    "type": "source.python comment.line.number-sign.python punctuation.definition.comment.python"
+  },
+  {
+    "character": " This one shouldn't highlight",
+    "type": "source.python comment.line.number-sign.python"
+  },
+  {
+    "character": "h ",
+    "type": "source.python"
+  },
+  {
+    "character": "=",
+    "type": "source.python keyword.operator.assignment.python"
+  },
+  {
+    "character": " ",
+    "type": "source.python"
+  },
+  {
+    "character": "'",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.begin.python"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN n",
+    "type": "source.python string.quoted.single.python"
+  },
+  {
+    "character": "'",
+    "type": "source.python string.quoted.single.python punctuation.definition.string.end.python"
+  }
+]

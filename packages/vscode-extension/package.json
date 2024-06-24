@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -19,7 +19,7 @@
     "database",
     "completions"
   ],
-  "icon": "images/logo.png",
+  "icon": "resources/images/logo.png",
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
@@ -34,6 +34,105 @@
     "vscode": "^1.75.0"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "neo4j.manageConnection",
+        "category": "Neo4j",
+        "title": "Manage Connection",
+        "icon": "$(add)"
+      },
+      {
+        "command": "neo4j.connect",
+        "title": "Connect"
+      },
+      {
+        "command": "neo4j.disconnect",
+        "title": "Disconnect"
+      },
+      {
+        "command": "neo4j.deleteConnection",
+        "title": "Delete Connection..."
+      },
+      {
+        "command": "neo4j.refreshConnections",
+        "title": "Refresh Connections"
+      },
+      {
+        "command": "neo4j.saveConnection",
+        "title": "Create Connection..."
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "neo4jConnections",
+        "contents": "No connections.\n[Add New Connection](command:neo4j.manageConnection)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.connect",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.disconnect",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.refreshConnections",
+          "when": "false"
+        },
+        {
+          "command": "neo4j.saveConnection",
+          "when": "false"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "neo4j.connect",
+          "when": "view == neo4jConnections && viewItem == connection",
+          "group": "00_connection@1"
+        },
+        {
+          "command": "neo4j.disconnect",
+          "when": "view == neo4jConnections && viewItem == activeConnection",
+          "group": "00_connection@1"
+        },
+        {
+          "command": "neo4j.manageConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "01_management@1"
+        },
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "01_management@2"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "neo4j-connection-explorer",
+          "title": "Neo4j",
+          "icon": "resources/images/neo4j.png"
+        }
+      ]
+    },
+    "views": {
+      "neo4j-connection-explorer": [
+        {
+          "type": "tree",
+          "id": "neo4jConnections",
+          "name": "Connections",
+          "icon": "resources/images/neo4j.png"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "cypher",
@@ -44,6 +143,90 @@
           "Cypher"
         ],
         "configuration": "./cypher-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cypher",
+        "scopeName": "source.cypher",
+        "path": "./syntaxes/cypher.json"
+      },
+      {
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.markdown.codeblock",
+        "path": "./syntaxes/cypher.markdown.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.js",
+        "path": "./syntaxes/cypher.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.java",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.java",
+        "path": "./syntaxes/cypher.java.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.python",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.python",
+        "path": "./syntaxes/cypher.python.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.go",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.go",
+        "path": "./syntaxes/cypher.go.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.cs",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.csharp",
+        "path": "./syntaxes/cypher.csharp.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
+          "source.fsharp",
+          "text.html.markdown"
+        ],
+        "scopeName": "inline.cypher.fsharp",
+        "path": "./syntaxes/cypher.fsharp.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
       }
     ],
     "configuration": {
@@ -59,30 +242,6 @@
           ],
           "default": "off",
           "description": "Traces the communication between VS Code and the language server."
-        },
-        "neo4j.connect": {
-          "order": 1,
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to connect to Neo4j for database aware completions."
-        },
-        "neo4j.connectURL": {
-          "order": 2,
-          "type": "string",
-          "default": "neo4j://localhost:7687",
-          "description": "URL of the Neo4j instance to poll data from, `bolt` & `neo4j` protocols supported."
-        },
-        "neo4j.user": {
-          "order": 3,
-          "type": "string",
-          "default": "neo4j",
-          "description": "Username for the database connection."
-        },
-        "neo4j.password": {
-          "order": 4,
-          "type": "string",
-          "default": "password",
-          "description": "Password for the database connection."
         }
       }
     },
@@ -93,26 +252,32 @@
     }
   },
   "scripts": {
+    "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
-    "build": "tsc -b && npm run bundle-extension && npm run bundle-language-server",
+    "bundle-webview-controller": "esbuild ./src/webviews/controllers/connectionPanelController.ts --bundle --outfile=dist/webviews/connectionPanelController.js --platform=browser",
+    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.7",
-    "vscode-languageclient": "^8.1.0"
+    "vscode-languageclient": "^8.1.0",
+    "neo4j-driver": "^5.12.0"
   },
   "devDependencies": {
     "@testcontainers/neo4j": "^10.4.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^16.11.7",
+    "@types/sinon": "^17.0.3",
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
     "@vscode/vsce": "^2.24.0",
+    "dotenv": "^16.4.5",
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
+    "sinon": "^18.0.0",
     "typescript": "^4.9.5"
   }
 }

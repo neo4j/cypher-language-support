@@ -6,8 +6,10 @@
 
 # Unignore only required files, readme/package.json automatically included
 !LICENSE.md
-!images/
+!resources/
 !dist/extension.js
 !dist/lintWorker.js
 !dist/cypher-language-server.js
+!dist/webviews/
 !cypher-language-configuration.json
+!syntaxes/

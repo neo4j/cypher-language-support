@@ -1,3 +1,5 @@
 out/
 packages/language-support/src/generated-parser/*
 vendor/*
+packages/vscode-extension/e2e_tests/fixtures/textmate/*
+packages/vscode-extension/syntaxes/cypher.json
