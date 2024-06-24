@@ -1,0 +1,118 @@
+{
+  "scopeName": "inline.cypher.python",
+  "injectionSelector": "L:(meta.embedded.block.python | source.python) -source.cypher -inline.cypher.python -string -comment",
+  "patterns": [
+    {
+      "name": "multilineDoubleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(\"\"\")((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
+      "end": "(\"\"\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.multi.python punctuation.definition.string.begin.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.multi.python punctuation.definition.string.end.python"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multilineSingleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(''')((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
+      "end": "(''')",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.multi.python punctuation.definition.string.begin.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.multi.python punctuation.definition.string.end.python"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineDoubleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(\")(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.single.python punctuation.definition.string.begin.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.single.python punctuation.definition.string.end.python"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineSingleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(')(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(')",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.single.python punctuation.definition.string.begin.python"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.single.python punctuation.definition.string.end.python"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}
