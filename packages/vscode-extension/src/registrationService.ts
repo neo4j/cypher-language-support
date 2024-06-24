@@ -3,7 +3,7 @@ import {
   configurationChangedHandler,
   deleteConnectionCommandHandler,
   manageConnectionCommandHandler,
-  saveAndConnectCommandHandler,
+  saveConnectionCommandHandler,
   toggleConnectionCommandHandler,
 } from './commandHandlers';
 import {
@@ -12,6 +12,10 @@ import {
 } from './connectionTreeDataProvider';
 import { constants } from './constants';
 
+/**
+ * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
+ * @returns An array of disposables.
+ */
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const connectionTreeDataProvider = new ConnectionTreeDataProvider();
@@ -24,7 +28,7 @@ export function registerDisposables(): Disposable[] {
     workspace.onDidChangeConfiguration(configurationChangedHandler),
     commands.registerCommand(
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
-      saveAndConnectCommandHandler,
+      saveConnectionCommandHandler,
     ),
     commands.registerCommand(
       constants.COMMANDS.MANAGE_CONNECTION_COMMAND,

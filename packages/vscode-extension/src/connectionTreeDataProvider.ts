@@ -50,6 +50,13 @@ export class ConnectionTreeDataProvider
   }
 }
 
+/**
+ * Extends the TreeItem class to represent a connection in the tree view.
+ * @param key The unique key of the connection, used to set the id.
+ * @param state The state of the connection, used to set the description.
+ * @param label The label of the connection, used to set the label and tooltip.
+ * @param collapsibleState The collapsible state of the connection.
+ */
 export class ConnectionItem extends TreeItem {
   constructor(
     public readonly key: string,
@@ -74,6 +81,8 @@ export class ConnectionItem extends TreeItem {
         this.description = '';
         break;
     }
+    // contextValue can be referenced in the package.json file to set icons, used for logical conditions, etc.
+    // For example, only an activeConnection can see the "Disconnect" command.
     this.contextValue =
       this.state === 'connected' || this.state === 'error'
         ? 'activeConnection'

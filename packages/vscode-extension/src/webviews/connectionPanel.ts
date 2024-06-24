@@ -1,3 +1,4 @@
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import path from 'path';
 import {
   commands,
@@ -8,7 +9,7 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
-import { Connection, getAllConnections } from '../connectionService';
+import { Connection } from '../connectionService';
 import { constants } from '../constants';
 import { getNonce } from '../getNonce';
 
@@ -36,13 +37,12 @@ export class ConnectionPanel {
     panel: WebviewPanel,
     extensionPath: string,
     connection?: Connection,
+    password?: string,
   ) {
     this._panel = panel;
     this._extensionPath = extensionPath;
-
-    // Ordinarily, if the connection was undefined, we would create a new one
-    // We want to limit this to a single connection for now
-    this._connection = connection ?? getAllConnections()[0];
+    this._connection = connection;
+    this._password = password;
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -82,6 +82,7 @@ export class ConnectionPanel {
       panel,
       extensionPath,
       connection,
+      password,
     );
   }
 
@@ -106,12 +107,17 @@ export class ConnectionPanel {
       async (message: ConnectionPanelMessage) => {
         switch (message.command) {
           case 'onSaveConnection': {
-            await commands.executeCommand(
+            const result: ConnnectionResult = await commands.executeCommand(
               constants.COMMANDS.SAVE_CONNECTION_COMMAND,
               message.connection,
               message.password,
             );
-            this.dispose();
+
+            if (result.success) {
+              this.dispose();
+            } else if (result.error) {
+              // TODO: highlight form with errors
+            }
             break;
           }
           case 'onValidationError': {
@@ -127,6 +133,15 @@ export class ConnectionPanel {
     );
   }
 
+  /**
+   * Generates a static HTML string for the webview.
+   * There is a content security policy in place to only allow loading scripts with a specific nonce.
+   * Form fields are populated with the current connection values if they exist, otherwise with some default values.
+   * Password will be populated with the current password if it exists.
+   * The connectionPanelController script is bundled with esbuild and injected into the webview as an IIFE.
+   * @param webview The webview to generate HTML for.
+   * @returns An HTML string.
+   */
   private getHtmlForWebview(webview: Webview): string {
     const resetCssPath = Uri.file(
       path.join(this._extensionPath, 'resources', 'styles', 'reset.css'),

@@ -5,6 +5,7 @@ import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   configurationChangedHandler,
   onConnectionErroredHandler,
+  onConnectionFailedHandler,
   onConnectionReconnectedHandler,
 } from '../../src/commandHandlers';
 import * as connection from '../../src/connectionService';
@@ -25,6 +26,7 @@ suite('Command handlers spec', () => {
   let getCurrentConnectionStub: sinon.SinonStub;
   let executeCommandStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
+  let showWarningMessageStub: sinon.SinonStub;
   let showInformationMessageStub: sinon.SinonStub;
 
   beforeEach(() => {
@@ -36,6 +38,7 @@ suite('Command handlers spec', () => {
 
     executeCommandStub = sandbox.stub(commands, 'executeCommand');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
+    showWarningMessageStub = sandbox.stub(window, 'showWarningMessage');
     showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
 
     sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
@@ -43,7 +46,7 @@ suite('Command handlers spec', () => {
       .stub(contextService, 'getLanguageClient')
       .returns(mockLanguageClient);
     sandbox
-      .stub(contextService, 'getConnectionManager')
+      .stub(contextService, 'getDatabaseConnectionManager')
       .returns(mockConnectionManager);
 
     const setContextStub = sandbox.stub(contextService, 'setContext');
@@ -120,7 +123,7 @@ suite('Command handlers spec', () => {
 
   test('onConnectionReconnectedHandler should update a connection state to connected', async () => {
     const mockConnection = getMockConnection(true);
-    await connection.updateConnectionState({
+    await connection.saveConnection({
       ...mockConnection,
       state: 'error',
     });
@@ -139,14 +142,32 @@ suite('Command handlers spec', () => {
     );
   });
 
-  test('onConnectionErroredHandler should update a connection state to error', async () => {
+  test('onConnectionErroredHandler should update a connection state to error and display a warning message', async () => {
     const mockConnection = getMockConnection(true);
-    await connection.updateConnectionState(mockConnection);
+    await connection.saveConnection(mockConnection);
 
     await onConnectionErroredHandler('error message');
     const updatedConnection = connection.getConnection(mockConnection.key);
 
     assert.strictEqual(updatedConnection.state, 'error');
+    sandbox.assert.calledOnceWithExactly(
+      showWarningMessageStub,
+      'error message',
+    );
+    sandbox.assert.calledWithExactly(
+      executeCommandStub,
+      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
+  });
+
+  test('onConnectionFailedHandler should update a connection state to disconnected and display an error message', async () => {
+    const mockConnection = getMockConnection(true);
+    await connection.saveConnection(mockConnection);
+
+    await onConnectionFailedHandler('error message');
+    const updatedConnection = connection.getConnection(mockConnection.key);
+
+    assert.strictEqual(updatedConnection.state, 'disconnected');
     sandbox.assert.calledOnceWithExactly(showErrorMessageStub, 'error message');
     sandbox.assert.calledWithExactly(
       executeCommandStub,

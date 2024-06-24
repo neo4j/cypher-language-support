@@ -1,15 +1,17 @@
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   Connection,
-  deleteConnection,
+  deleteConnectionAndUpdateDatabaseConnection,
+  getAllConnections,
   getConnection,
-  getConnectionSettings,
   getCurrentConnection,
+  getDatabaseConnectionSettings,
   getPasswordForConnection,
+  handleCurrentConnection,
   saveConnection,
-  toggleConnection,
-  updateConnectionState,
+  saveConnectionAndUpdateDatabaseConnection,
+  toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
@@ -17,41 +19,96 @@ import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
+/**
+ * Handler for configuration change events.
+ * Updates the language client with new connection settings if the neo4j configuration changes.
+ * @param event The configuration change event.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function configurationChangedHandler(
   event: ConfigurationChangeEvent,
 ): Promise<void> {
   if (event.affectsConfiguration('neo4j.trace.server')) {
     const currentConnection = getCurrentConnection();
     if (currentConnection) {
-      const settings = await getConnectionSettings(currentConnection);
+      const password = await getPasswordForConnection(currentConnection.key);
+      const settings = getDatabaseConnectionSettings(
+        currentConnection,
+        password,
+      );
       await sendNotificationToLanguageClient('connectionUpdated', settings);
     }
   }
 }
 
-export async function saveAndConnectCommandHandler(
+/**
+ * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
+ * Saves a connection to the database and updates the database connection.
+ * If the database connection fails with a retriable error, the user is prompted to save the connection anyway.
+ * Otherwise the result of the connection attempt is displayed.
+ * @param connection The Connection to save.
+ * @param password The password for the Connection.
+ * @returns A promise that resolves with the result of the connection attempt.
+ */
+export async function saveConnectionCommandHandler(
   connection: Connection,
   password: string,
-): Promise<void> {
+): Promise<ConnnectionResult> {
   if (!connection) {
     return;
   }
 
-  const result = await saveConnection(connection, password);
+  const result = await saveConnectionAndUpdateDatabaseConnection(
+    connection,
+    password,
+  );
+
+  if (!result.success && result.retriable) {
+    return (await trySaveConnectionAnyway(connection, password)) ?? result;
+  }
+
   handleConnectionResult(connection, result);
+  return result;
 }
 
+/**
+ * Handler for MANAGE_CONNECTION_COMMAND (neo4j.manageConnection)
+ * This can be triggered by the command palette or the Connection tree view.
+ * In the latter case, the Connection can be modified.
+ * In the former case, a new Connection can be created.
+ * We are currently limiting the number of connections to one, so the ConnectionPanel will always show the current connection.
+ * @param connectionItem The ConnectionItem to manage.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function manageConnectionCommandHandler(
-  connectionItem?: ConnectionItem,
+  connectionItem?: ConnectionItem | null,
 ): Promise<void> {
   const context = getExtensionContext();
-  const connection = connectionItem ? getConnection(connectionItem.key) : null;
-  const password = connection
-    ? await getPasswordForConnection(connection.key)
-    : '';
+  let connection: Connection;
+  let password: string;
+
+  // Artificially limit the number of connections to 1
+  // If we are triggering this command from the command palette,
+  // we will always try to show the first connection, if it exists
+  if (!connectionItem) {
+    connection = getAllConnections()[0];
+    password = connection ? await getPasswordForConnection(connection.key) : '';
+  } else {
+    connection = connectionItem ? getConnection(connectionItem.key) : null;
+    password = connection ? await getPasswordForConnection(connection.key) : '';
+  }
+
   ConnectionPanel.createOrShow(context.extensionPath, connection, password);
 }
 
+/**
+ * Handler for DELETE_CONNECTION_COMMAND (neo4j.deleteConnection)
+ * This may only be triggered from the Connection tree view.
+ * Deletes a connection from the database and updates the database connection.
+ * The user is first prompted to confirm the deletion.
+ * @param connectionItem The ConnectionItem to delete.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function deleteConnectionCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
@@ -62,24 +119,37 @@ export async function deleteConnectionCommandHandler(
   );
 
   if (result === 'Yes') {
-    await deleteConnection(connectionItem.key);
+    await deleteConnectionAndUpdateDatabaseConnection(connectionItem.key);
     void commands.executeCommand(
       constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
-    void window.showInformationMessage(
-      constants.MESSAGES.CONNECTION_DELETED_SUCCESSFULLY_MESSAGE,
-    );
+    void window.showInformationMessage(constants.MESSAGES.CONNECTION_DELETED);
   }
 }
 
+/**
+ * Handler for CONNECT_COMMAND and DISCONNECT_COMMAND (neo4j.connect and neo4j.disconnect)
+ * This may only be triggered from the Connection tree view.
+ * Toggles the connect flag and state of a Connection and updates the database connection.
+ * The result of the connection attempt is displayed to the user.
+ * @param connectionItem The Connecion to toggle.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function toggleConnectionCommandHandler(
   connectionItem: ConnectionItem,
 ): Promise<void> {
   const connectionToToggle = getConnection(connectionItem.key);
-  const { result, connection } = await toggleConnection(connectionToToggle);
+  const { result, connection } =
+    await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
   handleConnectionResult(connection, result);
 }
 
+/**
+ * Handler for connectionErrored events emitted from the schema poller, attached in the schema poller connection manager.
+ * Updates the connection state to error and displays an error message to the user when a connection fails.
+ * @param errorMessage The error message to display.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function onConnectionErroredHandler(
   errorMessage: string,
 ): Promise<void> {
@@ -89,10 +159,15 @@ export async function onConnectionErroredHandler(
     return;
   }
 
-  await updateConnectionState({ ...connection, state: 'error' });
-  void window.showErrorMessage(errorMessage);
+  await saveConnection({ ...connection, state: 'error' });
+  void window.showWarningMessage(errorMessage);
 }
 
+/**
+ * Handler for connectionReconnected events emitted from the schema poller, attached in the schema poller connection manager.
+ * Updates the connection state to connected and displays a message to the user when a connection is reestablished.
+ * @returns A promise that resolves when the handler has completed.
+ */
 export async function onConnectionReconnectedHandler(): Promise<void> {
   const connection = getCurrentConnection();
 
@@ -100,19 +175,106 @@ export async function onConnectionReconnectedHandler(): Promise<void> {
     return;
   }
 
-  await updateConnectionState({ ...connection, state: 'connected' });
+  await saveConnection({ ...connection, state: 'connected' });
   void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
 }
 
-export function handleConnectionResult(
-  connection: Connection,
+/**
+ * Handler for connectionFailed events emitted from the schema poller, attached in the schema poller connection manager.
+ * Updates the connection state to disconnected and displays an error message to the user when a connection permanently fails.
+ * This may be if the credentials expire during a session, or the maximum number of retries is exceeded.
+ * @param errorMessage The error message to display.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function onConnectionFailedHandler(
+  errorMessage: string,
+): Promise<void> {
+  const connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  const password = await getPasswordForConnection(connection.key);
+
+  await saveConnectionAndUpdateDatabaseConnection(
+    {
+      ...connection,
+      connect: false,
+      state: 'disconnected',
+    },
+    password,
+  );
+  void window.showErrorMessage(errorMessage);
+}
+
+/**
+ * Handler for extension sequence events, which occur on activation and deactivation.
+ * This is used to reconnect to, or disconnect from, a database when the extension is activated
+ * or deactivated and there is a Connection with its connect flag set.
+ * @param activating Whether the extension is activating or deactivating.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function onExtensionSequenceEvent(
+  activating: boolean,
+): Promise<void> {
+  const { connection, result } = await handleCurrentConnection(activating);
+  handleConnectionResult(connection, result);
+}
+
+/**
+ * Utility function to manage what type of message type to display to the user based on the result of a connection attempt.
+ * @param connection The Connection that was tried.
+ * @param result The result of the connection attempt.
+ */
+function handleConnectionResult(
+  connection: Connection | null,
   result: ConnnectionResult,
 ): void {
+  if (!connection) {
+    return;
+  }
+
   if (result.success && connection.connect) {
     void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
   } else if (result.success && !connection.connect) {
     void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
-  } else if (!result.success) {
+  } else if (!result.success && !result.retriable) {
     void window.showErrorMessage(result.error);
+  } else {
+    void window.showWarningMessage(result.error);
   }
+}
+
+/**
+ * Utility function to prompt the user to save a connection that failed with a retriable error.
+ * @param connection The Connection to save.
+ * @param password The password for the Connection.
+ * @returns A promise that resolves with the result of the connection attempt.
+ */
+async function trySaveConnectionAnyway(
+  connection: Connection,
+  password: string,
+): Promise<ConnnectionResult | null> {
+  const result = await window.showWarningMessage<string>(
+    'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+    {
+      modal: true,
+      detail:
+        'Alternatively, please check that your scheme, host and port are correct.',
+    },
+    'Yes',
+  );
+
+  if (result === 'Yes') {
+    const result = await saveConnectionAndUpdateDatabaseConnection(
+      { ...connection, connect: false, state: 'disconnected' },
+      password,
+      true,
+    );
+    void window.showInformationMessage(constants.MESSAGES.CONNECTION_SAVED);
+    return result;
+  }
+
+  return null;
 }

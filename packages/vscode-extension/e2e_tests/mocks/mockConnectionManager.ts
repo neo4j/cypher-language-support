@@ -5,6 +5,11 @@ import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/sche
 export class MockConnectionManager {
   private readonly _schemaPoller: Neo4jSchemaPoller;
 
+  async persistentConnect(settings: Neo4jSettings): Promise<ConnnectionResult> {
+    await Promise.resolve(settings);
+    return { success: true };
+  }
+
   async connect(connectionSettings: Neo4jSettings): Promise<ConnnectionResult> {
     await Promise.resolve(connectionSettings);
     return { success: true };

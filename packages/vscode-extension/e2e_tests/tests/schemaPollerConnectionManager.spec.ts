@@ -27,12 +27,14 @@ suite('Schema poller connection manager spec', () => {
 
   suite('Unsuccessful connections', () => {
     beforeEach(() => {
+      const connectFake = sandbox.fake.resolves({ success: true });
       const persistentConnectFake = sandbox.fake.resolves({
         success: false,
       });
 
       schemaPollerMock = {
         events: events,
+        connect: connectFake,
         persistentConnect: persistentConnectFake,
         disconnect: () => void 0,
       } as unknown as Neo4jSchemaPoller;
@@ -43,7 +45,7 @@ suite('Schema poller connection manager spec', () => {
     });
 
     test('Unsuccessful connection attempts to the schema poller should cause a connectionConnected listener to be attached', async () => {
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -56,7 +58,7 @@ suite('Schema poller connection manager spec', () => {
         schemaPollerConnectionManager,
         '_handleConnectionError',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -76,7 +78,7 @@ suite('Schema poller connection manager spec', () => {
         schemaPollerConnectionManager,
         '_attachErrorEventListener',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -97,7 +99,7 @@ suite('Schema poller connection manager spec', () => {
         schemaPollerConnectionManager,
         '_attachErrorEventListener',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -112,10 +114,12 @@ suite('Schema poller connection manager spec', () => {
 
   suite('Successful connections', () => {
     beforeEach(() => {
+      const connectFake = sandbox.fake.resolves({ success: true });
       const persistentConnectFake = sandbox.fake.resolves({ success: true });
 
       schemaPollerMock = {
         events: events,
+        connect: connectFake,
         persistentConnect: persistentConnectFake,
         disconnect: () => void 0,
       } as unknown as Neo4jSchemaPoller;
@@ -126,7 +130,7 @@ suite('Schema poller connection manager spec', () => {
     });
 
     test('Successful connection attempts to the schema poller should cause a connectionErrored listener to be attached', async () => {
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -139,7 +143,7 @@ suite('Schema poller connection manager spec', () => {
         schemaPollerConnectionManager,
         '_handleConnectionReconnected',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -157,9 +161,9 @@ suite('Schema poller connection manager spec', () => {
       );
       const attachedReconnectionListenerSpy = sandbox.spy(
         schemaPollerConnectionManager,
-        '_attachReconnectionEventListener',
+        '_attachReconnectionOrFailedEventListeners',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -179,11 +183,11 @@ suite('Schema poller connection manager spec', () => {
         schemaPollerConnectionManager,
         '_handleConnectionError',
       );
-      const attachedReconnectionListenerSpy = sandbox.spy(
+      const attachReconnectionOrFailedEventListenersSpy = sandbox.spy(
         schemaPollerConnectionManager,
-        '_attachReconnectionEventListener',
+        '_attachReconnectionOrFailedEventListeners',
       );
-      await schemaPollerConnectionManager.connect({
+      await schemaPollerConnectionManager.persistentConnect({
         trace: { server: 'off' },
       });
 
@@ -195,7 +199,7 @@ suite('Schema poller connection manager spec', () => {
         handleConnectionErrorSpy,
         'error message',
       );
-      sinon.assert.calledOnce(attachedReconnectionListenerSpy);
+      sinon.assert.calledOnce(attachReconnectionOrFailedEventListenersSpy);
     });
   });
 });
