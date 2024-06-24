@@ -212,6 +212,7 @@ suite('Schema poller connection manager spec', () => {
         trace: { server: 'off' },
       });
 
+      events.emit('connectionErrored', 'error message');
       events.emit('connectionFailed');
       events.emit('connectionFailed');
       events.emit('connectionFailed');

@@ -5,7 +5,7 @@ import { constants } from '../../src/constants';
 import { getNeo4jConfiguration } from '../helpers';
 import { testDatabaseKey } from '../suiteSetup';
 
-suite('Execute commands', () => {
+suite('Execute commands spec', () => {
   let sandbox: sinon.SinonSandbox;
   let showInformationMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
@@ -73,6 +73,64 @@ suite('Execute commands', () => {
       sandbox.assert.calledWith(
         showErrorMessageStub,
         'Unable to connect to Neo4j: Please check that your user and password are correct.',
+      );
+    });
+
+    test('Saving a connection with an invalid database should show an error message', async () => {
+      const { scheme, host, port, user, password } = getNeo4jConfiguration();
+      await commands.executeCommand(
+        constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+        {
+          name: 'mock-connection-2',
+          key: 'mock-key-2',
+          scheme: scheme,
+          host: host,
+          port: port,
+          user: user,
+          database: 'bad',
+          connect: true,
+        },
+        password,
+      );
+
+      sandbox.assert.calledWith(
+        showErrorMessageStub,
+        'Unable to connect to Neo4j: Please check that your database is correct.',
+      );
+    });
+
+    test('Saving a connection with a bad URL should show a warning message', async () => {
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      await commands.executeCommand(
+        constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+        {
+          name: 'mock-connection-3',
+          key: 'mock-key-3',
+          scheme: 'neo4j',
+          host: 'unknown-host',
+          port: '7687',
+          user: 'neo4j',
+          database: 'neo4j',
+          connect: true,
+        },
+        'password',
+      );
+
+      sandbox.assert.calledWith(
+        stub,
+        'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+        {
+          modal: true,
+          detail:
+            'Alternatively, please check that your scheme, host and port are correct.',
+        },
+        'Yes',
       );
     });
   });
@@ -170,6 +228,46 @@ suite('Execute commands', () => {
       sandbox.assert.calledWith(
         showInformationMessageStub,
         constants.MESSAGES.CONNECTED_MESSAGE,
+      );
+    });
+
+    test('Connecting to a previously saved bad connection should show a warning message', async () => {
+      const warningMessagePromptStub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      warningMessagePromptStub.resolves('Yes');
+
+      await commands.executeCommand(
+        constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+        {
+          name: 'mock-connection-4',
+          key: 'mock-key-4',
+          scheme: 'neo4j',
+          host: 'unknown-host',
+          port: '7687',
+          user: 'neo4j',
+          database: 'neo4j',
+          connect: false,
+        },
+        'password',
+      );
+
+      warningMessagePromptStub.restore();
+
+      const warningMessageStub = sandbox.stub(window, 'showWarningMessage');
+
+      await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
+        key: 'mock-key-4',
+      });
+
+      sandbox.assert.calledWith(
+        warningMessageStub,
+        'Unable to connect to Neo4j: Please check that your scheme, host and port are correct.. Retrying in 30 seconds.',
       );
     });
   });
