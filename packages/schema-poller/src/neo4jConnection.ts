@@ -83,6 +83,6 @@ export class Neo4jConnection {
   }
 
   dispose() {
-    void this.driver?.close();
+    void this.driver.close();
   }
 }

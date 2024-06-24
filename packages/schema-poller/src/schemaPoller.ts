@@ -31,6 +31,31 @@ export class Neo4jSchemaPoller {
   private retries = maxRetryAttempts;
   private lastError?: { message: string; code: string };
 
+  async connect(
+    url: string,
+    credentials: { username: string; password: string },
+    config: { driverConfig?: Config; appName: string },
+    database?: string,
+  ): Promise<ConnnectionResult> {
+    try {
+      this.driver = await this.initializeDriver(
+        url,
+        credentials,
+        config,
+        database,
+      );
+    } catch (error: unknown) {
+      console.error('Error connecting to Neo4j.', error);
+      return {
+        success: false,
+        retriable: isRetriableNeo4jError(error),
+        error: getFriendlyErrorMessage(error),
+      };
+    }
+
+    return { success: true };
+  }
+
   async persistentConnect(
     url: string,
     credentials: { username: string; password: string },
@@ -92,31 +117,6 @@ export class Neo4jSchemaPoller {
       config,
       database,
     );
-
-    return { success: true };
-  }
-
-  async connect(
-    url: string,
-    credentials: { username: string; password: string },
-    config: { driverConfig?: Config; appName: string },
-    database?: string,
-  ): Promise<ConnnectionResult> {
-    try {
-      this.driver = await this.initializeDriver(
-        url,
-        credentials,
-        config,
-        database,
-      );
-    } catch (error: unknown) {
-      console.error('Error connecting to Neo4j.', error);
-      return {
-        success: false,
-        retriable: isRetriableNeo4jError(error),
-        error: getFriendlyErrorMessage(error),
-      };
-    }
 
     return { success: true };
   }
