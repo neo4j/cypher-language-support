@@ -8,10 +8,15 @@ import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
 
+type ConnectionError = {
+  message: string;
+  code: string;
+};
+
 export type ConnnectionResult = {
   success: boolean;
   retriable?: boolean;
-  error?: string;
+  error?: ConnectionError;
 };
 
 const maxRetryAttempts = 5;
@@ -24,7 +29,7 @@ export class Neo4jSchemaPoller {
   private driver?: Driver;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = maxRetryAttempts;
-  private lastError?: string;
+  private lastError?: { message: string; code: string };
 
   async persistentConnect(
     url: string,
@@ -210,7 +215,11 @@ export class Neo4jSchemaPoller {
 
     this.events.emit('connectionErrored', errorMessage);
 
-    return { success: false, retriable: true, error: errorMessage };
+    return {
+      success: false,
+      retriable: true,
+      error: { message: errorMessage, code: this.lastError?.code ?? '' },
+    };
   }
 
   private handlePermanentlyFailingConnection(): ConnnectionResult {
@@ -220,14 +229,18 @@ export class Neo4jSchemaPoller {
 
     this.events.emit('connectionFailed', errorMessage);
 
-    return { success: false, retriable: false, error: errorMessage };
+    return {
+      success: false,
+      retriable: false,
+      error: { message: errorMessage, code: this.lastError?.code ?? '' },
+    };
   }
 
   private getFormattedErrorMessage(
-    errorMessage: string | undefined = 'Unknown error',
+    error: ConnectionError | undefined = { message: 'Unknown error', code: '' },
     retriable: boolean,
   ): string {
-    return `${errorMessage}. ${
+    return `${error.message}. ${
       retriable
         ? `Retrying in ${retryIntervalMs / 1000} seconds`
         : 'Not trying again'

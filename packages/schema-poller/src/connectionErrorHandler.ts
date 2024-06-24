@@ -12,20 +12,35 @@ export function isNeo4jError(error: unknown): error is Neo4jError {
   );
 }
 
-export function getFriendlyErrorMessage(error: unknown): string {
+export function getFriendlyErrorMessage(error: unknown): {
+  message: string;
+  code: string;
+} {
   if (isNeo4jError(error)) {
     switch (error.code) {
       case 'Neo.ClientError.Security.AuthenticationRateLimit':
       case 'Neo.ClientError.Security.CredentialsExpired':
       case 'Neo.ClientError.Security.Unauthorized':
       case 'Neo.ClientError.Security.TokenExpired':
-        return 'Unable to connect to Neo4j: Please check that your user and password are correct.';
+        return {
+          message:
+            'Unable to connect to Neo4j: Please check that your user and password are correct.',
+          code: error.code,
+        };
       case 'Neo.ClientError.Database.DatabaseNotFound':
-        return 'Unable to connect to Neo4j: Please check that your database is correct.';
+        return {
+          message:
+            'Unable to connect to Neo4j: Please check that your database is correct.',
+          code: error.code,
+        };
       case 'ServiceUnavailable':
-        return 'Unable to connect to Neo4j: Please check that your scheme, host and port are correct.';
+        return {
+          message:
+            'Unable to connect to Neo4j: Please check that your scheme, host and port are correct.',
+          code: error.code,
+        };
     }
   }
 
-  return 'Unable to connect to Neo4j: Please try again.';
+  return { message: 'Unable to connect to Neo4j: Please try again.', code: '' };
 }

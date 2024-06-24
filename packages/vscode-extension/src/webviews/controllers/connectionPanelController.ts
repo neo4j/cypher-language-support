@@ -51,6 +51,16 @@ export function highlightInvalidFields(): void {
 }
 
 /**
+ * Highlights any fields invalidated by the server.
+ * @param errorCode The Neo4j driver error code.
+ */
+export function highlightServerInvalidatedFields(): void {
+  document.querySelectorAll('[data-invalid="true"]').forEach((element) => {
+    element.classList.add('invalid');
+  });
+}
+
+/**
  * @returns A Connection object from the webview form.
  */
 export function getConnection(): Connection | null {
@@ -126,3 +136,5 @@ export function onSubmit(event: Event): boolean {
  * Adds an event listener to the form submission event.
  */
 addEventListener('submit', (event) => onSubmit(event));
+
+highlightServerInvalidatedFields();

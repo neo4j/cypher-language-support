@@ -240,9 +240,9 @@ function handleConnectionResult(
   } else if (result.success && !connection.connect) {
     void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
   } else if (!result.success && !result.retriable) {
-    void window.showErrorMessage(result.error);
+    void window.showErrorMessage(result.error?.message);
   } else {
-    void window.showWarningMessage(result.error);
+    void window.showWarningMessage(result.error?.message);
   }
 }
 

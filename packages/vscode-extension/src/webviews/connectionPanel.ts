@@ -31,6 +31,7 @@ export class ConnectionPanel {
 
   private _connection: Connection | undefined;
   private _password: string | undefined;
+  private _lastResult: ConnnectionResult | undefined;
   private _disposables: Disposable[] = [];
 
   private constructor(
@@ -40,6 +41,7 @@ export class ConnectionPanel {
     password?: string,
   ) {
     this._panel = panel;
+    this.bindOnDidReceiveMessage();
     this._extensionPath = extensionPath;
     this._connection = connection;
     this._password = password;
@@ -58,6 +60,7 @@ export class ConnectionPanel {
       : undefined;
 
     if (ConnectionPanel._currentPanel) {
+      ConnectionPanel._currentPanel._lastResult = undefined;
       ConnectionPanel._currentPanel._connection = connection;
       ConnectionPanel._currentPanel._password = password;
       ConnectionPanel._currentPanel._panel.reveal(column);
@@ -99,11 +102,8 @@ export class ConnectionPanel {
     }
   }
 
-  private update(): void {
-    const webview = this._panel.webview;
-    this._panel.webview.html = this.getHtmlForWebview(webview);
-
-    webview.onDidReceiveMessage(
+  private bindOnDidReceiveMessage() {
+    this._panel.webview.onDidReceiveMessage(
       async (message: ConnectionPanelMessage) => {
         switch (message.command) {
           case 'onSaveConnection': {
@@ -116,7 +116,17 @@ export class ConnectionPanel {
             if (result.success) {
               this.dispose();
             } else if (result.error) {
-              // TODO: highlight form with errors
+              this._lastResult = result;
+              this._connection = {
+                ...this._connection,
+                scheme: message.connection?.scheme,
+                host: message.connection?.host,
+                port: message.connection?.port,
+                database: message.connection?.database,
+                user: message.connection?.user,
+              };
+              this._password = message.password;
+              this.update();
             }
             break;
           }
@@ -131,6 +141,10 @@ export class ConnectionPanel {
       null,
       this._disposables,
     );
+  }
+
+  private update(): void {
+    this._panel.webview.html = this.getHtmlForWebview(this._panel.webview);
   }
 
   /**
@@ -157,7 +171,6 @@ export class ConnectionPanel {
         'connectionPanel.css',
       ),
     );
-
     const connectionPanelJsPath = Uri.file(
       path.join(
         this._extensionPath,
@@ -205,7 +218,7 @@ export class ConnectionPanel {
                   }" />
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
-                    <select id="scheme">
+                    <select id="scheme" data-invalid="${this.urlIsInvalid()}">
                         <option value="bolt" ${
                           this._connection?.scheme === 'bolt' ? 'selected' : ''
                         }>bolt://</option>
@@ -231,31 +244,31 @@ export class ConnectionPanel {
                     <label for="host">Host *</label>
                     <input type="text" id="host" required placeholder="localhost" value="${
                       this._connection?.host ?? 'localhost'
-                    }"/>
+                    }" data-invalid="${this.urlIsInvalid()}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
                     <input type="text" id="port" placeholder="7687" value="${
                       this._connection?.port ?? '7687'
-                    }"/>
+                    }" data-invalid="${this.urlIsInvalid()}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="database">Database</label>
                     <input type="text" id="database" placeholder="neo4j" value="${
                       this._connection?.database ?? ''
-                    }"/>
+                    }" data-invalid="${this.databaseIsInvalid()}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
                       this._connection?.user ?? 'neo4j'
-                    }"/>
+                    }" data-invalid="${this.authIsInvalid()}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="password">Password *</label>
                     <input type="password" id="password" required value="${
                       this._password ?? ''
-                    }" />
+                    }" data-invalid="${this.authIsInvalid()}" />
                   </div>
                   <div class="form--actions">
                     <input type="submit" value="Save Connection" />
@@ -266,5 +279,25 @@ export class ConnectionPanel {
             </div>
           </body>
         </html>`;
+  }
+
+  private authIsInvalid(): boolean {
+    return [
+      'Neo.ClientError.Security.AuthenticationRateLimit',
+      'Neo.ClientError.Security.CredentialsExpired',
+      'Neo.ClientError.Security.Unauthorized',
+      'Neo.ClientError.Security.TokenExpired',
+    ].includes(this._lastResult?.error?.code);
+  }
+
+  private databaseIsInvalid(): boolean {
+    return (
+      this._lastResult?.error?.code ===
+      'Neo.ClientError.Database.DatabaseNotFound'
+    );
+  }
+
+  private urlIsInvalid(): boolean {
+    return this._lastResult?.error?.code === 'ServiceUnavailable';
   }
 }
