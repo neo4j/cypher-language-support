@@ -77,7 +77,13 @@ export interface CypherEditorProps {
    * @default true
    */
   lint?: boolean;
-
+  /**
+   * Whether the signature help tooltip should be shown below the text.
+   * If false, it will be shown above.
+   *
+   * @default true
+   */
+  showSignatureTooltipBelow?: boolean;
   /**
    * Internal feature flags for the editor. Don't use in production
    *
@@ -246,6 +252,7 @@ export class CypherEditor extends Component<
     schema: {},
     overrideThemeBackgroundColor: false,
     lineWrap: false,
+    showSignatureTooltipBelow: true,
     extraKeybindings: [],
     history: [],
     theme: 'light',
@@ -264,6 +271,7 @@ export class CypherEditor extends Component<
       overrideThemeBackgroundColor,
       schema,
       lint,
+      showSignatureTooltipBelow,
       featureFlags,
       onExecute,
     } = this.props;
@@ -271,6 +279,7 @@ export class CypherEditor extends Component<
     this.schemaRef.current = {
       schema,
       lint,
+      showSignatureTooltipBelow,
       featureFlags: {
         consoleCommands: true,
         ...featureFlags,
