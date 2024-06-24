@@ -18,6 +18,7 @@ suite('Schema poller connection manager spec', () => {
 
     sandbox.stub(commandHandlers, 'onConnectionErroredHandler').resolves();
     sandbox.stub(commandHandlers, 'onConnectionReconnectedHandler').resolves();
+    sandbox.stub(commandHandlers, 'onConnectionFailedHandler').resolves();
   });
 
   afterEach(() => {
@@ -200,6 +201,25 @@ suite('Schema poller connection manager spec', () => {
         'error message',
       );
       sinon.assert.calledOnce(attachReconnectionOrFailedEventListenersSpy);
+    });
+
+    test('A failed connection event should only be handled once and removes all listeners', async () => {
+      const handleConnectionFailedSpy = sandbox.spy(
+        schemaPollerConnectionManager,
+        '_handleConnectionFailed',
+      );
+      await schemaPollerConnectionManager.persistentConnect({
+        trace: { server: 'off' },
+      });
+
+      events.emit('connectionFailed');
+      events.emit('connectionFailed');
+      events.emit('connectionFailed');
+
+      sinon.assert.calledOnce(handleConnectionFailedSpy);
+      assert.equal(events.listenerCount('connectionConnected'), 0);
+      assert.equal(events.listenerCount('connectionErrored'), 0);
+      assert.equal(events.listenerCount('connectionFailed'), 0);
     });
   });
 });
