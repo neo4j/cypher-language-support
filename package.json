@@ -15,7 +15,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
-    "build-vscode": "turbo run build --filter=neo4j-for-vscode",
+    "build-vscode": "turbo run neo4j-for-vscode#dev",
     "release": "turbo run build && npx changeset publish",
     "clean": "turbo run clean",
     "watch": "turbowatch ./turbowatch.ts",

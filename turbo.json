@@ -39,6 +39,11 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
+    "neo4j-for-vscode#dev": {
+      "outputs": [],
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "benchmark": {
       "cache": false
     }
