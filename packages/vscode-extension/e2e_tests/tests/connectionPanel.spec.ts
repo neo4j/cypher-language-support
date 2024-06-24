@@ -12,7 +12,7 @@ import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
-suite('Connection panel', () => {
+suite('Connection panel spec', () => {
   let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
@@ -161,6 +161,35 @@ suite('Connection panel', () => {
 
     messageReceived({
       command: 'onValidationError',
+    });
+
+    sandbox.assert.notCalled(disposeSpy);
+  });
+
+  test('Should not dispose the panel when saveConnection returns a non success status', (done) => {
+    executeCommandStub.resolves({ success: false });
+    let messageReceived: (message: ConnectionPanelMessage) => void;
+    const disposeSpy = sandbox.spy(() => '');
+
+    sandbox.stub(window, 'createWebviewPanel').returns({
+      webview: {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
+          messageReceived = callback;
+          done();
+        },
+        asWebviewUri: () => '',
+      },
+      dispose: disposeSpy,
+    } as unknown as WebviewPanel);
+
+    ConnectionPanel.createOrShow('');
+
+    messageReceived({
+      command: 'onSaveConnection',
+      connection: getMockConnection(),
+      password: 'mock-password',
     });
 
     sandbox.assert.notCalled(disposeSpy);
