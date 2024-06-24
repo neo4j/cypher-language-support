@@ -1,5 +1,5 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { constants } from './constants';
 import {

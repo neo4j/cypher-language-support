@@ -1,6 +1,8 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller/dist/cjs/src/schemaPoller';
+import {
+  ConnnectionResult,
+  Neo4jSchemaPoller,
+} from '@neo4j-cypher/schema-poller';
 import {
   onConnectionErroredHandler,
   onConnectionFailedHandler,
