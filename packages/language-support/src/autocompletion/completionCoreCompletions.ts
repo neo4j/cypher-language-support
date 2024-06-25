@@ -567,16 +567,13 @@ function completeAliasName({
     dbSchema,
     ExpectedParameterType.String,
   );
-
-  const rulesOnlyCreatingNewAliasOrDb = [
+  const rulesCreatingNewDb = [
     CypherParser.RULE_createDatabase,
     CypherParser.RULE_createCompositeDatabase,
   ];
   // avoid suggesting existing database names when creating a new alias or database
   if (
-    rulesOnlyCreatingNewAliasOrDb.some((rule) =>
-      candidateRule.ruleList.includes(rule),
-    )
+    rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
     return baseSuggestions;
   }
@@ -587,7 +584,7 @@ function completeAliasName({
   // relying on the startTokenIndex is brittle as it will change as the grammar changes
   if (
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
-    candidateRule.startTokenIndex !== 10
+    candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
     return baseSuggestions;
   }
