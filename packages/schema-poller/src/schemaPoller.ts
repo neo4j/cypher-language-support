@@ -12,6 +12,7 @@ export class Neo4jSchemaPoller {
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
+    database?: string,
   ) {
     const driver = neo4j.driver(
       url,
@@ -19,7 +20,7 @@ export class Neo4jSchemaPoller {
       { userAgent: config.appName, ...config.driverConfig },
     );
 
-    await driver.verifyConnectivity();
+    await driver.verifyConnectivity({ database: database });
 
     if (await driver.supportsSessionAuth()) {
       if (!(await driver.verifyAuthentication())) {
@@ -42,6 +43,7 @@ export class Neo4jSchemaPoller {
       protocolVersion,
       databases,
       driver,
+      database,
     );
 
     this.metadata = new MetadataPoller(databases, this.connection);
@@ -52,6 +54,7 @@ export class Neo4jSchemaPoller {
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
+    database?: string,
   ) {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
@@ -63,7 +66,7 @@ export class Neo4jSchemaPoller {
       }
 
       try {
-        await this.connect(url, credentials, config);
+        await this.connect(url, credentials, config, database);
         // eslint-disable-next-line no-console
         console.log('Established connection to Neo4j');
       } catch (error) {
@@ -76,11 +79,15 @@ export class Neo4jSchemaPoller {
     }
 
     this.reconnectionTimeout = setTimeout(() => {
-      void this.persistentConnect(url, credentials, config);
+      void this.persistentConnect(url, credentials, config, database);
     }, 30000);
   }
 
   disconnect() {
+    if (this.connection) {
+      // eslint-disable-next-line no-console
+      console.log('Disconnected from Neo4j');
+    }
     this.connection?.dispose();
     this.metadata?.stopBackgroundPolling();
     this.connection = undefined;

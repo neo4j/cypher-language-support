@@ -1,3 +1,4 @@
+import { autocompletion } from '@codemirror/autocomplete';
 import {
   defineLanguageFacet,
   Language,
@@ -7,7 +8,7 @@ import {
   _internalFeatureFlags,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
-import { cypherAutocomplete } from './autocomplete';
+import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signatureHelp';
 import { cypherLinter, semanticAnalysisLinter } from './syntaxValidation';
@@ -19,20 +20,31 @@ const facet = defineLanguageFacet({
 
 export type CypherConfig = {
   lint?: boolean;
+  showSignatureTooltipBelow?: boolean;
+  featureFlags?: {
+    signatureInfoOnAutoCompletions?: boolean;
+    consoleCommands?: boolean;
+  };
   schema?: DbSchema;
   useLightVersion: boolean;
   setUseLightVersion?: (useLightVersion: boolean) => void;
 };
 
 export function cypher(config: CypherConfig) {
-  _internalFeatureFlags.consoleCommands = true;
+  const featureFlags = config.featureFlags;
+  // We allow to override the consoleCommands feature flag
+  if (featureFlags.consoleCommands !== undefined) {
+    _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
+  }
+
   const parserAdapter = new ParserAdapter(facet, config);
 
   const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
 
   return new LanguageSupport(cypherLanguage, [
-    cypherLanguage.data.of({
-      autocomplete: cypherAutocomplete(config),
+    autocompletion({
+      override: [cypherAutocomplete(config)],
+      optionClass: completionStyles,
     }),
     cypherLinter(config),
     semanticAnalysisLinter(config),

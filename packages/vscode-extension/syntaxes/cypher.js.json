@@ -1,0 +1,117 @@
+{
+  "scopeName": "inline.cypher.js",
+  "injectionSelector": "L:(meta.embedded.block.javascript | meta.embedded.block.typescript | source.js | source.ts) -source.cypher -inline.cypher.js -string -comment",
+  "patterns": [
+    {
+      "contentName": "taggedTemplate",
+      "begin": "(/\\*\\s?cypher\\s?\\*/\\s*)(`)",
+      "end": "(`)",
+      "beginCaptures": {
+        "1": {
+          "name": "comment.block.js"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.template.js punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "multiLineString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(`)((//\\s?cypher)|(/\\*\\s?cypher\\s?\\*/\\s*))",
+      "end": "(`)",
+      "beginCaptures": {
+        "1": {
+          "name": "string.template.js punctuation.definition.string.template.begin.js"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.template.js punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineDoubleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(\")(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.dobule.js punctuation.definition.string.begin.js"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.dobule.js punctuation.definition.string.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    },
+    {
+      "name": "singleLineSingleQuotedString",
+      "contentName": "meta.embedded.block.cypher",
+      "begin": "(')(/\\*\\s?cypher\\s?\\*/\\s*)",
+      "end": "(')",
+      "beginCaptures": {
+        "1": {
+          "name": "string.quoted.single.js punctuation.definition.string.begin.js"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "string.quoted.single.js punctuation.definition.string.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.cypher"
+        }
+      ]
+    }
+  ]
+}

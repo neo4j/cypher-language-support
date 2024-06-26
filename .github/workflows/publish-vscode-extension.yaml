@@ -1,6 +1,7 @@
 name: Publish VSCode extension to Marketplace and OpenVSX
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'neo4j-for-vscode@*.*.*'
@@ -16,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          lfs: true
 
       - uses: actions/setup-node@v3
         with:
@@ -41,4 +44,6 @@ jobs:
       - name: Publish to OpenVSX
         env:
           VSX_PAT: ${{ secrets.VSX_PAT }}
-        run: npx ovsx publish -p $VSX_PAT
+        run: |
+          cd packages/vscode-extension
+          npx ovsx publish -p $VSX_PAT

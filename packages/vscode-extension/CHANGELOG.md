@@ -1,5 +1,16 @@
 # @neo4j-cypher/vscode-extension
 
+## 1.2.1
+
+### Patch changes
+
+- Fixes logo in VSCode Marketplace
+
+## 1.2.0
+
+- Adds basic connection pane to connect to Neo4j using VSCode menus
+- Adds syntax highlighting inside Markdown files and for annotated strings in Java, Python, Javascript, .NET and Go
+
 ## 1.1.1
 
 ### Patch Changes

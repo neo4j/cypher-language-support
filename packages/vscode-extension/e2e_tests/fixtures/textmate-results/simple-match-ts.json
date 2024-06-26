@@ -1,0 +1,810 @@
+[
+  {
+    "character": "/*",
+    "type": "source.ts comment.block.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": " eslint-disable @typescript-eslint/no-unused-vars ",
+    "type": "source.ts comment.block.ts"
+  },
+  {
+    "character": "*/",
+    "type": "source.ts comment.block.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "a",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "/* cypher */ ",
+    "type": "source.ts meta.var.expr.ts comment.block.js"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts string.template.js punctuation.definition.string.template.end.js"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "b",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "/*cypher*/ ",
+    "type": "source.ts meta.var.expr.ts comment.block.js"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "  ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts taggedTemplate comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts taggedTemplate entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts taggedTemplate keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts taggedTemplate variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts taggedTemplate"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts string.template.js punctuation.definition.string.template.end.js"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "c",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "e",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "/* cypher */",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.block"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "f",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts multiLineString comment.block"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts multiLineString meta.embedded.block.cypher"
+  },
+  {
+    "character": "`",
+    "type": "source.ts meta.var.expr.ts multiLineString string.template.js punctuation.definition.string.template.end.js"
+  },
+  {
+    "character": ";",
+    "type": "source.ts punctuation.terminator.statement.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "g",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "\"",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.ts meta.var.expr.ts singleLineDoubleQuotedString string.quoted.dobule.js punctuation.definition.string.end.js"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "h",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "'",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString string.quoted.single.js punctuation.definition.string.begin.js"
+  },
+  {
+    "character": "/*cypher*/",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString comment.block"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString meta.embedded.block.cypher"
+  },
+  {
+    "character": "'",
+    "type": "source.ts meta.var.expr.ts singleLineSingleQuotedString string.quoted.single.js punctuation.definition.string.end.js"
+  },
+  {
+    "character": "//",
+    "type": "source.ts comment.line.double-slash.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.ts comment.line.double-slash.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "i",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "\"",
+    "type": "source.ts meta.var.expr.ts string.quoted.double.ts punctuation.definition.string.begin.ts"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.ts meta.var.expr.ts string.quoted.double.ts"
+  },
+  {
+    "character": "\"",
+    "type": "source.ts meta.var.expr.ts string.quoted.double.ts punctuation.definition.string.end.ts"
+  },
+  {
+    "character": "//",
+    "type": "source.ts comment.line.double-slash.ts punctuation.definition.comment.ts"
+  },
+  {
+    "character": " This one shouldn't highglight",
+    "type": "source.ts comment.line.double-slash.ts"
+  },
+  {
+    "character": "const",
+    "type": "source.ts meta.var.expr.ts storage.type.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "j",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts meta.definition.variable.ts variable.other.constant.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts meta.var-single-variable.expr.ts"
+  },
+  {
+    "character": "=",
+    "type": "source.ts meta.var.expr.ts keyword.operator.assignment.ts"
+  },
+  {
+    "character": " ",
+    "type": "source.ts meta.var.expr.ts"
+  },
+  {
+    "character": "'",
+    "type": "source.ts meta.var.expr.ts string.quoted.single.ts punctuation.definition.string.begin.ts"
+  },
+  {
+    "character": "//cypher MATCH (n:Label) RETURN function(n.property)",
+    "type": "source.ts meta.var.expr.ts string.quoted.single.ts"
+  },
+  {
+    "character": "'",
+    "type": "source.ts meta.var.expr.ts string.quoted.single.ts punctuation.definition.string.end.ts"
+  }
+]

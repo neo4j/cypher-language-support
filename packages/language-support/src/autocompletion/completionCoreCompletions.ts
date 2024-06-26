@@ -2,8 +2,8 @@ import { Token } from 'antlr4';
 import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import {
-  CompletionItem,
   CompletionItemKind,
+  CompletionItemTag,
   InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
@@ -22,6 +22,7 @@ import {
 import { ParsedStatement } from '../parserWrapper';
 
 import { _internalFeatureFlags } from '../featureFlags';
+import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -41,11 +42,11 @@ const functionNameCompletions = (
   candidateRule: CandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
-) =>
+): CompletionItem[] =>
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.functions ?? {}),
+    dbSchema?.functions ?? {},
     'function',
   );
 
@@ -53,20 +54,58 @@ const procedureNameCompletions = (
   candidateRule: CandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
-) =>
+): CompletionItem[] =>
   namespacedCompletion(
     candidateRule,
     tokens,
-    Object.keys(dbSchema?.procedures ?? {}),
+    dbSchema?.procedures ?? {},
     'procedure',
   );
+
+function isDeprecated(arg: Neo4jFunction | Neo4jProcedure | undefined) {
+  if ('option' in arg) {
+    return arg.option.deprecated;
+  } else if ('isDeprecated' in arg) {
+    return arg.isDeprecated;
+  } else {
+    return false;
+  }
+}
+
+function getMethodCompletionItem(
+  label: string,
+  fullName: string,
+  signatures: Record<string, Neo4jFunction | Neo4jProcedure>,
+  type: 'procedure' | 'function',
+  kind: CompletionItemKind,
+): CompletionItem {
+  const maybeSignature = signatures[fullName];
+  const typeDetail = type === 'procedure' ? '(procedure)' : '(function)';
+  const deprecated = isDeprecated(maybeSignature);
+  const maybeTags: { tags?: CompletionItemTag[] } = deprecated
+    ? { tags: [CompletionItemTag.Deprecated] }
+    : {};
+  const maybeMethodSignature = maybeSignature
+    ? { signature: maybeSignature.signature }
+    : {};
+
+  return {
+    ...maybeTags,
+    ...maybeMethodSignature,
+    label,
+    kind,
+    detail: typeDetail,
+    documentation: maybeSignature?.description ?? '',
+  };
+}
 
 const namespacedCompletion = (
   candidateRule: CandidateRule,
   tokens: Token[],
-  fullNames: string[],
+  signatures: Record<string, Neo4jFunction> | Record<string, Neo4jProcedure>,
   type: 'procedure' | 'function',
-) => {
+): CompletionItem[] => {
+  const fullNames = Object.keys(signatures);
   const namespacePrefix = calculateNamespacePrefix(candidateRule, tokens);
   if (namespacePrefix === null) {
     return [];
@@ -76,7 +115,6 @@ const namespacedCompletion = (
     type === 'procedure'
       ? CompletionItemKind.Method
       : CompletionItemKind.Function;
-  const detail = type === 'procedure' ? '(procedure)' : '(function)';
 
   if (namespacePrefix === '') {
     // If we don't have any prefix show full functions and top level namespaces
@@ -85,13 +123,27 @@ const namespacedCompletion = (
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map((label) => ({ label, kind, detail: `(namespace)` }))
-      .concat(fullNames.map((label) => ({ label, kind, detail })));
+      .map(
+        (label) => ({ label, kind, detail: `(namespace)` } as CompletionItem),
+      )
+      .concat(
+        fullNames.map((label) => {
+          const result = getMethodCompletionItem(
+            label,
+            label,
+            signatures,
+            type,
+            kind,
+          );
+
+          return result;
+        }),
+      );
   } else {
     // if we have a namespace prefix, complete on the namespace level:
     // apoc. => show `util` | `load` | `date` etc.
 
-    const funcOptions = new Set<string>();
+    const funcOptions = new Set<{ completion: string; fullName: string }>();
     const namespaceOptions = new Set<string>();
 
     for (const name of fullNames) {
@@ -104,7 +156,7 @@ const namespacedCompletion = (
         // handle prefix `time.truncate.` turning `time.truncate` => ``
         if (option !== '') {
           if (isFunctionName) {
-            funcOptions.add(option);
+            funcOptions.add({ completion: option, fullName: name });
           } else {
             namespaceOptions.add(option);
           }
@@ -113,13 +165,15 @@ const namespacedCompletion = (
     }
 
     // test handle namespace with same name as function
-    const functionNameCompletions = Array.from(funcOptions).map((label) => ({
-      label,
-      kind,
-      detail,
-    }));
+    const functionNameCompletions: CompletionItem[] = Array.from(
+      funcOptions,
+    ).map(({ completion: label, fullName }) =>
+      getMethodCompletionItem(label, fullName, signatures, type, kind),
+    );
 
-    const namespaceCompletions = Array.from(namespaceOptions).map((label) => ({
+    const namespaceCompletions: CompletionItem[] = Array.from(
+      namespaceOptions,
+    ).map((label) => ({
       label,
       kind,
       detail: '(namespace)',
