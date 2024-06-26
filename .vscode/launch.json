@@ -25,6 +25,24 @@
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
       "preLaunchTask": "npm: build-vscode"
+    },
+    {
+      "type": "extensionHost",
+      "request": "launch",
+      "name": "Debug VSCode Tests",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension",
+        "--extensionTestsPath=${workspaceRoot}/packages/vscode-extension/dist/e2e_tests/testRunner"
+      ],
+      "outFiles": [
+        "${workspaceRoot}/packages/vscode-extension/**/*.js",
+        "${workspaceRoot}/packages/language-support/**/*.js",
+        "${workspaceRoot}/packages/schema-poller/**/*.js"
+      ],
+      "autoAttachChildProcesses": true,
+      "sourceMaps": true,
+      "preLaunchTask": "npm: build-vscode"
     }
   ],
   "type": "pwa-node",
