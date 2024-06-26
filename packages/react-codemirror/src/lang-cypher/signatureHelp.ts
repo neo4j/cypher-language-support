@@ -101,11 +101,13 @@ function getSignatureHelpTooltip(
         signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
+        const showSignatureTooltipBelow =
+          config.showSignatureTooltipBelow ?? true;
 
         result = [
           {
             pos: caretPosition,
-            above: true,
+            above: !showSignatureTooltipBelow,
             arrow: true,
             create: createSignatureHelpElement({ signature, activeParameter }),
           },
