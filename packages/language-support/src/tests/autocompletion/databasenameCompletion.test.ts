@@ -134,6 +134,29 @@ describe('Can complete database names', () => {
     });
   });
 
+  test('Correctly completes database name even in a create alias statement including extra of spaces', () => {
+    testCompletions({
+      query: 'CREATE ALIAS foo          FOR     DATABASE ',
+      dbSchema,
+      expected: [
+        { label: 'db1', kind: CompletionItemKind.Value },
+        { label: 'db2', kind: CompletionItemKind.Value },
+        { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'myMovies', kind: CompletionItemKind.Value },
+        { label: 'scoped.alias', kind: CompletionItemKind.Value },
+        { label: 'a.b.c.d', kind: CompletionItemKind.Value },
+        { label: '$param1', kind: CompletionItemKind.Variable },
+      ],
+      excluded: [
+        // validate invalid keyword bug isn't present
+        { label: '', kind: CompletionItemKind.Keyword },
+        // do not suggest non-string parameters
+        { label: '$param2', kind: CompletionItemKind.Variable },
+        { label: '$param3', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
   test('Suggests only aliases when dropping alias', () => {
     const query = 'DROP ALIAS ';
     testCompletions({

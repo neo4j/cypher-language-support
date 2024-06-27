@@ -563,7 +563,7 @@ function completeAliasName({
   }
 
   // parameters are valid values in all cases of symbolicAliasName
-  const baseSuggestions = parameterCompletions(
+  const parameterSuggestions = parameterCompletions(
     dbSchema,
     ExpectedParameterType.String,
   );
@@ -571,22 +571,21 @@ function completeAliasName({
     CypherParser.RULE_createDatabase,
     CypherParser.RULE_createCompositeDatabase,
   ];
-  // avoid suggesting existing database names when creating a new alias or database
+  // avoid suggesting existing database names when creating a new database
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return baseSuggestions;
+    return parameterSuggestions;
   }
 
   // For `CREATE ALIAS $1 FOR DATABASE $2`
-  // Should not suggest $1 but should suggest for $2
-  // Ideally the grammar would separate declaring and referencing database names
-  // relying on the startTokenIndex is brittle as it will change as the grammar changes
+  // Should not suggest existing aliases for $1 but should suggest existing databases for $2
+  // so we return base suggestions if we're at the `aliasName` rule
   if (
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return baseSuggestions;
+    return parameterSuggestions;
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -600,7 +599,7 @@ function completeAliasName({
     )
   ) {
     return [
-      ...baseSuggestions,
+      ...parameterSuggestions,
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
@@ -610,7 +609,7 @@ function completeAliasName({
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
-    ...baseSuggestions,
+    ...parameterSuggestions,
     ...(dbSchema.databaseNames ?? [])
       .concat(dbSchema.aliasNames ?? [])
       .map((databaseName) => ({
@@ -626,7 +625,7 @@ function completeSymbolicName({
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // parameters are valid values in all cases of symbolic name
-  const baseSuggestions = parameterCompletions(
+  const parameterSuggestions = parameterCompletions(
     dbSchema,
     inferExpectedParameterTypeFromContext(candidateRule),
   );
@@ -651,7 +650,7 @@ function completeSymbolicName({
     // so target should be non-existent
     (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
   ) {
-    return baseSuggestions;
+    return parameterSuggestions;
   }
 
   const rulesThatAcceptExistingUsers = [
@@ -663,7 +662,7 @@ function completeSymbolicName({
 
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
     const result = [
-      ...baseSuggestions,
+      ...parameterSuggestions,
       ...(dbSchema?.userNames ?? []).map((userName) => ({
         label: userName,
         kind: CompletionItemKind.Value,
@@ -681,7 +680,7 @@ function completeSymbolicName({
 
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {
     return [
-      ...baseSuggestions,
+      ...parameterSuggestions,
       ...(dbSchema?.roleNames ?? []).map((roleName) => ({
         label: roleName,
         kind: CompletionItemKind.Value,
