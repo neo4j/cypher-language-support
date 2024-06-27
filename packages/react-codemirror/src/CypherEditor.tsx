@@ -44,6 +44,13 @@ export interface CypherEditorProps {
    */
   onExecute?: (cmd: string) => void;
   /**
+   * If true, pressing enter will add a new line to the editor and cmd/ctrl + enter will execute the query.
+   * Otherwise pressing enter on a single line will execute the query.
+   *
+   * @default false
+   */
+  newLineOnEnter?: boolean;
+  /**
    * The editor history navigable via up/down arrow keys. Order newest to oldest.
    * Add to this list with the `onExecute` callback for REPL style history.
    */
@@ -157,9 +164,32 @@ export interface CypherEditorProps {
   ariaLabel?: string;
 }
 
-const executeKeybinding = (onExecute?: (cmd: string) => void) =>
+const executeKeybinding = (
+  onExecute?: (cmd: string) => void,
+  newLineOnEnter?: boolean,
+) =>
   onExecute
     ? [
+        ...(newLineOnEnter
+          ? []
+          : [
+              {
+                key: 'Enter',
+                preventDefault: true,
+                run: (view: EditorView) => {
+                  const doc = view.state.doc.toString();
+                  if (doc.includes('\n')) {
+                    return false;
+                  }
+
+                  if (doc.trim() !== '') {
+                    onExecute(doc);
+                  }
+
+                  return true;
+                },
+              },
+            ]),
         {
           key: 'Ctrl-Enter',
           mac: 'Mod-Enter',
@@ -257,6 +287,7 @@ export class CypherEditor extends Component<
     history: [],
     theme: 'light',
     lineNumbers: true,
+    newLineOnEnter: false,
   };
 
   private debouncedOnChange = this.props.onChange
@@ -274,6 +305,7 @@ export class CypherEditor extends Component<
       showSignatureTooltipBelow,
       featureFlags,
       onExecute,
+      newLineOnEnter,
     } = this.props;
 
     this.schemaRef.current = {
@@ -316,7 +348,10 @@ export class CypherEditor extends Component<
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
-          keymap.of([...executeKeybinding(onExecute), ...extraKeybindings]),
+          keymap.of([
+            ...executeKeybinding(onExecute, newLineOnEnter),
+            ...extraKeybindings,
+          ]),
         ),
         historyNavigation(this.props),
         basicNeo4jSetup(),

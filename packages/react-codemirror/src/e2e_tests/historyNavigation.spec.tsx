@@ -33,7 +33,10 @@ test('respects preloaded history', async ({ page, mount }) => {
   await expect(page.getByText(initialValue)).toBeVisible();
 });
 
-test('can execute queries and see them in history', async ({ page, mount }) => {
+test('can execute queries and see them in history with newLineOnEnter', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
 
   const initialValue = `MATCH (n)
@@ -49,6 +52,7 @@ RETURN n;`;
       value={initialValue}
       history={history}
       onExecute={onExecute}
+      newLineOnEnter
     />,
   );
 
@@ -118,6 +122,51 @@ RETURN n;`;
   // until you hit the end where have the draft we created earlier
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('draft')).toBeVisible();
+});
+
+test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const initialValue = 'Brock';
+
+  const history: string[] = [];
+  const onExecute = (cmd: string) => {
+    history.unshift(cmd);
+  };
+
+  await mount(<CypherEditor value={initialValue} onExecute={onExecute} />);
+
+  // Cmd/Control still executes initial query
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  expect(history.length).toBe(1);
+
+  // Ensure query execution doesn't fire if the query is only whitespace
+  await editorPage.getEditor().fill('     ');
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(1);
+
+  // Ensure enter executes query when in single line
+  await editorPage.getEditor().fill('Misty');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(2);
+  expect(history).toEqual(['Misty', 'Brock']);
+
+  // Ensure cmd+enter is required in multiline
+  await editorPage.getEditor().fill(`multiline
+
+  `);
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(2);
+
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  expect(history.length).toBe(3);
 });
 
 test('can navigate with cmd+up as well', async ({ page, mount }) => {
