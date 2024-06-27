@@ -4,11 +4,10 @@ import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getAllConnections,
-  getConnection,
+  getConnectionByKey,
   getCurrentConnection,
   getDatabaseConnectionSettings,
   getPasswordForConnection,
-  handleCurrentConnection,
   saveConnection,
   saveConnectionAndUpdateDatabaseConnection,
   toggleConnectionAndUpdateDatabaseConnection,
@@ -25,7 +24,7 @@ import { ConnectionPanel } from './webviews/connectionPanel';
  * @param event The configuration change event.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function configurationChangedHandler(
+export async function handleNeo4jConfigurationChangedEvent(
   event: ConfigurationChangeEvent,
 ): Promise<void> {
   if (event.affectsConfiguration('neo4j.trace.server')) {
@@ -50,7 +49,7 @@ export async function configurationChangedHandler(
  * @param password The password for the Connection.
  * @returns A promise that resolves with the result of the connection attempt.
  */
-export async function saveConnectionCommandHandler(
+export async function saveConnectionAndDisplayConnectionResult(
   connection: Connection,
   password: string,
 ): Promise<ConnnectionResult> {
@@ -64,10 +63,21 @@ export async function saveConnectionCommandHandler(
   );
 
   if (!result.success && result.retriable) {
-    return (await trySaveConnectionAnyway(connection, password)) ?? result;
+    const result = await displaySaveConnectionAnywayPrompt();
+
+    if (result === 'Yes') {
+      void window.showInformationMessage(constants.MESSAGES.CONNECTION_SAVED);
+      return await saveConnectionAndUpdateDatabaseConnection(
+        { ...connection, connect: false, state: 'disconnected' },
+        password,
+        true,
+      );
+    }
+
+    return null;
   }
 
-  handleConnectionResult(connection, result);
+  displayMessageForConnectionResult(connection, result);
   return result;
 }
 
@@ -80,7 +90,7 @@ export async function saveConnectionCommandHandler(
  * @param connectionItem The ConnectionItem to manage.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function manageConnectionCommandHandler(
+export async function createOrShowConnectionPanelForConnectionItem(
   connectionItem?: ConnectionItem | null,
 ): Promise<void> {
   const context = getExtensionContext();
@@ -94,7 +104,7 @@ export async function manageConnectionCommandHandler(
     connection = getAllConnections()[0];
     password = connection ? await getPasswordForConnection(connection.key) : '';
   } else {
-    connection = connectionItem ? getConnection(connectionItem.key) : null;
+    connection = connectionItem ? getConnectionByKey(connectionItem.key) : null;
     password = connection ? await getPasswordForConnection(connection.key) : '';
   }
 
@@ -109,14 +119,10 @@ export async function manageConnectionCommandHandler(
  * @param connectionItem The ConnectionItem to delete.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function deleteConnectionCommandHandler(
+export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
   connectionItem: ConnectionItem,
 ): Promise<void> {
-  const result = await window.showWarningMessage<string>(
-    `Are you sure you want to delete connection ${connectionItem.label}?`,
-    { modal: true },
-    'Yes',
-  );
+  const result = await displayConfirmConnectionDeletionPrompt(connectionItem);
 
   if (result === 'Yes') {
     await deleteConnectionAndUpdateDatabaseConnection(connectionItem.key);
@@ -135,13 +141,13 @@ export async function deleteConnectionCommandHandler(
  * @param connectionItem The Connecion to toggle.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function toggleConnectionCommandHandler(
+export async function toggleConnectionItemsConnectionState(
   connectionItem: ConnectionItem,
 ): Promise<void> {
-  const connectionToToggle = getConnection(connectionItem.key);
+  const connectionToToggle = getConnectionByKey(connectionItem.key);
   const { result, connection } =
     await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
-  handleConnectionResult(connection, result);
+  displayMessageForConnectionResult(connection, result);
 }
 
 /**
@@ -150,7 +156,7 @@ export async function toggleConnectionCommandHandler(
  * @param errorMessage The error message to display.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function onConnectionErroredHandler(
+export async function saveConnectionStateAsErroredAndShowWarningMessage(
   errorMessage: string,
 ): Promise<void> {
   const connection = getCurrentConnection();
@@ -168,7 +174,7 @@ export async function onConnectionErroredHandler(
  * Updates the connection state to connected and displays a message to the user when a connection is reestablished.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function onConnectionReconnectedHandler(): Promise<void> {
+export async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promise<void> {
   const connection = getCurrentConnection();
 
   if (!connection) {
@@ -186,7 +192,7 @@ export async function onConnectionReconnectedHandler(): Promise<void> {
  * @param errorMessage The error message to display.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function onConnectionFailedHandler(
+export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
   errorMessage: string,
 ): Promise<void> {
   const connection = getCurrentConnection();
@@ -215,11 +221,29 @@ export async function onConnectionFailedHandler(
  * @param activating Whether the extension is activating or deactivating.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function onExtensionSequenceEvent(
+export async function connectOrDisconnectCurrentConnectionOnLifecycleChange(
   activating: boolean,
 ): Promise<void> {
-  const { connection, result } = await handleCurrentConnection(activating);
-  handleConnectionResult(connection, result);
+  let connection = getCurrentConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  const password = await getPasswordForConnection(connection.key);
+
+  connection = {
+    ...connection,
+    state: activating ? 'connecting' : 'disconnected',
+    connect: activating,
+  };
+
+  const result = await saveConnectionAndUpdateDatabaseConnection(
+    connection,
+    password,
+  );
+
+  displayMessageForConnectionResult(connection, result);
 }
 
 /**
@@ -227,7 +251,7 @@ export async function onExtensionSequenceEvent(
  * @param connection The Connection that was tried.
  * @param result The result of the connection attempt.
  */
-function handleConnectionResult(
+function displayMessageForConnectionResult(
   connection: Connection | null,
   result: ConnnectionResult,
 ): void {
@@ -248,15 +272,10 @@ function handleConnectionResult(
 
 /**
  * Utility function to prompt the user to save a connection that failed with a retriable error.
- * @param connection The Connection to save.
- * @param password The password for the Connection.
- * @returns A promise that resolves with the result of the connection attempt.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or null).
  */
-async function trySaveConnectionAnyway(
-  connection: Connection,
-  password: string,
-): Promise<ConnnectionResult | null> {
-  const result = await window.showWarningMessage<string>(
+async function displaySaveConnectionAnywayPrompt(): Promise<string | null> {
+  return await window.showWarningMessage<string>(
     'Unable to connect to Neo4j. Would you like to save the connection anyway?',
     {
       modal: true,
@@ -265,16 +284,19 @@ async function trySaveConnectionAnyway(
     },
     'Yes',
   );
+}
 
-  if (result === 'Yes') {
-    const result = await saveConnectionAndUpdateDatabaseConnection(
-      { ...connection, connect: false, state: 'disconnected' },
-      password,
-      true,
-    );
-    void window.showInformationMessage(constants.MESSAGES.CONNECTION_SAVED);
-    return result;
-  }
-
-  return null;
+/**
+ * Utility function to prompt the user whether they're sure they want to delete a Connection.
+ * @param connectionItem The ConnectionItem to prompt for deletion.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or null).
+ */
+async function displayConfirmConnectionDeletionPrompt(
+  connectionItem: ConnectionItem,
+): Promise<string | null> {
+  return await window.showWarningMessage<string>(
+    `Are you sure you want to delete connection ${connectionItem.label}?`,
+    { modal: true },
+    'Yes',
+  );
 }

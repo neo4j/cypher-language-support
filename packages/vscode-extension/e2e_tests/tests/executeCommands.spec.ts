@@ -2,7 +2,6 @@ import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { constants } from '../../src/constants';
-import { getNeo4jConfiguration } from '../helpers';
 import { testDatabaseKey } from '../suiteSetup';
 
 suite('Execute commands spec', () => {
@@ -30,21 +29,19 @@ suite('Execute commands spec', () => {
 
   suite('saveConnectionCommand', () => {
     test('Creating and connecting to a valid connection should show a success message', async () => {
-      const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
-          database: database,
+          scheme: process.env.NEO4J_SCHEME || 'neo4j',
+          host: process.env.NEO4J_HOST || 'localhost',
+          port: process.env.NEO4J_PORT || '7687',
+          user: process.env.NEO4J_USER || 'neo4j',
+          database: process.env.NEO4J_DATABASE || 'neo4j',
           connect: true,
         },
-        password,
+        process.env.NEO4J_PASSWORD || 'password',
       );
 
       sandbox.assert.calledWith(
@@ -54,17 +51,16 @@ suite('Execute commands spec', () => {
     });
 
     test('Saving a connection with invalid credentials should show an error message', async () => {
-      const { scheme, host, port, user, database } = getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
-          database: database,
+          scheme: process.env.NEO4J_SCHEME || 'neo4j',
+          host: process.env.NEO4J_HOST || 'localhost',
+          port: process.env.NEO4J_PORT || '7687',
+          user: process.env.NEO4J_USER || 'neo4j',
+          database: process.env.NEO4J_DATABASE || 'neo4j',
           connect: true,
         },
         'bad',
@@ -77,20 +73,19 @@ suite('Execute commands spec', () => {
     });
 
     test('Saving a connection with an invalid database should show an error message', async () => {
-      const { scheme, host, port, user, password } = getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
+          scheme: process.env.NEO4J_SCHEME || 'neo4j',
+          host: process.env.NEO4J_HOST || 'localhost',
+          port: process.env.NEO4J_PORT || '7687',
+          user: process.env.NEO4J_USER || 'neo4j',
           database: 'bad',
           connect: true,
         },
-        password,
+        process.env.NEO4J_PASSWORD || 'password',
       );
 
       sandbox.assert.calledWith(
@@ -204,21 +199,19 @@ suite('Execute commands spec', () => {
 
   suite('connectCommand', () => {
     test('Connecting to a disconnected connection should show a success message', async () => {
-      const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
-          database: database,
+          scheme: process.env.NEO4J_SCHEME || 'neo4j',
+          host: process.env.NEO4J_HOST || 'localhost',
+          port: process.env.NEO4J_PORT || '7687',
+          user: process.env.NEO4J_USER || 'neo4j',
+          database: process.env.NEO4J_DATABASE || 'neo4j',
           connect: false,
         },
-        password,
+        process.env.NEO4J_PASSWORD || 'password',
       );
 
       await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
@@ -274,21 +267,19 @@ suite('Execute commands spec', () => {
 
   suite('disconnectCommand', () => {
     test('Disconnecting from a connection should show a success message', async () => {
-      const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
-          database: database,
+          scheme: process.env.NEO4J_SCHEME || 'neo4j',
+          host: process.env.NEO4J_HOST || 'localhost',
+          port: process.env.NEO4J_PORT || '7687',
+          user: process.env.NEO4J_USER || 'neo4j',
+          database: process.env.NEO4J_DATABASE || 'neo4j',
           connect: true,
         },
-        password,
+        process.env.NEO4J_PASSWORD || 'password',
       );
 
       await commands.executeCommand(constants.COMMANDS.DISCONNECT_COMMAND, {

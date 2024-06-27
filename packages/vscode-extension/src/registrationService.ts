@@ -1,10 +1,10 @@
 import { commands, Disposable, window, workspace } from 'vscode';
 import {
-  configurationChangedHandler,
-  deleteConnectionCommandHandler,
-  manageConnectionCommandHandler,
-  saveConnectionCommandHandler,
-  toggleConnectionCommandHandler,
+  createOrShowConnectionPanelForConnectionItem,
+  handleNeo4jConfigurationChangedEvent,
+  promptUserToDeleteConnectionAndDisplayConnectionResult,
+  saveConnectionAndDisplayConnectionResult,
+  toggleConnectionItemsConnectionState,
 } from './commandHandlers';
 import {
   ConnectionItem,
@@ -25,28 +25,28 @@ export function registerDisposables(): Disposable[] {
       'neo4jConnections',
       connectionTreeDataProvider,
     ),
-    workspace.onDidChangeConfiguration(configurationChangedHandler),
+    workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
     commands.registerCommand(
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
-      saveConnectionCommandHandler,
+      saveConnectionAndDisplayConnectionResult,
     ),
     commands.registerCommand(
       constants.COMMANDS.MANAGE_CONNECTION_COMMAND,
-      manageConnectionCommandHandler,
+      createOrShowConnectionPanelForConnectionItem,
     ),
     commands.registerCommand(
       constants.COMMANDS.DELETE_CONNECTION_COMMAND,
-      deleteConnectionCommandHandler,
+      promptUserToDeleteConnectionAndDisplayConnectionResult,
     ),
     commands.registerCommand(
       constants.COMMANDS.CONNECT_COMMAND,
       (connectionItem: ConnectionItem) =>
-        toggleConnectionCommandHandler(connectionItem),
+        toggleConnectionItemsConnectionState(connectionItem),
     ),
     commands.registerCommand(
       constants.COMMANDS.DISCONNECT_COMMAND,
       (connectionItem: ConnectionItem) =>
-        toggleConnectionCommandHandler(connectionItem),
+        toggleConnectionItemsConnectionState(connectionItem),
     ),
     commands.registerCommand(
       constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,

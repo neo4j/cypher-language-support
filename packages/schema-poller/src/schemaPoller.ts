@@ -19,8 +19,8 @@ export type ConnnectionResult = {
   error?: ConnectionError;
 };
 
-const maxRetryAttempts = 5;
-const retryIntervalMs = 30000;
+const MAX_RETRY_ATTEMPTS = 5;
+const RETRY_INTERVAL_MS = 30000;
 
 export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
@@ -28,7 +28,7 @@ export class Neo4jSchemaPoller {
   public events: EventEmitter = new EventEmitter();
   private driver?: Driver;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
-  private retries = maxRetryAttempts;
+  private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: { message: string; code: string };
 
   async connect(
@@ -197,7 +197,7 @@ export class Neo4jSchemaPoller {
   ): NodeJS.Timeout {
     return setTimeout(() => {
       void this.persistentConnect(url, credentials, config, database);
-    }, retryIntervalMs);
+    }, RETRY_INTERVAL_MS);
   }
 
   private handleSuccessfulConnection(): ConnnectionResult {
@@ -242,12 +242,12 @@ export class Neo4jSchemaPoller {
   ): string {
     return `${error.message}. ${
       retriable
-        ? `Retrying in ${retryIntervalMs / 1000} seconds`
+        ? `Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
         : 'Not trying again'
     }.`;
   }
 
   private resetRetries(): void {
-    this.retries = maxRetryAttempts;
+    this.retries = MAX_RETRY_ATTEMPTS;
   }
 }

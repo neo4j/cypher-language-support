@@ -1,38 +1,33 @@
 import neo4j from 'neo4j-driver';
 import * as vscode from 'vscode';
 import { constants } from '../src/constants';
-import { getNeo4jConfiguration } from './helpers';
 
 export const testDatabaseKey = 'default-test-connection';
 
 export async function createConnection(): Promise<void> {
-  const { scheme, host, port, user, database, password } =
-    getNeo4jConfiguration();
   await vscode.commands.executeCommand(
     constants.COMMANDS.SAVE_CONNECTION_COMMAND,
     {
-      name: testDatabaseKey,
-      key: testDatabaseKey,
-      scheme: scheme,
-      host: host,
-      port: port,
-      user: user,
-      database: database,
+      name: 'test',
+      key: 'test',
+      scheme: process.env.NEO4J_SCHEME || 'neo4j',
+      host: process.env.NEO4J_HOST || 'localhost',
+      port: process.env.NEO4J_PORT || '7687',
+      user: process.env.NEO4J_USER || 'neo4j',
+      database: process.env.NEO4J_DATABASE || 'neo4j',
       connect: true,
     },
-    password,
+    process.env.NEO4J_PASSWORD || 'password',
   );
 }
 
 export async function createTestDatabase(): Promise<void> {
-  const { scheme, host, port, user, password } = getNeo4jConfiguration();
+  const url = `${process.env.NEO4J_SCHEME}://${process.env.NEO4J_HOST}:${process.env.NEO4J_PORT}`;
 
   const driver = neo4j.driver(
-    `${scheme}://${host}:${port}`,
-    neo4j.auth.basic(user, password),
-    {
-      userAgent: 'vscode-e2e-tests',
-    },
+    url,
+    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
+    { userAgent: 'vscode-e2e-tests' },
   );
 
   const systemSession = driver.session({ database: 'system' });

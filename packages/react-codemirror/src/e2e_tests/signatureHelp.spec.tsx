@@ -307,3 +307,74 @@ test('Signature help does not blow up on empty query', async ({
     timeout: 2000,
   });
 });
+
+test('Signature help is shown below the text by default', async ({
+  page,
+  mount,
+}) => {
+  // We need to introduce new lines to make sure there's
+  // enough space to show the tooltip above
+  const query = '\n\n\n\n\n\n\nRETURN abs(';
+
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={testData.mockSchema}
+      autofocus={true}
+    />,
+  );
+
+  await expect(
+    page.locator('.cm-signature-help-panel.cm-tooltip-below'),
+  ).toBeVisible({
+    timeout: 2000,
+  });
+});
+
+test('Setting showSignatureTooltipBelow to true shows the signature help above the text', async ({
+  page,
+  mount,
+}) => {
+  // We need to introduce new lines to make sure there's
+  // enough space to show the tooltip above
+  const query = '\n\n\n\n\n\n\nRETURN abs(';
+
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={testData.mockSchema}
+      showSignatureTooltipBelow={true}
+      autofocus={true}
+    />,
+  );
+
+  await expect(
+    page.locator('.cm-signature-help-panel.cm-tooltip-below'),
+  ).toBeVisible({
+    timeout: 2000,
+  });
+});
+
+test('Setting showSignatureTooltipBelow to false shows the signature help above the text', async ({
+  page,
+  mount,
+}) => {
+  // We need to introduce new lines to make sure there's
+  // enough space to show the tooltip above
+  const query = '\n\n\n\n\n\n\nRETURN abs(';
+
+  await mount(
+    <CypherEditor
+      value={query}
+      schema={testData.mockSchema}
+      showSignatureTooltipBelow={false}
+      autofocus={true}
+    />,
+  );
+
+  await expect(
+    page.locator('.cm-signature-help-panel.cm-tooltip-above'),
+  ).toBeVisible({
+    timeout: 2000,
+  });
+});

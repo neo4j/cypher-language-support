@@ -2,9 +2,17 @@
 
 ## 1.2.2
 
+### Patch changes
+
 - Improvements to database connection pane
   - Adds validation the connection management, providing feedback in the UI for invalid auth, database names and unreachable instances
   - Adds connection state monitoring, providing feedback in the UI for connections that become unhealthy
+
+## 1.2.1
+
+### Patch changes
+
+- Fixes logo in VSCode Marketplace
 
 ## 1.2.0
 

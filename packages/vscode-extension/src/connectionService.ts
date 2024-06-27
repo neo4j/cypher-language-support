@@ -40,36 +40,6 @@ export type Connections = {
 const CONNECTIONS_KEY: string = 'connections';
 
 /**
- * Attempts to connect or disconnect the current Connection if it exists.
- * @param connect A boolean flag to determine if the Connection should be connected or disconnected.
- * @returns A promise that resolves with the Connection result and the updated Connection.
- */
-export async function handleCurrentConnection(
-  connect: boolean,
-): Promise<{ result: ConnnectionResult; connection: Connection | null }> {
-  let connection = getCurrentConnection();
-
-  if (!connection) {
-    return { result: { success: false, retriable: false }, connection: null };
-  }
-
-  connection = {
-    ...connection,
-    state: connect ? 'connecting' : 'disconnected',
-    connect: connect,
-  };
-
-  await saveConnection(connection);
-
-  const result = await updateDatabaseConnection(
-    'connectionUpdated',
-    connection,
-  );
-
-  return { result, connection };
-}
-
-/**
  * Deletes a Connection and its password if it exists, and disconnects from the database.
  * @param key The key of the Connection to delete.
  * @returns A promise that resolves when the Connection has been deleted and database connection dropped.
@@ -85,11 +55,14 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
 
   delete connections[key];
   await saveConnections(connections);
-  await deletePassword(key);
-  await updateDatabaseConnection('connectionDisconnected', {
-    ...connection,
-    connect: false,
-  });
+  await deletePasswordByKey(key);
+  await updateDatabaseConnectionAndNotifyLanguageClient(
+    'connectionDisconnected',
+    {
+      ...connection,
+      connect: false,
+    },
+  );
 }
 
 /**
@@ -118,8 +91,11 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 
   if (result.success || (forceSave && result.retriable)) {
     await saveConnection(connection);
-    await savePassword(connection.key, password);
-    return await updateDatabaseConnection('connectionUpdated', connection);
+    await savePasswordByKey(connection.key, password);
+    return await updateDatabaseConnectionAndNotifyLanguageClient(
+      'connectionUpdated',
+      connection,
+    );
   }
 
   return result;
@@ -150,7 +126,10 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
   let result = { success: true };
 
   if (connection.connect) {
-    result = await updateDatabaseConnection('connectionUpdated', connection);
+    result = await updateDatabaseConnectionAndNotifyLanguageClient(
+      'connectionUpdated',
+      connection,
+    );
   }
 
   return { result, connection };
@@ -210,7 +189,7 @@ export function getAllConnections(): Connection[] {
  * @param key The key of the Connection to get.
  * @returns The Connection, or null if no Connection with the given key exists.
  */
-export function getConnection(key: string): Connection | null {
+export function getConnectionByKey(key: string): Connection | null {
   const connections = getConnections();
   return connections[key] ?? null;
 }
@@ -284,7 +263,7 @@ async function initializeDatabaseConnection(
  * @param connection The Connection to update the database connection for.
  * @returns A promise that resolves with the Connection result.
  */
-async function updateDatabaseConnection(
+async function updateDatabaseConnectionAndNotifyLanguageClient(
   methodName: MethodName,
   connection: Connection,
 ): Promise<ConnnectionResult> {
@@ -334,7 +313,7 @@ async function saveConnections(connections: Connections): Promise<void> {
  * @param password The password to save.
  * @returns A promise that resolves when the password has been saved.
  */
-async function savePassword(key: string, password: string): Promise<void> {
+async function savePasswordByKey(key: string, password: string): Promise<void> {
   const context = getExtensionContext();
   await context.secrets.store(key, password);
 }
@@ -344,7 +323,7 @@ async function savePassword(key: string, password: string): Promise<void> {
  * @param key The key of the password to delete.
  * @returns A promise that resolves when the password has been deleted.
  */
-async function deletePassword(key: string): Promise<void> {
+async function deletePasswordByKey(key: string): Promise<void> {
   const context = getExtensionContext();
   await context.secrets.delete(key);
 }

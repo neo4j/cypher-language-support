@@ -4,9 +4,9 @@ import {
   Neo4jSchemaPoller,
 } from '@neo4j-cypher/schema-poller';
 import {
-  onConnectionErroredHandler,
-  onConnectionFailedHandler,
-  onConnectionReconnectedHandler,
+  saveConnectionStateAsConnectedAndShowInfoMessage,
+  saveConnectionStateAsDisconnectedAndShowErrorMessage,
+  saveConnectionStateAsErroredAndShowWarningMessage,
 } from './commandHandlers';
 
 /**
@@ -96,7 +96,7 @@ export class SchemaPollerConnectionManager {
    * @param errorMessage The error message to display.
    */
   _handleConnectionError(errorMessage: string): void {
-    void onConnectionErroredHandler(errorMessage);
+    void saveConnectionStateAsErroredAndShowWarningMessage(errorMessage);
     this._attachReconnectionOrFailedEventListeners();
   }
 
@@ -118,7 +118,7 @@ export class SchemaPollerConnectionManager {
    * This event is fired when the schema poller successfully re-establishes a database connection.
    */
   _handleConnectionReconnected(): void {
-    void onConnectionReconnectedHandler();
+    void saveConnectionStateAsConnectedAndShowInfoMessage();
     this._schemaPoller.events.removeAllListeners();
     this._attachErrorEventListener();
   }
@@ -129,7 +129,7 @@ export class SchemaPollerConnectionManager {
    * @param errorMessage The error message to display.
    */
   _handleConnectionFailed(errorMessage: string): void {
-    void onConnectionFailedHandler(errorMessage);
+    void saveConnectionStateAsDisconnectedAndShowErrorMessage(errorMessage);
     this._schemaPoller.events.removeAllListeners();
   }
 }

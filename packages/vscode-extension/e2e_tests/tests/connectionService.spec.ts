@@ -38,91 +38,6 @@ suite('Connection service spec', () => {
     sandbox.restore();
   });
 
-  suite('handleCurrentConnection', () => {
-    test('Should handle no existing connections', async () => {
-      const updateGlobalStateSpy = sandbox.spy(
-        mockContext.globalState,
-        'update',
-      );
-
-      const result = await connection.handleCurrentConnection(true);
-
-      assert.deepStrictEqual(result, {
-        result: { success: false, retriable: false },
-        connection: null,
-      });
-      sandbox.assert.notCalled(updateGlobalStateSpy);
-    });
-
-    test('Should reconnect a previously connected Connection', async () => {
-      const updateGlobalStateSpy = sandbox.spy(
-        mockContext.globalState,
-        'update',
-      );
-      const mockConnection = getMockConnection(true);
-      await connection.saveConnectionAndUpdateDatabaseConnection(
-        mockConnection,
-        'mock-password',
-      );
-
-      const result = await connection.handleCurrentConnection(true);
-
-      assert.deepStrictEqual(result, {
-        result: { success: true },
-        connection: mockConnection,
-      });
-      sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        [mockConnection.key]: { ...mockConnection, state: 'connected' },
-      });
-    });
-
-    test('Should not reconnect a previously disconnected Connection', async () => {
-      const mockConnection = getMockConnection(true);
-      await connection.saveConnectionAndUpdateDatabaseConnection(
-        mockConnection,
-        'mock-password',
-      );
-      await connection.toggleConnectionAndUpdateDatabaseConnection(
-        mockConnection,
-      );
-
-      const result = await connection.handleCurrentConnection(true);
-
-      assert.deepStrictEqual(result, {
-        result: { success: false, retriable: false },
-        connection: null,
-      });
-    });
-
-    test('Should disconnect a currently connected Connection', async () => {
-      const updateGlobalStateSpy = sandbox.spy(
-        mockContext.globalState,
-        'update',
-      );
-      const mockConnection = getMockConnection(true);
-      await connection.saveConnectionAndUpdateDatabaseConnection(
-        mockConnection,
-        'mock-password',
-      );
-
-      const result = await connection.handleCurrentConnection(false);
-
-      const expectedConnection: connection.Connection = {
-        ...mockConnection,
-        connect: false,
-        state: 'disconnected',
-      };
-
-      assert.deepStrictEqual(result, {
-        result: { success: true },
-        connection: expectedConnection,
-      });
-      sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
-        [mockConnection.key]: expectedConnection,
-      });
-    });
-  });
-
   suite('getCurrentConnection', () => {
     test('Should return null if there are no current connections', async () => {
       const mockConnection = getMockConnection();
@@ -186,7 +101,9 @@ suite('Connection service spec', () => {
         'mock-password-2',
       );
 
-      const returnedConnection = connection.getConnection(mockConnection.key);
+      const returnedConnection = connection.getConnectionByKey(
+        mockConnection.key,
+      );
 
       assert.deepStrictEqual(mockConnection, returnedConnection);
     });
@@ -198,7 +115,7 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      const returnedConnection = connection.getConnection('xyz');
+      const returnedConnection = connection.getConnectionByKey('xyz');
 
       assert.strictEqual(returnedConnection, null);
     });
@@ -242,8 +159,12 @@ suite('Connection service spec', () => {
       await connection.deleteConnectionAndUpdateDatabaseConnection(
         mockConnection.key,
       );
-      const returnedConnection = connection.getConnection(mockConnection.key);
-      const returnedConnection2 = connection.getConnection(mockConnection2.key);
+      const returnedConnection = connection.getConnectionByKey(
+        mockConnection.key,
+      );
+      const returnedConnection2 = connection.getConnectionByKey(
+        mockConnection2.key,
+      );
 
       assert.strictEqual(returnedConnection, null);
       assert.deepStrictEqual(returnedConnection2, mockConnection2);
@@ -335,7 +256,9 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      const storedConnection = connection.getConnection(mockConnection.key);
+      const storedConnection = connection.getConnectionByKey(
+        mockConnection.key,
+      );
 
       sandbox.assert.calledWithExactly(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: mockConnection,
@@ -365,7 +288,9 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      const storedConnection = connection.getConnection(mockConnection.key);
+      const storedConnection = connection.getConnectionByKey(
+        mockConnection.key,
+      );
 
       sandbox.assert.calledOnceWithExactly(
         updateGlobalStateSpy,
@@ -779,8 +704,8 @@ suite('Connection service spec', () => {
       await connection.toggleConnectionAndUpdateDatabaseConnection(
         mockConnection2,
       );
-      const connectionOne = connection.getConnection(mockConnection.key);
-      const connectionTwo = connection.getConnection(mockConnection2.key);
+      const connectionOne = connection.getConnectionByKey(mockConnection.key);
+      const connectionTwo = connection.getConnectionByKey(mockConnection2.key);
 
       assert.deepStrictEqual(connectionOne, {
         ...mockConnection,

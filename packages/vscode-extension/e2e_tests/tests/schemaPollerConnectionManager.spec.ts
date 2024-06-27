@@ -16,9 +16,21 @@ suite('Schema poller connection manager spec', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(commandHandlers, 'onConnectionErroredHandler').resolves();
-    sandbox.stub(commandHandlers, 'onConnectionReconnectedHandler').resolves();
-    sandbox.stub(commandHandlers, 'onConnectionFailedHandler').resolves();
+    sandbox
+      .stub(
+        commandHandlers,
+        'saveConnectionStateAsErroredAndShowWarningMessage',
+      )
+      .resolves();
+    sandbox
+      .stub(commandHandlers, 'saveConnectionStateAsConnectedAndShowInfoMessage')
+      .resolves();
+    sandbox
+      .stub(
+        commandHandlers,
+        'saveConnectionStateAsDisconnectedAndShowErrorMessage',
+      )
+      .resolves();
   });
 
   afterEach(() => {

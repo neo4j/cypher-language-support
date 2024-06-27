@@ -6,7 +6,7 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { onExtensionSequenceEvent } from './commandHandlers';
+import { connectOrDisconnectCurrentConnectionOnLifecycleChange } from './commandHandlers';
 import { setContext } from './contextService';
 import { registerDisposables } from './registrationService';
 
@@ -56,12 +56,12 @@ export async function activate(context: ExtensionContext) {
   await client.start();
 
   // Handle any sequence events for activation
-  await onExtensionSequenceEvent(true);
+  await connectOrDisconnectCurrentConnectionOnLifecycleChange(true);
 }
 
 export async function deactivate(): Promise<void> | undefined {
   // Handle any sequence events for deactivation
-  await onExtensionSequenceEvent(false);
+  await connectOrDisconnectCurrentConnectionOnLifecycleChange(false);
 
   if (!client) {
     return undefined;
