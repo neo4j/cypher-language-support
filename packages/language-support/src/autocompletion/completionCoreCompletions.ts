@@ -632,8 +632,8 @@ function completeAliasName({
     return parameterSuggestions;
   }
 
-  // For `CREATE ALIAS $1 FOR DATABASE $2`
-  // Should not suggest existing aliases for $1 but should suggest existing databases for $2
+  // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
+  // Should not suggest existing aliases for aliasName but should suggest existing databases for databaseName
   // so we return base suggestions if we're at the `aliasName` rule
   if (
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
