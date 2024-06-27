@@ -33,7 +33,7 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension",
-        "--extensionTestsPath=${workspaceRoot}/packages/vscode-extension/dist/e2e_tests/testRunner"
+        "--extensionTestsPath=${workspaceRoot}/packages/vscode-extension/dist/e2e_tests/testRunnerDebug"
       ],
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
