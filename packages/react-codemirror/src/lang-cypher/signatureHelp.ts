@@ -1,11 +1,9 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import { signatureHelp } from '@neo4j-cypher/language-support';
-import {
-  MarkupContent,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import { SignatureInformation } from 'vscode-languageserver-types';
 import { CypherConfig } from './langCypher';
+import { getDocString } from './utils';
 
 function getTriggerCharacter(query: string, caretPosition: number) {
   let i = caretPosition - 1;
@@ -18,14 +16,6 @@ function getTriggerCharacter(query: string, caretPosition: number) {
   }
 
   return triggerCharacter;
-}
-
-function getDocString(result: string | MarkupContent): string {
-  if (MarkupContent.is(result)) {
-    result.value;
-  } else {
-    return result;
-  }
 }
 
 const createSignatureHelpElement =
@@ -111,11 +101,13 @@ function getSignatureHelpTooltip(
         signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
+        const showSignatureTooltipBelow =
+          config.showSignatureTooltipBelow ?? true;
 
         result = [
           {
             pos: caretPosition,
-            above: true,
+            above: !showSignatureTooltipBelow,
             arrow: true,
             create: createSignatureHelpElement({ signature, activeParameter }),
           },

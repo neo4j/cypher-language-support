@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import { constants } from '../../src/constants';
 import {
   eventually,
   getDocumentUri,
@@ -31,6 +32,7 @@ export async function testSyntaxValidation({
             .filter(([uri]) => uri.scheme === 'untitled')
             .flatMap(([, diagnostics]) => diagnostics);
         }
+
         try {
           // We need to test diagnostics one by one
           // because the ones returned by VSCode contain
@@ -141,5 +143,84 @@ suite('Syntax validation spec', () => {
         ),
       ],
     });
+  });
+
+  test('Correctly re-validates cypher when switching databases', async () => {
+    const textFile = 'movies-syntax-validation.cypher';
+    const docUri = getDocumentUri(textFile);
+    const connection = {
+      name: 'test',
+      key: 'test',
+      scheme: process.env.NEO4J_SCHEME,
+      host: process.env.NEO4J_HOST,
+      port: process.env.NEO4J_PORT,
+      user: process.env.NEO4J_USER,
+      database: 'movies',
+      connect: true,
+    };
+
+    await openDocument(docUri);
+    const editor = vscode.window.activeTextEditor;
+
+    // assert that we have missing labels
+    await testSyntaxValidation({
+      textFile: textFile,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 11),
+            new vscode.Position(0, 17),
+          ),
+          "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 21),
+            new vscode.Position(0, 29),
+          ),
+          "Relationship type ACTED_IN is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 35),
+            new vscode.Position(0, 40),
+          ),
+          "Label Movie is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+
+    // update connection to switch to movies database
+    await vscode.commands.executeCommand(
+      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      connection,
+      process.env.NEO4J_PASSWORD,
+    );
+
+    // make a small doc change to refresh diagnostics
+    await editor.edit((editBuilder) => {
+      const lastLine = editor.document.lineCount - 1;
+      const lastChar = editor.document.lineAt(lastLine).text.length;
+      const position = new vscode.Position(lastLine, lastChar);
+      editBuilder.insert(position, ' ');
+    });
+
+    await vscode.commands.executeCommand('undo');
+
+    // assert that we no longer have missing labels
+    await testSyntaxValidation({
+      textFile: textFile,
+      expected: [],
+    });
+
+    // tidy up - reset connection to default database
+    await vscode.commands.executeCommand(
+      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      { ...connection, database: process.env.NEO4J_DATABASE || 'neo4j' },
+      process.env.NEO4J_PASSWORD,
+    );
   });
 });

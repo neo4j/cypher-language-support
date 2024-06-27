@@ -1,30 +1,28 @@
-import { CompletionItemKind } from 'vscode-languageserver-types';
+import {
+  CompletionItemKind,
+  CompletionItemTag,
+} from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('Procedures auto-completion', () => {
+  const procedures = testData.mockSchema.procedures;
+
   const dbSchema: DbSchema = {
     procedures: {
-      'tx.getMetaData': { ...testData.emptyProcedure, name: 'tx.getMetaData' },
+      'tx.getMetaData': procedures['tx.getMetaData'],
+      'db.index.fulltext.awaitEventuallyConsistentIndexRefresh':
+        procedures['db.index.fulltext.awaitEventuallyConsistentIndexRefresh'],
+      'db.ping': procedures['db.ping'],
+      'db.stats.retrieve': procedures['db.stats.retrieve'],
+      'db.stats.collect': procedures['db.stats.collect'],
+      'db.stats.clear': procedures['db.stats.clear'],
+      'cdc.current': procedures['cdc.current'],
       'jwt.security.requestAccess': {
         ...testData.emptyProcedure,
         name: 'jwt.security.requestAccess',
       },
-      'db.index.fulltext.awaitEventuallyConsistentIndexRefresh': {
-        ...testData.emptyProcedure,
-        name: 'db.index.fulltext.awaitEventuallyConsistentIndexRefresh',
-      },
-      'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
-      'db.stats.retrieve': {
-        ...testData.emptyProcedure,
-        name: 'db.stats.retrieve',
-      },
-      'db.stats.collect': {
-        ...testData.emptyProcedure,
-        name: 'db.stats.collect',
-      },
-      'db.stats.clear': { ...testData.emptyProcedure, name: 'db.stats.clear' },
     },
   };
 
@@ -66,11 +64,23 @@ describe('Procedures auto-completion', () => {
           label: 'tx.getMetaData',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['tx.getMetaData'].signature,
+          documentation: procedures['tx.getMetaData'].description,
+        },
+        {
+          label: 'cdc.current',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+          signature: procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
+          tags: [CompletionItemTag.Deprecated],
         },
         {
           label: 'jwt.security.requestAccess',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          documentation: '',
+          signature: '',
         },
       ],
     });
@@ -91,6 +101,8 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.ping'].signature,
+          documentation: procedures['db.ping'].description,
         },
       ],
       excluded: [
@@ -111,16 +123,22 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.retrieve'].signature,
+          documentation: procedures['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.collect'].signature,
+          documentation: procedures['db.stats.collect'].description,
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.clear'].signature,
+          documentation: procedures['db.stats.clear'].description,
         },
       ],
       excluded: [
@@ -153,16 +171,22 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.retrieve'].signature,
+          documentation: procedures['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.collect'].signature,
+          documentation: procedures['db.stats.collect'].description,
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.stats.clear'].signature,
+          documentation: procedures['db.stats.clear'].description,
         },
       ],
       excluded: [
@@ -234,6 +258,8 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
+          signature: procedures['db.ping'].signature,
+          documentation: procedures['db.ping'].description,
         },
         {
           label: 'stats',
@@ -242,6 +268,24 @@ describe('Procedures auto-completion', () => {
         },
       ],
       excluded: [{ label: 'db' }, { label: 'db.ping' }],
+    });
+  });
+
+  test('Correctly completes deprecated procedures when namespace started', () => {
+    const query = 'CALL cdc.';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: 'current',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+          signature: procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
     });
   });
 });

@@ -9,7 +9,9 @@ export type DataSummary = {
 
 const ITEM_LIMIT = 1000;
 
-export function getDataSummary(): ExecuteQueryArgs<DataSummary> {
+export function getDataSummary(
+  database?: string,
+): ExecuteQueryArgs<DataSummary> {
   const query = `CALL db.labels() YIELD label
 RETURN COLLECT(label)[..${ITEM_LIMIT}] AS result
 UNION ALL
@@ -35,6 +37,6 @@ RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
 
   return {
     query,
-    queryConfig: { resultTransformer, routing: 'READ' },
+    queryConfig: { resultTransformer, routing: 'READ', database: database },
   };
 }

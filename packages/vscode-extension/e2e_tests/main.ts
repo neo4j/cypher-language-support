@@ -1,5 +1,6 @@
 import { Neo4jContainer } from '@testcontainers/neo4j';
 import { runTests } from '@vscode/test-electron';
+import dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,25 +10,24 @@ function setSetting(file: string, variable: RegExp, value: string) {
   fs.writeFileSync(file, result);
 }
 
-function updateSettingsFile(port: number, password: string) {
-  const settingsPath = path.join(
-    __dirname,
-    '../../e2e_tests/fixtures/.vscode/',
-  );
-  const settingsTemplate = path.join(settingsPath, 'settings-template.json');
-  const settingsFile = path.join(settingsPath, 'settings.json');
-  fs.copyFileSync(settingsTemplate, settingsFile);
-  setSetting(settingsFile, /\{PORT\}/g, port.toString());
-  setSetting(settingsFile, /\{PASSWORD\}/g, password);
+function updateDotenvFile(port: number, password: string) {
+  const dotenvPath = path.join(__dirname, '../../e2e_tests/fixtures/');
+  const dotenvTemplate = path.join(dotenvPath, '.env');
+  const dotenvFile = path.join(dotenvPath, '.env.test');
+  fs.copyFileSync(dotenvTemplate, dotenvFile);
+  setSetting(dotenvFile, /\{PORT\}/g, port.toString());
+  setSetting(dotenvFile, /\{PASSWORD\}/g, password);
+  dotenv.config({ path: dotenvFile });
 }
 
 async function main() {
   const password = 'password';
 
-  const container = await new Neo4jContainer('neo4j:5')
+  const container = await new Neo4jContainer('neo4j:5-enterprise')
     .withExposedPorts(7474, 7687)
     .withApoc()
     .withPassword(password)
+    .withEnvironment({ NEO4J_ACCEPT_LICENSE_AGREEMENT: 'yes' })
     // Giving it a name prevents us from spinning up a different
     // container every time we run the tests and allows us
     // closing a lingering one when the tests finish
@@ -37,7 +37,7 @@ async function main() {
   const port = container.getMappedPort(7687);
   // This sets up a settings.json file based on the settings-template.json
   // replacing the random port and password we have given the container
-  updateSettingsFile(port, password);
+  updateDotenvFile(port, password);
 
   try {
     /* This is equivalent to running from a command line: 

@@ -1,0 +1,54 @@
+[
+  {
+    "character": "MATCH",
+    "type": "source.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cypher"
+  }
+]

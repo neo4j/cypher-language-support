@@ -12,7 +12,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import type { DbSchema } from '@neo4j-cypher/language-support';
+import { type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import {
@@ -77,6 +77,21 @@ export interface CypherEditorProps {
    * @default true
    */
   lint?: boolean;
+  /**
+   * Whether the signature help tooltip should be shown below the text.
+   * If false, it will be shown above.
+   *
+   * @default true
+   */
+  showSignatureTooltipBelow?: boolean;
+  /**
+   * Internal feature flags for the editor. Don't use in production
+   *
+   */
+  featureFlags?: {
+    consoleCommands?: boolean;
+    signatureInfoOnAutoCompletions?: boolean;
+  };
   /**
    * The schema to use for autocompletion and linting.
    *
@@ -237,6 +252,7 @@ export class CypherEditor extends Component<
     schema: {},
     overrideThemeBackgroundColor: false,
     lineWrap: false,
+    showSignatureTooltipBelow: true,
     extraKeybindings: [],
     history: [],
     theme: 'light',
@@ -255,12 +271,19 @@ export class CypherEditor extends Component<
       overrideThemeBackgroundColor,
       schema,
       lint,
+      showSignatureTooltipBelow,
+      featureFlags,
       onExecute,
     } = this.props;
 
     this.schemaRef.current = {
       schema,
       lint,
+      showSignatureTooltipBelow,
+      featureFlags: {
+        consoleCommands: true,
+        ...featureFlags,
+      },
       useLightVersion: false,
       setUseLightVersion: (newVal) => {
         if (this.schemaRef.current !== undefined) {
@@ -448,6 +471,7 @@ export class CypherEditor extends Component<
     */
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
+    this.schemaRef.current.featureFlags = this.props.featureFlags;
   }
 
   componentWillUnmount(): void {

@@ -410,3 +410,6 @@ export const tokenNames: string[] = Array.from({ length }).map(
 );
 
 export const keywordNames = new Set(lexerKeywords.map((i) => tokenNames[i]));
+export const operatorSymbols = new Set(
+  lexerOperators.map((i) => literalNames[i].replaceAll("'", '')),
+);

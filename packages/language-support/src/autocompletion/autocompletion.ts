@@ -1,8 +1,7 @@
-import { CompletionItem } from 'vscode-languageserver-types';
-
 import { DbSchema } from '../dbSchema';
 import { findCaret } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
+import { CompletionItem } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
 
 export function autocomplete(

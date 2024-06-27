@@ -2,8 +2,6 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
-test.use({ viewport: { width: 500, height: 500 } });
-
 test('can add extra keybinding statically', async ({ mount, page }) => {
   const editorPage = new CypherEditorPage(page);
   let hasRun = false;

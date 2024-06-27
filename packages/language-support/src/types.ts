@@ -1,3 +1,5 @@
+import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
+
 export type ReturnDescription = {
   name: string;
   description: string;
@@ -34,4 +36,9 @@ export type Neo4jFunction = {
   returnDescription: string;
   signature: string;
   aggregating: boolean;
+  isDeprecated: boolean;
+};
+
+export type CompletionItem = VSCodeCompletionItem & {
+  signature?: string;
 };
