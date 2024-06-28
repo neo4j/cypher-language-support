@@ -25,6 +25,8 @@ test('respects preloaded history', async ({ page, mount }) => {
   await editorPage.getEditor().press('ArrowUp');
   await expect(page.getByText('second')).toBeVisible();
 
+  // First arrow down is to get to end of line
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('first')).toBeVisible();
   await editorPage.getEditor().press('ArrowDown');
@@ -100,8 +102,13 @@ RETURN n;`;
   await expect(page.getByText('multiline')).toBeVisible();
 
   // arrow movements don't matter until bottom is hit
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowUp');
   await editorPage.getEditor().press('ArrowUp');
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
 
@@ -125,11 +132,11 @@ test('can navigate with cmd+up as well', async ({ page, mount }) => {
     <CypherEditor
       value={initialValue}
       history={[
+        'first',
         `one
 multiline
 entry
 .`,
-        'second',
       ]}
       onExecute={() => {
         /* needed to turn on history movements */
@@ -138,23 +145,23 @@ entry
   );
 
   await editorPage.getEditor().press(metaUp);
-  await expect(page.getByText('multiline')).toBeVisible();
+  await expect(page.getByText('first')).toBeVisible();
 
-  // Single meta up moves all the way to top of editor on mac
-  if (isMac) {
-    await editorPage.getEditor().press(metaUp);
-  } else {
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-  }
   // move in history
   await editorPage.getEditor().press(metaUp);
-  await expect(page.getByText('second')).toBeVisible();
-
-  await editorPage.getEditor().press(metaDown);
   await expect(page.getByText('multiline')).toBeVisible();
+
+  // Single meta down moves all the way to top of editor on mac
+  if (isMac) {
+    await editorPage.getEditor().press(metaDown);
+  } else {
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+  }
+  await editorPage.getEditor().press(metaDown);
+  await expect(page.getByText('first')).toBeVisible();
 });
 
 test('test onExecute', async ({ page, mount }) => {
