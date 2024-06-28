@@ -2,7 +2,7 @@ import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { constants } from '../../src/constants';
-import { testDatabaseKey } from '../suiteSetup';
+import { saveDefaultConnection } from '../suiteSetup';
 
 suite('Execute commands spec', () => {
   let sandbox: sinon.SinonSandbox;
@@ -20,15 +20,12 @@ suite('Execute commands spec', () => {
   });
 
   after(async () => {
-    // Ensure we reconnect back to the default connection when this suite is complete
-    await commands.executeCommand(constants.COMMANDS.CONNECT_COMMAND, {
-      key: testDatabaseKey,
-      connect: true,
-    });
+    // Ensure we reconnect back to the default Connection when this suite is complete
+    await saveDefaultConnection();
   });
 
   suite('saveConnectionCommand', () => {
-    test('Creating and connecting to a valid connection should show a success message', async () => {
+    test('Creating and activating a valid Connection should show a success message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -39,7 +36,7 @@ suite('Execute commands spec', () => {
           port: process.env.NEO4J_PORT || '7687',
           user: process.env.NEO4J_USER || 'neo4j',
           database: process.env.NEO4J_DATABASE || 'neo4j',
-          connect: true,
+          state: 'activating',
         },
         process.env.NEO4J_PASSWORD || 'password',
       );
@@ -50,7 +47,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Saving a connection with invalid credentials should show an error message', async () => {
+    test('Saving a Connection with invalid credentials should show an error message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -61,7 +58,7 @@ suite('Execute commands spec', () => {
           port: process.env.NEO4J_PORT || '7687',
           user: process.env.NEO4J_USER || 'neo4j',
           database: process.env.NEO4J_DATABASE || 'neo4j',
-          connect: true,
+          state: 'activating',
         },
         'bad',
       );
@@ -72,7 +69,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Saving a connection with an invalid database should show an error message', async () => {
+    test('Saving a Connection with an invalid database should show an error message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -83,7 +80,7 @@ suite('Execute commands spec', () => {
           port: process.env.NEO4J_PORT || '7687',
           user: process.env.NEO4J_USER || 'neo4j',
           database: 'bad',
-          connect: true,
+          state: 'activating',
         },
         process.env.NEO4J_PASSWORD || 'password',
       );
@@ -94,7 +91,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Saving a connection with a bad URL should show a warning message', async () => {
+    test('Saving a Connection with a bad URL should show a warning message', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -112,14 +109,14 @@ suite('Execute commands spec', () => {
           port: '7687',
           user: 'neo4j',
           database: 'neo4j',
-          connect: true,
+          state: 'activating',
         },
         'password',
       );
 
       sandbox.assert.calledWith(
         stub,
-        'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+        'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
         {
           modal: true,
           detail:
@@ -131,7 +128,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('deleteConnectionCommand', () => {
-    test('Deleting a connection should show a success message', async () => {
+    test('Deleting a Connection should show a success message', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -158,7 +155,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Dismissing delete connection prompt should not show any messages', async () => {
+    test('Dismissing delete Connection prompt should not show any messages', async () => {
       sandbox.stub(window, 'showWarningMessage').resolves(undefined);
 
       await commands.executeCommand(
@@ -172,7 +169,7 @@ suite('Execute commands spec', () => {
       sandbox.assert.notCalled(showInformationMessageStub);
     });
 
-    test('Any other response from delete connection prompt should not show any messages', async () => {
+    test('Any other response from delete Connection prompt should not show any messages', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -198,7 +195,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('connectCommand', () => {
-    test('Connecting to a disconnected connection should show a success message', async () => {
+    test('Activating an inactive Connection should show a success message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -209,7 +206,7 @@ suite('Execute commands spec', () => {
           port: process.env.NEO4J_PORT || '7687',
           user: process.env.NEO4J_USER || 'neo4j',
           database: process.env.NEO4J_DATABASE || 'neo4j',
-          connect: false,
+          state: 'inactive',
         },
         process.env.NEO4J_PASSWORD || 'password',
       );
@@ -224,7 +221,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Connecting to a previously saved bad connection should show a warning message', async () => {
+    test('Activating a previously saved bad Connection should show a warning message', async () => {
       const warningMessagePromptStub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -245,7 +242,7 @@ suite('Execute commands spec', () => {
           port: '7687',
           user: 'neo4j',
           database: 'neo4j',
-          connect: false,
+          state: 'inactive',
         },
         'password',
       );
@@ -266,7 +263,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('disconnectCommand', () => {
-    test('Disconnecting from a connection should show a success message', async () => {
+    test('Decativating a Connection should show a success message', async () => {
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -277,7 +274,7 @@ suite('Execute commands spec', () => {
           port: process.env.NEO4J_PORT || '7687',
           user: process.env.NEO4J_USER || 'neo4j',
           database: process.env.NEO4J_DATABASE || 'neo4j',
-          connect: true,
+          state: 'active',
         },
         process.env.NEO4J_PASSWORD || 'password',
       );

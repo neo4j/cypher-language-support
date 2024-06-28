@@ -68,24 +68,19 @@ export class ConnectionItem extends TreeItem {
     this.id = key;
     this.tooltip = this.label;
     switch (state) {
-      case 'connected':
+      case 'active':
         this.description = 'connected';
         break;
-      case 'connecting':
-        this.description = 'connecting...';
-        break;
+      case 'activating':
       case 'error':
-        this.description = 'reconnecting...';
+        this.description = 'connecting...';
         break;
       default:
         this.description = '';
         break;
     }
-    // contextValue can be referenced in the package.json file to set icons, used for logical conditions, etc.
-    // For example, only an activeConnection can see the "Disconnect" command.
+
     this.contextValue =
-      this.state === 'connected' || this.state === 'error'
-        ? 'activeConnection'
-        : 'connection';
+      this.state === 'inactive' ? 'connection' : 'activeConnection';
   }
 }

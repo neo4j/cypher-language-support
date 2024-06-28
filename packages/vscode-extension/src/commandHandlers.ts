@@ -3,9 +3,9 @@ import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
+  getActiveConnection,
   getAllConnections,
   getConnectionByKey,
-  getCurrentConnection,
   getDatabaseConnectionSettings,
   getPasswordForConnection,
   saveConnection,
@@ -14,7 +14,11 @@ import {
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
-import { getExtensionContext } from './contextService';
+import {
+  getDatabaseConnectionManager,
+  getExtensionContext,
+  getLanguageClient,
+} from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
@@ -28,7 +32,7 @@ export async function handleNeo4jConfigurationChangedEvent(
   event: ConfigurationChangeEvent,
 ): Promise<void> {
   if (event.affectsConfiguration('neo4j.trace.server')) {
-    const currentConnection = getCurrentConnection();
+    const currentConnection = getActiveConnection();
     if (currentConnection) {
       const password = await getPasswordForConnection(currentConnection.key);
       const settings = getDatabaseConnectionSettings(
@@ -68,7 +72,7 @@ export async function saveConnectionAndDisplayConnectionResult(
     if (result === 'Yes') {
       void window.showInformationMessage(constants.MESSAGES.CONNECTION_SAVED);
       return await saveConnectionAndUpdateDatabaseConnection(
-        { ...connection, connect: false, state: 'disconnected' },
+        { ...connection, state: 'inactive' },
         password,
         true,
       );
@@ -159,7 +163,7 @@ export async function toggleConnectionItemsConnectionState(
 export async function saveConnectionStateAsErroredAndShowWarningMessage(
   errorMessage: string,
 ): Promise<void> {
-  const connection = getCurrentConnection();
+  const connection = getActiveConnection();
 
   if (!connection) {
     return;
@@ -175,13 +179,13 @@ export async function saveConnectionStateAsErroredAndShowWarningMessage(
  * @returns A promise that resolves when the handler has completed.
  */
 export async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promise<void> {
-  const connection = getCurrentConnection();
+  const connection = getActiveConnection();
 
   if (!connection) {
     return;
   }
 
-  await saveConnection({ ...connection, state: 'connected' });
+  await saveConnection({ ...connection, state: 'active' });
   void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
 }
 
@@ -195,7 +199,7 @@ export async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promis
 export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
   errorMessage: string,
 ): Promise<void> {
-  const connection = getCurrentConnection();
+  const connection = getActiveConnection();
 
   if (!connection) {
     return;
@@ -206,8 +210,7 @@ export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
   await saveConnectionAndUpdateDatabaseConnection(
     {
       ...connection,
-      connect: false,
-      state: 'disconnected',
+      state: 'inactive',
     },
     password,
   );
@@ -215,35 +218,42 @@ export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
 }
 
 /**
- * Handler for extension sequence events, which occur on activation and deactivation.
- * This is used to reconnect to, or disconnect from, a database when the extension is activated
- * or deactivated and there is a Connection with its connect flag set.
+ * Handler for extension lifecycle events, which occur on activation and deactivation.
+ * This is used to activate or deactivate a database connection when the extension is activated
+ * or deactivated and there is an active Connection.
  * @param activating Whether the extension is activating or deactivating.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function connectOrDisconnectCurrentConnectionOnLifecycleChange(
+export async function setConnectionStateForActiveConnectionOnLifecycleChange(
   activating: boolean,
 ): Promise<void> {
-  let connection = getCurrentConnection();
+  let connection = getActiveConnection();
 
   if (!connection) {
     return;
   }
 
-  const password = await getPasswordForConnection(connection.key);
+  if (activating) {
+    const password = await getPasswordForConnection(connection.key);
 
-  connection = {
-    ...connection,
-    state: activating ? 'connecting' : 'disconnected',
-    connect: activating,
-  };
+    connection = {
+      ...connection,
+      state: 'activating',
+    };
 
-  const result = await saveConnectionAndUpdateDatabaseConnection(
-    connection,
-    password,
-  );
+    const result = await saveConnectionAndUpdateDatabaseConnection(
+      connection,
+      password,
+    );
 
-  displayMessageForConnectionResult(connection, result);
+    displayMessageForConnectionResult(connection, result);
+  } else {
+    const databaseConnectionManager = getDatabaseConnectionManager();
+    const languageClient = getLanguageClient();
+
+    databaseConnectionManager.disconnect();
+    void languageClient.sendNotification('connectionDisconnected');
+  }
 }
 
 /**
@@ -259,9 +269,9 @@ function displayMessageForConnectionResult(
     return;
   }
 
-  if (result.success && connection.connect) {
+  if (result.success && connection.state !== 'inactive') {
     void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
-  } else if (result.success && !connection.connect) {
+  } else if (result.success && connection.state === 'inactive') {
     void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
   } else if (!result.success && !result.retriable) {
     void window.showErrorMessage(result.error?.message);
@@ -276,7 +286,7 @@ function displayMessageForConnectionResult(
  */
 async function displaySaveConnectionAnywayPrompt(): Promise<string | null> {
   return await window.showWarningMessage<string>(
-    'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+    'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
     {
       modal: true,
       detail:

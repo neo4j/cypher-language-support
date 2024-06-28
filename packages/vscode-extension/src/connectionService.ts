@@ -13,7 +13,7 @@ import {
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
 
-export type State = 'disconnected' | 'connecting' | 'connected' | 'error';
+export type State = 'inactive' | 'activating' | 'active' | 'error';
 
 /**
  * A Connection object that represents a connection to a Neo4j database.
@@ -26,7 +26,6 @@ export type Connection = {
   port?: string | undefined;
   user: string;
   database?: string | undefined;
-  connect: boolean;
   state: State;
 };
 
@@ -60,7 +59,7 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
     'connectionDisconnected',
     {
       ...connection,
-      connect: false,
+      state: 'inactive',
     },
   );
 }
@@ -116,8 +115,7 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
 
   connection = {
     ...connection,
-    connect: !connection.connect,
-    state: !connection.connect ? 'connecting' : 'disconnected',
+    state: connection.state === 'inactive' ? 'activating' : 'inactive',
   };
 
   await disconnectAllDatabaseConnections();
@@ -125,7 +123,7 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
 
   let result = { success: true };
 
-  if (connection.connect) {
+  if (connection.state !== 'inactive') {
     result = await updateDatabaseConnectionAndNotifyLanguageClient(
       'connectionUpdated',
       connection,
@@ -167,10 +165,11 @@ export async function getPasswordForConnection(
  * Returns the currently connected Connection if it exists.
  * @returns The current Connection, or null if no Connection is connected to the database.
  */
-export function getCurrentConnection(): Connection | null {
+export function getActiveConnection(): Connection | null {
   return (
-    Object.values(getConnections()).find((connection) => connection.connect) ??
-    null
+    Object.values(getConnections()).find(
+      (connection) => connection.state !== 'inactive',
+    ) ?? null
   );
 }
 
@@ -229,7 +228,7 @@ export function getDatabaseConnectionSettings(
 
   return {
     trace: trace,
-    connect: connection.connect,
+    connect: connection.state !== 'inactive',
     connectURL: getDatabaseConnectionString(connection),
     database: connection.database,
     user: connection.user,
@@ -274,19 +273,17 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 
   await sendNotificationToLanguageClient(methodName, settings);
 
-  if (connection.connect) {
+  if (connection.state !== 'inactive') {
     result = await databaseConnectionManager.persistentConnect(settings);
     const state: State = result.success
-      ? 'connected'
+      ? 'active'
       : result.retriable
       ? 'error'
-      : 'disconnected';
-    const connect: boolean = result.success || result.retriable;
+      : 'inactive';
 
     await saveConnection({
       ...connection,
       state: state,
-      connect: connect,
     });
   } else {
     databaseConnectionManager.disconnect();
@@ -339,11 +336,10 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
   const databaseConnectionManager = getDatabaseConnectionManager();
 
   for (const key in connections) {
-    if (connections[key].connect) {
+    if (connections[key].state !== 'inactive') {
       connections[key] = {
         ...connections[key],
-        connect: false,
-        state: 'disconnected',
+        state: 'inactive',
       };
 
       void sendNotificationToLanguageClient('connectionDisconnected');

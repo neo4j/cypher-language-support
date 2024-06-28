@@ -38,8 +38,8 @@ suite('Connection service spec', () => {
     sandbox.restore();
   });
 
-  suite('getCurrentConnection', () => {
-    test('Should return null if there are no current connections', async () => {
+  suite('getActiveConnection', () => {
+    test('Should return null if there are no active Connection', async () => {
       const mockConnection = getMockConnection();
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -47,35 +47,35 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      const currentConnection = connection.getCurrentConnection();
+      const currentConnection = connection.getActiveConnection();
 
       assert.strictEqual(currentConnection, null);
     });
 
-    test('Should return a connection when there is a connected connection', async () => {
+    test('Should return a Connection when there is an active Connection', async () => {
       const mockConnection = getMockConnection(true);
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
         mockConnection,
         'mock-password',
       );
-      const currentConnection = connection.getCurrentConnection();
+      const currentConnection = connection.getActiveConnection();
 
       assert.deepStrictEqual(currentConnection, {
         ...mockConnection,
-        state: 'connected',
+        state: 'active',
       });
     });
   });
 
   suite('getAllConnections', () => {
-    test('Should return an empty array when there are no connections', () => {
+    test('Should return an empty array when there are no Connections', () => {
       const connections = connection.getAllConnections();
 
       assert.notStrictEqual(connections, []);
     });
 
-    test('Should return an array of connections when connections exist', async () => {
+    test('Should return an array of Connections when Connections exist', async () => {
       const mockConnection = getMockConnection();
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -88,8 +88,8 @@ suite('Connection service spec', () => {
     });
   });
 
-  suite('getConnection', () => {
-    test('Should return the correct connection for a given key', async () => {
+  suite('getConnectionByKey', () => {
+    test('Should return the correct Connection for a given key', async () => {
       const mockConnection = getMockConnection();
       const mockConnection2 = getMockConnection();
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -108,7 +108,7 @@ suite('Connection service spec', () => {
       assert.deepStrictEqual(mockConnection, returnedConnection);
     });
 
-    test('Should return null when a connection does not exist for a given key', async () => {
+    test('Should return null when a Connection does not exist for a given key', async () => {
       const mockConnection = getMockConnection();
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -122,7 +122,7 @@ suite('Connection service spec', () => {
   });
 
   suite('deleteConnectionAndUpdateDatabaseConnection', () => {
-    test('Should handle non-existent connection key', () => {
+    test('Should handle non-existent Connection key', () => {
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
         'update',
@@ -144,7 +144,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should delete a connection by a given key', async () => {
+    test('Should delete a Connection by a given key', async () => {
       const mockConnection = getMockConnection();
       const mockConnection2 = getMockConnection();
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -170,7 +170,7 @@ suite('Connection service spec', () => {
       assert.deepStrictEqual(returnedConnection2, mockConnection2);
     });
 
-    test('Should delete a password by a given key when a connection is deleted', async () => {
+    test('Should delete a password by a given key when a Connection is deleted', async () => {
       const deleteSecretsSpy = sandbox.spy(mockContext.secrets, 'delete');
       const mockConnection = getMockConnection();
       const mockConnection2 = getMockConnection();
@@ -197,7 +197,7 @@ suite('Connection service spec', () => {
       assert.strictEqual(returnedPassword2, 'mock-password-2');
     });
 
-    test('Should notify language server when a connection is deleted', async () => {
+    test('Should notify language server when a Connection is deleted', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -224,7 +224,7 @@ suite('Connection service spec', () => {
   });
 
   suite('saveConnectionAndUpdateDatabaseConnection', () => {
-    test('Should handle non-existent connection key', () => {
+    test('Should handle non-existent Connection key', () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -244,7 +244,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should store connection and password in global state and secret storage', async () => {
+    test('Should store Connection and password in global state and secret storage', async () => {
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
         'update',
@@ -273,7 +273,7 @@ suite('Connection service spec', () => {
       assert.deepStrictEqual(storedConnection, mockConnection);
     });
 
-    test('Should not store connection and password in global state and secret storage when initializeDatabaseConnection returns a non success status', async () => {
+    test('Should not store Connection and password in global state and secret storage when initializeDatabaseConnection returns a non success status', async () => {
       sandbox
         .stub(mockConnectionManager, 'connect')
         .resolves({ success: false, retriable: true });
@@ -301,7 +301,7 @@ suite('Connection service spec', () => {
       assert.deepStrictEqual(storedConnection, null);
     });
 
-    test('Should notify language server with correct payload when connection.connect is false', async () => {
+    test('Should notify language server with correct payload when connection.state is inactive', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -327,7 +327,7 @@ suite('Connection service spec', () => {
       );
     });
 
-    test('Should notify language server with correct payload when connection.connect is true', async () => {
+    test('Should notify language server with correct payload when connection.state is activating', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -371,7 +371,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should call connectionManager.connect when connection.connect is true', async () => {
+    test('Should call connectionManager.connect when connection.state is activating', async () => {
       const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
       const mockConnection = getMockConnection(true);
 
@@ -392,7 +392,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(connectSpy, settings);
     });
 
-    test('Should call connectionManager.connect when connection.connect is false', async () => {
+    test('Should call connectionManager.connect when connection.state is inactive', async () => {
       const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
       const mockConnection = getMockConnection(false);
 
@@ -413,7 +413,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(connectSpy, settings);
     });
 
-    test('Should call connectionManager.persistentConnect when connection.connect is true', async () => {
+    test('Should call connectionManager.persistentConnect when connection.state is activating', async () => {
       const connectSpy = sandbox.spy(
         mockConnectionManager,
         'persistentConnect',
@@ -437,7 +437,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(connectSpy, settings);
     });
 
-    test('Should not call connectionManager.persistentConnect when connection.connect is false', async () => {
+    test('Should not call connectionManager.persistentConnect when connection.state is inactive', async () => {
       const connectSpy = sandbox.spy(
         mockConnectionManager,
         'persistentConnect',
@@ -470,7 +470,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(persistentConnectSpy);
     });
 
-    test('Should call connectionManager.persistentConnect when forceSave is true for a non successful connection', async () => {
+    test('Should call connectionManager.persistentConnect when forceSave is true for a non successful Connection', async () => {
       sandbox
         .stub(mockConnectionManager, 'connect')
         .resolves({ success: false, retriable: true });
@@ -497,7 +497,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(persistentConnectSpy, settings);
     });
 
-    test('Should not call connectionManager.persistentConnect when forceSave is true for a non successful connection when the retriable flag is false', async () => {
+    test('Should not call connectionManager.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is false', async () => {
       sandbox
         .stub(mockConnectionManager, 'connect')
         .resolves({ success: false, retriable: false });
@@ -516,7 +516,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(persistentConnectSpy);
     });
 
-    test('Should reset all connections when saving a connection with connected flag set to true', async () => {
+    test('Should reset all connections when saving a Connection with state flag set to activating', async () => {
       const mockConnection = getMockConnection(true);
       const mockConnection2 = getMockConnection(true);
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -528,17 +528,17 @@ suite('Connection service spec', () => {
         mockConnection2,
         'mock-password-2',
       );
-      const connectedConnection = connection.getCurrentConnection();
+      const connectedConnection = connection.getActiveConnection();
 
       assert.deepStrictEqual(connectedConnection, {
         ...mockConnection2,
-        state: 'connected',
+        state: 'active',
       });
     });
   });
 
   suite('toggleConnectionAndUpdateDatabaseConnection', () => {
-    test('Should handle non-existent connection key', () => {
+    test('Should handle non-existent Connection key', () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -556,7 +556,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should toggle a disconnected connection to connected', async () => {
+    test('Should toggle a disconnected Connection to active', async () => {
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
         'update',
@@ -574,13 +574,12 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: {
           ...mockConnection,
-          connect: true,
-          state: 'connected',
+          state: 'active',
         },
       });
     });
 
-    test('Should toggle a connected connection to disconnected', async () => {
+    test('Should toggle a connected Connection to inactive', async () => {
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
         'update',
@@ -598,13 +597,12 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWith(updateGlobalStateSpy, 'connections', {
         [mockConnection.key]: {
           ...mockConnection,
-          connect: false,
-          state: 'disconnected',
+          state: 'inactive',
         },
       });
     });
 
-    test('Should notify language server when toggling a connection to connected', async () => {
+    test('Should notify language server when toggling a Connection to active', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -629,7 +627,7 @@ suite('Connection service spec', () => {
       });
     });
 
-    test('Should notify language server when toggling a connection to disconnected', async () => {
+    test('Should notify language server when toggling a Connection to inactive', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -647,7 +645,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionDisconnected');
     });
 
-    test('Should call connect on connection manager when toggling a connection to connected', async () => {
+    test('Should call connect on connection manager when toggling a Connection to active', async () => {
       const persistentConnectSpy = sandbox.spy(
         mockConnectionManager,
         'persistentConnect',
@@ -674,7 +672,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(persistentConnectSpy, settings);
     });
 
-    test('Should call disconnect on connection manager when toggling a connection to disconnected', async () => {
+    test('Should call disconnect on connection manager when toggling a Connection to inactive', async () => {
       const disconnectSpy = sandbox.spy(mockConnectionManager, 'disconnect');
       const mockConnection = getMockConnection(true);
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -689,7 +687,7 @@ suite('Connection service spec', () => {
       sandbox.assert.called(disconnectSpy);
     });
 
-    test('Should reset all connections when toggling a connection to connected', async () => {
+    test('Should reset all connections when toggling a Connection to active', async () => {
       const mockConnection = getMockConnection(true);
       const mockConnection2 = getMockConnection(false);
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -709,14 +707,12 @@ suite('Connection service spec', () => {
 
       assert.deepStrictEqual(connectionOne, {
         ...mockConnection,
-        connect: false,
-        state: 'disconnected',
+        state: 'inactive',
       });
 
       assert.deepStrictEqual(connectionTwo, {
         ...mockConnection2,
-        connect: true,
-        state: 'connected',
+        state: 'active',
       });
     });
   });
@@ -727,7 +723,7 @@ suite('Connection service spec', () => {
       assert.strictEqual(result, null);
     });
 
-    test('Should return a password for the existing connection', async () => {
+    test('Should return a password for the existing Connection', async () => {
       const mockConnection = getMockConnection();
       await connection.saveConnectionAndUpdateDatabaseConnection(
         mockConnection,
@@ -749,17 +745,16 @@ suite('Connection service spec', () => {
       assert.strictEqual(result, null);
     });
 
-    test('Should handle a connection with an undefined property', () => {
+    test('Should handle a Connection with an undefined property', () => {
       const result = connection.getDatabaseConnectionString({
         scheme: 'neo4j',
-        connect: false,
         database: 'neo4j',
         host: undefined,
         port: '7687',
         key: 'mock-key',
         name: 'mock-connection',
         user: 'neo4j',
-        state: 'disconnected',
+        state: 'inactive',
       });
 
       assert.strictEqual(result, 'neo4j://undefined:7687');

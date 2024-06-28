@@ -83,8 +83,7 @@ export function getConnection(): Connection | null {
     port: port.value,
     user: user.value,
     database: database.value,
-    connect: true,
-    state: 'connecting',
+    state: 'activating',
   };
 }
 

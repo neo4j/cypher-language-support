@@ -4,7 +4,7 @@ import { ExtensionContext } from 'vscode';
 import { SchemaPollerConnectionManager } from './schemaPollerConnectionManager';
 
 type LanguageClient = {
-  sendNotification: (method: string, settings: Neo4jSettings) => Promise<void>;
+  sendNotification: (method: string, settings?: Neo4jSettings) => Promise<void>;
 };
 
 type DatabaseConnectionManager = {

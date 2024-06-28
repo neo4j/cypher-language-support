@@ -7,7 +7,7 @@ import {
   newUntitledFileWithContent,
   openDocument,
 } from '../helpers';
-import { testDatabaseKey } from '../suiteSetup';
+import { defaultConnectionKey } from '../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;
@@ -150,14 +150,14 @@ suite('Syntax validation spec', () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
     const connection = {
-      name: testDatabaseKey,
-      key: testDatabaseKey,
+      name: defaultConnectionKey,
+      key: defaultConnectionKey,
       scheme: process.env.NEO4J_SCHEME,
       host: process.env.NEO4J_HOST,
       port: process.env.NEO4J_PORT,
       user: process.env.NEO4J_USER,
       database: 'movies',
-      connect: true,
+      state: 'active',
     };
 
     await openDocument(docUri);
@@ -194,7 +194,7 @@ suite('Syntax validation spec', () => {
       ],
     });
 
-    // update connection to switch to movies database
+    // update Connection to switch to the movies database
     await vscode.commands.executeCommand(
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       connection,
@@ -217,7 +217,7 @@ suite('Syntax validation spec', () => {
       expected: [],
     });
 
-    // tidy up - reset connection to default database
+    // tidy up - reset Connection to default database
     await vscode.commands.executeCommand(
       constants.COMMANDS.SAVE_CONNECTION_COMMAND,
       { ...connection, database: process.env.NEO4J_DATABASE || 'neo4j' },
