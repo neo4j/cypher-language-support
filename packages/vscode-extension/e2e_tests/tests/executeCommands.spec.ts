@@ -2,6 +2,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { constants } from '../../src/constants';
+import { getNeo4jConfiguration } from '../helpers';
 
 suite('Execute commands', () => {
   let sandbox: sinon.SinonSandbox;
@@ -18,16 +19,17 @@ suite('Execute commands', () => {
 
   suite('saveConnectionCommand', () => {
     test('Creating a valid connection should show a success message', async () => {
+      const { scheme, host, port, user, database } = getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2',
           key: 'mock-key-2',
-          scheme: process.env.NEO4J_SCHEME || 'neo4j',
-          host: process.env.NEO4J_HOST || 'localhost',
-          port: process.env.NEO4J_PORT || '7687',
-          user: process.env.NEO4J_USER || 'neo4j',
-          database: process.env.NEO4J_DATABASE || 'neo4j',
+          scheme: scheme,
+          host: host,
+          port: port,
+          user: user,
+          database: database,
           connect: true,
         },
         process.env.NEO4J_PASSWORD || 'password',
@@ -41,16 +43,17 @@ suite('Execute commands', () => {
     });
 
     test('Updating a valid connection should show a success message', async () => {
+      const { scheme, host, port, user, database } = getNeo4jConfiguration();
       await commands.executeCommand(
         constants.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
           name: 'mock-connection-2-update',
           key: 'mock-key-2',
-          scheme: process.env.NEO4J_SCHEME || 'neo4j',
-          host: process.env.NEO4J_HOST || 'localhost',
-          port: process.env.NEO4J_PORT || '7687',
-          user: process.env.NEO4J_USER || 'neo4j',
-          database: process.env.NEO4J_DATABASE || 'neo4j',
+          scheme: scheme,
+          host: host,
+          port: port,
+          user: user,
+          database: database,
           connect: true,
         },
         process.env.NEO4J_PASSWORD || 'password',
