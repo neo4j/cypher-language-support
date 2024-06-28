@@ -179,6 +179,8 @@ const executeKeybinding = (
                 run: (view: EditorView) => {
                   const doc = view.state.doc.toString();
                   if (doc.includes('\n')) {
+                    // Returning false means the event will mark the event
+                    // as not handled and the default behavior will be executed
                     return false;
                   }
 

@@ -134,7 +134,9 @@ test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
     history.unshift(cmd);
   };
 
-  await mount(<CypherEditor value={initialValue} onExecute={onExecute} />);
+  const editorComponent = await mount(
+    <CypherEditor value={initialValue} onExecute={onExecute} />,
+  );
 
   // Cmd/Control still executes initial query
   await editorPage.getEditor().press('Control+Enter');
@@ -155,9 +157,14 @@ test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
   expect(history).toEqual(['Misty', 'Brock']);
 
   // Ensure cmd+enter is required in multiline
-  await editorPage.getEditor().fill(`multiline
+  await editorPage.getEditor().fill('multiline');
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('A');
 
-  `);
+  // line numbers and the text
+  await expect(editorComponent).toHaveText(['1\n2\nmultiline\nA'], {
+    useInnerText: true,
+  });
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
