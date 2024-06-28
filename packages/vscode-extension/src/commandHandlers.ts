@@ -218,42 +218,41 @@ export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
 }
 
 /**
- * Handler for extension lifecycle events, which occur on activation and deactivation.
- * This is used to activate or deactivate a database connection when the extension is activated
- * or deactivated and there is an active Connection.
- * @param activating Whether the extension is activating or deactivating.
+ * Handler for reconnecting database connections for an active Connection when the extension is activated.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function setConnectionStateForActiveConnectionOnLifecycleChange(
-  activating: boolean,
-): Promise<void> {
+export async function reconnectDatabaseConnectionOnExtensionActivation(): Promise<void> {
   let connection = getActiveConnection();
 
   if (!connection) {
     return;
   }
 
-  if (activating) {
-    const password = await getPasswordForConnection(connection.key);
+  const password = await getPasswordForConnection(connection.key);
 
-    connection = {
-      ...connection,
-      state: 'activating',
-    };
+  connection = {
+    ...connection,
+    state: 'activating',
+  };
 
-    const result = await saveConnectionAndUpdateDatabaseConnection(
-      connection,
-      password,
-    );
+  const result = await saveConnectionAndUpdateDatabaseConnection(
+    connection,
+    password,
+  );
 
-    displayMessageForConnectionResult(connection, result);
-  } else {
-    const databaseConnectionManager = getDatabaseConnectionManager();
-    const languageClient = getLanguageClient();
+  displayMessageForConnectionResult(connection, result);
+}
 
-    databaseConnectionManager.disconnect();
-    void languageClient.sendNotification('connectionDisconnected');
-  }
+/**
+ * Handler for disconnecting database connections when the extension is deactivated.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Promise<void> {
+  const databaseConnectionManager = getDatabaseConnectionManager();
+  const languageClient = getLanguageClient();
+
+  databaseConnectionManager.disconnect();
+  await languageClient.sendNotification('connectionDisconnected');
 }
 
 /**

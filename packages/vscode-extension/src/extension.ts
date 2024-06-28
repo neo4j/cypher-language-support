@@ -6,7 +6,10 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { setConnectionStateForActiveConnectionOnLifecycleChange } from './commandHandlers';
+import {
+  disconnectDatabaseConnectionOnExtensionDeactivation,
+  reconnectDatabaseConnectionOnExtensionActivation,
+} from './commandHandlers';
 import { setContext } from './contextService';
 import { registerDisposables } from './registrationService';
 
@@ -56,12 +59,12 @@ export async function activate(context: ExtensionContext) {
   await client.start();
 
   // Handle any sequence events for activation
-  await setConnectionStateForActiveConnectionOnLifecycleChange(true);
+  await reconnectDatabaseConnectionOnExtensionActivation();
 }
 
 export async function deactivate(): Promise<void> | undefined {
   // Handle any sequence events for deactivation
-  await setConnectionStateForActiveConnectionOnLifecycleChange(false);
+  await disconnectDatabaseConnectionOnExtensionDeactivation();
 
   if (!client) {
     return undefined;

@@ -3,11 +3,12 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
+  disconnectDatabaseConnectionOnExtensionDeactivation,
   handleNeo4jConfigurationChangedEvent,
+  reconnectDatabaseConnectionOnExtensionActivation,
   saveConnectionStateAsConnectedAndShowInfoMessage,
   saveConnectionStateAsDisconnectedAndShowErrorMessage,
   saveConnectionStateAsErroredAndShowWarningMessage,
-  setConnectionStateForActiveConnectionOnLifecycleChange,
 } from '../../src/commandHandlers';
 import * as connection from '../../src/connectionService';
 import { constants } from '../../src/constants';
@@ -176,7 +177,7 @@ suite('Command handlers spec', () => {
     );
   });
 
-  test('Should handle no active Connection when setConnectionStateForActiveConnectionOnLifecycleChange is called', () => {
+  test('Should handle no active Connection when reconnectDatabaseConnectionOnExtensionActivation is called', () => {
     sandbox.stub(connection, 'getActiveConnection').returns(null);
     const saveConnectionAndUpdateDatabaseConnectionSpy = sandbox.spy(
       connection,
@@ -187,15 +188,14 @@ suite('Command handlers spec', () => {
       'getPasswordForConnection',
     );
 
-    const promise =
-      setConnectionStateForActiveConnectionOnLifecycleChange(true);
+    const promise = reconnectDatabaseConnectionOnExtensionActivation();
 
     assert.doesNotThrow(async () => await promise);
     sandbox.assert.notCalled(saveConnectionAndUpdateDatabaseConnectionSpy);
     sandbox.assert.notCalled(getPasswordForConnectionSpy);
   });
 
-  test('Should activate a previously active Connection when setConnectionStateForActiveConnectionOnLifecycleChange is called', async () => {
+  test('Should activate a previously active Connection when reconnectDatabaseConnectionOnExtensionActivation is called', async () => {
     const mockConnection = getMockConnection(true);
     sandbox
       .stub(connection, 'getActiveConnection')
@@ -212,7 +212,7 @@ suite('Command handlers spec', () => {
       'sendNotification',
     );
 
-    await setConnectionStateForActiveConnectionOnLifecycleChange(true);
+    await reconnectDatabaseConnectionOnExtensionActivation();
 
     sandbox.assert.calledOnceWithExactly(
       saveConnectionAndUpdateDatabaseConnectionSpy,
@@ -238,7 +238,7 @@ suite('Command handlers spec', () => {
     );
   });
 
-  test('Should deactivate a currently active Connection when setConnectionStateForActiveConnectionOnLifecycleChange is called', async () => {
+  test('Should deactivate a currently active Connection when disconnectDatabaseConnectionOnExtensionDeactivation is called', async () => {
     const mockConnection = getMockConnection(true);
     sandbox.stub(connection, 'getActiveConnection').returns(mockConnection);
     sandbox.stub(connection, 'getPasswordForConnection').resolves('password');
@@ -247,7 +247,7 @@ suite('Command handlers spec', () => {
       'sendNotification',
     );
 
-    await setConnectionStateForActiveConnectionOnLifecycleChange(false);
+    await disconnectDatabaseConnectionOnExtensionDeactivation();
 
     sandbox.assert.calledOnceWithExactly(
       sendNotificationSpy,
