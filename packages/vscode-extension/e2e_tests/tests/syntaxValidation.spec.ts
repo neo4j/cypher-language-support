@@ -4,6 +4,7 @@ import { constants } from '../../src/constants';
 import {
   eventually,
   getDocumentUri,
+  getNeo4jConfiguration,
   newUntitledFileWithContent,
   openDocument,
 } from '../helpers';
@@ -148,13 +149,14 @@ suite('Syntax validation spec', () => {
   test('Correctly re-validates cypher when switching databases', async () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
+    const { scheme, host, port, user } = getNeo4jConfiguration();
     const connection = {
       name: 'test',
       key: 'test',
-      scheme: process.env.NEO4J_SCHEME,
-      host: process.env.NEO4J_HOST,
-      port: process.env.NEO4J_PORT,
-      user: process.env.NEO4J_USER,
+      scheme: scheme,
+      host: host,
+      port: port,
+      user: user,
       database: 'movies',
       connect: true,
     };
