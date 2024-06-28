@@ -20,7 +20,8 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js"
+        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
@@ -38,7 +39,8 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js"
+        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
