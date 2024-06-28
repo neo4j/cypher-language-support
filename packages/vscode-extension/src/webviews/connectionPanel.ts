@@ -248,7 +248,7 @@ export class ConnectionPanel {
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
-                    <input type="text" id="port" placeholder="7687" value="${
+                    <input type="number" id="port" placeholder="7687" value="${
                       this._connection?.port ?? '7687'
                     }" data-invalid="${this.urlIsInvalid()}" />
                   </div>
