@@ -1,5 +1,19 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.9
+
+### Patch Changes
+
+- 09dfae2: Add an ariaLabel prop to CypherEditor
+- Updated dependencies [fbd5f7e]
+- Updated dependencies [3661e9d]
+- Updated dependencies [09dfae2]
+- Updated dependencies [b76af58]
+- Updated dependencies [21699b7]
+- Updated dependencies [6afc0e3]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.9
+  - @neo4j-cypher/language-support@2.0.0-next.7
+
 ## 2.0.0-next.8
 
 ### Patch Changes
