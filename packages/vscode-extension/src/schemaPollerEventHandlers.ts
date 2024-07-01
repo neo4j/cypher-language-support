@@ -5,7 +5,7 @@ import {
   saveConnection,
   saveConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
-import { constants } from './constants';
+import { CONSTANTS } from './constants';
 
 export function handleConnectionErrored(errorMessage: string): void {
   void saveConnectionStateAsErroredAndShowWarningMessage(errorMessage);
@@ -51,7 +51,7 @@ async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promise<void>
   }
 
   await saveConnection({ ...connection, state: 'active' });
-  void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
+  void window.showInformationMessage(CONSTANTS.MESSAGES.RECONNECTED_MESSAGE);
 }
 
 /**

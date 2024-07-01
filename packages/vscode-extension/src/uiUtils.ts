@@ -1,7 +1,7 @@
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import { Connection } from './connectionService';
-import { constants } from './constants';
+import { CONSTANTS } from './constants';
 
 /**
  * Utility function to manage what type of message type to display to the user based on the result of a connection attempt.
@@ -17,12 +17,16 @@ export function displayMessageForConnectionResult(
   }
 
   if (result.success && connection.state !== 'inactive') {
-    void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
+    void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTED_MESSAGE);
   } else if (result.success && connection.state === 'inactive') {
-    void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
+    void window.showInformationMessage(CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE);
   } else if (!result.success && !result.retriable) {
-    void window.showErrorMessage(result.error?.message);
+    void window.showErrorMessage(
+      `${result.error?.message}. ${result.error?.friendlyMessage}.`,
+    );
   } else {
-    void window.showWarningMessage(result.error?.message);
+    void window.showWarningMessage(
+      `${result.error?.message}. ${result.error?.friendlyMessage}.`,
+    );
   }
 }

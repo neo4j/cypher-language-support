@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import {
   eventually,
   getDocumentUri,
@@ -150,7 +150,8 @@ suite('Syntax validation spec', () => {
   test('Correctly re-validates cypher when switching databases', async () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
-    const { scheme, host, port, user } = getNeo4jConfiguration();
+    const { scheme, host, port, user, database, password } =
+      getNeo4jConfiguration();
     const connection = {
       name: defaultConnectionKey,
       key: defaultConnectionKey,
@@ -198,9 +199,9 @@ suite('Syntax validation spec', () => {
 
     // update Connection to switch to the movies database
     await vscode.commands.executeCommand(
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       connection,
-      process.env.NEO4J_PASSWORD,
+      password,
     );
 
     // make a small doc change to refresh diagnostics
@@ -221,9 +222,9 @@ suite('Syntax validation spec', () => {
 
     // tidy up - reset Connection to default database
     await vscode.commands.executeCommand(
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
-      { ...connection, database: process.env.NEO4J_DATABASE || 'neo4j' },
-      process.env.NEO4J_PASSWORD,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+      { ...connection, database: database },
+      password,
     );
   });
 });

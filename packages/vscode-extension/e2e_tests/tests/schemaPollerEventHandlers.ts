@@ -3,7 +3,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, window } from 'vscode';
 import * as connection from '../../src/connectionService';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import {
   handleConnectionErrored,
   handleConnectionFailed,
@@ -45,11 +45,11 @@ suite('Schema poller event handlers spec', () => {
     assert.strictEqual(updatedConnection.state, 'active');
     sandbox.assert.calledOnceWithExactly(
       showInformationMessageStub,
-      constants.MESSAGES.RECONNECTED_MESSAGE,
+      CONSTANTS.MESSAGES.RECONNECTED_MESSAGE,
     );
     sandbox.assert.calledWithExactly(
       executeCommandStub,
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
   });
 
@@ -67,7 +67,7 @@ suite('Schema poller event handlers spec', () => {
     );
     sandbox.assert.calledWithExactly(
       executeCommandStub,
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
   });
 
@@ -82,7 +82,7 @@ suite('Schema poller event handlers spec', () => {
     sandbox.assert.calledOnceWithExactly(showErrorMessageStub, 'error message');
     sandbox.assert.calledWithExactly(
       executeCommandStub,
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
   });
 });

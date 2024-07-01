@@ -1,17 +1,14 @@
 import { EventEmitter } from 'events';
 import neo4j, { Config, Driver } from 'neo4j-driver';
 import {
-  getFriendlyErrorMessage,
+  ConnectionError,
+  FRIENDLY_ERROR_MESSAGES,
+  getConnectionError,
   isRetriableNeo4jError,
 } from './connectionErrorHandler';
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
-
-type ConnectionError = {
-  message: string;
-  code: string;
-};
 
 export type ConnnectionResult = {
   success: boolean;
@@ -49,7 +46,7 @@ export class Neo4jSchemaPoller {
       return {
         success: false,
         retriable: isRetriableNeo4jError(error),
-        error: getFriendlyErrorMessage(error),
+        error: getConnectionError(error),
       };
     }
 
@@ -90,7 +87,7 @@ export class Neo4jSchemaPoller {
       } catch (error) {
         console.error('Error connecting to Neo4j.', error);
         this.retries -= 1;
-        this.lastError = getFriendlyErrorMessage(error);
+        this.lastError = getConnectionError(error);
 
         if (!isRetriableNeo4jError(error)) {
           return this.handlePermanentlyFailingConnection();
@@ -211,40 +208,53 @@ export class Neo4jSchemaPoller {
   }
 
   private handleNonSuccessfulConnection(): ConnnectionResult {
-    const errorMessage = this.getFormattedErrorMessage(this.lastError, true);
+    const connectionError = this.formatConnectionErrorFriendlyMessage(
+      this.lastError,
+      true,
+    );
 
-    this.events.emit('connectionErrored', errorMessage);
+    this.events.emit('connectionErrored', connectionError);
 
     return {
       success: false,
       retriable: true,
-      error: { message: errorMessage, code: this.lastError?.code ?? '' },
+      error: connectionError,
     };
   }
 
   private handlePermanentlyFailingConnection(): ConnnectionResult {
     this.resetRetries();
 
-    const errorMessage = this.getFormattedErrorMessage(this.lastError, false);
+    const connectionError = this.formatConnectionErrorFriendlyMessage(
+      this.lastError,
+      false,
+    );
 
-    this.events.emit('connectionFailed', errorMessage);
+    this.events.emit('connectionFailed', connectionError);
 
     return {
       success: false,
       retriable: false,
-      error: { message: errorMessage, code: this.lastError?.code ?? '' },
+      error: connectionError,
     };
   }
 
-  private getFormattedErrorMessage(
-    error: ConnectionError | undefined = { message: 'Unknown error', code: '' },
+  private formatConnectionErrorFriendlyMessage(
+    connectionError: ConnectionError = {
+      message: '',
+      friendlyMessage: FRIENDLY_ERROR_MESSAGES.Default,
+      code: '',
+    },
     retriable: boolean,
-  ): string {
-    return `${error.message}. ${
-      retriable
-        ? `Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
-        : 'Not trying again'
-    }.`;
+  ): ConnectionError {
+    return {
+      ...connectionError,
+      friendlyMessage: `${connectionError.friendlyMessage}. ${
+        retriable
+          ? `Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
+          : 'Not trying again'
+      }`,
+    };
   }
 
   private resetRetries(): void {

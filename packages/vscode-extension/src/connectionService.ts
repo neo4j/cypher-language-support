@@ -1,7 +1,7 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
-import { constants } from './constants';
+import { CONSTANTS } from './constants';
 import {
   getExtensionContext,
   getLanguageClient,
@@ -380,7 +380,7 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 async function saveConnections(connections: Connections): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(CONNECTIONS_KEY, connections);
-  await commands.executeCommand(constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+  await commands.executeCommand(CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
 
 /**

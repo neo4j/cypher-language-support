@@ -10,7 +10,7 @@ import {
   window,
 } from 'vscode';
 import { Connection } from '../connectionService';
-import { constants } from '../constants';
+import { CONSTANTS } from '../constants';
 import { getNonce } from '../getNonce';
 
 export type ConnectionPanelMessage = {
@@ -108,7 +108,7 @@ export class ConnectionPanel {
         switch (message.command) {
           case 'onSaveConnection': {
             const result: ConnnectionResult = await commands.executeCommand(
-              constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+              CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
               message.connection,
               message.password,
             );
@@ -132,7 +132,7 @@ export class ConnectionPanel {
           }
           case 'onValidationError': {
             void window.showErrorMessage(
-              constants.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
+              CONSTANTS.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
             );
             break;
           }

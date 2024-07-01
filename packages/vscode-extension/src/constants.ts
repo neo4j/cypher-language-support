@@ -1,4 +1,4 @@
-export const constants = {
+export const CONSTANTS = {
   COMMANDS: {
     SAVE_CONNECTION_COMMAND: 'neo4j.saveConnection',
     MANAGE_CONNECTION_COMMAND: 'neo4j.manageConnection',

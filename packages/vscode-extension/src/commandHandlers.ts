@@ -1,4 +1,7 @@
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import {
+  ConnnectionResult,
+  FRIENDLY_ERROR_MESSAGES,
+} from '@neo4j-cypher/schema-poller';
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   Connection,
@@ -12,7 +15,7 @@ import {
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
-import { constants } from './constants';
+import { CONSTANTS } from './constants';
 import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { displayMessageForConnectionResult } from './uiUtils';
@@ -66,7 +69,7 @@ export async function saveConnectionAndDisplayConnectionResult(
     const result = await displaySaveConnectionAnywayPrompt();
 
     if (result === 'Yes') {
-      void window.showInformationMessage(constants.MESSAGES.CONNECTION_SAVED);
+      void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_SAVED);
       return await saveConnectionAndUpdateDatabaseConnection(
         { ...connection, state: 'inactive' },
         password,
@@ -127,9 +130,9 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
   if (result === 'Yes') {
     await deleteConnectionAndUpdateDatabaseConnection(connectionItem.key);
     void commands.executeCommand(
-      constants.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
-    void window.showInformationMessage(constants.MESSAGES.CONNECTION_DELETED);
+    void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_DELETED);
   }
 }
 
@@ -159,8 +162,7 @@ async function displaySaveConnectionAnywayPrompt(): Promise<string | null> {
     'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
     {
       modal: true,
-      detail:
-        'Alternatively, please check that your scheme, host and port are correct.',
+      detail: `${FRIENDLY_ERROR_MESSAGES.ServiceUnavailable}.`,
     },
     'Yes',
   );

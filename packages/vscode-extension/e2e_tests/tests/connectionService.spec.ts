@@ -5,7 +5,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { window } from 'vscode';
 import * as connection from '../../src/connectionService';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import * as contextService from '../../src/contextService';
 import * as schemaPollerEventHandlers from '../../src/schemaPollerEventHandlers';
 import { getMockConnection } from '../helpers';
@@ -1081,7 +1081,7 @@ suite('Connection service spec', () => {
       );
       sandbox.assert.calledOnceWithExactly(
         showInformationMessageStub,
-        constants.MESSAGES.CONNECTED_MESSAGE,
+        CONSTANTS.MESSAGES.CONNECTED_MESSAGE,
       );
       sandbox.assert.calledWithExactly(
         sendNotificationSpy,

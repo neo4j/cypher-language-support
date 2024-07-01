@@ -2,7 +2,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, WebviewPanel, window } from 'vscode';
 import * as connectionService from '../../src/connectionService';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import * as contextService from '../../src/contextService';
 import {
   ConnectionPanel,
@@ -70,7 +70,7 @@ suite('Connection panel spec', () => {
 
     sandbox.assert.calledOnceWithExactly(
       executeCommandStub,
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       mockConnection,
       'mock-password',
     );
@@ -106,7 +106,7 @@ suite('Connection panel spec', () => {
 
     sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
-      constants.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
+      CONSTANTS.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
     );
     sandbox.assert.notCalled(executeCommandStub);
     sandbox.assert.notCalled(saveConnectionStub);
