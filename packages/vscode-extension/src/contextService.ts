@@ -4,7 +4,7 @@ import {
   Neo4jSchemaPoller,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import { Config, EagerResult, RecordShape } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 
 type LanguageClient = {
@@ -38,6 +38,7 @@ type SchemaPoller = {
     database?: string,
   ): Promise<ConnnectionResult>;
   disconnect(): void;
+  runQuery(query: string): Promise<EagerResult<RecordShape> | undefined>;
 };
 
 let _context: ExtensionContext | undefined;
