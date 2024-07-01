@@ -16,3 +16,8 @@ export const CONSTANTS = {
     CONNECTION_VALIDATION_MESSAGE: 'Please fill in all required fields.',
   },
 };
+
+export const METHOD_READ = 'executeRead';
+export const METHOD_WRITE = 'executeWrite';
+
+export type Method = typeof METHOD_READ | typeof METHOD_WRITE;

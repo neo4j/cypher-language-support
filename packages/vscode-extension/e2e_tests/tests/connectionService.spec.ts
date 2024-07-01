@@ -816,6 +816,7 @@ suite('Connection service spec', () => {
           connect: connectFake,
           persistentConnect: persistentConnectFake,
           disconnect: () => void 0,
+          runQuery: () => undefined,
         };
 
         sandbox
@@ -901,6 +902,7 @@ suite('Connection service spec', () => {
           connect: connectFake,
           persistentConnect: persistentConnectFake,
           disconnect: () => void 0,
+          runQuery: () => undefined,
         };
 
         sandbox

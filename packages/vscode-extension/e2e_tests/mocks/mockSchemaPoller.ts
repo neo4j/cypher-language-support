@@ -4,7 +4,7 @@ import {
   Neo4jConnection,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import { Config, EagerResult, RecordShape } from 'neo4j-driver';
 
 export class MockSchemaPoller {
   connection?: Neo4jConnection;
@@ -46,6 +46,12 @@ export class MockSchemaPoller {
       retriable: false,
       error: undefined,
     });
+  }
+
+  async runQuery(query: string): Promise<EagerResult<RecordShape> | undefined> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const result: Promise<undefined> = await Promise.resolve(undefined);
+    return result;
   }
 
   disconnect(): void {}
