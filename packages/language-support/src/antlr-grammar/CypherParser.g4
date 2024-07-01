@@ -132,11 +132,12 @@ setClause
    ;
 
 setItem
-   : propertyExpression EQ expression # SetProp
-   | variable EQ expression           # SetProps
-   | variable PLUSEQUAL expression    # AddProp
-   | variable nodeLabels              # SetLabels
-   | variable nodeLabelsIs            # SetLabelsIs
+   : propertyExpression EQ expression        # SetProp
+   | dynamicPropertyExpression EQ expression # SetDynamicProp
+   | variable EQ expression                  # SetProps
+   | variable PLUSEQUAL expression           # AddProp
+   | variable nodeLabels                     # SetLabels
+   | variable nodeLabelsIs                   # SetLabelsIs
    ;
 
 removeClause
@@ -144,9 +145,10 @@ removeClause
    ;
 
 removeItem
-   : propertyExpression    # RemoveProp
-   | variable nodeLabels   # RemoveLabels
-   | variable nodeLabelsIs # RemoveLabelsIs
+   : propertyExpression         # RemoveProp
+   | dynamicPropertyExpression  # RemoveDynamicProp
+   | variable nodeLabels        # RemoveLabels
+   | variable nodeLabelsIs      # RemoveLabelsIs
    ;
 
 deleteClause
@@ -301,11 +303,19 @@ parenthesizedPath
    ;
 
 nodeLabels
-   : labelType+
+   : (labelType | dynamicLabelType)+
    ;
 
 nodeLabelsIs
-   : IS symbolicNameString labelType*
+   : IS (symbolicNameString | dynamicExpression) (labelType | dynamicLabelType)*
+   ;
+
+dynamicExpression
+   : DOLLAR LPAREN expression RPAREN
+   ;
+
+dynamicLabelType
+   : COLON dynamicExpression
    ;
 
 labelType
@@ -487,8 +497,16 @@ property
    : DOT propertyKeyName
    ;
 
+dynamicProperty
+   : LBRACKET expression RBRACKET
+   ;
+
 propertyExpression
    : expression1 property+
+   ;
+
+dynamicPropertyExpression
+   : expression1 dynamicProperty
    ;
 
 expression1
@@ -1109,8 +1127,13 @@ showRoles
    ;
 
 createUser
-   : USER commandNameExpression (IF NOT EXISTS)? SET password (SET (PASSWORD passwordChangeRequired | userStatus | homeDatabase))*
-   ;
+   : USER commandNameExpression (IF NOT EXISTS)? (SET (
+      password
+      | PASSWORD passwordChangeRequired
+      | userStatus
+      | homeDatabase
+      | setAuthClause
+   ))+;
 
 dropUser
    : USER commandNameExpression (IF EXISTS)?
@@ -1125,16 +1148,29 @@ alterCurrentUser
    ;
 
 alterUser
-   : USER commandNameExpression (IF EXISTS)? ((SET (
+   : USER commandNameExpression (IF EXISTS)? (REMOVE (
+      HOME DATABASE
+      | ALL AUTH (PROVIDER | PROVIDERS)?
+      | removeNamedProvider
+   ))* (SET (
       password
       | PASSWORD passwordChangeRequired
       | userStatus
       | homeDatabase
-   ))+ | REMOVE HOME DATABASE)
+      | setAuthClause
+   ))*
+   ;
+
+removeNamedProvider
+   : AUTH (PROVIDER | PROVIDERS)? (stringLiteral | stringListLiteral | parameter["ANY"])
    ;
 
 password
    : (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression passwordChangeRequired?
+   ;
+
+passwordOnly
+   : (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression
    ;
 
 passwordExpression
@@ -1154,8 +1190,20 @@ homeDatabase
    : HOME DATABASE symbolicAliasNameOrParameter
    ;
 
+setAuthClause
+   : AUTH PROVIDER? stringLiteral LCURLY (SET (
+      userAuthAttribute
+   ))+ RCURLY
+   ;
+
+userAuthAttribute
+   : ID stringOrParameterExpression
+   | passwordOnly
+   | PASSWORD passwordChangeRequired
+   ;
+
 showUsers
-   : (USER | USERS) showCommandYield?
+   : (USER | USERS) (WITH AUTH)? showCommandYield?
    ;
 
 showCurrentUser
@@ -1312,6 +1360,7 @@ setPrivilege
       (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE ACCESS) ON DBMS
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
+      | AUTH ON DBMS
    )
    ;
 
@@ -1553,16 +1602,22 @@ symbolicNameOrStringParameter
    | parameter["STRING"]
    ;
 
+aliasName:
+    symbolicAliasNameOrParameter;
+
+databaseName:
+    symbolicAliasNameOrParameter;
+
 createAlias
-   : ALIAS symbolicAliasNameOrParameter (IF NOT EXISTS)? FOR DATABASE symbolicAliasNameOrParameter (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE databaseName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
    ;
 
 dropAlias
-   : ALIAS symbolicAliasNameOrParameter (IF EXISTS)? FOR DATABASE
+   : ALIAS aliasName (IF EXISTS)? FOR DATABASE
    ;
 
 alterAlias
-   : ALIAS symbolicAliasNameOrParameter (IF EXISTS)? SET DATABASE (
+   : ALIAS aliasName (IF EXISTS)? SET DATABASE (
       alterAliasTarget
       | alterAliasUser
       | alterAliasPassword
@@ -1572,7 +1627,7 @@ alterAlias
    ;
 
 alterAliasTarget
-   : TARGET symbolicAliasNameOrParameter (AT stringOrParameter)?
+   : TARGET databaseName (AT stringOrParameter)?
    ;
 
 alterAliasUser
@@ -1592,7 +1647,7 @@ alterAliasProperties
    ;
 
 showAliases
-   : (ALIAS | ALIASES) symbolicAliasNameOrParameter? FOR (DATABASE | DATABASES) showCommandYield?
+   : (ALIAS | ALIASES) aliasName? FOR (DATABASE | DATABASES) showCommandYield?
    ;
 
 symbolicAliasNameList
@@ -1628,6 +1683,10 @@ globPart
    | unescapedSymbolicNameString
    ;
 
+stringListLiteral
+   : LBRACKET (stringLiteral (COMMA stringLiteral)*)? RBRACKET
+   ;
+
 stringList
    : stringLiteral (COMMA stringLiteral)+
    ;
@@ -1637,6 +1696,13 @@ stringLiteral
    | STRING_LITERAL2
    ;
 
+// Should return an Expression
+stringOrParameterExpression
+   : stringLiteral
+   | parameter["STRING"]
+   ;
+
+// Should return an Either[String, Parameter]
 stringOrParameter
    : stringLiteral
    | parameter["STRING"]
@@ -1697,6 +1763,7 @@ unescapedLabelSymbolicNameString
    | ASSERT
    | ASSIGN
    | AT
+   | AUTH
    | BINDINGS
    | BOOL
    | BOOLEAN
@@ -1781,6 +1848,7 @@ unescapedLabelSymbolicNameString
    | GROUPS
    | HEADERS
    | HOME
+   | ID
    | IF
    | IMMUTABLE
    | IMPERSONATE
@@ -1843,6 +1911,8 @@ unescapedLabelSymbolicNameString
    | PROCEDURES
    | PROPERTIES
    | PROPERTY
+   | PROVIDER
+   | PROVIDERS
    | RANGE
    | READ
    | REALLOCATE

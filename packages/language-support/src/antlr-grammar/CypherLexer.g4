@@ -81,11 +81,17 @@ UNSIGNED_OCTAL_INTEGER
    ;
 
 STRING_LITERAL1
-   : '\'' ( ~'\'' | '\\\'' )* '\''
+   : '\'' (~['\\] | EscapeSequence)* '\''
    ;
 
 STRING_LITERAL2
-   : '"' ( ~'"' | '\\"' )* '"'
+   : '"' (~["\\] | EscapeSequence)* '"'
+   ;
+
+// In Cypher it is allowed to have any character following a backslash.
+// In the cases it is an actual escape code it is handled in the AST builder.
+fragment EscapeSequence
+   : '\\' .
    ;
 
 ESCAPED_SYMBOLIC_NAME
@@ -162,6 +168,10 @@ ASSIGN
 
 AT
    : A T
+   ;
+
+AUTH
+   : A U T H
    ;
 
 BAR
@@ -548,6 +558,10 @@ HOME
    : H O M E
    ;
 
+ID
+   : I D
+   ;
+
 IF
    : I F
    ;
@@ -878,6 +892,14 @@ PROPERTIES
 
 PROPERTY
    : P R O P E R T Y
+   ;
+
+PROVIDER
+   : P R O V I D E R
+   ;
+
+PROVIDERS
+   : P R O V I D E R S
    ;
 
 QUESTION
