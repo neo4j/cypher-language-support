@@ -8,6 +8,7 @@ import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
   default as CypherParser,
+  FunctionNameContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
@@ -40,6 +41,7 @@ export interface ParsedStatement {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  collectedFunctions: ParsedFunction[];
 }
 
 export interface ParsingResult {
@@ -69,6 +71,12 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
   else return LabelType.unknown;
 }
 
+function getFunctionName(ctx: FunctionNameContext): string {
+  const namespace = ctx.namespace().getText();
+  const name = ctx.symbolicNameString().getText();
+  return `${namespace}${name}`;
+}
+
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
   const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
 
@@ -84,6 +92,16 @@ export type LabelOrRelType = {
   labeltype: LabelType;
   labelText: string;
   couldCreateNewLabel: boolean;
+  line: number;
+  column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
+};
+
+export type ParsedFunction = {
+  name: string;
   line: number;
   column: number;
   offsets: {
@@ -134,8 +152,13 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
+      const functionFinder = new FunctionCollector();
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [labelsCollector, variableFinder];
+      parser._parseListeners = [
+        labelsCollector,
+        variableFinder,
+        functionFinder,
+      ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -159,6 +182,7 @@ export function createParsingResult(query: string): ParsingResult {
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
+        collectedFunctions: functionFinder.functions,
       };
     });
 
@@ -170,7 +194,7 @@ export function createParsingResult(query: string): ParsingResult {
   return parsingResult;
 }
 
-// This listener is collects all labels and relationship types
+// This listener collects all labels and relationship types
 class LabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
@@ -263,6 +287,36 @@ class VariableCollector implements ParseTreeListener {
       if (variable && !nextTokenIsEOF && definesVariable) {
         this.variables.push(variable);
       }
+    }
+  }
+}
+
+// This listener collects all functions
+class FunctionCollector extends ParseTreeListener {
+  functions: ParsedFunction[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof FunctionNameContext) {
+      const functionName = getFunctionName(ctx);
+      this.functions.push({
+        name: functionName,
+        line: ctx.start.line,
+        column: ctx.start.column,
+        offsets: {
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
+        },
+      });
     }
   }
 }
