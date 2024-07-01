@@ -1,40 +1,17 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { workspace } from 'vscode';
-import {
-  Connection,
-  getConnectionString,
-  getPasswordForConnection,
-} from './connectionService';
 import { getLanguageClient } from './contextService';
 
-export type MethodName = 'connectionUpdated' | 'connectionDeleted';
+export type MethodName = 'connectionUpdated' | 'connectionDisconnected';
 
+/**
+ * Communicates to the language client that a connection has been updated or disconnected and needs to take action.
+ * @param methodName The name of the method to call.
+ * @param settings The settings to send to the language client.
+ */
 export async function sendNotificationToLanguageClient(
   methodName: MethodName,
-  connection: Connection,
+  settings?: Neo4jSettings,
 ) {
   const languageClient = getLanguageClient();
-  const settings = await getLanguageClientConnectionSettings(connection);
   await languageClient.sendNotification(methodName, settings);
-}
-
-async function getLanguageClientConnectionSettings(
-  connection: Connection,
-): Promise<Neo4jSettings> {
-  const trace = workspace
-    .getConfiguration('neo4j')
-    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-    server: 'off',
-  };
-
-  const password = await getPasswordForConnection(connection.key);
-
-  return {
-    trace: trace,
-    connect: connection.connect,
-    connectURL: getConnectionString(connection),
-    database: connection.database,
-    user: connection.user,
-    password: password,
-  };
 }

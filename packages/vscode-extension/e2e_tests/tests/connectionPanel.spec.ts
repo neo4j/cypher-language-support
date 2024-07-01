@@ -2,7 +2,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, WebviewPanel, window } from 'vscode';
 import * as connectionService from '../../src/connectionService';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import * as contextService from '../../src/contextService';
 import {
   ConnectionPanel,
@@ -12,7 +12,7 @@ import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 
-suite('Connection panel', () => {
+suite('Connection panel spec', () => {
   let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
@@ -70,7 +70,7 @@ suite('Connection panel', () => {
 
     sandbox.assert.calledOnceWithExactly(
       executeCommandStub,
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       mockConnection,
       'mock-password',
     );
@@ -106,7 +106,7 @@ suite('Connection panel', () => {
 
     sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
-      constants.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
+      CONSTANTS.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
     );
     sandbox.assert.notCalled(executeCommandStub);
     sandbox.assert.notCalled(saveConnectionStub);
@@ -161,6 +161,35 @@ suite('Connection panel', () => {
 
     messageReceived({
       command: 'onValidationError',
+    });
+
+    sandbox.assert.notCalled(disposeSpy);
+  });
+
+  test('Should not dispose the panel when saveConnection returns a non success status', (done) => {
+    executeCommandStub.resolves({ success: false });
+    let messageReceived: (message: ConnectionPanelMessage) => void;
+    const disposeSpy = sandbox.spy(() => '');
+
+    sandbox.stub(window, 'createWebviewPanel').returns({
+      webview: {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
+          messageReceived = callback;
+          done();
+        },
+        asWebviewUri: () => '',
+      },
+      dispose: disposeSpy,
+    } as unknown as WebviewPanel);
+
+    ConnectionPanel.createOrShow('');
+
+    messageReceived({
+      command: 'onSaveConnection',
+      connection: getMockConnection(),
+      password: 'mock-password',
     });
 
     sandbox.assert.notCalled(disposeSpy);

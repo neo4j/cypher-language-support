@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { constants } from '../../src/constants';
+import { CONSTANTS } from '../../src/constants';
 import {
   eventually,
   getDocumentUri,
@@ -8,6 +8,7 @@ import {
   newUntitledFileWithContent,
   openDocument,
 } from '../helpers';
+import { defaultConnectionKey } from '../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;
@@ -149,16 +150,17 @@ suite('Syntax validation spec', () => {
   test('Correctly re-validates cypher when switching databases', async () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
-    const { scheme, host, port, user } = getNeo4jConfiguration();
+    const { scheme, host, port, user, database, password } =
+      getNeo4jConfiguration();
     const connection = {
-      name: 'test',
-      key: 'test',
+      name: defaultConnectionKey,
+      key: defaultConnectionKey,
       scheme: scheme,
       host: host,
       port: port,
       user: user,
       database: 'movies',
-      connect: true,
+      state: 'active',
     };
 
     await openDocument(docUri);
@@ -195,11 +197,11 @@ suite('Syntax validation spec', () => {
       ],
     });
 
-    // update connection to switch to movies database
+    // update Connection to switch to the movies database
     await vscode.commands.executeCommand(
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       connection,
-      process.env.NEO4J_PASSWORD,
+      password,
     );
 
     // make a small doc change to refresh diagnostics
@@ -218,11 +220,11 @@ suite('Syntax validation spec', () => {
       expected: [],
     });
 
-    // tidy up - reset connection to default database
+    // tidy up - reset Connection to default database
     await vscode.commands.executeCommand(
-      constants.COMMANDS.SAVE_CONNECTION_COMMAND,
-      { ...connection, database: process.env.NEO4J_DATABASE || 'neo4j' },
-      process.env.NEO4J_PASSWORD,
+      CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+      { ...connection, database: database },
+      password,
     );
   });
 });

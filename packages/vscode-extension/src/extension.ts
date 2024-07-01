@@ -6,9 +6,11 @@ import {
   ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
-import { getCurrentConnection } from './connectionService';
+import {
+  disconnectDatabaseConnectionOnExtensionDeactivation,
+  reconnectDatabaseConnectionOnExtensionActivation,
+} from './connectionService';
 import { setContext } from './contextService';
-import { sendNotificationToLanguageClient } from './languageClientService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
@@ -56,21 +58,17 @@ export async function activate(context: ExtensionContext) {
   // Start the client. This will also launch the server
   await client.start();
 
-  // Reconnect to a connection if there is one
-  await reconnectConnection();
+  // Handle any sequence events for activation
+  await reconnectDatabaseConnectionOnExtensionActivation();
 }
 
 export async function deactivate(): Promise<void> | undefined {
+  // Handle any sequence events for deactivation
+  await disconnectDatabaseConnectionOnExtensionDeactivation();
+
   if (!client) {
     return undefined;
   }
 
   return client.stop();
-}
-
-async function reconnectConnection(): Promise<void> {
-  const connection = getCurrentConnection();
-  if (connection) {
-    await sendNotificationToLanguageClient('connectionUpdated', connection);
-  }
 }

@@ -1,3 +1,8 @@
+/**
+ * Non crypto secure random alphanumeric generator
+ * @param length Optional length of the nonce to generate. Default is 32.
+ * @returns A random alphanumeric string.
+ */
 export function getNonce(length: number = 32): string {
   let text = '';
   const possible =
