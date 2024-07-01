@@ -1,21 +1,48 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import {
+  ConnnectionResult,
+  Neo4jSchemaPoller,
+} from '@neo4j-cypher/schema-poller';
+import EventEmitter from 'events';
+import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
-import { SchemaPollerConnectionManager } from './schemaPollerConnectionManager';
 
 type LanguageClient = {
   sendNotification: (method: string, settings?: Neo4jSettings) => Promise<void>;
 };
 
-type DatabaseConnectionManager = {
-  persistentConnect(settings: Neo4jSettings): Promise<ConnnectionResult>;
-  connect: (settings: Neo4jSettings) => Promise<ConnnectionResult>;
-  disconnect: () => void;
+type SchemaPoller = {
+  events: EventEmitter;
+  connect(
+    url: string,
+    credentials: {
+      username: string;
+      password: string;
+    },
+    config: {
+      driverConfig?: Config;
+      appName: string;
+    },
+    database?: string,
+  ): Promise<ConnnectionResult>;
+  persistentConnect(
+    url: string,
+    credentials: {
+      username: string;
+      password: string;
+    },
+    config: {
+      driverConfig?: Config;
+      appName: string;
+    },
+    database?: string,
+  ): Promise<ConnnectionResult>;
+  disconnect(): void;
 };
 
 let _context: ExtensionContext | undefined;
 let _languageClient: LanguageClient | undefined;
-let _databaseConnectionManager: DatabaseConnectionManager | undefined;
+let _schemaPoller: SchemaPoller | undefined;
 
 /**
  * Sets global context/singletons for the extension.
@@ -28,7 +55,7 @@ export function setContext(
 ) {
   _context = context;
   _languageClient = languageClient;
-  _databaseConnectionManager = new SchemaPollerConnectionManager();
+  _schemaPoller = new Neo4jSchemaPoller();
 }
 
 /**
@@ -52,11 +79,12 @@ export function getLanguageClient(): LanguageClient {
 }
 
 /**
- * @returns The global database connection manager.
+ * @returns The global schema poller.
  */
-export function getDatabaseConnectionManager(): DatabaseConnectionManager {
-  if (!_databaseConnectionManager) {
-    throw new Error('Connection manager is undefined');
+export function getSchemaPoller(): SchemaPoller {
+  if (!_schemaPoller) {
+    _schemaPoller = new Neo4jSchemaPoller();
   }
-  return _databaseConnectionManager;
+
+  return _schemaPoller;
 }

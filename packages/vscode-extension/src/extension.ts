@@ -9,7 +9,7 @@ import {
 import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
   reconnectDatabaseConnectionOnExtensionActivation,
-} from './commandHandlers';
+} from './connectionService';
 import { setContext } from './contextService';
 import { registerDisposables } from './registrationService';
 

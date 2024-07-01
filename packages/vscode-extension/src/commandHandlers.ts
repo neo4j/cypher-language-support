@@ -8,18 +8,14 @@ import {
   getConnectionByKey,
   getDatabaseConnectionSettings,
   getPasswordForConnection,
-  saveConnection,
   saveConnectionAndUpdateDatabaseConnection,
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
 import { constants } from './constants';
-import {
-  getDatabaseConnectionManager,
-  getExtensionContext,
-  getLanguageClient,
-} from './contextService';
+import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
+import { displayMessageForConnectionResult } from './uiUtils';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
 /**
@@ -152,131 +148,6 @@ export async function toggleConnectionItemsConnectionState(
   const { result, connection } =
     await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
   displayMessageForConnectionResult(connection, result);
-}
-
-/**
- * Handler for connectionErrored events emitted from the schema poller, attached in the schema poller connection manager.
- * Updates the connection state to error and displays an error message to the user when a connection fails.
- * @param errorMessage The error message to display.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function saveConnectionStateAsErroredAndShowWarningMessage(
-  errorMessage: string,
-): Promise<void> {
-  const connection = getActiveConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  await saveConnection({ ...connection, state: 'error' });
-  void window.showWarningMessage(errorMessage);
-}
-
-/**
- * Handler for connectionReconnected events emitted from the schema poller, attached in the schema poller connection manager.
- * Updates the connection state to connected and displays a message to the user when a connection is reestablished.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promise<void> {
-  const connection = getActiveConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  await saveConnection({ ...connection, state: 'active' });
-  void window.showInformationMessage(constants.MESSAGES.RECONNECTED_MESSAGE);
-}
-
-/**
- * Handler for connectionFailed events emitted from the schema poller, attached in the schema poller connection manager.
- * Updates the connection state to disconnected and displays an error message to the user when a connection permanently fails.
- * This may be if the credentials expire during a session, or the maximum number of retries is exceeded.
- * @param errorMessage The error message to display.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
-  errorMessage: string,
-): Promise<void> {
-  const connection = getActiveConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  const password = await getPasswordForConnection(connection.key);
-
-  await saveConnectionAndUpdateDatabaseConnection(
-    {
-      ...connection,
-      state: 'inactive',
-    },
-    password,
-  );
-  void window.showErrorMessage(errorMessage);
-}
-
-/**
- * Handler for reconnecting database connections for an active Connection when the extension is activated.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function reconnectDatabaseConnectionOnExtensionActivation(): Promise<void> {
-  let connection = getActiveConnection();
-
-  if (!connection) {
-    return;
-  }
-
-  const password = await getPasswordForConnection(connection.key);
-
-  connection = {
-    ...connection,
-    state: 'activating',
-  };
-
-  const result = await saveConnectionAndUpdateDatabaseConnection(
-    connection,
-    password,
-  );
-
-  displayMessageForConnectionResult(connection, result);
-}
-
-/**
- * Handler for disconnecting database connections when the extension is deactivated.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Promise<void> {
-  const databaseConnectionManager = getDatabaseConnectionManager();
-  const languageClient = getLanguageClient();
-
-  databaseConnectionManager.disconnect();
-  await languageClient.sendNotification('connectionDisconnected');
-}
-
-/**
- * Utility function to manage what type of message type to display to the user based on the result of a connection attempt.
- * @param connection The Connection that was tried.
- * @param result The result of the connection attempt.
- */
-function displayMessageForConnectionResult(
-  connection: Connection | null,
-  result: ConnnectionResult,
-): void {
-  if (!connection) {
-    return;
-  }
-
-  if (result.success && connection.state !== 'inactive') {
-    void window.showInformationMessage(constants.MESSAGES.CONNECTED_MESSAGE);
-  } else if (result.success && connection.state === 'inactive') {
-    void window.showInformationMessage(constants.MESSAGES.DISCONNECTED_MESSAGE);
-  } else if (!result.success && !result.retriable) {
-    void window.showErrorMessage(result.error?.message);
-  } else {
-    void window.showWarningMessage(result.error?.message);
-  }
 }
 
 /**

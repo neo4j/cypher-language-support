@@ -3,13 +3,16 @@ import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { constants } from './constants';
 import {
-  getDatabaseConnectionManager,
   getExtensionContext,
+  getLanguageClient,
+  getSchemaPoller,
 } from './contextService';
 import {
   MethodName,
   sendNotificationToLanguageClient,
 } from './languageClientService';
+import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
+import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
 
@@ -237,6 +240,71 @@ export function getDatabaseConnectionSettings(
 }
 
 /**
+ * Handler for reconnecting database connections for an active Connection when the extension is activated.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function reconnectDatabaseConnectionOnExtensionActivation(): Promise<void> {
+  let connection = getActiveConnection();
+
+  if (!connection) {
+    return;
+  }
+
+  const password = await getPasswordForConnection(connection.key);
+
+  connection = {
+    ...connection,
+    state: 'activating',
+  };
+
+  const result = await saveConnectionAndUpdateDatabaseConnection(
+    connection,
+    password,
+  );
+
+  displayMessageForConnectionResult(connection, result);
+}
+
+/**
+ * Handler for disconnecting database connections when the extension is deactivated.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Promise<void> {
+  const languageClient = getLanguageClient();
+
+  disconnectFromSchemaPoller();
+  await languageClient.sendNotification('connectionDisconnected');
+}
+
+/**
+ * Used to establish a persistent connection to a Neo4j database.
+ * If the connection attempt fails, a reconnection event listener is attached which fires once the connection is re-established.
+ * If the connection attempt is successful, an error event listener is attached to handle any future connection errors.
+ * @param connectionSettings The connection settings for the database connection.
+ * @returns A promise that resolves with the result of the connection attempt.
+ */
+export async function establishPersistentConnectionToSchemaPoller(
+  connectionSettings: Neo4jSettings,
+): Promise<ConnnectionResult> {
+  const schemaPoller = getSchemaPoller();
+  const result = await schemaPoller.persistentConnect(
+    connectionSettings.connectURL,
+    {
+      username: connectionSettings.user,
+      password: connectionSettings.password,
+    },
+    { appName: 'vscode-extension' },
+    connectionSettings.database,
+  );
+
+  result.success
+    ? attachSchemaPollerConnectionErrorEventListener()
+    : attachSchemaPollerConnectionFailedEventListeners();
+
+  return result;
+}
+
+/**
  * Attempts to initialize a database connection with the given Connection and password.
  * The initialization phases instantiates an instance of the Neo4j driver and verifies connectivity to the database.
  * @param connection The Connection to initialize the database connection with.
@@ -248,8 +316,20 @@ async function initializeDatabaseConnection(
   password: string,
 ): Promise<ConnnectionResult> {
   const settings = getDatabaseConnectionSettings(connection, password);
-  const databaseConnectionManager = getDatabaseConnectionManager();
-  return await databaseConnectionManager.connect(settings);
+  const schemaPoller = getSchemaPoller();
+  disconnectFromSchemaPoller();
+
+  const result = await schemaPoller.connect(
+    settings.connectURL,
+    {
+      username: settings.user,
+      password: settings.password,
+    },
+    { appName: 'vscode-extension' },
+    settings.database,
+  );
+
+  return result;
 }
 
 /**
@@ -268,13 +348,12 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 ): Promise<ConnnectionResult> {
   const password = await getPasswordForConnection(connection.key);
   const settings = getDatabaseConnectionSettings(connection, password);
-  const databaseConnectionManager = getDatabaseConnectionManager();
   let result: ConnnectionResult = { success: true };
 
   await sendNotificationToLanguageClient(methodName, settings);
 
   if (connection.state !== 'inactive') {
-    result = await databaseConnectionManager.persistentConnect(settings);
+    result = await establishPersistentConnectionToSchemaPoller(settings);
     const state: State = result.success
       ? 'active'
       : result.retriable
@@ -286,7 +365,7 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
       state: state,
     });
   } else {
-    databaseConnectionManager.disconnect();
+    disconnectFromSchemaPoller();
   }
 
   return result;
@@ -333,7 +412,6 @@ async function deletePasswordByKey(key: string): Promise<void> {
  */
 async function disconnectAllDatabaseConnections(): Promise<void> {
   const connections = getConnections();
-  const databaseConnectionManager = getDatabaseConnectionManager();
 
   for (const key in connections) {
     if (connections[key].state !== 'inactive') {
@@ -343,7 +421,7 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
       };
 
       void sendNotificationToLanguageClient('connectionDisconnected');
-      databaseConnectionManager.disconnect();
+      disconnectFromSchemaPoller();
     }
   }
 
@@ -357,4 +435,43 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
 function getConnections(): Connections {
   const context = getExtensionContext();
   return context.globalState.get(CONNECTIONS_KEY, {});
+}
+
+/**
+ * Disconnects the current schema poller connection and removes all event listeners.
+ */
+function disconnectFromSchemaPoller(): void {
+  const schemaPoller = getSchemaPoller();
+  schemaPoller.disconnect();
+  schemaPoller.events.removeAllListeners();
+}
+
+/**
+ * Attaches event listeners to handle reconnection and connection failed events.
+ * These events are only handled once.
+ */
+function attachSchemaPollerConnectionFailedEventListeners(): void {
+  const schemaPoller = getSchemaPoller();
+  schemaPoller.events.once('connectionConnected', () => {
+    schemaPoller.events.removeAllListeners();
+    schemaPollerEventHandlers.handleConnectionReconnected();
+    attachSchemaPollerConnectionErrorEventListener();
+  });
+  schemaPoller.events.once('connectionFailed', (errorMessage: string) => {
+    schemaPoller.events.removeAllListeners();
+    schemaPollerEventHandlers.handleConnectionFailed(errorMessage);
+  });
+}
+
+/**
+ * Attaches an event listener to handle connection errors.
+ * This event is only handled once.
+ */
+function attachSchemaPollerConnectionErrorEventListener(): void {
+  const schemaPoller = getSchemaPoller();
+  schemaPoller.events.once('connectionErrored', (errorMessage: string) => {
+    schemaPoller.events.removeAllListeners();
+    schemaPollerEventHandlers.handleConnectionErrored(errorMessage);
+    attachSchemaPollerConnectionFailedEventListeners();
+  });
 }

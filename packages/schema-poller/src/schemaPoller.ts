@@ -29,7 +29,7 @@ export class Neo4jSchemaPoller {
   private driver?: Driver;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
-  private lastError?: { message: string; code: string };
+  private lastError?: ConnectionError;
 
   async connect(
     url: string,

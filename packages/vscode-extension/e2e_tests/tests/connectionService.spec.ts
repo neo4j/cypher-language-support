@@ -1,33 +1,35 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import * as assert from 'assert';
+import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
+import { window } from 'vscode';
 import * as connection from '../../src/connectionService';
+import { constants } from '../../src/constants';
 import * as contextService from '../../src/contextService';
+import * as schemaPollerEventHandlers from '../../src/schemaPollerEventHandlers';
 import { getMockConnection } from '../helpers';
-import { MockConnectionManager } from '../mocks/mockConnectionManager';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
+import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
 
 suite('Connection service spec', () => {
   let sandbox: sinon.SinonSandbox;
   let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
-  let mockConnectionManager: MockConnectionManager;
+  let mockSchemaPoller: MockSchemaPoller;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     mockContext = new MockExtensionContext();
     mockLanguageClient = new MockLanguageClient();
-    mockConnectionManager = new MockConnectionManager();
+    mockSchemaPoller = new MockSchemaPoller();
 
     sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
     sandbox
       .stub(contextService, 'getLanguageClient')
       .returns(mockLanguageClient);
-    sandbox
-      .stub(contextService, 'getDatabaseConnectionManager')
-      .returns(mockConnectionManager);
+    sandbox.stub(contextService, 'getSchemaPoller').returns(mockSchemaPoller);
 
     const setContextStub = sandbox.stub(contextService, 'setContext');
 
@@ -275,7 +277,7 @@ suite('Connection service spec', () => {
 
     test('Should not store Connection and password in global state and secret storage when initializeDatabaseConnection returns a non success status', async () => {
       sandbox
-        .stub(mockConnectionManager, 'connect')
+        .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: true });
       const updateGlobalStateSpy = sandbox.spy(
         mockContext.globalState,
@@ -359,7 +361,7 @@ suite('Connection service spec', () => {
         'sendNotification',
       );
       sandbox
-        .stub(mockConnectionManager, 'connect')
+        .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: true });
       const mockConnection = getMockConnection(true);
 
@@ -371,8 +373,8 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(sendNotificationSpy);
     });
 
-    test('Should call connectionManager.connect when connection.state is activating', async () => {
-      const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
+    test('Should call schemaPoller.connect when connection.state is activating', async () => {
+      const connectSpy = sandbox.spy(mockSchemaPoller, 'connect');
       const mockConnection = getMockConnection(true);
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -389,11 +391,17 @@ suite('Connection service spec', () => {
         password: 'mock-password',
       };
 
-      sandbox.assert.calledWithExactly(connectSpy, settings);
+      sandbox.assert.calledWithExactly(
+        connectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
-    test('Should call connectionManager.connect when connection.state is inactive', async () => {
-      const connectSpy = sandbox.spy(mockConnectionManager, 'connect');
+    test('Should call schemaPoller.connect when connection.state is inactive', async () => {
+      const connectSpy = sandbox.spy(mockSchemaPoller, 'connect');
       const mockConnection = getMockConnection(false);
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -410,14 +418,17 @@ suite('Connection service spec', () => {
         password: 'mock-password',
       };
 
-      sandbox.assert.calledWithExactly(connectSpy, settings);
+      sandbox.assert.calledWithExactly(
+        connectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
-    test('Should call connectionManager.persistentConnect when connection.state is activating', async () => {
-      const connectSpy = sandbox.spy(
-        mockConnectionManager,
-        'persistentConnect',
-      );
+    test('Should call schemaPoller.persistentConnect when connection.state is activating', async () => {
+      const connectSpy = sandbox.spy(mockSchemaPoller, 'persistentConnect');
       const mockConnection = getMockConnection(true);
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -434,14 +445,17 @@ suite('Connection service spec', () => {
         password: 'mock-password',
       };
 
-      sandbox.assert.calledWithExactly(connectSpy, settings);
+      sandbox.assert.calledWithExactly(
+        connectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
-    test('Should not call connectionManager.persistentConnect when connection.state is inactive', async () => {
-      const connectSpy = sandbox.spy(
-        mockConnectionManager,
-        'persistentConnect',
-      );
+    test('Should not call schemaPoller.persistentConnect when connection.state is inactive', async () => {
+      const connectSpy = sandbox.spy(mockSchemaPoller, 'persistentConnect');
       const mockConnection = getMockConnection(false);
 
       await connection.saveConnectionAndUpdateDatabaseConnection(
@@ -452,12 +466,12 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(connectSpy);
     });
 
-    test('Should not call connectionManager.persistentConnect when initializeDatabaseConnection returns a non success status', async () => {
+    test('Should not call schemaPoller.persistentConnect when initializeDatabaseConnection returns a non success status', async () => {
       sandbox
-        .stub(mockConnectionManager, 'connect')
+        .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: true });
       const persistentConnectSpy = sandbox.spy(
-        mockConnectionManager,
+        mockSchemaPoller,
         'persistentConnect',
       );
       const mockConnection = getMockConnection(true);
@@ -470,12 +484,12 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(persistentConnectSpy);
     });
 
-    test('Should call connectionManager.persistentConnect when forceSave is true for a non successful Connection', async () => {
+    test('Should call schemaPoller.persistentConnect when forceSave is true for a non successful Connection', async () => {
       sandbox
-        .stub(mockConnectionManager, 'connect')
+        .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: true });
       const persistentConnectSpy = sandbox.spy(
-        mockConnectionManager,
+        mockSchemaPoller,
         'persistentConnect',
       );
       const mockConnection = getMockConnection(true);
@@ -494,15 +508,22 @@ suite('Connection service spec', () => {
         user: 'neo4j',
         password: 'mock-password',
       };
-      sandbox.assert.calledWithExactly(persistentConnectSpy, settings);
+
+      sandbox.assert.calledWithExactly(
+        persistentConnectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
-    test('Should not call connectionManager.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is false', async () => {
+    test('Should not call schemaPoller.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is false', async () => {
       sandbox
-        .stub(mockConnectionManager, 'connect')
+        .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: false });
       const persistentConnectSpy = sandbox.spy(
-        mockConnectionManager,
+        mockSchemaPoller,
         'persistentConnect',
       );
       const mockConnection = getMockConnection(true);
@@ -647,7 +668,7 @@ suite('Connection service spec', () => {
 
     test('Should call connect on connection manager when toggling a Connection to active', async () => {
       const persistentConnectSpy = sandbox.spy(
-        mockConnectionManager,
+        mockSchemaPoller,
         'persistentConnect',
       );
       const mockConnection = getMockConnection();
@@ -669,11 +690,17 @@ suite('Connection service spec', () => {
         password: 'mock-password',
       };
 
-      sandbox.assert.calledWithExactly(persistentConnectSpy, settings);
+      sandbox.assert.calledWithExactly(
+        persistentConnectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
     test('Should call disconnect on connection manager when toggling a Connection to inactive', async () => {
-      const disconnectSpy = sandbox.spy(mockConnectionManager, 'disconnect');
+      const disconnectSpy = sandbox.spy(mockSchemaPoller, 'disconnect');
       const mockConnection = getMockConnection(true);
       await connection.saveConnectionAndUpdateDatabaseConnection(
         mockConnection,
@@ -758,6 +785,335 @@ suite('Connection service spec', () => {
       });
 
       assert.strictEqual(result, 'neo4j://undefined:7687');
+    });
+  });
+
+  suite('establishPersistentConnectionToSchemaPoller', () => {
+    let handleConnectionErroredStub: sinon.SinonStub;
+    let handleConnectionReconnectedStub: sinon.SinonStub;
+    let handleConnectionFailedStub: sinon.SinonStub;
+
+    const events = new EventEmitter();
+
+    beforeEach(() => {
+      // required because we're re-configuring the getSchemaPoller stub, which is already wrapped
+      sandbox.restore();
+
+      handleConnectionErroredStub = sandbox.stub(
+        schemaPollerEventHandlers,
+        'handleConnectionErrored',
+      );
+      handleConnectionReconnectedStub = sandbox.stub(
+        schemaPollerEventHandlers,
+        'handleConnectionReconnected',
+      );
+      handleConnectionFailedStub = sandbox.stub(
+        schemaPollerEventHandlers,
+        'handleConnectionFailed',
+      );
+    });
+
+    afterEach(() => {
+      mockSchemaPoller.events.removeAllListeners();
+    });
+
+    suite('Unsuccessful connections', () => {
+      beforeEach(() => {
+        const connectFake = sandbox.fake.resolves({ success: true });
+        const persistentConnectFake = sandbox.fake.resolves({
+          success: false,
+        });
+
+        mockSchemaPoller = {
+          events: events,
+          connect: connectFake,
+          persistentConnect: persistentConnectFake,
+          disconnect: () => void 0,
+        };
+
+        sandbox
+          .stub(contextService, 'getSchemaPoller')
+          .returns(mockSchemaPoller);
+
+        const setContextStub = sandbox.stub(contextService, 'setContext');
+
+        setContextStub(mockContext, mockLanguageClient);
+      });
+
+      test('Unsuccessful connection attempts to the schema poller should cause a connectionConnected listener to be attached', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          1,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          0,
+        );
+      });
+
+      test('An unsuccessful connection should not handle connectionErrored events', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionErrored');
+
+        sandbox.assert.notCalled(handleConnectionErroredStub);
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          1,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          0,
+        );
+      });
+
+      test('Connection connected events should be handled and cause a connectionErrored listener to be attached', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionConnected');
+
+        sandbox.assert.calledOnce(handleConnectionReconnectedStub);
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          0,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          1,
+        );
+      });
+
+      test('Connection connected events should only be handled once', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionConnected');
+        mockSchemaPoller.events.emit('connectionConnected');
+        mockSchemaPoller.events.emit('connectionConnected');
+
+        sandbox.assert.calledOnce(handleConnectionReconnectedStub);
+      });
+    });
+
+    suite('Successful connections', () => {
+      beforeEach(() => {
+        const connectFake = sandbox.fake.resolves({ success: true });
+        const persistentConnectFake = sandbox.fake.resolves({ success: true });
+
+        mockSchemaPoller = {
+          events: events,
+          connect: connectFake,
+          persistentConnect: persistentConnectFake,
+          disconnect: () => void 0,
+        };
+
+        sandbox
+          .stub(contextService, 'getSchemaPoller')
+          .returns(mockSchemaPoller);
+
+        const setContextStub = sandbox.stub(contextService, 'setContext');
+
+        setContextStub(mockContext, mockLanguageClient);
+      });
+
+      test('Successful connection attempts to the schema poller should cause a connectionErrored listener to be attached', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          1,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          0,
+        );
+      });
+
+      test('A successful connection should not handle connectionConnected events', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionConnected');
+
+        sandbox.assert.notCalled(handleConnectionReconnectedStub);
+        assert.equal(events.listenerCount('connectionErrored'), 1);
+        assert.equal(events.listenerCount('connectionConnected'), 0);
+      });
+
+      test('Connection error events should be handled and cause a connectionConnected listener to be attached', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionErrored', 'error message');
+
+        sandbox.assert.calledOnceWithExactly(
+          handleConnectionErroredStub,
+          'error message',
+        );
+
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          0,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          1,
+        );
+      });
+
+      test('Connection error events should only be handled once', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionErrored', 'error message');
+        mockSchemaPoller.events.emit('connectionErrored', 'error message');
+        mockSchemaPoller.events.emit('connectionErrored', 'error message');
+
+        sandbox.assert.calledOnceWithExactly(
+          handleConnectionErroredStub,
+          'error message',
+        );
+      });
+
+      test('A failed connection event should only be handled once and removes all listeners', async () => {
+        await connection.establishPersistentConnectionToSchemaPoller({
+          trace: { server: 'off' },
+        });
+
+        mockSchemaPoller.events.emit('connectionErrored', 'error message');
+        mockSchemaPoller.events.emit('connectionFailed');
+        mockSchemaPoller.events.emit('connectionFailed');
+        mockSchemaPoller.events.emit('connectionFailed');
+
+        sandbox.assert.calledOnce(handleConnectionFailedStub);
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionConnected'),
+          0,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionErrored'),
+          0,
+        );
+        assert.equal(
+          mockSchemaPoller.events.listenerCount('connectionFailed'),
+          0,
+        );
+      });
+    });
+  });
+
+  suite('reconnect/disconnectDatabaseConnectionOnExtensionActivation', () => {
+    test('Should handle no active Connection when reconnectDatabaseConnectionOnExtensionActivation is called', () => {
+      const saveConnectionAndUpdateDatabaseConnectionSpy = sandbox.spy(
+        connection,
+        'saveConnectionAndUpdateDatabaseConnection',
+      );
+      const getPasswordForConnectionSpy = sandbox.spy(
+        connection,
+        'getPasswordForConnection',
+      );
+
+      const promise =
+        connection.reconnectDatabaseConnectionOnExtensionActivation();
+
+      assert.doesNotThrow(async () => await promise);
+      sandbox.assert.notCalled(saveConnectionAndUpdateDatabaseConnectionSpy);
+      sandbox.assert.notCalled(getPasswordForConnectionSpy);
+    });
+
+    test('Should activate a previously active Connection when reconnectDatabaseConnectionOnExtensionActivation is called', async () => {
+      const mockConnection = getMockConnection(true);
+      await connection.saveConnectionAndUpdateDatabaseConnection(
+        mockConnection,
+        'mock-password',
+      );
+      const connectSpy = sandbox.spy(mockSchemaPoller, 'connect');
+      const persistentConnectSpy = sandbox.spy(
+        mockSchemaPoller,
+        'persistentConnect',
+      );
+      const sendNotificationSpy = sandbox.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
+      const showInformationMessageStub: sinon.SinonStub = sandbox.stub(
+        window,
+        'showInformationMessage',
+      );
+
+      await connection.reconnectDatabaseConnectionOnExtensionActivation();
+
+      const settings: Neo4jSettings = {
+        trace: { server: 'off' },
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      };
+      sandbox.assert.calledWithExactly(
+        connectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
+      sandbox.assert.calledWithExactly(
+        persistentConnectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
+      sandbox.assert.calledOnceWithExactly(
+        showInformationMessageStub,
+        constants.MESSAGES.CONNECTED_MESSAGE,
+      );
+      sandbox.assert.calledWithExactly(
+        sendNotificationSpy,
+        'connectionUpdated',
+        {
+          trace: { server: 'off' },
+          connect: true,
+          connectURL: 'neo4j://localhost:7687',
+          database: 'neo4j',
+          user: 'neo4j',
+          password: 'mock-password',
+        },
+      );
+    });
+
+    test('Should deactivate a currently active Connection when disconnectDatabaseConnectionOnExtensionDeactivation is called', async () => {
+      const mockConnection = getMockConnection(true);
+      await connection.saveConnectionAndUpdateDatabaseConnection(
+        mockConnection,
+        'mock-password',
+      );
+      const sendNotificationSpy = sandbox.spy(
+        mockLanguageClient,
+        'sendNotification',
+      );
+
+      await connection.disconnectDatabaseConnectionOnExtensionDeactivation();
+
+      sandbox.assert.calledOnceWithExactly(
+        sendNotificationSpy,
+        'connectionDisconnected',
+      );
     });
   });
 });
