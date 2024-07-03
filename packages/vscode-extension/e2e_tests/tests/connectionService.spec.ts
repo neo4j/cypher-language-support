@@ -214,14 +214,11 @@ suite('Connection service spec', () => {
         mockConnection.key,
       );
 
-      sandbox.assert.calledWith(sendNotificationSpy, 'connectionDisconnected', {
-        trace: { server: 'off' },
-        connect: false,
-        connectURL: 'neo4j://localhost:7687',
-        database: 'neo4j',
-        user: 'neo4j',
-        password: null,
-      });
+      sandbox.assert.calledWithExactly(
+        sendNotificationSpy,
+        'connectionDisconnected',
+        undefined,
+      );
     });
   });
 
@@ -317,15 +314,8 @@ suite('Connection service spec', () => {
 
       sandbox.assert.calledOnceWithExactly(
         sendNotificationSpy,
-        'connectionUpdated',
-        {
-          trace: { server: 'off' },
-          connect: false,
-          connectURL: 'neo4j://localhost:7687',
-          database: 'neo4j',
-          user: 'neo4j',
-          password: 'mock-password',
-        },
+        'connectionDisconnected',
+        undefined,
       );
     });
 
@@ -663,7 +653,11 @@ suite('Connection service spec', () => {
         mockConnection,
       );
 
-      sandbox.assert.calledWith(sendNotificationSpy, 'connectionDisconnected');
+      sandbox.assert.calledWithExactly(
+        sendNotificationSpy,
+        'connectionDisconnected',
+        undefined,
+      );
     });
 
     test('Should call connect on connection manager when toggling a Connection to active', async () => {
@@ -1110,9 +1104,10 @@ suite('Connection service spec', () => {
 
       await connection.disconnectDatabaseConnectionOnExtensionDeactivation();
 
-      sandbox.assert.calledOnceWithExactly(
+      sandbox.assert.calledWithExactly(
         sendNotificationSpy,
         'connectionDisconnected',
+        undefined,
       );
     });
   });

@@ -2,15 +2,8 @@ import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
-import {
-  getExtensionContext,
-  getLanguageClient,
-  getSchemaPoller,
-} from './contextService';
-import {
-  MethodName,
-  sendNotificationToLanguageClient,
-} from './languageClientService';
+import { getExtensionContext, getSchemaPoller } from './contextService';
+import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { displayMessageForConnectionResult } from './uiUtils';
 
@@ -58,13 +51,7 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
   delete connections[key];
   await saveConnections(connections);
   await deletePasswordByKey(key);
-  await updateDatabaseConnectionAndNotifyLanguageClient(
-    'connectionDisconnected',
-    {
-      ...connection,
-      state: 'inactive',
-    },
-  );
+  await disconnectFromDatabaseAndNotifyLanguageClient();
 }
 
 /**
@@ -94,10 +81,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
   if (result.success || (forceSave && result.retriable)) {
     await saveConnection(connection);
     await savePasswordByKey(connection.key, password);
-    return await updateDatabaseConnectionAndNotifyLanguageClient(
-      'connectionUpdated',
-      connection,
-    );
+    return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
   }
 
   return result;
@@ -124,14 +108,9 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
   await disconnectAllDatabaseConnections();
   await saveConnection(connection);
 
-  let result = { success: true };
-
-  if (connection.state !== 'inactive') {
-    result = await updateDatabaseConnectionAndNotifyLanguageClient(
-      'connectionUpdated',
-      connection,
-    );
-  }
+  const result = await updateDatabaseConnectionAndNotifyLanguageClient(
+    connection,
+  );
 
   return { result, connection };
 }
@@ -244,18 +223,13 @@ export function getDatabaseConnectionSettings(
  * @returns A promise that resolves when the handler has completed.
  */
 export async function reconnectDatabaseConnectionOnExtensionActivation(): Promise<void> {
-  let connection = getActiveConnection();
+  const connection = getActiveConnection();
 
   if (!connection) {
     return;
   }
 
   const password = await getPasswordForConnection(connection.key);
-
-  connection = {
-    ...connection,
-    state: 'activating',
-  };
 
   const result = await saveConnectionAndUpdateDatabaseConnection(
     connection,
@@ -270,10 +244,7 @@ export async function reconnectDatabaseConnectionOnExtensionActivation(): Promis
  * @returns A promise that resolves when the handler has completed.
  */
 export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Promise<void> {
-  const languageClient = getLanguageClient();
-
-  disconnectFromSchemaPoller();
-  await languageClient.sendNotification('connectionDisconnected');
+  await disconnectFromDatabaseAndNotifyLanguageClient();
 }
 
 /**
@@ -333,42 +304,58 @@ async function initializeDatabaseConnection(
 }
 
 /**
- * Dispatches a notification to the language client with the given method name and settings to either connect or disconnect from the database.
- * If the Connection's connect flag is set, an attempt to establish a persistent connection to the database will be made.
- * If the connection is successful, the Connection's state will be set to 'connected'.
- * If the connection is not successful, the Connection's state will either be set to 'error' if the error is retriable, or disconnected if not.
- * If the Connection's connect flag is not set, the database connection will be dropped.
- * @param methodName The method name of the notification to send to the language client, either 'connectionUpdated' or 'connectionDisconnected'.
+ * Updates the database connection for a Connection.
+ * If the Connection's state is 'inactive', the database connection will be dropped.
+ * If the Connection's state is not 'inactive', a connection attempt will be made.
  * @param connection The Connection to update the database connection for.
  * @returns A promise that resolves with the Connection result.
  */
 async function updateDatabaseConnectionAndNotifyLanguageClient(
-  methodName: MethodName,
+  connection: Connection,
+): Promise<ConnnectionResult> {
+  return connection.state !== 'inactive'
+    ? await connectToDatabaseAndNotifyLanguageClient(connection)
+    : await disconnectFromDatabaseAndNotifyLanguageClient();
+}
+
+/**
+ * Attempts to establish a connection to the database and notifies the language client that the connection has been updated.
+ * If the connection is successful, the Connection's state will be set to 'connected'.
+ * If the connection is not successful, the Connection's state will either be set to 'error' if the error is retriable, or disconnected if not.
+ * @param connection The Connection to use to get database connection settings.
+ * @returns A promise that resolves with the Connection result.
+ */
+async function connectToDatabaseAndNotifyLanguageClient(
   connection: Connection,
 ): Promise<ConnnectionResult> {
   const password = await getPasswordForConnection(connection.key);
   const settings = getDatabaseConnectionSettings(connection, password);
-  let result: ConnnectionResult = { success: true };
 
-  await sendNotificationToLanguageClient(methodName, settings);
+  await sendNotificationToLanguageClient('connectionUpdated', settings);
 
-  if (connection.state !== 'inactive') {
-    result = await establishPersistentConnectionToSchemaPoller(settings);
-    const state: State = result.success
-      ? 'active'
-      : result.retriable
-      ? 'error'
-      : 'inactive';
+  const result = await establishPersistentConnectionToSchemaPoller(settings);
+  const state: State = result.success
+    ? 'active'
+    : result.retriable
+    ? 'error'
+    : 'inactive';
 
-    await saveConnection({
-      ...connection,
-      state: state,
-    });
-  } else {
-    disconnectFromSchemaPoller();
-  }
+  await saveConnection({
+    ...connection,
+    state: state,
+  });
 
   return result;
+}
+
+/**
+ * Disonnects from the database and notifies the language client that the connection has been dropped.
+ * @returns A promise that resolves with the Connection result.
+ */
+async function disconnectFromDatabaseAndNotifyLanguageClient(): Promise<ConnnectionResult> {
+  await sendNotificationToLanguageClient('connectionDisconnected');
+  disconnectFromSchemaPoller();
+  return { success: true };
 }
 
 /**
