@@ -1,5 +1,8 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import {
+  ConnectionError,
+  ConnnectionResult,
+} from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
@@ -441,12 +444,12 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.events.once('connectionConnected', () => {
     schemaPoller.events.removeAllListeners();
-    schemaPollerEventHandlers.handleConnectionReconnected();
+    void schemaPollerEventHandlers.handleConnectionReconnected();
     attachSchemaPollerConnectionErrorEventListener();
   });
-  schemaPoller.events.once('connectionFailed', (errorMessage: string) => {
+  schemaPoller.events.once('connectionFailed', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
-    schemaPollerEventHandlers.handleConnectionFailed(errorMessage);
+    void schemaPollerEventHandlers.handleConnectionFailed(error);
   });
 }
 
@@ -456,9 +459,9 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
  */
 function attachSchemaPollerConnectionErrorEventListener(): void {
   const schemaPoller = getSchemaPoller();
-  schemaPoller.events.once('connectionErrored', (errorMessage: string) => {
+  schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
-    schemaPollerEventHandlers.handleConnectionErrored(errorMessage);
+    void schemaPollerEventHandlers.handleConnectionErrored(error);
     attachSchemaPollerConnectionFailedEventListeners();
   });
 }

@@ -3,39 +3,27 @@ import * as sinon from 'sinon';
 import { commands, WebviewPanel, window } from 'vscode';
 import * as connectionService from '../../src/connectionService';
 import { CONSTANTS } from '../../src/constants';
-import * as contextService from '../../src/contextService';
 import {
   ConnectionPanel,
   ConnectionPanelMessage,
 } from '../../src/webviews/connectionPanel';
 import { getMockConnection } from '../helpers';
-import { MockExtensionContext } from '../mocks/mockExtensionContext';
-import { MockLanguageClient } from '../mocks/mockLanguageClient';
+import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
 
 suite('Connection panel spec', () => {
   let sandbox: sinon.SinonSandbox;
-  let mockContext: MockExtensionContext;
-  let mockLanguageClient: MockLanguageClient;
   let saveConnectionStub: sinon.SinonStub;
   let executeCommandStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    mockContext = new MockExtensionContext();
-    mockLanguageClient = new MockLanguageClient();
+
+    setupMockContextStubs(sandbox);
 
     saveConnectionStub = sandbox.stub(connectionService, 'saveConnection');
     executeCommandStub = sandbox.stub(commands, 'executeCommand');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
-    sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
-    sandbox
-      .stub(contextService, 'getLanguageClient')
-      .returns(mockLanguageClient);
-
-    const setContextStub = sandbox.stub(contextService, 'setContext');
-
-    setContextStub(mockContext, mockLanguageClient);
   });
 
   afterEach(() => {

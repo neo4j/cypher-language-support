@@ -3,37 +3,23 @@ import * as sinon from 'sinon';
 import { ConfigurationChangeEvent } from 'vscode';
 import { handleNeo4jConfigurationChangedEvent } from '../../src/commandHandlers';
 import * as connection from '../../src/connectionService';
-import * as contextService from '../../src/contextService';
 import { getMockConnection } from '../helpers';
-import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
+import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
 
 suite('Command handlers spec', () => {
   let sandbox: sinon.SinonSandbox;
 
-  let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
-  let mockSchemaPoller: MockSchemaPoller;
 
   let getActiveConnectionStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    mockContext = new MockExtensionContext();
-    mockLanguageClient = new MockLanguageClient();
-    mockSchemaPoller = new MockSchemaPoller();
+    const stubs = setupMockContextStubs(sandbox);
 
-    sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
-    sandbox
-      .stub(contextService, 'getLanguageClient')
-      .returns(mockLanguageClient);
-    sandbox.stub(contextService, 'getSchemaPoller').returns(mockSchemaPoller);
-
-    const setContextStub = sandbox.stub(contextService, 'setContext');
-
-    setContextStub(mockContext, mockLanguageClient);
+    mockLanguageClient = stubs.mockLanguageClient;
   });
 
   afterEach(() => {

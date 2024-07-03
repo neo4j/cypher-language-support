@@ -1,3 +1,4 @@
+import { ConnectionError } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import {
   getActiveConnection,
@@ -7,16 +8,20 @@ import {
 } from './connectionService';
 import { CONSTANTS } from './constants';
 
-export function handleConnectionErrored(errorMessage: string): void {
-  void saveConnectionStateAsErroredAndShowWarningMessage(errorMessage);
+export async function handleConnectionErrored(
+  error: ConnectionError,
+): Promise<void> {
+  await saveConnectionStateAsErroredAndShowWarningMessage(error);
 }
 
-export function handleConnectionReconnected(): void {
-  void saveConnectionStateAsConnectedAndShowInfoMessage();
+export async function handleConnectionReconnected(): Promise<void> {
+  await saveConnectionStateAsConnectedAndShowInfoMessage();
 }
 
-export function handleConnectionFailed(errorMessage: string): void {
-  void saveConnectionStateAsDisconnectedAndShowErrorMessage(errorMessage);
+export async function handleConnectionFailed(
+  error: ConnectionError,
+): Promise<void> {
+  await saveConnectionStateAsDisconnectedAndShowErrorMessage(error);
 }
 
 /**
@@ -26,7 +31,7 @@ export function handleConnectionFailed(errorMessage: string): void {
  * @returns A promise that resolves when the handler has completed.
  */
 async function saveConnectionStateAsErroredAndShowWarningMessage(
-  errorMessage: string,
+  error: ConnectionError,
 ): Promise<void> {
   const connection = getActiveConnection();
 
@@ -35,7 +40,7 @@ async function saveConnectionStateAsErroredAndShowWarningMessage(
   }
 
   await saveConnection({ ...connection, state: 'error' });
-  void window.showWarningMessage(errorMessage);
+  void window.showWarningMessage(`${error.message}. ${error.friendlyMessage}.`);
 }
 
 /**
@@ -58,11 +63,11 @@ async function saveConnectionStateAsConnectedAndShowInfoMessage(): Promise<void>
  * Handler for connectionFailed events emitted from the schema poller, attached in the schema poller connection manager.
  * Updates the connection state to disconnected and displays an error message to the user when a connection permanently fails.
  * This may be if the credentials expire during a session, or the maximum number of retries is exceeded.
- * @param errorMessage The error message to display.
+ * @param error The error message to display.
  * @returns A promise that resolves when the handler has completed.
  */
 async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
-  errorMessage: string,
+  error: ConnectionError,
 ): Promise<void> {
   const connection = getActiveConnection();
 
@@ -79,5 +84,5 @@ async function saveConnectionStateAsDisconnectedAndShowErrorMessage(
     },
     password,
   );
-  void window.showErrorMessage(errorMessage);
+  void window.showErrorMessage(`${error.message}. ${error.friendlyMessage}.`);
 }

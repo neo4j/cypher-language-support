@@ -12,6 +12,7 @@ import { getMockConnection } from '../helpers';
 import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
 import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
+import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
 
 suite('Connection service spec', () => {
   let sandbox: sinon.SinonSandbox;
@@ -21,19 +22,12 @@ suite('Connection service spec', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    mockContext = new MockExtensionContext();
-    mockLanguageClient = new MockLanguageClient();
-    mockSchemaPoller = new MockSchemaPoller();
 
-    sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
-    sandbox
-      .stub(contextService, 'getLanguageClient')
-      .returns(mockLanguageClient);
-    sandbox.stub(contextService, 'getSchemaPoller').returns(mockSchemaPoller);
+    const stubs = setupMockContextStubs(sandbox);
 
-    const setContextStub = sandbox.stub(contextService, 'setContext');
-
-    setContextStub(mockContext, mockLanguageClient);
+    mockContext = stubs.mockContext;
+    mockLanguageClient = stubs.mockLanguageClient;
+    mockSchemaPoller = stubs.mockSchemaPoller;
   });
 
   afterEach(() => {

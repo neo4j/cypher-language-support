@@ -10,6 +10,7 @@ import {
   handleConnectionReconnected,
 } from '../../src/schemaPollerEventHandlers';
 import { getMockConnection } from '../helpers';
+import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
 
 suite('Schema poller event handlers spec', () => {
   let sandbox: sinon.SinonSandbox;
@@ -21,6 +22,8 @@ suite('Schema poller event handlers spec', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
+
+    setupMockContextStubs(sandbox);
 
     executeCommandStub = sandbox.stub(commands, 'executeCommand');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
@@ -39,7 +42,7 @@ suite('Schema poller event handlers spec', () => {
       state: 'error',
     });
 
-    handleConnectionReconnected();
+    await handleConnectionReconnected();
     const updatedConnection = connection.getConnectionByKey(mockConnection.key);
 
     assert.strictEqual(updatedConnection.state, 'active');
@@ -57,13 +60,17 @@ suite('Schema poller event handlers spec', () => {
     const mockConnection = getMockConnection(true);
     await connection.saveConnection(mockConnection);
 
-    handleConnectionErrored('error message');
+    await handleConnectionErrored({
+      message: 'error message',
+      friendlyMessage: 'friendly error message',
+      code: '',
+    });
     const updatedConnection = connection.getConnectionByKey(mockConnection.key);
 
     assert.strictEqual(updatedConnection.state, 'error');
     sandbox.assert.calledOnceWithExactly(
       showWarningMessageStub,
-      'error message',
+      'error message. friendly error message.',
     );
     sandbox.assert.calledWithExactly(
       executeCommandStub,
@@ -75,11 +82,18 @@ suite('Schema poller event handlers spec', () => {
     const mockConnection = getMockConnection(true);
     await connection.saveConnection(mockConnection);
 
-    handleConnectionFailed('error message');
+    await handleConnectionFailed({
+      message: 'error message',
+      friendlyMessage: 'friendly error message',
+      code: '',
+    });
     const updatedConnection = connection.getConnectionByKey(mockConnection.key);
 
     assert.strictEqual(updatedConnection.state, 'inactive');
-    sandbox.assert.calledOnceWithExactly(showErrorMessageStub, 'error message');
+    sandbox.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      'error message. friendly error message.',
+    );
     sandbox.assert.calledWithExactly(
       executeCommandStub,
       CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
