@@ -1103,8 +1103,8 @@ describe('Syntactic validation spec', () => {
           "Function test.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         range: {
           end: {
-            character: 21,
-            line: 0,
+            character: 13,
+            line: 1,
           },
           start: {
             character: 7,
@@ -1182,6 +1182,111 @@ describe('Syntactic validation spec', () => {
           start: {
             character: 11,
             line: 1,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation does not warn on existing function with spaces when database can be contacted', () => {
+    const query = `RETURN apoc.   text.  decapitalize   ("Marvin")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+    const query = `RETURN apoc.   text.  dontpanic   ("Marvin")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 31,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation does not warn on existing function with new lines when database can be contacted', () => {
+    const query = `RETURN apoc. 
+     text. 
+    decapitalize  
+    ("Marvin")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+    const query = `RETURN apoc.   text. 
+     dontpanic  
+     ("Marvin")`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 36,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 14,
+            line: 1,
+          },
+          start: {
+            character: 7,
+            line: 0,
           },
         },
         severity: 2,

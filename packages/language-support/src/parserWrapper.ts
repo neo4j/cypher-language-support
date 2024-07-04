@@ -102,6 +102,7 @@ export type LabelOrRelType = {
 
 export type ParsedFunction = {
   name: string;
+  rawText: string;
   line: number;
   column: number;
   offsets: {
@@ -152,7 +153,7 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const functionFinder = new FunctionCollector();
+      const functionFinder = new FunctionCollector(tokens);
       const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [
         labelsCollector,
@@ -293,7 +294,13 @@ class VariableCollector implements ParseTreeListener {
 
 // This listener collects all functions
 class FunctionCollector extends ParseTreeListener {
-  functions: ParsedFunction[] = [];
+  public functions: ParsedFunction[] = [];
+  private tokens: Token[];
+
+  constructor(tokens: Token[]) {
+    super();
+    this.tokens = tokens;
+  }
 
   enterEveryRule() {
     /* no-op */
@@ -308,8 +315,20 @@ class FunctionCollector extends ParseTreeListener {
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof FunctionNameContext) {
       const functionName = getFunctionName(ctx);
+
+      const startTokenIndex = ctx.start.tokenIndex;
+      const stopTokenIndex = ctx.stop.tokenIndex;
+
+      const rawText = this.tokens
+        .slice(startTokenIndex, stopTokenIndex + 1)
+        .map((token) => {
+          return token.text;
+        })
+        .join('');
+
       this.functions.push({
         name: functionName,
+        rawText: rawText,
         line: ctx.start.line,
         column: ctx.start.column,
         offsets: {

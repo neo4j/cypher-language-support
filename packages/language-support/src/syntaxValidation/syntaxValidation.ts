@@ -86,14 +86,14 @@ function detectNonDeclaredFunction(
 function generateFunctionNotFoundWarning(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
-  const functionName = parsedFunction.name;
-  const nameChunks = functionName.split('\n');
+  const rawText = parsedFunction.rawText;
+  const nameChunks = rawText.split('\n');
   const linesOffset = nameChunks.length - 1;
   const lineIndex = parsedFunction.line - 1;
   const startColumn = parsedFunction.column;
   const endColumn =
     linesOffset == 0
-      ? startColumn + functionName.length
+      ? startColumn + rawText.length
       : nameChunks.at(-1)?.length ?? 0;
 
   const warning: SyntaxDiagnostic = {
