@@ -1,35 +1,25 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import * as vscode from 'vscode';
-import { configurationChangedHandler } from '../../src/commandHandlers';
-import * as connectionService from '../../src/connectionService';
-import * as contextService from '../../src/contextService';
+import { ConfigurationChangeEvent } from 'vscode';
+import { handleNeo4jConfigurationChangedEvent } from '../../src/commandHandlers';
+import * as connection from '../../src/connectionService';
 import { getMockConnection } from '../helpers';
-import { MockExtensionContext } from '../mocks/mockExtensionContext';
 import { MockLanguageClient } from '../mocks/mockLanguageClient';
+import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
 
-suite('Command handlers', () => {
+suite('Command handlers spec', () => {
   let sandbox: sinon.SinonSandbox;
 
-  let mockContext: MockExtensionContext;
   let mockLanguageClient: MockLanguageClient;
 
-  let getCurrentConnectionStub: sinon.SinonStub;
+  let getActiveConnectionStub: sinon.SinonStub;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    mockContext = new MockExtensionContext();
-    mockLanguageClient = new MockLanguageClient();
+    const stubs = setupMockContextStubs(sandbox);
 
-    sandbox.stub(contextService, 'getExtensionContext').returns(mockContext);
-    sandbox
-      .stub(contextService, 'getLanguageClient')
-      .returns(mockLanguageClient);
-
-    const setContextStub = sandbox.stub(contextService, 'setContext');
-
-    setContextStub(mockContext, mockLanguageClient);
+    mockLanguageClient = stubs.mockLanguageClient;
   });
 
   afterEach(() => {
@@ -42,13 +32,13 @@ suite('Command handlers', () => {
       'sendNotification',
     );
 
-    getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+    getActiveConnectionStub = sandbox
+      .stub(connection, 'getActiveConnection')
       .returns(getMockConnection(true));
 
-    await configurationChangedHandler({
+    await handleNeo4jConfigurationChangedEvent({
       affectsConfiguration: () => true,
-    } as vscode.ConfigurationChangeEvent);
+    } as ConfigurationChangeEvent);
 
     sandbox.assert.calledOnceWithExactly(
       sendNotificationSpy,
@@ -70,31 +60,31 @@ suite('Command handlers', () => {
       'sendNotification',
     );
 
-    getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+    getActiveConnectionStub = sandbox
+      .stub(connection, 'getActiveConnection')
       .returns(null);
 
-    await configurationChangedHandler({
+    await handleNeo4jConfigurationChangedEvent({
       affectsConfiguration: () => false,
-    } as vscode.ConfigurationChangeEvent);
+    } as ConfigurationChangeEvent);
 
     sandbox.assert.notCalled(sendNotificationSpy);
-    sandbox.assert.notCalled(getCurrentConnectionStub);
+    sandbox.assert.notCalled(getActiveConnectionStub);
   });
 
-  test('Should not notify language server on configuration change event if there is no current connection', async () => {
+  test('Should not notify language server on configuration change event if there is no active Connection', async () => {
     const sendNotificationSpy = sandbox.spy(
       mockLanguageClient,
       'sendNotification',
     );
 
-    getCurrentConnectionStub = sandbox
-      .stub(connectionService, 'getCurrentConnection')
+    getActiveConnectionStub = sandbox
+      .stub(connection, 'getActiveConnection')
       .returns(null);
 
-    await configurationChangedHandler({
+    await handleNeo4jConfigurationChangedEvent({
       affectsConfiguration: () => true,
-    } as vscode.ConfigurationChangeEvent);
+    } as ConfigurationChangeEvent);
 
     sandbox.assert.notCalled(sendNotificationSpy);
   });

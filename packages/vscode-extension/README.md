@@ -2,7 +2,7 @@
 
 ## Getting started
 
-After installing the extension from the VS Code Marketplace, open a file with a `.cypher` to start using the extension. To enable database aware features (such as completing labels/functions), set up a connection to a Neo4j instance using the settings described in the settings section below.
+After installing the extension from the VS Code Marketplace, open a file with a `.cypher` to start using the extension. To enable database aware features (such as completing labels/functions), set up a connection to a Neo4j instance using the database connection pane and any settings described in the settings section below.
 
 ## Feature Highlights
 
@@ -62,6 +62,19 @@ const c = `/*cypher*/
 const d = '/*cypher*/ MATCH (n) RETURN n';
 ```
 
+## Managing connections
+
+You can launch the connection pane from the Neo4j icon in the Activity Bar, or by using the `Neo4j: Manage Connection` command from the Command Palette.
+
+![demo-manage-connection](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-manage-connection.png?raw=true)
+
+From here you can manage, connect to, or disconnect from your database connections.
+
+![demo-connect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-connect.png?raw=true)
+![demo-disconnect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-disconnect.png?raw=true)
+
+Once a connection is added, and a connection to your Neo4j instance is established, you will be able to use database aware features of the extension.
+
 ## Upcoming features
 
 We're working on adding more features to the extension, such as:
@@ -74,11 +87,6 @@ We're working on adding more features to the extension, such as:
 ## Extension settings
 
 The following settings are available in VS Code once the plugin is installed, which can be set either through the `Settings` menu on VS Code or by editing your `.vscode/settings.json` file.
-
-- `neo4j.connect`: If true it will attempt to connect to a Neo4j database to retrieve data used for completions. Defaults to `true`
-- `neo4j.connectURL`: Defaults to `"neo4j://localhost:7687"`, the default url for connecting a local Neo4j instance over websocket via the `bolt` protocol
-- `neo4j.user`: Defaults to `"neo4j"`, the default user for a local Neo4j instance
-- `neo4j.password`: Replace this with the password for the user above
 
 ### Debug
 

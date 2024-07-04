@@ -5,9 +5,7 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import { getAllConnections } from './connectionService';
-
-type ConnectionItemType = 'connection' | 'activeConnection';
+import { getAllConnections, State } from './connectionService';
 
 export class ConnectionTreeDataProvider
   implements TreeDataProvider<ConnectionItem>
@@ -41,7 +39,7 @@ export class ConnectionTreeDataProvider
         connectionItems.push(
           new ConnectionItem(
             connection.key,
-            connection.connect ? 'activeConnection' : 'connection',
+            connection.state,
             connection.name,
             TreeItemCollapsibleState.None,
           ),
@@ -52,17 +50,37 @@ export class ConnectionTreeDataProvider
   }
 }
 
+/**
+ * Extends the TreeItem class to represent a connection in the tree view.
+ * @param key The unique key of the connection, used to set the id.
+ * @param state The state of the connection, used to set the description.
+ * @param label The label of the connection, used to set the label and tooltip.
+ * @param collapsibleState The collapsible state of the connection.
+ */
 export class ConnectionItem extends TreeItem {
   constructor(
     public readonly key: string,
-    public readonly type: ConnectionItemType,
+    public readonly state: State,
     public readonly label: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
   ) {
     super(label, collapsibleState);
     this.id = key;
     this.tooltip = this.label;
-    this.description = this.type === 'activeConnection' ? 'connected' : '';
-    this.contextValue = this.type;
+    switch (state) {
+      case 'active':
+        this.description = 'connected';
+        break;
+      case 'activating':
+      case 'error':
+        this.description = 'connecting...';
+        break;
+      default:
+        this.description = '';
+        break;
+    }
+
+    this.contextValue =
+      this.state === 'inactive' ? 'connection' : 'activeConnection';
   }
 }

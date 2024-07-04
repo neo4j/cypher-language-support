@@ -1,24 +1,26 @@
 import neo4j from 'neo4j-driver';
 import * as vscode from 'vscode';
-import { constants } from '../src/constants';
+import { CONSTANTS } from '../src/constants';
 import { getNeo4jConfiguration } from './helpers';
 
 export const testDatabaseKey = 'default-test-connection';
 
-export async function createConnection(): Promise<void> {
+export const defaultConnectionKey = 'default-connection-key';
+
+export async function saveDefaultConnection(): Promise<void> {
   const { scheme, host, port, user, database, password } =
     getNeo4jConfiguration();
   await vscode.commands.executeCommand(
-    constants.COMMANDS.SAVE_CONNECTION_COMMAND,
+    CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
     {
-      name: testDatabaseKey,
-      key: testDatabaseKey,
+      name: defaultConnectionKey,
+      key: defaultConnectionKey,
       scheme: scheme,
       host: host,
       port: port,
       user: user,
       database: database,
-      connect: true,
+      state: 'active',
     },
     password,
   );
