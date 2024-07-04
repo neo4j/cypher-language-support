@@ -1134,4 +1134,58 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([]);
   });
+
+  test('Syntax validation is case insensitive on built-in functions', () => {
+    const query = `
+    RETURN aBS(123)
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation is not case insensitive on user defined functions', () => {
+    const query = `
+    RETURN apoc.text.capiTALize("marvin")
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.text.capiTALize is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 32,
+          start: 12,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 1,
+          },
+          start: {
+            character: 11,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
 });

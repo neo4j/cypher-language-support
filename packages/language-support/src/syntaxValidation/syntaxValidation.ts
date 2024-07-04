@@ -9,6 +9,7 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
+import { Neo4jFunction } from '../types';
 import {
   SemanticAnalysisElement,
   wrappedSemanticAnalysis,
@@ -60,33 +61,52 @@ function detectNonDeclaredLabel(
 
 function detectNonDeclaredFunction(
   parsedFunction: ParsedFunction,
-  dbFunctions: Set<string>,
+  functionsSchema: Record<string, Neo4jFunction>,
 ): SyntaxDiagnostic | undefined {
-  const normalizedFunctionName = parsedFunction.name;
+  const lowercaseFunctionName = parsedFunction.name.toLowerCase();
+  const caseInsensitiveFunctionInDatabase =
+    functionsSchema[lowercaseFunctionName];
 
-  if (!dbFunctions.has(normalizedFunctionName)) {
-    const functionName = parsedFunction.name;
-    const nameChunks = functionName.split('\n');
-    const linesOffset = nameChunks.length - 1;
-    const lineIndex = parsedFunction.line - 1;
-    const startColumn = parsedFunction.column;
-    const endColumn =
-      linesOffset == 0
-        ? startColumn + functionName.length
-        : nameChunks.at(-1)?.length ?? 0;
-
-    const warning: SyntaxDiagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, startColumn),
-        end: Position.create(lineIndex + linesOffset, endColumn),
-      },
-      offsets: parsedFunction.offsets,
-      message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-    };
-
-    return warning;
+  // Built-in functions are case-insensitive in the database
+  if (
+    caseInsensitiveFunctionInDatabase &&
+    caseInsensitiveFunctionInDatabase.isBuiltIn
+  ) {
+    return undefined;
   }
+
+  const functionExistsWithExactName = Boolean(
+    functionsSchema[parsedFunction.name],
+  );
+  if (!functionExistsWithExactName) {
+    return generateFunctionNotFoundWarning(parsedFunction);
+  }
+}
+
+function generateFunctionNotFoundWarning(
+  parsedFunction: ParsedFunction,
+): SyntaxDiagnostic {
+  const functionName = parsedFunction.name;
+  const nameChunks = functionName.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedFunction.line - 1;
+  const startColumn = parsedFunction.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + functionName.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const warning: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Warning,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedFunction.offsets,
+    message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  };
+
+  return warning;
 }
 
 function warnOnUndeclaredLabels(
@@ -278,16 +298,12 @@ function warnOnUndeclaredFunctions(
   const warnings: SyntaxDiagnostic[] = [];
 
   if (dbSchema.functions) {
-    const dbFunctionNames = new Set(
-      Object.values(dbSchema.functions).map((f) => f.name),
-    );
-
     const functionsInQuery = parsingResult.collectedFunctions;
 
     functionsInQuery.forEach((parsedFunction) => {
       const warning = detectNonDeclaredFunction(
         parsedFunction,
-        dbFunctionNames,
+        dbSchema.functions,
       );
 
       if (warning) warnings.push(warning);
