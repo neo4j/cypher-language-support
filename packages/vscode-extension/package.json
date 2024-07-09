@@ -60,6 +60,17 @@
       {
         "command": "neo4j.saveConnection",
         "title": "Create Connection..."
+      },
+      {
+        "command": "neo4j.runCypher",
+        "title": "Neo4j: Run Cypher Statement"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "neo4j.runCypher",
+        "key": "ctrl+alt+space",
+        "mac": "ctrl+cmd+space"
       }
     ],
     "viewsWelcome": [
@@ -264,6 +275,7 @@
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
+    "@neo4j-cypher/language-support": "2.0.0-next.6",
     "@neo4j-cypher/language-server": "2.0.0-next.7",
     "vscode-languageclient": "^8.1.0",
     "neo4j-driver": "^5.12.0"
@@ -280,6 +292,7 @@
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "esbuild": "^0.19.4"
   }
 }

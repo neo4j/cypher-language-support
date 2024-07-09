@@ -1,10 +1,10 @@
 import { window } from 'vscode';
 import { getActiveConnection } from './connectionService';
-import CypherRunner from './cypherRunner';
+import { getQueryRunner } from './contextService';
 
-export default async function runCypher(
-  cypherRunner: CypherRunner,
-): Promise<void> {
+export default async function runCypher(): Promise<void> {
+  const cypherRunner = getQueryRunner();
+
   // Get the active text editor
   const editor = window.activeTextEditor;
 
