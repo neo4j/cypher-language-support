@@ -11,6 +11,7 @@ import {
   ConnectionTreeDataProvider,
 } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
+import runCypher from './executionService';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -54,6 +55,7 @@ export function registerDisposables(): Disposable[] {
         connectionTreeDataProvider.refresh();
       },
     ),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_QUERY, runCypher),
   );
 
   return disposables;

@@ -1,3 +1,4 @@
+import { parseStatementsStrs } from '@neo4j-cypher/language-support';
 import { ExtensionContext } from 'vscode';
 import { Connection } from './connectionService';
 import OutputChannel from './output';
@@ -11,11 +12,11 @@ export default class CypherRunner {
 
   async run(connection: Connection, input: string): Promise<void> {
     // Split text on ; and a new line
-    const queries = input.split(';\n');
+    const queries = parseStatementsStrs(input);
 
     // Run individual queries
     for (const query of queries) {
-      if (query && query !== '') {
+      if (query !== '') {
         await this.runSingle(connection, query.trim());
       }
     }
