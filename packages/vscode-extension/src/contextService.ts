@@ -100,7 +100,7 @@ export function getSchemaPoller(): SchemaPoller {
  */
 export function getQueryRunner(): CypherRunner {
   if (!_queryRunner) {
-    // TODO Nacho: this conext could be undefined as well
+    // TODO Nacho: this context could be undefined as well
     _queryRunner = new CypherRunner(_context);
   }
 

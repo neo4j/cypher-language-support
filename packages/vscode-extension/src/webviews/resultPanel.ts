@@ -22,9 +22,12 @@ export default class ResultWindow {
       ViewColumn.Two,
       { retainContextWhenHidden: true },
     );
+
+    window.registerWebviewPanelSerializer;
   }
 
   async run() {
+    // TODO Nacho rename this, shouldn't be called a schema poller anymore
     const schemaPoller = getSchemaPoller();
 
     // Start output
