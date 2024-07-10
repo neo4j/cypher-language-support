@@ -8,9 +8,6 @@ import {
   isTime,
   QueryResult,
 } from 'neo4j-driver';
-import path from 'path';
-import { Uri, Webview } from 'vscode';
-import { getExtensionContext } from '../contextService';
 
 export function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
@@ -123,39 +120,64 @@ export function getErrorContent(cypher: string, err: Error): string {
   );
 }
 
-export function getResultContent(
-  cypher: string,
-  res: QueryResult,
-  webview: Webview,
-) {
-  // return wrapper(
-  //   cypher,
-  //   `
-  //   ${renderTable(res)}
-
-  //   <div class="summary">${querySummary(res)
-  //     .map((str) => `<p>${str}</p>`)
-  //     .join('\n')}</div>
-  // `,
-  // );
-
-  const panelJsPath = Uri.file(
-    path.join(
-      getExtensionContext().extensionPath,
-      'dist',
-      'webviews',
-      'webview.js',
-    ),
-  );
-
-  const panelJsUri = webview.asWebviewUri(panelJsPath);
+export function getResultContent(cypher: string, res: QueryResult) {
   return wrapper(
     cypher,
     `
-      <div id="root"></div>
-      <script src="${panelJsUri.toString()}"></script>
-    `,
+    ${renderTable(res)}
+
+    <div class="summary">${querySummary(res)
+      .map((str) => `<p>${str}</p>`)
+      .join('\n')}</div>
+  `,
   );
+}
+
+export function setAllTabsToLoading(script: string): string {
+  return `
+    <html>
+      <head>
+      <script>
+        const vscode = acquireVsCodeApi();
+      </script>
+      <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+      <style>
+      :root {
+        --background: #f2f2f2;
+        --border: #ccc;
+        --text: #000;
+        --error: #ff0000;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        --background: transparent;
+        --border: #ddd;
+        --text: #ccc;
+        --error: #bbb;
+      }
+
+      table{border-collapse:collapse; width: 100%}
+      table,td,th{border:1px solid var(--border); padding:5px; vertical-align: top}
+      th {font-weight: bold}
+      details {margin-bottom: 24px; padding: 12px; border: 1px solid var(--border)}
+      details summary {border-bottom: 1px solid var(--border); padding: 6px}
+      pre {
+        max-height: 280px;
+        overflow: auto;
+      }
+
+      .error {
+        color: var(--border);
+        border-color: var(--border);
+      }
+      </style>
+      </head>
+      <body>
+          <div id="resultDiv"></div> 
+          <script src="${script}"></script>
+      </body>
+      </html>
+    `;
 }
 
 function wrapper(cypher: string, content: string): string {
