@@ -269,16 +269,20 @@
     "bundle-extension": "node ./esbuild.js --production",
     "bundle-extension:dev": "node ./esbuild.js",
     "bundle-webview-controller": "esbuild ./src/webviews/controllers/connectionPanelController.ts --bundle --outfile=dist/webviews/connectionPanelController.js --platform=browser",
-    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller",
-    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controller",
+    "bundle-webview-results": "esbuild ./src/webviews/webview.tsx --bundle --outfile=dist/webviews/webview.js --platform=browser",
+    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller && npm run bundle-webview-results",
+    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controller && npm run bundle-webview-results",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-support": "2.0.0-next.6",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.16.0",
     "@neo4j-cypher/language-server": "2.0.0-next.7",
-    "vscode-languageclient": "^8.1.0",
-    "neo4j-driver": "^5.12.0"
+    "@neo4j-cypher/language-support": "2.0.0-next.6",
+    "neo4j-driver": "^5.12.0",
+    "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
     "@testcontainers/neo4j": "^10.4.0",
@@ -289,10 +293,10 @@
     "@vscode/test-electron": "^2.3.8",
     "@vscode/vsce": "^2.29.0",
     "dotenv": "^16.4.5",
+    "esbuild": "^0.19.4",
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
-    "typescript": "^4.9.5",
-    "esbuild": "^0.19.4"
+    "typescript": "^4.9.5"
   }
 }
