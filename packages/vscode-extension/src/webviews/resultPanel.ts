@@ -20,7 +20,7 @@ export default class ResultWindow {
       'neo4j.result',
       cypher,
       ViewColumn.Two,
-      { retainContextWhenHidden: true },
+      { retainContextWhenHidden: true, enableScripts: true },
     );
 
     window.registerWebviewPanelSerializer;
@@ -46,7 +46,11 @@ export default class ResultWindow {
       const res = await schemaPoller.runQuery(this.cypher);
 
       // Show results in webframe
-      this.panel.webview.html = getResultContent(this.cypher, res);
+      this.panel.webview.html = getResultContent(
+        this.cypher,
+        res,
+        this.panel.webview,
+      );
     } catch (e: unknown) {
       // Output error in neo4j channel
       OutputChannel.append('Error Running Query');

@@ -8,6 +8,9 @@ import {
   isTime,
   QueryResult,
 } from 'neo4j-driver';
+import path from 'path';
+import { Uri, Webview } from 'vscode';
+import { getExtensionContext } from '../contextService';
 
 export function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
@@ -120,16 +123,38 @@ export function getErrorContent(cypher: string, err: Error): string {
   );
 }
 
-export function getResultContent(cypher: string, res: QueryResult) {
+export function getResultContent(
+  cypher: string,
+  res: QueryResult,
+  webview: Webview,
+) {
+  // return wrapper(
+  //   cypher,
+  //   `
+  //   ${renderTable(res)}
+
+  //   <div class="summary">${querySummary(res)
+  //     .map((str) => `<p>${str}</p>`)
+  //     .join('\n')}</div>
+  // `,
+  // );
+
+  const panelJsPath = Uri.file(
+    path.join(
+      getExtensionContext().extensionPath,
+      'dist',
+      'webviews',
+      'webview.js',
+    ),
+  );
+
+  const panelJsUri = webview.asWebviewUri(panelJsPath);
   return wrapper(
     cypher,
     `
-    ${renderTable(res)}
-
-    <div class="summary">${querySummary(res)
-      .map((str) => `<p>${str}</p>`)
-      .join('\n')}</div>
-  `,
+      <div id="root"></div>
+      <script src="${panelJsUri.toString()}"></script>
+    `,
   );
 }
 
