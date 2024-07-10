@@ -55,7 +55,7 @@ export function registerDisposables(): Disposable[] {
         connectionTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_QUERY, runCypher),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE, runCypher),
   );
 
   return disposables;

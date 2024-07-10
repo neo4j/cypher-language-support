@@ -14,5 +14,17 @@
   "jest.rootPath": "./",
   "playwright.env": {
     "NODE_OPTIONS": "--max_old_space_size=8192"
-  }
+  },
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "database": "postgres",
+      "username": "postgres",
+      "password": "pass12345",
+      "name": "postgres-docker"
+    }
+  ]
 }

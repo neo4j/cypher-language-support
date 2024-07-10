@@ -62,13 +62,13 @@
         "title": "Create Connection..."
       },
       {
-        "command": "neo4j.runCypher",
-        "title": "Neo4j: Run Cypher Statement"
+        "command": "neo4j.runCypherFile",
+        "title": "Neo4j: Run Cypher Statements in a file"
       }
     ],
     "keybindings": [
       {
-        "command": "neo4j.runCypher",
+        "command": "neo4j.runCypherFile",
         "key": "ctrl+alt+space",
         "mac": "ctrl+cmd+space"
       }

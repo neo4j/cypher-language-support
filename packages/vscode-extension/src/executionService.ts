@@ -9,7 +9,6 @@ export default async function runCypher(): Promise<void> {
   const editor = window.activeTextEditor;
 
   if (editor) {
-    // Get the active connection
     const activeConnection = getActiveConnection();
 
     if (!activeConnection) {
@@ -21,6 +20,7 @@ export default async function runCypher(): Promise<void> {
     }
 
     const documentText = editor.document.getText();
-    await cypherRunner.run(activeConnection, documentText);
+    const documentUri = editor.document.uri;
+    await cypherRunner.run(activeConnection, documentUri, documentText);
   }
 }

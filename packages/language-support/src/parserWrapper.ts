@@ -128,7 +128,11 @@ export function parseStatementsStrs(query: string): string[] {
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
       .join('');
-    result.push(statementStr);
+
+    // Do not return empty statements
+    if (statementStr.trimLeft().length != 0) {
+      result.push(statementStr);
+    }
   }
 
   return result;
