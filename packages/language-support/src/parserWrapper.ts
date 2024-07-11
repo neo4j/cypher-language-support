@@ -14,6 +14,7 @@ import {
   LabelOrRelTypeContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
+  SymbolicNameStringContext,
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
@@ -72,9 +73,28 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
 }
 
 function getFunctionName(ctx: FunctionNameContext): string {
-  const namespace = ctx.namespace().getText();
-  const name = ctx.symbolicNameString().getText();
-  return `${namespace}${name}`;
+  const namespaces = ctx.namespace().symbolicNameString_list();
+  const functionName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, functionName]
+    .map((symbolicName) => {
+      return getFunctionNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
 }
 
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {

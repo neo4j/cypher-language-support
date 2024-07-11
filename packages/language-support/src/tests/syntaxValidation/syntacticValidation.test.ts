@@ -1293,4 +1293,143 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Syntax validation should recognize escaped function names', () => {
+    const query = `
+    RETURN \`abs\`(123)
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation should fail on escaped function names that do not exist', () => {
+    const query = `
+    RETURN \`dontpanic\`(123)
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 23,
+          start: 12,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 1,
+          },
+          start: {
+            character: 11,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation should pass on escaped function names with namespaces', () => {
+    const query = "RETURN `apoc`.text.`capitalize`('Marvin');";
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation should fail on escaped function names with namespaces that do not exist', () => {
+    const query = "RETURN `apoc`.text.`dontpanic`('Marvin');";
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 30,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation should fail if whole name and namespaces are escaped', () => {
+    const query = "RETURN `apoc.text.capitalize`('Marvin');";
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function `apoc.text.capitalize` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 29,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
 });
