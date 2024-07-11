@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import { QueryResult } from 'neo4j-driver';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -10,10 +11,17 @@ interface vscode {
 
 declare const vscode: vscode;
 
-interface StatementResult {
-  statement: string;
-  status: 'executing';
-}
+type StatementResult = {
+  statements: string;
+  result: 'beginStatementsExecution' | QueryResult;
+}[];
+
+type ResultMessage =
+  | {
+      statements: string[];
+      type: 'beginStatementsExecution';
+    }
+  | { index: number; result: QueryResult; type: 'successfulExecution' };
 
 export type ResultsTabMessage = {
   type: 'resultsWindowLoaded';
@@ -49,8 +57,12 @@ function a11yProps(index: number) {
 }
 
 function renderStatementResult(result: StatementResult) {
-  if (result.status === 'executing') {
+  if (result.type === 'beginStatementsExecution') {
+    result.statements.map((statement, i) => {
+      return <Tab label={statement} {...a11yProps(i)} />;
+    });
     return <p>Executing query {result.statement}</p>;
+  } else if (result.status === 'successfulExecution') {
   } else {
     return <p>Error executing query {result.statement}</p>;
   }
@@ -63,14 +75,10 @@ export function ResultTabs() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log(`handling message ${Date.now()}`);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = event.data;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (message.type === 'beginStatementsExecution') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-        setStatementResults(message.statementResults);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      setStatementResults({ ...message.content, type: message.type });
     };
 
     window.addEventListener('message', handleMessage);
@@ -94,7 +102,7 @@ export function ResultTabs() {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          {statementResults.map((result, i) => {
+          {statementResults.co.map((result, i) => {
             return <Tab label={result.statement} {...a11yProps(i)} />;
           })}
         </Tabs>

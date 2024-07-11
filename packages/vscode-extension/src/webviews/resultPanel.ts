@@ -1,3 +1,4 @@
+import { QueryResult } from 'neo4j-driver';
 import path from 'path';
 import {
   ExtensionContext,
@@ -7,10 +8,13 @@ import {
   window,
 } from 'vscode';
 import { Connection } from '../connectionService';
+import { getSchemaPoller } from '../contextService';
 import { setAllTabsToLoading } from './resultUtils';
 
 export default class ResultWindow {
   public panel: WebviewPanel;
+  // TODO Nacho rename this, shouldn't be called a schema poller anymore
+  schemaPoller = getSchemaPoller();
 
   constructor(
     public readonly context: ExtensionContext,
@@ -29,8 +33,6 @@ export default class ResultWindow {
   }
 
   async run() {
-    // TODO Nacho rename this, shouldn't be called a schema poller anymore
-    //const schemaPoller = getSchemaPoller();
     //const results: Promise<EagerResult<RecordShape> | undefined>[] = [];
     const webview = this.panel.webview;
 
@@ -47,6 +49,8 @@ export default class ResultWindow {
 
     // Set all the tabs to loading
 
+    webview.html = setAllTabsToLoading(resultTabsJs);
+
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(
       async (message) => {
@@ -55,12 +59,9 @@ export default class ResultWindow {
           case 'resultsWindowLoaded':
             await webview.postMessage({
               type: 'beginStatementsExecution',
-              statementResults: this.statements.map((statement) => {
-                return {
-                  statement: statement,
-                  status: 'executing',
-                };
-              }),
+              content: {
+                statements: this.statements,
+              },
             });
             return;
           case 'alert':
@@ -72,42 +73,21 @@ export default class ResultWindow {
       this.context.subscriptions,
     );
 
-    webview.html = setAllTabsToLoading(resultTabsJs);
+    for (const [index, statement] of this.statements.entries()) {
+      await this.executeStatement(statement, index);
+    }
+  }
 
-    // for (const statement of this.statements) {
-    //   // Start output
-    //   OutputChannel.append('--');
+  async executeStatement(statement: string, index: number) {
+    const result: QueryResult = await this.schemaPoller.runQuery(statement);
+    const webview = this.panel.webview;
 
-    //   OutputChannel.append(
-    //     `Executing query ${statement} on database ${
-    //       this.connection.database || 'neo4j'
-    //     }`,
-    //   );
-    //   OutputChannel.append(statement);
-
-    //   try {
-    //     // Loading
-    //     this.panel.webview.html = getLoadingContent(this.cypher, resultTabs);
-
-    //     // Run it
-    //     const res = await schemaPoller.runQuery(statement);
-    //     results.push(res);
-    //     // Show results in webframe
-    //     this.panel.webview.html = getResultContent(
-    //       this.cypher,
-    //       res,
-    //       this.panel.webview,
-    //     );
-    //   } catch (e: unknown) {
-    //     // Output error in neo4j channel
-    //     OutputChannel.append('Error Running Query');
-    //     if (e instanceof Error) {
-    //       OutputChannel.append(e.message);
-    //       // Update Webview
-    //       this.panel.webview.html = getErrorContent(this.cypher, e);
-    //     }
-    //     OutputChannel.show();
-    //   }
-    // }
+    await webview.postMessage({
+      type: 'successfulExecution',
+      statementResults: {
+        index: index,
+        result: result,
+      },
+    });
   }
 }
