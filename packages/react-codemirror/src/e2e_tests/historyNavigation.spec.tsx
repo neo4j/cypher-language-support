@@ -60,6 +60,36 @@ test('can add new lines without onExecute', async ({ page, mount }) => {
   });
 });
 
+test('can add new lines with newLineOnEnter and without onExecute', async ({
+  page,
+  mount,
+}) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const editorComponent = await mount(<CypherEditor newLineOnEnter />);
+
+  // Ctrl-Enter does nothing when onExecute is false
+  await editorPage.getEditor().press('Control+Enter');
+  await expect(editorComponent).toHaveText('1\n', {
+    useInnerText: true,
+  });
+
+  // Enter adds new lines
+  await editorPage.getEditor().fill('Brock');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\nBrock', {
+    useInnerText: true,
+  });
+
+  // Shift-Enter adds new lines
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Shift+Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\n4\n5\nBrock', {
+    useInnerText: true,
+  });
+});
+
 test('can execute queries and see them in history with newLineOnEnter', async ({
   page,
   mount,
