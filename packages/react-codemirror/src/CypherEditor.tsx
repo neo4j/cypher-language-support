@@ -1,3 +1,4 @@
+import { insertNewline } from '@codemirror/commands';
 import {
   Annotation,
   Compartment,
@@ -167,46 +168,61 @@ export interface CypherEditorProps {
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
   newLineOnEnter?: boolean,
-) =>
-  onExecute
-    ? [
-        ...(newLineOnEnter
-          ? []
-          : [
-              {
-                key: 'Enter',
-                preventDefault: true,
-                run: (view: EditorView) => {
-                  const doc = view.state.doc.toString();
-                  if (doc.includes('\n')) {
-                    // Returning false means the event will mark the event
-                    // as not handled and the default behavior will be executed
-                    return false;
-                  }
+) => {
+  const keybindings: Record<string, KeyBinding> = {
+    'Shift-Enter': {
+      key: 'Shift-Enter',
+      run: insertNewline,
+    },
+    'Ctrl-Enter': {
+      key: 'Ctrl-Enter',
+      run: () => true,
+    },
+    Enter: {
+      key: 'Enter',
+      run: insertNewline,
+    },
+  };
 
-                  if (doc.trim() !== '') {
-                    onExecute(doc);
-                  }
+  if (onExecute) {
+    keybindings['Ctrl-Enter'] = {
+      key: 'Ctrl-Enter',
+      mac: 'Mod-Enter',
+      preventDefault: true,
+      run: (view: EditorView) => {
+        const doc = view.state.doc.toString();
+        if (doc.trim() !== '') {
+          onExecute(doc);
+        }
 
-                  return true;
-                },
-              },
-            ]),
-        {
-          key: 'Ctrl-Enter',
-          mac: 'Mod-Enter',
-          preventDefault: true,
-          run: (view: EditorView) => {
-            const doc = view.state.doc.toString();
-            if (doc.trim() !== '') {
-              onExecute(doc);
-            }
+        return true;
+      },
+    };
 
-            return true;
-          },
+    if (!newLineOnEnter) {
+      keybindings['Enter'] = {
+        key: 'Enter',
+        preventDefault: true,
+        run: (view: EditorView) => {
+          const doc = view.state.doc.toString();
+          if (doc.includes('\n')) {
+            // Returning false means the event will mark the event
+            // as not handled and the default behavior will be executed
+            return false;
+          }
+
+          if (doc.trim() !== '') {
+            onExecute(doc);
+          }
+
+          return true;
         },
-      ]
-    : [];
+      };
+    }
+  }
+
+  return Object.values(keybindings);
+};
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
@@ -472,7 +488,10 @@ export class CypherEditor extends Component<
       this.editorView.current.dispatch({
         effects: keyBindingCompartment.reconfigure(
           keymap.of([
-            ...executeKeybinding(this.props.onExecute),
+            ...executeKeybinding(
+              this.props.onExecute,
+              this.props.newLineOnEnter,
+            ),
             ...this.props.extraKeybindings,
           ]),
         ),

@@ -33,6 +33,33 @@ test('respects preloaded history', async ({ page, mount }) => {
   await expect(page.getByText(initialValue)).toBeVisible();
 });
 
+test('can add new lines without onExecute', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const editorComponent = await mount(<CypherEditor />);
+
+  // Ctrl-Enter does nothing when onExecute is false
+  await editorPage.getEditor().press('Control+Enter');
+  await expect(editorComponent).toHaveText('1\n', {
+    useInnerText: true,
+  });
+
+  // Enter adds new lines
+  await editorPage.getEditor().fill('Brock');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\nBrock', {
+    useInnerText: true,
+  });
+
+  // Shift-Enter adds new lines
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Shift+Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\n4\n5\nBrock', {
+    useInnerText: true,
+  });
+});
+
 test('can execute queries and see them in history with newLineOnEnter', async ({
   page,
   mount,
@@ -67,12 +94,12 @@ RETURN n;`;
   await editorPage.getEditor().press('Meta+Enter');
   expect(history.length).toBe(1);
 
-  // Ensure only enter doesn't execute query
+  // Ensure cmd+enter is required in multiline
   await editorPage.getEditor().fill('multiline');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
-  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Shift+Enter');
   await page.keyboard.type('entry');
   expect(history.length).toBe(1);
 
@@ -158,11 +185,12 @@ test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
 
   // Ensure cmd+enter is required in multiline
   await editorPage.getEditor().fill('multiline');
+  await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Shift+Enter');
   await editorPage.getEditor().press('A');
 
   // line numbers and the text
-  await expect(editorComponent).toHaveText(['1\n2\nmultiline\nA'], {
+  await expect(editorComponent).toHaveText('1\n2\n3\nmultiline\nA', {
     useInnerText: true,
   });
   await editorPage.getEditor().press('Enter');
