@@ -185,8 +185,8 @@ test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
 
   // Ensure cmd+enter is required in multiline
   await editorPage.getEditor().fill('multiline');
-  await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('A');
 
   // line numbers and the text
