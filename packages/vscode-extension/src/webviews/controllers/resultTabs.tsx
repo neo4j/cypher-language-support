@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { QueryResult } from 'neo4j-driver';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ResultMessage } from '../resultPanel';
 
 interface vscode {
   postMessage(message: ResultsTabMessage): void;
@@ -11,17 +11,12 @@ interface vscode {
 
 declare const vscode: vscode;
 
-type StatementResult = {
-  statements: string;
-  result: 'beginStatementsExecution' | QueryResult;
-}[];
+type ResultRows = Record<string, unknown>[];
 
-type ResultMessage =
-  | {
-      statements: string[];
-      type: 'beginStatementsExecution';
-    }
-  | { index: number; result: QueryResult; type: 'successfulExecution' };
+type ResultState = {
+  statement: string;
+  state: 'executing' | 'error' | ResultRows;
+}[];
 
 export type ResultsTabMessage = {
   type: 'resultsWindowLoaded';
@@ -56,29 +51,112 @@ function a11yProps(index: number) {
   };
 }
 
-function renderStatementResult(result: StatementResult) {
-  if (result.type === 'beginStatementsExecution') {
-    result.statements.map((statement, i) => {
-      return <Tab label={statement} {...a11yProps(i)} />;
-    });
-    return <p>Executing query {result.statement}</p>;
-  } else if (result.status === 'successfulExecution') {
-  } else {
-    return <p>Error executing query {result.statement}</p>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function renderRow(keys: any[], row: Record<string, unknown>) {
+  return (
+    <tr>
+      {keys.map((key) => {
+        return (
+          <td>
+            <pre>
+              {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                JSON.stringify(row[key], null, 2)
+              }
+            </pre>
+          </td>
+        );
+      })}
+    </tr>
+  );
+}
+
+function renderTable(rows: ResultRows) {
+  if (rows.length === 0) {
+    return <p>No records returned</p>;
   }
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {Object.keys(rows[0]).map((key) => (
+            <th>{key.toString()}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+          return renderRow(Object.keys(row), row);
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+export function getResultContent(res: ResultRows) {
+  return renderTable(res);
+
+  //   <div class="summary">${querySummary(res)
+  //     .map((str) => `<p>${str}</p>`)
+  //     .join('\n')}</div>
+  // ;
+}
+
+function renderStatementResult(value: number, result: ResultState) {
+  return result.map((r, i) => {
+    if (r.state === 'executing') {
+      return (
+        <CustomTabPanel value={value} index={i}>
+          <p>Executing query {r.statement}</p>
+        </CustomTabPanel>
+      );
+    } else if (r.state === 'error') {
+      return (
+        <CustomTabPanel value={value} index={i}>
+          <p>Error executing query {r.statement}</p>
+        </CustomTabPanel>
+      );
+    } else {
+      const queryResult: ResultRows = r.state;
+      return (
+        <div>
+          <details>
+            <summary>Query Details</summary>
+            <pre>{r.statement}</pre>
+          </details>
+          {getResultContent(queryResult)}
+        </div>
+      );
+    }
+  });
 }
 
 export function ResultTabs() {
-  const [statementResults, setStatementResults] = useState<StatementResult[]>(
-    [],
-  );
+  const [statementResults, setStatementResults] = useState<ResultState>([]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = event.data;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-      setStatementResults({ ...message.content, type: message.type });
+      const message = event.data as ResultMessage;
+
+      if (message.type === 'beginStatementsExecution') {
+        const resultState: ResultState = message.statements.map((statement) => {
+          return {
+            statement: statement,
+            state: 'executing',
+          };
+        });
+        setStatementResults(resultState);
+      } else if (message.type === 'successfulExecution') {
+        setStatementResults((prev) => {
+          const i = message.index;
+          const newState = [...prev];
+          newState[i].state = message.result;
+          return newState;
+        });
+      }
     };
 
     window.addEventListener('message', handleMessage);
@@ -102,16 +180,12 @@ export function ResultTabs() {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          {statementResults.co.map((result, i) => {
+          {statementResults.map((result, i) => {
             return <Tab label={result.statement} {...a11yProps(i)} />;
           })}
         </Tabs>
       </Box>
-      {statementResults.map((result, index) => (
-        <CustomTabPanel value={value} index={index}>
-          {renderStatementResult(result)}
-        </CustomTabPanel>
-      ))}
+      {renderStatementResult(value, statementResults)}
     </Box>
   );
 }
