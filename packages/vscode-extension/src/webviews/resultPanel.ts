@@ -9,7 +9,16 @@ import {
 } from 'vscode';
 import { Connection } from '../connectionService';
 import { getSchemaPoller } from '../contextService';
-import { setAllTabsToLoading } from './resultUtils';
+import { setAllTabsToLoading, toNativeTypes } from './resultUtils';
+
+export type ResultRows = Record<string, unknown>[];
+
+export type ResultMessage =
+  | {
+      statements: string[];
+      type: 'beginStatementsExecution';
+    }
+  | { index: number; result: ResultRows; type: 'successfulExecution' };
 
 export default class ResultWindow {
   public panel: WebviewPanel;
@@ -56,14 +65,17 @@ export default class ResultWindow {
       async (message) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         switch (message.type) {
-          case 'resultsWindowLoaded':
-            await webview.postMessage({
+          case 'resultsWindowLoaded': {
+            const message: ResultMessage = {
               type: 'beginStatementsExecution',
-              content: {
-                statements: this.statements,
-              },
-            });
+              statements: this.statements,
+            };
+            await webview.postMessage(message);
+            for (const [index, statement] of this.statements.entries()) {
+              await this.executeStatement(statement, index);
+            }
             return;
+          }
           case 'alert':
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
             await window.showErrorMessage(message.text);
@@ -72,22 +84,20 @@ export default class ResultWindow {
       undefined,
       this.context.subscriptions,
     );
-
-    for (const [index, statement] of this.statements.entries()) {
-      await this.executeStatement(statement, index);
-    }
   }
 
   async executeStatement(statement: string, index: number) {
     const result: QueryResult = await this.schemaPoller.runQuery(statement);
     const webview = this.panel.webview;
-
-    await webview.postMessage({
+    const resultRecords = result.records.map((record) =>
+      toNativeTypes(record.toObject()),
+    );
+    const message: ResultMessage = {
       type: 'successfulExecution',
-      statementResults: {
-        index: index,
-        result: result,
-      },
-    });
+      index: index,
+      result: resultRecords,
+    };
+
+    await webview.postMessage(message);
   }
 }
