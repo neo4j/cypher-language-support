@@ -1,6 +1,10 @@
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import {
+  ConnnectionResult,
+  FRIENDLY_ERROR_MESSAGES,
+} from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import { Connection } from './connectionService';
+import { ConnectionItem } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
 
 /**
@@ -29,4 +33,54 @@ export function displayMessageForConnectionResult(
       `${result.error?.message}. ${result.error?.friendlyMessage}.`,
     );
   }
+}
+
+/**
+ * Utility function to prompt the user to save a connection that failed with a retriable error.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or null).
+ */
+export async function displaySaveConnectionAnywayPrompt(): Promise<
+  string | null
+> {
+  return await window.showWarningMessage<string>(
+    'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
+    {
+      modal: true,
+      detail: `${FRIENDLY_ERROR_MESSAGES.ServiceUnavailable}.`,
+    },
+    'Yes',
+  );
+}
+
+/**
+ * Utility function to prompt the user whether they're sure they want to delete a Connection.
+ * @param connectionItem The ConnectionItem to prompt for deletion.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or null).
+ */
+export async function displayConfirmConnectionDeletionPrompt(
+  connectionItem: ConnectionItem,
+): Promise<string | null> {
+  return await window.showWarningMessage<string>(
+    `Are you sure you want to delete connection ${connectionItem.label}?`,
+    { modal: true },
+    'Yes',
+  );
+}
+
+/**
+ * Utility function to display a message to the user based on the result of switching databases.
+ * @param database The database that was switched to.
+ * @param result The result of the switch database attempt.
+ */
+export function displayMessageForSwitchDatabaseResult(
+  database: string,
+  result: ConnnectionResult,
+): void {
+  result.success
+    ? void window.showInformationMessage(
+        `${CONSTANTS.MESSAGES.SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE} '${database}'.`,
+      )
+    : void window.showErrorMessage(
+        `${CONSTANTS.MESSAGES.ERROR_SWITCHING_DATABASE_MESSAGE} '${database}'. ${result.error?.message}. ${result.error?.friendlyMessage}.`,
+      );
 }

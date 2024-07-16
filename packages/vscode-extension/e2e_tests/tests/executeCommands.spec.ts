@@ -303,4 +303,40 @@ suite('Execute commands spec', () => {
       );
     });
   });
+
+  suite('switchDatabaseCommand', () => {
+    test('Switching a database should show a success message', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+        { type: 'database', key: 'movies' },
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        `${CONSTANTS.MESSAGES.SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE} 'movies'.`,
+      );
+    });
+
+    test('Switching to a bad database should show a failure message', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+        { type: 'database', key: 'bad-database' },
+      );
+
+      sandbox.assert.calledWith(
+        showErrorMessageStub,
+        `${CONSTANTS.MESSAGES.ERROR_SWITCHING_DATABASE_MESSAGE} 'bad-database'. Unable to get a routing table for database 'bad-database' because this database does not exist. Double check that the database exists.`,
+      );
+    });
+
+    test('Switching to a non-database should do nothing', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+        { type: 'activeDatabase', key: 'neo4j' },
+      );
+
+      sandbox.assert.notCalled(showInformationMessageStub);
+      sandbox.assert.notCalled(showErrorMessageStub);
+    });
+  });
 });
