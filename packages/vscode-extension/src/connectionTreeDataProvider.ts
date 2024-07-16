@@ -1,4 +1,4 @@
-import { Database } from '@neo4j-cypher/schema-poller/dist/cjs/src/queries/databases';
+import { Database } from '@neo4j-cypher/schema-poller';
 import {
   Event,
   EventEmitter,
@@ -125,6 +125,8 @@ export class ConnectionTreeDataProvider
       : `${connection.user}@${connection.scheme}://${connection.host}`;
   }
 }
+
+export const connectionTreeDataProvider = new ConnectionTreeDataProvider();
 
 /**
  * Extends the TreeItem class to represent a connection in the tree view.

@@ -8,9 +8,9 @@ import {
 } from './commandHandlers';
 import {
   ConnectionItem,
-  ConnectionTreeDataProvider,
+  connectionTreeDataProvider,
 } from './connectionTreeDataProvider';
-import { ConnectionTreeDecorationProvider } from './connectionTreeDecorationProvider';
+import { connectionTreeDecorationProvider } from './connectionTreeDecorationProvider';
 import { CONSTANTS } from './constants';
 
 /**
@@ -19,9 +19,6 @@ import { CONSTANTS } from './constants';
  */
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
-  const connectionTreeDataProvider = new ConnectionTreeDataProvider();
-  const connectionTreeDecorationProvider =
-    new ConnectionTreeDecorationProvider();
 
   disposables.push(
     window.registerTreeDataProvider(

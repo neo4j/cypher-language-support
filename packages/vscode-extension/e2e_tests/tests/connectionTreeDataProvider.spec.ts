@@ -1,4 +1,4 @@
-import { Database } from '@neo4j-cypher/schema-poller/dist/cjs/src/queries/databases';
+import { Database } from '@neo4j-cypher/schema-poller';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
@@ -7,7 +7,7 @@ import * as connectionService from '../../src/connectionService';
 import { Connection } from '../../src/connectionService';
 import {
   ConnectionItem,
-  ConnectionTreeDataProvider,
+  connectionTreeDataProvider,
 } from '../../src/connectionTreeDataProvider';
 
 suite('Connection tree data provider spec', () => {
@@ -81,8 +81,7 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An active Connection should show as connected', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
 
     const actual = children.find((child) => child.key === 'test-connection');
     const expected: ConnectionItem = {
@@ -100,24 +99,22 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An active Connection should have a list of child databases', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
     const connection = children.find(
       (child) => child.key === 'test-connection',
     );
 
-    const databases = testConnectionItem.getChildren({ ...connection });
+    const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     assert.equal(databases.length, 2);
   });
 
   test('An active Connection should show the default database as active if no database is specified', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
     const connection = children.find(
       (child) => child.key === 'test-connection',
     );
-    const databases = testConnectionItem.getChildren({ ...connection });
+    const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     const database = { ...databases.find((child) => child.key === 'neo4j') };
     const actual = {
@@ -148,12 +145,11 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An active Connection should show the specified database as active', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
     const connection = children.find(
       (child) => child.key === 'test-connection-2',
     );
-    const databases = testConnectionItem.getChildren({ ...connection });
+    const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     const database = { ...databases.find((child) => child.key === 'schemas') };
     const actual = {
@@ -184,8 +180,7 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An activating Connection should show as connecting', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
 
     const actual = {
       ...children.find((child) => child.key === 'test-connection-4'),
@@ -205,8 +200,7 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An errored Connection should show as connecting', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
 
     const actual = {
       ...children.find((child) => child.key === 'test-connection-5'),
@@ -226,8 +220,7 @@ suite('Connection tree data provider spec', () => {
   });
 
   test('An inactive Connection should not show as connected or connecting', () => {
-    const testConnectionItem = new ConnectionTreeDataProvider();
-    const children = testConnectionItem.getChildren();
+    const children = connectionTreeDataProvider.getChildren();
 
     const actual = {
       ...children.find((child) => child.key === 'test-connection-3'),
