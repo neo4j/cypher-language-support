@@ -196,12 +196,12 @@ export default class ResultWindow {
   constructor(
     public readonly context: ExtensionContext,
     public readonly connection: Connection,
-    public readonly fileName: string,
-    public readonly statements: string[],
+    public readonly shortFileName: string,
+    public statements: string[],
   ) {
     this.panel = window.createWebviewPanel(
       'neo4j.result',
-      fileName,
+      shortFileName,
       ViewColumn.Two,
       { retainContextWhenHidden: true, enableScripts: true },
     );
@@ -210,7 +210,6 @@ export default class ResultWindow {
   }
 
   run() {
-    //const results: Promise<EagerResult<RecordShape> | undefined>[] = [];
     const webview = this.panel.webview;
 
     const resultTabsJsPath = Uri.file(
@@ -234,14 +233,7 @@ export default class ResultWindow {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         switch (message.type) {
           case 'resultsWindowLoaded': {
-            const message: ResultMessage = {
-              type: 'executing',
-              statements: this.statements,
-            };
-            await webview.postMessage(message);
-            for (const [index, statement] of this.statements.entries()) {
-              await this.executeStatement(statement, index);
-            }
+            await this.executeStatements();
             return;
           }
           case 'alert':
@@ -254,7 +246,20 @@ export default class ResultWindow {
     );
   }
 
-  async executeStatement(statement: string, index: number) {
+  async executeStatements() {
+    const webview = this.panel.webview;
+
+    const message: ResultMessage = {
+      type: 'executing',
+      statements: this.statements,
+    };
+    await webview.postMessage(message);
+    for (const [index, statement] of this.statements.entries()) {
+      await this.executeStatement(statement, index);
+    }
+  }
+
+  private async executeStatement(statement: string, index: number) {
     const webview = this.panel.webview;
     const result: QueryResult | Error = await this.schemaPoller.runQuery(
       statement,
