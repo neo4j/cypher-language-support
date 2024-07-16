@@ -13,7 +13,6 @@ export async function saveDefaultConnection(): Promise<void> {
   await vscode.commands.executeCommand(
     CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
     {
-      name: defaultConnectionKey,
       key: defaultConnectionKey,
       scheme: scheme,
       host: host,

@@ -10,6 +10,7 @@ import {
   ConnectionItem,
   ConnectionTreeDataProvider,
 } from './connectionTreeDataProvider';
+import { ConnectionTreeDecorationProvider } from './connectionTreeDecorationProvider';
 import { CONSTANTS } from './constants';
 
 /**
@@ -19,12 +20,15 @@ import { CONSTANTS } from './constants';
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const connectionTreeDataProvider = new ConnectionTreeDataProvider();
+  const connectionTreeDecorationProvider =
+    new ConnectionTreeDecorationProvider();
 
   disposables.push(
     window.registerTreeDataProvider(
       'neo4jConnections',
       connectionTreeDataProvider,
     ),
+    window.registerFileDecorationProvider(connectionTreeDecorationProvider),
     workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,

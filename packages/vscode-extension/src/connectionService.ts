@@ -2,6 +2,7 @@ import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnectionError,
   ConnnectionResult,
+  Database,
 } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
@@ -19,7 +20,6 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
  */
 export type Connection = {
   key: string;
-  name: string;
   scheme: Scheme;
   host: string;
   port?: string | undefined;
@@ -276,6 +276,11 @@ export async function establishPersistentConnectionToSchemaPoller(
     : attachSchemaPollerConnectionFailedEventListeners();
 
   return result;
+}
+
+export function getConnectionDatabases(): Database[] {
+  const schemaPoller = getSchemaPoller();
+  return schemaPoller.connection?.databases ?? [];
 }
 
 /**

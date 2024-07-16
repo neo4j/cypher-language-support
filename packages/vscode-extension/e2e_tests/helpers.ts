@@ -63,7 +63,6 @@ export async function eventually(
 export function getMockConnection(activate: boolean = false): Connection {
   return {
     key: getNonce(16),
-    name: 'mock-connection',
     database: 'neo4j',
     user: 'neo4j',
     host: 'localhost',

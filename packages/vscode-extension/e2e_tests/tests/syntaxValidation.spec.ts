@@ -153,7 +153,6 @@ suite('Syntax validation spec', () => {
     const { scheme, host, port, user, database, password } =
       getNeo4jConfiguration();
     const connection = {
-      name: defaultConnectionKey,
       key: defaultConnectionKey,
       scheme: scheme,
       host: host,

@@ -33,7 +33,7 @@ export class Neo4jConnection {
   constructor(
     public connectedUser: string,
     public protocolVersion: string,
-    databases: Database[],
+    public databases: Database[],
     public driver: Driver,
     database?: string,
   ) {
