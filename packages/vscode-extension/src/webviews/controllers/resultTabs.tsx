@@ -3,7 +3,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ResultMessage } from '../resultPanel';
+import { Result, ResultMessage, ResultRows } from '../resultPanel';
 
 interface vscode {
   postMessage(message: ResultsTabMessage): void;
@@ -11,11 +11,9 @@ interface vscode {
 
 declare const vscode: vscode;
 
-type ResultRows = Record<string, unknown>[];
-
 type ResultState = {
   statement: string;
-  state: 'executing' | 'error' | ResultRows;
+  state: 'executing' | 'error' | Result;
 }[];
 
 export type ResultsTabMessage = {
@@ -95,13 +93,21 @@ function renderTable(rows: ResultRows) {
   );
 }
 
-export function getResultContent(res: ResultRows) {
-  return renderTable(res);
-
-  //   <div class="summary">${querySummary(res)
-  //     .map((str) => `<p>${str}</p>`)
-  //     .join('\n')}</div>
-  // ;
+export function getResultContent(statement: string, result: Result) {
+  return (
+    <div>
+      <details>
+        <summary>Query Details</summary>
+        <pre>{statement}</pre>
+      </details>
+      {renderTable(result.rows)}
+      <div>
+        {result.querySummary.map((str) => (
+          <p>{str}</p>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function renderStatementResult(value: number, result: ResultState) {
@@ -119,15 +125,10 @@ function renderStatementResult(value: number, result: ResultState) {
         </CustomTabPanel>
       );
     } else {
-      const queryResult: ResultRows = r.state;
       return (
-        <div>
-          <details>
-            <summary>Query Details</summary>
-            <pre>{r.statement}</pre>
-          </details>
-          {getResultContent(queryResult)}
-        </div>
+        <CustomTabPanel value={value} index={i}>
+          {getResultContent(r.statement, r.state)}
+        </CustomTabPanel>
       );
     }
   });
@@ -141,7 +142,7 @@ export function ResultTabs() {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = event.data as ResultMessage;
 
-      if (message.type === 'beginStatementsExecution') {
+      if (message.type === 'executing') {
         const resultState: ResultState = message.statements.map((statement) => {
           return {
             statement: statement,
@@ -149,11 +150,18 @@ export function ResultTabs() {
           };
         });
         setStatementResults(resultState);
-      } else if (message.type === 'successfulExecution') {
+      } else if (message.type === 'success') {
         setStatementResults((prev) => {
           const i = message.index;
           const newState = [...prev];
           newState[i].state = message.result;
+          return newState;
+        });
+      } else if (message.type === 'error') {
+        setStatementResults((prev) => {
+          const i = message.index;
+          const newState = [...prev];
+          newState[i].state = 'error';
           return newState;
         });
       }

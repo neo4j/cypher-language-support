@@ -9,16 +9,33 @@ import {
 } from 'vscode';
 import { Connection } from '../connectionService';
 import { getSchemaPoller } from '../contextService';
-import { setAllTabsToLoading, toNativeTypes } from './resultUtils';
+import {
+  querySummary,
+  setAllTabsToLoading,
+  toNativeTypes,
+} from './resultUtils';
 
 export type ResultRows = Record<string, unknown>[];
+
+export type Result = {
+  rows: ResultRows;
+  querySummary: string[];
+};
 
 export type ResultMessage =
   | {
       statements: string[];
-      type: 'beginStatementsExecution';
+      type: 'executing';
     }
-  | { index: number; result: ResultRows; type: 'successfulExecution' };
+  | {
+      index: number;
+      result: Result;
+      type: 'success';
+    }
+  | {
+      index: number;
+      type: 'error';
+    };
 
 export default class ResultWindow {
   public panel: WebviewPanel;
@@ -41,7 +58,7 @@ export default class ResultWindow {
     window.registerWebviewPanelSerializer;
   }
 
-  async run() {
+  run() {
     //const results: Promise<EagerResult<RecordShape> | undefined>[] = [];
     const webview = this.panel.webview;
 
@@ -67,7 +84,7 @@ export default class ResultWindow {
         switch (message.type) {
           case 'resultsWindowLoaded': {
             const message: ResultMessage = {
-              type: 'beginStatementsExecution',
+              type: 'executing',
               statements: this.statements,
             };
             await webview.postMessage(message);
@@ -87,17 +104,30 @@ export default class ResultWindow {
   }
 
   async executeStatement(statement: string, index: number) {
-    const result: QueryResult = await this.schemaPoller.runQuery(statement);
     const webview = this.panel.webview;
-    const resultRecords = result.records.map((record) =>
-      toNativeTypes(record.toObject()),
+    const result: QueryResult | 'error' = await this.schemaPoller.runQuery(
+      statement,
     );
-    const message: ResultMessage = {
-      type: 'successfulExecution',
-      index: index,
-      result: resultRecords,
-    };
+    let message: ResultMessage;
 
+    if (result === 'error') {
+      message = {
+        type: 'error',
+        index: index,
+      };
+    } else {
+      const resultRecords = result.records.map((record) =>
+        toNativeTypes(record.toObject()),
+      );
+      message = {
+        type: 'success',
+        index: index,
+        result: {
+          rows: resultRecords,
+          querySummary: querySummary(result),
+        },
+      };
+    }
     await webview.postMessage(message);
   }
 }

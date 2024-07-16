@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import neo4j, { Config, Driver, EagerResult, RecordShape } from 'neo4j-driver';
+import neo4j, { Config, Driver, QueryResult } from 'neo4j-driver';
 import {
   ConnectionError,
   FRIENDLY_ERROR_MESSAGES,
@@ -261,18 +261,20 @@ export class Neo4jSchemaPoller {
     this.retries = MAX_RETRY_ATTEMPTS;
   }
 
-  public async runQuery(
-    query: string,
-  ): Promise<EagerResult<RecordShape> | undefined> {
+  public async runQuery(query: string): Promise<QueryResult | 'error'> {
     if (this.driver) {
-      const result = await this.driver.executeQuery(query);
-      return result;
+      try {
+        const result = await this.driver.executeQuery(query);
+        return result;
+      } catch (e) {
+        return 'error';
+      }
     } else {
       this.events.emit(
         'connectionFailed',
         'Could not execute query, the connection to Neo4j was not set',
       );
-      return undefined;
+      return 'error';
     }
   }
 }
