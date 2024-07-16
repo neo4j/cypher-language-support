@@ -12,7 +12,7 @@ import {
   getAllConnections,
   getConnectionByKey,
   getConnectionDatabases,
-} from './connectionService';
+} from './../connectionService';
 
 export type ConnectionItemType =
   | 'connection'

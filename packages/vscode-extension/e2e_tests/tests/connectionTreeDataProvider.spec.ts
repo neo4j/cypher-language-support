@@ -8,7 +8,7 @@ import { Connection } from '../../src/connectionService';
 import {
   ConnectionItem,
   connectionTreeDataProvider,
-} from '../../src/connectionTreeDataProvider';
+} from '../../src/treeviews/connectionTreeDataProvider';
 
 suite('Connection tree data provider spec', () => {
   const mockConnections: Connection[] = [
