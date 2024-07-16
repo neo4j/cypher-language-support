@@ -261,20 +261,21 @@ export class Neo4jSchemaPoller {
     this.retries = MAX_RETRY_ATTEMPTS;
   }
 
-  public async runQuery(query: string): Promise<QueryResult | 'error'> {
+  public async runQuery(query: string): Promise<QueryResult | Error> {
     if (this.driver) {
       try {
+        // TODO Nacho: This should be a session to be able to run CALL IN TXs for example
         const result = await this.driver.executeQuery(query);
         return result;
       } catch (e) {
-        return 'error';
+        const error = e as Error;
+        return error;
       }
     } else {
-      this.events.emit(
-        'connectionFailed',
-        'Could not execute query, the connection to Neo4j was not set',
-      );
-      return 'error';
+      const errorMessage =
+        'Could not execute query, the connection to Neo4j was not set';
+      this.events.emit('connectionFailed', errorMessage);
+      return Error(errorMessage);
     }
   }
 }

@@ -41,7 +41,7 @@ type SchemaPoller = {
     database?: string,
   ): Promise<ConnnectionResult>;
   disconnect(): void;
-  runQuery(query: string): Promise<QueryResult | 'error'>;
+  runQuery(query: string): Promise<QueryResult | Error>;
 };
 
 let _context: ExtensionContext | undefined;
