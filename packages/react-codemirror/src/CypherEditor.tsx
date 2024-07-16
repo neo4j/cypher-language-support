@@ -425,6 +425,7 @@ export class CypherEditor extends Component<
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
     if (this.props.value !== undefined && currentCmValue !== this.props.value) {
+      this.debouncedOnChange?.cancel();
       this.editorView.current.dispatch({
         changes: {
           from: 0,

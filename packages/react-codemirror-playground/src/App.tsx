@@ -105,7 +105,10 @@ export function App() {
               value={value}
               onChange={setValue}
               prompt="neo4j$"
-              onExecute={() => setCommandRanCount((c) => c + 1)}
+              onExecute={() => {
+                setCommandRanCount((c) => c + 1);
+                setValue('');
+              }}
               theme={darkMode ? 'dark' : 'light'}
               history={Object.values(demos)}
               schema={schema}
