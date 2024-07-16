@@ -122,7 +122,6 @@ export class ConnectionPanel {
                 scheme: message.connection?.scheme,
                 host: message.connection?.host,
                 port: message.connection?.port,
-                database: message.connection?.database,
                 user: message.connection?.user,
               };
               this._password = message.password;
@@ -253,12 +252,6 @@ export class ConnectionPanel {
                     }" data-invalid="${this.urlIsInvalid()}" />
                   </div>
                   <div class="form--input-wrapper">
-                    <label for="database">Database</label>
-                    <input type="text" id="database" placeholder="neo4j" value="${
-                      this._connection?.database ?? ''
-                    }" data-invalid="${this.databaseIsInvalid()}" />
-                  </div>
-                  <div class="form--input-wrapper">
                     <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
                       this._connection?.user ?? 'neo4j'
@@ -288,13 +281,6 @@ export class ConnectionPanel {
       'Neo.ClientError.Security.Unauthorized',
       'Neo.ClientError.Security.TokenExpired',
     ].includes(this._lastResult?.error?.code);
-  }
-
-  private databaseIsInvalid(): boolean {
-    return (
-      this._lastResult?.error?.code ===
-      'Neo.ClientError.Database.DatabaseNotFound'
-    );
   }
 
   private urlIsInvalid(): boolean {

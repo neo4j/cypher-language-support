@@ -305,6 +305,11 @@ suite('Execute commands spec', () => {
   });
 
   suite('switchDatabaseCommand', () => {
+    beforeEach(async () => {
+      await saveDefaultConnection();
+      sandbox.resetHistory();
+    });
+
     test('Switching a database should show a success message', async () => {
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
