@@ -13,7 +13,10 @@ declare const vscode: vscode;
 
 type ResultState = {
   statement: string;
-  state: 'executing' | 'error' | Result;
+  state:
+    | 'executing'
+    | { type: 'error'; errorMessage: string }
+    | { type: 'success'; result: Result };
 }[];
 
 export type ResultsTabMessage = {
@@ -118,16 +121,17 @@ function renderStatementResult(value: number, result: ResultState) {
           <p>Executing query {r.statement}</p>
         </CustomTabPanel>
       );
-    } else if (r.state === 'error') {
+    } else if (r.state.type === 'error') {
       return (
         <CustomTabPanel value={value} index={i}>
-          <p>Error executing query {r.statement}</p>
+          <p>Error executing query {r.statement}: </p>
+          <p>{r.state.errorMessage}</p>
         </CustomTabPanel>
       );
     } else {
       return (
         <CustomTabPanel value={value} index={i}>
-          {getResultContent(r.statement, r.state)}
+          {getResultContent(r.statement, r.state.result)}
         </CustomTabPanel>
       );
     }
@@ -154,14 +158,17 @@ export function ResultTabs() {
         setStatementResults((prev) => {
           const i = message.index;
           const newState = [...prev];
-          newState[i].state = message.result;
+          newState[i].state = { type: 'success', result: message.result };
           return newState;
         });
       } else if (message.type === 'error') {
         setStatementResults((prev) => {
           const i = message.index;
           const newState = [...prev];
-          newState[i].state = 'error';
+          newState[i].state = {
+            type: 'error',
+            errorMessage: message.errorMessage,
+          };
           return newState;
         });
       }
