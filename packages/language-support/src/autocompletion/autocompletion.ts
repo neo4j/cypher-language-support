@@ -26,7 +26,8 @@ export function autocomplete(
   const caret = findCaret(parsingResult, caretPosition);
   if (caret) {
     const statement = caret.statement;
-    return completionCoreCompletion(statement, dbSchema, manual);
+    const caretToken = caret.token;
+    return completionCoreCompletion(statement, dbSchema, caretToken, manual);
   }
 
   return [];
