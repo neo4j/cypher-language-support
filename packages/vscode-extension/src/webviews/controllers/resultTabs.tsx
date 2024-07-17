@@ -1,10 +1,9 @@
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import { Tabs } from '@neo4j-ndl/react';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Result, ResultMessage, ResultRows } from '../resultPanel';
 
+const maxTabHeaderSize = 25;
 interface vscode {
   postMessage(message: ResultsTabMessage): void;
 }
@@ -22,35 +21,6 @@ type ResultState = {
 export type ResultsTabMessage = {
   type: 'resultsWindowLoaded';
 };
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function renderRow(keys: any[], row: Record<string, unknown>) {
@@ -117,25 +87,44 @@ function renderStatementResult(value: number, result: ResultState) {
   return result.map((r, i) => {
     if (r.state === 'executing') {
       return (
-        <CustomTabPanel value={value} index={i}>
+        <Tabs.TabPanel
+          className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
+          value={value}
+          tabId={i}
+        >
           <p>Executing query {r.statement}</p>
-        </CustomTabPanel>
+        </Tabs.TabPanel>
       );
     } else if (r.state.type === 'error') {
       return (
-        <CustomTabPanel value={value} index={i}>
+        <Tabs.TabPanel
+          className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
+          value={value}
+          tabId={i}
+        >
           <p>Error executing query {r.statement}: </p>
           <p>{r.state.errorMessage}</p>
-        </CustomTabPanel>
+        </Tabs.TabPanel>
       );
     } else {
       return (
-        <CustomTabPanel value={value} index={i}>
+        <Tabs.TabPanel
+          className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
+          value={value}
+          tabId={i}
+        >
           {getResultContent(r.statement, r.state.result)}
-        </CustomTabPanel>
+        </Tabs.TabPanel>
       );
     }
   });
+}
+
+function truncateTabName(statement: string) {
+  if (statement.length > maxTabHeaderSize) {
+    return statement.substring(0, maxTabHeaderSize) + '...';
+  }
+  return statement;
 }
 
 export function ResultTabs() {
@@ -183,25 +172,21 @@ export function ResultTabs() {
   }, []);
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (newValue: number) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          {statementResults.map((result, i) => {
-            return <Tab label={result.statement} {...a11yProps(i)} />;
-          })}
-        </Tabs>
-      </Box>
+    <div>
+      <Tabs value={value} onChange={handleChange} className="label">
+        {statementResults.map((result, i) => {
+          return (
+            <Tabs.Tab tabId={i}>{truncateTabName(result.statement)}</Tabs.Tab>
+          );
+        })}
+      </Tabs>
       {renderStatementResult(value, statementResults)}
-    </Box>
+    </div>
   );
 }
 

@@ -118,7 +118,7 @@ export function getErrorContent(err: Error): string {
   `;
 }
 
-export function setAllTabsToLoading(script: string): string {
+export function setAllTabsToLoading(script: string, ndlCssUri: string): string {
   return `
     <html>
       <head>
@@ -156,6 +156,7 @@ export function setAllTabsToLoading(script: string): string {
         border-color: var(--border);
       }
       </style>
+      <link href="${ndlCssUri.toString()}" rel="stylesheet">
       </head>
       <body>
           <div id="resultDiv"></div> 
@@ -221,11 +222,16 @@ export default class ResultWindow {
       ),
     );
 
+    const ndlCssPath = Uri.file(
+      path.join(this.context.extensionPath, 'resources', 'styles', 'ndl.css'),
+    );
+
     const resultTabsJs = webview.asWebviewUri(resultTabsJsPath).toString();
+    const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
 
     // Set all the tabs to loading
 
-    webview.html = setAllTabsToLoading(resultTabsJs);
+    webview.html = setAllTabsToLoading(resultTabsJs, ndlCssUri);
 
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(

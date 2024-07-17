@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.2.2",
+  "version": "1.2.6",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -268,7 +268,7 @@
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild.js --production",
     "bundle-extension:dev": "node ./esbuild.js",
-    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
+    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser   --loader:.woff2=dataurl",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
@@ -277,9 +277,10 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.16.0",
     "@neo4j-cypher/language-server": "2.0.0-next.7",
     "@neo4j-cypher/language-support": "2.0.0-next.6",
+    "@neo4j-ndl/base": "^2.11.12",
+    "@neo4j-ndl/react": "^2.15.18",
     "neo4j-driver": "^5.12.0",
     "vscode-languageclient": "^8.1.0"
   },
