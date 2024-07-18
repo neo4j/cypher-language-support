@@ -8,11 +8,13 @@ import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
   default as CypherParser,
+  FunctionNameContext,
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
+  SymbolicNameStringContext,
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
@@ -40,6 +42,7 @@ export interface ParsedStatement {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  collectedFunctions: ParsedFunction[];
 }
 
 export interface ParsingResult {
@@ -92,6 +95,17 @@ export type LabelOrRelType = {
   };
 };
 
+export type ParsedFunction = {
+  parsedName: string;
+  rawText: string;
+  line: number;
+  column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
+};
+
 export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
@@ -134,8 +148,13 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
+      const functionFinder = new FunctionCollector(tokens);
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [labelsCollector, variableFinder];
+      parser._parseListeners = [
+        labelsCollector,
+        variableFinder,
+        functionFinder,
+      ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -159,6 +178,7 @@ export function createParsingResult(query: string): ParsingResult {
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
+        collectedFunctions: functionFinder.functions,
       };
     });
 
@@ -170,7 +190,7 @@ export function createParsingResult(query: string): ParsingResult {
   return parsingResult;
 }
 
-// This listener is collects all labels and relationship types
+// This listener collects all labels and relationship types
 class LabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
@@ -264,6 +284,79 @@ class VariableCollector implements ParseTreeListener {
         this.variables.push(variable);
       }
     }
+  }
+}
+
+// This listener collects all functions
+class FunctionCollector extends ParseTreeListener {
+  public functions: ParsedFunction[] = [];
+  private tokens: Token[];
+
+  constructor(tokens: Token[]) {
+    super();
+    this.tokens = tokens;
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof FunctionNameContext) {
+      const functionName = this.getNormalizedFunctionName(ctx);
+
+      const startTokenIndex = ctx.start.tokenIndex;
+      const stopTokenIndex = ctx.stop.tokenIndex;
+
+      const rawText = this.tokens
+        .slice(startTokenIndex, stopTokenIndex + 1)
+        .map((token) => {
+          return token.text;
+        })
+        .join('');
+
+      this.functions.push({
+        parsedName: functionName,
+        rawText: rawText,
+        line: ctx.start.line,
+        column: ctx.start.column,
+        offsets: {
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
+        },
+      });
+    }
+  }
+
+  private getNormalizedFunctionName(ctx: FunctionNameContext): string {
+    const namespaces = ctx.namespace().symbolicNameString_list();
+    const functionName = ctx.symbolicNameString();
+
+    const normalizedName = [...namespaces, functionName]
+      .map((symbolicName) => {
+        return this.getFunctionNamespaceString(symbolicName);
+      })
+      .join('.');
+
+    return normalizedName;
+  }
+
+  private getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
+    const text = ctx.getText();
+    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+    const hasDot = text.includes('.');
+
+    if (isEscaped && !hasDot) {
+      return text.slice(1, -1);
+    }
+
+    return text;
   }
 }
 
