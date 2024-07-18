@@ -60,15 +60,26 @@ export async function eventually(
   }
 }
 
-export function getMockConnection(connect: boolean = false): Connection {
+export function getMockConnection(activate: boolean = false): Connection {
   return {
     key: getNonce(16),
     name: 'mock-connection',
     database: 'neo4j',
-    connect: connect,
     user: 'neo4j',
     host: 'localhost',
     scheme: 'neo4j',
     port: '7687',
+    state: activate ? 'activating' : 'inactive',
+  };
+}
+
+export function getNeo4jConfiguration() {
+  return {
+    scheme: process.env.NEO4J_SCHEME || 'neo4j',
+    host: process.env.NEO4J_HOST || 'localhost',
+    port: process.env.NEO4J_PORT || '7687',
+    user: process.env.NEO4J_USER || 'neo4j',
+    database: process.env.NEO4J_DATABASE || 'neo4j',
+    password: process.env.NEO4J_PASSWORD || 'password',
   };
 }

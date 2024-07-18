@@ -25,13 +25,75 @@ test('respects preloaded history', async ({ page, mount }) => {
   await editorPage.getEditor().press('ArrowUp');
   await expect(page.getByText('second')).toBeVisible();
 
+  // First arrow down is to get to end of line
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('first')).toBeVisible();
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText(initialValue)).toBeVisible();
 });
 
-test('can execute queries and see them in history', async ({ page, mount }) => {
+test('can add new lines without onExecute', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const editorComponent = await mount(<CypherEditor />);
+
+  // Ctrl-Enter does nothing when onExecute is false
+  await editorPage.getEditor().press('Control+Enter');
+  await expect(editorComponent).toHaveText('1\n', {
+    useInnerText: true,
+  });
+
+  // Enter adds new lines
+  await editorPage.getEditor().fill('Brock');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\nBrock', {
+    useInnerText: true,
+  });
+
+  // Shift-Enter adds new lines
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Shift+Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\n4\n5\nBrock', {
+    useInnerText: true,
+  });
+});
+
+test('can add new lines with newLineOnEnter and without onExecute', async ({
+  page,
+  mount,
+}) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const editorComponent = await mount(<CypherEditor newLineOnEnter />);
+
+  // Ctrl-Enter does nothing when onExecute is false
+  await editorPage.getEditor().press('Control+Enter');
+  await expect(editorComponent).toHaveText('1\n', {
+    useInnerText: true,
+  });
+
+  // Enter adds new lines
+  await editorPage.getEditor().fill('Brock');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\nBrock', {
+    useInnerText: true,
+  });
+
+  // Shift-Enter adds new lines
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Shift+Enter');
+  await expect(editorComponent).toHaveText('1\n2\n3\n4\n5\nBrock', {
+    useInnerText: true,
+  });
+});
+
+test('can execute queries and see them in history with newLineOnEnter', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
 
   const initialValue = `MATCH (n)
@@ -47,6 +109,7 @@ RETURN n;`;
       value={initialValue}
       history={history}
       onExecute={onExecute}
+      newLineOnEnter
     />,
   );
 
@@ -61,12 +124,12 @@ RETURN n;`;
   await editorPage.getEditor().press('Meta+Enter');
   expect(history.length).toBe(1);
 
-  // Ensure only enter doesn't execute query
+  // Ensure cmd+enter is required in multiline
   await editorPage.getEditor().fill('multiline');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().press('Enter');
-  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Shift+Enter');
   await page.keyboard.type('entry');
   expect(history.length).toBe(1);
 
@@ -100,8 +163,13 @@ RETURN n;`;
   await expect(page.getByText('multiline')).toBeVisible();
 
   // arrow movements don't matter until bottom is hit
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowUp');
   await editorPage.getEditor().press('ArrowUp');
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
+  await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
   await editorPage.getEditor().press('ArrowDown');
 
@@ -111,6 +179,59 @@ RETURN n;`;
   // until you hit the end where have the draft we created earlier
   await editorPage.getEditor().press('ArrowDown');
   await expect(page.getByText('draft')).toBeVisible();
+});
+
+test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const initialValue = 'Brock';
+
+  const history: string[] = [];
+  const onExecute = (cmd: string) => {
+    history.unshift(cmd);
+  };
+
+  const editorComponent = await mount(
+    <CypherEditor value={initialValue} onExecute={onExecute} />,
+  );
+
+  // Cmd/Control still executes initial query
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  expect(history.length).toBe(1);
+
+  // Ensure query execution doesn't fire if the query is only whitespace
+  await editorPage.getEditor().fill('     ');
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(1);
+
+  // Ensure enter executes query when in single line
+  await editorPage.getEditor().fill('Misty');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(2);
+  expect(history).toEqual(['Misty', 'Brock']);
+
+  // Ensure cmd+enter is required in multiline
+  await editorPage.getEditor().fill('multiline');
+  await editorPage.getEditor().press('Shift+Enter');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('A');
+
+  // line numbers and the text
+  await expect(editorComponent).toHaveText('1\n2\n3\nmultiline\nA', {
+    useInnerText: true,
+  });
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  await editorPage.getEditor().press('Enter');
+  expect(history.length).toBe(2);
+
+  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Meta+Enter');
+  expect(history.length).toBe(3);
 });
 
 test('can navigate with cmd+up as well', async ({ page, mount }) => {
@@ -125,11 +246,11 @@ test('can navigate with cmd+up as well', async ({ page, mount }) => {
     <CypherEditor
       value={initialValue}
       history={[
+        'first',
         `one
 multiline
 entry
 .`,
-        'second',
       ]}
       onExecute={() => {
         /* needed to turn on history movements */
@@ -138,23 +259,23 @@ entry
   );
 
   await editorPage.getEditor().press(metaUp);
-  await expect(page.getByText('multiline')).toBeVisible();
+  await expect(page.getByText('first')).toBeVisible();
 
-  // Single meta up moves all the way to top of editor on mac
-  if (isMac) {
-    await editorPage.getEditor().press(metaUp);
-  } else {
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-    await editorPage.getEditor().press('ArrowUp');
-  }
   // move in history
   await editorPage.getEditor().press(metaUp);
-  await expect(page.getByText('second')).toBeVisible();
-
-  await editorPage.getEditor().press(metaDown);
   await expect(page.getByText('multiline')).toBeVisible();
+
+  // Single meta down moves all the way to top of editor on mac
+  if (isMac) {
+    await editorPage.getEditor().press(metaDown);
+  } else {
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+    await editorPage.getEditor().press('ArrowDown');
+  }
+  await editorPage.getEditor().press(metaDown);
+  await expect(page.getByText('first')).toBeVisible();
 });
 
 test('test onExecute', async ({ page, mount }) => {

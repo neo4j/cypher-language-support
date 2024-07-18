@@ -1,7 +1,7 @@
 import { before } from 'mocha';
-import { createConnection, createTestDatabase } from '../suiteSetup';
+import { createTestDatabase, saveDefaultConnection } from '../suiteSetup';
 
 before(async () => {
-  await createConnection();
+  await saveDefaultConnection();
   await createTestDatabase();
 });

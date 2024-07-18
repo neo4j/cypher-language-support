@@ -103,7 +103,7 @@ connection.onNotification(
   },
 );
 
-connection.onNotification('connectionDeleted', () => {
+connection.onNotification('connectionDisconnected', () => {
   disconnect();
 });
 

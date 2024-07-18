@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -255,9 +255,11 @@
     "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
-    "bundle-extension": "esbuild ./src/extension.ts --bundle --external:vscode --format=cjs --platform=node --minify --outfile=dist/extension.js",
+    "bundle-extension": "node ./esbuild.js --production",
+    "bundle-extension:dev": "node ./esbuild.js",
     "bundle-webview-controller": "esbuild ./src/webviews/controllers/connectionPanelController.ts --bundle --outfile=dist/webviews/connectionPanelController.js --platform=browser",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller",
+    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controller",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
   },

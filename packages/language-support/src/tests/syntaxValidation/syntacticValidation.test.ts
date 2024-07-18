@@ -813,7 +813,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected a string or a parameter',
+        message: 'Expected any of CHANGE, a string or a parameter',
         offsets: {
           end: 39,
           start: 36,

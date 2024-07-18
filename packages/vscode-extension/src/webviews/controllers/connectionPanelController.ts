@@ -7,6 +7,16 @@ interface vscode {
 
 declare const vscode: vscode;
 
+/**
+ * These functions are all bundled into an IIFE with esbuild and injected into the webview as a script.
+ */
+
+/**
+ * Validates a Connection object and a password from the webview form.ƒ
+ * @param connection The Connection object to validate. Only scheme, host, user, and password are required.
+ * @param password The password to validate.
+ * @returns True if the connection is valid, false otherwise.
+ */
 export function validateConnection(
   connection: Connection | null,
   password: string,
@@ -16,17 +26,19 @@ export function validateConnection(
     !connection ||
     (!!connection.scheme &&
       !!connection.host &&
-      !!connection.database &&
       !!connection.user &&
       !!password)
   );
 }
 
+/**
+ * Highlights any invalid fields in the webview form by toggling the invalid class.
+ * Only scheme, host, user, and password are required.
+ */
 export function highlightInvalidFields(): void {
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
   const user = document.getElementById('user') as HTMLInputElement;
-  const database = document.getElementById('database') as HTMLInputElement;
   const password = document.getElementById('password') as HTMLInputElement;
 
   scheme.classList.toggle(
@@ -34,11 +46,23 @@ export function highlightInvalidFields(): void {
     !scheme.value || !isValidScheme(scheme.value),
   );
   host.classList.toggle('invalid', !host.value);
-  database.classList.toggle('invalid', !database.value);
   user.classList.toggle('invalid', !user.value);
   password.classList.toggle('invalid', !password.value);
 }
 
+/**
+ * Highlights any fields invalidated by the server.
+ * @param errorCode The Neo4j driver error code.
+ */
+export function highlightServerInvalidatedFields(): void {
+  document.querySelectorAll('[data-invalid="true"]').forEach((element) => {
+    element.classList.add('invalid');
+  });
+}
+
+/**
+ * @returns A Connection object from the webview form.
+ */
 export function getConnection(): Connection | null {
   const key = document.getElementById('key') as HTMLInputElement;
   const scheme = document.getElementById('scheme') as HTMLInputElement;
@@ -46,7 +70,6 @@ export function getConnection(): Connection | null {
   const port = document.getElementById('port') as HTMLInputElement;
   const user = document.getElementById('user') as HTMLInputElement;
   const database = document.getElementById('database') as HTMLInputElement;
-  const connect = document.getElementById('connect') as HTMLInputElement;
 
   if (!isValidScheme(scheme.value)) {
     return null;
@@ -60,19 +83,34 @@ export function getConnection(): Connection | null {
     port: port.value,
     user: user.value,
     database: database.value,
-    connect: connect.value === 'true',
+    state: 'activating',
   };
 }
 
+/**
+ * Guard function to validate a string is a Scheme.
+ * @param scheme A string to validate as a Scheme.
+ * @returns True if the string is a valid Scheme, false otherwise.
+ */
 export function isValidScheme(scheme: string): scheme is Scheme {
   return ['neo4j', 'neo4j+s', 'bolt', 'bolt+s'].includes(scheme);
 }
 
+/**
+ * @returns The password from the webview form.
+ */
 export function getPassword(): string {
   const password = document.getElementById('password') as HTMLInputElement;
   return password.value;
 }
 
+/**
+ * Handles the form submission event by validating the connection and password and invoking the appropriate command via the vscode API.
+ * If the connection is valid, the connection and password are sent to the extension.
+ * If the connection is invalid, a validation error is sent to the extension.
+ * @param event The form submission event.
+ * @returns False to prevent the default form submission behavior.
+ */
 export function onSubmit(event: Event): boolean {
   event.preventDefault();
 
@@ -93,4 +131,9 @@ export function onSubmit(event: Event): boolean {
   }
 }
 
+/**
+ * Adds an event listener to the form submission event.
+ */
 addEventListener('submit', (event) => onSubmit(event));
+
+highlightServerInvalidatedFields();
