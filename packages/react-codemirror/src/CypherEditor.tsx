@@ -262,6 +262,8 @@ export class CypherEditor extends Component<
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
+  private latestDispatchedValue: string | undefined;
+
   /**
    * Focus the editor
    */
@@ -309,7 +311,13 @@ export class CypherEditor extends Component<
   };
 
   private debouncedOnChange = this.props.onChange
-    ? debounce(this.props.onChange, 200)
+    ? debounce(
+        ((value, viewUpdate) => {
+          this.latestDispatchedValue = value;
+          this.props.onChange(value, viewUpdate);
+        }) satisfies CypherEditorProps['onChange'],
+        200,
+      )
     : undefined;
 
   componentDidMount(): void {
@@ -424,7 +432,10 @@ export class CypherEditor extends Component<
     // Handle externally set value
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
-    if (this.props.value !== undefined && currentCmValue !== this.props.value) {
+    if (
+      this.props.value !== undefined &&
+      this.props.value !== this.latestDispatchedValue
+    ) {
       this.debouncedOnChange?.cancel();
       this.editorView.current.dispatch({
         changes: {
