@@ -77,7 +77,6 @@ export function getConnection(): Connection | null {
 
   return {
     key: key.value,
-    name: 'Default connection',
     scheme: scheme.value,
     host: host.value,
     port: port.value,
