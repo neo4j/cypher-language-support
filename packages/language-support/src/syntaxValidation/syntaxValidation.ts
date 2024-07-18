@@ -6,10 +6,11 @@ import {
   LabelOrRelType,
   LabelType,
   ParsedFunction,
+  ParsedProcedure,
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction } from '../types';
+import { Neo4jFunction, Neo4jProcedure } from '../types';
 import {
   SemanticAnalysisElement,
   wrappedSemanticAnalysis,
@@ -83,6 +84,18 @@ function detectNonDeclaredFunction(
   }
 }
 
+function detectNonDeclaredProcedure(
+  parsedProcedure: ParsedProcedure,
+  proceduresSchema: Record<string, Neo4jProcedure>,
+): SyntaxDiagnostic | undefined {
+  const procedureName = parsedProcedure.name;
+  const procedureExists = Boolean(proceduresSchema[procedureName]);
+
+  if (!procedureExists) {
+    return generateProcedureNotFoundWarning(parsedProcedure);
+  }
+}
+
 function generateFunctionNotFoundWarning(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
@@ -104,6 +117,32 @@ function generateFunctionNotFoundWarning(
     },
     offsets: parsedFunction.offsets,
     message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  };
+
+  return warning;
+}
+
+function generateProcedureNotFoundWarning(
+  parsedProcedure: ParsedProcedure,
+): SyntaxDiagnostic {
+  const rawText = parsedProcedure.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedProcedure.line - 1;
+  const startColumn = parsedProcedure.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const warning: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Warning,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedProcedure.offsets,
+    message: `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   };
 
   return warning;
@@ -246,9 +285,10 @@ export function validateSyntax(
     const diagnostics = statement.diagnostics;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
     const functionWarnings = warnOnUndeclaredFunctions(statement, dbSchema);
+    const proceduresWarnings = warnOnUndeclaredProcedures(statement, dbSchema);
 
     return diagnostics
-      .concat(labelWarnings, functionWarnings)
+      .concat(labelWarnings, functionWarnings, proceduresWarnings)
       .sort(sortByPositionAndMessage);
   });
 
@@ -304,6 +344,28 @@ function warnOnUndeclaredFunctions(
       const warning = detectNonDeclaredFunction(
         parsedFunction,
         dbSchema.functions,
+      );
+
+      if (warning) warnings.push(warning);
+    });
+  }
+
+  return warnings;
+}
+
+function warnOnUndeclaredProcedures(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+
+  if (dbSchema.procedures) {
+    const proceduresInQuery = parsingResult.collectedProcedures;
+
+    proceduresInQuery.forEach((parsedProcedure) => {
+      const warning = detectNonDeclaredProcedure(
+        parsedProcedure,
+        dbSchema.procedures,
       );
 
       if (warning) warnings.push(warning);

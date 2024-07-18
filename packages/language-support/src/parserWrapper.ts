@@ -12,6 +12,7 @@ import {
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  ProcedureNameContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
@@ -43,6 +44,7 @@ export interface ParsedStatement {
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
+  collectedProcedures: ParsedProcedure[];
 }
 
 export interface ParsingResult {
@@ -105,6 +107,7 @@ export type ParsedFunction = {
     end: number;
   };
 };
+export type ParsedProcedure = ParsedFunction;
 
 export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
@@ -149,11 +152,13 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const functionFinder = new FunctionCollector(tokens);
+      const procedureFinder = new ProceduresCollector(tokens);
       const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [
         labelsCollector,
         variableFinder,
         functionFinder,
+        procedureFinder,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -179,6 +184,7 @@ export function createParsingResult(query: string): ParsingResult {
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
         collectedFunctions: functionFinder.functions,
+        collectedProcedures: procedureFinder.procedures,
       };
     });
 
@@ -339,6 +345,79 @@ class FunctionCollector extends ParseTreeListener {
     const functionName = ctx.symbolicNameString();
 
     const normalizedName = [...namespaces, functionName]
+      .map((symbolicName) => {
+        return this.getProcedureNamespaceString(symbolicName);
+      })
+      .join('.');
+
+    return normalizedName;
+  }
+
+  private getProcedureNamespaceString(ctx: SymbolicNameStringContext): string {
+    const text = ctx.getText();
+    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+    const hasDot = text.includes('.');
+
+    if (isEscaped && !hasDot) {
+      return text.slice(1, -1);
+    }
+
+    return text;
+  }
+}
+
+// This listener collects all functions
+class ProceduresCollector extends ParseTreeListener {
+  public procedures: ParsedProcedure[] = [];
+  private tokens: Token[];
+
+  constructor(tokens: Token[]) {
+    super();
+    this.tokens = tokens;
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof ProcedureNameContext) {
+      const procedureName = this.getProcedureName(ctx);
+
+      const startTokenIndex = ctx.start.tokenIndex;
+      const stopTokenIndex = ctx.stop.tokenIndex;
+
+      const rawText = this.tokens
+        .slice(startTokenIndex, stopTokenIndex + 1)
+        .map((token) => {
+          return token.text;
+        })
+        .join('');
+
+      this.procedures.push({
+        name: procedureName,
+        rawText: rawText,
+        line: ctx.start.line,
+        column: ctx.start.column,
+        offsets: {
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
+        },
+      });
+    }
+  }
+
+  private getProcedureName(ctx: ProcedureNameContext): string {
+    const namespaces = ctx.namespace().symbolicNameString_list();
+    const procedureName = ctx.symbolicNameString();
+
+    const normalizedName = [...namespaces, procedureName]
       .map((symbolicName) => {
         return this.getFunctionNamespaceString(symbolicName);
       })
