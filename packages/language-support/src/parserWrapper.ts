@@ -72,31 +72,6 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
   else return LabelType.unknown;
 }
 
-function getFunctionName(ctx: FunctionNameContext): string {
-  const namespaces = ctx.namespace().symbolicNameString_list();
-  const functionName = ctx.symbolicNameString();
-
-  const normalizedName = [...namespaces, functionName]
-    .map((symbolicName) => {
-      return getFunctionNamespaceString(symbolicName);
-    })
-    .join('.');
-
-  return normalizedName;
-}
-
-function getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
-  const text = ctx.getText();
-  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
-  const hasDot = text.includes('.');
-
-  if (isEscaped && !hasDot) {
-    return text.slice(1, -1);
-  }
-
-  return text;
-}
-
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
   const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
 
@@ -334,7 +309,7 @@ class FunctionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof FunctionNameContext) {
-      const functionName = getFunctionName(ctx);
+      const functionName = this.getFunctionName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -357,6 +332,31 @@ class FunctionCollector extends ParseTreeListener {
         },
       });
     }
+  }
+
+  private getFunctionName(ctx: FunctionNameContext): string {
+    const namespaces = ctx.namespace().symbolicNameString_list();
+    const functionName = ctx.symbolicNameString();
+
+    const normalizedName = [...namespaces, functionName]
+      .map((symbolicName) => {
+        return this.getFunctionNamespaceString(symbolicName);
+      })
+      .join('.');
+
+    return normalizedName;
+  }
+
+  private getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
+    const text = ctx.getText();
+    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+    const hasDot = text.includes('.');
+
+    if (isEscaped && !hasDot) {
+      return text.slice(1, -1);
+    }
+
+    return text;
   }
 }
 
