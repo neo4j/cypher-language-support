@@ -63,7 +63,7 @@ function detectNonDeclaredFunction(
   parsedFunction: ParsedFunction,
   functionsSchema: Record<string, Neo4jFunction>,
 ): SyntaxDiagnostic | undefined {
-  const lowercaseFunctionName = parsedFunction.name.toLowerCase();
+  const lowercaseFunctionName = parsedFunction.parsedName.toLowerCase();
   const caseInsensitiveFunctionInDatabase =
     functionsSchema[lowercaseFunctionName];
 
@@ -76,7 +76,7 @@ function detectNonDeclaredFunction(
   }
 
   const functionExistsWithExactName = Boolean(
-    functionsSchema[parsedFunction.name],
+    functionsSchema[parsedFunction.parsedName],
   );
   if (!functionExistsWithExactName) {
     return generateFunctionNotFoundWarning(parsedFunction);
@@ -103,7 +103,7 @@ function generateFunctionNotFoundWarning(
       end: Position.create(lineIndex + linesOffset, endColumn),
     },
     offsets: parsedFunction.offsets,
-    message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+    message: `Function ${parsedFunction.parsedName} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   };
 
   return warning;

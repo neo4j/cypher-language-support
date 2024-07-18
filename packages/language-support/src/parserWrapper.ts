@@ -96,7 +96,7 @@ export type LabelOrRelType = {
 };
 
 export type ParsedFunction = {
-  name: string;
+  parsedName: string;
   rawText: string;
   line: number;
   column: number;
@@ -309,7 +309,7 @@ class FunctionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof FunctionNameContext) {
-      const functionName = this.getFunctionName(ctx);
+      const functionName = this.getNormalizedFunctionName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -322,7 +322,7 @@ class FunctionCollector extends ParseTreeListener {
         .join('');
 
       this.functions.push({
-        name: functionName,
+        parsedName: functionName,
         rawText: rawText,
         line: ctx.start.line,
         column: ctx.start.column,
@@ -334,7 +334,7 @@ class FunctionCollector extends ParseTreeListener {
     }
   }
 
-  private getFunctionName(ctx: FunctionNameContext): string {
+  private getNormalizedFunctionName(ctx: FunctionNameContext): string {
     const namespaces = ctx.namespace().symbolicNameString_list();
     const functionName = ctx.symbolicNameString();
 
