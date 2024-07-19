@@ -13,11 +13,13 @@ import {
   ExtensionContext,
   Uri,
   ViewColumn,
+  Webview,
   WebviewPanel,
   window,
 } from 'vscode';
 import { Connection } from '../connectionService';
 import { getSchemaPoller } from '../contextService';
+import { getNonce } from '../getNonce';
 
 export function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
@@ -118,11 +120,26 @@ export function getErrorContent(err: Error): string {
   `;
 }
 
-export function setAllTabsToLoading(script: string, ndlCssUri: string): string {
+export function setAllTabsToLoading(
+  webview: Webview,
+  script: string,
+  ndlCssUri: string,
+): string {
+  const nonce = getNonce();
+
   return `
-    <html>
+    <!DOCTYPE html>
+    <html lang="en">
       <head>
-      <script>
+        <meta charset="UTF-8">
+        <!--
+        Use a content security policy to only allow loading images from https or from our extension directory,
+        and only allow scripts that have a specific nonce.
+        -->
+        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
+      <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
       </script>
       <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -160,7 +177,7 @@ export function setAllTabsToLoading(script: string, ndlCssUri: string): string {
       </head>
       <body>
           <div id="resultDiv"></div> 
-          <script src="${script}"></script>
+          <script nonce="${nonce}" src="${script}"></script>
       </body>
       </html>
     `;
@@ -231,7 +248,7 @@ export default class ResultWindow {
 
     // Set all the tabs to loading
 
-    webview.html = setAllTabsToLoading(resultTabsJs, ndlCssUri);
+    webview.html = setAllTabsToLoading(webview, resultTabsJs, ndlCssUri);
 
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(
