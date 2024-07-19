@@ -101,6 +101,7 @@ export async function switchDatabase(connection: Connection | null) {
     return;
   }
 
+  await saveConnection(connection);
   return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 }
 
