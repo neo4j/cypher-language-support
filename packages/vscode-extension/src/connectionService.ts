@@ -101,7 +101,6 @@ export async function switchDatabase(connection: Connection | null) {
     return;
   }
 
-  await saveConnection(connection);
   return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 }
 
@@ -313,7 +312,7 @@ async function initializeDatabaseConnection(
   const schemaPoller = getSchemaPoller();
   disconnectFromSchemaPoller();
 
-  const result = await schemaPoller.connect(
+  return await schemaPoller.connect(
     settings.connectURL,
     {
       username: settings.user,
@@ -322,8 +321,6 @@ async function initializeDatabaseConnection(
     { appName: 'vscode-extension' },
     settings.database,
   );
-
-  return result;
 }
 
 /**
@@ -354,8 +351,6 @@ async function connectToDatabaseAndNotifyLanguageClient(
   const password = await getPasswordForConnection(connection.key);
   const settings = getDatabaseConnectionSettings(connection, password);
 
-  await sendNotificationToLanguageClient('connectionUpdated', settings);
-
   const result = await establishPersistentConnectionToSchemaPoller(settings);
   const state: State = result.success
     ? 'active'
@@ -363,9 +358,17 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
+  result.success
+    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
+    : await sendNotificationToLanguageClient('connectionDisconnected');
+
   await saveConnection({
     ...connection,
     state: state,
+    database:
+      result.error?.code === 'Neo.ClientError.Database.DatabaseNotFound'
+        ? undefined
+        : connection.database,
   });
 
   return result;

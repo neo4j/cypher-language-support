@@ -62,15 +62,13 @@ export class Neo4jSchemaPoller {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
     const shouldUpdateConnection =
-      this.connection && this.connection?.currentDb !== database;
+      this.connection && database && this.connection?.currentDb !== database;
 
     if (!connectionAlive || shouldUpdateConnection) {
-      if (shouldUpdateConnection) {
-        // eslint-disable-next-line no-console
-        console.log('Updating Neo4j connection');
-        this.stopPolling();
-      } else if (shouldHaveConnection) {
+      if (shouldHaveConnection && !shouldUpdateConnection) {
         console.error('Connection to Neo4j dropped');
+        this.disconnect();
+      } else if (shouldUpdateConnection) {
         this.disconnect();
       }
 
@@ -129,15 +127,11 @@ export class Neo4jSchemaPoller {
       // eslint-disable-next-line no-console
       console.log('Disconnected from Neo4j');
     }
-    this.stopPolling();
     this.connection?.dispose();
+    this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
     this.metadata = undefined;
     this.driver = undefined;
-  }
-
-  stopPolling() {
-    this.metadata?.stopBackgroundPolling();
     clearTimeout(this.reconnectionTimeout);
   }
 
@@ -257,13 +251,15 @@ export class Neo4jSchemaPoller {
     },
     retriable: boolean,
   ): ConnectionError {
+    const friendlyMessage = retriable
+      ? `${connectionError.friendlyMessage}. Retrying in ${
+          RETRY_INTERVAL_MS / 1000
+        } seconds`
+      : connectionError.friendlyMessage;
+
     return {
       ...connectionError,
-      friendlyMessage: `${connectionError.friendlyMessage}. ${
-        retriable
-          ? `Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
-          : 'Not trying again'
-      }`,
+      friendlyMessage: friendlyMessage,
     };
   }
 

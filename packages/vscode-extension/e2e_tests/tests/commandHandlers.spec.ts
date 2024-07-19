@@ -95,7 +95,7 @@ suite('Command handlers spec', () => {
     sandbox.assert.notCalled(sendNotificationSpy);
   });
 
-  test('Switching a database should notify the language server', async () => {
+  test('Switching a database should notify the language server with connectionUpdated', async () => {
     const sendNotificationSpy = sandbox.spy(
       mockLanguageClient,
       'sendNotification',
@@ -126,9 +126,9 @@ suite('Command handlers spec', () => {
     );
   });
 
-  test('Switching to a bad database should not notify the language server', async () => {
+  test('Switching to a bad database should notify the language server with connectionDisconnected', async () => {
     sandbox
-      .stub(mockSchemaPoller, 'connect')
+      .stub(mockSchemaPoller, 'persistentConnect')
       .resolves({ success: false, retriable: true });
     const sendNotificationSpy = sandbox.spy(
       mockLanguageClient,
@@ -146,7 +146,11 @@ suite('Command handlers spec', () => {
       key: 'bad-database',
     });
 
-    sandbox.assert.notCalled(sendNotificationSpy);
+    sandbox.assert.calledOnceWithExactly(
+      sendNotificationSpy,
+      'connectionDisconnected',
+      undefined,
+    );
   });
 
   test('Switching to a non-database should do nothing', async () => {
