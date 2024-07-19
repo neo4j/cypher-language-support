@@ -9,6 +9,7 @@ import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
+import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
@@ -297,9 +298,29 @@ export async function establishPersistentConnectionToSchemaPoller(
  *  Gets an array of database names from the connection, if they exist.
  * @returns An array of database names, or an empty array if no databases exist.
  */
-export function getConnectionDatabases(): Database[] {
+export function getConnectionDatabases(): Pick<
+  Database,
+  'name' | 'default' | 'home'
+>[] {
   const schemaPoller = getSchemaPoller();
-  return schemaPoller.connection?.databases ?? [];
+  const databases = schemaPoller.connection?.databases ?? [];
+
+  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema) {
+    return databases;
+  }
+
+  return schemaPoller.metadata.dbSchema.databaseNames?.map((name) => {
+    const database = databases.find((db) => db.name === name);
+    if (!database) {
+      return {
+        name: name,
+        default: false,
+        home: false,
+      };
+    } else {
+      return database;
+    }
+  }, []);
 }
 
 /**
@@ -502,13 +523,16 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
 }
 
 /**
- * Attaches an event listener to handle connection errors.
- * This event is only handled once.
+ * Attaches event listeners for a successful database connection attempt.
+ * The events handled are:
+ * - schemaFetched: Refreshes the database information tree view.
+ * - connectionErrored: Handles connection errors. This event is only handled once.
  */
 function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.events.on('schemaFetched', () => {
     databaseInformationTreeDataProvider.refresh();
+    connectionTreeDataProvider.refresh();
   });
   schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
