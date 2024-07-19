@@ -127,15 +127,11 @@ export class Neo4jSchemaPoller {
       // eslint-disable-next-line no-console
       console.log('Disconnected from Neo4j');
     }
-    this.stopPolling();
     this.connection?.dispose();
+    this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
     this.metadata = undefined;
     this.driver = undefined;
-  }
-
-  stopPolling() {
-    this.metadata?.stopBackgroundPolling();
     clearTimeout(this.reconnectionTimeout);
   }
 
