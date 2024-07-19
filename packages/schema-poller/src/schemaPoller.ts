@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import neo4j, { Config, Driver, QueryResult, Session } from 'neo4j-driver';
+import neo4j, { Config, Driver, Session } from 'neo4j-driver';
 import {
   ConnectionError,
   FRIENDLY_ERROR_MESSAGES,
@@ -261,22 +261,5 @@ export class Neo4jSchemaPoller {
 
   private resetRetries(): void {
     this.retries = MAX_RETRY_ATTEMPTS;
-  }
-
-  public async runQuery(query: string): Promise<QueryResult | Error> {
-    if (this.session) {
-      try {
-        const result = this.session.run(query);
-        return result;
-      } catch (e) {
-        const error = e as Error;
-        return error;
-      }
-    } else {
-      const errorMessage =
-        'Could not execute query, the connection to Neo4j was not set';
-      this.events.emit('connectionFailed', errorMessage);
-      return Error(errorMessage);
-    }
   }
 }

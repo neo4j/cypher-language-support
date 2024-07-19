@@ -167,11 +167,6 @@ export function setAllTabsToLoading(
         max-height: 280px;
         overflow: auto;
       }
-
-      .error {
-        color: var(--border);
-        border-color: var(--border);
-      }
       </style>
       <link href="${ndlCssUri.toString()}" rel="stylesheet">
       </head>
@@ -282,11 +277,39 @@ export default class ResultWindow {
     }
   }
 
+  private async runQuery(query: string): Promise<QueryResult | Error> {
+    const connection = this.schemaPoller.connection;
+
+    if (connection) {
+      try {
+        const result = await connection.runSdkQuery(
+          {
+            query: query,
+            queryConfig: {
+              resultTransformer: (result) => {
+                return result;
+              },
+              routing: 'WRITE',
+            },
+          },
+          { queryType: 'user-direct' },
+        );
+
+        return result;
+      } catch (e) {
+        const error = e as Error;
+        return error;
+      }
+    } else {
+      const errorMessage =
+        'Could not execute query, the connection to Neo4j was not set';
+      return Error(errorMessage);
+    }
+  }
+
   private async executeStatement(statement: string, index: number) {
     const webview = this.panel.webview;
-    const result: QueryResult | Error = await this.schemaPoller.runQuery(
-      statement,
-    );
+    const result: QueryResult | Error = await this.runQuery(statement);
     let message: ResultMessage;
 
     if (result instanceof Error) {
