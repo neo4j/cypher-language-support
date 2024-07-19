@@ -59,11 +59,11 @@
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create Connection..."
+        "title": "Create Connection"
       },
       {
         "command": "neo4j.switchDatabase",
-        "title": "Switch to database..."
+        "title": "Switch to database"
       }
     ],
     "viewsWelcome": [

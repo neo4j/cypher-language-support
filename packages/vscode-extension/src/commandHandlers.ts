@@ -9,6 +9,7 @@ import {
   getDatabaseConnectionSettings,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
+  switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
 import { ConnectionItem } from './connectionTreeDataProvider';
@@ -170,10 +171,6 @@ export async function switchToDatabase(
   }
   const database = connectionItem.key;
   const connection = getActiveConnection();
-  const password = await getPasswordForConnection(connection.key);
-  const result = await saveConnectionAndUpdateDatabaseConnection(
-    { ...connection, database },
-    password,
-  );
+  const result = await switchDatabase({ ...connection, database });
   displayMessageForSwitchDatabaseResult(database, result);
 }

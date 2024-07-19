@@ -91,6 +91,21 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 }
 
 /**
+ * Saves a connection and updates the database connection.
+ * This function is used when switching databases, and avoids the need to reinitialize the driver.
+ * @param connection The Conection to save.
+ * @returns A promise that resolves with the Connection result.
+ */
+export async function switchDatabase(connection: Connection | null) {
+  if (!connection) {
+    return;
+  }
+
+  await saveConnection(connection);
+  return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
+}
+
+/**
  * Toggles the connect flag and connection state of a Connection and updates the database connection.
  * If the Connection's connect flag is true, any current database connections will be dropped.
  * @param connection The Connection to toggle.

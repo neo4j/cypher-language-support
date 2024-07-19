@@ -61,9 +61,15 @@ export class Neo4jSchemaPoller {
   ): Promise<ConnnectionResult> {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
+    const shouldUpdateConnection =
+      this.connection && this.connection?.currentDb !== database;
 
-    if (!connectionAlive) {
-      if (shouldHaveConnection) {
+    if (!connectionAlive || shouldUpdateConnection) {
+      if (shouldUpdateConnection) {
+        // eslint-disable-next-line no-console
+        console.log('Updating Neo4j connection');
+        this.stopPolling();
+      } else if (shouldHaveConnection) {
         console.error('Connection to Neo4j dropped');
         this.disconnect();
       }
@@ -123,11 +129,15 @@ export class Neo4jSchemaPoller {
       // eslint-disable-next-line no-console
       console.log('Disconnected from Neo4j');
     }
+    this.stopPolling();
     this.connection?.dispose();
-    this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
     this.metadata = undefined;
     this.driver = undefined;
+  }
+
+  stopPolling() {
+    this.metadata?.stopBackgroundPolling();
     clearTimeout(this.reconnectionTimeout);
   }
 
