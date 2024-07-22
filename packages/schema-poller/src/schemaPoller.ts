@@ -63,10 +63,14 @@ export class Neo4jSchemaPoller {
   ): Promise<ConnnectionResult> {
     const shouldHaveConnection = this.connection !== undefined;
     const connectionAlive = await this.connection?.healthcheck();
+    const shouldUpdateConnection =
+      this.connection && database && this.connection?.currentDb !== database;
 
-    if (!connectionAlive) {
-      if (shouldHaveConnection) {
+    if (!connectionAlive || shouldUpdateConnection) {
+      if (shouldHaveConnection && !shouldUpdateConnection) {
         console.error('Connection to Neo4j dropped');
+        this.disconnect();
+      } else if (shouldUpdateConnection) {
         this.disconnect();
       }
 
@@ -249,13 +253,15 @@ export class Neo4jSchemaPoller {
     },
     retriable: boolean,
   ): ConnectionError {
+    const friendlyMessage = retriable
+      ? `${connectionError.friendlyMessage}. Retrying in ${
+          RETRY_INTERVAL_MS / 1000
+        } seconds`
+      : connectionError.friendlyMessage;
+
     return {
       ...connectionError,
-      friendlyMessage: `${connectionError.friendlyMessage}. ${
-        retriable
-          ? `Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
-          : 'Not trying again'
-      }`,
+      friendlyMessage: friendlyMessage,
     };
   }
 
