@@ -4,6 +4,7 @@ import {
   handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   saveConnectionAndDisplayConnectionResult,
+  switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
 import {
@@ -54,6 +55,10 @@ export function registerDisposables(): Disposable[] {
       () => {
         connectionTreeDataProvider.refresh();
       },
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+      (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
     ),
   );
 
