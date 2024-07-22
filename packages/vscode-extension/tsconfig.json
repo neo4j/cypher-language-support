@@ -1,5 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "e2e_tests"],
-  "compilerOptions": { "outDir": "dist", "jsx": "react-jsx" }
+  "include": ["src", "e2e_tests", "webview_tests"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "types": [
+      "node",
+      "@wdio/mocha-framework",
+      "expect-webdriverio",
+      "wdio-vscode-service"
+    ]
+  }
 }

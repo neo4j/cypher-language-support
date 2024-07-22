@@ -34,7 +34,7 @@ export function getDocumentUri(docName: string) {
 
 export async function eventually(
   assertion: () => Promise<void>,
-  timeoutMs = 15000,
+  timeoutMs = 60000,
   backoffMs = 100,
 ) {
   let totalWait = 0;

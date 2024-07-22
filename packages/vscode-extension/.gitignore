@@ -1,1 +1,2 @@
 e2e_tests/fixtures/.env.test
+.wdio-vscode-service

@@ -1,0 +1,1 @@
+WITH (n:Person) RETURN n

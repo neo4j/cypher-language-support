@@ -68,13 +68,13 @@ function renderTable(rows: ResultRows) {
 
 export function getResultContent(statement: string, result: Result) {
   return (
-    <div>
+    <div id="query-result">
       <details>
         <summary>Query Details</summary>
         <pre>{statement}</pre>
       </details>
       {renderTable(result.rows)}
-      <div>
+      <div id="query-summary">
         {result.querySummary.map((str) => (
           <p>{str}</p>
         ))}
@@ -92,7 +92,9 @@ function renderStatementResult(value: number, result: ResultState) {
           value={value}
           tabId={i}
         >
-          <p>Executing query {r.statement}</p>
+          <div id="query-executing">
+            <p>Executing query {r.statement}</p>
+          </div>
         </Tabs.TabPanel>
       );
     } else if (r.state.type === 'error') {
@@ -102,8 +104,10 @@ function renderStatementResult(value: number, result: ResultState) {
           value={value}
           tabId={i}
         >
-          <p>Error executing query {r.statement}: </p>
-          <p>{r.state.errorMessage}</p>
+          <div id="query-error">
+            <p>Error executing query {r.statement}: </p>
+            <p>{r.state.errorMessage}</p>
+          </div>
         </Tabs.TabPanel>
       );
     } else {
