@@ -272,7 +272,7 @@
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
-    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js",
+    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js && npm run wdio",
     "wdio": "wdio run ./wdio.conf.ts"
   },
   "dependencies": {
