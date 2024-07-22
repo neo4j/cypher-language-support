@@ -103,6 +103,7 @@ export async function switchDatabase(connection: Connection | null) {
     return;
   }
 
+  await saveConnection(connection);
   return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 }
 
@@ -530,6 +531,7 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
  */
 function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
+  schemaPoller.events.removeAllListeners();
   schemaPoller.events.on('schemaFetched', () => {
     databaseInformationTreeDataProvider.refresh();
     connectionTreeDataProvider.refresh();
