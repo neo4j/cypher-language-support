@@ -103,7 +103,6 @@ export async function switchDatabase(connection: Connection | null) {
     return;
   }
 
-  await saveConnection(connection);
   return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 }
 
@@ -306,11 +305,14 @@ export function getConnectionDatabases(): Pick<
   const schemaPoller = getSchemaPoller();
   const databases = schemaPoller.connection?.databases ?? [];
 
-  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema) {
+  if (
+    !schemaPoller.metadata ||
+    !schemaPoller.metadata.dbSchema?.databaseNames
+  ) {
     return databases;
   }
 
-  return schemaPoller.metadata.dbSchema.databaseNames?.map((name) => {
+  return schemaPoller.metadata.dbSchema.databaseNames.map((name) => {
     const database = databases.find((db) => db.name === name);
     if (!database) {
       return {
