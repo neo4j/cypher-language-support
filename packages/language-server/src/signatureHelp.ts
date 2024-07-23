@@ -1,4 +1,4 @@
-import { DbSchema, signatureHelp } from '@neo4j-cypher/language-support';
+import { signatureHelp } from '@neo4j-cypher/language-support';
 import {
   SignatureHelp,
   SignatureHelpParams,
@@ -6,6 +6,7 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -15,9 +16,10 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  dbSchema: DbSchema,
+  runtime: RuntimeStrategy,
 ) {
   return (params: SignatureHelpParams) => {
+    const dbSchema = runtime.getDbSchema();
     const textDocument = documents.get(params.textDocument.uri);
     const endOfTriggerHelp = params.context?.triggerCharacter === ')';
     if (textDocument === undefined || endOfTriggerHelp) return emptyResult;

@@ -5,15 +5,17 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import type { CompletionItem, DbSchema } from '@neo4j-cypher/language-support';
+import type { CompletionItem } from '@neo4j-cypher/language-support';
 import { autocomplete } from '@neo4j-cypher/language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
-  dbSchema: DbSchema,
+  runtime: RuntimeStrategy,
 ) {
   return (completionParams: CompletionParams) => {
+    const dbSchema = runtime.getDbSchema();
     const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 

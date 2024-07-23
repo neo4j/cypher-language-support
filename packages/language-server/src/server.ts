@@ -74,36 +74,34 @@ connection.onInitialized(() => {
     SemanticTokensRegistrationType.type,
     registrationOptions,
   );
+
+  // Trigger linting
+  documents.onDidChangeContent((change) =>
+    lintDocument(
+      change,
+      (diagnostics: Diagnostic[]) => {
+        void connection.sendDiagnostics({
+          uri: change.document.uri,
+          diagnostics,
+        });
+      },
+      runtimeStrategy,
+    ),
+  );
+
+  // Trigger the signature help, providing info about functions / procedures
+  connection.onSignatureHelp(doSignatureHelp(documents, runtimeStrategy));
+
+  // Trigger the auto completion
+  connection.onCompletion(doAutoCompletion(documents, runtimeStrategy));
+
+  // Trigger the syntax colouring
+  connection.languages.semanticTokens.on(
+    applySyntaxColouringForDocument(documents),
+  );
+
+  documents.listen(connection);
 });
-
-documents.onDidChangeContent((change) =>
-  lintDocument(
-    change,
-    (diagnostics: Diagnostic[]) => {
-      void connection.sendDiagnostics({
-        uri: change.document.uri,
-        diagnostics,
-      });
-    },
-    runtimeStrategy?.getDbSchema() ?? {},
-  ),
-);
-
-// Trigger the syntax colouring
-connection.languages.semanticTokens.on(
-  applySyntaxColouringForDocument(documents),
-);
-
-// Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(
-  doSignatureHelp(documents, runtimeStrategy?.getDbSchema() ?? {}),
-);
-// Trigger the auto completion
-connection.onCompletion(
-  doAutoCompletion(documents, runtimeStrategy?.getDbSchema() ?? {}),
-);
-
-documents.listen(connection);
 
 connection.listen();
 
