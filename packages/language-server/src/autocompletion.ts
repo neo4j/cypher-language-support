@@ -5,14 +5,13 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import type { CompletionItem } from '@neo4j-cypher/language-support';
+import type { CompletionItem, DbSchema } from '@neo4j-cypher/language-support';
 import { autocomplete } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSchemaPoller,
+  dbSchema: DbSchema,
 ) {
   return (completionParams: CompletionParams) => {
     const textDocument = documents.get(completionParams.textDocument.uri);
@@ -23,7 +22,7 @@ export function doAutoCompletion(
 
     const completions: CompletionItem[] = autocomplete(
       textDocument.getText(),
-      neo4j.metadata?.dbSchema ?? {},
+      dbSchema,
       offset,
       completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
     );

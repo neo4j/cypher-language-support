@@ -5,12 +5,15 @@ import {
   Database,
 } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
+import { connectionTreeDataProvider } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
-import { getExtensionContext, getSchemaPoller } from './contextService';
+import {
+  getExtensionContext,
+  getLanguageClient,
+  getSchemaPoller,
+} from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
-import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
-import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
@@ -537,8 +540,13 @@ function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.events.removeAllListeners();
   schemaPoller.events.on('schemaFetched', () => {
-    databaseInformationTreeDataProvider.refresh();
     connectionTreeDataProvider.refresh();
+    const languageClient = getLanguageClient();
+    const schemaPoller = getSchemaPoller();
+    void languageClient.sendNotification(
+      'schemaFetched',
+      schemaPoller.metadata?.dbSchema ?? {},
+    );
   });
   schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();

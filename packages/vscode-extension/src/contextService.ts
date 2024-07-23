@@ -1,4 +1,5 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { DbSchema } from '@neo4j-cypher/language-support';
 import {
   ConnnectionResult,
   MetadataPoller,
@@ -10,13 +11,17 @@ import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 
 type LanguageClient = {
-  sendNotification: (method: string, settings?: Neo4jSettings) => Promise<void>;
+  sendNotification: (
+    method: string,
+    payload?: Neo4jSettings | DbSchema,
+  ) => Promise<void>;
 };
 
 type SchemaPoller = {
   connection?: Neo4jConnection;
   metadata?: MetadataPoller;
   events: EventEmitter;
+  metadata?: MetadataPoller;
   connect(
     url: string,
     credentials: {

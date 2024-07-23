@@ -2,6 +2,7 @@ import {
   createConnection,
   Diagnostic,
   DidChangeConfigurationNotification,
+  InitializeParams,
   InitializeResult,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
@@ -13,22 +14,24 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
-import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
 import { cleanupWorkers, lintDocument } from './linting';
+import { getRuntime } from './runtime/runtimeFactory';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
-const neo4jSchemaPoller = new Neo4jSchemaPoller();
+let runtimeStrategy: RuntimeStrategy;
 
-connection.onInitialize(() => {
+connection.onInitialize((params: InitializeParams): InitializeResult => {
+  runtimeStrategy = getRuntime(params.clientInfo?.name ?? '', connection);
+
   const result: InitializeResult = {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Full,
@@ -82,7 +85,7 @@ documents.onDidChangeContent((change) =>
         diagnostics,
       });
     },
-    neo4jSchemaPoller,
+    runtimeStrategy?.getDbSchema() ?? {},
   ),
 );
 
@@ -92,20 +95,13 @@ connection.languages.semanticTokens.on(
 );
 
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
-// Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
-
-connection.onNotification(
-  'connectionUpdated',
-  (connectionSettings: Neo4jSettings) => {
-    changeConnection(connectionSettings);
-  },
+connection.onSignatureHelp(
+  doSignatureHelp(documents, runtimeStrategy?.getDbSchema() ?? {}),
 );
-
-connection.onNotification('connectionDisconnected', () => {
-  disconnect();
-});
+// Trigger the auto completion
+connection.onCompletion(
+  doAutoCompletion(documents, runtimeStrategy?.getDbSchema() ?? {}),
+);
 
 documents.listen(connection);
 
@@ -114,29 +110,3 @@ connection.listen();
 connection.onExit(() => {
   cleanupWorkers();
 });
-
-const changeConnection = (connectionSettings: Neo4jSettings) => {
-  disconnect();
-
-  if (
-    neo4jSchemaPoller.connection === undefined &&
-    connectionSettings.connect &&
-    connectionSettings.password &&
-    connectionSettings.connectURL &&
-    connectionSettings.user
-  ) {
-    void neo4jSchemaPoller.persistentConnect(
-      connectionSettings.connectURL,
-      {
-        username: connectionSettings.user,
-        password: connectionSettings.password,
-      },
-      { appName: 'cypher-language-server' },
-      connectionSettings.database,
-    );
-  }
-};
-
-const disconnect = () => {
-  neo4jSchemaPoller.disconnect();
-};
