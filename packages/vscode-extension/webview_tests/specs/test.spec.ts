@@ -11,41 +11,50 @@ before(async () => {
   const container = await createAndStartTestContainer('../webview_tests');
   const port = container.getMappedPort(7687);
 
-  await browser.executeWorkbench(async (vscode, port: number) => {
-    const defaultConnectionKey = 'default-connection-key';
+  const workbench = await browser.getWorkbench();
+  const activityBar = workbench.getActivityBar();
+  const neo4jTile = await activityBar.getViewControl('Neo4j');
+  const connectionPannel = await neo4jTile.openView();
+  const content = connectionPannel.getContent();
+  const sections = await content.getSections();
+  const section = sections.at(0);
+  if (section) {
+    const newConnectionButton = await section.button$;
+    await newConnectionButton.click();
+  }
 
-    function getNeo4jConfiguration() {
-      return {
-        scheme: process.env.NEO4J_SCHEME || 'neo4j',
-        host: process.env.NEO4J_HOST || 'localhost',
-        port: process.env.NEO4J_PORT || port,
-        user: process.env.NEO4J_USER || 'neo4j',
-        database: process.env.NEO4J_DATABASE || 'neo4j',
-        password: process.env.NEO4J_PASSWORD || 'password',
-      };
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async function saveDefaultConnection(vscode: any): Promise<void> {
-      const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.commands.executeCommand(
-        'neo4j.saveConnection',
-        {
-          key: defaultConnectionKey,
-          scheme: scheme,
-          host: host,
-          port: port,
-          user: user,
-          database: database,
-          state: 'active',
-        },
-        password,
-      );
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    await saveDefaultConnection(vscode);
-  }, port);
+  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+
+  if (connectionWebview) {
+    await connectionWebview.open();
+
+    const schemeInput = await $('#scheme');
+    const hostInput = await $('#host');
+    const portInput = await $('#port');
+    const userInput = await $('#user');
+    const passwordInput = await $('#password');
+    await schemeInput.selectByVisibleText('neo4j://');
+    await hostInput.setValue('localhost');
+    await portInput.setValue(port);
+    await userInput.setValue('neo4j');
+    await passwordInput.setValue('password');
+
+    const saveConnectionButton = await $('#save-connection');
+    await saveConnectionButton.click();
+
+    await connectionWebview.close();
+  }
+
+  await browser.waitUntil(async function () {
+    const wb = await browser.getWorkbench();
+    const notifications = await wb.getNotifications();
+    const messages = await Promise.all(
+      notifications.map(async (n) => await n.getMessage()),
+    );
+
+    return messages.includes('Connected to Neo4j.');
+  });
+  await neo4jTile.closeView();
 });
 
 async function openFixtureFile(browser: WebdriverIO.Browser, fileName: string) {
@@ -83,7 +92,9 @@ describe('Query results testing', () => {
     await resultsWebview.open();
     const querySummary = await (await $('#query-summary')).getText();
     await expect(querySummary).toContain('1 nodes created, 1 labels added.');
+
     await resultsWebview.close();
+    await workbench.getEditorView().closeAllEditors();
   });
 
   it('should error on invalid cypher', async () => {
@@ -91,9 +102,9 @@ describe('Query results testing', () => {
 
     await runCommand(browser, CONSTANTS.COMMANDS.RUN_CYPHER_FILE);
     const webviews = await workbench.getAllWebviews();
-    await expect(webviews.length).toBe(2);
+    await expect(webviews.length).toBe(1);
 
-    const resultsWebview = (await workbench.getAllWebviews()).at(1);
+    const resultsWebview = (await workbench.getAllWebviews()).at(0);
     await resultsWebview.open();
 
     const text = await (await $('#query-error')).getText();
@@ -101,6 +112,8 @@ describe('Query results testing', () => {
       'Error executing query WITH (n:Person) RETURN n',
     );
     await expect(text).toContain('Variable `n` not defined');
+
     await resultsWebview.close();
+    await workbench.getEditorView().closeAllEditors();
   });
 });

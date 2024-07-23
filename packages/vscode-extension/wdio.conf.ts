@@ -9,7 +9,7 @@ export const config: Options.Testrunner = {
   autoCompileOpts: {
     autoCompile: true,
     tsNodeOpts: {
-      project: './test/tsconfig.json',
+      project: './webview_tests/tsconfig.json',
       transpileOnly: true,
     },
   },
@@ -29,7 +29,7 @@ export const config: Options.Testrunner = {
   // The path of the spec files will be resolved relative from the directory of
   // of the config file unless it's absolute.
   //
-  specs: ['./webview_tests/specs/**/*.e2e.ts'],
+  specs: ['./webview_tests/specs/**/*.spec.ts'],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
