@@ -330,19 +330,21 @@ export function getConnectionDatabases(): Pick<
  * Returns the labels and relationship types from the dbSchema, if they exist.
  * @returns An object containing the labels and relationships, or null if the dbSchema does not exist.
  */
-export function getDbSchemaInformation(): {
-  labels: string[];
-  relationships: string[];
-} | null {
+export function getDbSchemaInformation():
+  | {
+      labels: string[];
+      relationships: string[];
+    }
+  | undefined {
   const schemaPoller = getSchemaPoller();
 
   if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema) {
-    return null;
+    return undefined;
   }
 
   return {
-    labels: schemaPoller.metadata?.dbSchema.labels,
-    relationships: schemaPoller.metadata?.dbSchema.relationshipTypes,
+    labels: schemaPoller.metadata.dbSchema.labels,
+    relationships: schemaPoller.metadata.dbSchema.relationshipTypes,
   };
 }
 

@@ -63,6 +63,10 @@ export class DatabaseInformationTreeDataProvider
   ): DatabaseInformationItem[] {
     const dbSchemaInformation = getDbSchemaInformation();
 
+    if (!dbSchemaInformation) {
+      return [];
+    }
+
     return element.type === 'label'
       ? this.mapDbSchemaProperties('label', dbSchemaInformation.labels)
       : this.mapDbSchemaProperties(
