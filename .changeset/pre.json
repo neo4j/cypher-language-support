@@ -8,23 +8,35 @@
     "@neo4j-cypher/react-codemirror-playground": "1.0.0",
     "@neo4j-cypher/schema-poller": "1.0.0",
     "antlr4": "4.13.1",
-    "antlr4-c3": "3.0.1"
+    "antlr4-c3": "3.0.1",
+    "neo4j-for-vscode": "1.2.2"
   },
   "changesets": [
     "afraid-beans-juggle",
     "brave-donuts-camp",
     "brown-ravens-obey",
+    "chilled-dots-guess",
+    "clean-apes-pay",
+    "curvy-singers-greet",
+    "eleven-scissors-type",
     "fuzzy-rice-train",
+    "gentle-pans-rescue",
+    "healthy-turtles-change",
     "hungry-beans-eat",
+    "loud-meals-attend",
     "nervous-rabbits-greet",
     "nice-elephants-prove",
+    "nine-bobcats-sit",
     "pink-chefs-trade",
     "purple-buckets-applaud",
     "purple-suns-applaud",
     "quick-berries-report",
     "silver-students-wait",
     "stale-donkeys-grow",
+    "stale-peas-warn",
+    "strong-squids-relax",
     "twelve-cycles-call",
-    "violet-peas-float"
+    "violet-peas-float",
+    "yellow-grapes-ring"
   ]
 }

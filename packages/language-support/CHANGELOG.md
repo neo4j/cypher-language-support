@@ -1,5 +1,15 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.7
+
+### Patch Changes
+
+- 3661e9d: Fixes database completions for CREATE ALIAS commands
+- b76af58: Fixes bug in signature help of functions nested inside procedure calls
+- 21699b7: Updates the semantic analysis module to use the antlr parser instead of the javaCC one
+- 6afc0e3: Adds signature information on auto-completions
+- 39b924d: Fixes bug in labels completion
+
 ## 2.0.0-next.6
 
 ### Patch Changes
