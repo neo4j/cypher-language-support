@@ -280,6 +280,8 @@
     "@mui/material": "^5.16.0",
     "@neo4j-cypher/language-server": "2.0.0-next.7",
     "@neo4j-cypher/language-support": "2.0.0-next.6",
+    "@neo4j-nvl/base": "^0.3.1-c5ad05c9-canary",
+    "@neo4j-nvl/react": "^0.3.1-c5ad05c9-canary",
     "neo4j-driver": "^5.12.0",
     "vscode-languageclient": "^8.1.0"
   },

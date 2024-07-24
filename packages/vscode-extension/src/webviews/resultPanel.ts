@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   isDate,
   isDateTime,
@@ -5,8 +10,15 @@ import {
   isInt,
   isLocalDateTime,
   isLocalTime,
+  isNode,
+  isPath,
+  isRelationship,
   isTime,
+  Node,
+  Path,
   QueryResult,
+  Record as Neo4jRecord,
+  Relationship,
 } from 'neo4j-driver';
 import path from 'path';
 import {
@@ -169,6 +181,8 @@ export type ResultRows = Record<string, unknown>[];
 
 export type Result = {
   rows: ResultRows;
+  nodes: any[];
+  relationships: any[];
   querySummary: string[];
 };
 
@@ -276,15 +290,181 @@ export default class ResultWindow {
       const resultRecords = result.records.map((record) =>
         toNativeTypes(record.toObject()),
       );
+
+      const { nodes, relationships } = this.extractUniqueNodesAndRels(
+        result.records,
+      );
+
       message = {
         type: 'success',
         index: index,
         result: {
           rows: resultRecords,
+          nodes: nodes,
+          relationships: relationships,
           querySummary: querySummary(result),
         },
       };
     }
     await webview.postMessage(message);
   }
+
+  private extractUniqueNodesAndRels(
+    records: Neo4jRecord[],
+    {
+      nodeLimit,
+      keepDanglingRels = false,
+    }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
+  ): { nodes: any[]; relationships: any[]; limitHit: boolean } {
+    let limitHit = false;
+    if (records.length === 0) {
+      return { nodes: [], relationships: [], limitHit };
+    }
+
+    const items = new Set<unknown>();
+
+    for (const record of records) {
+      for (const key of record.keys) {
+        items.add(record.get(key));
+      }
+    }
+
+    const paths: Path[] = [];
+
+    const nodeMap = new Map<string, Node>();
+    function addNode(n: Node) {
+      if (!limitHit) {
+        const id = n.identity.toString();
+        if (!nodeMap.has(id)) {
+          nodeMap.set(id, n);
+        }
+        if (typeof nodeLimit === 'number' && nodeMap.size === nodeLimit) {
+          limitHit = true;
+        }
+      }
+    }
+
+    const relMap = new Map<string, Relationship>();
+    function addRel(r: Relationship) {
+      const id = r.identity.toString();
+      if (!relMap.has(id)) {
+        relMap.set(id, r);
+      }
+    }
+
+    const findAllEntities = (item: unknown) => {
+      if (typeof item !== 'object' || !item) {
+        return;
+      }
+
+      if (isRelationship(item)) {
+        addRel(item);
+      } else if (isNode(item)) {
+        addNode(item);
+      } else if (isPath(item)) {
+        paths.push(item);
+      } else if (Array.isArray(item)) {
+        item.forEach(findAllEntities);
+      } else {
+        Object.values(item).forEach(findAllEntities);
+      }
+    };
+
+    findAllEntities(Array.from(items));
+
+    for (const path of paths) {
+      addNode(path.start);
+      addNode(path.end);
+      for (const segment of path.segments) {
+        addNode(segment.start);
+        addNode(segment.end);
+        addRel(segment.relationship);
+      }
+    }
+
+    const nodes = Array.from(nodeMap.values()).map((item) => {
+      return {
+        id: item.identity.toString(),
+        elementId: item.elementId,
+        labels: item.labels,
+        properties: this.mapValues(item.properties, (p) => {
+          p.toString();
+        }),
+        propertyTypes: this.mapValues(item.properties, () => {
+          return 'Unknown';
+        }),
+      };
+    });
+
+    const relationships = Array.from(relMap.values())
+      .filter((item) => {
+        if (keepDanglingRels) {
+          return true;
+        }
+
+        // We'd get dangling relationships from
+        // match ()-[a:ACTED_IN]->() return a;
+        // or from hitting the node limit
+        const start = item.start.toString();
+        const end = item.end.toString();
+        return nodeMap.has(start) && nodeMap.has(end);
+      })
+      .map((item) => {
+        return {
+          id: item.identity.toString(),
+          elementId: item.elementId,
+          startNodeId: item.start.toString(),
+          from: item.start.toString(),
+          endNodeId: item.end.toString(),
+          to: item.end.toString(),
+          type: item.type,
+          properties: this.mapValues(item.properties, (p) => {
+            p.toString();
+          }),
+          propertyTypes: this.mapValues(item.properties, () => {
+            return 'Unknown';
+          }),
+        };
+      });
+
+    return { nodes, relationships, limitHit };
+  }
+
+  private mapValues<A, B>(
+    object: Record<string, A>,
+    mapper: (val: A) => B,
+  ): Record<string, B> {
+    return Object.entries(object).reduce(
+      (res: Record<string, B>, [currKey, currVal]) => {
+        res[currKey] = mapper(currVal);
+        return res;
+      },
+      {},
+    );
+  }
+
+  // private mapNode(node) {
+  //   return {
+  //     id:
+  //       typeof node.identity === 'string'
+  //         ? node.identity
+  //         : node.identity.toString(),
+  //     color: '',
+  //     captions: node.labels[0],
+  //     icon: '',
+  //     size: '',
+  //     disabled: !!node.disabled,
+  //     activated: !!node.activated,
+  //     selected: !!node.selected,
+  //   };
+  // }
+
+  // private mapRel({ identity, start, end, ...rest }) {
+  //   return {
+  //     id: typeof identity === 'string' ? identity : identity.toString(),
+  //     from: start,
+  //     to: end,
+  //     ...rest,
+  //   };
+  // }
 }

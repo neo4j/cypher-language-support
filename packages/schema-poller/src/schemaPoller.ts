@@ -265,7 +265,9 @@ export class Neo4jSchemaPoller {
     if (this.driver) {
       try {
         // TODO Nacho: This should be a session to be able to run CALL IN TXs for example
-        const result = await this.driver.executeQuery(query);
+        const result = await this.driver.executeQuery(query, undefined, {
+          database: this.connection?.currentDb,
+        });
         return result;
       } catch (e) {
         const error = e as Error;

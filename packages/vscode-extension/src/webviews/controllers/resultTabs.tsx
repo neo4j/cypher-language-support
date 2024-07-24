@@ -4,6 +4,7 @@ import Tabs from '@mui/material/Tabs';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Result, ResultMessage, ResultRows } from '../resultPanel';
+import { NvlGraphViz } from './nvlGraphViz';
 
 interface vscode {
   postMessage(message: ResultsTabMessage): void;
@@ -132,6 +133,10 @@ function renderStatementResult(value: number, result: ResultState) {
       return (
         <CustomTabPanel value={value} index={i}>
           {getResultContent(r.statement, r.state.result)}
+          <NvlGraphViz
+            nodes={r.state.result.nodes}
+            rels={r.state.result.relationships}
+          />
         </CustomTabPanel>
       );
     }
