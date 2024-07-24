@@ -12,7 +12,7 @@ import {
   getAllConnections,
   getConnectionByKey,
   getConnectionDatabases,
-} from './connectionService';
+} from './../connectionService';
 
 export type ConnectionItemType =
   | 'connection'
@@ -94,29 +94,32 @@ export class ConnectionTreeDataProvider
       return [];
     }
 
-    return getConnectionDatabases().map((database: Database) => {
-      const name: string = database.home
-        ? `${database.name} 🏠`
-        : database.name;
+    return getConnectionDatabases().map(
+      (database: Pick<Database, 'name' | 'default' | 'home'>) => {
+        const name: string = database.home
+          ? `${database.name} 🏠`
+          : database.name;
 
-      const activeDatabase: boolean =
-        database.name === connection.database ||
-        (!connection.database && database.default);
+        const activeDatabase: boolean =
+          database.name === connection.database ||
+          (!connection.database && database.default);
 
-      const description: string = activeDatabase ? 'active' : '';
+        const description: string = activeDatabase ? 'active' : '';
 
-      const type: ConnectionItemType = activeDatabase
-        ? 'activeDatabase'
-        : 'database';
+        const type: ConnectionItemType = activeDatabase
+          ? 'activeDatabase'
+          : 'database';
 
-      return new ConnectionItem(
-        type,
-        name,
-        description,
-        TreeItemCollapsibleState.None,
-        database.name,
-      );
-    }, []);
+        return new ConnectionItem(
+          type,
+          name,
+          description,
+          TreeItemCollapsibleState.None,
+          database.name,
+        );
+      },
+      [],
+    );
   }
 
   private getConnectionName(connection: Connection): string {

@@ -4,8 +4,8 @@ import {
 } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import { Connection } from './connectionService';
-import { ConnectionItem } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
+import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
 
 /**
  * Utility function to manage what type of message type to display to the user based on the result of a connection attempt.

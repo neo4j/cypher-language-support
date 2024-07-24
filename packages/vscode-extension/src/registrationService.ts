@@ -7,12 +7,13 @@ import {
   switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
+import { CONSTANTS } from './constants';
 import {
   ConnectionItem,
   connectionTreeDataProvider,
-} from './connectionTreeDataProvider';
-import { connectionTreeDecorationProvider } from './connectionTreeDecorationProvider';
-import { CONSTANTS } from './constants';
+} from './treeviews/connectionTreeDataProvider';
+import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
+import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -25,6 +26,10 @@ export function registerDisposables(): Disposable[] {
     window.registerTreeDataProvider(
       'neo4jConnections',
       connectionTreeDataProvider,
+    ),
+    window.registerTreeDataProvider(
+      'neo4jDatabaseInformation',
+      databaseInformationTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
     workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
@@ -54,6 +59,7 @@ export function registerDisposables(): Disposable[] {
       CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
       () => {
         connectionTreeDataProvider.refresh();
+        databaseInformationTreeDataProvider.refresh();
       },
     ),
     commands.registerCommand(

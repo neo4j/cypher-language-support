@@ -12,10 +12,10 @@ import {
   switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
-import { ConnectionItem } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
 import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
+import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
 import {
   displayConfirmConnectionDeletionPrompt,
   displayMessageForConnectionResult,
