@@ -5,7 +5,6 @@ import {
   Database,
 } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
-import { connectionTreeDataProvider } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
 import {
   getExtensionContext,
@@ -14,6 +13,7 @@ import {
 } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
+import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';

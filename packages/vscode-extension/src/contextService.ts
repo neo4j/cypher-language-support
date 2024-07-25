@@ -21,7 +21,6 @@ type SchemaPoller = {
   connection?: Neo4jConnection;
   metadata?: MetadataPoller;
   events: EventEmitter;
-  metadata?: MetadataPoller;
   connect(
     url: string,
     credentials: {
