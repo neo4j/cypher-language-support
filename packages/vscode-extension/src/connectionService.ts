@@ -14,6 +14,7 @@ import {
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
+import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
@@ -540,6 +541,7 @@ function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.events.removeAllListeners();
   schemaPoller.events.on('schemaFetched', () => {
+    databaseInformationTreeDataProvider.refresh();
     connectionTreeDataProvider.refresh();
     const languageClient = getLanguageClient();
     const schemaPoller = getSchemaPoller();
