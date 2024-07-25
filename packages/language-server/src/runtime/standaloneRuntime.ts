@@ -10,16 +10,11 @@ export class StandaloneRuntime implements RuntimeStrategy {
   constructor(connection: _Connection) {
     this._schemaPoller = new Neo4jSchemaPoller();
 
-    connection.onNotification(
-      'connectionUpdated',
-      (connectionSettings: Neo4jSettings) => {
-        this.changeConnection(connectionSettings);
+    connection.onDidChangeConfiguration(
+      (params: { settings: { neo4j: Neo4jSettings } }) => {
+        this.changeConnection(params.settings.neo4j);
       },
     );
-
-    connection.onNotification('connectionDisconnected', () => {
-      this.disconnect();
-    });
   }
 
   getDbSchema(): DbSchema {
