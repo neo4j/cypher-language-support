@@ -112,9 +112,10 @@ describe('Connections testing', () => {
 
       const contextMenu = await connectionItem.openContextMenu();
       const menuItems = await contextMenu.getItems();
-      const disconnect = menuItems.find(
-        (menuItem) => menuItem.label == 'Disconnect',
-      );
+      const disconnect = menuItems.find(async (menuItem) => {
+        const menuText = await menuItem.elem.getText();
+        return menuText === 'Disconnect';
+      });
 
       if (disconnect) {
         const disconnectOption = await disconnect.elem;
@@ -134,13 +135,14 @@ describe('Connections testing', () => {
 
       const contextMenu = await connectionItem.openContextMenu();
       const menuItems = await contextMenu.getItems();
-      const disconnect = menuItems.find(
-        (menuItem) => menuItem.label == 'Connect',
-      );
+      const connect = menuItems.find(async (menuItem) => {
+        const menuText = await menuItem.elem.getText();
+        return menuText === 'Connect';
+      });
 
-      if (disconnect) {
-        const disconnectOption = await disconnect.elem;
-        await disconnectOption.click();
+      if (connect) {
+        const connectOption = await connect.elem;
+        await connectOption.click();
       }
     }
     await waitUntilNotification(browser, 'Connected to Neo4j.');
