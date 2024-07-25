@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc --declaration --outDir dist/",
     "clean": "rm -rf dist",
-    "test": "jest",
+    "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
     "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui",
     "benchmark": "BENCHMARKING=true npx playwright test -c playwright-ct.config.ts -g \"benchmarking & performance test session\""

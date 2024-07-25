@@ -9,9 +9,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "jest.autoRun": "off",
-  "jest.jestCommandLine": "npm test -- --filter=language-support -- --passWithNoTests",
-  "jest.rootPath": "./",
   "playwright.env": {
     "NODE_OPTIONS": "--max_old_space_size=8192"
   }

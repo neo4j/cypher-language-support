@@ -18,5 +18,4 @@ package
 .git/
 cspell.json
 tsconfig.json
-jest.config.ts
 index.ts
