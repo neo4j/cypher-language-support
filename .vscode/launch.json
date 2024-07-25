@@ -60,6 +60,16 @@
         "${workspaceFolder}/lib/**/*.js",
         "<node_internals>/**/*.js"
       ]
+    },
+    {
+      "name": "Debug Extest Tests",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/vscode-extension",
+      "program": "dist/extests/main.js",
+      "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
+      "internalConsoleOptions": "neverOpen"
     }
   ],
   "type": "pwa-node",

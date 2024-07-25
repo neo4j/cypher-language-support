@@ -281,6 +281,7 @@
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js && npm run wdio",
+    "extest": "npm run build && rm -rf .vscode-test/user-data && node ./dist/extests/main.js",
     "wdio": "wdio run ./wdio.conf.ts"
   },
   "dependencies": {
@@ -312,6 +313,7 @@
     "sinon": "^18.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5",
+    "vscode-extension-tester": "^8.3.1",
     "wdio-vscode-service": "^6.1.0",
     "wdio-wait-for": "^3.0.11"
   }
