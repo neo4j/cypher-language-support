@@ -1,7 +1,6 @@
-import { commands, Disposable, window, workspace } from 'vscode';
+import { commands, Disposable, window } from 'vscode';
 import {
   createOrShowConnectionPanelForConnectionItem,
-  handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   saveConnectionAndDisplayConnectionResult,
   switchToDatabase,
@@ -32,7 +31,6 @@ export function registerDisposables(): Disposable[] {
       databaseInformationTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
-    workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       saveConnectionAndDisplayConnectionResult,

@@ -64,7 +64,7 @@ export async function activate(context: ExtensionContext) {
 
 export async function deactivate(): Promise<void> | undefined {
   // Handle any sequence events for deactivation
-  await disconnectDatabaseConnectionOnExtensionDeactivation();
+  disconnectDatabaseConnectionOnExtensionDeactivation();
 
   if (!client) {
     return undefined;
