@@ -165,7 +165,7 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    this.metadata = new MetadataPoller(databases, this.connection);
+    this.metadata = new MetadataPoller(databases, this.connection, this.events);
     this.metadata.startBackgroundPolling();
   }
 

@@ -80,7 +80,11 @@
     "viewsWelcome": [
       {
         "view": "neo4jConnections",
-        "contents": "No connections.\n[Add New Connection](command:neo4j.manageConnection)"
+        "contents": "No Connections.\n[Add New Connection](command:neo4j.manageConnection)"
+      },
+      {
+        "view": "neo4jDatabaseInformation",
+        "contents": "No active Connection."
       }
     ],
     "menus": {
@@ -147,8 +151,12 @@
         {
           "type": "tree",
           "id": "neo4jConnections",
-          "name": "Connections",
-          "icon": "resources/images/neo4j.png"
+          "name": "Connections"
+        },
+        {
+          "type": "tree",
+          "id": "neo4jDatabaseInformation",
+          "name": "Database Information"
         }
       ]
     },

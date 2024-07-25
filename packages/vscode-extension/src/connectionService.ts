@@ -9,6 +9,8 @@ import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
+import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
+import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
@@ -286,15 +288,64 @@ export async function establishPersistentConnectionToSchemaPoller(
   );
 
   result.success
-    ? attachSchemaPollerConnectionErrorEventListener()
+    ? attachSchemaPollerConnectionEventListeners()
     : attachSchemaPollerConnectionFailedEventListeners();
 
   return result;
 }
 
-export function getConnectionDatabases(): Database[] {
+/**
+ *  Gets an array of database names from the connection, if they exist.
+ * @returns An array of database names, or an empty array if no databases exist.
+ */
+export function getConnectionDatabases(): Pick<
+  Database,
+  'name' | 'default' | 'home'
+>[] {
   const schemaPoller = getSchemaPoller();
-  return schemaPoller.connection?.databases ?? [];
+  const databases = schemaPoller.connection?.databases ?? [];
+
+  if (
+    !schemaPoller.metadata ||
+    !schemaPoller.metadata.dbSchema?.databaseNames
+  ) {
+    return databases;
+  }
+
+  return schemaPoller.metadata.dbSchema.databaseNames.map((name) => {
+    const database = databases.find((db) => db.name === name);
+    if (!database) {
+      return {
+        name: name,
+        default: false,
+        home: false,
+      };
+    } else {
+      return database;
+    }
+  }, []);
+}
+
+/**
+ * Returns the labels and relationship types from the dbSchema, if they exist.
+ * @returns An object containing the labels and relationships, or null if the dbSchema does not exist.
+ */
+export function getDbSchemaInformation():
+  | {
+      labels: string[];
+      relationships: string[];
+    }
+  | undefined {
+  const schemaPoller = getSchemaPoller();
+
+  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema) {
+    return undefined;
+  }
+
+  return {
+    labels: schemaPoller.metadata.dbSchema.labels,
+    relationships: schemaPoller.metadata.dbSchema.relationshipTypes,
+  };
 }
 
 /**
@@ -468,7 +519,7 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
   schemaPoller.events.once('connectionConnected', () => {
     schemaPoller.events.removeAllListeners();
     void schemaPollerEventHandlers.handleConnectionReconnected();
-    attachSchemaPollerConnectionErrorEventListener();
+    attachSchemaPollerConnectionEventListeners();
   });
   schemaPoller.events.once('connectionFailed', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
@@ -477,11 +528,18 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
 }
 
 /**
- * Attaches an event listener to handle connection errors.
- * This event is only handled once.
+ * Attaches event listeners for a successful database connection attempt.
+ * The events handled are:
+ * - schemaFetched: Refreshes the database information tree view.
+ * - connectionErrored: Handles connection errors. This event is only handled once.
  */
-function attachSchemaPollerConnectionErrorEventListener(): void {
+function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
+  schemaPoller.events.removeAllListeners();
+  schemaPoller.events.on('schemaFetched', () => {
+    databaseInformationTreeDataProvider.refresh();
+    connectionTreeDataProvider.refresh();
+  });
   schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
     void schemaPollerEventHandlers.handleConnectionErrored(error);
