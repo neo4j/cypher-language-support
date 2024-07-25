@@ -3,13 +3,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
-import { Workbench } from 'wdio-vscode-service';
+import { TreeItem, ViewSection, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from '../../e2e_tests/setupTestContainer';
 import { CONSTANTS } from '../../src/constants';
 
+let port: number;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 before(async () => {
   const container = await createAndStartTestContainer('../webview_tests');
-  const port = container.getMappedPort(7687);
+  port = container.getMappedPort(7687);
 
   const workbench = await browser.getWorkbench();
   const activityBar = workbench.getActivityBar();
@@ -45,15 +51,18 @@ before(async () => {
     await connectionWebview.close();
   }
 
-  await browser.waitUntil(async function () {
-    const wb = await browser.getWorkbench();
-    const notifications = await wb.getNotifications();
-    const messages = await Promise.all(
-      notifications.map(async (n) => await n.getMessage()),
-    );
+  await browser.waitUntil(
+    async function () {
+      const wb = await browser.getWorkbench();
+      const notifications = await wb.getNotifications();
+      const messages = await Promise.all(
+        notifications.map(async (n) => await n.getMessage()),
+      );
 
-    return messages.includes('Connected to Neo4j.');
-  });
+      return messages.includes('Connected to Neo4j.');
+    },
+    { timeout: 10000 },
+  );
   await neo4jTile.closeView();
 });
 
@@ -74,6 +83,56 @@ async function runCommand(browser: WebdriverIO.Browser, command: string) {
     await vscode.commands.executeCommand(command);
   }, command);
 }
+
+describe('Connections testing', () => {
+  let workbench: Workbench;
+  let connectionSection: ViewSection;
+
+  before(async () => {
+    workbench = await browser.getWorkbench();
+    const activityBar = workbench.getActivityBar();
+    const neo4jTile = await activityBar.getViewControl('Neo4j');
+    const connectionPannel = await neo4jTile.openView();
+    const content = connectionPannel.getContent();
+    const sections = await content.getSections();
+    connectionSection = sections.at(0);
+  });
+
+  it('should disconnect from neo4j gracefully', async () => {
+    const actions = await connectionSection.getActions();
+    const items = await connectionSection.getVisibleItems();
+    expect(items.length).toBeGreaterThan(0);
+    const connectionItem = items.at(0) as TreeItem;
+
+    await connectionItem.select();
+    const twistie = await connectionItem.twistie$;
+
+    await twistie.click({ button: 'right' });
+    const contextMenuLocators = connectionItem.locatorMap.ContextMenu;
+    const contextMenu = await browser.$('.monaco-menu-container');
+    const contextView = await contextMenu.$$('.context-view');
+    await sleep(1000);
+    await contextView.at(1).click();
+    await sleep(10000);
+
+    // const contextMenu = await connectionItem.openContextMenu();
+    // contextMenu.view
+    // const contextViews = await contextMenu.contextView$$;
+    // const disconnect = contextViews.find(async (view) => {
+    //   const viewText = await view.getText();
+    //   return viewText.includes('Disconnect');
+    // });
+    // await disconnect.click();
+    // await (await connectionItem.elem).click();
+    // const locators = connectionItem.locators.elem(
+    //   `neo4j@neo4j://localhost:${port}`,
+    // );
+    // await connectionItem.select();
+
+    // await elem.click({ button: 'right' });
+    console.log(items);
+  });
+});
 
 describe('Query results testing', () => {
   let workbench: Workbench;
