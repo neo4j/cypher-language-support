@@ -29,7 +29,8 @@ export const config: Options.Testrunner = {
   // The path of the spec files will be resolved relative from the directory of
   // of the config file unless it's absolute.
   //
-  specs: ['./webview_tests/specs/**/*.spec.ts'],
+  // The double array here makes it execute the specs sequentially
+  specs: [['./webview_tests/specs/**/*.spec.ts']],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -50,7 +51,7 @@ export const config: Options.Testrunner = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 10,
+  maxInstances: 1,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -69,6 +70,7 @@ export const config: Options.Testrunner = {
         },
         filePath: `${__dirname}/webview_tests/fixtures`,
       },
+      'wdio:maxInstances': 1,
     } as WebdriverIO.Capabilities,
   ],
 
@@ -148,7 +150,7 @@ export const config: Options.Testrunner = {
   // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: 'bdd',
-    timeout: 6000000,
+    timeout: 120000,
   },
 
   //
