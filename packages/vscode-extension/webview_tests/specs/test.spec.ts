@@ -9,8 +9,22 @@ import { CONSTANTS } from '../../src/constants';
 
 let port: number;
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function waitUntilNotification(
+  browser: WebdriverIO.Browser,
+  notification: string,
+) {
+  await browser.waitUntil(
+    async function () {
+      const wb = await browser.getWorkbench();
+      const notifications = await wb.getNotifications();
+      const messages = await Promise.all(
+        notifications.map(async (n) => await n.getMessage()),
+      );
+
+      return messages.includes(notification);
+    },
+    { timeout: 10000 },
+  );
 }
 
 before(async () => {
@@ -51,18 +65,7 @@ before(async () => {
     await connectionWebview.close();
   }
 
-  await browser.waitUntil(
-    async function () {
-      const wb = await browser.getWorkbench();
-      const notifications = await wb.getNotifications();
-      const messages = await Promise.all(
-        notifications.map(async (n) => await n.getMessage()),
-      );
-
-      return messages.includes('Connected to Neo4j.');
-    },
-    { timeout: 10000 },
-  );
+  await waitUntilNotification(browser, 'Connected to Neo4j.');
   await neo4jTile.closeView();
 });
 
@@ -99,38 +102,39 @@ describe('Connections testing', () => {
   });
 
   it('should disconnect from neo4j gracefully', async () => {
-    const actions = await connectionSection.getActions();
     const items = await connectionSection.getVisibleItems();
-    expect(items.length).toBeGreaterThan(0);
+    await expect(items.length).toBeGreaterThan(0);
     const connectionItem = items.at(0) as TreeItem;
 
-    await connectionItem.select();
-    const twistie = await connectionItem.twistie$;
+    const contextMenu = await connectionItem.openContextMenu();
+    const menuItems = await contextMenu.getItems();
+    const disconnect = menuItems.find(
+      (menuItem) => menuItem.label == 'Disconnect',
+    );
 
-    await twistie.click({ button: 'right' });
-    const contextMenuLocators = connectionItem.locatorMap.ContextMenu;
-    const contextMenu = await browser.$('.monaco-menu-container');
-    const contextView = await contextMenu.$$('.context-view');
-    await sleep(1000);
-    await contextView.at(1).click();
-    await sleep(10000);
+    if (disconnect) {
+      const disconnectOption = await disconnect.elem;
+      await disconnectOption.click();
+    }
+    await waitUntilNotification(browser, 'Disconnected from Neo4j.');
+  });
 
-    // const contextMenu = await connectionItem.openContextMenu();
-    // contextMenu.view
-    // const contextViews = await contextMenu.contextView$$;
-    // const disconnect = contextViews.find(async (view) => {
-    //   const viewText = await view.getText();
-    //   return viewText.includes('Disconnect');
-    // });
-    // await disconnect.click();
-    // await (await connectionItem.elem).click();
-    // const locators = connectionItem.locators.elem(
-    //   `neo4j@neo4j://localhost:${port}`,
-    // );
-    // await connectionItem.select();
+  it('should connect to neo4j gracefully', async () => {
+    const items = await connectionSection.getVisibleItems();
+    await expect(items.length).toBeGreaterThan(0);
+    const connectionItem = items.at(0) as TreeItem;
 
-    // await elem.click({ button: 'right' });
-    console.log(items);
+    const contextMenu = await connectionItem.openContextMenu();
+    const menuItems = await contextMenu.getItems();
+    const disconnect = menuItems.find(
+      (menuItem) => menuItem.label == 'Connect',
+    );
+
+    if (disconnect) {
+      const disconnectOption = await disconnect.elem;
+      await disconnectOption.click();
+    }
+    await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 });
 
