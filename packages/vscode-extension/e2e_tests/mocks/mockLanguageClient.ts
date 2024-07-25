@@ -1,12 +1,11 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { DbSchema } from '@neo4j-cypher/language-support/dist/types';
 
 export class MockLanguageClient {
   async sendNotification(
     methodName: string,
-    settings?: Neo4jSettings,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dbSchema?: DbSchema,
   ): Promise<void> {
-    await Promise.resolve(
-      `sending notification using ${methodName} with ${settings?.connectURL}, ${settings?.connect}, ${settings?.database}, ${settings?.password}, ${settings?.trace.server}, ${settings?.user}`,
-    );
+    await Promise.resolve(`sending notification using ${methodName}`);
   }
 }

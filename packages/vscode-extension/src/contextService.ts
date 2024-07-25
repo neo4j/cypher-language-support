@@ -1,4 +1,3 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import { DbSchema } from '@neo4j-cypher/language-support';
 import {
   ConnnectionResult,
@@ -11,10 +10,7 @@ import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 
 type LanguageClient = {
-  sendNotification: (
-    method: string,
-    payload?: Neo4jSettings | DbSchema,
-  ) => Promise<void>;
+  sendNotification: (method: string, dbSchema?: DbSchema) => Promise<void>;
 };
 
 type SchemaPoller = {
