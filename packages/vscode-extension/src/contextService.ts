@@ -1,6 +1,8 @@
 import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnnectionResult,
+  MetadataPoller,
+  Neo4jConnection,
   Neo4jSchemaPoller,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
@@ -13,6 +15,8 @@ type LanguageClient = {
 };
 
 type SchemaPoller = {
+  connection?: Neo4jConnection;
+  metadata?: MetadataPoller;
   events: EventEmitter;
   connect(
     url: string,

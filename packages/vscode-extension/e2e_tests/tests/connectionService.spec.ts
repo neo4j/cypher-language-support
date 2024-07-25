@@ -767,7 +767,6 @@ suite('Connection service spec', () => {
         host: undefined,
         port: '7687',
         key: 'mock-key',
-        name: 'mock-connection',
         user: 'neo4j',
         state: 'inactive',
       });

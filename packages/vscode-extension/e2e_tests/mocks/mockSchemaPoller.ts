@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import {
+  ConnnectionResult,
+  MetadataPoller,
+  Neo4jConnection,
+} from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
 import { Config, EagerResult, RecordShape } from 'neo4j-driver';
 
 export class MockSchemaPoller {
+  connection?: Neo4jConnection;
   events: EventEmitter = new EventEmitter();
+  metadata?: MetadataPoller;
 
   async connect(
     url: string,

@@ -353,6 +353,7 @@ function calculateNamespacePrefix(
 export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
+  caretToken: Token,
   manualTrigger = false,
 ): CompletionItem[] {
   const parser = parsingResult.parser;
@@ -360,15 +361,16 @@ export function completionCoreCompletion(
 
   const codeCompletion = new CodeCompletionCore(parser);
 
+  let caretIndex = caretToken.tokenIndex;
   // Move the caret index to the end of the query
-  let caretIndex = tokens.length > 0 ? tokens.length - 1 : 0;
+  const eofIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
-  const eof = tokens[caretIndex];
+  const eof = tokens[eofIndex];
 
   // When we have EOF with a different text in the token, it means the parser has failed to parse it.
   // We give empty completions in that case because the query is severely broken at the
   // point of completion (e.g. an unclosed string)
-  if (eof.text !== '<EOF>') {
+  if (eof.type === CypherLexer.EOF && eof.text !== '<EOF>') {
     return [];
   }
 

@@ -1,3 +1,4 @@
+import { insertNewline } from '@codemirror/commands';
 import {
   Annotation,
   Compartment,
@@ -43,6 +44,13 @@ export interface CypherEditorProps {
    * @returns void
    */
   onExecute?: (cmd: string) => void;
+  /**
+   * If true, pressing enter will add a new line to the editor and cmd/ctrl + enter will execute the query.
+   * Otherwise pressing enter on a single line will execute the query.
+   *
+   * @default false
+   */
+  newLineOnEnter?: boolean;
   /**
    * The editor history navigable via up/down arrow keys. Order newest to oldest.
    * Add to this list with the `onExecute` callback for REPL style history.
@@ -157,24 +165,67 @@ export interface CypherEditorProps {
   ariaLabel?: string;
 }
 
-const executeKeybinding = (onExecute?: (cmd: string) => void) =>
-  onExecute
-    ? [
-        {
-          key: 'Ctrl-Enter',
-          mac: 'Mod-Enter',
-          preventDefault: true,
-          run: (view: EditorView) => {
-            const doc = view.state.doc.toString();
-            if (doc.trim() !== '') {
-              onExecute(doc);
-            }
+const executeKeybinding = (
+  onExecute?: (cmd: string) => void,
+  newLineOnEnter?: boolean,
+  flush?: () => void,
+) => {
+  const keybindings: Record<string, KeyBinding> = {
+    'Shift-Enter': {
+      key: 'Shift-Enter',
+      run: insertNewline,
+    },
+    'Ctrl-Enter': {
+      key: 'Ctrl-Enter',
+      run: () => true,
+    },
+    Enter: {
+      key: 'Enter',
+      run: insertNewline,
+    },
+  };
 
-            return true;
-          },
+  if (onExecute) {
+    keybindings['Ctrl-Enter'] = {
+      key: 'Ctrl-Enter',
+      mac: 'Mod-Enter',
+      preventDefault: true,
+      run: (view: EditorView) => {
+        const doc = view.state.doc.toString();
+        if (doc.trim() !== '') {
+          flush?.();
+          onExecute(doc);
+        }
+
+        return true;
+      },
+    };
+
+    if (!newLineOnEnter) {
+      keybindings['Enter'] = {
+        key: 'Enter',
+        preventDefault: true,
+        run: (view: EditorView) => {
+          const doc = view.state.doc.toString();
+          if (doc.includes('\n')) {
+            // Returning false means the event will mark the event
+            // as not handled and the default behavior will be executed
+            return false;
+          }
+
+          if (doc.trim() !== '') {
+            flush?.();
+            onExecute(doc);
+          }
+
+          return true;
         },
-      ]
-    : [];
+      };
+    }
+  }
+
+  return Object.values(keybindings);
+};
 
 const themeCompartment = new Compartment();
 const keyBindingCompartment = new Compartment();
@@ -213,6 +264,8 @@ export class CypherEditor extends Component<
    */
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+
+  private latestDispatchedValue: string | undefined;
 
   /**
    * Focus the editor
@@ -257,10 +310,17 @@ export class CypherEditor extends Component<
     history: [],
     theme: 'light',
     lineNumbers: true,
+    newLineOnEnter: false,
   };
 
   private debouncedOnChange = this.props.onChange
-    ? debounce(this.props.onChange, 200)
+    ? debounce(
+        ((value, viewUpdate) => {
+          this.latestDispatchedValue = value;
+          this.props.onChange(value, viewUpdate);
+        }) satisfies CypherEditorProps['onChange'],
+        200,
+      )
     : undefined;
 
   componentDidMount(): void {
@@ -274,6 +334,7 @@ export class CypherEditor extends Component<
       showSignatureTooltipBelow,
       featureFlags,
       onExecute,
+      newLineOnEnter,
     } = this.props;
 
     this.schemaRef.current = {
@@ -313,10 +374,17 @@ export class CypherEditor extends Component<
         ]
       : [];
 
+    this.latestDispatchedValue = this.props.value;
+
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
-          keymap.of([...executeKeybinding(onExecute), ...extraKeybindings]),
+          keymap.of([
+            ...executeKeybinding(onExecute, newLineOnEnter, () =>
+              this.debouncedOnChange.flush(),
+            ),
+            ...extraKeybindings,
+          ]),
         ),
         historyNavigation(this.props),
         basicNeo4jSetup(),
@@ -371,7 +439,11 @@ export class CypherEditor extends Component<
     // Handle externally set value
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
-    if (this.props.value !== undefined && currentCmValue !== this.props.value) {
+    if (
+      this.props.value !== undefined &&
+      this.props.value !== this.latestDispatchedValue
+    ) {
+      this.debouncedOnChange?.cancel();
       this.editorView.current.dispatch({
         changes: {
           from: 0,
@@ -435,7 +507,11 @@ export class CypherEditor extends Component<
       this.editorView.current.dispatch({
         effects: keyBindingCompartment.reconfigure(
           keymap.of([
-            ...executeKeybinding(this.props.onExecute),
+            ...executeKeybinding(
+              this.props.onExecute,
+              this.props.newLineOnEnter,
+              () => this.debouncedOnChange.flush(),
+            ),
             ...this.props.extraKeybindings,
           ]),
         ),

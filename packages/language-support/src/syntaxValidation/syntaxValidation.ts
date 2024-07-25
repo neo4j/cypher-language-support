@@ -5,9 +5,11 @@ import { DbSchema } from '../dbSchema';
 import {
   LabelOrRelType,
   LabelType,
+  ParsedFunction,
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
+import { Neo4jFunction } from '../types';
 import {
   SemanticAnalysisElement,
   wrappedSemanticAnalysis,
@@ -55,6 +57,56 @@ function detectNonDeclaredLabel(
   }
 
   return undefined;
+}
+
+function detectNonDeclaredFunction(
+  parsedFunction: ParsedFunction,
+  functionsSchema: Record<string, Neo4jFunction>,
+): SyntaxDiagnostic | undefined {
+  const lowercaseFunctionName = parsedFunction.parsedName.toLowerCase();
+  const caseInsensitiveFunctionInDatabase =
+    functionsSchema[lowercaseFunctionName];
+
+  // Built-in functions are case-insensitive in the database
+  if (
+    caseInsensitiveFunctionInDatabase &&
+    caseInsensitiveFunctionInDatabase.isBuiltIn
+  ) {
+    return undefined;
+  }
+
+  const functionExistsWithExactName = Boolean(
+    functionsSchema[parsedFunction.parsedName],
+  );
+  if (!functionExistsWithExactName) {
+    return generateFunctionNotFoundWarning(parsedFunction);
+  }
+}
+
+function generateFunctionNotFoundWarning(
+  parsedFunction: ParsedFunction,
+): SyntaxDiagnostic {
+  const rawText = parsedFunction.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedFunction.line - 1;
+  const startColumn = parsedFunction.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const warning: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Warning,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedFunction.offsets,
+    message: `Function ${parsedFunction.parsedName} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  };
+
+  return warning;
 }
 
 function warnOnUndeclaredLabels(
@@ -193,7 +245,11 @@ export function validateSyntax(
   const result = statements.statementsParsing.flatMap((statement) => {
     const diagnostics = statement.diagnostics;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    return diagnostics.concat(labelWarnings).sort(sortByPositionAndMessage);
+    const functionWarnings = warnOnUndeclaredFunctions(statement, dbSchema);
+
+    return diagnostics
+      .concat(labelWarnings, functionWarnings)
+      .sort(sortByPositionAndMessage);
   });
 
   return result;
@@ -233,4 +289,26 @@ export function validateSemantics(
   }
 
   return [];
+}
+
+function warnOnUndeclaredFunctions(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+
+  if (dbSchema.functions) {
+    const functionsInQuery = parsingResult.collectedFunctions;
+
+    functionsInQuery.forEach((parsedFunction) => {
+      const warning = detectNonDeclaredFunction(
+        parsedFunction,
+        dbSchema.functions,
+      );
+
+      if (warning) warnings.push(warning);
+    });
+  }
+
+  return warnings;
 }

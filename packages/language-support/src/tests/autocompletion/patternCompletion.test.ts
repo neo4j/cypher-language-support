@@ -63,6 +63,38 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Correctly completes unstarted label when caret is passed', () => {
+    const query = 'MATCH (n:)';
+
+    testCompletions({
+      query,
+      offset: query.length - 1,
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
+      expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test.only('Correctly completes unstarted label when caret is passed and there is a space', () => {
+    const query = 'MATCH (n : ';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
+      expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Correctly completes unstarted label for a first statement when caret is passed', () => {
+    const query = 'MATCH (n:); MATCH (m:)';
+
+    testCompletions({
+      query,
+      offset: 'MATCH (n:)'.length - 1,
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
+      expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
   test('Correctly completes started barred label inside a node pattern', () => {
     const query = 'MATCH (n:A|B';
     const dbSchema = {
