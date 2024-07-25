@@ -59,7 +59,8 @@
         "${workspaceFolder}/node_modules/**/*.js",
         "${workspaceFolder}/lib/**/*.js",
         "<node_internals>/**/*.js"
-      ]
+      ],
+      "preLaunchTask": "npm: build-vscode"
     }
   ],
   "type": "pwa-node",

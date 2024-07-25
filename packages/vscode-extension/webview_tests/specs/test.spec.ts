@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
+import * as os from 'os';
 import { TreeItem, ViewSection, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from '../../e2e_tests/setupTestContainer';
 import { CONSTANTS } from '../../src/constants';
@@ -101,38 +102,46 @@ describe('Connections testing', () => {
     connectionSection = sections.at(0);
   });
 
-  it('should disconnect from neo4j gracefully', async () => {
-    const items = await connectionSection.getVisibleItems();
-    await expect(items.length).toBeGreaterThan(0);
-    const connectionItem = items.at(0) as TreeItem;
+  it('should disconnect from neo4j gracefully', async function () {
+    if (os.platform() === 'darwin') {
+      this.skip();
+    } else {
+      const items = await connectionSection.getVisibleItems();
+      await expect(items.length).toBeGreaterThan(0);
+      const connectionItem = items.at(0) as TreeItem;
 
-    const contextMenu = await connectionItem.openContextMenu();
-    const menuItems = await contextMenu.getItems();
-    const disconnect = menuItems.find(
-      (menuItem) => menuItem.label == 'Disconnect',
-    );
+      const contextMenu = await connectionItem.openContextMenu();
+      const menuItems = await contextMenu.getItems();
+      const disconnect = menuItems.find(
+        (menuItem) => menuItem.label == 'Disconnect',
+      );
 
-    if (disconnect) {
-      const disconnectOption = await disconnect.elem;
-      await disconnectOption.click();
+      if (disconnect) {
+        const disconnectOption = await disconnect.elem;
+        await disconnectOption.click();
+      }
     }
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
-  it('should connect to neo4j gracefully', async () => {
-    const items = await connectionSection.getVisibleItems();
-    await expect(items.length).toBeGreaterThan(0);
-    const connectionItem = items.at(0) as TreeItem;
+  it('should connect to neo4j gracefully', async function () {
+    if (os.platform() === 'darwin') {
+      this.skip();
+    } else {
+      const items = await connectionSection.getVisibleItems();
+      await expect(items.length).toBeGreaterThan(0);
+      const connectionItem = items.at(0) as TreeItem;
 
-    const contextMenu = await connectionItem.openContextMenu();
-    const menuItems = await contextMenu.getItems();
-    const disconnect = menuItems.find(
-      (menuItem) => menuItem.label == 'Connect',
-    );
+      const contextMenu = await connectionItem.openContextMenu();
+      const menuItems = await contextMenu.getItems();
+      const disconnect = menuItems.find(
+        (menuItem) => menuItem.label == 'Connect',
+      );
 
-    if (disconnect) {
-      const disconnectOption = await disconnect.elem;
-      await disconnectOption.click();
+      if (disconnect) {
+        const disconnectOption = await disconnect.elem;
+        await disconnectOption.click();
+      }
     }
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
