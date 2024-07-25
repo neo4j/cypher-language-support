@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "e2e_tests"],
-  "compilerOptions": { "outDir": "dist" }
+  "include": ["src", "e2e_tests", "webview_tests", "wdio.conf.ts"],
+  "compilerOptions": { "outDir": "dist" },
+  "types": [
+    "@wdio/mocha-framework",
+    "expect-webdriverio",
+    "wdio-vscode-service"
+  ]
 }

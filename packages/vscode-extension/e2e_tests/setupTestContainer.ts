@@ -3,7 +3,13 @@ import dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export async function createAndStartTestContainer(): Promise<StartedNeo4jContainer> {
+type ContainerOpts = {
+  writeEnvFile: boolean;
+};
+
+export async function createAndStartTestContainer(
+  opts: ContainerOpts = { writeEnvFile: true },
+): Promise<StartedNeo4jContainer> {
   const password = 'password';
   const container = await new Neo4jContainer('neo4j:5-enterprise')
     .withExposedPorts(7474, 7687)
@@ -17,10 +23,12 @@ export async function createAndStartTestContainer(): Promise<StartedNeo4jContain
     .start();
 
   const port = container.getMappedPort(7687);
-  // This sets up a settings.json file based on the settings-template.json
-  // replacing the random port and password we have given the container
-  updateDotenvFile(port, password);
 
+  if (opts.writeEnvFile) {
+    // This sets up a settings.json file based on the settings-template.json
+    // replacing the random port and password we have given the container
+    updateDotenvFile(port, password);
+  }
   return container;
 }
 
