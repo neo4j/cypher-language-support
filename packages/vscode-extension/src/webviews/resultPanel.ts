@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-base-to-string */
+import {
+  Node as NvlNode,
+  Relationship as NvlRelationship,
+} from '@neo4j-nvl/base';
 import {
   isDate,
   isDateTime,
@@ -14,22 +14,24 @@ import {
   isPath,
   isRelationship,
   isTime,
-  Node,
+  Node as Neo4jNode,
   Path,
   QueryResult,
   Record as Neo4jRecord,
-  Relationship,
+  Relationship as Neo4jRelationship,
 } from 'neo4j-driver';
 import path from 'path';
 import {
   ExtensionContext,
   Uri,
   ViewColumn,
+  Webview,
   WebviewPanel,
   window,
 } from 'vscode';
 import { Connection } from '../connectionService';
 import { getSchemaPoller } from '../contextService';
+import { getNonce } from '../getNonce';
 
 export function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
@@ -130,11 +132,26 @@ export function getErrorContent(err: Error): string {
   `;
 }
 
-export function setAllTabsToLoading(script: string): string {
+export function setAllTabsToLoading(
+  webview: Webview,
+  script: string,
+  ndlCssUri: string,
+): string {
+  const nonce = getNonce();
+
   return `
-    <html>
+    <!DOCTYPE html>
+    <html lang="en">
       <head>
-      <script>
+        <meta charset="UTF-8">
+        <!--
+        Use a content security policy to only allow loading images from https or from our extension directory,
+        and only allow scripts that have a specific nonce.
+        -->
+        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
+      <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
       </script>
       <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
@@ -162,16 +179,12 @@ export function setAllTabsToLoading(script: string): string {
         max-height: 280px;
         overflow: auto;
       }
-
-      .error {
-        color: var(--border);
-        border-color: var(--border);
-      }
       </style>
+      <link href="${ndlCssUri.toString()}" rel="stylesheet">
       </head>
       <body>
           <div id="resultDiv"></div> 
-          <script src="${script}"></script>
+          <script nonce="${nonce}" src="${script}"></script>
       </body>
       </html>
     `;
@@ -181,8 +194,8 @@ export type ResultRows = Record<string, unknown>[];
 
 export type Result = {
   rows: ResultRows;
-  nodes: any[];
-  relationships: any[];
+  nodes: NvlNode[];
+  relationships: NvlRelationship[];
   querySummary: string[];
 };
 
@@ -235,11 +248,16 @@ export default class ResultWindow {
       ),
     );
 
+    const ndlCssPath = Uri.file(
+      path.join(this.context.extensionPath, 'resources', 'styles', 'ndl.css'),
+    );
+
     const resultTabsJs = webview.asWebviewUri(resultTabsJsPath).toString();
+    const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
 
     // Set all the tabs to loading
 
-    webview.html = setAllTabsToLoading(resultTabsJs);
+    webview.html = setAllTabsToLoading(webview, resultTabsJs, ndlCssUri);
 
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(
@@ -273,11 +291,39 @@ export default class ResultWindow {
     }
   }
 
+  private async runQuery(query: string): Promise<QueryResult | Error> {
+    const connection = this.schemaPoller.connection;
+
+    if (connection) {
+      try {
+        const result = await connection.runSdkQuery(
+          {
+            query: query,
+            queryConfig: {
+              resultTransformer: (result) => {
+                return result;
+              },
+              routing: 'WRITE',
+            },
+          },
+          { queryType: 'user-direct' },
+        );
+
+        return result;
+      } catch (e) {
+        const error = e as Error;
+        return error;
+      }
+    } else {
+      const errorMessage =
+        'Could not execute query, the connection to Neo4j was not set';
+      return Error(errorMessage);
+    }
+  }
+
   private async executeStatement(statement: string, index: number) {
     const webview = this.panel.webview;
-    const result: QueryResult | Error = await this.schemaPoller.runQuery(
-      statement,
-    );
+    const result: QueryResult | Error = await this.runQuery(statement);
     let message: ResultMessage;
 
     if (result instanceof Error) {
@@ -315,7 +361,11 @@ export default class ResultWindow {
       nodeLimit,
       keepDanglingRels = false,
     }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
-  ): { nodes: any[]; relationships: any[]; limitHit: boolean } {
+  ): {
+    nodes: NvlNode[];
+    relationships: NvlRelationship[];
+    limitHit: boolean;
+  } {
     let limitHit = false;
     if (records.length === 0) {
       return { nodes: [], relationships: [], limitHit };
@@ -331,8 +381,8 @@ export default class ResultWindow {
 
     const paths: Path[] = [];
 
-    const nodeMap = new Map<string, Node>();
-    function addNode(n: Node) {
+    const nodeMap = new Map<string, Neo4jNode>();
+    function addNode(n: Neo4jNode) {
       if (!limitHit) {
         const id = n.identity.toString();
         if (!nodeMap.has(id)) {
@@ -344,8 +394,8 @@ export default class ResultWindow {
       }
     }
 
-    const relMap = new Map<string, Relationship>();
-    function addRel(r: Relationship) {
+    const relMap = new Map<string, Neo4jRelationship>();
+    function addRel(r: Neo4jRelationship) {
       const id = r.identity.toString();
       if (!relMap.has(id)) {
         relMap.set(id, r);
@@ -387,13 +437,13 @@ export default class ResultWindow {
         id: item.identity.toString(),
         elementId: item.elementId,
         labels: item.labels,
-        properties: this.mapValues(item.properties, (p) => {
+        properties: this.mapValues(item.properties, (p: unknown) => {
           p.toString();
         }),
         propertyTypes: this.mapValues(item.properties, () => {
           return 'Unknown';
         }),
-      };
+      } as NvlNode;
     });
 
     const relationships = Array.from(relMap.values())
@@ -418,13 +468,13 @@ export default class ResultWindow {
           endNodeId: item.end.toString(),
           to: item.end.toString(),
           type: item.type,
-          properties: this.mapValues(item.properties, (p) => {
+          properties: this.mapValues(item.properties, (p: unknown) => {
             p.toString();
           }),
           propertyTypes: this.mapValues(item.properties, () => {
             return 'Unknown';
           }),
-        };
+        } as NvlRelationship;
       });
 
     return { nodes, relationships, limitHit };

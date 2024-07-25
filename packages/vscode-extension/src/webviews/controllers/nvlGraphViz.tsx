@@ -1,12 +1,15 @@
-import { Node, Relationship } from '@neo4j-nvl/base';
+import {
+  Node as NvlNode,
+  Relationship as NvlRelationship,
+} from '@neo4j-nvl/base';
 import { BasicNvlWrapper } from '@neo4j-nvl/react';
 
 export function NvlGraphViz({
   nodes,
   rels,
 }: {
-  nodes: Node[];
-  rels: Relationship[];
+  nodes: NvlNode[];
+  rels: NvlRelationship[];
 }) {
   return (
     <div style={{ height: 500 }}>

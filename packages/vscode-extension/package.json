@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.2.2",
+  "version": "1.2.6",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -59,7 +59,11 @@
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create Connection"
+        "title": "Create Connection..."
+      },
+      {
+        "command": "neo4j.runCypherFile",
+        "title": "Neo4j: Run Cypher Statements in a file"
       },
       {
         "command": "neo4j.switchDatabase",
@@ -284,18 +288,20 @@
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild.js --production",
     "bundle-extension:dev": "node ./esbuild.js",
-    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
+    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser   --loader:.woff2=dataurl",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
-    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js"
+    "test:e2e": "npm run build && rm -rf .vscode-test/user-data && node ./dist/e2e_tests/main.js && npm run wdio",
+    "wdio": "wdio run ./wdio.conf.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.16.0",
     "@neo4j-cypher/language-server": "2.0.0-next.7",
     "@neo4j-cypher/language-support": "2.0.0-next.6",
+    "@neo4j-ndl/base": "^2.11.12",
+    "@neo4j-ndl/react": "^2.15.18",
     "@neo4j-nvl/base": "^0.3.1-4d1a39ed-canary",
     "@neo4j-nvl/react": "^0.3.1-4d1a39ed-canary",
     "neo4j-driver": "^5.12.0",
@@ -309,14 +315,23 @@
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
     "@vscode/vsce": "^2.29.0",
+    "@wdio/cli": "^8.39.1",
+    "@wdio/local-runner": "^8.39.1",
+    "@wdio/mocha-framework": "^8.39.0",
+    "@wdio/spec-reporter": "^8.39.0",
     "dotenv": "^16.4.5",
     "esbuild": "^0.19.4",
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
-    "typescript": "^4.9.5"
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5",
+    "wdio-vscode-service": "^6.1.0",
+    "wdio-wait-for": "^3.0.11"
   },
   "peerDependencies": {
-    "@segment/analytics-next": "^1.70.0"
+    "@segment/analytics-next": "^1.70.0",
+    "tinyqueue": "3.0.0",
+    "cose-base": "1.0.0"
   }
 }

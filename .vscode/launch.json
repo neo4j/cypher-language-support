@@ -45,6 +45,22 @@
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
       "preLaunchTask": "npm: build-vscode"
+    },
+    {
+      "name": "Debug VSCode Webview Tests",
+      "type": "node",
+      "request": "launch",
+      "args": ["./packages/vscode-extension/wdio.conf.js"],
+      "cwd": "${workspaceFolder}",
+      "autoAttachChildProcesses": true,
+      "program": "${workspaceRoot}/node_modules/@wdio/cli/bin/wdio.js",
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "${workspaceFolder}/lib/**/*.js",
+        "<node_internals>/**/*.js"
+      ],
+      "preLaunchTask": "npm: build-vscode"
     }
   ],
   "type": "pwa-node",

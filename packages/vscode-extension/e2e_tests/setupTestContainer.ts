@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export async function createAndStartTestContainer(): Promise<StartedNeo4jContainer> {
+export async function createAndStartTestContainer(
+  testDir: string,
+): Promise<StartedNeo4jContainer> {
   const password = 'password';
   const container = await new Neo4jContainer('neo4j:5-enterprise')
     .withExposedPorts(7474, 7687)
@@ -19,7 +21,7 @@ export async function createAndStartTestContainer(): Promise<StartedNeo4jContain
   const port = container.getMappedPort(7687);
   // This sets up a settings.json file based on the settings-template.json
   // replacing the random port and password we have given the container
-  updateDotenvFile(port, password);
+  updateDotenvFile(testDir, port, password);
 
   return container;
 }
@@ -30,8 +32,8 @@ function setSetting(file: string, variable: RegExp, value: string) {
   fs.writeFileSync(file, result);
 }
 
-function updateDotenvFile(port: number, password: string) {
-  const dotenvPath = path.join(__dirname, '../../e2e_tests/fixtures/');
+function updateDotenvFile(testDir: string, port: number, password: string) {
+  const dotenvPath = path.join(__dirname, `${testDir}/fixtures/`);
   const dotenvTemplate = path.join(dotenvPath, '.env');
   const dotenvFile = path.join(dotenvPath, '.env.test');
   fs.copyFileSync(dotenvTemplate, dotenvFile);

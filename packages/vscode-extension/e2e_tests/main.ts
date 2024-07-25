@@ -3,7 +3,7 @@ import * as path from 'path';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 async function main() {
-  const container = await createAndStartTestContainer();
+  const container = await createAndStartTestContainer('../../e2e_tests');
 
   try {
     /* This is equivalent to running from a command line: 
