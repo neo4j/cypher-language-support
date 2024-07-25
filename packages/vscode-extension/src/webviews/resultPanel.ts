@@ -492,29 +492,4 @@ export default class ResultWindow {
       {},
     );
   }
-
-  // private mapNode(node) {
-  //   return {
-  //     id:
-  //       typeof node.identity === 'string'
-  //         ? node.identity
-  //         : node.identity.toString(),
-  //     color: '',
-  //     captions: node.labels[0],
-  //     icon: '',
-  //     size: '',
-  //     disabled: !!node.disabled,
-  //     activated: !!node.activated,
-  //     selected: !!node.selected,
-  //   };
-  // }
-
-  // private mapRel({ identity, start, end, ...rest }) {
-  //   return {
-  //     id: typeof identity === 'string' ? identity : identity.toString(),
-  //     from: start,
-  //     to: end,
-  //     ...rest,
-  //   };
-  // }
 }

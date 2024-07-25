@@ -6,7 +6,7 @@ import {
   Neo4jSchemaPoller,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
-import { Config, QueryResult } from 'neo4j-driver';
+import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
 
@@ -43,7 +43,6 @@ type SchemaPoller = {
     database?: string,
   ): Promise<ConnnectionResult>;
   disconnect(): void;
-  runQuery(query: string): Promise<QueryResult | Error>;
 };
 
 let _context: ExtensionContext | undefined;

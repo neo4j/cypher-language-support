@@ -68,10 +68,6 @@
       {
         "command": "neo4j.switchDatabase",
         "title": "Switch to database"
-      },
-      {
-        "command": "neo4j.runCypherFile",
-        "title": "Neo4j: Run Cypher Statements in a file"
       }
     ],
     "keybindings": [
