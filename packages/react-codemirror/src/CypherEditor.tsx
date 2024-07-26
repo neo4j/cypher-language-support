@@ -168,7 +168,6 @@ export interface CypherEditorProps {
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
   newLineOnEnter?: boolean,
-  flush?: () => void,
 ) => {
   const keybindings: Record<string, KeyBinding> = {
     'Shift-Enter': {
@@ -193,7 +192,6 @@ const executeKeybinding = (
       run: (view: EditorView) => {
         const doc = view.state.doc.toString();
         if (doc.trim() !== '') {
-          flush?.();
           onExecute(doc);
         }
 
@@ -214,7 +212,6 @@ const executeKeybinding = (
           }
 
           if (doc.trim() !== '') {
-            flush?.();
             onExecute(doc);
           }
 
@@ -375,14 +372,11 @@ export class CypherEditor extends Component<
       : [];
 
     this.latestDispatchedValue = this.props.value;
-
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
           keymap.of([
-            ...executeKeybinding(onExecute, newLineOnEnter, () =>
-              this.debouncedOnChange?.flush(),
-            ),
+            ...executeKeybinding(onExecute, newLineOnEnter),
             ...extraKeybindings,
           ]),
         ),
@@ -452,6 +446,7 @@ export class CypherEditor extends Component<
         },
         annotations: [ExternalEdit.of(true)],
       });
+      this.latestDispatchedValue = this.props.value;
     }
 
     // Handle theme change
@@ -510,7 +505,6 @@ export class CypherEditor extends Component<
             ...executeKeybinding(
               this.props.onExecute,
               this.props.newLineOnEnter,
-              () => this.debouncedOnChange?.flush(),
             ),
             ...this.props.extraKeybindings,
           ]),
