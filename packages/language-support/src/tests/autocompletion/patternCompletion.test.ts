@@ -74,7 +74,7 @@ describe('MATCH auto-completion', () => {
     });
   });
 
-  test.only('Correctly completes unstarted label when caret is passed and there is a space', () => {
+  test('Correctly completes unstarted label when caret is passed and there is a space', () => {
     const query = 'MATCH (n : ';
 
     testCompletions({
