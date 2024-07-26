@@ -4,7 +4,7 @@ import {
 } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { eventually, getDocumentUri, openDocument } from '../helpers';
+import { eventually, getDocumentUri, openDocument } from '../../helpers';
 
 type InclusionTestArgs = {
   textFile: string;

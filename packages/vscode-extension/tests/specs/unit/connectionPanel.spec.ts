@@ -1,14 +1,14 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, WebviewPanel, window } from 'vscode';
-import * as connectionService from '../../src/connectionService';
-import { CONSTANTS } from '../../src/constants';
+import * as connectionService from '../../../src/connectionService';
+import { CONSTANTS } from '../../../src/constants';
 import {
   ConnectionPanel,
   ConnectionPanelMessage,
-} from '../../src/webviews/connectionPanel';
-import { getMockConnection } from '../helpers';
-import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
+} from '../../../src/webviews/connectionPanel';
+import { getMockConnection } from '../../helpers';
+import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Connection panel spec', () => {
   let sandbox: sinon.SinonSandbox;

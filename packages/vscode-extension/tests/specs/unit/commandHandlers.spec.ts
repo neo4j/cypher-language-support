@@ -4,12 +4,12 @@ import { ConfigurationChangeEvent } from 'vscode';
 import {
   handleNeo4jConfigurationChangedEvent,
   switchToDatabase,
-} from '../../src/commandHandlers';
-import * as connection from '../../src/connectionService';
-import { getMockConnection } from '../helpers';
-import { MockLanguageClient } from '../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
-import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
+} from '../../../src/commandHandlers';
+import * as connection from '../../../src/connectionService';
+import { getMockConnection } from '../../helpers';
+import { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Command handlers spec', () => {
   let sandbox: sinon.SinonSandbox;

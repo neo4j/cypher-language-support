@@ -1,7 +1,7 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
-import { createAndStartTestContainer } from '../../e2e_tests/setupTestContainer';
-import { waitUntilNotification } from '../utils';
+import { createAndStartTestContainer } from '../../setupTestContainer';
+import { waitUntilNotification } from '../../utils';
 
 before(async () => {
   const container = await createAndStartTestContainer({

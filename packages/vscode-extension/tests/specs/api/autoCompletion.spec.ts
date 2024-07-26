@@ -2,7 +2,7 @@ import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CompletionItemTag } from 'vscode-languageclient';
-import { eventually, getDocumentUri, openDocument } from '../helpers';
+import { eventually, getDocumentUri, openDocument } from '../../helpers';
 
 type InclusionTestArgs = {
   textFile: string;

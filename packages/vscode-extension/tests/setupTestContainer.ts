@@ -39,7 +39,7 @@ function setSetting(file: string, variable: RegExp, value: string) {
 }
 
 function updateDotenvFile(port: number, password: string) {
-  const dotenvPath = path.join(__dirname, '../../e2e_tests/fixtures/');
+  const dotenvPath = path.join(__dirname, '../../tests/fixtures/');
   const dotenvTemplate = path.join(dotenvPath, '.env');
   const dotenvFile = path.join(dotenvPath, '.env.test');
   fs.copyFileSync(dotenvTemplate, dotenvFile);

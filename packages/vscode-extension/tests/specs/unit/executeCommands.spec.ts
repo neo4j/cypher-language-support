@@ -2,9 +2,9 @@ import { FRIENDLY_ERROR_MESSAGES } from '@neo4j-cypher/schema-poller';
 import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
-import { CONSTANTS } from '../../src/constants';
-import { getNeo4jConfiguration } from '../helpers';
-import { saveDefaultConnection } from '../suiteSetup';
+import { CONSTANTS } from '../../../src/constants';
+import { getNeo4jConfiguration } from '../../helpers';
+import { saveDefaultConnection } from '../../suiteSetup';
 
 suite('Execute commands spec', () => {
   let sandbox: sinon.SinonSandbox;

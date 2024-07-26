@@ -7,9 +7,9 @@ export const config: Options.Testrunner = {
   // WebdriverIO supports running e2e tests as well as unit and component tests.
   runner: 'local',
   autoCompileOpts: {
-    autoCompile: true,
+    autoCompile: false,
     tsNodeOpts: {
-      project: './webview_tests/tsconfig.json',
+      project: '../tsconfig.json',
       transpileOnly: true,
     },
   },
@@ -29,8 +29,9 @@ export const config: Options.Testrunner = {
   // The path of the spec files will be resolved relative from the directory of
   // of the config file unless it's absolute.
   //
-  // The double array here makes it execute the specs sequentially
-  specs: [['./webview_tests/specs/**/*.spec.ts']],
+  // The double array here makes it execute the specs sequentially and we
+  // need the setup.spec.js to run before the rest of the tests.
+  specs: [['**/webviews/**/setup.spec.js', '**/webviews/**/!(setup).spec.js']],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -63,7 +64,7 @@ export const config: Options.Testrunner = {
       browserVersion: 'stable', // also possible: "insiders" or a specific version e.g. "1.80.0"
       'wdio:vscodeOptions': {
         // points to directory where extension package.json is located
-        extensionPath: __dirname,
+        extensionPath: `${__dirname}/../..`,
         // optional VS Code settings
         userSettings: {
           'editor.fontSize': 14,
@@ -148,7 +149,7 @@ export const config: Options.Testrunner = {
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
   mochaOpts: {
-    ui: 'bdd',
+    ui: 'tdd',
     timeout: 120000,
   },
 

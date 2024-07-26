@@ -1,5 +1,5 @@
 import { browser } from '@wdio/globals';
-import { before } from 'mocha';
+import { after, before } from 'mocha';
 import * as os from 'os';
 import {
   TreeItem,
@@ -7,9 +7,9 @@ import {
   ViewSection,
   Workbench,
 } from 'wdio-vscode-service';
-import { waitUntilNotification } from '../utils';
+import { waitUntilNotification } from '../../utils';
 
-describe('Connection testing', () => {
+suite('Connection testing', () => {
   let workbench: Workbench;
   let connectionSection: ViewSection;
   let neo4jTile: ViewControl;
@@ -17,11 +17,14 @@ describe('Connection testing', () => {
   before(async () => {
     workbench = await browser.getWorkbench();
     const activityBar = workbench.getActivityBar();
-    neo4jTile = await activityBar.getViewControl('Neo4j');
-    const connectionPannel = await neo4jTile.openView();
-    const content = connectionPannel.getContent();
-    const sections = await content.getSections();
-    connectionSection = sections.at(0);
+    const maybeNeo4jTile = await activityBar.getViewControl('Neo4j');
+    if (maybeNeo4jTile) {
+      neo4jTile = maybeNeo4jTile;
+      const connectionPannel = await neo4jTile.openView();
+      const content = connectionPannel.getContent();
+      const sections = await content.getSections();
+      connectionSection = sections.at(0);
+    }
   });
 
   after(async () => {
@@ -46,7 +49,7 @@ describe('Connection testing', () => {
     }
   }
 
-  it('should disconnect from neo4j gracefully', async function () {
+  test('should disconnect from neo4j gracefully', async function () {
     if (os.platform() === 'darwin') {
       this.skip();
     }
@@ -54,7 +57,7 @@ describe('Connection testing', () => {
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
-  it('should connect to neo4j gracefully', async function () {
+  test('should connect to neo4j gracefully', async function () {
     if (os.platform() === 'darwin') {
       this.skip();
     }
