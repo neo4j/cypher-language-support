@@ -1,5 +1,23 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.9
+
+### Patch Changes
+
+- fbd5f7e: allow signature help panel to render below editor when there's not enough space above it
+- 09dfae2: Add an ariaLabel prop to CypherEditor
+- 7154e94: Fix bug causing debouncing to override value
+- 62c152f: execute single line query on enter by default
+- cbfc75e: Fix a bug causing debounced value updates to get cancelled erroneously
+- 04ae35e: Set initial latestDispatchedValue and flush debounced changes onExecute
+  Add tests for debounce behaviour
+- Updated dependencies [3661e9d]
+- Updated dependencies [b76af58]
+- Updated dependencies [21699b7]
+- Updated dependencies [6afc0e3]
+- Updated dependencies [39b924d]
+  - @neo4j-cypher/language-support@2.0.0-next.7
+
 ## 2.0.0-next.8
 
 ### Patch Changes
