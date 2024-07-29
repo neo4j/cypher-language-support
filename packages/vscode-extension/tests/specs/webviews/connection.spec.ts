@@ -1,5 +1,5 @@
 import { browser } from '@wdio/globals';
-import { after, before } from 'mocha';
+import { before } from 'mocha';
 import * as os from 'os';
 import {
   TreeItem,
@@ -25,10 +25,6 @@ suite('Connection testing', () => {
       const sections = await content.getSections();
       connectionSection = sections.at(0);
     }
-  });
-
-  after(async () => {
-    await neo4jTile.closeView();
   });
 
   async function clickOnContextMenuItem(item: string) {

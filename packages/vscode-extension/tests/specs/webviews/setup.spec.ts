@@ -44,5 +44,4 @@ before(async () => {
   }
 
   await waitUntilNotification(browser, 'Connected to Neo4j.');
-  await neo4jTile.closeView();
 });
