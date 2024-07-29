@@ -1,14 +1,14 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { CONSTANTS } from '../../src/constants';
+import { CONSTANTS } from '../../../src/constants';
 import {
   eventually,
   getDocumentUri,
   getNeo4jConfiguration,
   newUntitledFileWithContent,
   openDocument,
-} from '../helpers';
-import { defaultConnectionKey } from '../suiteSetup';
+} from '../../helpers';
+import { defaultConnectionKey } from '../../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;

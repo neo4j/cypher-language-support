@@ -62,7 +62,7 @@ function assertUnchangedTokens(testFixurePath: string) {
 suite('Textmate highlighting', () => {
   const extensionColorizeFixturePath = path.resolve(
     __dirname,
-    '../../../e2e_tests/fixtures/textmate',
+    '../../../../tests/fixtures/textmate',
   );
 
   if (fs.existsSync(extensionColorizeFixturePath)) {

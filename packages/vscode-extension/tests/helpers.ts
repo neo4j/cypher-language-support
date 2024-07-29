@@ -29,7 +29,7 @@ async function sleep(ms: number) {
 }
 
 export function getDocumentUri(docName: string) {
-  return Uri.file(path.resolve(__dirname, '../../e2e_tests/fixtures', docName));
+  return Uri.file(path.resolve(__dirname, '../../tests/fixtures', docName));
 }
 
 export async function eventually(

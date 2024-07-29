@@ -15,7 +15,7 @@ export function run(): Promise<void> {
 
   return new Promise((resolve, reject) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    glob('**/**.spec.js', { cwd: testsRoot }, (err, files) => {
+    glob('**/{api,unit}/**/*.spec.js', { cwd: testsRoot }, (err, files) => {
       if (err) {
         return reject(err);
       }

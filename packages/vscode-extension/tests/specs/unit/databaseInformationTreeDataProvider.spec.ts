@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import * as connectionService from '../../src/connectionService';
-import { databaseInformationTreeDataProvider } from '../../src/treeviews/databaseInformationTreeDataProvider';
-import { getMockConnection } from '../helpers';
-import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
-import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
+import * as connectionService from '../../../src/connectionService';
+import { databaseInformationTreeDataProvider } from '../../../src/treeviews/databaseInformationTreeDataProvider';
+import { getMockConnection } from '../../helpers';
+import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Database information tree data provider spec', () => {
   let sandbox: sinon.SinonSandbox;

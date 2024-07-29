@@ -23,7 +23,7 @@ async function main() {
 
     // Bootstraps VS Code and executes the integration tests
     await runTests({
-      launchArgs: [path.join(__dirname, '../../e2e_tests/fixtures/')],
+      launchArgs: [path.join(__dirname, '../../tests/fixtures/')],
       extensionDevelopmentPath,
       extensionTestsPath,
     });

@@ -2,15 +2,15 @@ import assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, window } from 'vscode';
-import * as connection from '../../src/connectionService';
-import { CONSTANTS } from '../../src/constants';
+import * as connection from '../../../src/connectionService';
+import { CONSTANTS } from '../../../src/constants';
 import {
   handleConnectionErrored,
   handleConnectionFailed,
   handleConnectionReconnected,
-} from '../../src/schemaPollerEventHandlers';
-import { getMockConnection } from '../helpers';
-import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
+} from '../../../src/schemaPollerEventHandlers';
+import { getMockConnection } from '../../helpers';
+import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Schema poller event handlers spec', () => {
   let sandbox: sinon.SinonSandbox;

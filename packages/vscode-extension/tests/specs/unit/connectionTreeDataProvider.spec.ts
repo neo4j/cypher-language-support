@@ -3,12 +3,12 @@ import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { TreeItemCollapsibleState } from 'vscode';
-import * as connectionService from '../../src/connectionService';
-import { Connection } from '../../src/connectionService';
+import * as connectionService from '../../../src/connectionService';
+import { Connection } from '../../../src/connectionService';
 import {
   ConnectionItem,
   connectionTreeDataProvider,
-} from '../../src/treeviews/connectionTreeDataProvider';
+} from '../../../src/treeviews/connectionTreeDataProvider';
 
 suite('Connection tree data provider spec', () => {
   const mockConnections: Connection[] = [
