@@ -7,14 +7,15 @@ import {
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
 import { autocomplete } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSchemaPoller,
+  runtime: RuntimeStrategy,
 ) {
   return (completionParams: CompletionParams) => {
+    const dbSchema = runtime.getDbSchema();
     const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 
@@ -23,7 +24,7 @@ export function doAutoCompletion(
 
     const completions: CompletionItem[] = autocomplete(
       textDocument.getText(),
-      neo4j.metadata?.dbSchema ?? {},
+      dbSchema,
       offset,
       completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
     );

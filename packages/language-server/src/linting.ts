@@ -1,11 +1,11 @@
 import { validateSyntax } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
 import { Diagnostic, TextDocumentChangeEvent } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
 import { LinterTask, LintWorker } from './lintWorker';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 const pool = workerpool.pool(join(__dirname, 'lintWorker.js'), {
   minWorkers: 2,
@@ -17,8 +17,9 @@ let lastSemanticJob: LinterTask | undefined;
 async function rawLintDocument(
   change: TextDocumentChangeEvent<TextDocument>,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
-  neo4j: Neo4jSchemaPoller,
+  runtime: RuntimeStrategy,
 ) {
+  const dbSchema = runtime.getDbSchema();
   const { document } = change;
 
   const query = document.getText();
@@ -27,7 +28,6 @@ async function rawLintDocument(
     return;
   }
 
-  const dbSchema = neo4j.metadata?.dbSchema ?? {};
   const syntaxErrors = validateSyntax(query, dbSchema);
 
   sendDiagnostics(syntaxErrors);

@@ -5,8 +5,8 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { RuntimeStrategy } from './runtime/runtimeStrategy';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -16,9 +16,10 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSchemaPoller,
+  runtime: RuntimeStrategy,
 ) {
   return (params: SignatureHelpParams) => {
+    const dbSchema = runtime.getDbSchema();
     const textDocument = documents.get(params.textDocument.uri);
     const endOfTriggerHelp = params.context?.triggerCharacter === ')';
     if (textDocument === undefined || endOfTriggerHelp) return emptyResult;
@@ -26,10 +27,6 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return signatureHelp(
-      textDocument.getText(),
-      neo4j.metadata?.dbSchema ?? {},
-      offset,
-    );
+    return signatureHelp(textDocument.getText(), dbSchema, offset);
   };
 }

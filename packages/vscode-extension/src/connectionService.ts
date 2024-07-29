@@ -6,8 +6,11 @@ import {
 } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
-import { getExtensionContext, getSchemaPoller } from './contextService';
-import { sendNotificationToLanguageClient } from './languageClientService';
+import {
+  getExtensionContext,
+  getLanguageClient,
+  getSchemaPoller,
+} from './contextService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
@@ -56,7 +59,7 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
   delete connections[key];
   await saveConnections(connections);
   await deletePasswordByKey(key);
-  await disconnectFromDatabaseAndNotifyLanguageClient();
+  disconnectFromDatabase();
 }
 
 /**
@@ -262,8 +265,8 @@ export async function reconnectDatabaseConnectionOnExtensionActivation(): Promis
  * Handler for disconnecting database connections when the extension is deactivated.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Promise<void> {
-  await disconnectFromDatabaseAndNotifyLanguageClient();
+export function disconnectDatabaseConnectionOnExtensionDeactivation(): void {
+  disconnectFromDatabase();
 }
 
 /**
@@ -385,18 +388,18 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
   connection: Connection,
 ): Promise<ConnnectionResult> {
   return connection.state !== 'inactive'
-    ? await connectToDatabaseAndNotifyLanguageClient(connection)
-    : await disconnectFromDatabaseAndNotifyLanguageClient();
+    ? await connectToDatabase(connection)
+    : disconnectFromDatabase();
 }
 
 /**
- * Attempts to establish a connection to the database and notifies the language client that the connection has been updated.
+ * Attempts to establish a connection to the database.
  * If the connection is successful, the Connection's state will be set to 'connected'.
  * If the connection is not successful, the Connection's state will either be set to 'error' if the error is retriable, or disconnected if not.
  * @param connection The Connection to use to get database connection settings.
  * @returns A promise that resolves with the Connection result.
  */
-async function connectToDatabaseAndNotifyLanguageClient(
+async function connectToDatabase(
   connection: Connection,
 ): Promise<ConnnectionResult> {
   const password = await getPasswordForConnection(connection.key);
@@ -408,10 +411,6 @@ async function connectToDatabaseAndNotifyLanguageClient(
     : result.retriable
     ? 'error'
     : 'inactive';
-
-  result.success
-    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
-    : await sendNotificationToLanguageClient('connectionDisconnected');
 
   await saveConnection({
     ...connection,
@@ -426,11 +425,10 @@ async function connectToDatabaseAndNotifyLanguageClient(
 }
 
 /**
- * Disonnects from the database and notifies the language client that the connection has been dropped.
+ * Disonnects from the database.
  * @returns A promise that resolves with the Connection result.
  */
-async function disconnectFromDatabaseAndNotifyLanguageClient(): Promise<ConnnectionResult> {
-  await sendNotificationToLanguageClient('connectionDisconnected');
+function disconnectFromDatabase(): ConnnectionResult {
   disconnectFromSchemaPoller();
   return { success: true };
 }
@@ -484,7 +482,6 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
         state: 'inactive',
       };
 
-      void sendNotificationToLanguageClient('connectionDisconnected');
       disconnectFromSchemaPoller();
     }
   }
@@ -539,6 +536,12 @@ function attachSchemaPollerConnectionEventListeners(): void {
   schemaPoller.events.on('schemaFetched', () => {
     databaseInformationTreeDataProvider.refresh();
     connectionTreeDataProvider.refresh();
+    const languageClient = getLanguageClient();
+    const schemaPoller = getSchemaPoller();
+    void languageClient.sendNotification(
+      'schemaFetched',
+      schemaPoller.metadata?.dbSchema ?? {},
+    );
   });
   schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
