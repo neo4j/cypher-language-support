@@ -25,6 +25,8 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 
+export const DEBOUNCE_TIME = 200;
+
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
   /**
@@ -262,8 +264,6 @@ export class CypherEditor extends Component<
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
-  private latestDispatchedValue: string | undefined;
-
   /**
    * Focus the editor
    */
@@ -313,10 +313,9 @@ export class CypherEditor extends Component<
   private debouncedOnChange = this.props.onChange
     ? debounce(
         ((value, viewUpdate) => {
-          this.latestDispatchedValue = value;
           this.props.onChange(value, viewUpdate);
         }) satisfies CypherEditorProps['onChange'],
-        200,
+        DEBOUNCE_TIME,
       )
     : undefined;
 
@@ -371,7 +370,6 @@ export class CypherEditor extends Component<
         ]
       : [];
 
-    this.latestDispatchedValue = this.props.value;
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
@@ -435,7 +433,8 @@ export class CypherEditor extends Component<
 
     if (
       this.props.value !== undefined &&
-      this.props.value !== this.latestDispatchedValue
+      this.props.value !== prevProps.value &&
+      this.props.value !== currentCmValue
     ) {
       this.debouncedOnChange?.cancel();
       this.editorView.current.dispatch({
@@ -446,7 +445,6 @@ export class CypherEditor extends Component<
         },
         annotations: [ExternalEdit.of(true)],
       });
-      this.latestDispatchedValue = this.props.value;
     }
 
     // Handle theme change
