@@ -9,16 +9,9 @@ import {
   QueryResult,
 } from 'neo4j-driver';
 import path from 'path';
-import {
-  ExtensionContext,
-  Uri,
-  ViewColumn,
-  Webview,
-  WebviewPanel,
-  window,
-} from 'vscode';
+import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
-import { getSchemaPoller } from '../contextService';
+import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
 
 export function querySummary(result: QueryResult): string[] {
@@ -203,13 +196,11 @@ export type ResultMessage =
 
 export default class ResultWindow {
   public panel: WebviewPanel;
-  // TODO Nacho rename this, shouldn't be called a schema poller anymore
   schemaPoller = getSchemaPoller();
 
   constructor(
-    public readonly context: ExtensionContext,
-    public readonly connection: Connection,
     public readonly shortFileName: string,
+    public connection: Connection,
     public statements: string[],
   ) {
     this.panel = window.createWebviewPanel(
@@ -224,10 +215,10 @@ export default class ResultWindow {
 
   run() {
     const webview = this.panel.webview;
-
+    const extensionContext = getExtensionContext();
     const resultTabsJsPath = Uri.file(
       path.join(
-        this.context.extensionPath,
+        extensionContext.extensionPath,
         'dist',
         'webviews',
         'resultTabs.js',
@@ -235,7 +226,12 @@ export default class ResultWindow {
     );
 
     const ndlCssPath = Uri.file(
-      path.join(this.context.extensionPath, 'resources', 'styles', 'ndl.css'),
+      path.join(
+        extensionContext.extensionPath,
+        'resources',
+        'styles',
+        'ndl.css',
+      ),
     );
 
     const resultTabsJs = webview.asWebviewUri(resultTabsJsPath).toString();
@@ -260,7 +256,7 @@ export default class ResultWindow {
         }
       },
       undefined,
-      this.context.subscriptions,
+      extensionContext.subscriptions,
     );
   }
 

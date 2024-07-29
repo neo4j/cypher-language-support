@@ -21,6 +21,6 @@ export default async function runCypher(): Promise<void> {
 
     const documentText = editor.document.getText();
     const documentUri = editor.document.uri;
-    cypherRunner.run(activeConnection, documentUri, documentText);
+    await cypherRunner.run(activeConnection, documentUri, documentText);
   }
 }
