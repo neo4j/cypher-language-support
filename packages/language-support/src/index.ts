@@ -4,7 +4,7 @@ export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper } from './parserWrapper';
+export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

@@ -1,7 +1,7 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { createAndStartTestContainer } from '../../setupTestContainer';
-import { waitUntilNotification } from '../../utils';
+import { waitUntilNotification } from '../../webviewUtils';
 
 before(async () => {
   const container = await createAndStartTestContainer({

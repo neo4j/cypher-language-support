@@ -20,6 +20,7 @@ import {
 import {
   findParent,
   findStopNode,
+  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
@@ -130,6 +131,28 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
   };
 }
 
+export function parseStatementsStrs(query: string): string[] {
+  const statements = parse(query);
+  const result: string[] = [];
+
+  for (const statement of statements) {
+    const tokenStream = statement.parser?.getTokenStream() ?? [];
+    const tokens = getTokens(tokenStream as CommonTokenStream);
+    const statementStr = tokens
+      .filter((token) => token.type !== CypherLexer.EOF)
+      .map((token) => token.text)
+      .join('');
+
+    // Do not return empty statements
+    if (statementStr.trimLeft().length != 0) {
+      result.push(statementStr);
+    }
+  }
+
+  return result;
+}
+
+/* Parses a query without storing it in the cache */
 export function parse(query: string): StatementOrCommandContext[] {
   const statementScaffolding =
     createParsingScaffolding(query).statementsScaffolding;

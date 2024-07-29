@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import neo4j, { Config, Driver } from 'neo4j-driver';
+import neo4j, { Config, Driver, Session } from 'neo4j-driver';
 import {
   ConnectionError,
   FRIENDLY_ERROR_MESSAGES,
@@ -24,6 +24,7 @@ export class Neo4jSchemaPoller {
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
   private driver?: Driver;
+  private session?: Session;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
@@ -41,6 +42,7 @@ export class Neo4jSchemaPoller {
         config,
         database,
       );
+      this.session = this.driver.session();
     } catch (error: unknown) {
       console.error('Error connecting to Neo4j.', error);
       return {

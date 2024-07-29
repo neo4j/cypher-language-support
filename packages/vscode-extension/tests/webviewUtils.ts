@@ -22,7 +22,7 @@ export async function openFixtureFile(
 ) {
   await browser.executeWorkbench(
     async (vscode, __dirname, fileName) => {
-      const textDocumentUri = `${__dirname}/fixtures/${fileName}`;
+      const textDocumentUri = `${__dirname}/../../tests/fixtures/${fileName}`;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const document = await vscode.workspace.openTextDocument(textDocumentUri);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

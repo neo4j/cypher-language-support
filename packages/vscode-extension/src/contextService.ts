@@ -8,6 +8,7 @@ import {
 import EventEmitter from 'events';
 import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
+import CypherRunner from './cypherRunner';
 
 type LanguageClient = {
   sendNotification: (method: string, settings?: Neo4jSettings) => Promise<void>;
@@ -47,6 +48,7 @@ type SchemaPoller = {
 let _context: ExtensionContext | undefined;
 let _languageClient: LanguageClient | undefined;
 let _schemaPoller: SchemaPoller | undefined;
+let _queryRunner: CypherRunner | undefined;
 
 /**
  * Sets global context/singletons for the extension.
@@ -60,6 +62,7 @@ export function setContext(
   _context = context;
   _languageClient = languageClient;
   _schemaPoller = new Neo4jSchemaPoller();
+  _queryRunner = new CypherRunner(_context);
 }
 
 /**
@@ -91,4 +94,16 @@ export function getSchemaPoller(): SchemaPoller {
   }
 
   return _schemaPoller;
+}
+
+/**
+ * @returns The global query runner.
+ */
+export function getQueryRunner(): CypherRunner {
+  if (!_queryRunner) {
+    // TODO Nacho: this context could be undefined as well
+    _queryRunner = new CypherRunner(_context);
+  }
+
+  return _queryRunner;
 }
