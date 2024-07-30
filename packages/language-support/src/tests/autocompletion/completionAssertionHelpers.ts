@@ -59,7 +59,7 @@ export function testCompletions({
 
   expect(expected).toEqual(expectedCompletions);
 
-  const unexpectedCompletions = excluded.map((notExpectedItem) =>
+  const unexpectedCompletions = excluded.filter((notExpectedItem) =>
     actualCompletionList.find((value) => {
       // if label is left out -> only check kind and vice versa
       const matchingKind =

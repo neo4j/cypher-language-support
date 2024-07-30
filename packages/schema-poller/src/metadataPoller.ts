@@ -84,7 +84,7 @@ export class MetadataPoller {
   private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
   private users: QueryPoller<{ users: Neo4jUser[] }>;
   private roles: QueryPoller<{ roles: Neo4jRole[] }>;
-  private dbPollingInterval: NodeJS.Timer | undefined;
+  private dbPollingInterval: NodeJS.Timeout | undefined;
 
   public dbSchema: DbSchema = {};
 
