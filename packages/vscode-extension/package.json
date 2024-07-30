@@ -272,9 +272,10 @@
     "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild.js --production",
+    "bundle-ndl": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
     "bundle-extension:dev": "node ./esbuild.js",
     "bundle-webview-controller": "esbuild ./src/webviews/controllers/connectionPanelController.ts --bundle --outfile=dist/webviews/connectionPanelController.js --platform=browser",
-    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller",
+    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller && npm run bundle-ndl",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controller",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && npm run test:apiAndUnit && npm run test:webviews",
@@ -283,6 +284,8 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.8",
+    "@neo4j-ndl/base": "^2.12.3",
+    "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "^5.12.0",
     "vscode-languageclient": "^8.1.0"
   },
