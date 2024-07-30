@@ -4,15 +4,15 @@ import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { window } from 'vscode';
-import * as connection from '../../src/connectionService';
-import { CONSTANTS } from '../../src/constants';
-import * as contextService from '../../src/contextService';
-import * as schemaPollerEventHandlers from '../../src/schemaPollerEventHandlers';
-import { getMockConnection } from '../helpers';
-import { MockExtensionContext } from '../mocks/mockExtensionContext';
-import { MockLanguageClient } from '../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../mocks/mockSchemaPoller';
-import { setupMockContextStubs } from '../mocks/setupMockContextStubs';
+import * as connection from '../../../src/connectionService';
+import { CONSTANTS } from '../../../src/constants';
+import * as contextService from '../../../src/contextService';
+import * as schemaPollerEventHandlers from '../../../src/schemaPollerEventHandlers';
+import { getMockConnection } from '../../helpers';
+import { MockExtensionContext } from '../../mocks/mockExtensionContext';
+import { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Connection service spec', () => {
   let sandbox: sinon.SinonSandbox;
