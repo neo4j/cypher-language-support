@@ -381,7 +381,7 @@ export class CypherEditor extends Component<
         keyBindingCompartment.of(
           keymap.of([
             ...executeKeybinding(onExecute, newLineOnEnter, () =>
-              this.debouncedOnChange.flush(),
+              this.debouncedOnChange?.flush(),
             ),
             ...extraKeybindings,
           ]),
@@ -510,7 +510,7 @@ export class CypherEditor extends Component<
             ...executeKeybinding(
               this.props.onExecute,
               this.props.newLineOnEnter,
-              () => this.debouncedOnChange.flush(),
+              () => this.debouncedOnChange?.flush(),
             ),
             ...this.props.extraKeybindings,
           ]),
