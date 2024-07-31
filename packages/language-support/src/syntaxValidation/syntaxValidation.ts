@@ -208,10 +208,7 @@ function fixSemanticAnalysisPositions({
   });
 }
 
-export function sortByPositionAndMessage(
-  a: SyntaxDiagnostic,
-  b: SyntaxDiagnostic,
-) {
+function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
