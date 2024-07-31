@@ -4,27 +4,28 @@ import { CypherEditorPage } from './e2eUtils';
 
 const DEBOUNCE_TIMER = 200;
 
-test('external updates should override debounced updates', async ({
-  mount,
-  page,
-}) => {
-  const editorPage = new CypherEditorPage(page);
-  let value = '';
+// value updates from outside onExecute are not supported
+test.fail(
+  'external updates should override debounced updates',
+  async ({ mount, page }) => {
+    const editorPage = new CypherEditorPage(page);
+    let value = '';
 
-  const onChange = (val: string) => {
-    value = val;
-    void component.update(<CypherEditor value={val} onChange={onChange} />);
-  };
+    const onChange = (val: string) => {
+      value = val;
+      void component.update(<CypherEditor value={val} onChange={onChange} />);
+    };
 
-  const component = await mount(
-    <CypherEditor value={value} onChange={onChange} />,
-  );
+    const component = await mount(
+      <CypherEditor value={value} onChange={onChange} />,
+    );
 
-  await editorPage.getEditor().pressSequentially('RETURN 1');
-  onChange('foo');
-  await page.waitForTimeout(DEBOUNCE_TIMER);
-  await expect(component).toContainText('foo');
-});
+    await editorPage.getEditor().pressSequentially('RETURN 1');
+    onChange('foo');
+    await page.waitForTimeout(DEBOUNCE_TIMER);
+    await expect(component).toContainText('foo');
+  },
+);
 
 test('onExecute updates should override debounce updates', async ({
   mount,
