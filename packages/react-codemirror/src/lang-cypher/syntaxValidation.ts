@@ -5,12 +5,9 @@ import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from './lintWorker';
+import WorkerURL from './lintWorker?worker&url';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore ignore: https://v3.vitejs.dev/guide/features.html#import-with-query-suffixes
-import WorkerURL from './lintWorker?url&worker';
-
-const pool = workerpool.pool(WorkerURL as string, {
+const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
   workerOpts: { type: 'module' },
   workerTerminateTimeout: 2000,
