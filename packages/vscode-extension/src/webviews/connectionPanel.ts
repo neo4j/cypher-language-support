@@ -12,6 +12,7 @@ import {
 import { Connection } from '../connectionService';
 import { CONSTANTS } from '../constants';
 import { getNonce } from '../getNonce';
+import * as webviewTemplateEngine from './webviewTemplateEngine';
 
 export type ConnectionPanelMessage = {
   command: ConnectionPanelMessageCommand;
@@ -27,7 +28,6 @@ export class ConnectionPanel {
   private static readonly _viewType = 'connection';
 
   private readonly _panel: WebviewPanel;
-  private readonly _extensionPath: string;
 
   private _connection: Connection | undefined;
   private _password: string | undefined;
@@ -36,13 +36,11 @@ export class ConnectionPanel {
 
   private constructor(
     panel: WebviewPanel,
-    extensionPath: string,
     connection?: Connection,
     password?: string,
   ) {
     this._panel = panel;
     this.bindOnDidReceiveMessage();
-    this._extensionPath = extensionPath;
     this._connection = connection;
     this._password = password;
 
@@ -83,7 +81,6 @@ export class ConnectionPanel {
 
     ConnectionPanel._currentPanel = new ConnectionPanel(
       panel,
-      extensionPath,
       connection,
       password,
     );
@@ -156,122 +153,72 @@ export class ConnectionPanel {
    * @returns An HTML string.
    */
   private getHtmlForWebview(webview: Webview): string {
-    const resetCssPath = Uri.file(
-      path.join(this._extensionPath, 'resources', 'styles', 'reset.css'),
-    );
-    const vscodeCssPath = Uri.file(
-      path.join(this._extensionPath, 'resources', 'styles', 'vscode.css'),
-    );
-    const connectionPanelCssPath = Uri.file(
-      path.join(
-        this._extensionPath,
-        'resources',
-        'styles',
-        'connectionPanel.css',
-      ),
-    );
-    const connectionPanelJsPath = Uri.file(
-      path.join(
-        this._extensionPath,
-        'dist',
-        'webviews',
-        'connectionPanelController.js',
-      ),
-    );
-
-    const resetCssUri = webview.asWebviewUri(resetCssPath);
-    const vscodeCssUri = webview.asWebviewUri(vscodeCssPath);
-    const connectionPanelCssUri = webview.asWebviewUri(connectionPanelCssPath);
-    const connectionPanelJsUri = webview.asWebviewUri(connectionPanelJsPath);
-    const nonce = getNonce();
-
-    return `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <!--
-            Use a content security policy to only allow loading images from https or from our extension directory,
-            and only allow scripts that have a specific nonce.
-            -->
-            <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
-              webview.cspSource
-            }; script-src 'nonce-${nonce}';">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link href="${resetCssUri.toString()}" rel="stylesheet">
-            <link href="${vscodeCssUri.toString()}" rel="stylesheet">
-            <link href="${connectionPanelCssUri.toString()}" rel="stylesheet">
-            <script nonce="${nonce}">
-              const vscode = acquireVsCodeApi();
-            </script>
-          </head>
-          <body>
-            <div class="container">
-              <div>
-                <h1>${
-                  this._connection ? 'Edit Connection' : 'Add New Connection'
-                }</h1>
-                <form class="form" action="" novalidate method="post">
-                  <input type="hidden" id="key" value="${
-                    this._connection?.key ?? getNonce(16)
-                  }" />
-                  <div class="form--input-wrapper">
-                    <label for="scheme">Scheme *</label>
-                    <select id="scheme" data-invalid="${this.urlIsInvalid()}">
-                        <option value="bolt" ${
-                          this._connection?.scheme === 'bolt' ? 'selected' : ''
-                        }>bolt://</option>
-                        <option value="bolt+s" ${
-                          this._connection?.scheme === 'bolt+s'
-                            ? 'selected'
-                            : ''
-                        }>bolt+s://</option>
-                        <option value="neo4j" ${
-                          this._connection?.scheme === 'neo4j' ||
-                          !this._connection
-                            ? 'selected'
-                            : ''
-                        }>neo4j://</option>
-                        <option value="neo4j+s" ${
-                          this._connection?.scheme === 'neo4j+s'
-                            ? 'selected'
-                            : ''
-                        }>neo4j+s://</option>
-                    </select>
-                  </div>
-                  <div class="form--input-wrapper">
-                    <label for="host">Host *</label>
-                    <input type="text" id="host" required placeholder="localhost" value="${
-                      this._connection?.host ?? 'localhost'
-                    }" data-invalid="${this.urlIsInvalid()}" />
-                  </div>
-                  <div class="form--input-wrapper">
-                    <label for="port">Port</label>
-                    <input type="number" id="port" placeholder="7687" value="${
-                      this._connection?.port ?? '7687'
-                    }" data-invalid="${this.urlIsInvalid()}" />
-                  </div>
-                  <div class="form--input-wrapper">
-                    <label for="user">User *</label>
-                    <input type="text" id="user" required placeholder="neo4j" value="${
-                      this._connection?.user ?? 'neo4j'
-                    }" data-invalid="${this.authIsInvalid()}" />
-                  </div>
-                  <div class="form--input-wrapper">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" required value="${
-                      this._password ?? ''
-                    }" data-invalid="${this.authIsInvalid()}" />
-                  </div>
-                  <div class="form--actions">
-                    <input id="save-connection" type="submit" value="Save Connection" />
-                  </div>
-                </form>
-              </div>
-              <script nonce="${nonce}" src="${connectionPanelJsUri.toString()}"></script>
+    const body = `
+      <div class="container">
+        <div>
+          <h1>${
+            this._connection ? 'Edit Connection' : 'Add New Connection'
+          }</h1>
+          <form class="form" action="" novalidate method="post">
+            <input type="hidden" id="key" value="${
+              this._connection?.key ?? getNonce(16)
+            }" />
+            <div class="form--input-wrapper">
+              <label for="scheme">Scheme *</label>
+              <select id="scheme" data-invalid="${this.urlIsInvalid()}">
+                  <option value="bolt" ${
+                    this._connection?.scheme === 'bolt' ? 'selected' : ''
+                  }>bolt://</option>
+                  <option value="bolt+s" ${
+                    this._connection?.scheme === 'bolt+s' ? 'selected' : ''
+                  }>bolt+s://</option>
+                  <option value="neo4j" ${
+                    this._connection?.scheme === 'neo4j' || !this._connection
+                      ? 'selected'
+                      : ''
+                  }>neo4j://</option>
+                  <option value="neo4j+s" ${
+                    this._connection?.scheme === 'neo4j+s' ? 'selected' : ''
+                  }>neo4j+s://</option>
+              </select>
             </div>
-          </body>
-        </html>`;
+            <div class="form--input-wrapper">
+              <label for="host">Host *</label>
+              <input type="text" id="host" required placeholder="localhost" value="${
+                this._connection?.host ?? 'localhost'
+              }" data-invalid="${this.urlIsInvalid()}" />
+            </div>
+            <div class="form--input-wrapper">
+              <label for="port">Port</label>
+              <input type="number" id="port" placeholder="7687" value="${
+                this._connection?.port ?? '7687'
+              }" data-invalid="${this.urlIsInvalid()}" />
+            </div>
+            <div class="form--input-wrapper">
+              <label for="user">User *</label>
+              <input type="text" id="user" required placeholder="neo4j" value="${
+                this._connection?.user ?? 'neo4j'
+              }" data-invalid="${this.authIsInvalid()}" />
+            </div>
+            <div class="form--input-wrapper">
+              <label for="password">Password *</label>
+              <input type="password" id="password" required value="${
+                this._password ?? ''
+              }" data-invalid="${this.authIsInvalid()}" />
+            </div>
+            <div class="form--actions">
+              <input id="save-connection" type="submit" value="Save Connection" />
+            </div>
+          </form>
+        </div>
+      </div>`;
+
+    return webviewTemplateEngine.getWebviewHtml(
+      webview,
+      body,
+      ['connectionPanel.css'],
+      ['connectionPanelController.js'],
+    );
   }
 
   private authIsInvalid(): boolean {
