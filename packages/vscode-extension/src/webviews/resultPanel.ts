@@ -9,12 +9,12 @@ import {
   QueryResult,
 } from 'neo4j-driver';
 import path from 'path';
-import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
+import { Uri, ViewColumn, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
 import { getExtensionContext, getSchemaPoller } from '../contextService';
-import { getNonce } from '../getNonce';
+import * as webviewTemplateEngine from './webviewTemplateEngine';
 
-export function querySummary(result: QueryResult): string[] {
+function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
   const counters = result.summary.counters;
   const output: string[] = [];
@@ -63,7 +63,7 @@ export function querySummary(result: QueryResult): string[] {
  * @return {Record<string, any>}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toNativeTypes(properties: Record<string, any>) {
+function toNativeTypes(properties: Record<string, any>) {
   return Object.fromEntries(
     Object.keys(properties).map((key) => {
       const value = valueToNativeType(properties[key]);
@@ -104,73 +104,6 @@ function valueToNativeType(value: unknown) {
   return value;
 }
 
-export function getErrorContent(err: Error): string {
-  return `
-    <details class="error">
-      <summary style="color:red">Error: ${err.message}</summary>
-      <pre>${err.stack}</pre>
-    </details>
-  `;
-}
-
-export function setAllTabsToLoading(
-  webview: Webview,
-  script: string,
-  ndlCssUri: string,
-): string {
-  const nonce = getNonce();
-
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <!--
-        Use a content security policy to only allow loading images from https or from our extension directory,
-        and only allow scripts that have a specific nonce.
-        -->
-        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
-          webview.cspSource
-        }; script-src 'nonce-${nonce}';">
-      <script nonce="${nonce}">
-        const vscode = acquireVsCodeApi();
-      </script>
-      <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-      <style>
-      :root {
-        --background: #f2f2f2;
-        --border: #ccc;
-        --text: #000;
-        --error: #ff0000;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        --background: transparent;
-        --border: #ddd;
-        --text: #ccc;
-        --error: #bbb;
-      }
-
-      table{border-collapse:collapse; width: 100%}
-      table,td,th{border:1px solid var(--border); padding:5px; vertical-align: top}
-      th {font-weight: bold}
-      details {margin-bottom: 24px; padding: 12px; border: 1px solid var(--border)}
-      details summary {border-bottom: 1px solid var(--border); padding: 6px}
-      pre {
-        max-height: 280px;
-        overflow: auto;
-      }
-      </style>
-      <link href="${ndlCssUri.toString()}" rel="stylesheet">
-      </head>
-      <body>
-          <div id="resultDiv"></div> 
-          <script nonce="${nonce}" src="${script}"></script>
-      </body>
-      </html>
-    `;
-}
-
 export type ResultRows = Record<string, unknown>[];
 
 export type Result = {
@@ -203,11 +136,21 @@ export default class ResultWindow {
     public connection: Connection,
     public statements: string[],
   ) {
+    const extensionContext = getExtensionContext();
     this.panel = window.createWebviewPanel(
       'neo4j.result',
       shortFileName,
       ViewColumn.Two,
-      { retainContextWhenHidden: true, enableScripts: true },
+      {
+        retainContextWhenHidden: true,
+        enableScripts: true,
+        localResourceRoots: [
+          Uri.file(
+            path.join(extensionContext.extensionPath, 'dist', 'webviews'),
+          ),
+          Uri.file(path.join(extensionContext.extensionPath, 'resources')),
+        ],
+      },
     );
 
     window.registerWebviewPanelSerializer;
@@ -216,30 +159,14 @@ export default class ResultWindow {
   run() {
     const webview = this.panel.webview;
     const extensionContext = getExtensionContext();
-    const resultTabsJsPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'dist',
-        'webviews',
-        'resultTabs.js',
-      ),
-    );
-
-    const ndlCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'ndl.css',
-      ),
-    );
-
-    const resultTabsJs = webview.asWebviewUri(resultTabsJsPath).toString();
-    const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
 
     // Set all the tabs to loading
-
-    webview.html = setAllTabsToLoading(webview, resultTabsJs, ndlCssUri);
+    webview.html = webviewTemplateEngine.getWebviewHtml(
+      webview,
+      '<div id="resultDiv"></div>',
+      ['ndl.css', 'resultPanel.css'],
+      ['resultTabs.js'],
+    );
 
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(
