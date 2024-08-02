@@ -16,6 +16,7 @@ import {
 import { type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
+import { DEBOUNCE_TIME } from './constants';
 import {
   replaceHistory,
   replMode as historyNavigation,
@@ -24,8 +25,6 @@ import { cypher, CypherConfig } from './lang-cypher/langCypher';
 import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
-
-export const DEBOUNCE_TIME = 200;
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {

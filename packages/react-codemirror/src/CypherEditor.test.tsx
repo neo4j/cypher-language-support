@@ -5,7 +5,8 @@ import { createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { CypherEditor, DEBOUNCE_TIME } from './CypherEditor';
+import { DEBOUNCE_TIME } from './constants';
+import { CypherEditor } from './CypherEditor';
 
 const container = document.createElement('div');
 let root: ReturnType<typeof createRoot>;
