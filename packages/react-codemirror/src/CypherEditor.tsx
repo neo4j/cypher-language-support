@@ -437,8 +437,9 @@ export class CypherEditor extends Component<
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
     if (
-      this.props.value !== undefined &&
-      this.props.value !== prevProps.value
+      this.props.value !== undefined && // If the component becomes uncontolled, we just leave the value as is
+      this.props.value !== prevProps.value && // The value prop has changed, we need to update the editor
+      this.props.value !== currentCmValue // No need to dispatch an update if the value is the same
     ) {
       this.editorView.current.dispatch({
         changes: {
