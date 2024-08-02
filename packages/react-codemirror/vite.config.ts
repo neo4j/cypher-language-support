@@ -13,5 +13,8 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/e2e_tests/**',
     ],
+    // Fix for error in pipeline, see https://github.com/vitest-dev/vitest/discussions/6131
+    minWorkers: 1,
+    maxWorkers: 1,
   },
 });

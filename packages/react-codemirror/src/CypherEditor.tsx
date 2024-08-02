@@ -16,6 +16,7 @@ import {
 import { type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
+import { DEBOUNCE_TIME } from './constants';
 import {
   replaceHistory,
   replMode as historyNavigation,
@@ -265,8 +266,6 @@ export class CypherEditor extends Component<
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
-  private latestDispatchedValue: string | undefined;
-
   /**
    * Focus the editor
    */
@@ -316,10 +315,9 @@ export class CypherEditor extends Component<
   private debouncedOnChange = this.props.onChange
     ? debounce(
         ((value, viewUpdate) => {
-          this.latestDispatchedValue = value;
           this.props.onChange(value, viewUpdate);
         }) satisfies CypherEditorProps['onChange'],
-        200,
+        DEBOUNCE_TIME,
       )
     : undefined;
 
@@ -373,8 +371,6 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
-
-    this.latestDispatchedValue = this.props.value;
 
     this.editorState.current = EditorState.create({
       extensions: [
@@ -440,10 +436,10 @@ export class CypherEditor extends Component<
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
     if (
-      this.props.value !== undefined &&
-      this.props.value !== this.latestDispatchedValue
+      this.props.value !== undefined && // If the component becomes uncontolled, we just leave the value as is
+      this.props.value !== prevProps.value && // The value prop has changed, we need to update the editor
+      this.props.value !== currentCmValue // No need to dispatch an update if the value is the same
     ) {
-      this.debouncedOnChange?.cancel();
       this.editorView.current.dispatch({
         changes: {
           from: 0,
