@@ -4,7 +4,7 @@ import { CypherEditorPage } from './e2eUtils';
 
 const DEBOUNCE_TIMER = 200;
 
-// value updates from outside onExecute are not supported
+// value updates from outside onExecute are overwritten by pending updates
 test.fail(
   'external updates should override debounced updates',
   async ({ mount, page }) => {

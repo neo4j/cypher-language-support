@@ -93,7 +93,7 @@ test('props.value set to undefined preserves editorValue', () => {
   expect(getEditorValue()).toBe('initial');
 });
 
-// value updates from outside onExecute are not supported
+// value updates from outside onExecute are overwritten by pending updates
 test.fails('new props.value should cancel onChange', async () => {
   // 1. value is updated internally
   ref.current.setValueAndFocus('update');
@@ -109,7 +109,7 @@ test.fails('new props.value should cancel onChange', async () => {
   expect(value).toBe('new external value');
 });
 
-// value updates from outside onExecute are not supported
+// value updates from outside onExecute are overwritten by pending updates
 test.fails(
   'new props.value set to same value should cancel onChange',
   async () => {
