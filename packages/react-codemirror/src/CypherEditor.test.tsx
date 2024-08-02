@@ -71,6 +71,16 @@ test('editorValue updates props.value after debounce', async () => {
   expect(value).toBe('new value');
 });
 
+test('editorValue updates should not be applied twice', async () => {
+  const dispatch = vi.spyOn(ref.current.editorView.current, 'dispatch');
+
+  ref.current.setValueAndFocus('new value');
+  await debounce();
+
+  expect(onChange).toHaveBeenCalledOnce();
+  expect(dispatch).toHaveBeenCalledOnce(); // it gets called once for the initial setValueAndFocus
+});
+
 test('props.value updates editorValue', () => {
   value = 'external value';
   rerender();
