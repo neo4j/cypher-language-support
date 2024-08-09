@@ -1,18 +1,10 @@
-import {
-  isDate,
-  isDateTime,
-  isDuration,
-  isInt,
-  isLocalDateTime,
-  isLocalTime,
-  isTime,
-  QueryResult,
-} from 'neo4j-driver';
+import { QueryResult } from 'neo4j-driver';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
 import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
+import { toNativeTypes } from '../typeUtils';
 
 export function querySummary(result: QueryResult): string[] {
   const rows = result.records.length;
@@ -54,63 +46,6 @@ export function querySummary(result: QueryResult): string[] {
   }
 
   return output;
-}
-
-/**
- * Convert Neo4j Properties back into JavaScript types
- *
- * @param {Record<string, any>} properties
- * @return {Record<string, any>}
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toNativeTypes(properties: Record<string, any>) {
-  return Object.fromEntries(
-    Object.keys(properties).map((key) => {
-      const value = valueToNativeType(properties[key]);
-
-      return [key, value];
-    }),
-  );
-}
-
-/**
- * Convert an individual value to its JavaScript equivalent
- *
- * @param {any} value
- * @returns {any}
- */
-function valueToNativeType(value: unknown) {
-  if (Array.isArray(value)) {
-    value = value.map((innerValue) => valueToNativeType(innerValue));
-  } else if (isInt(value)) {
-    value = value.toNumber();
-  } else if (
-    isDate(value) ||
-    isDateTime(value) ||
-    isTime(value) ||
-    isLocalDateTime(value) ||
-    isLocalTime(value) ||
-    isDuration(value)
-  ) {
-    value = value.toString();
-  } else if (
-    typeof value === 'object' &&
-    value !== undefined &&
-    value !== null
-  ) {
-    value = toNativeTypes(value);
-  }
-
-  return value;
-}
-
-export function getErrorContent(err: Error): string {
-  return `
-    <details class="error">
-      <summary style="color:red">Error: ${err.message}</summary>
-      <pre>${err.stack}</pre>
-    </details>
-  `;
 }
 
 export function setAllTabsToLoading(

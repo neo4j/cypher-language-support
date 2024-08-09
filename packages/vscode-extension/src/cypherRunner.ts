@@ -1,7 +1,7 @@
 import { parseStatementsStrs } from '@neo4j-cypher/language-support';
 import { Uri } from 'vscode';
 import { Connection } from './connectionService';
-import ResultWindow from './webviews/resultPanel';
+import ResultWindow from './webviews/resultWindow';
 
 export default class CypherRunner {
   private results: Map<string, ResultWindow> = new Map();

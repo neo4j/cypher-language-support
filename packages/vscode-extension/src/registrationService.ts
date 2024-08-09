@@ -1,5 +1,5 @@
 import { commands, Disposable, window, workspace } from 'vscode';
-import {
+import runCypher, {
   createOrShowConnectionPanelForConnectionItem,
   handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
@@ -8,7 +8,6 @@ import {
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
 import { CONSTANTS } from './constants';
-import runCypher from './executionService';
 import {
   ConnectionItem,
   connectionTreeDataProvider,

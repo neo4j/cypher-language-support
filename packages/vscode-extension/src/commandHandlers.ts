@@ -13,7 +13,7 @@ import {
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
 import { CONSTANTS } from './constants';
-import { getExtensionContext } from './contextService';
+import { getExtensionContext, getQueryRunner } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
 import {
@@ -173,4 +173,27 @@ export async function switchToDatabase(
   const connection = getActiveConnection();
   const result = await switchDatabase({ ...connection, database });
   displayMessageForSwitchDatabaseResult(database, result);
+}
+
+export default async function runCypher(): Promise<void> {
+  const cypherRunner = getQueryRunner();
+
+  // Get the active text editor
+  const editor = window.activeTextEditor;
+
+  if (editor) {
+    const activeConnection = getActiveConnection();
+
+    if (!activeConnection) {
+      await window.showErrorMessage(
+        `You need to be connected to Neo4j to run queries`,
+      );
+
+      return;
+    }
+
+    const documentText = editor.document.getText();
+    const documentUri = editor.document.uri;
+    await cypherRunner.run(activeConnection, documentUri, documentText);
+  }
 }

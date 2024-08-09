@@ -1,7 +1,7 @@
 import { Tabs } from '@neo4j-ndl/react';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Result, ResultMessage, ResultRows } from '../resultPanel';
+import { Result, ResultMessage, ResultRows } from '../resultWindow';
 
 const maxTabHeaderSize = 25;
 interface vscode {
