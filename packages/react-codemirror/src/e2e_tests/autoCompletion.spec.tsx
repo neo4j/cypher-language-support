@@ -62,6 +62,38 @@ test('get completions when typing and can accept completions with tab', async ({
   await expect(component).toContainText('RETURN');
 });
 
+test('get completions when typing in controlled component', async ({
+  mount,
+  page,
+}) => {
+  let value = '';
+  const onChange = (val: string) => {
+    value = val;
+    void component.update(<CypherEditor value={val} onChange={onChange} />);
+  };
+
+  const component = await mount(
+    <CypherEditor value={value} onChange={onChange} />,
+  );
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('RETU');
+  await page.waitForTimeout(500); // wait for debounce
+
+  await expect(
+    page.locator('.cm-tooltip-autocomplete').getByText('RETURN'),
+  ).toBeVisible();
+
+  // We need to wait for the editor to realise there is a completion open
+  // so that it does not just indent with tab key
+  await page.waitForTimeout(500);
+  await textField.press('Tab');
+
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('RETURN');
+});
+
 test('can complete labels', async ({ mount, page }) => {
   const component = await mount(
     <CypherEditor
