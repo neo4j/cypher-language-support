@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - archive-vscode-artifacts
 
 env:
   NODE_OPTIONS: '--max_old_space_size=8192'
