@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "tests", "webview_tests", "tests/wdio.conf.ts"],
-  "compilerOptions": { "outDir": "dist" },
+  "include": ["src", "tests"],
+  "compilerOptions": { "outDir": "dist", "jsx": "react-jsx" },
   "types": [
     "@wdio/mocha-framework",
     "expect-webdriverio",

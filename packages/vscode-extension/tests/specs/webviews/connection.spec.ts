@@ -7,7 +7,7 @@ import {
   ViewSection,
   Workbench,
 } from 'wdio-vscode-service';
-import { waitUntilNotification } from '../../utils';
+import { waitUntilNotification } from '../../webviewUtils';
 
 suite('Connection testing', () => {
   let workbench: Workbench;

@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -64,6 +64,17 @@
       {
         "command": "neo4j.switchDatabase",
         "title": "Switch to database"
+      },
+      {
+        "command": "neo4j.runCypherFile",
+        "title": "Neo4j: Run Cypher Statements in a file"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "neo4j.runCypherFile",
+        "key": "ctrl+alt+space",
+        "mac": "ctrl+cmd+space"
       }
     ],
     "viewsWelcome": [
@@ -274,9 +285,9 @@
     "bundle-extension": "node ./esbuild.js --production",
     "bundle-ndl": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
     "bundle-extension:dev": "node ./esbuild.js",
-    "bundle-webview-controller": "esbuild ./src/webviews/controllers/connectionPanelController.ts --bundle --outfile=dist/webviews/connectionPanelController.js --platform=browser",
-    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controller && npm run bundle-ndl",
-    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controller",
+    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
+    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers && npm run bundle-ndl",
+    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && npm run test:apiAndUnit && npm run test:webviews",
     "test:apiAndUnit": "rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
