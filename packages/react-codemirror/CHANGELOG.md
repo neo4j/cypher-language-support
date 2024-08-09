@@ -1,5 +1,11 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.10
+
+### Patch Changes
+
+- bb7e9d3: Simplify detection and handling of value prop updates
+
 ## 2.0.0-next.9
 
 ### Patch Changes
