@@ -175,7 +175,7 @@ export async function switchToDatabase(
   displayMessageForSwitchDatabaseResult(database, result);
 }
 
-export default async function runCypher(): Promise<void> {
+export async function runCypher(): Promise<void> {
   const cypherRunner = getQueryRunner();
 
   // Get the active text editor
