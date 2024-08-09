@@ -1,0 +1,38 @@
+on:
+  push:
+    branches:
+      - main
+      - archive-vscode-artifacts
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=8192'
+
+jobs:
+  archive-vscode-artifacts:
+    name: Archives VSCode artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file and generate parser
+        run: npm ci
+
+      - name: Build project
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npm run build
+
+      - name: Generate VSCode plugin package
+        run: |
+          cd packages/vscode-extension
+          npx vsce package
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vscode-extension
+          path: packages/vscode-extension/*.vsix
+          retention-days: 30
