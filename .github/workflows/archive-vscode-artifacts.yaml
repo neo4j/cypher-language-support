@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
@@ -27,7 +29,7 @@ jobs:
       - name: Generate VSCode plugin package
         run: |
           cd packages/vscode-extension
-          npx vsce package
+          npx vsce package --pre-release
 
       - uses: actions/upload-artifact@v4
         if: always()
