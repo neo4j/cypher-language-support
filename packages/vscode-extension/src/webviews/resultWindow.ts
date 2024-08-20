@@ -1,5 +1,4 @@
 import type { QueryResultWithLimit } from '@neo4j-cypher/schema-poller';
-import { QueryResult } from 'neo4j-driver';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
@@ -7,7 +6,7 @@ import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
 import { toNativeTypes } from '../typeUtils';
 
-export function querySummary(result: QueryResult): string[] {
+export function querySummary(result: QueryResultWithLimit): string[] {
   const rows = result.records.length;
   const counters = result.summary.counters;
   const output: string[] = [];
@@ -16,7 +15,11 @@ export function querySummary(result: QueryResult): string[] {
   if (rows > 0) {
     // Started streaming 1 records after 5 ms and completed after 10  ms.
     output.push(
-      `Started streaming ${rows} record${
+      `${
+        result.recordLimitHit
+          ? `Fetch limit hit at ${result.records.length} records. `
+          : ''
+      }Started streaming ${rows} record${
         rows === 1 ? '' : 's'
       } after ${result.summary.resultConsumedAfter.toString()} ms and completed after ${result.summary.resultAvailableAfter.toString()}ms.`,
     );
