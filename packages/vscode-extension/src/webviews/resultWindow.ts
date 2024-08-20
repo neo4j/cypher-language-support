@@ -1,3 +1,4 @@
+import type { QueryResultWithLimit } from '@neo4j-cypher/schema-poller';
 import { QueryResult } from 'neo4j-driver';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
@@ -208,25 +209,12 @@ export default class ResultWindow {
     }
   }
 
-  private async runQuery(query: string): Promise<QueryResult | Error> {
+  private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
     const connection = this.schemaPoller.connection;
 
     if (connection) {
       try {
-        const result = await connection.runSdkQuery(
-          {
-            query: query,
-            queryConfig: {
-              resultTransformer: (result) => {
-                return result;
-              },
-              routing: 'WRITE',
-            },
-          },
-          { queryType: 'user-direct' },
-        );
-
-        return result;
+        return connection.runCypherQuery({ query });
       } catch (e) {
         const error = e as Error;
         return error;
@@ -240,7 +228,7 @@ export default class ResultWindow {
 
   private async executeStatement(statement: string, index: number) {
     const webview = this.panel.webview;
-    const result: QueryResult | Error = await this.runQuery(statement);
+    const result = await this.runQuery(statement);
     let message: ResultMessage;
 
     if (result instanceof Error) {
