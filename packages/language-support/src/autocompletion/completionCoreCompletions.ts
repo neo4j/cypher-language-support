@@ -249,8 +249,8 @@ const parameterCompletions = (
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, paramType]) =>
-      isExpectedParameterType(expectedType, paramType),
+    .filter(([_, paramValue]) =>
+      isExpectedParameterType(expectedType, paramValue),
     )
     .map(([paramName]) => ({
       label: `$${paramName}`,
