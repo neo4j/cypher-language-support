@@ -217,7 +217,7 @@ export default class ResultWindow {
 
     if (connection) {
       try {
-        return connection.runCypherQuery({ query });
+        return await connection.runCypherQuery({ query });
       } catch (e) {
         const error = e as Error;
         return error;
