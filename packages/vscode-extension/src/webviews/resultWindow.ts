@@ -1,4 +1,4 @@
-import { QueryResult } from 'neo4j-driver';
+import type { QueryResultWithLimit } from '@neo4j-cypher/schema-poller';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
@@ -6,7 +6,7 @@ import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
 import { toNativeTypes } from '../typeUtils';
 
-export function querySummary(result: QueryResult): string[] {
+export function querySummary(result: QueryResultWithLimit): string[] {
   const rows = result.records.length;
   const counters = result.summary.counters;
   const output: string[] = [];
@@ -15,7 +15,11 @@ export function querySummary(result: QueryResult): string[] {
   if (rows > 0) {
     // Started streaming 1 records after 5 ms and completed after 10  ms.
     output.push(
-      `Started streaming ${rows} record${
+      `${
+        result.recordLimitHit
+          ? `Fetch limit hit at ${result.records.length} records. `
+          : ''
+      }Started streaming ${rows} record${
         rows === 1 ? '' : 's'
       } after ${result.summary.resultConsumedAfter.toString()} ms and completed after ${result.summary.resultAvailableAfter.toString()}ms.`,
     );
@@ -208,25 +212,12 @@ export default class ResultWindow {
     }
   }
 
-  private async runQuery(query: string): Promise<QueryResult | Error> {
+  private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
     const connection = this.schemaPoller.connection;
 
     if (connection) {
       try {
-        const result = await connection.runSdkQuery(
-          {
-            query: query,
-            queryConfig: {
-              resultTransformer: (result) => {
-                return result;
-              },
-              routing: 'WRITE',
-            },
-          },
-          { queryType: 'user-direct' },
-        );
-
-        return result;
+        return await connection.runCypherQuery({ query });
       } catch (e) {
         const error = e as Error;
         return error;
@@ -240,7 +231,7 @@ export default class ResultWindow {
 
   private async executeStatement(statement: string, index: number) {
     const webview = this.panel.webview;
-    const result: QueryResult | Error = await this.runQuery(statement);
+    const result = await this.runQuery(statement);
     let message: ResultMessage;
 
     if (result instanceof Error) {
