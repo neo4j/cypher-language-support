@@ -371,9 +371,9 @@ class MethodsCollector extends ParseTreeListener {
     ctx: ProcedureNameContext | FunctionNameContext,
   ): string {
     const namespaces = ctx.namespace().symbolicNameString_list();
-    const procedureName = ctx.symbolicNameString();
+    const methodName = ctx.symbolicNameString();
 
-    const normalizedName = [...namespaces, procedureName]
+    const normalizedName = [...namespaces, methodName]
       .map((symbolicName) => {
         return this.getNamespaceString(symbolicName);
       })
