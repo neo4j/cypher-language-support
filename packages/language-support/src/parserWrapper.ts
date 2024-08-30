@@ -174,15 +174,9 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const functionFinder = new FunctionCollector(tokens);
-      const procedureFinder = new ProceduresCollector(tokens);
+      const methodsFinder = new MethodsCollector(tokens);
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [
-        labelsCollector,
-        variableFinder,
-        functionFinder,
-        procedureFinder,
-      ];
+      parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -206,8 +200,8 @@ export function createParsingResult(query: string): ParsingResult {
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
-        collectedFunctions: functionFinder.functions,
-        collectedProcedures: procedureFinder.procedures,
+        collectedFunctions: methodsFinder.functions,
+        collectedProcedures: methodsFinder.procedures,
       };
     });
 
@@ -316,8 +310,9 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
-// This listener collects all functions
-class FunctionCollector extends ParseTreeListener {
+// This listener collects all functions and procedures
+class MethodsCollector extends ParseTreeListener {
+  public procedures: ParsedProcedure[] = [];
   public functions: ParsedFunction[] = [];
   private tokens: Token[];
 
@@ -337,8 +332,11 @@ class FunctionCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof FunctionNameContext) {
-      const functionName = this.getNormalizedFunctionName(ctx);
+    if (
+      ctx instanceof FunctionNameContext ||
+      ctx instanceof ProcedureNameContext
+    ) {
+      const methodName = this.getMethodName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -350,8 +348,8 @@ class FunctionCollector extends ParseTreeListener {
         })
         .join('');
 
-      this.functions.push({
-        name: functionName,
+      const result = {
+        name: methodName,
         rawText: rawText,
         line: ctx.start.line,
         column: ctx.start.column,
@@ -359,97 +357,32 @@ class FunctionCollector extends ParseTreeListener {
           start: ctx.start.start,
           end: ctx.stop.stop + 1,
         },
-      });
+      };
+
+      if (ctx instanceof FunctionNameContext) {
+        this.functions.push(result);
+      } else {
+        this.procedures.push(result);
+      }
     }
   }
 
-  private getNormalizedFunctionName(ctx: FunctionNameContext): string {
-    const namespaces = ctx.namespace().symbolicNameString_list();
-    const functionName = ctx.symbolicNameString();
-
-    const normalizedName = [...namespaces, functionName]
-      .map((symbolicName) => {
-        return this.getProcedureNamespaceString(symbolicName);
-      })
-      .join('.');
-
-    return normalizedName;
-  }
-
-  private getProcedureNamespaceString(ctx: SymbolicNameStringContext): string {
-    const text = ctx.getText();
-    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
-    const hasDot = text.includes('.');
-
-    if (isEscaped && !hasDot) {
-      return text.slice(1, -1);
-    }
-
-    return text;
-  }
-}
-
-// This listener collects all functions
-class ProceduresCollector extends ParseTreeListener {
-  public procedures: ParsedProcedure[] = [];
-  private tokens: Token[];
-
-  constructor(tokens: Token[]) {
-    super();
-    this.tokens = tokens;
-  }
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof ProcedureNameContext) {
-      const procedureName = this.getProcedureName(ctx);
-
-      const startTokenIndex = ctx.start.tokenIndex;
-      const stopTokenIndex = ctx.stop.tokenIndex;
-
-      const rawText = this.tokens
-        .slice(startTokenIndex, stopTokenIndex + 1)
-        .map((token) => {
-          return token.text;
-        })
-        .join('');
-
-      this.procedures.push({
-        name: procedureName,
-        rawText: rawText,
-        line: ctx.start.line,
-        column: ctx.start.column,
-        offsets: {
-          start: ctx.start.start,
-          end: ctx.stop.stop + 1,
-        },
-      });
-    }
-  }
-
-  private getProcedureName(ctx: ProcedureNameContext): string {
+  private getMethodName(
+    ctx: ProcedureNameContext | FunctionNameContext,
+  ): string {
     const namespaces = ctx.namespace().symbolicNameString_list();
     const procedureName = ctx.symbolicNameString();
 
     const normalizedName = [...namespaces, procedureName]
       .map((symbolicName) => {
-        return this.getFunctionNamespaceString(symbolicName);
+        return this.getNamespaceString(symbolicName);
       })
       .join('.');
 
     return normalizedName;
   }
 
-  private getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
+  private getNamespaceString(ctx: SymbolicNameStringContext): string {
     const text = ctx.getText();
     const isEscaped = Boolean(ctx.escapedSymbolicNameString());
     const hasDot = text.includes('.');
