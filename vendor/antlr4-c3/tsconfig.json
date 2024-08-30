@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": false,
     "strictNullChecks": false,
     "useDefineForClassFields": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vitest/globals"]
   },
   "compileOnSave": true,
   "include": ["src", "index.ts", "tests"],

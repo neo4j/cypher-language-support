@@ -69,7 +69,6 @@ export function getConnection(): Connection | null {
   const host = document.getElementById('host') as HTMLInputElement;
   const port = document.getElementById('port') as HTMLInputElement;
   const user = document.getElementById('user') as HTMLInputElement;
-  const database = document.getElementById('database') as HTMLInputElement;
 
   if (!isValidScheme(scheme.value)) {
     return null;
@@ -77,12 +76,10 @@ export function getConnection(): Connection | null {
 
   return {
     key: key.value,
-    name: 'Default connection',
     scheme: scheme.value,
     host: host.value,
     port: port.value,
     user: user.value,
-    database: database.value,
     state: 'activating',
   };
 }

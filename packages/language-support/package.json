@@ -18,7 +18,7 @@
     "linting",
     "highlighting"
   ],
-  "version": "2.0.0-next.6",
+  "version": "2.0.0-next.7",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
   "types": "./dist/types/index.d.js",
@@ -55,11 +55,10 @@
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
     "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",
-    "test": "jest"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/benchmark": "^2.1.5",
-    "@types/jest": "^29.5.5",
     "benchmark": "^2.1.4"
   }
 }

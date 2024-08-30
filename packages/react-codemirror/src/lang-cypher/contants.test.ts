@@ -3,6 +3,7 @@ import {
   applySyntaxColouring,
   CypherTokenType,
 } from '@neo4j-cypher/language-support';
+import { expect, test } from 'vitest';
 import { tokenTypeToStyleTag } from './constants';
 
 const cypherQueryWithAllTokenTypes = `MATCH (variable :Label)-[:REL_TYPE]->() 

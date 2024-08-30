@@ -11,8 +11,7 @@ export function autocomplete(
   manual = false,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(query);
-  /* We try to locate the latest statement by finding the latest available `;` 
-     in the query and take from that point to the end of the query
+  /* We try to locate the statement where the caret is and the token of the caret
 
      The reason for doing that is we need a way to "resynchronise" when the 
      previous statements have errors and the parser fails from them onwards:
@@ -20,13 +19,12 @@ export function autocomplete(
      MATCH (m) REUT m; CREATE (n) R
                                   ^ we should still be getting autocompletions here   
 
-     If there was no ;, we don't want to reparse, so we return undefined 
-     inside findLatestStatement
   */
   const caret = findCaret(parsingResult, caretPosition);
   if (caret) {
     const statement = caret.statement;
-    return completionCoreCompletion(statement, dbSchema, manual);
+    const caretToken = caret.token;
+    return completionCoreCompletion(statement, dbSchema, caretToken, manual);
   }
 
   return [];

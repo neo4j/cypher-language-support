@@ -1,4 +1,5 @@
 import { tokens } from '@neo4j-ndl/base';
+import { expect, test } from 'vitest';
 import { tokens as tokensCopy } from './ndlTokensCopy';
 
 /*

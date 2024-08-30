@@ -1,4 +1,4 @@
-import { Driver } from 'neo4j-driver';
+import { Driver, QueryResult } from 'neo4j-driver';
 import { version } from '../package.json';
 import { Database } from './queries/databases.js';
 import { ExecuteQueryArgs, QueryType } from './types/sdkTypes';
@@ -7,6 +7,7 @@ const METADATA_BASE = {
   app: 'neo4j-sdk',
   version: version,
 };
+const RECORD_LIMIT = 5000;
 
 function resolveInitialDatabase(
   databases: Database[],
@@ -27,17 +28,75 @@ type SdkQueryArgs = {
   queryType: QueryType;
   abortSignal?: AbortSignal;
 };
+
+type RunCypherQueryArgs = {
+  query: string;
+  database?: string;
+  abortSignal?: AbortSignal;
+};
+
+export type QueryResultWithLimit = QueryResult & { recordLimitHit: boolean };
 export class Neo4jConnection {
   public currentDb: string | undefined;
 
   constructor(
     public connectedUser: string,
     public protocolVersion: string,
-    databases: Database[],
+    public databases: Database[],
     public driver: Driver,
     database?: string,
   ) {
     this.currentDb = resolveInitialDatabase(databases, database);
+  }
+
+  async runCypherQuery({
+    query,
+    database,
+    abortSignal,
+  }: RunCypherQueryArgs): Promise<QueryResultWithLimit> {
+    // we'd like to use the drivers `executeQuery` method, but it doesn't support transaction metadata or cancelations yet
+    const session = this.driver.session({
+      database: database ?? this.currentDb,
+    });
+
+    if (abortSignal !== undefined) {
+      abortSignal.addEventListener('abort', () => {
+        void session.close();
+      });
+    }
+
+    try {
+      const result = await session.executeWrite(
+        async (tx) => {
+          const result = tx.run(query, {});
+
+          const records = [];
+          let recordLimitHit = false;
+
+          for await (const record of result) {
+            if (records.length < RECORD_LIMIT) {
+              records.push(record);
+            } else {
+              recordLimitHit = true;
+              break;
+            }
+          }
+
+          const summary = await result.summary();
+
+          return { records, summary, recordLimitHit };
+        },
+        {
+          metadata: {
+            ...METADATA_BASE,
+            type: 'user-direct' satisfies QueryType,
+          },
+        },
+      );
+      return result;
+    } finally {
+      await session.close();
+    }
   }
 
   async runSdkQuery<T>(

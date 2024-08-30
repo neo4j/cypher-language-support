@@ -2,12 +2,15 @@ import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnectionError,
   ConnnectionResult,
+  Database,
 } from '@neo4j-cypher/schema-poller';
 import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
+import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
+import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
 export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
@@ -19,7 +22,6 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
  */
 export type Connection = {
   key: string;
-  name: string;
   scheme: Scheme;
   host: string;
   port?: string | undefined;
@@ -88,6 +90,20 @@ export async function saveConnectionAndUpdateDatabaseConnection(
   }
 
   return result;
+}
+
+/**
+ * Saves a connection and updates the database connection.
+ * This function is used when switching databases, and avoids the need to reinitialize the driver.
+ * @param connection The Conection to save.
+ * @returns A promise that resolves with the Connection result.
+ */
+export async function switchDatabase(connection: Connection | null) {
+  if (!connection) {
+    return;
+  }
+
+  return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 }
 
 /**
@@ -272,10 +288,64 @@ export async function establishPersistentConnectionToSchemaPoller(
   );
 
   result.success
-    ? attachSchemaPollerConnectionErrorEventListener()
+    ? attachSchemaPollerConnectionEventListeners()
     : attachSchemaPollerConnectionFailedEventListeners();
 
   return result;
+}
+
+/**
+ *  Gets an array of database names from the connection, if they exist.
+ * @returns An array of database names, or an empty array if no databases exist.
+ */
+export function getConnectionDatabases(): Pick<
+  Database,
+  'name' | 'default' | 'home'
+>[] {
+  const schemaPoller = getSchemaPoller();
+  const databases = schemaPoller.connection?.databases ?? [];
+
+  if (
+    !schemaPoller.metadata ||
+    !schemaPoller.metadata.dbSchema?.databaseNames
+  ) {
+    return databases;
+  }
+
+  return schemaPoller.metadata.dbSchema.databaseNames.map((name) => {
+    const database = databases.find((db) => db.name === name);
+    if (!database) {
+      return {
+        name: name,
+        default: false,
+        home: false,
+      };
+    } else {
+      return database;
+    }
+  }, []);
+}
+
+/**
+ * Returns the labels and relationship types from the dbSchema, if they exist.
+ * @returns An object containing the labels and relationships, or null if the dbSchema does not exist.
+ */
+export function getDbSchemaInformation():
+  | {
+      labels: string[];
+      relationships: string[];
+    }
+  | undefined {
+  const schemaPoller = getSchemaPoller();
+
+  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema) {
+    return undefined;
+  }
+
+  return {
+    labels: schemaPoller.metadata.dbSchema.labels,
+    relationships: schemaPoller.metadata.dbSchema.relationshipTypes,
+  };
 }
 
 /**
@@ -293,7 +363,7 @@ async function initializeDatabaseConnection(
   const schemaPoller = getSchemaPoller();
   disconnectFromSchemaPoller();
 
-  const result = await schemaPoller.connect(
+  return await schemaPoller.connect(
     settings.connectURL,
     {
       username: settings.user,
@@ -302,8 +372,6 @@ async function initializeDatabaseConnection(
     { appName: 'vscode-extension' },
     settings.database,
   );
-
-  return result;
 }
 
 /**
@@ -334,8 +402,6 @@ async function connectToDatabaseAndNotifyLanguageClient(
   const password = await getPasswordForConnection(connection.key);
   const settings = getDatabaseConnectionSettings(connection, password);
 
-  await sendNotificationToLanguageClient('connectionUpdated', settings);
-
   const result = await establishPersistentConnectionToSchemaPoller(settings);
   const state: State = result.success
     ? 'active'
@@ -343,9 +409,17 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
+  result.success
+    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
+    : await sendNotificationToLanguageClient('connectionDisconnected');
+
   await saveConnection({
     ...connection,
     state: state,
+    database:
+      result.error?.code === 'Neo.ClientError.Database.DatabaseNotFound'
+        ? undefined
+        : connection.database,
   });
 
   return result;
@@ -445,7 +519,7 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
   schemaPoller.events.once('connectionConnected', () => {
     schemaPoller.events.removeAllListeners();
     void schemaPollerEventHandlers.handleConnectionReconnected();
-    attachSchemaPollerConnectionErrorEventListener();
+    attachSchemaPollerConnectionEventListeners();
   });
   schemaPoller.events.once('connectionFailed', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
@@ -454,11 +528,18 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
 }
 
 /**
- * Attaches an event listener to handle connection errors.
- * This event is only handled once.
+ * Attaches event listeners for a successful database connection attempt.
+ * The events handled are:
+ * - schemaFetched: Refreshes the database information tree view.
+ * - connectionErrored: Handles connection errors. This event is only handled once.
  */
-function attachSchemaPollerConnectionErrorEventListener(): void {
+function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
+  schemaPoller.events.removeAllListeners();
+  schemaPoller.events.on('schemaFetched', () => {
+    databaseInformationTreeDataProvider.refresh();
+    connectionTreeDataProvider.refresh();
+  });
   schemaPoller.events.once('connectionErrored', (error: ConnectionError) => {
     schemaPoller.events.removeAllListeners();
     void schemaPollerEventHandlers.handleConnectionErrored(error);

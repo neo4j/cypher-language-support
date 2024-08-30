@@ -1,1 +1,4 @@
-e2e_tests/fixtures/.env.test
+tests/fixtures/.env.test
+webview_tests/fixtures/.env.test
+.wdio-vscode-service
+resources/styles/ndl.css

@@ -3,14 +3,18 @@ import {
   createOrShowConnectionPanelForConnectionItem,
   handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
+  runCypher,
   saveConnectionAndDisplayConnectionResult,
+  switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
+import { CONSTANTS } from './constants';
 import {
   ConnectionItem,
-  ConnectionTreeDataProvider,
-} from './connectionTreeDataProvider';
-import { CONSTANTS } from './constants';
+  connectionTreeDataProvider,
+} from './treeviews/connectionTreeDataProvider';
+import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
+import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -18,13 +22,17 @@ import { CONSTANTS } from './constants';
  */
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
-  const connectionTreeDataProvider = new ConnectionTreeDataProvider();
 
   disposables.push(
     window.registerTreeDataProvider(
       'neo4jConnections',
       connectionTreeDataProvider,
     ),
+    window.registerTreeDataProvider(
+      'neo4jDatabaseInformation',
+      databaseInformationTreeDataProvider,
+    ),
+    window.registerFileDecorationProvider(connectionTreeDecorationProvider),
     workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
@@ -52,7 +60,13 @@ export function registerDisposables(): Disposable[] {
       CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
       () => {
         connectionTreeDataProvider.refresh();
+        databaseInformationTreeDataProvider.refresh();
       },
+    ),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE, runCypher),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+      (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
     ),
   );
 

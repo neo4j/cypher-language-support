@@ -1,7 +1,4 @@
-import {
-  ConnnectionResult,
-  FRIENDLY_ERROR_MESSAGES,
-} from '@neo4j-cypher/schema-poller';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { commands, ConfigurationChangeEvent, window } from 'vscode';
 import {
   Connection,
@@ -12,13 +9,19 @@ import {
   getDatabaseConnectionSettings,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
+  switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
 } from './connectionService';
-import { ConnectionItem } from './connectionTreeDataProvider';
 import { CONSTANTS } from './constants';
-import { getExtensionContext } from './contextService';
+import { getExtensionContext, getQueryRunner } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
-import { displayMessageForConnectionResult } from './uiUtils';
+import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
+import {
+  displayConfirmConnectionDeletionPrompt,
+  displayMessageForConnectionResult,
+  displayMessageForSwitchDatabaseResult,
+  displaySaveConnectionAnywayPrompt,
+} from './uiUtils';
 import { ConnectionPanel } from './webviews/connectionPanel';
 
 /**
@@ -154,31 +157,43 @@ export async function toggleConnectionItemsConnectionState(
 }
 
 /**
- * Utility function to prompt the user to save a connection that failed with a retriable error.
- * @returns A promise that resolves with the result of the prompt ("Yes" or null).
+ * Handler for SWITCH_DATABASE_COMMAND (neo4j.switchDatabase)
+ * This may only be triggered from the Connection tree view.
+ * Switches the active database of the active Connection and updates the database connection, reconnecting the connection.
+ * @param connectionItem The ConnectionItem of the database to switch to.
+ * @returns A promise that resolves when the handler has completed.
  */
-async function displaySaveConnectionAnywayPrompt(): Promise<string | null> {
-  return await window.showWarningMessage<string>(
-    'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
-    {
-      modal: true,
-      detail: `${FRIENDLY_ERROR_MESSAGES.ServiceUnavailable}.`,
-    },
-    'Yes',
-  );
+export async function switchToDatabase(
+  connectionItem: ConnectionItem,
+): Promise<void> {
+  if (connectionItem.type !== 'database') {
+    return;
+  }
+  const database = connectionItem.key;
+  const connection = getActiveConnection();
+  const result = await switchDatabase({ ...connection, database });
+  displayMessageForSwitchDatabaseResult(database, result);
 }
 
-/**
- * Utility function to prompt the user whether they're sure they want to delete a Connection.
- * @param connectionItem The ConnectionItem to prompt for deletion.
- * @returns A promise that resolves with the result of the prompt ("Yes" or null).
- */
-async function displayConfirmConnectionDeletionPrompt(
-  connectionItem: ConnectionItem,
-): Promise<string | null> {
-  return await window.showWarningMessage<string>(
-    `Are you sure you want to delete connection ${connectionItem.label}?`,
-    { modal: true },
-    'Yes',
-  );
+export async function runCypher(): Promise<void> {
+  const cypherRunner = getQueryRunner();
+
+  // Get the active text editor
+  const editor = window.activeTextEditor;
+
+  if (editor) {
+    const activeConnection = getActiveConnection();
+
+    if (!activeConnection) {
+      await window.showErrorMessage(
+        `You need to be connected to Neo4j to run queries`,
+      );
+
+      return;
+    }
+
+    const documentText = editor.document.getText();
+    const documentUri = editor.document.uri;
+    await cypherRunner.run(activeConnection, documentUri, documentText);
+  }
 }

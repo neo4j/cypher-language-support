@@ -6,6 +6,8 @@ export const CONSTANTS = {
     REFRESH_CONNECTIONS_COMMAND: 'neo4j.refreshConnections',
     CONNECT_COMMAND: 'neo4j.connect',
     DISCONNECT_COMMAND: 'neo4j.disconnect',
+    SWITCH_DATABASE_COMMAND: 'neo4j.switchDatabase',
+    RUN_CYPHER_FILE: 'neo4j.runCypherFile',
   },
   MESSAGES: {
     CONNECTED_MESSAGE: 'Connected to Neo4j.',
@@ -14,5 +16,7 @@ export const CONSTANTS = {
     CONNECTION_SAVED: 'Neo4j connection saved.',
     CONNECTION_DELETED: 'Neo4j connection deleted.',
     CONNECTION_VALIDATION_MESSAGE: 'Please fill in all required fields.',
+    SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE: 'Switched to database',
+    ERROR_SWITCHING_DATABASE_MESSAGE: 'Error switching to database',
   },
 };

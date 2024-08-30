@@ -57,10 +57,10 @@ export const completionStyles: (
 
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
-    const textUntilCursor = context.state.doc.toString().slice(0, context.pos);
+    const documentText = context.state.doc.toString();
 
     const triggerCharacters = ['.', ':', '{', '$', ')'];
-    const lastCharacter = textUntilCursor.slice(-1);
+    const lastCharacter = documentText.at(context.pos - 1);
 
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
@@ -77,13 +77,13 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     }
 
     const options = autocomplete(
-      textUntilCursor,
+      documentText,
       config.schema ?? {},
-      undefined,
+      context.pos,
       context.explicit,
     );
 
-    if (config.featureFlags.signatureInfoOnAutoCompletions) {
+    if (config.featureFlags?.signatureInfoOnAutoCompletions) {
       return {
         from: context.matchBefore(/(\w|\$)*$/).from,
         options: options.map((o) => {

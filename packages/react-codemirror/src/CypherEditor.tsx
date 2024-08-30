@@ -16,6 +16,7 @@ import {
 import { type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
+import { DEBOUNCE_TIME } from './constants';
 import {
   replaceHistory,
   replMode as historyNavigation,
@@ -168,6 +169,7 @@ export interface CypherEditorProps {
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
   newLineOnEnter?: boolean,
+  flush?: () => void,
 ) => {
   const keybindings: Record<string, KeyBinding> = {
     'Shift-Enter': {
@@ -192,6 +194,7 @@ const executeKeybinding = (
       run: (view: EditorView) => {
         const doc = view.state.doc.toString();
         if (doc.trim() !== '') {
+          flush?.();
           onExecute(doc);
         }
 
@@ -212,6 +215,7 @@ const executeKeybinding = (
           }
 
           if (doc.trim() !== '') {
+            flush?.();
             onExecute(doc);
           }
 
@@ -309,7 +313,12 @@ export class CypherEditor extends Component<
   };
 
   private debouncedOnChange = this.props.onChange
-    ? debounce(this.props.onChange, 200)
+    ? debounce(
+        ((value, viewUpdate) => {
+          this.props.onChange(value, viewUpdate);
+        }) satisfies CypherEditorProps['onChange'],
+        DEBOUNCE_TIME,
+      )
     : undefined;
 
   componentDidMount(): void {
@@ -367,7 +376,9 @@ export class CypherEditor extends Component<
       extensions: [
         keyBindingCompartment.of(
           keymap.of([
-            ...executeKeybinding(onExecute, newLineOnEnter),
+            ...executeKeybinding(onExecute, newLineOnEnter, () =>
+              this.debouncedOnChange?.flush(),
+            ),
             ...extraKeybindings,
           ]),
         ),
@@ -424,8 +435,11 @@ export class CypherEditor extends Component<
     // Handle externally set value
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
 
-    if (this.props.value !== undefined && currentCmValue !== this.props.value) {
-      this.debouncedOnChange?.cancel();
+    if (
+      this.props.value !== undefined && // If the component becomes uncontolled, we just leave the value as is
+      this.props.value !== prevProps.value && // The value prop has changed, we need to update the editor
+      this.props.value !== currentCmValue // No need to dispatch an update if the value is the same
+    ) {
       this.editorView.current.dispatch({
         changes: {
           from: 0,
@@ -492,6 +506,7 @@ export class CypherEditor extends Component<
             ...executeKeybinding(
               this.props.onExecute,
               this.props.newLineOnEnter,
+              () => this.debouncedOnChange?.flush(),
             ),
             ...this.props.extraKeybindings,
           ]),

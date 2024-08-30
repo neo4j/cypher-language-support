@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "e2e_tests"],
-  "compilerOptions": { "outDir": "dist" }
+  "include": ["src", "tests"],
+  "compilerOptions": { "outDir": "dist", "jsx": "react-jsx" },
+  "types": [
+    "@wdio/mocha-framework",
+    "expect-webdriverio",
+    "wdio-vscode-service"
+  ]
 }

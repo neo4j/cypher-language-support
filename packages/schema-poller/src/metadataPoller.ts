@@ -3,6 +3,7 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
+import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { Database, listDatabases } from './queries/databases.js';
 import { DataSummary, getDataSummary } from './queries/dataSummary.js';
@@ -83,11 +84,15 @@ export class MetadataPoller {
   private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
   private users: QueryPoller<{ users: Neo4jUser[] }>;
   private roles: QueryPoller<{ roles: Neo4jRole[] }>;
-  private dbPollingInterval: NodeJS.Timer | undefined;
+  private dbPollingInterval: NodeJS.Timeout | undefined;
 
   public dbSchema: DbSchema = {};
 
-  constructor(databases: Database[], connection: Neo4jConnection) {
+  constructor(
+    databases: Database[],
+    private readonly connection: Neo4jConnection,
+    private readonly events: EventEmitter,
+  ) {
     this.databases = new QueryPoller({
       connection,
       queryArgs: listDatabases(),
@@ -172,13 +177,14 @@ export class MetadataPoller {
     });
   }
 
-  async fetchDbSchema() {
-    return await Promise.allSettled([
+  async fetchDbSchema(): Promise<void> {
+    await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
       this.procedures.refetch(),
       this.functions.refetch(),
     ]);
+    this.events.emit('schemaFetched');
   }
 
   stopBackgroundPolling() {
