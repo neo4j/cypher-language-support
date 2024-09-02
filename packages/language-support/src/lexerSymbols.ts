@@ -357,6 +357,7 @@ export const lexerKeywords = [
   CypherLexer.WRITE,
   CypherLexer.XOR,
   CypherLexer.YIELD,
+  CypherLexer.ZONE,
   CypherLexer.ZONED,
   // Preparser tokens
   CypherLexer.EXPLAIN,
