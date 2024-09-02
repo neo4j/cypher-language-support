@@ -745,18 +745,19 @@ Attempted to access graph other`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Path selectors such as `ANY 2 PATHS` are not supported yet',
+        message:
+          'Multiple path patterns cannot be used in the same clause in combination with a selective path selector.',
         offsets: {
-          end: 32,
-          start: 21,
+          end: 82,
+          start: 16,
         },
         range: {
           end: {
-            character: 26,
-            line: 1,
+            character: 31,
+            line: 2,
           },
           start: {
-            character: 15,
+            character: 10,
             line: 1,
           },
         },
@@ -889,8 +890,7 @@ Attempted to access graph other`,
         severity: 1,
       },
       {
-        message:
-          'Type mismatch: p defined with conflicting type List<T> (expected Path)',
+        message: 'Variable `p` already declared',
         offsets: {
           end: 35,
           start: 23,
@@ -1174,7 +1174,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'A pattern expression should only be used in order to test the existence of a pattern. It should therefore only be used in contexts that evaluate to a boolean, e.g. inside the function exists() or in a WHERE-clause. No other uses are allowed, instead they should be replaced by a pattern comprehension.',
+          'A pattern expression should only be used in order to test the existence of a pattern. It can no longer be used inside the function size(), an alternative is to replace size() with COUNT {}.',
         offsets: {
           end: 29,
           start: 22,
@@ -1681,5 +1681,16 @@ meaning that it expects at least 1 argument of type ANY
         severity: 2,
       },
     ]);
+  });
+
+  test('Does not error on SHORTEST k', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `MATCH p = SHORTEST 2 (a)-[]-+(b)
+             WHERE a.name = "foo" AND b.name = "bar"
+             RETURN [n in nodes(p) | n.name] AS stops;`,
+        dbSchema: testData.mockSchema,
+      }),
+    );
   });
 });
