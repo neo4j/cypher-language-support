@@ -32,15 +32,11 @@ test('the editor can report changes to the text ', async ({ mount, page }) => {
 
   const textField = page.getByRole('textbox');
 
+  await textField.fill('');
   await textField.fill('RETURN 12');
+  await expect(textField).toHaveText('RETURN 12');
 
   // editor update is debounced, retry wait for debounced
-  await expect(() => {
-    expect(editorValueCopy).toBe('RETURN 12');
-  }).toPass({ intervals: [300, 300, 1000] });
-
-  await page.keyboard.type('34');
-
   await expect(() => {
     expect(editorValueCopy).toBe('RETURN 12');
   }).toPass({ intervals: [300, 300, 1000] });

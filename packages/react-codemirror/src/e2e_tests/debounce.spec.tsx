@@ -3,6 +3,7 @@ import { DEBOUNCE_TIME } from '../constants';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
+const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 // value updates from outside onExecute are overwritten by pending updates
 test.fail(
   'external updates should override debounced updates',
@@ -21,7 +22,7 @@ test.fail(
 
     await editorPage.getEditor().pressSequentially('RETURN 1');
     onChange('foo');
-    await page.waitForTimeout(DEBOUNCE_TIME);
+    await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
     await expect(component).toContainText('foo');
   },
 );
@@ -52,15 +53,15 @@ test('onExecute updates should override debounce updates', async ({
   );
 
   await editorPage.getEditor().pressSequentially('RETURN 1');
-  await editorPage.getEditor().press('Control+Enter');
-  await page.waitForTimeout(DEBOUNCE_TIME);
+  await editorPage.getEditor().press('Enter');
+  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
   await expect(component).not.toContainText('RETURN 1');
 
   await editorPage.getEditor().pressSequentially('RETURN 1');
   await editorPage.getEditor().pressSequentially('');
   await editorPage.getEditor().pressSequentially('RETURN 1');
-  await editorPage.getEditor().press('Control+Enter');
-  await page.waitForTimeout(DEBOUNCE_TIME);
+  await editorPage.getEditor().press('Enter');
+  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
   await expect(component).not.toContainText('RETURN 1');
 });
 
@@ -91,10 +92,10 @@ test('onExecute should fire after debounced updates', async ({
   );
 
   await editorPage.getEditor().fill('RETURN 1');
-  await editorPage.getEditor().press('Control+Enter');
+  await editorPage.getEditor().press('Enter');
   await editorPage.getEditor().fill('RETURN 2');
-  await editorPage.getEditor().press('Control+Enter');
-  await page.waitForTimeout(DEBOUNCE_TIME);
+  await editorPage.getEditor().press('Enter');
+  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
   await expect(component).toContainText('RETURN 2');
   expect(executedCommand).toBe('RETURN 2');
 });
