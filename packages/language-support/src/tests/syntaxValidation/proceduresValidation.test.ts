@@ -48,13 +48,13 @@ describe('Procedures syntactic validation spec', () => {
           relationshipTypes: ['Person'],
           procedures: {
             mockProcedure: {
-              name: 'db.cdc.current',
+              name: 'mockProcedure',
               description:
                 'Returns the current change identifier that can be used to stream changes from.',
               mode: 'READ',
               worksOnSystem: false,
               argumentDescription: [],
-              signature: 'db.cdc.current() :: (id :: STRING)',
+              signature: 'mockProcedure() :: (id :: STRING)',
               returnDescription: [
                 {
                   isDeprecated: false,
@@ -256,8 +256,8 @@ describe('Procedures syntactic validation spec', () => {
     ]);
   });
 
-  test.skip('Syntax validation does not warn on existing function with spaces when database can be contacted', () => {
-    const query = `RETURN apoc.   text.  decapitalize   ("Marvin")`;
+  test('Syntax validation does not warn on existing procedure with spaces when database can be contacted', () => {
+    const query = `CALL apoc   .      coll      .      zipToRows      ([0,0,0], [1,1,1])`;
 
     expect(
       getDiagnosticsForQuery({
@@ -265,14 +265,14 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([]);
   });
 
-  test.skip('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
-    const query = `RETURN apoc.   text.  dontpanic   ("Marvin")`;
+  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+    const query = `CALL apoc.   text.  dontpanic   ("Marvin")`;
 
     expect(
       getDiagnosticsForQuery({
@@ -280,24 +280,24 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([
       {
         message:
-          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Procedure apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
-          end: 31,
-          start: 7,
+          end: 29,
+          start: 5,
         },
         range: {
           end: {
-            character: 31,
+            character: 29,
             line: 0,
           },
           start: {
-            character: 7,
+            character: 5,
             line: 0,
           },
         },
@@ -306,11 +306,11 @@ describe('Procedures syntactic validation spec', () => {
     ]);
   });
 
-  test.skip('Syntax validation does not warn on existing function with new lines when database can be contacted', () => {
-    const query = `RETURN apoc. 
-     text. 
-    decapitalize  
-    ("Marvin")`;
+  test('Syntax validation does not warn on existing procedure with new lines when database can be contacted', () => {
+    const query = `CALL db
+      .cdc
+      .current
+      ()`;
 
     expect(
       getDiagnosticsForQuery({
@@ -318,14 +318,14 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([]);
   });
 
-  test.skip('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
-    const query = `RETURN apoc.   text. 
+  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+    const query = `CALL apoc.   text. 
      dontpanic  
      ("Marvin")`;
 
@@ -335,16 +335,16 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([
       {
         message:
-          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Procedure apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
-          end: 36,
-          start: 7,
+          end: 34,
+          start: 5,
         },
         range: {
           end: {
@@ -352,7 +352,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 1,
           },
           start: {
-            character: 7,
+            character: 5,
             line: 0,
           },
         },
@@ -361,9 +361,9 @@ describe('Procedures syntactic validation spec', () => {
     ]);
   });
 
-  test.skip('Syntax validation should recognize escaped function names', () => {
+  test('Syntax validation should recognize escaped procedure names', () => {
     const query = `
-    RETURN \`abs\`(123)
+    CALL \`mockProcedure\`()
     `;
 
     expect(
@@ -372,15 +372,37 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: {
+            mockProcedure: {
+              name: 'mockProcedure',
+              description:
+                'Returns the current change identifier that can be used to stream changes from.',
+              mode: 'READ',
+              worksOnSystem: false,
+              argumentDescription: [],
+              signature: 'mockProcedure() :: (id :: STRING)',
+              returnDescription: [
+                {
+                  isDeprecated: false,
+                  description: 'id :: STRING',
+                  name: 'id',
+                  type: 'STRING',
+                },
+              ],
+              admin: false,
+              option: {
+                deprecated: false,
+              },
+            },
+          },
         },
       }),
     ).toEqual([]);
   });
 
-  test.skip('Syntax validation should fail on escaped function names that do not exist', () => {
+  test('Syntax validation should fail on escaped procedure names that do not exist', () => {
     const query = `
-    RETURN \`dontpanic\`(123)
+    CALL \`doesNotExist\`()
     `;
 
     expect(
@@ -389,24 +411,46 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: {
+            mockProcedure: {
+              name: 'mockProcedure',
+              description:
+                'Returns the current change identifier that can be used to stream changes from.',
+              mode: 'READ',
+              worksOnSystem: false,
+              argumentDescription: [],
+              signature: 'mockProcedure() :: (id :: STRING)',
+              returnDescription: [
+                {
+                  isDeprecated: false,
+                  description: 'id :: STRING',
+                  name: 'id',
+                  type: 'STRING',
+                },
+              ],
+              admin: false,
+              option: {
+                deprecated: false,
+              },
+            },
+          },
         },
       }),
     ).toEqual([
       {
         message:
-          "Function dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Procedure doesNotExist is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
-          end: 23,
-          start: 12,
+          end: 24,
+          start: 10,
         },
         range: {
           end: {
-            character: 22,
+            character: 23,
             line: 1,
           },
           start: {
-            character: 11,
+            character: 9,
             line: 1,
           },
         },
@@ -415,8 +459,8 @@ describe('Procedures syntactic validation spec', () => {
     ]);
   });
 
-  test.skip('Syntax validation should pass on escaped function names with namespaces', () => {
-    const query = "RETURN `apoc`.text.`capitalize`('Marvin');";
+  test('Syntax validation should pass on escaped procedure names with namespaces', () => {
+    const query = 'CALL `db`.cdc.`current`();';
 
     expect(
       getDiagnosticsForQuery({
@@ -424,14 +468,14 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([]);
   });
 
-  test.skip('Syntax validation should fail on escaped function names with namespaces that do not exist', () => {
-    const query = "RETURN `apoc`.text.`dontpanic`('Marvin');";
+  test('Syntax validation should fail on escaped procedure names with namespaces that do not exist', () => {
+    const query = 'CALL `doesNotExist`.cdc.`current`();';
 
     expect(
       getDiagnosticsForQuery({
@@ -439,24 +483,24 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([
       {
         message:
-          "Function apoc.text.dontpanic is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Procedure doesNotExist.cdc.current is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
-          end: 30,
-          start: 7,
+          end: 33,
+          start: 5,
         },
         range: {
           end: {
-            character: 30,
+            character: 33,
             line: 0,
           },
           start: {
-            character: 7,
+            character: 5,
             line: 0,
           },
         },
@@ -465,8 +509,8 @@ describe('Procedures syntactic validation spec', () => {
     ]);
   });
 
-  test.skip('Syntax validation should fail if whole name and namespaces are escaped', () => {
-    const query = "RETURN `apoc.text.capitalize`('Marvin');";
+  test('Syntax validation should fail if whole name and namespaces are escaped', () => {
+    const query = 'CALL `db.cdc.current`();';
 
     expect(
       getDiagnosticsForQuery({
@@ -474,24 +518,24 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
         },
       }),
     ).toEqual([
       {
         message:
-          "Function `apoc.text.capitalize` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Procedure `db.cdc.current` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
-          end: 29,
-          start: 7,
+          end: 21,
+          start: 5,
         },
         range: {
           end: {
-            character: 29,
+            character: 21,
             line: 0,
           },
           start: {
-            character: 7,
+            character: 5,
             line: 0,
           },
         },
@@ -512,8 +556,8 @@ describe('Procedures syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          functions: testData.mockSchema.functions,
           procedures: testData.mockSchema.procedures,
+          functions: testData.mockSchema.functions,
         },
       }).length,
     ).toEqual(2);
