@@ -40,7 +40,7 @@ export interface ParsedStatement {
   // A statement needs to be parsed with the .statements() rule because
   // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
-  diagnostics: SyntaxDiagnostic[];
+  syntaxErrors: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -184,18 +184,18 @@ export function createParsingResult(query: string): ParsingResult {
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const diagnostics = isEmptyStatement ? [] : errorListener.errors;
+      const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
       const collectedCommand = parseToCommand(ctx, isEmptyStatement);
 
       if (!_internalFeatureFlags.consoleCommands) {
-        diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
+        syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
       return {
         command: collectedCommand,
         parser: parser,
         tokens: tokens,
-        diagnostics: diagnostics,
+        syntaxErrors: syntaxErrors,
         ctx: ctx,
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,

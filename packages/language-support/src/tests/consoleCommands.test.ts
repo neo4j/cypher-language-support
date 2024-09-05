@@ -10,7 +10,7 @@ function expectParsedCommands(
 ) {
   const result = parserWrapper.parse(query);
   expect(
-    result.statementsParsing.flatMap((statement) => statement.diagnostics),
+    result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
   ).toEqual([]);
   expect(
     result.statementsParsing
@@ -30,7 +30,7 @@ function expectErrorMessage(query: string, msg: string) {
   const result = parserWrapper.parse(query);
   expect(
     result.statementsParsing
-      .flatMap((statement) => statement.diagnostics)
+      .flatMap((statement) => statement.syntaxErrors)
       .map((e) => e.message),
   ).toContain(msg);
 }

@@ -1,7 +1,7 @@
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
-describe('Functions syntactic validation spec', () => {
+describe('Functions semantic validation spec', () => {
   test('Syntax validation errors on missing function when database can be contacted', () => {
     const query = `RETURN dontpanic("marvin")`;
 
@@ -450,6 +450,100 @@ describe('Functions syntactic validation spec', () => {
           start: {
             character: 7,
             line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Does not fail semantic validation for functions that expect LIST<ANY>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.max(['a'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Provides semantic validation for functions that expect LIST<NUMBER>', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'Type mismatch: expected List<Float>, List<Integer> or List<Number> but was List<String>',
+        offsets: {
+          end: 31,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Does not provide semantic validation for pluggeable functions when schema is not available', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `RETURN apoc.coll.sum(['a', 'b'])`,
+        dbSchema: {},
+      }),
+    ).toEqual([]);
+  });
+
+  test('Provides semantic validation for built-in functions', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `WITH character_length() AS a
+        WITH character_length(1) AS b, a
+        RETURN a,b`,
+      }),
+    ).toEqual([
+      {
+        message: "Insufficient parameters for function 'character_length'",
+        offsets: {
+          end: 28,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 28,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Type mismatch: expected String but was Integer',
+        offsets: {
+          end: 60,
+          start: 59,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 1,
+          },
+          start: {
+            character: 30,
+            line: 1,
           },
         },
         severity: 1,

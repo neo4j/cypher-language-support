@@ -266,12 +266,12 @@ export function lintCypherQuery(
 ): SyntaxDiagnostic[] {
   const syntaxErrors = validateSyntax(query, dbSchema);
   // If there are any syntactic errors in the query, do not run the semantic validation
-  if (syntaxErrors.length > 0) {
+  if (syntaxErrors.find((d) => d.severity === DiagnosticSeverity.Error)) {
     return syntaxErrors;
   }
 
   const semanticErrors = validateSemantics(query, dbSchema);
-  return semanticErrors;
+  return syntaxErrors.concat(semanticErrors);
 }
 
 export function validateSyntax(
@@ -283,14 +283,9 @@ export function validateSyntax(
   }
   const statements = parserWrapper.parse(query);
   const result = statements.statementsParsing.flatMap((statement) => {
-    const diagnostics = statement.diagnostics;
+    const syntaxErrors = statement.syntaxErrors;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    const functionWarnings = errorOnUndeclaredFunctions(statement, dbSchema);
-    const proceduresWarnings = errorOnUndeclaredProcedures(statement, dbSchema);
-
-    return diagnostics
-      .concat(labelWarnings, functionWarnings, proceduresWarnings)
-      .sort(sortByPositionAndMessage);
+    return syntaxErrors.concat(labelWarnings).sort(sortByPositionAndMessage);
   });
 
   return result;
@@ -307,20 +302,28 @@ export function validateSemantics(
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
     const semanticErrors = statements.flatMap((current) => {
-      if (current.diagnostics.length === 0) {
+      if (current.syntaxErrors.length === 0) {
         const cmd = current.command;
         if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+          const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
+          const procedureErrors = errorOnUndeclaredProcedures(
+            current,
+            dbSchema,
+          );
+
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
             dbSchema,
           );
 
           const elements = notifications.concat(errors);
-          const result = fixSemanticAnalysisPositions({
+          const semanticDiagnostics = fixSemanticAnalysisPositions({
             semanticElements: elements,
             parseResult: current,
-          }).sort(sortByPositionAndMessage);
-          return result;
+          });
+          return semanticDiagnostics
+            .concat(functionErrors, procedureErrors)
+            .sort(sortByPositionAndMessage);
         }
       }
       return [];
