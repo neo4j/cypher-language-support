@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: changesets/action@f13b1baaa620fde937751f5d2c3572b9da32af23 # v1.4.5
+        uses: changesets/action@50750fa876cc1e54c7cb972db5e2f7271fc53d99 # v1.4.8
         with:
           publish: npm run release
         env:
