@@ -80,7 +80,7 @@ function detectNonDeclaredFunction(
     functionsSchema[parsedFunction.name],
   );
   if (!functionExistsWithExactName) {
-    return generateFunctionNotFoundWarning(parsedFunction);
+    return generateFunctionNotFoundError(parsedFunction);
   }
 }
 
@@ -92,11 +92,11 @@ function detectNonDeclaredProcedure(
   const procedureExists = Boolean(proceduresSchema[procedureName]);
 
   if (!procedureExists) {
-    return generateProcedureNotFoundWarning(parsedProcedure);
+    return generateProcedureNotFoundError(parsedProcedure);
   }
 }
 
-function generateFunctionNotFoundWarning(
+function generateFunctionNotFoundError(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
   const rawText = parsedFunction.rawText;
@@ -109,8 +109,8 @@ function generateFunctionNotFoundWarning(
       ? startColumn + rawText.length
       : nameChunks.at(-1)?.length ?? 0;
 
-  const warning: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Warning,
+  const error: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Error,
     range: {
       start: Position.create(lineIndex, startColumn),
       end: Position.create(lineIndex + linesOffset, endColumn),
@@ -119,10 +119,10 @@ function generateFunctionNotFoundWarning(
     message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   };
 
-  return warning;
+  return error;
 }
 
-function generateProcedureNotFoundWarning(
+function generateProcedureNotFoundError(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
   const rawText = parsedProcedure.rawText;
@@ -135,8 +135,8 @@ function generateProcedureNotFoundWarning(
       ? startColumn + rawText.length
       : nameChunks.at(-1)?.length ?? 0;
 
-  const warning: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Warning,
+  const error: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Error,
     range: {
       start: Position.create(lineIndex, startColumn),
       end: Position.create(lineIndex + linesOffset, endColumn),
@@ -145,7 +145,7 @@ function generateProcedureNotFoundWarning(
     message: `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   };
 
-  return warning;
+  return error;
 }
 
 function warnOnUndeclaredLabels(
@@ -265,6 +265,7 @@ export function lintCypherQuery(
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const syntaxErrors = validateSyntax(query, dbSchema);
+  // If there are any syntactic errors in the query, do not run the semantic validation
   if (syntaxErrors.length > 0) {
     return syntaxErrors;
   }
@@ -284,8 +285,8 @@ export function validateSyntax(
   const result = statements.statementsParsing.flatMap((statement) => {
     const diagnostics = statement.diagnostics;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    const functionWarnings = warnOnUndeclaredFunctions(statement, dbSchema);
-    const proceduresWarnings = warnOnUndeclaredProcedures(statement, dbSchema);
+    const functionWarnings = errorOnUndeclaredFunctions(statement, dbSchema);
+    const proceduresWarnings = errorOnUndeclaredProcedures(statement, dbSchema);
 
     return diagnostics
       .concat(labelWarnings, functionWarnings, proceduresWarnings)
@@ -331,7 +332,7 @@ export function validateSemantics(
   return [];
 }
 
-function warnOnUndeclaredFunctions(
+function errorOnUndeclaredFunctions(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
@@ -353,24 +354,24 @@ function warnOnUndeclaredFunctions(
   return warnings;
 }
 
-function warnOnUndeclaredProcedures(
+function errorOnUndeclaredProcedures(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
+  const errors: SyntaxDiagnostic[] = [];
 
   if (dbSchema.procedures) {
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
-      const warning = detectNonDeclaredProcedure(
+      const error = detectNonDeclaredProcedure(
         parsedProcedure,
         dbSchema.procedures,
       );
 
-      if (warning) warnings.push(warning);
+      if (error) errors.push(error);
     });
   }
 
-  return warnings;
+  return errors;
 }

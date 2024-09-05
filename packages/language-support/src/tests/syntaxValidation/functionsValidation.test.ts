@@ -2,7 +2,7 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Functions syntactic validation spec', () => {
-  test('Syntax validation warns on missing function when database can be contacted', () => {
+  test('Syntax validation errors on missing function when database can be contacted', () => {
     const query = `RETURN dontpanic("marvin")`;
 
     expect(
@@ -32,12 +32,12 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing function when database can be contacted', () => {
+  test('Syntax validation does not error on existing function when database can be contacted', () => {
     const query = `RETURN abs(4)`;
 
     expect(
@@ -52,7 +52,7 @@ describe('Functions syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns on missing function with namespace when database can be contacted', () => {
+  test('Syntax validation errors on missing function with namespace when database can be contacted', () => {
     const query = `RETURN test.dontpanic("marvin")`;
 
     expect(
@@ -82,12 +82,12 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing function with namespace when database can be contacted', () => {
+  test('Syntax validation does not error on existing function with namespace when database can be contacted', () => {
     const query = `RETURN apoc.text.decapitalize("Marvin")`;
 
     expect(
@@ -102,7 +102,7 @@ describe('Functions syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns on missing function with namespace split in multiple lines when database can be contacted', () => {
+  test('Syntax validation errors on missing function with namespace split in multiple lines when database can be contacted', () => {
     const query = `RETURN test.
     dontpanic
     ("marvin")
@@ -135,12 +135,12 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing function with namespace split in multiple lines when database can be contacted', () => {
+  test('Syntax validation does not error on existing function with namespace split in multiple lines when database can be contacted', () => {
     const query = `
     RETURN apoc.text.
       capitalize
@@ -208,12 +208,12 @@ describe('Functions syntactic validation spec', () => {
             line: 1,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing function with spaces when database can be contacted', () => {
+  test('Syntax validation does not error on existing function with spaces when database can be contacted', () => {
     const query = `RETURN apoc.   text.  decapitalize   ("Marvin")`;
 
     expect(
@@ -228,7 +228,7 @@ describe('Functions syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+  test('Syntax validation errors with correct positions with spaces when database can be contacted', () => {
     const query = `RETURN apoc.   text.  dontpanic   ("Marvin")`;
 
     expect(
@@ -258,12 +258,12 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing function with new lines when database can be contacted', () => {
+  test('Syntax validation does not error on existing function with new lines when database can be contacted', () => {
     const query = `RETURN apoc. 
      text. 
     decapitalize  
@@ -281,7 +281,7 @@ describe('Functions syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+  test('Syntax validation errors with correct positions with spaces when database can be contacted', () => {
     const query = `RETURN apoc.   text. 
      dontpanic  
      ("Marvin")`;
@@ -313,7 +313,7 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -367,7 +367,7 @@ describe('Functions syntactic validation spec', () => {
             line: 1,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -417,7 +417,7 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -452,7 +452,7 @@ describe('Functions syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });

@@ -32,12 +32,12 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing procedure when database can be contacted', () => {
+  test('Syntax validation does not error on existing procedure when database can be contacted', () => {
     const query = `CALL mockProcedure()`;
 
     expect(
@@ -74,7 +74,7 @@ describe('Procedures syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns on missing procedure with namespace when database can be contacted', () => {
+  test('Syntax validation errors on missing procedure with namespace when database can be contacted', () => {
     const query = `CALL test.dontpanic("marvin")`;
 
     expect(
@@ -104,12 +104,12 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing procedure with namespace when database can be contacted', () => {
+  test('Syntax validation does not error on existing procedure with namespace when database can be contacted', () => {
     const query = `CALL db.cdc.current()`;
 
     expect(
@@ -124,7 +124,7 @@ describe('Procedures syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns on missing procedure with namespace split in multiple lines when database can be contacted', () => {
+  test('Syntax validation errors on missing procedure with namespace split in multiple lines when database can be contacted', () => {
     const query = `CALL test.
     dontpanic
     ("marvin")
@@ -157,12 +157,12 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing procedure with namespace split in multiple lines when database can be contacted', () => {
+  test('Syntax validation does not error on existing procedure with namespace split in multiple lines when database can be contacted', () => {
     const query = `
     CALL db
       .cdc
@@ -214,7 +214,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 1,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -251,12 +251,12 @@ describe('Procedures syntactic validation spec', () => {
             line: 1,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing procedure with spaces when database can be contacted', () => {
+  test('Syntax validation does not error on existing procedure with spaces when database can be contacted', () => {
     const query = `CALL apoc   .      coll      .      zipToRows      ([0,0,0], [1,1,1])`;
 
     expect(
@@ -271,7 +271,7 @@ describe('Procedures syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+  test('Syntax validation errors with correct positions with spaces when database can be contacted', () => {
     const query = `CALL apoc.   text.  dontpanic   ("Marvin")`;
 
     expect(
@@ -301,12 +301,12 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
 
-  test('Syntax validation does not warn on existing procedure with new lines when database can be contacted', () => {
+  test('Syntax validation does not error on existing procedure with new lines when database can be contacted', () => {
     const query = `CALL db
       .cdc
       .current
@@ -324,7 +324,7 @@ describe('Procedures syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Syntax validation warns with correct positions with spaces when database can be contacted', () => {
+  test('Syntax validation errors with correct positions with spaces when database can be contacted', () => {
     const query = `CALL apoc.   text. 
      dontpanic  
      ("Marvin")`;
@@ -356,7 +356,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -454,7 +454,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 1,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -504,7 +504,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
@@ -539,7 +539,7 @@ describe('Procedures syntactic validation spec', () => {
             line: 0,
           },
         },
-        severity: 2,
+        severity: 1,
       },
     ]);
   });
