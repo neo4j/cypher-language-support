@@ -695,7 +695,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected '{' or a procedure name",
+        message: "Expected any of '{', '(' or a procedure name",
         offsets: {
           end: 6,
           start: 5,
