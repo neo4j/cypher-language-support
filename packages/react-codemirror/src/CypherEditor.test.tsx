@@ -19,6 +19,7 @@ const onChange = vi.fn((v: string) => {
 });
 
 global.IS_REACT_ACT_ENVIRONMENT = true;
+const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 
 /** Avoids crash in test environment */
 function mockEditorView(editorView: EditorView) {
@@ -31,7 +32,9 @@ function mockEditorView(editorView: EditorView) {
 }
 
 async function debounce() {
-  await new Promise((resolve) => setTimeout(resolve, DEBOUNCE_TIME));
+  await new Promise((resolve) =>
+    setTimeout(resolve, DEBOUNCE_TIME_WITH_MARGIN),
+  );
 }
 
 function getEditorValue() {
@@ -144,7 +147,7 @@ test.fails(
 );
 
 test('rerender should not cancel onChange', async () => {
-  // 1. value is updated ínternally
+  // 1. value is updated internally
   ref.current.setValueAndFocus('changed');
 
   // 2. editor is rerendered while a value update is still pending
@@ -158,11 +161,11 @@ test('rerender should not cancel onChange', async () => {
 });
 
 test('rerender with a previous update should not cancel onChange', async () => {
-  // 1. value is updated ínternally
+  // 1. value is updated internally
   ref.current.setValueAndFocus('changed');
   await debounce();
 
-  // 2. value is updated ínternally again
+  // 2. value is updated internally again
   ref.current.setValueAndFocus('new change');
 
   // 3. editor is rerendered while a value update is still pending
