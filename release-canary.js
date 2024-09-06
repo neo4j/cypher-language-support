@@ -77,6 +77,7 @@ function buildProject() {
 
 const langSupport = 'packages/language-support';
 const reactCodemirror = 'packages/react-codemirror';
+const reactCodemirrorPlayground = 'packages/react-codemirror-playground';
 const langSupportVersion = getCanaryVersion(langSupport);
 const reactCodemirrorVersion = getCanaryVersion(reactCodemirror);
 
@@ -97,8 +98,13 @@ replaceDependency(
   '@neo4j-cypher/language-support',
   langSupportVersion,
 );
+replaceDependency(
+  reactCodemirrorPlayground,
+  '@neo4j-cypher/react-codemirror',
+  reactCodemirrorVersion,
+);
 updateVersion(reactCodemirror, reactCodemirrorVersion);
-// We need to rebuild everything with the newly generated versions
+// // We need to rebuild everything with the newly generated versions
 buildProject();
 publishCanaryVersion(langSupport);
 publishCanaryVersion(reactCodemirror);
