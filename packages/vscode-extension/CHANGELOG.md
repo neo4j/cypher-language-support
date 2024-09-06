@@ -1,4 +1,9 @@
-# @neo4j-cypher/vscode-extension
+# neo4j-for-vscode
+
+## 1.3.0
+
+- Improvements to database connection pane: lists databases and metadata for active connection
+- Adds query execution capabilities to extension
 
 ## 1.2.2
 
