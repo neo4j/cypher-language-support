@@ -104,7 +104,7 @@ replaceDependency(
   reactCodemirrorVersion,
 );
 updateVersion(reactCodemirror, reactCodemirrorVersion);
-// // We need to rebuild everything with the newly generated versions
+// We need to rebuild everything with the newly generated versions
 buildProject();
 publishCanaryVersion(langSupport);
 publishCanaryVersion(reactCodemirror);
