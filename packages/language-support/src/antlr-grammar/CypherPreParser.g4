@@ -9,4 +9,3 @@ preparsedStatement:
 
 preparserOption:
    EXPLAIN | PROFILE;
-

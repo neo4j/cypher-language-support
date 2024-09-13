@@ -1769,14 +1769,15 @@ symbolicLabelNameString
    | unescapedLabelSymbolicNameString
    ;
 
+// Do not remove this, it is needed for composing the grammar 
+// with other ones (e.g. language support ones)
+externalKeywords
+   : IDENTIFIER
+   ;
 
 unescapedLabelSymbolicNameString
-   : IDENTIFIER | staticIdentifiers;
-
-
-
-staticIdentifiers
-   :ACCESS
+   : IDENTIFIER
+   | ACCESS
    | ACTIVE
    | ADMIN
    | ADMINISTRATOR
@@ -2030,6 +2031,7 @@ staticIdentifiers
    | YIELD
    | ZONE
    | ZONED
+   | externalKeywords
    ;
 
 endOfFile
