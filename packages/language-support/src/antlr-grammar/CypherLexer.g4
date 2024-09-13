@@ -98,6 +98,9 @@ ESCAPED_SYMBOLIC_NAME
    : '`' ( ~'`' | '``' )* '`'
    ;
 
+EXPLAIN:
+   E X P L A I N;
+
 ACCESS
    : A C C E S S
    ;

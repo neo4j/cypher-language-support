@@ -1769,9 +1769,14 @@ symbolicLabelNameString
    | unescapedLabelSymbolicNameString
    ;
 
+
 unescapedLabelSymbolicNameString
-   : IDENTIFIER
-   | ACCESS
+   : IDENTIFIER | staticIdentifiers;
+
+
+
+staticIdentifiers
+   :ACCESS
    | ACTIVE
    | ADMIN
    | ADMINISTRATOR

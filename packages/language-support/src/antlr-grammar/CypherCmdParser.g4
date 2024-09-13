@@ -26,3 +26,10 @@ useCmd: useCompletionRule symbolicAliasName?;
 listCompletionRule: LIST; 
 
 useCompletionRule: USE;
+
+
+cmdCommandsKeywords: HISTORY | CLEAR | PARAM;
+
+
+unescapedLabelSymbolicNameString
+   : IDENTIFIER | staticIdentifiers | preparserOption | cmdCommandsKeywords;

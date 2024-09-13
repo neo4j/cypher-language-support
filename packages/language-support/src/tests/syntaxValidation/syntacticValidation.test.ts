@@ -1432,4 +1432,19 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test.each([
+    `MATCH (n:Test1) RETURN n.profile`,
+    `CREATE (n:Test1 {explain: 'Explain'});`,
+    `RETURN { clear: 'Clear', params: 'params', history: 'history'}`,
+  ])(
+    'Syntax validation should not fail if cmd keywords are used in map properties %s',
+    (query) => {
+      expect(
+        getDiagnosticsForQuery({
+          query,
+        }),
+      ).toEqual([]);
+    },
+  );
 });
