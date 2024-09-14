@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.8
+
+### Patch Changes
+
+- 05663bd: Fixes bug using non language keywords (EXPLAIN, PROFILE, etc) as symbolic names
+
 ## 2.0.0-next.7
 
 ### Patch Changes
