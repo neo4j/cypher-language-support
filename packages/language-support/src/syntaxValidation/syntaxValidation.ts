@@ -10,7 +10,7 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction, Neo4jProcedure } from '../types';
+import { Neo4jFunction } from '../types';
 import {
   SemanticAnalysisElement,
   wrappedSemanticAnalysis,
@@ -81,18 +81,6 @@ function detectNonDeclaredFunction(
   );
   if (!functionExistsWithExactName) {
     return generateFunctionNotFoundError(parsedFunction);
-  }
-}
-
-function detectNonDeclaredProcedure(
-  parsedProcedure: ParsedProcedure,
-  proceduresSchema: Record<string, Neo4jProcedure>,
-): SyntaxDiagnostic | undefined {
-  const procedureName = parsedProcedure.name;
-  const procedureExists = Boolean(proceduresSchema[procedureName]);
-
-  if (!procedureExists) {
-    return generateProcedureNotFoundError(parsedProcedure);
   }
 }
 
@@ -367,12 +355,12 @@ function errorOnUndeclaredProcedures(
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
-      const error = detectNonDeclaredProcedure(
-        parsedProcedure,
-        dbSchema.procedures,
+      const procedureExists = Boolean(
+        dbSchema.procedures[parsedProcedure.name],
       );
-
-      if (error) errors.push(error);
+      if (!procedureExists) {
+        errors.push(generateProcedureNotFoundError(parsedProcedure));
+      }
     });
   }
 
