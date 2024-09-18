@@ -6,6 +6,7 @@ import {
   LabelOrRelType,
   LabelType,
   ParsedFunction,
+  ParsedProcedure,
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
@@ -63,7 +64,7 @@ function detectNonDeclaredFunction(
   parsedFunction: ParsedFunction,
   functionsSchema: Record<string, Neo4jFunction>,
 ): SyntaxDiagnostic | undefined {
-  const lowercaseFunctionName = parsedFunction.parsedName.toLowerCase();
+  const lowercaseFunctionName = parsedFunction.name.toLowerCase();
   const caseInsensitiveFunctionInDatabase =
     functionsSchema[lowercaseFunctionName];
 
@@ -76,14 +77,14 @@ function detectNonDeclaredFunction(
   }
 
   const functionExistsWithExactName = Boolean(
-    functionsSchema[parsedFunction.parsedName],
+    functionsSchema[parsedFunction.name],
   );
   if (!functionExistsWithExactName) {
-    return generateFunctionNotFoundWarning(parsedFunction);
+    return generateFunctionNotFoundError(parsedFunction);
   }
 }
 
-function generateFunctionNotFoundWarning(
+function generateFunctionNotFoundError(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
   const rawText = parsedFunction.rawText;
@@ -96,17 +97,43 @@ function generateFunctionNotFoundWarning(
       ? startColumn + rawText.length
       : nameChunks.at(-1)?.length ?? 0;
 
-  const warning: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Warning,
+  const error: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Error,
     range: {
       start: Position.create(lineIndex, startColumn),
       end: Position.create(lineIndex + linesOffset, endColumn),
     },
     offsets: parsedFunction.offsets,
-    message: `Function ${parsedFunction.parsedName} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+    message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   };
 
-  return warning;
+  return error;
+}
+
+function generateProcedureNotFoundError(
+  parsedProcedure: ParsedProcedure,
+): SyntaxDiagnostic {
+  const rawText = parsedProcedure.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedProcedure.line - 1;
+  const startColumn = parsedProcedure.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const error: SyntaxDiagnostic = {
+    severity: DiagnosticSeverity.Error,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedProcedure.offsets,
+    message: `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  };
+
+  return error;
 }
 
 function warnOnUndeclaredLabels(
@@ -226,12 +253,13 @@ export function lintCypherQuery(
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const syntaxErrors = validateSyntax(query, dbSchema);
-  if (syntaxErrors.length > 0) {
+  // If there are any syntactic errors in the query, do not run the semantic validation
+  if (syntaxErrors.find((d) => d.severity === DiagnosticSeverity.Error)) {
     return syntaxErrors;
   }
 
   const semanticErrors = validateSemantics(query, dbSchema);
-  return semanticErrors;
+  return syntaxErrors.concat(semanticErrors);
 }
 
 export function validateSyntax(
@@ -243,13 +271,9 @@ export function validateSyntax(
   }
   const statements = parserWrapper.parse(query);
   const result = statements.statementsParsing.flatMap((statement) => {
-    const diagnostics = statement.diagnostics;
+    const syntaxErrors = statement.syntaxErrors;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    const functionWarnings = warnOnUndeclaredFunctions(statement, dbSchema);
-
-    return diagnostics
-      .concat(labelWarnings, functionWarnings)
-      .sort(sortByPositionAndMessage);
+    return syntaxErrors.concat(labelWarnings).sort(sortByPositionAndMessage);
   });
 
   return result;
@@ -266,20 +290,28 @@ export function validateSemantics(
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
     const semanticErrors = statements.flatMap((current) => {
-      if (current.diagnostics.length === 0) {
+      if (current.syntaxErrors.length === 0) {
         const cmd = current.command;
         if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+          const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
+          const procedureErrors = errorOnUndeclaredProcedures(
+            current,
+            dbSchema,
+          );
+
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
             dbSchema,
           );
 
           const elements = notifications.concat(errors);
-          const result = fixSemanticAnalysisPositions({
+          const semanticDiagnostics = fixSemanticAnalysisPositions({
             semanticElements: elements,
             parseResult: current,
-          }).sort(sortByPositionAndMessage);
-          return result;
+          });
+          return semanticDiagnostics
+            .concat(functionErrors, procedureErrors)
+            .sort(sortByPositionAndMessage);
         }
       }
       return [];
@@ -291,7 +323,7 @@ export function validateSemantics(
   return [];
 }
 
-function warnOnUndeclaredFunctions(
+function errorOnUndeclaredFunctions(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
@@ -311,4 +343,26 @@ function warnOnUndeclaredFunctions(
   }
 
   return warnings;
+}
+
+function errorOnUndeclaredProcedures(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const errors: SyntaxDiagnostic[] = [];
+
+  if (dbSchema.procedures) {
+    const proceduresInQuery = parsingResult.collectedProcedures;
+
+    proceduresInQuery.forEach((parsedProcedure) => {
+      const procedureExists = Boolean(
+        dbSchema.procedures[parsedProcedure.name],
+      );
+      if (!procedureExists) {
+        errors.push(generateProcedureNotFoundError(parsedProcedure));
+      }
+    });
+  }
+
+  return errors;
 }

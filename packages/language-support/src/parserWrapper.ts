@@ -12,6 +12,7 @@ import {
   LabelNameContext,
   LabelNameIsContext,
   LabelOrRelTypeContext,
+  ProcedureNameContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
@@ -39,11 +40,12 @@ export interface ParsedStatement {
   // A statement needs to be parsed with the .statements() rule because
   // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
-  diagnostics: SyntaxDiagnostic[];
+  syntaxErrors: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
+  collectedProcedures: ParsedProcedure[];
 }
 
 export interface ParsingResult {
@@ -97,7 +99,7 @@ export type LabelOrRelType = {
 };
 
 export type ParsedFunction = {
-  parsedName: string;
+  name: string;
   rawText: string;
   line: number;
   column: number;
@@ -106,6 +108,7 @@ export type ParsedFunction = {
     end: number;
   };
 };
+export type ParsedProcedure = ParsedFunction;
 
 export function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
@@ -171,13 +174,9 @@ export function createParsingResult(query: string): ParsingResult {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
-      const functionFinder = new FunctionCollector(tokens);
+      const methodsFinder = new MethodsCollector(tokens);
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [
-        labelsCollector,
-        variableFinder,
-        functionFinder,
-      ];
+      parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -185,23 +184,24 @@ export function createParsingResult(query: string): ParsingResult {
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const diagnostics = isEmptyStatement ? [] : errorListener.errors;
+      const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
       const collectedCommand = parseToCommand(ctx, isEmptyStatement);
 
       if (!_internalFeatureFlags.consoleCommands) {
-        diagnostics.push(...errorOnNonCypherCommands(collectedCommand));
+        syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
       return {
         command: collectedCommand,
         parser: parser,
         tokens: tokens,
-        diagnostics: diagnostics,
+        syntaxErrors: syntaxErrors,
         ctx: ctx,
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
-        collectedFunctions: functionFinder.functions,
+        collectedFunctions: methodsFinder.functions,
+        collectedProcedures: methodsFinder.procedures,
       };
     });
 
@@ -310,8 +310,9 @@ class VariableCollector implements ParseTreeListener {
   }
 }
 
-// This listener collects all functions
-class FunctionCollector extends ParseTreeListener {
+// This listener collects all functions and procedures
+class MethodsCollector extends ParseTreeListener {
+  public procedures: ParsedProcedure[] = [];
   public functions: ParsedFunction[] = [];
   private tokens: Token[];
 
@@ -331,8 +332,11 @@ class FunctionCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof FunctionNameContext) {
-      const functionName = this.getNormalizedFunctionName(ctx);
+    if (
+      ctx instanceof FunctionNameContext ||
+      ctx instanceof ProcedureNameContext
+    ) {
+      const methodName = this.getMethodName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -344,8 +348,8 @@ class FunctionCollector extends ParseTreeListener {
         })
         .join('');
 
-      this.functions.push({
-        parsedName: functionName,
+      const result = {
+        name: methodName,
         rawText: rawText,
         line: ctx.start.line,
         column: ctx.start.column,
@@ -353,24 +357,32 @@ class FunctionCollector extends ParseTreeListener {
           start: ctx.start.start,
           end: ctx.stop.stop + 1,
         },
-      });
+      };
+
+      if (ctx instanceof FunctionNameContext) {
+        this.functions.push(result);
+      } else {
+        this.procedures.push(result);
+      }
     }
   }
 
-  private getNormalizedFunctionName(ctx: FunctionNameContext): string {
+  private getMethodName(
+    ctx: ProcedureNameContext | FunctionNameContext,
+  ): string {
     const namespaces = ctx.namespace().symbolicNameString_list();
-    const functionName = ctx.symbolicNameString();
+    const methodName = ctx.symbolicNameString();
 
-    const normalizedName = [...namespaces, functionName]
+    const normalizedName = [...namespaces, methodName]
       .map((symbolicName) => {
-        return this.getFunctionNamespaceString(symbolicName);
+        return this.getNamespaceString(symbolicName);
       })
       .join('.');
 
     return normalizedName;
   }
 
-  private getFunctionNamespaceString(ctx: SymbolicNameStringContext): string {
+  private getNamespaceString(ctx: SymbolicNameStringContext): string {
     const text = ctx.getText();
     const isEscaped = Boolean(ctx.escapedSymbolicNameString());
     const hasDot = text.includes('.');
