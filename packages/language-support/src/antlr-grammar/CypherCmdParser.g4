@@ -26,3 +26,5 @@ useCmd: useCompletionRule symbolicAliasName?;
 listCompletionRule: LIST; 
 
 useCompletionRule: USE;
+
+externalKeywords: preparserOption | HISTORY | CLEAR | PARAM;
