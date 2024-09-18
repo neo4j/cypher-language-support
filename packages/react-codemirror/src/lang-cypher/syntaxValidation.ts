@@ -54,9 +54,9 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
     const parse = parserWrapper.parse(query);
     const statements = parse.statementsParsing;
 
-    const anySyntacticError =
-      statements.filter((statement) => statement.syntaxErrors.length !== 0)
-        .length > 0;
+    const anySyntacticError = statements.some(
+      (statement) => statement.syntaxErrors.length !== 0,
+    );
 
     if (anySyntacticError) {
       return [];
