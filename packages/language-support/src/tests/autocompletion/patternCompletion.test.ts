@@ -11,12 +11,15 @@ describe('MATCH auto-completion', () => {
     });
   });
 
-  test('Correctly completes OPTIONAL MATCH', () => {
-    const query = 'OP';
+  test('Correctly completes OPTIONAL MATCH and OPTIONAL CALL', () => {
+    const query = 'OPTIONAL ';
 
     testCompletions({
       query,
-      expected: [{ label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword }],
+      expected: [
+        { label: 'MATCH', kind: CompletionItemKind.Keyword },
+        { label: 'CALL', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 

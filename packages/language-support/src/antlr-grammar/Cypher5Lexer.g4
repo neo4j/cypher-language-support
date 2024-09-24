@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-lexer grammar CypherLexer;
+lexer grammar Cypher5Lexer;
 
 SPACE
    : ( '\u0009'
@@ -220,6 +220,10 @@ BY
 
 CALL
    : C A L L
+   ;
+
+CASCADE
+   : C A S C A D E
    ;
 
 CASE
@@ -786,6 +790,10 @@ OF
    : O F
    ;
 
+OFFSET
+   : O F F S E T
+   ;
+
 ON
    : O N
    ;
@@ -972,6 +980,10 @@ REQUIRE
 
 REQUIRED
    : R E Q U I R E D
+   ;
+
+RESTRICT
+   : R E S T R I C T
    ;
 
 RETURN

@@ -275,25 +275,6 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
-        offsets: {
-          end: 47,
-          start: 46,
-        },
-        range: {
-          end: {
-            character: 19,
-            line: 2,
-          },
-          start: {
-            character: 18,
-            line: 2,
-          },
-        },
-        severity: 2,
-      },
-      {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
           end: 64,
@@ -330,23 +311,22 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
+        message: 'Variable `i` already declared',
         offsets: {
-          end: 100,
-          start: 99,
+          end: 117,
+          start: 75,
         },
         range: {
           end: {
-            character: 19,
-            line: 5,
+            character: 16,
+            line: 6,
           },
           start: {
-            character: 18,
-            line: 5,
+            character: 10,
+            line: 4,
           },
         },
-        severity: 2,
+        severity: 1,
       },
       {
         message: 'Variable `i` already declared in outer scope',
