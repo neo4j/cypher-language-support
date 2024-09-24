@@ -1450,4 +1450,67 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       }),
     ).toEqual([]);
   });
+
+  test('Shows deprecation for CALL IN TXs without parentheses', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL { MATCH (n) RETURN n} IN TRANSACTIONS OF 50 ROWS RETURN 1`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 62,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 62,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Shows deprecation for CALL without parentheses', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `WITH 1 AS i
+          CALL {
+             RETURN 3 AS j
+          }
+          RETURN i
+        `,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 67,
+          start: 22,
+        },
+        range: {
+          end: {
+            character: 11,
+            line: 3,
+          },
+          start: {
+            character: 10,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
 });
