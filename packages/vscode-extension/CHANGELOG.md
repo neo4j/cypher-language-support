@@ -1,5 +1,10 @@
 # neo4j-for-vscode
 
+## 1.4.0
+
+- Adds errors for non existing procedures and functions
+- Updates grammar version to neo4j 5.24
+
 ## 1.3.0
 
 - Improvements to database connection pane: lists databases and metadata for active connection
