@@ -113,6 +113,25 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 100,
+          start: 26,
+        },
+        range: {
+          end: {
+            character: 5,
+            line: 5,
+          },
+          start: {
+            character: 4,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: shadowed)',
         offsets: {
           end: 54,
@@ -134,19 +153,19 @@ describe('Semantic validation spec', () => {
   });
 
   test('Accumulates several semantic errors', () => {
-    const query = `CALL { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
+    const query = `CALL () { MATCH (n) RETURN m} IN TRANSACTIONS OF -1 ROWS`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
-          end: 53,
+          end: 56,
           start: 0,
         },
         range: {
           end: {
-            character: 53,
+            character: 56,
             line: 0,
           },
           start: {
@@ -159,16 +178,16 @@ describe('Semantic validation spec', () => {
       {
         message: 'Variable `m` not defined',
         offsets: {
-          end: 25,
-          start: 24,
+          end: 28,
+          start: 27,
         },
         range: {
           end: {
-            character: 25,
+            character: 28,
             line: 0,
           },
           start: {
-            character: 24,
+            character: 27,
             line: 0,
           },
         },
@@ -178,16 +197,16 @@ describe('Semantic validation spec', () => {
         message:
           "Invalid input. '-1' is not a valid value. Must be a positive integer.",
         offsets: {
-          end: 48,
-          start: 46,
+          end: 51,
+          start: 49,
         },
         range: {
           end: {
-            character: 48,
+            character: 51,
             line: 0,
           },
           start: {
-            character: 46,
+            character: 49,
             line: 0,
           },
         },
@@ -197,17 +216,17 @@ describe('Semantic validation spec', () => {
   });
 
   test('Shows errors for CALL IN TXs used in UNION', () => {
-    const query = `CALL { CREATE (x) } IN TRANSACTIONS
+    const query = `CALL () { CREATE (x) } IN TRANSACTIONS
       RETURN 1 AS result
       UNION
-      CALL { CREATE (x) } IN TRANSACTIONS
+      CALL () { CREATE (x) } IN TRANSACTIONS
       RETURN 2 AS result`;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 139,
+          end: 145,
           start: 0,
         },
         range: {
@@ -225,8 +244,8 @@ describe('Semantic validation spec', () => {
       {
         message: 'CALL { ... } IN TRANSACTIONS in a UNION is not supported',
         offsets: {
-          end: 139,
-          start: 79,
+          end: 145,
+          start: 82,
         },
         range: {
           end: {
@@ -245,7 +264,7 @@ describe('Semantic validation spec', () => {
 
   test('Shows errors for CALL when return variable already bound', () => {
     const query = `WITH 1 AS i
-      CALL {
+      CALL () {
         WITH 2 AS i
         RETURN *
           UNION
@@ -256,29 +275,10 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
-        offsets: {
-          end: 44,
-          start: 43,
-        },
-        range: {
-          end: {
-            character: 19,
-            line: 2,
-          },
-          start: {
-            character: 18,
-            line: 2,
-          },
-        },
-        severity: 2,
-      },
-      {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
-          end: 61,
-          start: 53,
+          end: 64,
+          start: 56,
         },
         range: {
           end: {
@@ -295,8 +295,8 @@ describe('Semantic validation spec', () => {
       {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
-          end: 61,
-          start: 60,
+          end: 64,
+          start: 63,
         },
         range: {
           end: {
@@ -311,29 +311,28 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
+        message: 'Variable `i` already declared',
         offsets: {
-          end: 97,
-          start: 96,
+          end: 117,
+          start: 75,
         },
         range: {
           end: {
-            character: 19,
-            line: 5,
+            character: 16,
+            line: 6,
           },
           start: {
-            character: 18,
-            line: 5,
+            character: 10,
+            line: 4,
           },
         },
-        severity: 2,
+        severity: 1,
       },
       {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
-          end: 114,
-          start: 106,
+          end: 117,
+          start: 109,
         },
         range: {
           end: {
@@ -350,8 +349,8 @@ describe('Semantic validation spec', () => {
       {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
-          end: 114,
-          start: 113,
+          end: 117,
+          start: 116,
         },
         range: {
           end: {
@@ -369,23 +368,23 @@ describe('Semantic validation spec', () => {
   });
 
   test('Shows errors for subquery with only WITH', () => {
-    const query = 'WITH 1 AS a CALL { WITH a } RETURN a';
+    const query = 'WITH 1 AS a CALL (a) { WITH a } RETURN a';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query must conclude with a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD.',
+          'Query cannot conclude with WITH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
-          end: 25,
-          start: 19,
+          end: 29,
+          start: 23,
         },
         range: {
           end: {
-            character: 25,
+            character: 29,
             line: 0,
           },
           start: {
-            character: 19,
+            character: 23,
             line: 0,
           },
         },
@@ -397,7 +396,7 @@ describe('Semantic validation spec', () => {
   test('Does not show errors for multiple USE with the same database', () => {
     const query = `USE x
         WITH 1 AS a
-        CALL {
+        CALL () {
           USE x
           RETURN 2 AS b
         }
@@ -409,7 +408,7 @@ describe('Semantic validation spec', () => {
   test('Shows errors for using multiple USE with different databases', () => {
     const query = `USE neo4j
         WITH 1 AS a
-        CALL {
+        CALL () {
           USE other
           RETURN 2 AS b
         }
@@ -420,8 +419,8 @@ describe('Semantic validation spec', () => {
         message: `Multiple graphs in the same query not allowed here. This feature is only available on composite databases.
 Attempted to access graph other`,
         offsets: {
-          end: 88,
-          start: 55,
+          end: 91,
+          start: 58,
         },
         range: {
           end: {
@@ -642,8 +641,7 @@ Attempted to access graph other`,
     const query = `WITH 5 AS y
       RETURN COLLECT {
           UNWIND [0, 1, 2] AS x
-          CALL {
-              WITH x
+          CALL (x) {
               RETURN x * 10 AS y
           }
           RETURN y
@@ -654,17 +652,17 @@ Attempted to access graph other`,
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
-          end: 137,
-          start: 136,
+          end: 120,
+          start: 119,
         },
         range: {
           end: {
             character: 32,
-            line: 5,
+            line: 4,
           },
           start: {
             character: 31,
-            line: 5,
+            line: 4,
           },
         },
         severity: 1,
@@ -1430,6 +1428,89 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
              RETURN [n in nodes(p) | n.name] AS stops;`,
         dbSchema: testData.mockSchema,
       }),
-    );
+    ).toEqual([]);
+  });
+
+  test('Does not error on dynamic labels', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `MATCH (n)
+                SET n:$("label")`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Does not error on dynamic properties', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `MATCH (n)
+                SET n["prop"] = "some value"`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Shows deprecation for CALL IN TXs without parentheses', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `CALL { MATCH (n) RETURN n} IN TRANSACTIONS OF 50 ROWS RETURN 1`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 62,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 62,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Shows deprecation for CALL without parentheses', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `WITH 1 AS i
+          CALL {
+             RETURN 3 AS j
+          }
+          RETURN i
+        `,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 67,
+          start: 22,
+        },
+        range: {
+          end: {
+            character: 11,
+            line: 3,
+          },
+          start: {
+            character: 10,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 });

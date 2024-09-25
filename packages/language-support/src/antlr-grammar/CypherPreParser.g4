@@ -1,6 +1,6 @@
 parser grammar CypherPreParser;
 
-import CypherParser;
+import Cypher5Parser;
 
 options { tokenVocab = CypherPreLexer; }
 

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-parser grammar CypherParser;
+parser grammar Cypher5Parser;
 
 
-options { tokenVocab = CypherLexer; }
+options { tokenVocab = Cypher5Lexer; }
 statements
    : statement (SEMICOLON statement)* SEMICOLON? EOF
    ;
@@ -55,6 +55,7 @@ clause
    | subqueryClause
    | loadCSVClause
    | foreachClause
+   | orderBySkipLimitClause
    ;
 
 useClause
@@ -104,7 +105,7 @@ orderBy
    ;
 
 skip
-   : SKIPROWS expression
+   : (OFFSET | SKIPROWS) expression
    ;
 
 limit
@@ -190,7 +191,7 @@ unwindClause
    ;
 
 callClause
-   : CALL procedureName (LPAREN (procedureArgument (COMMA procedureArgument)*)? RPAREN)? (YIELD (TIMES | procedureResultItem (COMMA procedureResultItem)* whereClause?))?
+   : OPTIONAL? CALL procedureName (LPAREN (procedureArgument (COMMA procedureArgument)*)? RPAREN)? (YIELD (TIMES | procedureResultItem (COMMA procedureResultItem)* whereClause?))?
    ;
 
 procedureName
@@ -214,7 +215,7 @@ foreachClause
    ;
 
 subqueryClause
-   : CALL subqueryScope? LCURLY regularQuery RCURLY subqueryInTransactionsParameters?
+   : OPTIONAL? CALL subqueryScope? LCURLY regularQuery RCURLY subqueryInTransactionsParameters?
    ;
 
 subqueryScope
@@ -235,6 +236,12 @@ subqueryInTransactionsErrorParameters
 
 subqueryInTransactionsReportParameters
    : REPORT STATUS AS variable
+   ;
+
+orderBySkipLimitClause
+   : orderBy skip? limit?
+   | skip limit?
+   | limit
    ;
 
 patternList
@@ -840,7 +847,7 @@ yieldItem
    ;
 
 yieldSkip
-   : SKIPROWS signedIntegerLiteral
+   : (OFFSET | SKIPROWS) signedIntegerLiteral
    ;
 
 yieldLimit
@@ -1585,7 +1592,12 @@ secondaryToken
    ;
 
 dropDatabase
-   : COMPOSITE? DATABASE symbolicAliasNameOrParameter (IF EXISTS)? ((DUMP | DESTROY) DATA)? waitClause?
+   : COMPOSITE? DATABASE symbolicAliasNameOrParameter (IF EXISTS)? aliasAction? ((DUMP | DESTROY) DATA)? waitClause?
+   ;
+
+aliasAction
+   : RESTRICT
+   | CASCADE (ALIAS | ALIASES)
    ;
 
 alterDatabase
@@ -1630,6 +1642,14 @@ showDatabase
 
 // Alias commands
 
+aliasName
+   : symbolicAliasNameOrParameter
+   ;
+
+databaseName
+   : symbolicAliasNameOrParameter
+   ;
+
 createAlias
    : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE databaseName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
    ;
@@ -1669,7 +1689,7 @@ alterAliasProperties
    ;
 
 showAliases
-   : (ALIAS | ALIASES) symbolicAliasNameOrParameter? FOR (DATABASE | DATABASES) showCommandYield?
+   : (ALIAS | ALIASES) aliasName? FOR (DATABASE | DATABASES) showCommandYield?
    ;
 
 // Various strings, symbolic names, lists and maps
@@ -1702,12 +1722,6 @@ symbolicAliasNameOrParameter
 symbolicAliasName
    : symbolicNameString (DOT symbolicNameString)*
    ;
-
-aliasName:
-    symbolicAliasNameOrParameter;
-
-databaseName:
-    symbolicAliasNameOrParameter;
 
 stringListLiteral
    : LBRACKET (stringLiteral (COMMA stringLiteral)*)? RBRACKET
@@ -1769,7 +1783,7 @@ symbolicLabelNameString
    | unescapedLabelSymbolicNameString
    ;
 
-// Do not remove this, it is needed for composing the grammar 
+// Do not remove this, it is needed for composing the grammar
 // with other ones (e.g. language support ones)
 externalKeywords
    : IDENTIFIER
@@ -1807,6 +1821,7 @@ unescapedLabelSymbolicNameString
    | BUILT
    | BY
    | CALL
+   | CASCADE
    | CASE
    | CHANGE
    | CIDR
@@ -1919,6 +1934,7 @@ unescapedLabelSymbolicNameString
    | NOTHING
    | NOWAIT
    | OF
+   | OFFSET
    | ON
    | ONLY
    | OPTIONAL
@@ -1959,6 +1975,7 @@ unescapedLabelSymbolicNameString
    | REPORT
    | REQUIRE
    | REQUIRED
+   | RESTRICT
    | RETURN
    | REVOKE
    | ROLE

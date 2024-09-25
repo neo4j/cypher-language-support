@@ -46,15 +46,6 @@ describe('Preparser auto-completions', () => {
 });
 
 describe('Auto completion of back to back keywords', () => {
-  test('Correctly completes OPTIONAL MATCH', () => {
-    const query = 'OP';
-
-    testCompletions({
-      query,
-      expected: [{ label: 'OPTIONAL MATCH', kind: CompletionItemKind.Keyword }],
-    });
-  });
-
   test('Correctly completes DEFAULT DATABASE and HOME DATABASE', () => {
     const query = 'SHOW ';
 

@@ -1,6 +1,6 @@
 lexer grammar CypherPreLexer;
 
-import CypherLexer;
+import Cypher5Lexer;
 
 EXPLAIN:
    E X P L A I N;
