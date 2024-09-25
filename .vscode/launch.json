@@ -47,20 +47,13 @@
       "preLaunchTask": "npm: build-vscode"
     },
     {
-      "name": "Debug VSCode Webview Tests",
+      "name": "Debug benchmarks",
       "type": "node",
       "request": "launch",
-      "args": ["./packages/vscode-extension/dist/tests/runWebviewTests.js"],
+      "args": ["./packages/language-support/dist/benchmark/benchmark.js"],
       "cwd": "${workspaceFolder}",
       "autoAttachChildProcesses": true,
-      "program": "${workspaceRoot}/node_modules/@wdio/cli/bin/wdio.js",
-      "console": "integratedTerminal",
-      "skipFiles": [
-        "${workspaceFolder}/node_modules/**/*.js",
-        "${workspaceFolder}/lib/**/*.js",
-        "<node_internals>/**/*.js"
-      ],
-      "preLaunchTask": "npm: build-vscode"
+      "console": "integratedTerminal"
     }
   ],
   "type": "pwa-node",

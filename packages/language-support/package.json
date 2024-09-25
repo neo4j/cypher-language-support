@@ -53,7 +53,10 @@
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
-    "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
+    "build-benchmarks": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js",
+    "build-docker-benchmarks": "npm run build-benchmarks && docker build -f benchmarks.Dockerfile -t benchmark-ls .",
+    "build-and-run-docker-benchmarks": "npm run build-docker-benchmarks && docker run benchmark-ls",
+    "benchmark": "npm run build-benchmarks && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",
     "test": "vitest run"
   },
