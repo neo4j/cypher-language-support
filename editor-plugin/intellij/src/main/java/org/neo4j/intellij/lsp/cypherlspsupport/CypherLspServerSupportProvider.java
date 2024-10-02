@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.lsp.api.LspServerSupportProvider;
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor;
+import com.intellij.platform.lsp.api.customization.LspSemanticTokensSupport;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -53,6 +54,11 @@ public class CypherLspServerSupportProvider implements LspServerSupportProvider 
         @Override
         public boolean getLspGoToDefinitionSupport() {
             return false;
+        }
+
+        @Override
+        public LspSemanticTokensSupport getLspSemanticTokensSupport() {
+            return new LspSemanticTokensSupport();
         }
 
         public CypherLspServerDescriptor(Project project) {
