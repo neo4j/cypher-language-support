@@ -35,6 +35,15 @@ tasks {
         }
     }
 
+    runIde {
+        debugOptions {
+           enabled = false
+           port = 8000
+           server = true
+           suspend = true
+       }
+    }
+
     prepareSandbox {
         doFirst {
             exec {
@@ -45,11 +54,6 @@ tasks {
             include("*.js")
             into("cypher-lsp-support")
         }
-    }
-
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("242.*")
     }
 
     signPlugin {
