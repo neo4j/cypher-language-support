@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import Benchmark from 'benchmark';
-import { parse, parserWrapper } from '../../parserWrapper';
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { parse } from '../../parserWrapper';
 import { simpleQuery } from './benchmarkQueries';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
@@ -12,14 +11,13 @@ Benchmark.options.maxTime = 1;
 
 const suite = new Benchmark.Suite();
 
-suite
-  .add('simple - parse', function () {
-    parse(simpleQuery);
-  })
-  .add('simple - highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(simpleQuery);
-  });
+suite.add('simple - parse', function () {
+  parse(simpleQuery);
+});
+// .add('simple - highlight', function () {
+//   parserWrapper.clearCache();
+//   applySyntaxColouring(simpleQuery);
+// });
 //   .add('simple - validate syntax', function () {
 //     parserWrapper.clearCache();
 //     validateSyntax(simpleQuery, testData.mockSchema);
@@ -117,47 +115,24 @@ suite
 // });
 
 suite
-  .on('cycle', function (event: { target: { toString: () => string } }) {
-    console.log(String(event.target));
-  })
-  .on('cycle', function (event) {
-    const benchmark = event.target;
-
-    const scheduled_at = benchmark.timestamp; // Tiempo en el que se programó la prueba (cuando se añadió al suite)
-    const started_at = benchmark.stats.startTime.getTime(); // Hora de inicio
-    const stopped_at = new Date().getTime(); // Hora de finalización, el momento actual
-
-    // Imprimir los valores en el formato deseado
-    console.log({
-      scheduled_at: scheduled_at,
-      started_at: started_at,
-      stopped_at: stopped_at,
-    });
-  })
+  // .on('cycle', function (event: { target: { toString: () => string } }) {
+  //   console.log(String(event.target));
+  // })
   .on('complete', function () {
-    console.log('Writing metrics locally');
-
-    const metrics: Record<string, number> = {};
-
     // arcane magic to get the benchmark results
     // eslint-disable-next-line
     this.forEach(function (benchmark: {
       name: string;
-      hz: number /* operations per second */;
+      stats: {
+        mean: number;
+      } /* operations per second */;
     }) {
-      metrics[benchmark.name] = benchmark.hz;
+      const startedAt = new Date().getTime();
+      // eslint-disable-next-line
+      const elapsed: number = benchmark.stats.mean * 1000;
+      const stoppedAt = (startedAt + elapsed).toPrecision(30);
+
+      console.log(`${startedAt},${startedAt},${stoppedAt}`);
     });
-
-    const body = Object.entries(metrics)
-      .map(
-        ([key, value]) =>
-          `unit-benchmark,bar_label=${key.replaceAll(
-            /\s/g,
-            '',
-          )},source=benchmarkjs metric=${value}`,
-      )
-      .join('\n');
-
-    console.log(body);
   })
   .run({ async: true });
