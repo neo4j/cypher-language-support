@@ -1,38 +1,38 @@
 import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 
 import {
-  ArrowLineContext,
-  BooleanLiteralContext,
+  ArrowLine_Cypher5Context,
+  BooleanLiteral5Context,
   ConsoleCommandContext,
-  FunctionNameContext,
-  KeywordLiteralContext,
-  LabelNameContext,
-  LabelNameIsContext,
-  LabelOrRelTypeContext,
-  LabelTypeContext,
-  LeftArrowContext,
-  ListItemsPredicateContext,
-  NumberLiteralContext,
-  ParameterContext,
+  FunctionName_Cypher5Context,
+  KeywordLiteral5Context,
+  LabelName5Context,
+  LabelNameIs5Context,
+  LabelOrRelType_Cypher5Context,
+  LabelType_Cypher5Context,
+  LeftArrow_Cypher5Context,
+  ListItemsPredicate_Cypher5Context,
+  NumberLiteral_Cypher5Context,
+  Parameter_Cypher5Context,
   ParamsArgsContext,
-  ProcedureNameContext,
-  ProcedureResultItemContext,
-  PropertyKeyNameContext,
-  ReduceExpressionContext,
-  RightArrowContext,
-  StringLiteralContext,
-  StringsLiteralContext,
-  SymbolicNameStringContext,
+  ProcedureName_Cypher5Context,
+  ProcedureResultItem_Cypher5Context,
+  PropertyKeyName_Cypher5Context,
+  ReduceExpression_Cypher5Context,
+  RightArrow_Cypher5Context,
+  StringLiteral_Cypher5Context,
+  StringsLiteral5Context,
+  SymbolicNameString_Cypher5Context,
   UseCompletionRuleContext,
-  VariableContext,
-} from '../generated-parser/CypherCmdParser';
+  Variable_Cypher5Context,
+} from '../generated-parser/Cypher5CmdParser';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
 import { CypherLexer } from '..';
-import CypherParserListener from '../generated-parser/CypherCmdParserListener';
+import CypherParserListener from '../generated-parser/Cypher5CmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
@@ -109,61 +109,61 @@ class SyntaxHighlighter extends CypherParserListener {
     }
   }
 
-  exitLabelName = (ctx: LabelNameContext) => {
+  exitLabelName5 = (ctx: LabelName5Context) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
   };
 
-  exitLabelNameIs = (ctx: LabelNameIsContext) => {
+  exitLabelNameIs5 = (ctx: LabelNameIs5Context) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
   };
 
-  exitLabelType = (ctx: LabelTypeContext) => {
-    const labelName = ctx.symbolicNameString()?.start;
+  exitLabelType_Cypher5 = (ctx: LabelType_Cypher5Context) => {
+    const labelName = ctx.symbolicNameString_Cypher5()?.start;
     if (labelName) {
       this.addToken(labelName, CypherTokenType.label, labelName.text);
     }
   };
 
-  exitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
+  exitLabelOrRelType_Cypher5 = (ctx: LabelOrRelType_Cypher5Context) => {
     // Error recovery can insert a LabelOrRelType node with no text
     // See for example CREATE CONSTRAINT FOR (node)
-    const labelName = ctx.symbolicNameString()?.start;
+    const labelName = ctx.symbolicNameString_Cypher5()?.start;
     if (labelName) {
       this.addToken(labelName, CypherTokenType.label, labelName.text);
     }
   };
 
-  exitLeftArrow = (ctx: LeftArrowContext) => {
+  exitLeftArrow_Cypher5 = (ctx: LeftArrow_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
 
-  exitArrowLine = (ctx: ArrowLineContext) => {
+  exitArrowLine_Cypher5 = (ctx: ArrowLine_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
 
-  exitRightArrow = (ctx: RightArrowContext) => {
+  exitRightArrow_Cypher5 = (ctx: RightArrow_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
 
-  exitFunctionName = (ctx: FunctionNameContext) => {
+  exitFunctionName_Cypher5 = (ctx: FunctionName_Cypher5Context) => {
     this.colourMethodName(ctx, CypherTokenType.function);
   };
 
-  exitProcedureName = (ctx: ProcedureNameContext) => {
+  exitProcedureName_Cypher5 = (ctx: ProcedureName_Cypher5Context) => {
     this.colourMethodName(ctx, CypherTokenType.procedure);
   };
 
   private colourMethodName(
-    ctx: FunctionNameContext | ProcedureNameContext,
+    ctx: FunctionName_Cypher5Context | ProcedureName_Cypher5Context,
     tokenType: CypherTokenType.function | CypherTokenType.procedure,
   ) {
-    const namespace = ctx.namespace();
+    const namespace = ctx.namespace_Cypher5();
 
-    namespace.symbolicNameString_list().forEach((namespaceName) => {
+    namespace.symbolicNameString_Cypher5_list().forEach((namespaceName) => {
       this.addToken(namespaceName.start, tokenType, namespaceName.getText());
     });
 
-    const nameOfMethod = ctx.symbolicNameString();
+    const nameOfMethod = ctx.symbolicNameString_Cypher5();
     this.addToken(nameOfMethod.start, tokenType, nameOfMethod.getText());
   }
 
@@ -171,44 +171,46 @@ class SyntaxHighlighter extends CypherParserListener {
     this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.getText());
   };
 
-  exitVariable = (ctx: VariableContext) => {
+  exitVariable_Cypher5 = (ctx: Variable_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
   };
 
-  exitProcedureResultItem = (ctx: ProcedureResultItemContext) => {
+  exitProcedureResultItem_Cypher5 = (
+    ctx: ProcedureResultItem_Cypher5Context,
+  ) => {
     this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
   };
 
-  exitPropertyKeyName = (ctx: PropertyKeyNameContext) => {
+  exitPropertyKeyName_Cypher5 = (ctx: PropertyKeyName_Cypher5Context) => {
     // FIXME Is this correct in this case for all cases, not just simple properties?
     this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
   };
 
   // TODO Do we need this one and the one below?
-  exitStringLiteral = (ctx: StringLiteralContext) => {
+  exitStringLiteral_Cypher5 = (ctx: StringLiteral_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
   };
 
-  exitStringsLiteral = (ctx: StringsLiteralContext) => {
+  exitStringsLiteral5 = (ctx: StringsLiteral5Context) => {
     this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
   };
 
-  exitBooleanLiteral = (ctx: BooleanLiteralContext) => {
+  exitBooleanLiteral5 = (ctx: BooleanLiteral5Context) => {
     // Normally booleans are coloured as numbers in other languages
     this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.getText());
   };
 
-  exitNumberLiteral = (ctx: NumberLiteralContext) => {
+  exitNumberLiteral_Cypher5 = (ctx: NumberLiteral_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.getText());
   };
 
-  exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
+  exitKeywordLiteral5 = (ctx: KeywordLiteral5Context) => {
     this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.getText());
   };
 
-  exitParameter = (ctx: ParameterContext) => {
+  exitParameter_Cypher5 = (ctx: Parameter_Cypher5Context) => {
     const dollar = ctx.DOLLAR();
-    const parameterName = ctx.parameterName();
+    const parameterName = ctx.parameterName_Cypher5();
     this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
     this.addToken(
       parameterName.start,
@@ -217,18 +219,18 @@ class SyntaxHighlighter extends CypherParserListener {
     );
   };
 
-  exitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
+  exitListItemsPredicate_Cypher5 = (ctx: ListItemsPredicate_Cypher5Context) => {
     if (ctx.ANY()) this.colourPredicateFunction(ctx.ANY());
     if (ctx.ALL()) this.colourPredicateFunction(ctx.ALL());
     if (ctx.NONE()) this.colourPredicateFunction(ctx.NONE());
     if (ctx.SINGLE()) this.colourPredicateFunction(ctx.SINGLE());
   };
 
-  exitReduceExpression = (ctx: ReduceExpressionContext) => {
+  exitReduceExpression_Cypher5 = (ctx: ReduceExpression_Cypher5Context) => {
     this.colourPredicateFunction(ctx.REDUCE());
   };
 
-  exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
+  exitSymbolicNameString_Cypher5 = (ctx: SymbolicNameString_Cypher5Context) => {
     this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
   };
 

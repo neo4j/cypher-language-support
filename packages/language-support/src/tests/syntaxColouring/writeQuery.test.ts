@@ -309,7 +309,7 @@ describe('SET syntax colouring', () => {
       g: ['abc', 'example'],
       h: [true, false, false],
       i: [date('2022-05-04'), date()],
-      j: [point({x: 2, y: 3}), point({x: 5, y: 5})],
+      j: [point({x: 2, y: 3}), point({x: 6, y: 6})],
       k: null
     }`;
 
@@ -1500,7 +1500,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 41,
           startOffset: 277,
         },
-        token: '5',
+        token: '6',
         tokenType: 'numberLiteral',
       },
       {
@@ -1544,7 +1544,7 @@ describe('SET syntax colouring', () => {
           startCharacter: 47,
           startOffset: 283,
         },
-        token: '5',
+        token: '6',
         tokenType: 'numberLiteral',
       },
       {

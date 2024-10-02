@@ -3,8 +3,8 @@ import type { ParserRuleContext } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
 import { _internalFeatureFlags } from '../featureFlags';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import Cypher5Lexer from '../generated-parser/Cypher5CmdLexer';
+import Cypher5Parser from '../generated-parser/Cypher5CmdParser';
 import {
   CypherTokenType,
   keywordNames,
@@ -27,7 +27,7 @@ function normalizedLevenshteinDistance(s1: string, s2: string): number {
 }
 
 export function completionCoreErrormessage(
-  parser: CypherParser,
+  parser: Cypher5Parser,
   currentToken: Token,
   ctx: ParserRuleContext,
 ): string | undefined {
@@ -35,23 +35,23 @@ export function completionCoreErrormessage(
   const caretIndex = currentToken.tokenIndex;
 
   const rulesOfInterest: Record<number, string | null> = {
-    [CypherParser.RULE_expression9]: 'an expression',
-    [CypherParser.RULE_labelExpression2]: 'a node label / rel type',
-    [CypherParser.RULE_labelExpression2Is]: 'a node label / rel type',
-    [CypherParser.RULE_procedureName]: 'a procedure name',
-    [CypherParser.RULE_stringLiteral]: 'a string',
-    [CypherParser.RULE_numberLiteral]: 'a number literal',
-    [CypherParser.RULE_parameter]: 'a parameter',
-    [CypherParser.RULE_symbolicNameString]: 'an identifier',
-    [CypherParser.RULE_symbolicAliasName]: 'a database name',
+    [Cypher5Parser.RULE_expression9_Cypher5]: 'an expression',
+    [Cypher5Parser.RULE_labelExpression2_Cypher5]: 'a node label / rel type',
+    [Cypher5Parser.RULE_labelExpression2Is_Cypher5]: 'a node label / rel type',
+    [Cypher5Parser.RULE_procedureName_Cypher5]: 'a procedure name',
+    [Cypher5Parser.RULE_stringLiteral_Cypher5]: 'a string',
+    [Cypher5Parser.RULE_numberLiteral_Cypher5]: 'a number literal',
+    [Cypher5Parser.RULE_parameter_Cypher5]: 'a parameter',
+    [Cypher5Parser.RULE_symbolicNameString_Cypher5]: 'an identifier',
+    [Cypher5Parser.RULE_symbolicAliasName_Cypher5]: 'a database name',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(_internalFeatureFlags.consoleCommands
       ? {
-          [CypherParser.RULE_useCompletionRule]: 'use',
-          [CypherParser.RULE_listCompletionRule]: 'list',
+          [Cypher5Parser.RULE_useCompletionRule]: 'use',
+          [Cypher5Parser.RULE_listCompletionRule]: 'list',
         }
-      : { [CypherParser.RULE_consoleCommand]: null }),
+      : { [Cypher5Parser.RULE_consoleCommand]: null }),
   };
 
   codeCompletion.preferredRules = new Set<number>(
@@ -84,27 +84,27 @@ export function completionCoreErrormessage(
 
     // We don't want to suggest the ":" of console commands as it's not helpful even
     // when console commands are available
-    if (caretIndex === 0 && tokenNumber === CypherLexer.COLON) {
+    if (caretIndex === 0 && tokenNumber === Cypher5Lexer.COLON) {
       return [];
     }
 
     switch (tokenNumber) {
-      case CypherLexer.DECIMAL_DOUBLE:
+      case Cypher5Lexer.DECIMAL_DOUBLE:
         humanReadableRulename.push('a decimal double');
         return [];
-      case CypherLexer.UNSIGNED_DECIMAL_INTEGER:
+      case Cypher5Lexer.UNSIGNED_DECIMAL_INTEGER:
         humanReadableRulename.push('an unsigned integer');
         return [];
-      case CypherLexer.UNSIGNED_HEX_INTEGER:
+      case Cypher5Lexer.UNSIGNED_HEX_INTEGER:
         humanReadableRulename.push('an unsinged hexadecimal integer');
         return [];
-      case CypherLexer.UNSIGNED_OCTAL_INTEGER:
+      case Cypher5Lexer.UNSIGNED_OCTAL_INTEGER:
         humanReadableRulename.push('an unsigned octal integer');
         return [];
-      case CypherLexer.STRING_LITERAL1:
+      case Cypher5Lexer.STRING_LITERAL1:
         humanReadableRulename.push('a string');
         return [];
-      case CypherLexer.STRING_LITERAL2:
+      case Cypher5Lexer.STRING_LITERAL2:
         humanReadableRulename.push('a string');
         return [];
       default:
@@ -129,7 +129,7 @@ export function completionCoreErrormessage(
     // options length is 0 should only happen when RULE_consoleCommand is hit and there are no other options
     if (
       ruleCandidates.find(
-        (ruleNumber) => ruleNumber === CypherParser.RULE_consoleCommand,
+        (ruleNumber) => ruleNumber === Cypher5Parser.RULE_consoleCommand,
       )
     ) {
       return 'Console commands are unsupported in this environment.';

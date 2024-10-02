@@ -606,7 +606,7 @@ Attempted to access graph other`,
   });
 
   test('Shows errors for shadowing inside COLLECT subqueries', () => {
-    const query = `WITH 5 as aNum
+    const query = `WITH 6 as aNum
       MATCH (a)
       RETURN COLLECT {
         WITH 6 as aNum
@@ -638,7 +638,7 @@ Attempted to access graph other`,
   });
 
   test('Shows errors for nested CALL inside COLLECT subqueries', () => {
-    const query = `WITH 5 AS y
+    const query = `WITH 6 AS y
       RETURN COLLECT {
           UNWIND [0, 1, 2] AS x
           CALL (x) {
@@ -1017,12 +1017,12 @@ Attempted to access graph other`,
   });
 
   test('Shows errors on quantified path patterns without relationship', () => {
-    const query = 'MATCH ((n) (m)){1, 5} RETURN count(*)';
+    const query = 'MATCH ((n) (m)){1, 6} RETURN count(*)';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message: `A quantified path pattern needs to have at least one relationship.
-In this case, the quantified path pattern ((n) (m)){1, 5} consists of only nodes.`,
+In this case, the quantified path pattern ((n) (m)){1, 6} consists of only nodes.`,
         offsets: {
           end: 21,
           start: 6,

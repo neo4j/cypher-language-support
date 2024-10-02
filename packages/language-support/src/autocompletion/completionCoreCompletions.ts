@@ -7,10 +7,10 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
-  Expression2Context,
-} from '../generated-parser/CypherCmdParser';
+import Cypher5Lexer from '../generated-parser/Cypher5CmdLexer';
+import Cypher5Parser, {
+  Expression2_Cypher5Context,
+} from '../generated-parser/Cypher5CmdParser';
 import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
 import {
   CypherTokenType,
@@ -273,28 +273,29 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
 
   if (
     [
-      CypherParser.RULE_stringOrParameter,
-      CypherParser.RULE_commandNameExpression,
-      CypherParser.RULE_symbolicNameOrStringParameter,
-      CypherParser.RULE_symbolicNameOrStringParameterList,
-      CypherParser.RULE_symbolicAliasNameOrParameter,
-      CypherParser.RULE_passwordExpression,
-      CypherParser.RULE_createUser,
-      CypherParser.RULE_dropUser,
-      CypherParser.RULE_alterUser,
-      CypherParser.RULE_renameUser,
-      CypherParser.RULE_createRole,
-      CypherParser.RULE_dropRole,
-      CypherParser.RULE_userNames,
-      CypherParser.RULE_roleNames,
-      CypherParser.RULE_renameRole,
+      Cypher5Parser.RULE_stringOrParameter_Cypher5,
+      Cypher5Parser.RULE_commandNameExpression_Cypher5,
+      Cypher5Parser.RULE_symbolicNameOrStringParameter_Cypher5,
+      Cypher5Parser.RULE_symbolicNameOrStringParameterList_Cypher5,
+      Cypher5Parser.RULE_symbolicAliasNameOrParameter_Cypher5,
+      Cypher5Parser.RULE_passwordExpression_Cypher5,
+      Cypher5Parser.RULE_createUser_Cypher5,
+      Cypher5Parser.RULE_dropUser_Cypher5,
+      Cypher5Parser.RULE_alterUser_Cypher5,
+      Cypher5Parser.RULE_renameUser_Cypher5,
+      Cypher5Parser.RULE_createRole_Cypher5,
+      Cypher5Parser.RULE_dropRole_Cypher5,
+      Cypher5Parser.RULE_userNames_Cypher5,
+      Cypher5Parser.RULE_roleNames_Cypher5,
+      Cypher5Parser.RULE_renameRole_Cypher5,
     ].includes(parentRule)
   ) {
     return ExpectedParameterType.String;
   } else if (
-    [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(
-      parentRule,
-    )
+    [
+      Cypher5Parser.RULE_properties_Cypher5,
+      Cypher5Parser.RULE_mapOrParameter_Cypher5,
+    ].includes(parentRule)
   ) {
     return ExpectedParameterType.Map;
   } else {
@@ -326,16 +327,16 @@ function calculateNamespacePrefix(
 
   const nonSpaceTokens = ruleTokens.filter(
     (token) =>
-      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+      token.type !== Cypher5Lexer.SPACE && token.type !== Cypher5Lexer.EOF,
   );
 
-  const lastNonSpaceIsDot = nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
+  const lastNonSpaceIsDot = nonSpaceTokens.at(-1)?.type === Cypher5Lexer.DOT;
 
   // `gds version` is invalid but `gds .version` and `gds. version` are valid
   // so if the last token is a space and the last non-space token
   // is anything but a dot return empty completions to avoid
   // creating invalid suggestions (db ping)
-  if (lastNonEOFToken?.type === CypherLexer.SPACE && !lastNonSpaceIsDot) {
+  if (lastNonEOFToken?.type === Cypher5Lexer.SPACE && !lastNonSpaceIsDot) {
     return null;
   }
 
@@ -370,7 +371,7 @@ export function completionCoreCompletion(
   // When we have EOF with a different text in the token, it means the parser has failed to parse it.
   // We give empty completions in that case because the query is severely broken at the
   // point of completion (e.g. an unclosed string)
-  if (eof.type === CypherLexer.EOF && eof.text !== '<EOF>') {
+  if (eof.type === Cypher5Lexer.EOF && eof.text !== '<EOF>') {
     return [];
   }
 
@@ -382,39 +383,39 @@ export function completionCoreCompletion(
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1]?.type;
   if (
-    previousToken === CypherLexer.IDENTIFIER ||
+    previousToken === Cypher5Lexer.IDENTIFIER ||
     lexerKeywords.includes(previousToken)
   ) {
     caretIndex--;
   }
 
   codeCompletion.preferredRules = new Set<number>([
-    CypherParser.RULE_functionName,
-    CypherParser.RULE_procedureName,
-    CypherParser.RULE_labelExpression1,
-    CypherParser.RULE_symbolicAliasName,
-    CypherParser.RULE_parameter,
-    CypherParser.RULE_propertyKeyName,
-    CypherParser.RULE_variable,
-    CypherParser.RULE_leftArrow,
+    Cypher5Parser.RULE_functionName_Cypher5,
+    Cypher5Parser.RULE_procedureName_Cypher5,
+    Cypher5Parser.RULE_labelExpression1_Cypher5,
+    Cypher5Parser.RULE_symbolicAliasName_Cypher5,
+    Cypher5Parser.RULE_parameter_Cypher5,
+    Cypher5Parser.RULE_propertyKeyName_Cypher5,
+    Cypher5Parser.RULE_variable_Cypher5,
+    Cypher5Parser.RULE_leftArrow_Cypher5,
     // this rule is used for usernames and roles.
-    CypherParser.RULE_commandNameExpression,
+    Cypher5Parser.RULE_commandNameExpression_Cypher5,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(_internalFeatureFlags.consoleCommands
       ? [
-          CypherParser.RULE_useCompletionRule,
-          CypherParser.RULE_listCompletionRule,
+          Cypher5Parser.RULE_useCompletionRule,
+          Cypher5Parser.RULE_listCompletionRule,
         ]
-      : [CypherParser.RULE_consoleCommand]),
+      : [Cypher5Parser.RULE_consoleCommand]),
 
     // Because of the overlap of keywords and identifiers in cypher
     // We will suggest keywords when users type identifiers as well
     // To avoid this we want custom completion for identifiers
     // Until we've covered all the ways we can reach symbolic name string we'll keep this here
     // Ideally we'd find another way to get around this issue
-    CypherParser.RULE_symbolicNameString,
+    Cypher5Parser.RULE_symbolicNameString_Cypher5,
   ]);
 
   // Keep only keywords as suggestions
@@ -433,22 +434,22 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
-      if (ruleNumber === CypherParser.RULE_functionName) {
+      if (ruleNumber === Cypher5Parser.RULE_functionName_Cypher5) {
         return functionNameCompletions(candidateRule, tokens, dbSchema);
       }
 
-      if (ruleNumber === CypherParser.RULE_procedureName) {
+      if (ruleNumber === Cypher5Parser.RULE_procedureName_Cypher5) {
         return procedureNameCompletions(candidateRule, tokens, dbSchema);
       }
 
-      if (ruleNumber === CypherParser.RULE_parameter) {
+      if (ruleNumber === Cypher5Parser.RULE_parameter_Cypher5) {
         return parameterCompletions(
           dbSchema,
           inferExpectedParameterTypeFromContext(candidateRule),
         );
       }
 
-      if (ruleNumber === CypherParser.RULE_propertyKeyName) {
+      if (ruleNumber === Cypher5Parser.RULE_propertyKeyName_Cypher5) {
         // Map literal keys are also parsed as "propertyKey"s even though
         // they are not considered propertyKeys by the database
         // We check if the parent mapLiteral is used as a literal
@@ -456,8 +457,8 @@ export function completionCoreCompletion(
         const parentRule = candidateRule.ruleList.at(-1);
         const grandParentRule = candidateRule.ruleList.at(-2);
         if (
-          parentRule === CypherParser.RULE_map &&
-          grandParentRule === CypherParser.RULE_literal
+          parentRule === Cypher5Parser.RULE_map_Cypher5 &&
+          grandParentRule === Cypher5Parser.RULE_literal_Cypher5
         ) {
           return [];
         }
@@ -469,13 +470,16 @@ export function completionCoreCompletion(
         // We still don't know the type of the variable we're completing without a symbol table
         // but it is likely to be a node/relationship
         if (
-          parentRule === CypherParser.RULE_property &&
-          grandParentRule == CypherParser.RULE_postFix &&
-          greatGrandParentRule === CypherParser.RULE_expression2
+          parentRule === Cypher5Parser.RULE_property_Cypher5 &&
+          grandParentRule == Cypher5Parser.RULE_postFix_Cypher5 &&
+          greatGrandParentRule === Cypher5Parser.RULE_expression2_Cypher5
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
-          if (expr2 instanceof Expression2Context) {
-            const variableName = expr2.expression1().variable()?.getText();
+          if (expr2 instanceof Expression2_Cypher5Context) {
+            const variableName = expr2
+              .expression1_Cypher5()
+              .variable_Cypher5()
+              ?.getText();
             if (
               !variableName ||
               !parsingResult.collectedVariables.includes(variableName)
@@ -488,7 +492,7 @@ export function completionCoreCompletion(
         return propertyKeyCompletions(dbSchema);
       }
 
-      if (ruleNumber === CypherParser.RULE_variable) {
+      if (ruleNumber === Cypher5Parser.RULE_variable_Cypher5) {
         const parentRule = candidateRule.ruleList.at(-1);
         // some rules only define, never use variables
         if (
@@ -504,17 +508,17 @@ export function completionCoreCompletion(
         }));
       }
 
-      if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
+      if (ruleNumber === Cypher5Parser.RULE_symbolicAliasName_Cypher5) {
         return completeAliasName({ candidateRule, dbSchema, parsingResult });
       }
 
-      if (ruleNumber === CypherParser.RULE_commandNameExpression) {
+      if (ruleNumber === Cypher5Parser.RULE_commandNameExpression_Cypher5) {
         return completeSymbolicName({ candidateRule, dbSchema, parsingResult });
       }
 
-      if (ruleNumber === CypherParser.RULE_labelExpression1) {
+      if (ruleNumber === Cypher5Parser.RULE_labelExpression1_Cypher5) {
         const topExprIndex = candidateRule.ruleList.indexOf(
-          CypherParser.RULE_labelExpression,
+          Cypher5Parser.RULE_labelExpression_Cypher5,
         );
 
         const topExprParent = candidateRule.ruleList[topExprIndex - 1];
@@ -523,11 +527,11 @@ export function completionCoreCompletion(
           return [];
         }
 
-        if (topExprParent === CypherParser.RULE_nodePattern) {
+        if (topExprParent === Cypher5Parser.RULE_nodePattern_Cypher5) {
           return labelCompletions(dbSchema);
         }
 
-        if (topExprParent === CypherParser.RULE_relationshipPattern) {
+        if (topExprParent === Cypher5Parser.RULE_relationshipPattern_Cypher5) {
           return reltypeCompletions(dbSchema);
         }
 
@@ -535,15 +539,15 @@ export function completionCoreCompletion(
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
-      if (ruleNumber === CypherParser.RULE_useCompletionRule) {
+      if (ruleNumber === Cypher5Parser.RULE_useCompletionRule) {
         return [{ label: 'use', kind: CompletionItemKind.Event }];
       }
 
-      if (ruleNumber === CypherParser.RULE_listCompletionRule) {
+      if (ruleNumber === Cypher5Parser.RULE_listCompletionRule) {
         return [{ label: 'list', kind: CompletionItemKind.Event }];
       }
 
-      if (ruleNumber === CypherParser.RULE_leftArrow) {
+      if (ruleNumber === Cypher5Parser.RULE_leftArrow_Cypher5) {
         return [
           {
             label: '-[]->()',
@@ -581,7 +585,7 @@ export function completionCoreCompletion(
 
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
-  if (CypherLexer.RPAREN === previousToken && !manualTrigger) {
+  if (Cypher5Lexer.RPAREN === previousToken && !manualTrigger) {
     return ruleCompletions.filter(
       (completion) => completion.kind === CompletionItemKind.Snippet,
     );
@@ -613,7 +617,7 @@ function completeAliasName({
   // symbolicAliasName: (symbolicNameString (DOT symbolicNameString)* | parameter);
   if (
     parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
-    CypherLexer.SPACE
+    Cypher5Lexer.SPACE
   ) {
     return [];
   }
@@ -624,8 +628,8 @@ function completeAliasName({
     ExpectedParameterType.String,
   );
   const rulesCreatingNewDb = [
-    CypherParser.RULE_createDatabase,
-    CypherParser.RULE_createCompositeDatabase,
+    Cypher5Parser.RULE_createDatabase_Cypher5,
+    Cypher5Parser.RULE_createCompositeDatabase_Cypher5,
   ];
   // avoid suggesting existing database names when creating a new database
   if (
@@ -638,16 +642,16 @@ function completeAliasName({
   // Should not suggest existing aliases for aliasName but should suggest existing databases for databaseName
   // so we return base suggestions if we're at the `aliasName` rule
   if (
-    candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
-    candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
+    candidateRule.ruleList.includes(Cypher5Parser.RULE_createAlias_Cypher5) &&
+    candidateRule.ruleList.includes(Cypher5Parser.RULE_aliasName_Cypher5)
   ) {
     return parameterSuggestions;
   }
 
   const rulesThatOnlyAcceptAlias = [
-    CypherParser.RULE_dropAlias,
-    CypherParser.RULE_alterAlias,
-    CypherParser.RULE_showAliases,
+    Cypher5Parser.RULE_dropAlias_Cypher5,
+    Cypher5Parser.RULE_alterAlias_Cypher5,
+    Cypher5Parser.RULE_showAliases_Cypher5,
   ];
   if (
     rulesThatOnlyAcceptAlias.some((rule) =>
@@ -687,15 +691,15 @@ function completeSymbolicName({
   );
 
   const rulesCreatingNewUserOrRole = [
-    CypherParser.RULE_createUser,
-    CypherParser.RULE_createRole,
+    Cypher5Parser.RULE_createUser_Cypher5,
+    Cypher5Parser.RULE_createRole_Cypher5,
   ];
 
   const previousToken = findPreviousNonSpace(
     parsingResult.tokens,
     candidateRule.startTokenIndex,
   );
-  const afterToToken = previousToken.type === CypherParser.TO;
+  const afterToToken = previousToken.type === Cypher5Parser.TO;
   const ruleList = candidateRule.ruleList;
 
   // avoid suggesting existing user names or role names when creating a new one
@@ -704,16 +708,16 @@ function completeSymbolicName({
     // We are suggesting an user as target for the renaming
     //      RENAME USER existing TO target
     // so target should be non-existent
-    (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
+    (ruleList.includes(Cypher5Parser.RULE_renameUser_Cypher5) && afterToToken)
   ) {
     return parameterSuggestions;
   }
 
   const rulesThatAcceptExistingUsers = [
-    CypherParser.RULE_dropUser,
-    CypherParser.RULE_renameUser,
-    CypherParser.RULE_alterUser,
-    CypherParser.RULE_userNames,
+    Cypher5Parser.RULE_dropUser_Cypher5,
+    Cypher5Parser.RULE_renameUser_Cypher5,
+    Cypher5Parser.RULE_alterUser_Cypher5,
+    Cypher5Parser.RULE_userNames_Cypher5,
   ];
 
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
@@ -729,9 +733,9 @@ function completeSymbolicName({
   }
 
   const rulesThatAcceptExistingRoles = [
-    CypherParser.RULE_roleNames,
-    CypherParser.RULE_dropRole,
-    CypherParser.RULE_renameRole,
+    Cypher5Parser.RULE_roleNames_Cypher5,
+    Cypher5Parser.RULE_dropRole_Cypher5,
+    Cypher5Parser.RULE_renameRole_Cypher5,
   ];
 
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {

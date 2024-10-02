@@ -1,23 +1,23 @@
 import type { ParserRuleContext, Token } from 'antlr4';
 import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherLexer from './generated-parser/Cypher5CmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from './featureFlags';
 import {
-  ClauseContext,
+  Clause_Cypher5Context,
   default as CypherParser,
-  FunctionNameContext,
-  LabelNameContext,
-  LabelNameIsContext,
-  LabelOrRelTypeContext,
-  ProcedureNameContext,
+  FunctionName_Cypher5Context,
+  LabelName5Context,
+  LabelNameIs5Context,
+  LabelOrRelType_Cypher5Context,
+  ProcedureName_Cypher5Context,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
-  SymbolicNameStringContext,
-  VariableContext,
-} from './generated-parser/CypherCmdParser';
+  SymbolicNameString_Cypher5Context,
+  Variable_Cypher5Context,
+} from './generated-parser/Cypher5CmdParser';
 import {
   findParent,
   findStopNode,
@@ -76,11 +76,14 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
 }
 
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
-  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
+  const parent = findParent(ctx, (ctx) => ctx instanceof Clause_Cypher5Context);
 
-  if (parent instanceof ClauseContext) {
+  if (parent instanceof Clause_Cypher5Context) {
     const clause = parent;
-    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+    return (
+      isDefined(clause.mergeClause_Cypher5()) ||
+      isDefined(clause.createClause_Cypher5())
+    );
   } else {
     return false;
   }
@@ -228,7 +231,10 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
+    if (
+      ctx instanceof LabelName5Context ||
+      ctx instanceof LabelNameIs5Context
+    ) {
       // If the parent ctx start doesn't coincide with this ctx start,
       // it means the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
@@ -246,8 +252,8 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
           },
         });
       }
-    } else if (ctx instanceof LabelOrRelTypeContext) {
-      const symbolicName = ctx.symbolicNameString();
+    } else if (ctx instanceof LabelOrRelType_Cypher5Context) {
+      const symbolicName = ctx.symbolicNameString_Cypher5();
       // Read comment for the label name case
       if (
         isDefined(symbolicName) &&
@@ -286,8 +292,8 @@ class VariableCollector implements ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof VariableContext) {
-      const variable = ctx.symbolicNameString().getText();
+    if (ctx instanceof Variable_Cypher5Context) {
+      const variable = ctx.symbolicNameString_Cypher5().getText();
       // To avoid suggesting the variable that is currently being typed
       // For example RETURN a| <- we don't want to suggest "a" as a variable
       // We check if the variable is in the end of the statement
@@ -333,8 +339,8 @@ class MethodsCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (
-      ctx instanceof FunctionNameContext ||
-      ctx instanceof ProcedureNameContext
+      ctx instanceof FunctionName_Cypher5Context ||
+      ctx instanceof ProcedureName_Cypher5Context
     ) {
       const methodName = this.getMethodName(ctx);
 
@@ -359,7 +365,7 @@ class MethodsCollector extends ParseTreeListener {
         },
       };
 
-      if (ctx instanceof FunctionNameContext) {
+      if (ctx instanceof FunctionName_Cypher5Context) {
         this.functions.push(result);
       } else {
         this.procedures.push(result);
@@ -368,10 +374,12 @@ class MethodsCollector extends ParseTreeListener {
   }
 
   private getMethodName(
-    ctx: ProcedureNameContext | FunctionNameContext,
+    ctx: ProcedureName_Cypher5Context | FunctionName_Cypher5Context,
   ): string {
-    const namespaces = ctx.namespace().symbolicNameString_list();
-    const methodName = ctx.symbolicNameString();
+    const namespaces = ctx
+      .namespace_Cypher5()
+      .symbolicNameString_Cypher5_list();
+    const methodName = ctx.symbolicNameString_Cypher5();
 
     const normalizedName = [...namespaces, methodName]
       .map((symbolicName) => {
@@ -382,9 +390,9 @@ class MethodsCollector extends ParseTreeListener {
     return normalizedName;
   }
 
-  private getNamespaceString(ctx: SymbolicNameStringContext): string {
+  private getNamespaceString(ctx: SymbolicNameString_Cypher5Context): string {
     const text = ctx.getText();
-    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+    const isEscaped = Boolean(ctx.escapedSymbolicNameString_Cypher5());
     const hasDot = text.includes('.');
 
     if (isEscaped && !hasDot) {
@@ -446,7 +454,7 @@ function parseToCommand(
       if (useCmd) {
         return {
           type: 'use',
-          database: useCmd.symbolicAliasName()?.getText(),
+          database: useCmd.symbolicAliasName_Cypher5()?.getText(),
           start,
           stop,
         };
@@ -471,13 +479,13 @@ function parseToCommand(
       }
 
       if (paramArgs) {
-        const cypherMap = paramArgs.map();
+        const cypherMap = paramArgs.map_Cypher5();
         if (cypherMap) {
           const names = cypherMap
-            ?.propertyKeyName_list()
+            ?.propertyKeyName_Cypher5_list()
             .map((name) => name.getText());
           const expressions = cypherMap
-            ?.expression_list()
+            ?.expression_Cypher5_list()
             .map((expr) => expr.getText());
 
           if (names && expressions && names.length === expressions.length) {
@@ -494,8 +502,8 @@ function parseToCommand(
         }
 
         const lambda = paramArgs.lambda();
-        const name = lambda?.unescapedSymbolicNameString()?.getText();
-        const expression = lambda?.expression()?.getText();
+        const name = lambda?.unescapedSymbolicNameString_Cypher5()?.getText();
+        const expression = lambda?.expression_Cypher5()?.getText();
         if (name && expression) {
           return {
             type: 'set-parameters',

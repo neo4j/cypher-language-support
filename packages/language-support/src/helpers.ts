@@ -6,12 +6,12 @@ import antlrDefaultExport, {
   ParseTree,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherLexer from './generated-parser/Cypher5CmdLexer';
 import CypherParser, {
-  NodePatternContext,
-  RelationshipPatternContext,
+  NodePattern_Cypher5Context,
+  RelationshipPattern_Cypher5Context,
   StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
+} from './generated-parser/Cypher5CmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
 
 /* In antlr we have 
@@ -95,7 +95,7 @@ export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
-    (p) => p instanceof NodePatternContext,
+    (p) => p instanceof NodePattern_Cypher5Context,
   );
 
   return isDefined(nodePattern);
@@ -104,7 +104,7 @@ export function inNodeLabel(stopNode: ParserRuleContext) {
 export function inRelationshipType(stopNode: ParserRuleContext) {
   const relPattern = findParent(
     stopNode,
-    (p) => p instanceof RelationshipPatternContext,
+    (p) => p instanceof RelationshipPattern_Cypher5Context,
   );
 
   return isDefined(relPattern);
@@ -200,20 +200,20 @@ export function isCommentOpener(
 }
 
 export const rulesDefiningVariables = [
-  CypherParser.RULE_returnItem,
-  CypherParser.RULE_unwindClause,
-  CypherParser.RULE_subqueryInTransactionsReportParameters,
-  CypherParser.RULE_procedureResultItem,
-  CypherParser.RULE_foreachClause,
-  CypherParser.RULE_loadCSVClause,
-  CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_listItemsPredicate,
-  CypherParser.RULE_listComprehension,
+  CypherParser.RULE_returnItem_Cypher5,
+  CypherParser.RULE_unwindClause_Cypher5,
+  CypherParser.RULE_subqueryInTransactionsReportParameters_Cypher5,
+  CypherParser.RULE_procedureResultItem_Cypher5,
+  CypherParser.RULE_foreachClause_Cypher5,
+  CypherParser.RULE_loadCSVClause_Cypher5,
+  CypherParser.RULE_reduceExpression_Cypher5,
+  CypherParser.RULE_listItemsPredicate_Cypher5,
+  CypherParser.RULE_listComprehension_Cypher5,
 ];
 
 export const rulesDefiningOrUsingVariables = [
   ...rulesDefiningVariables,
-  CypherParser.RULE_pattern,
-  CypherParser.RULE_nodePattern,
-  CypherParser.RULE_relationshipPattern,
+  CypherParser.RULE_pattern_Cypher5,
+  CypherParser.RULE_nodePattern_Cypher5,
+  CypherParser.RULE_relationshipPattern_Cypher5,
 ];

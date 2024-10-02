@@ -2,7 +2,7 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4';
 
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import Cypher5Lexer from '../generated-parser/Cypher5CmdLexer';
 
 import { isCommentOpener } from '../helpers';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
@@ -53,29 +53,29 @@ export function getTokenPosition(token: Token): TokenPosition {
 
 function getBracketType(token: Token): BracketType | undefined {
   const bracketType: Record<number, BracketType> = {
-    [CypherLexer.LPAREN]: BracketType.parenthesis,
-    [CypherLexer.RPAREN]: BracketType.parenthesis,
-    [CypherLexer.LBRACKET]: BracketType.bracket,
-    [CypherLexer.RBRACKET]: BracketType.bracket,
-    [CypherLexer.LCURLY]: BracketType.curly,
-    [CypherLexer.RCURLY]: BracketType.curly,
+    [Cypher5Lexer.LPAREN]: BracketType.parenthesis,
+    [Cypher5Lexer.RPAREN]: BracketType.parenthesis,
+    [Cypher5Lexer.LBRACKET]: BracketType.bracket,
+    [Cypher5Lexer.RBRACKET]: BracketType.bracket,
+    [Cypher5Lexer.LCURLY]: BracketType.curly,
+    [Cypher5Lexer.RCURLY]: BracketType.curly,
   };
   return bracketType[token.type];
 }
 
 function isClosingBracket(token: Token): boolean {
   return [
-    CypherLexer.RPAREN,
-    CypherLexer.RBRACKET,
-    CypherLexer.RCURLY,
+    Cypher5Lexer.RPAREN,
+    Cypher5Lexer.RBRACKET,
+    Cypher5Lexer.RCURLY,
   ].includes(token.type);
 }
 
 function isOpeningBracket(token: Token): boolean {
   return [
-    CypherLexer.LPAREN,
-    CypherLexer.LBRACKET,
-    CypherLexer.LCURLY,
+    Cypher5Lexer.LPAREN,
+    Cypher5Lexer.LBRACKET,
+    Cypher5Lexer.LCURLY,
   ].includes(token.type);
 }
 
@@ -158,7 +158,7 @@ export function getCypherTokenType(
 } {
   const tokenText = token.text;
 
-  if (token.type === CypherLexer.ErrorChar) {
+  if (token.type === Cypher5Lexer.ErrorChar) {
     if (tokenText === '"' || tokenText === "'") {
       return { tokenType: CypherTokenType.stringLiteral, finished: false };
     } else if (tokenText.startsWith('`')) {
@@ -180,8 +180,8 @@ export function shouldAssignTokenType(token: Token): boolean {
   const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
   const inMainChannel = token.channel == 0;
   const isComment =
-    token.type === CypherLexer.SINGLE_LINE_COMMENT ||
-    token.type === CypherLexer.MULTI_LINE_COMMENT;
+    token.type === Cypher5Lexer.SINGLE_LINE_COMMENT ||
+    token.type === Cypher5Lexer.MULTI_LINE_COMMENT;
 
   return nonEOF && (inMainChannel || isComment);
 }
