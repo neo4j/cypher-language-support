@@ -18,429 +18,337 @@ parser grammar Cypher5Parser;
 
 
 options { tokenVocab = Cypher5Lexer; }
-statements
-   : statement (SEMICOLON statement)* SEMICOLON? EOF
+statements_Cypher5: statement_Cypher5 (SEMICOLON statement_Cypher5)* SEMICOLON? EOF
    ;
 
-statement
-   : periodicCommitQueryHintFailure? (command | regularQuery)
+statement_Cypher5: periodicCommitQueryHintFailure_Cypher5? (command_Cypher5 | regularQuery_Cypher5)
    ;
 
-periodicCommitQueryHintFailure
-   : USING PERIODIC COMMIT UNSIGNED_DECIMAL_INTEGER?
+periodicCommitQueryHintFailure_Cypher5: USING PERIODIC COMMIT UNSIGNED_DECIMAL_INTEGER?
    ;
 
-regularQuery
-   : singleQuery (UNION (ALL | DISTINCT)? singleQuery)*
+regularQuery_Cypher5: singleQuery_Cypher5 (UNION (ALL | DISTINCT)? singleQuery_Cypher5)*
    ;
 
-singleQuery
-   : clause+
+singleQuery_Cypher5: clause_Cypher5+
    ;
 
-clause
-   : useClause
-   | finishClause
-   | returnClause
-   | createClause
-   | insertClause
-   | deleteClause
-   | setClause
-   | removeClause
-   | matchClause
-   | mergeClause
-   | withClause
-   | unwindClause
-   | callClause
-   | subqueryClause
-   | loadCSVClause
-   | foreachClause
-   | orderBySkipLimitClause
+clause_Cypher5: useClause_Cypher5
+   | finishClause_Cypher5
+   | returnClause_Cypher5
+   | createClause_Cypher5
+   | insertClause_Cypher5
+   | deleteClause_Cypher5
+   | setClause_Cypher5
+   | removeClause_Cypher5
+   | matchClause_Cypher5
+   | mergeClause_Cypher5
+   | withClause_Cypher5
+   | unwindClause_Cypher5
+   | callClause_Cypher5
+   | subqueryClause_Cypher5
+   | loadCSVClause_Cypher5
+   | foreachClause_Cypher5
+   | orderBySkipLimitClause_Cypher5
    ;
 
-useClause
-   : USE GRAPH? graphReference
+useClause_Cypher5: USE GRAPH? graphReference_Cypher5
    ;
 
-graphReference
-   : LPAREN graphReference RPAREN
-   | functionInvocation
-   | symbolicAliasName
+graphReference_Cypher5: LPAREN graphReference_Cypher5 RPAREN
+   | functionInvocation_Cypher5
+   | symbolicAliasName_Cypher5
    ;
 
-finishClause
-   : FINISH
+finishClause_Cypher5: FINISH
    ;
 
-returnClause
-   : RETURN returnBody
+returnClause_Cypher5: RETURN returnBody_Cypher5
    ;
 
-returnBody
-   : DISTINCT? returnItems orderBy? skip? limit?
+returnBody_Cypher5: DISTINCT? returnItems_Cypher5 orderBy_Cypher5? skip_Cypher5? limit_Cypher5?
    ;
 
-returnItem
-   : expression (AS variable)?
+returnItem_Cypher5: expression_Cypher5 (AS variable_Cypher5)?
    ;
 
-returnItems
-   : (TIMES | returnItem) (COMMA returnItem)*
+returnItems_Cypher5: (TIMES | returnItem_Cypher5) (COMMA returnItem_Cypher5)*
    ;
 
-orderItem
-   : expression (ascToken | descToken)?
+orderItem_Cypher5: expression_Cypher5 (ascToken_Cypher5 | descToken_Cypher5)?
    ;
 
-ascToken
-   : ASC | ASCENDING
+ascToken_Cypher5: ASC | ASCENDING
    ;
 
-descToken
-   : DESC | DESCENDING
+descToken_Cypher5: DESC | DESCENDING
    ;
 
-orderBy
-   : ORDER BY orderItem (COMMA orderItem)*
+orderBy_Cypher5: ORDER BY orderItem_Cypher5 (COMMA orderItem_Cypher5)*
    ;
 
-skip
-   : (OFFSET | SKIPROWS) expression
+skip_Cypher5: (OFFSET | SKIPROWS) expression_Cypher5
    ;
 
-limit
-   : LIMITROWS expression
+limit_Cypher5: LIMITROWS expression_Cypher5
    ;
 
-whereClause
-   : WHERE expression
+whereClause_Cypher5: WHERE expression_Cypher5
    ;
 
-withClause
-   : WITH returnBody whereClause?
+withClause_Cypher5: WITH returnBody_Cypher5 whereClause_Cypher5?
    ;
 
-createClause
-   : CREATE patternList
+createClause_Cypher5: CREATE patternList_Cypher5
    ;
 
-insertClause
-   : INSERT insertPatternList
+insertClause_Cypher5: INSERT insertPatternList_Cypher5
    ;
 
-setClause
-   : SET setItem (COMMA setItem)*
+setClause_Cypher5: SET setItem_Cypher5 (COMMA setItem_Cypher5)*
    ;
 
-setItem
-   : propertyExpression EQ expression        # SetProp
-   | dynamicPropertyExpression EQ expression # SetDynamicProp
-   | variable EQ expression                  # SetProps
-   | variable PLUSEQUAL expression           # AddProp
-   | variable nodeLabels                     # SetLabels
-   | variable nodeLabelsIs                   # SetLabelsIs
+setItem_Cypher5: propertyExpression_Cypher5 EQ expression_Cypher5        # SetProp5
+   | dynamicPropertyExpression_Cypher5 EQ expression_Cypher5 # SetDynamicProp5
+   | variable_Cypher5 EQ expression_Cypher5                  # SetProps5
+   | variable_Cypher5 PLUSEQUAL expression_Cypher5           # AddProp5
+   | variable_Cypher5 nodeLabels_Cypher5                     # SetLabels5
+   | variable_Cypher5 nodeLabelsIs_Cypher5                   # SetLabelsIs5
    ;
 
-removeClause
-   : REMOVE removeItem (COMMA removeItem)*
+removeClause_Cypher5: REMOVE removeItem_Cypher5 (COMMA removeItem_Cypher5)*
    ;
 
-removeItem
-   : propertyExpression         # RemoveProp
-   | dynamicPropertyExpression  # RemoveDynamicProp
-   | variable nodeLabels        # RemoveLabels
-   | variable nodeLabelsIs      # RemoveLabelsIs
+removeItem_Cypher5: propertyExpression_Cypher5         # RemoveProp5
+   | dynamicPropertyExpression_Cypher5  # RemoveDynamicProp5
+   | variable_Cypher5 nodeLabels_Cypher5        # RemoveLabels5
+   | variable_Cypher5 nodeLabelsIs_Cypher5      # RemoveLabelsIs5
    ;
 
-deleteClause
-   : (DETACH | NODETACH)? DELETE expression (COMMA expression)*
+deleteClause_Cypher5: (DETACH | NODETACH)? DELETE expression_Cypher5 (COMMA expression_Cypher5)*
    ;
 
-matchClause
-   : OPTIONAL? MATCH matchMode? patternList hint* whereClause?
+matchClause_Cypher5: OPTIONAL? MATCH matchMode_Cypher5? patternList_Cypher5 hint_Cypher5* whereClause_Cypher5?
    ;
 
-matchMode
-   : REPEATABLE (ELEMENT BINDINGS? | ELEMENTS)
+matchMode_Cypher5: REPEATABLE (ELEMENT BINDINGS? | ELEMENTS)
    | DIFFERENT (RELATIONSHIP BINDINGS? | RELATIONSHIPS)
    ;
 
-hint
-   : USING (((
+hint_Cypher5: USING (((
       INDEX
       | BTREE INDEX
       | TEXT INDEX
       | RANGE INDEX
       | POINT INDEX
-   ) SEEK? variable labelOrRelType LPAREN nonEmptyNameList RPAREN)
-   | JOIN ON nonEmptyNameList
-   | SCAN variable labelOrRelType
+   ) SEEK? variable_Cypher5 labelOrRelType_Cypher5 LPAREN nonEmptyNameList_Cypher5 RPAREN)
+   | JOIN ON nonEmptyNameList_Cypher5
+   | SCAN variable_Cypher5 labelOrRelType_Cypher5
    )
    ;
 
-mergeClause
-   : MERGE pattern mergeAction*
+mergeClause_Cypher5: MERGE pattern_Cypher5 mergeAction_Cypher5*
    ;
 
-mergeAction
-   : ON (MATCH | CREATE) setClause
+mergeAction_Cypher5: ON (MATCH | CREATE) setClause_Cypher5
    ;
 
-unwindClause
-   : UNWIND expression AS variable
+unwindClause_Cypher5: UNWIND expression_Cypher5 AS variable_Cypher5
    ;
 
-callClause
-   : OPTIONAL? CALL procedureName (LPAREN (procedureArgument (COMMA procedureArgument)*)? RPAREN)? (YIELD (TIMES | procedureResultItem (COMMA procedureResultItem)* whereClause?))?
+callClause_Cypher5: OPTIONAL? CALL procedureName_Cypher5 (LPAREN (procedureArgument_Cypher5 (COMMA procedureArgument_Cypher5)*)? RPAREN)? (YIELD (TIMES | procedureResultItem_Cypher5 (COMMA procedureResultItem_Cypher5)* whereClause_Cypher5?))?
    ;
 
-procedureName
-   : namespace symbolicNameString
+procedureName_Cypher5: namespace_Cypher5 symbolicNameString_Cypher5
    ;
 
-procedureArgument
-   : expression
+procedureArgument_Cypher5: expression_Cypher5
    ;
 
-procedureResultItem
-   : symbolicNameString (AS variable)?
+procedureResultItem_Cypher5: symbolicNameString_Cypher5 (AS variable_Cypher5)?
    ;
 
-loadCSVClause
-   : LOAD CSV (WITH HEADERS)? FROM expression AS variable (FIELDTERMINATOR stringLiteral)?
+loadCSVClause_Cypher5: LOAD CSV (WITH HEADERS)? FROM expression_Cypher5 AS variable_Cypher5 (FIELDTERMINATOR stringLiteral_Cypher5)?
    ;
 
-foreachClause
-   : FOREACH LPAREN variable IN expression BAR clause+ RPAREN
+foreachClause_Cypher5: FOREACH LPAREN variable_Cypher5 IN expression_Cypher5 BAR clause_Cypher5+ RPAREN
    ;
 
-subqueryClause
-   : OPTIONAL? CALL subqueryScope? LCURLY regularQuery RCURLY subqueryInTransactionsParameters?
+subqueryClause_Cypher5: OPTIONAL? CALL subqueryScope_Cypher5? LCURLY regularQuery_Cypher5 RCURLY subqueryInTransactionsParameters_Cypher5?
    ;
 
-subqueryScope
-   : LPAREN (TIMES | variable (COMMA variable)*)? RPAREN
+subqueryScope_Cypher5: LPAREN (TIMES | variable_Cypher5 (COMMA variable_Cypher5)*)? RPAREN
    ;
 
-subqueryInTransactionsParameters
-   : IN (expression? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*
+subqueryInTransactionsParameters_Cypher5: IN (expression_Cypher5? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters_Cypher5 | subqueryInTransactionsErrorParameters_Cypher5 | subqueryInTransactionsReportParameters_Cypher5)*
    ;
 
-subqueryInTransactionsBatchParameters
-   : OF expression (ROW | ROWS)
+subqueryInTransactionsBatchParameters_Cypher5: OF expression_Cypher5 (ROW | ROWS)
    ;
 
-subqueryInTransactionsErrorParameters
-   : ON ERROR (CONTINUE | BREAK | FAIL)
+subqueryInTransactionsErrorParameters_Cypher5: ON ERROR (CONTINUE | BREAK | FAIL)
    ;
 
-subqueryInTransactionsReportParameters
-   : REPORT STATUS AS variable
+subqueryInTransactionsReportParameters_Cypher5: REPORT STATUS AS variable_Cypher5
    ;
 
-orderBySkipLimitClause
-   : orderBy skip? limit?
-   | skip limit?
-   | limit
+orderBySkipLimitClause_Cypher5: orderBy_Cypher5 skip_Cypher5? limit_Cypher5?
+   | skip_Cypher5 limit_Cypher5?
+   | limit_Cypher5
    ;
 
-patternList
-   : pattern (COMMA pattern)*
+patternList_Cypher5: pattern_Cypher5 (COMMA pattern_Cypher5)*
    ;
 
-insertPatternList
-   : insertPattern (COMMA insertPattern)*
+insertPatternList_Cypher5: insertPattern_Cypher5 (COMMA insertPattern_Cypher5)*
    ;
 
-pattern
-   : (variable EQ)? selector? anonymousPattern
+pattern_Cypher5: (variable_Cypher5 EQ)? selector_Cypher5? anonymousPattern_Cypher5
    ;
 
-insertPattern
-   : (symbolicNameString EQ)? insertNodePattern (insertRelationshipPattern insertNodePattern)*
+insertPattern_Cypher5: (symbolicNameString_Cypher5 EQ)? insertNodePattern_Cypher5 (insertRelationshipPattern_Cypher5 insertNodePattern_Cypher5)*
    ;
 
-quantifier
-   : LCURLY UNSIGNED_DECIMAL_INTEGER RCURLY
+quantifier_Cypher5: LCURLY UNSIGNED_DECIMAL_INTEGER RCURLY
    | LCURLY from = UNSIGNED_DECIMAL_INTEGER? COMMA to = UNSIGNED_DECIMAL_INTEGER? RCURLY
    | PLUS
    | TIMES
    ;
 
-anonymousPattern
-   : shortestPathPattern
-   | patternElement
+anonymousPattern_Cypher5: shortestPathPattern_Cypher5
+   | patternElement_Cypher5
    ;
 
-shortestPathPattern
-   : (SHORTEST_PATH | ALL_SHORTEST_PATHS) LPAREN patternElement RPAREN
+shortestPathPattern_Cypher5: (SHORTEST_PATH | ALL_SHORTEST_PATHS) LPAREN patternElement_Cypher5 RPAREN
    ;
 
-patternElement
-   : (nodePattern (relationshipPattern quantifier? nodePattern)* | parenthesizedPath)+
+patternElement_Cypher5: (nodePattern_Cypher5 (relationshipPattern_Cypher5 quantifier_Cypher5? nodePattern_Cypher5)* | parenthesizedPath_Cypher5)+
    ;
 
-selector
-   : ANY SHORTEST pathToken?                                  # AnyShortestPath
-   | ALL SHORTEST pathToken?                                  # AllShortestPath
-   | ANY UNSIGNED_DECIMAL_INTEGER? pathToken?                 # AnyPath
-   | ALL pathToken?                                           # AllPath
-   | SHORTEST UNSIGNED_DECIMAL_INTEGER? pathToken? groupToken # ShortestGroup
-   | SHORTEST UNSIGNED_DECIMAL_INTEGER pathToken?             # AnyShortestPath
+selector_Cypher5: ANY SHORTEST pathToken_Cypher5?                                  # AnyShortestPath5
+   | ALL SHORTEST pathToken_Cypher5?                                  # AllShortestPath5
+   | ANY UNSIGNED_DECIMAL_INTEGER? pathToken_Cypher5?                 # AnyPath5
+   | ALL pathToken_Cypher5?                                           # AllPath5
+   | SHORTEST UNSIGNED_DECIMAL_INTEGER? pathToken_Cypher5? groupToken_Cypher5 # ShortestGroup5
+   | SHORTEST UNSIGNED_DECIMAL_INTEGER pathToken_Cypher5?             # AnyShortestPath5
    ;
 
-groupToken
-   : GROUP | GROUPS
+groupToken_Cypher5: GROUP | GROUPS
    ;
 
-pathToken
-   : PATH | PATHS
+pathToken_Cypher5: PATH | PATHS
    ;
 
-pathPatternNonEmpty
-   : nodePattern (relationshipPattern nodePattern)+
+pathPatternNonEmpty_Cypher5: nodePattern_Cypher5 (relationshipPattern_Cypher5 nodePattern_Cypher5)+
    ;
 
-nodePattern
-   : LPAREN variable? labelExpression? properties? (WHERE expression)? RPAREN
+nodePattern_Cypher5: LPAREN variable_Cypher5? labelExpression_Cypher5? properties_Cypher5? (WHERE expression_Cypher5)? RPAREN
    ;
 
-insertNodePattern
-   : LPAREN variable? insertNodeLabelExpression? map? RPAREN
+insertNodePattern_Cypher5: LPAREN variable_Cypher5? insertNodeLabelExpression_Cypher5? map_Cypher5? RPAREN
    ;
 
-parenthesizedPath
-   : LPAREN pattern (WHERE expression)? RPAREN quantifier?
+parenthesizedPath_Cypher5: LPAREN pattern_Cypher5 (WHERE expression_Cypher5)? RPAREN quantifier_Cypher5?
    ;
 
-nodeLabels
-   : (labelType | dynamicLabelType)+
+nodeLabels_Cypher5: (labelType_Cypher5 | dynamicLabelType_Cypher5)+
    ;
 
-nodeLabelsIs
-   : IS (symbolicNameString | dynamicExpression) (labelType | dynamicLabelType)*
+nodeLabelsIs_Cypher5: IS (symbolicNameString_Cypher5 | dynamicExpression_Cypher5) (labelType_Cypher5 | dynamicLabelType_Cypher5)*
    ;
 
-dynamicExpression
-   : DOLLAR LPAREN expression RPAREN
+dynamicExpression_Cypher5: DOLLAR LPAREN expression_Cypher5 RPAREN
    ;
 
-dynamicLabelType
-   : COLON dynamicExpression
+dynamicLabelType_Cypher5: COLON dynamicExpression_Cypher5
    ;
 
-labelType
-   : COLON symbolicNameString
+labelType_Cypher5: COLON symbolicNameString_Cypher5
    ;
 
-relType
-   : COLON symbolicNameString
+relType_Cypher5: COLON symbolicNameString_Cypher5
    ;
 
-labelOrRelType
-   : COLON symbolicNameString
+labelOrRelType_Cypher5: COLON symbolicNameString_Cypher5
    ;
 
-properties
-   : map
-   | parameter["ANY"]
+properties_Cypher5: map_Cypher5
+   | parameter_Cypher5["ANY"]
    ;
 
-relationshipPattern
-   : leftArrow? arrowLine (LBRACKET variable? labelExpression? pathLength? properties? (WHERE expression)? RBRACKET)? arrowLine rightArrow?
+relationshipPattern_Cypher5: leftArrow_Cypher5? arrowLine_Cypher5 (LBRACKET variable_Cypher5? labelExpression_Cypher5? pathLength_Cypher5? properties_Cypher5? (WHERE expression_Cypher5)? RBRACKET)? arrowLine_Cypher5 rightArrow_Cypher5?
    ;
 
-insertRelationshipPattern
-   : leftArrow? arrowLine LBRACKET variable? insertRelationshipLabelExpression map? RBRACKET arrowLine rightArrow?
+insertRelationshipPattern_Cypher5: leftArrow_Cypher5? arrowLine_Cypher5 LBRACKET variable_Cypher5? insertRelationshipLabelExpression_Cypher5 map_Cypher5? RBRACKET arrowLine_Cypher5 rightArrow_Cypher5?
    ;
 
-leftArrow
-   : LT
+leftArrow_Cypher5: LT
    | ARROW_LEFT_HEAD
    ;
 
-arrowLine
-   : ARROW_LINE
+arrowLine_Cypher5: ARROW_LINE
    | MINUS
    ;
 
-rightArrow
-   : GT
+rightArrow_Cypher5: GT
    | ARROW_RIGHT_HEAD
    ;
 
-pathLength
-   : TIMES (from = UNSIGNED_DECIMAL_INTEGER? DOTDOT to = UNSIGNED_DECIMAL_INTEGER? | single = UNSIGNED_DECIMAL_INTEGER)?
+pathLength_Cypher5: TIMES (from = UNSIGNED_DECIMAL_INTEGER? DOTDOT to = UNSIGNED_DECIMAL_INTEGER? | single = UNSIGNED_DECIMAL_INTEGER)?
    ;
 
-labelExpression
-   : COLON labelExpression4
-   | IS labelExpression4Is
+labelExpression_Cypher5: COLON labelExpression4_Cypher5
+   | IS labelExpression4Is_Cypher5
    ;
 
-labelExpression4
-   : labelExpression3 (BAR COLON? labelExpression3)*
+labelExpression4_Cypher5: labelExpression3_Cypher5 (BAR COLON? labelExpression3_Cypher5)*
    ;
 
-labelExpression4Is
-   : labelExpression3Is (BAR COLON? labelExpression3Is)*
+labelExpression4Is_Cypher5: labelExpression3Is_Cypher5 (BAR COLON? labelExpression3Is_Cypher5)*
    ;
 
-labelExpression3
-   : labelExpression2 ((AMPERSAND | COLON) labelExpression2)*
+labelExpression3_Cypher5: labelExpression2_Cypher5 ((AMPERSAND | COLON) labelExpression2_Cypher5)*
    ;
 
-labelExpression3Is
-   : labelExpression2Is ((AMPERSAND | COLON) labelExpression2Is)*
+labelExpression3Is_Cypher5: labelExpression2Is_Cypher5 ((AMPERSAND | COLON) labelExpression2Is_Cypher5)*
    ;
 
-labelExpression2
-   : EXCLAMATION_MARK* labelExpression1
+labelExpression2_Cypher5: EXCLAMATION_MARK* labelExpression1_Cypher5
    ;
 
-labelExpression2Is
-   : EXCLAMATION_MARK* labelExpression1Is
+labelExpression2Is_Cypher5: EXCLAMATION_MARK* labelExpression1Is_Cypher5
    ;
 
-labelExpression1
-   : LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
-   | PERCENT                        #AnyLabel
-   | symbolicNameString             #LabelName
+labelExpression1_Cypher5: LPAREN labelExpression4_Cypher5 RPAREN #ParenthesizedLabelExpression5
+   | PERCENT                        #AnyLabel5
+   | symbolicNameString_Cypher5             #LabelName5
    ;
 
-labelExpression1Is
-   : LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
-   | PERCENT                          #AnyLabelIs
-   | symbolicLabelNameString          #LabelNameIs
+labelExpression1Is_Cypher5: LPAREN labelExpression4Is_Cypher5 RPAREN #ParenthesizedLabelExpressionIs5
+   | PERCENT                          #AnyLabelIs5
+   | symbolicLabelNameString_Cypher5          #LabelNameIs5
    ;
 
-insertNodeLabelExpression
-   : (COLON | IS) symbolicNameString ((AMPERSAND | COLON) symbolicNameString)*
+insertNodeLabelExpression_Cypher5: (COLON | IS) symbolicNameString_Cypher5 ((AMPERSAND | COLON) symbolicNameString_Cypher5)*
    ;
 
-insertRelationshipLabelExpression
-   : (COLON | IS) symbolicNameString
+insertRelationshipLabelExpression_Cypher5: (COLON | IS) symbolicNameString_Cypher5
    ;
 
-expression
-   : expression11 (OR expression11)*
+expression_Cypher5: expression11_Cypher5 (OR expression11_Cypher5)*
    ;
 
-expression11
-   : expression10 (XOR expression10)*
+expression11_Cypher5: expression10_Cypher5 (XOR expression10_Cypher5)*
    ;
 
-expression10
-   : expression9 (AND expression9)*
+expression10_Cypher5: expression9_Cypher5 (AND expression9_Cypher5)*
    ;
 
-expression9
-   : NOT* expression8
+expression9_Cypher5: NOT* expression8_Cypher5
    ;
 
-// Making changes here? Consider looking at extendedWhen too.
-expression8
-   : expression7 ((
+// Making changes here? Consider looking at extendedWhen_Cypher5 too.
+expression8_Cypher5: expression7_Cypher5 ((
       EQ
       | INVALID_NEQ
       | NEQ
@@ -448,136 +356,116 @@ expression8
       | GE
       | LT
       | GT
-   ) expression7)*
+   ) expression7_Cypher5)*
    ;
 
-expression7
-   : expression6 comparisonExpression6?
+expression7_Cypher5: expression6_Cypher5 comparisonExpression6_Cypher5?
    ;
 
-// Making changes here? Consider looking at extendedWhen too.
-comparisonExpression6
-   : (
+// Making changes here? Consider looking at extendedWhen_Cypher5 too.
+comparisonExpression6_Cypher5: (
       REGEQ
       | STARTS WITH
       | ENDS WITH
       | CONTAINS
       | IN
-   ) expression6                                      # StringAndListComparison
-   | IS NOT? NULL                                     # NullComparison
-   | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type # TypeComparison
-   | IS NOT? normalForm? NORMALIZED                   # NormalFormComparison
+   ) expression6_Cypher5                                      # StringAndListComparison5
+   | IS NOT? NULL                                     # NullComparison5
+   | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type_Cypher5 # TypeComparison5
+   | IS NOT? normalForm_Cypher5? NORMALIZED                   # NormalFormComparison5
    ;
 
-normalForm
-   : NFC
+normalForm_Cypher5: NFC
    | NFD
    | NFKC
    | NFKD
    ;
 
-expression6
-   : expression5 ((PLUS | MINUS | DOUBLEBAR) expression5)*
+expression6_Cypher5: expression5_Cypher5 ((PLUS | MINUS | DOUBLEBAR) expression5_Cypher5)*
    ;
 
-expression5
-   : expression4 ((TIMES | DIVIDE | PERCENT) expression4)*
+expression5_Cypher5: expression4_Cypher5 ((TIMES | DIVIDE | PERCENT) expression4_Cypher5)*
    ;
 
-expression4
-   : expression3 (POW expression3)*
+expression4_Cypher5: expression3_Cypher5 (POW expression3_Cypher5)*
    ;
 
-expression3
-   : expression2
-   | (PLUS | MINUS) expression2
+expression3_Cypher5: expression2_Cypher5
+   | (PLUS | MINUS) expression2_Cypher5
    ;
 
-expression2
-   : expression1 postFix*
+expression2_Cypher5: expression1_Cypher5 postFix_Cypher5*
    ;
 
-postFix
-   : property                                                           # PropertyPostfix
-   | labelExpression                                                    # LabelPostfix
-   | LBRACKET expression RBRACKET                                       # IndexPostfix
-   | LBRACKET fromExp = expression? DOTDOT toExp = expression? RBRACKET # RangePostfix
+postFix_Cypher5: property_Cypher5                                                           # PropertyPostfix5
+   | labelExpression_Cypher5                                                    # LabelPostfix5
+   | LBRACKET expression_Cypher5 RBRACKET                                       # IndexPostfix5
+   | LBRACKET fromExp = expression_Cypher5? DOTDOT toExp = expression_Cypher5? RBRACKET # RangePostfix5
    ;
 
-property
-   : DOT propertyKeyName
+property_Cypher5: DOT propertyKeyName_Cypher5
    ;
 
-dynamicProperty
-   : LBRACKET expression RBRACKET
+dynamicProperty_Cypher5: LBRACKET expression_Cypher5 RBRACKET
    ;
 
-propertyExpression
-   : expression1 property+
+propertyExpression_Cypher5: expression1_Cypher5 property_Cypher5+
    ;
 
-dynamicPropertyExpression
-   : expression1 dynamicProperty
+dynamicPropertyExpression_Cypher5: expression1_Cypher5 dynamicProperty_Cypher5
    ;
 
-expression1
-   : literal
-   | parameter["ANY"]
-   | caseExpression
-   | extendedCaseExpression
-   | countStar
-   | existsExpression
-   | countExpression
-   | collectExpression
-   | mapProjection
-   | listComprehension
-   | listLiteral
-   | patternComprehension
-   | reduceExpression
-   | listItemsPredicate
-   | normalizeFunction
-   | trimFunction
-   | patternExpression
-   | shortestPathExpression
-   | parenthesizedExpression
-   | functionInvocation
-   | variable
+expression1_Cypher5: literal_Cypher5
+   | parameter_Cypher5["ANY"]
+   | caseExpression_Cypher5
+   | extendedCaseExpression_Cypher5
+   | countStar_Cypher5
+   | existsExpression_Cypher5
+   | countExpression_Cypher5
+   | collectExpression_Cypher5
+   | mapProjection_Cypher5
+   | listComprehension_Cypher5
+   | listLiteral_Cypher5
+   | patternComprehension_Cypher5
+   | reduceExpression_Cypher5
+   | listItemsPredicate_Cypher5
+   | normalizeFunction_Cypher5
+   | trimFunction_Cypher5
+   | patternExpression_Cypher5
+   | shortestPathExpression_Cypher5
+   | parenthesizedExpression_Cypher5
+   | functionInvocation_Cypher5
+   | variable_Cypher5
    ;
 
-literal
-   : numberLiteral # NummericLiteral
-   | stringLiteral # StringsLiteral
-   | map           # OtherLiteral
-   | TRUE          # BooleanLiteral
-   | FALSE         # BooleanLiteral
-   | INF           # KeywordLiteral
-   | INFINITY      # KeywordLiteral
-   | NAN           # KeywordLiteral
-   | NULL          # KeywordLiteral
+literal_Cypher5: numberLiteral_Cypher5 # NummericLiteral5
+   | stringLiteral_Cypher5 # StringsLiteral5
+   | map_Cypher5           # OtherLiteral5
+   | TRUE          # BooleanLiteral5
+   | FALSE         # BooleanLiteral5
+   | INF           # KeywordLiteral5
+   | INFINITY      # KeywordLiteral5
+   | NAN           # KeywordLiteral5
+   | NULL          # KeywordLiteral5
    ;
 
-caseExpression
-   : CASE caseAlternative+ (ELSE expression)? END
+caseExpression_Cypher5: CASE caseAlternative_Cypher5+ (ELSE expression_Cypher5)? END
    ;
 
-caseAlternative
-   : WHEN expression THEN expression
+caseAlternative_Cypher5: WHEN expression_Cypher5 THEN expression_Cypher5
    ;
 
-extendedCaseExpression
-   : CASE expression extendedCaseAlternative+ (ELSE elseExp = expression)? END
+extendedCaseExpression_Cypher5: CASE expression_Cypher5 extendedCaseAlternative_Cypher5+ (ELSE elseExp = expression_Cypher5)? END
    ;
 
-extendedCaseAlternative
-   : WHEN extendedWhen (COMMA extendedWhen)* THEN expression
+extendedCaseAlternative_Cypher5: WHEN extendedWhen_Cypher5 (COMMA extendedWhen_Cypher5)* THEN expression_Cypher5
    ;
 
-// Making changes here? Consider looking at comparisonExpression6 and expression8 too.
-extendedWhen
-   : (REGEQ | STARTS WITH | ENDS WITH) expression6 # WhenStringOrList
-   | IS NOT? NULL                                  # WhenNull
-   | (IS NOT? TYPED | COLONCOLON) type             # WhenType
-   | IS NOT? normalForm? NORMALIZED                # WhenForm
+// Making changes here? Consider looking at comparisonExpression6_Cypher5 and expression8_Cypher5 too.
+extendedWhen_Cypher5: (REGEQ | STARTS WITH | ENDS WITH) expression6_Cypher5 # WhenStringOrList5
+   | IS NOT? NULL                                  # WhenNull5
+   | (IS NOT? TYPED | COLONCOLON) type_Cypher5             # WhenType5
+   | IS NOT? normalForm_Cypher5? NORMALIZED                # WhenForm5
    | (
       EQ
       | NEQ
@@ -586,84 +474,68 @@ extendedWhen
       | GE
       | LT
       | GT
-   ) expression7                                   # WhenComparator
-   | expression                                    # WhenEquals
+   ) expression7_Cypher5                                   # WhenComparator5
+   | expression_Cypher5                                    # WhenEquals5
    ;
 
 // Observe that this is not possible to write as:
-// (WHERE whereExp = expression)? (BAR barExp = expression)? RBRACKET
+// (WHERE whereExp = expression_Cypher5)? (BAR barExp = expression_Cypher5)? RBRACKET
 // Due to an ambigouity with cases such as [node IN nodes WHERE node:A|B]
 // where |B will be interpreted as part of the whereExp, rather than as the expected barExp.
-listComprehension
-   : LBRACKET variable IN expression ((WHERE whereExp = expression)? BAR barExp = expression | (WHERE whereExp = expression)?) RBRACKET
+listComprehension_Cypher5: LBRACKET variable_Cypher5 IN expression_Cypher5 ((WHERE whereExp = expression_Cypher5)? BAR barExp = expression_Cypher5 | (WHERE whereExp = expression_Cypher5)?) RBRACKET
    ;
 
-patternComprehension
-   : LBRACKET (variable EQ)? pathPatternNonEmpty (WHERE whereExp = expression)? BAR barExp = expression RBRACKET
+patternComprehension_Cypher5: LBRACKET (variable_Cypher5 EQ)? pathPatternNonEmpty_Cypher5 (WHERE whereExp = expression_Cypher5)? BAR barExp = expression_Cypher5 RBRACKET
    ;
 
-reduceExpression
-   : REDUCE LPAREN variable EQ expression COMMA variable IN expression BAR expression RPAREN
+reduceExpression_Cypher5: REDUCE LPAREN variable_Cypher5 EQ expression_Cypher5 COMMA variable_Cypher5 IN expression_Cypher5 BAR expression_Cypher5 RPAREN
    ;
 
-listItemsPredicate
-   : (
+listItemsPredicate_Cypher5: (
       ALL
       | ANY
       | NONE
       | SINGLE
-   ) LPAREN variable IN inExp = expression (WHERE whereExp = expression)? RPAREN
+   ) LPAREN variable_Cypher5 IN inExp = expression_Cypher5 (WHERE whereExp = expression_Cypher5)? RPAREN
    ;
 
-normalizeFunction
-   : NORMALIZE LPAREN expression (COMMA normalForm)? RPAREN
+normalizeFunction_Cypher5: NORMALIZE LPAREN expression_Cypher5 (COMMA normalForm_Cypher5)? RPAREN
    ;
 
-trimFunction
-   : TRIM LPAREN ((BOTH | LEADING | TRAILING)? (trimCharacterString = expression)? FROM)? trimSource = expression RPAREN
+trimFunction_Cypher5: TRIM LPAREN ((BOTH | LEADING | TRAILING)? (trimCharacterString = expression_Cypher5)? FROM)? trimSource = expression_Cypher5 RPAREN
    ;
 
-patternExpression
-   : pathPatternNonEmpty
+patternExpression_Cypher5: pathPatternNonEmpty_Cypher5
    ;
 
-shortestPathExpression
-   : shortestPathPattern
+shortestPathExpression_Cypher5: shortestPathPattern_Cypher5
    ;
 
-parenthesizedExpression
-   : LPAREN expression RPAREN
+parenthesizedExpression_Cypher5: LPAREN expression_Cypher5 RPAREN
    ;
 
-mapProjection
-   : variable LCURLY (mapProjectionElement (COMMA mapProjectionElement)* )? RCURLY
+mapProjection_Cypher5: variable_Cypher5 LCURLY (mapProjectionElement_Cypher5 (COMMA mapProjectionElement_Cypher5)* )? RCURLY
    ;
 
-mapProjectionElement
-   : propertyKeyName COLON expression
-   | property
-   | variable
+mapProjectionElement_Cypher5: propertyKeyName_Cypher5 COLON expression_Cypher5
+   | property_Cypher5
+   | variable_Cypher5
    | DOT TIMES
    ;
 
-countStar
-   : COUNT LPAREN TIMES RPAREN
+countStar_Cypher5: COUNT LPAREN TIMES RPAREN
    ;
 
-existsExpression
-   : EXISTS LCURLY (regularQuery | matchMode? patternList whereClause?) RCURLY
+existsExpression_Cypher5: EXISTS LCURLY (regularQuery_Cypher5 | matchMode_Cypher5? patternList_Cypher5 whereClause_Cypher5?) RCURLY
    ;
 
-countExpression
-   : COUNT LCURLY (regularQuery | matchMode? patternList whereClause?) RCURLY
+countExpression_Cypher5: COUNT LCURLY (regularQuery_Cypher5 | matchMode_Cypher5? patternList_Cypher5 whereClause_Cypher5?) RCURLY
    ;
 
-collectExpression
-   : COLLECT LCURLY regularQuery RCURLY
+collectExpression_Cypher5: COLLECT LCURLY regularQuery_Cypher5 RCURLY
    ;
 
-numberLiteral
-   : MINUS? (
+numberLiteral_Cypher5: MINUS? (
       DECIMAL_DOUBLE
       | UNSIGNED_DECIMAL_INTEGER
       | UNSIGNED_HEX_INTEGER
@@ -671,57 +543,46 @@ numberLiteral
    )
    ;
 
-signedIntegerLiteral
-   : MINUS? UNSIGNED_DECIMAL_INTEGER
+signedIntegerLiteral_Cypher5: MINUS? UNSIGNED_DECIMAL_INTEGER
    ;
 
-listLiteral
-   : LBRACKET (expression (COMMA expression)* )? RBRACKET
+listLiteral_Cypher5: LBRACKET (expression_Cypher5 (COMMA expression_Cypher5)* )? RBRACKET
    ;
 
-propertyKeyName
-   : symbolicNameString
+propertyKeyName_Cypher5: symbolicNameString_Cypher5
    ;
 
-parameter[String paramType]
-   : DOLLAR parameterName[paramType]
+parameter_Cypher5[String paramType]
+   : DOLLAR parameterName_Cypher5[paramType]
    ;
 
-parameterName[String paramType]
-   : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER)
+parameterName_Cypher5[String paramType]
+   : (symbolicNameString_Cypher5 | UNSIGNED_DECIMAL_INTEGER)
    ;
 
-functionInvocation
-   : functionName LPAREN (DISTINCT | ALL)? (functionArgument (COMMA functionArgument)* )? RPAREN
+functionInvocation_Cypher5: functionName_Cypher5 LPAREN (DISTINCT | ALL)? (functionArgument_Cypher5 (COMMA functionArgument_Cypher5)* )? RPAREN
    ;
 
-functionArgument
-   : expression
+functionArgument_Cypher5: expression_Cypher5
    ;
 
-functionName
-   : namespace symbolicNameString
+functionName_Cypher5: namespace_Cypher5 symbolicNameString_Cypher5
    ;
 
-namespace
-   : (symbolicNameString DOT)*
+namespace_Cypher5: (symbolicNameString_Cypher5 DOT)*
    ;
 
-variable
-   : symbolicNameString
+variable_Cypher5: symbolicNameString_Cypher5
    ;
 
 // Returns non-list of propertyKeyNames
-nonEmptyNameList
-   : symbolicNameString (COMMA symbolicNameString)*
+nonEmptyNameList_Cypher5: symbolicNameString_Cypher5 (COMMA symbolicNameString_Cypher5)*
    ;
 
-type
-   : typePart (BAR typePart)*
+type_Cypher5: typePart_Cypher5 (BAR typePart_Cypher5)*
    ;
 
-typePart
-   : typeName typeNullability? typeListSuffix*
+typePart_Cypher5: typeName typeNullability_Cypher5? typeListSuffix_Cypher5*
    ;
 
 typeName
@@ -747,7 +608,7 @@ typeName
    | RELATIONSHIP
    | EDGE
    | MAP
-   | (LIST | ARRAY) LT type GT
+   | (LIST | ARRAY) LT type_Cypher5 GT
    | PATH
    | PATHS
    | PROPERTY VALUE
@@ -758,181 +619,158 @@ typeName
       | EDGE
       | MAP
       | PROPERTY VALUE
-      | VALUE? LT type GT
+      | VALUE? LT type_Cypher5 GT
       | VALUE
    )?
    ;
 
-typeNullability
-   : NOT NULL
+typeNullability_Cypher5: NOT NULL
    | EXCLAMATION_MARK
    ;
 
-typeListSuffix
-   : (LIST | ARRAY) typeNullability?
+typeListSuffix_Cypher5: (LIST | ARRAY) typeNullability_Cypher5?
    ;
 
 // Show, terminate, schema and admin commands
 
-command
-   : useClause? (
-      createCommand
-      | dropCommand
-      | alterCommand
-      | renameCommand
-      | denyCommand
-      | revokeCommand
-      | grantCommand
-      | startDatabase
-      | stopDatabase
-      | enableServerCommand
-      | allocationCommand
-      | showCommand
-      | terminateCommand
+command_Cypher5: useClause_Cypher5? (
+      createCommand_Cypher5
+      | dropCommand_Cypher5
+      | alterCommand_Cypher5
+      | renameCommand_Cypher5
+      | denyCommand_Cypher5
+      | revokeCommand_Cypher5
+      | grantCommand_Cypher5
+      | startDatabase_Cypher5
+      | stopDatabase_Cypher5
+      | enableServerCommand_Cypher5
+      | allocationCommand_Cypher5
+      | showCommand_Cypher5
+      | terminateCommand_Cypher5
    )
    ;
 
-createCommand
-   : CREATE (OR REPLACE)? (
-      createAlias
-      | createCompositeDatabase
-      | createConstraint
-      | createDatabase
-      | createIndex
-      | createRole
-      | createUser
+createCommand_Cypher5: CREATE (OR REPLACE)? (
+      createAlias_Cypher5
+      | createCompositeDatabase_Cypher5
+      | createConstraint_Cypher5
+      | createDatabase_Cypher5
+      | createIndex_Cypher5
+      | createRole_Cypher5
+      | createUser_Cypher5
    )
    ;
 
-dropCommand
-   : DROP (
-      dropAlias
-      | dropConstraint
-      | dropDatabase
-      | dropIndex
-      | dropRole
-      | dropServer
-      | dropUser
+dropCommand_Cypher5: DROP (
+      dropAlias_Cypher5
+      | dropConstraint_Cypher5
+      | dropDatabase_Cypher5
+      | dropIndex_Cypher5
+      | dropRole_Cypher5
+      | dropServer_Cypher5
+      | dropUser_Cypher5
    )
    ;
 
-showCommand
-   : SHOW (
-      showAliases
-      | showConstraintCommand
-      | showCurrentUser
-      | showDatabase
-      | showFunctions
-      | showIndexCommand
-      | showPrivileges
-      | showProcedures
-      | showRolePrivileges
-      | showRoles
-      | showServers
-      | showSettings
-      | showSupportedPrivileges
-      | showTransactions
-      | showUserPrivileges
-      | showUsers
+showCommand_Cypher5: SHOW (
+      showAliases_Cypher5
+      | showConstraintCommand_Cypher5
+      | showCurrentUser_Cypher5
+      | showDatabase_Cypher5
+      | showFunctions_Cypher5
+      | showIndexCommand_Cypher5
+      | showPrivileges_Cypher5
+      | showProcedures_Cypher5
+      | showRolePrivileges_Cypher5
+      | showRoles_Cypher5
+      | showServers_Cypher5
+      | showSettings_Cypher5
+      | showSupportedPrivileges_Cypher5
+      | showTransactions_Cypher5
+      | showUserPrivileges_Cypher5
+      | showUsers_Cypher5
    )
    ;
 
-showCommandYield
-   : yieldClause returnClause?
-   | whereClause
+showCommandYield_Cypher5: yieldClause_Cypher5 returnClause_Cypher5?
+   | whereClause_Cypher5
    ;
 
-yieldItem
-   : variable (AS variable)?
+yieldItem_Cypher5: variable_Cypher5 (AS variable_Cypher5)?
    ;
 
-yieldSkip
-   : (OFFSET | SKIPROWS) signedIntegerLiteral
+yieldSkip_Cypher5: (OFFSET | SKIPROWS) signedIntegerLiteral_Cypher5
    ;
 
-yieldLimit
-   : LIMITROWS signedIntegerLiteral
+yieldLimit_Cypher5: LIMITROWS signedIntegerLiteral_Cypher5
    ;
 
-yieldClause
-   : YIELD (TIMES | yieldItem (COMMA yieldItem)*) orderBy? yieldSkip? yieldLimit? whereClause?
+yieldClause_Cypher5: YIELD (TIMES | yieldItem_Cypher5 (COMMA yieldItem_Cypher5)*) orderBy_Cypher5? yieldSkip_Cypher5? yieldLimit_Cypher5? whereClause_Cypher5?
    ;
 
-commandOptions
-   : OPTIONS mapOrParameter
+commandOptions_Cypher5: OPTIONS mapOrParameter_Cypher5
    ;
 
 // Non-admin show and terminate commands
 
-terminateCommand
-   : TERMINATE terminateTransactions
+terminateCommand_Cypher5: TERMINATE terminateTransactions_Cypher5
    ;
 
-composableCommandClauses
-   : terminateCommand
-   | composableShowCommandClauses
+composableCommandClauses_Cypher5: terminateCommand_Cypher5
+   | composableShowCommandClauses_Cypher5
    ;
 
-composableShowCommandClauses
-   : SHOW (
-      showIndexCommand
-      | showConstraintCommand
-      | showFunctions
-      | showProcedures
-      | showSettings
-      | showTransactions
+composableShowCommandClauses_Cypher5: SHOW (
+      showIndexCommand_Cypher5
+      | showConstraintCommand_Cypher5
+      | showFunctions_Cypher5
+      | showProcedures_Cypher5
+      | showSettings_Cypher5
+      | showTransactions_Cypher5
    )
    ;
 
-showBriefAndYield
-   : (BRIEF | VERBOSE) OUTPUT?
-   | yieldClause returnClause?
-   | whereClause
+showBriefAndYield_Cypher5: (BRIEF | VERBOSE) OUTPUT?
+   | yieldClause_Cypher5 returnClause_Cypher5?
+   | whereClause_Cypher5
    ;
 
-showIndexCommand
-   : (
+showIndexCommand_Cypher5: (
       FULLTEXT
       | LOOKUP
       | POINT
       | RANGE
       | TEXT
       | VECTOR
-   ) showIndexesNoBrief
-   | (ALL | BTREE)? showIndexesAllowBrief
+   ) showIndexesNoBrief_Cypher5
+   | (ALL | BTREE)? showIndexesAllowBrief_Cypher5
    ;
 
-showIndexesAllowBrief
-   : indexToken showBriefAndYield? composableCommandClauses?
+showIndexesAllowBrief_Cypher5: indexToken_Cypher5 showBriefAndYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-showIndexesNoBrief
-   : indexToken showCommandYield? composableCommandClauses?
+showIndexesNoBrief_Cypher5: indexToken_Cypher5 showCommandYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-showConstraintCommand
-   : (NODE | RELATIONSHIP | REL)? constraintAllowYieldType showConstraintsAllowYield # ShowConstraintMulti
-   | (NODE | RELATIONSHIP | REL) UNIQUE showConstraintsAllowYield                    # ShowConstraintUnique
-   | (RELATIONSHIP | REL)? KEY showConstraintsAllowYield                             # ShowConstraintKey
-   | REL EXIST showConstraintsAllowYield                                             # ShowConstraintRelExist
-   | (NODE | RELATIONSHIP)? EXISTS showConstraintsAllowBrief                         # ShowConstraintOldExists
-   | constraintBriefAndYieldType? showConstraintsAllowBriefAndYield                  # ShowConstraintBriefAndYield
+showConstraintCommand_Cypher5: (NODE | RELATIONSHIP | REL)? constraintAllowYieldType_Cypher5 showConstraintsAllowYield_Cypher5 # ShowConstraintMulti5
+   | (NODE | RELATIONSHIP | REL) UNIQUE showConstraintsAllowYield_Cypher5                    # ShowConstraintUnique5
+   | (RELATIONSHIP | REL)? KEY showConstraintsAllowYield_Cypher5                             # ShowConstraintKey5
+   | REL EXIST showConstraintsAllowYield_Cypher5                                             # ShowConstraintRelExist5
+   | (NODE | RELATIONSHIP)? EXISTS showConstraintsAllowBrief_Cypher5                         # ShowConstraintOldExists5
+   | constraintBriefAndYieldType_Cypher5? showConstraintsAllowBriefAndYield_Cypher5                  # ShowConstraintBriefAndYield5
    ;
 
-constraintAllowYieldType
-   : UNIQUENESS
-   | constraintExistType
+constraintAllowYieldType_Cypher5: UNIQUENESS
+   | constraintExistType_Cypher5
    | PROPERTY TYPE
    ;
 
-constraintExistType
-   : EXISTENCE
+constraintExistType_Cypher5: EXISTENCE
    | PROPERTY EXISTENCE
    | PROPERTY EXIST
    ;
 
-constraintBriefAndYieldType
-   : ALL
+constraintBriefAndYieldType_Cypher5: ALL
    | UNIQUE
    | EXIST
    | NODE KEY
@@ -940,834 +778,670 @@ constraintBriefAndYieldType
    | RELATIONSHIP EXIST
    ;
 
-showConstraintsAllowBriefAndYield
-   : constraintToken showBriefAndYield? composableCommandClauses?
+showConstraintsAllowBriefAndYield_Cypher5: constraintToken_Cypher5 showBriefAndYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-showConstraintsAllowBrief
-   : constraintToken ((BRIEF | VERBOSE) OUTPUT?)? composableCommandClauses?
+showConstraintsAllowBrief_Cypher5: constraintToken_Cypher5 ((BRIEF | VERBOSE) OUTPUT?)? composableCommandClauses_Cypher5?
    ;
 
-showConstraintsAllowYield
-   : constraintToken showCommandYield? composableCommandClauses?
+showConstraintsAllowYield_Cypher5: constraintToken_Cypher5 showCommandYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-showProcedures
-   : (PROCEDURE | PROCEDURES) executableBy? showCommandYield? composableCommandClauses?
+showProcedures_Cypher5: (PROCEDURE | PROCEDURES) executableBy_Cypher5? showCommandYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-showFunctions
-   : showFunctionsType? functionToken executableBy? showCommandYield? composableCommandClauses?
+showFunctions_Cypher5: showFunctionsType_Cypher5? functionToken_Cypher5 executableBy_Cypher5? showCommandYield_Cypher5? composableCommandClauses_Cypher5?
    ;
 
-functionToken
-   : FUNCTION | FUNCTIONS
+functionToken_Cypher5: FUNCTION | FUNCTIONS
    ;
 
-executableBy
-   : EXECUTABLE (BY (CURRENT USER | symbolicNameString))?
+executableBy_Cypher5: EXECUTABLE (BY (CURRENT USER | symbolicNameString_Cypher5))?
    ;
 
-showFunctionsType
-   : ALL
+showFunctionsType_Cypher5: ALL
    | BUILT IN
    | USER DEFINED
    ;
 
-showTransactions
-   : transactionToken namesAndClauses
+showTransactions_Cypher5: transactionToken_Cypher5 namesAndClauses_Cypher5
    ;
 
-terminateTransactions
-   : transactionToken namesAndClauses
+terminateTransactions_Cypher5: transactionToken_Cypher5 namesAndClauses_Cypher5
    ;
 
-showSettings
-   : settingToken namesAndClauses
+showSettings_Cypher5: settingToken_Cypher5 namesAndClauses_Cypher5
    ;
 
-settingToken
-   : SETTING | SETTINGS
+settingToken_Cypher5: SETTING | SETTINGS
    ;
 
-namesAndClauses
-   : (showCommandYield? | stringsOrExpression showCommandYield?) composableCommandClauses?
+namesAndClauses_Cypher5: (showCommandYield_Cypher5? | stringsOrExpression_Cypher5 showCommandYield_Cypher5?) composableCommandClauses_Cypher5?
    ;
 
-stringsOrExpression
-   : stringList
-   | expression
+stringsOrExpression_Cypher5: stringList_Cypher5
+   | expression_Cypher5
    ;
 
 // Schema commands
 
-commandNodePattern
-   : LPAREN variable labelType RPAREN
+commandNodePattern_Cypher5: LPAREN variable_Cypher5 labelType_Cypher5 RPAREN
    ;
 
-commandRelPattern
-   : LPAREN RPAREN leftArrow? arrowLine LBRACKET variable relType RBRACKET arrowLine rightArrow? LPAREN RPAREN
+commandRelPattern_Cypher5: LPAREN RPAREN leftArrow_Cypher5? arrowLine_Cypher5 LBRACKET variable_Cypher5 relType_Cypher5 RBRACKET arrowLine_Cypher5 rightArrow_Cypher5? LPAREN RPAREN
    ;
 
-createConstraint
-   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? (ON | FOR) (commandNodePattern | commandRelPattern) constraintType commandOptions?
+createConstraint_Cypher5: CONSTRAINT symbolicNameOrStringParameter_Cypher5? (IF NOT EXISTS)? (ON | FOR) (commandNodePattern_Cypher5 | commandRelPattern_Cypher5) constraintType_Cypher5 commandOptions_Cypher5?
    ;
 
-constraintType
-   : ASSERT EXISTS propertyList                                                  # ConstraintExists
-   | (REQUIRE | ASSERT) propertyList (COLONCOLON | IS (TYPED | COLONCOLON)) type # ConstraintTyped
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey
-   | (REQUIRE | ASSERT) propertyList IS NOT NULL                                 # ConstraintIsNotNull
+constraintType_Cypher5: ASSERT EXISTS propertyList_Cypher5                                                  # ConstraintExists5
+   | (REQUIRE | ASSERT) propertyList_Cypher5 (COLONCOLON | IS (TYPED | COLONCOLON)) type_Cypher5 # ConstraintTyped5
+   | (REQUIRE | ASSERT) propertyList_Cypher5 IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique5
+   | (REQUIRE | ASSERT) propertyList_Cypher5 IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey5
+   | (REQUIRE | ASSERT) propertyList_Cypher5 IS NOT NULL                                 # ConstraintIsNotNull5
    ;
 
-dropConstraint
-   : CONSTRAINT (ON (commandNodePattern | commandRelPattern) ASSERT (EXISTS propertyList | propertyList IS (UNIQUE | NODE KEY | NOT NULL)) | symbolicNameOrStringParameter (IF EXISTS)?)
+dropConstraint_Cypher5: CONSTRAINT (ON (commandNodePattern_Cypher5 | commandRelPattern_Cypher5) ASSERT (EXISTS propertyList_Cypher5 | propertyList_Cypher5 IS (UNIQUE | NODE KEY | NOT NULL)) | symbolicNameOrStringParameter_Cypher5 (IF EXISTS)?)
    ;
 
-createIndex
-   : BTREE INDEX createIndex_
-   | RANGE INDEX createIndex_
-   | TEXT INDEX createIndex_
-   | POINT INDEX createIndex_
-   | VECTOR INDEX createIndex_
-   | LOOKUP INDEX createLookupIndex
-   | FULLTEXT INDEX createFulltextIndex
-   | INDEX (ON oldCreateIndex | createIndex_)
+createIndex_Cypher5: BTREE INDEX createIndex__Cypher5
+   | RANGE INDEX createIndex__Cypher5
+   | TEXT INDEX createIndex__Cypher5
+   | POINT INDEX createIndex__Cypher5
+   | VECTOR INDEX createIndex__Cypher5
+   | LOOKUP INDEX createLookupIndex_Cypher5
+   | FULLTEXT INDEX createFulltextIndex_Cypher5
+   | INDEX (ON oldCreateIndex_Cypher5 | createIndex__Cypher5)
    ;
 
-oldCreateIndex
-   : labelType LPAREN nonEmptyNameList RPAREN
+oldCreateIndex_Cypher5: labelType_Cypher5 LPAREN nonEmptyNameList_Cypher5 RPAREN
    ;
 
-createIndex_
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) ON propertyList commandOptions?
+createIndex__Cypher5: symbolicNameOrStringParameter_Cypher5? (IF NOT EXISTS)? FOR (commandNodePattern_Cypher5 | commandRelPattern_Cypher5) ON propertyList_Cypher5 commandOptions_Cypher5?
    ;
 
-createFulltextIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (fulltextNodePattern | fulltextRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
+createFulltextIndex_Cypher5: symbolicNameOrStringParameter_Cypher5? (IF NOT EXISTS)? FOR (fulltextNodePattern_Cypher5 | fulltextRelPattern_Cypher5) ON EACH LBRACKET enclosedPropertyList_Cypher5 RBRACKET commandOptions_Cypher5?
    ;
 
-fulltextNodePattern
-   : LPAREN variable COLON symbolicNameString (BAR symbolicNameString)* RPAREN
+fulltextNodePattern_Cypher5: LPAREN variable_Cypher5 COLON symbolicNameString_Cypher5 (BAR symbolicNameString_Cypher5)* RPAREN
    ;
 
-fulltextRelPattern
-   : LPAREN RPAREN leftArrow? arrowLine LBRACKET variable COLON symbolicNameString (BAR symbolicNameString)* RBRACKET arrowLine rightArrow? LPAREN RPAREN
+fulltextRelPattern_Cypher5: LPAREN RPAREN leftArrow_Cypher5? arrowLine_Cypher5 LBRACKET variable_Cypher5 COLON symbolicNameString_Cypher5 (BAR symbolicNameString_Cypher5)* RBRACKET arrowLine_Cypher5 rightArrow_Cypher5? LPAREN RPAREN
    ;
 
-createLookupIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (lookupIndexNodePattern | lookupIndexRelPattern) symbolicNameString LPAREN variable RPAREN commandOptions?
+createLookupIndex_Cypher5: symbolicNameOrStringParameter_Cypher5? (IF NOT EXISTS)? FOR (lookupIndexNodePattern_Cypher5 | lookupIndexRelPattern_Cypher5) symbolicNameString_Cypher5 LPAREN variable_Cypher5 RPAREN commandOptions_Cypher5?
    ;
 
-lookupIndexNodePattern
-   : LPAREN variable RPAREN ON EACH
+lookupIndexNodePattern_Cypher5: LPAREN variable_Cypher5 RPAREN ON EACH
    ;
 
-lookupIndexRelPattern
-   : LPAREN RPAREN leftArrow? arrowLine LBRACKET variable RBRACKET arrowLine rightArrow? LPAREN RPAREN ON EACH?
+lookupIndexRelPattern_Cypher5: LPAREN RPAREN leftArrow_Cypher5? arrowLine_Cypher5 LBRACKET variable_Cypher5 RBRACKET arrowLine_Cypher5 rightArrow_Cypher5? LPAREN RPAREN ON EACH?
    ;
 
-dropIndex
-   : INDEX (ON labelType LPAREN nonEmptyNameList RPAREN | symbolicNameOrStringParameter (IF EXISTS)?)
+dropIndex_Cypher5: INDEX (ON labelType_Cypher5 LPAREN nonEmptyNameList_Cypher5 RPAREN | symbolicNameOrStringParameter_Cypher5 (IF EXISTS)?)
    ;
 
-propertyList
-   : variable property | LPAREN enclosedPropertyList RPAREN
+propertyList_Cypher5: variable_Cypher5 property_Cypher5 | LPAREN enclosedPropertyList_Cypher5 RPAREN
    ;
 
-enclosedPropertyList
-   : variable property (COMMA variable property)*
+enclosedPropertyList_Cypher5: variable_Cypher5 property_Cypher5 (COMMA variable_Cypher5 property_Cypher5)*
    ;
 
 // Admin commands
 
-alterCommand
-   : ALTER (
-      alterAlias
-      | alterCurrentUser
-      | alterDatabase
-      | alterUser
-      | alterServer
+alterCommand_Cypher5: ALTER (
+      alterAlias_Cypher5
+      | alterCurrentUser_Cypher5
+      | alterDatabase_Cypher5
+      | alterUser_Cypher5
+      | alterServer_Cypher5
    )
    ;
 
-renameCommand
-   : RENAME (renameRole | renameServer | renameUser)
+renameCommand_Cypher5: RENAME (renameRole_Cypher5 | renameServer_Cypher5 | renameUser_Cypher5)
    ;
 
-grantCommand
-   : GRANT (
-      IMMUTABLE? privilege TO roleNames
-      | roleToken grantRole
+grantCommand_Cypher5: GRANT (
+      IMMUTABLE? privilege_Cypher5 TO roleNames_Cypher5
+      | roleToken_Cypher5 grantRole_Cypher5
    )
    ;
 
-denyCommand
-   : DENY IMMUTABLE? privilege TO roleNames
+denyCommand_Cypher5: DENY IMMUTABLE? privilege_Cypher5 TO roleNames_Cypher5
    ;
 
-revokeCommand
-   : REVOKE (
-      (DENY | GRANT)? IMMUTABLE? privilege FROM roleNames
-      | roleToken revokeRole
+revokeCommand_Cypher5: REVOKE (
+      (DENY | GRANT)? IMMUTABLE? privilege_Cypher5 FROM roleNames_Cypher5
+      | roleToken_Cypher5 revokeRole_Cypher5
    )
    ;
 
-userNames
-   : symbolicNameOrStringParameterList
+userNames_Cypher5: symbolicNameOrStringParameterList_Cypher5
    ;
 
-roleNames
-   : symbolicNameOrStringParameterList
+roleNames_Cypher5: symbolicNameOrStringParameterList_Cypher5
    ;
 
-roleToken
-   : ROLES
+roleToken_Cypher5: ROLES
    | ROLE
    ;
 
 // Server commands
 
-enableServerCommand
-   : ENABLE SERVER stringOrParameter commandOptions?
+enableServerCommand_Cypher5: ENABLE SERVER stringOrParameter_Cypher5 commandOptions_Cypher5?
    ;
 
-alterServer
-   : SERVER stringOrParameter SET commandOptions
+alterServer_Cypher5: SERVER stringOrParameter_Cypher5 SET commandOptions_Cypher5
    ;
 
-renameServer
-   : SERVER stringOrParameter TO stringOrParameter
+renameServer_Cypher5: SERVER stringOrParameter_Cypher5 TO stringOrParameter_Cypher5
    ;
 
-dropServer
-   : SERVER stringOrParameter
+dropServer_Cypher5: SERVER stringOrParameter_Cypher5
    ;
 
-showServers
-   : (SERVER | SERVERS) showCommandYield?
+showServers_Cypher5: (SERVER | SERVERS) showCommandYield_Cypher5?
    ;
 
-allocationCommand
-   : DRYRUN? (deallocateDatabaseFromServers | reallocateDatabases)
+allocationCommand_Cypher5: DRYRUN? (deallocateDatabaseFromServers_Cypher5 | reallocateDatabases_Cypher5)
    ;
 
-deallocateDatabaseFromServers
-   : DEALLOCATE (DATABASE | DATABASES) FROM (SERVER | SERVERS) stringOrParameter (COMMA stringOrParameter)*
+deallocateDatabaseFromServers_Cypher5: DEALLOCATE (DATABASE | DATABASES) FROM (SERVER | SERVERS) stringOrParameter_Cypher5 (COMMA stringOrParameter_Cypher5)*
    ;
 
-reallocateDatabases
-   : REALLOCATE (DATABASE | DATABASES)
+reallocateDatabases_Cypher5: REALLOCATE (DATABASE | DATABASES)
    ;
 
 // Role commands
 
-createRole
-   : ROLE commandNameExpression (IF NOT EXISTS)? (AS COPY OF commandNameExpression)?
+createRole_Cypher5: ROLE commandNameExpression_Cypher5 (IF NOT EXISTS)? (AS COPY OF commandNameExpression_Cypher5)?
    ;
 
-dropRole
-   : ROLE commandNameExpression (IF EXISTS)?
+dropRole_Cypher5: ROLE commandNameExpression_Cypher5 (IF EXISTS)?
    ;
 
-renameRole
-   : ROLE commandNameExpression (IF EXISTS)? TO commandNameExpression
+renameRole_Cypher5: ROLE commandNameExpression_Cypher5 (IF EXISTS)? TO commandNameExpression_Cypher5
    ;
 
-showRoles
-   : (ALL | POPULATED)? roleToken (WITH (USER | USERS))? showCommandYield?
+showRoles_Cypher5: (ALL | POPULATED)? roleToken_Cypher5 (WITH (USER | USERS))? showCommandYield_Cypher5?
    ;
 
-grantRole
-   : roleNames TO userNames
+grantRole_Cypher5: roleNames_Cypher5 TO userNames_Cypher5
    ;
 
-revokeRole
-   : roleNames FROM userNames
+revokeRole_Cypher5: roleNames_Cypher5 FROM userNames_Cypher5
    ;
 
 // User commands
 
-createUser
-   : USER commandNameExpression (IF NOT EXISTS)? (SET (
-      password
-      | PASSWORD passwordChangeRequired
-      | userStatus
-      | homeDatabase
-      | setAuthClause
+createUser_Cypher5: USER commandNameExpression_Cypher5 (IF NOT EXISTS)? (SET (
+      password_Cypher5
+      | PASSWORD passwordChangeRequired_Cypher5
+      | userStatus_Cypher5
+      | homeDatabase_Cypher5
+      | setAuthClause_Cypher5
    ))+;
 
-dropUser
-   : USER commandNameExpression (IF EXISTS)?
+dropUser_Cypher5: USER commandNameExpression_Cypher5 (IF EXISTS)?
    ;
 
-renameUser
-   : USER commandNameExpression (IF EXISTS)? TO commandNameExpression
+renameUser_Cypher5: USER commandNameExpression_Cypher5 (IF EXISTS)? TO commandNameExpression_Cypher5
    ;
 
-alterCurrentUser
-   : CURRENT USER SET PASSWORD FROM passwordExpression TO passwordExpression
+alterCurrentUser_Cypher5: CURRENT USER SET PASSWORD FROM passwordExpression_Cypher5 TO passwordExpression_Cypher5
    ;
 
-alterUser
-   : USER commandNameExpression (IF EXISTS)? (REMOVE (
+alterUser_Cypher5: USER commandNameExpression_Cypher5 (IF EXISTS)? (REMOVE (
       HOME DATABASE
       | ALL AUTH (PROVIDER | PROVIDERS)?
-      | removeNamedProvider
+      | removeNamedProvider_Cypher5
    ))* (SET (
-      password
-      | PASSWORD passwordChangeRequired
-      | userStatus
-      | homeDatabase
-      | setAuthClause
+      password_Cypher5
+      | PASSWORD passwordChangeRequired_Cypher5
+      | userStatus_Cypher5
+      | homeDatabase_Cypher5
+      | setAuthClause_Cypher5
    ))*
    ;
 
-removeNamedProvider
-   : AUTH (PROVIDER | PROVIDERS)? (stringLiteral | stringListLiteral | parameter["ANY"])
+removeNamedProvider_Cypher5: AUTH (PROVIDER | PROVIDERS)? (stringLiteral_Cypher5 | stringListLiteral_Cypher5 | parameter_Cypher5["ANY"])
    ;
 
-password
-   : (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression passwordChangeRequired?
+password_Cypher5: (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression_Cypher5 passwordChangeRequired_Cypher5?
    ;
 
-passwordOnly
-   : (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression
+passwordOnly_Cypher5: (PLAINTEXT | ENCRYPTED)? PASSWORD passwordExpression_Cypher5
    ;
 
-passwordExpression
-   : stringLiteral
-   | parameter["STRING"]
+passwordExpression_Cypher5: stringLiteral_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
-passwordChangeRequired
-   : CHANGE NOT? REQUIRED
+passwordChangeRequired_Cypher5: CHANGE NOT? REQUIRED
    ;
 
-userStatus
-   : STATUS (SUSPENDED | ACTIVE)
+userStatus_Cypher5: STATUS (SUSPENDED | ACTIVE)
    ;
 
-homeDatabase
-   : HOME DATABASE symbolicAliasNameOrParameter
+homeDatabase_Cypher5: HOME DATABASE symbolicAliasNameOrParameter_Cypher5
    ;
 
-setAuthClause
-   : AUTH PROVIDER? stringLiteral LCURLY (SET (
-      userAuthAttribute
+setAuthClause_Cypher5: AUTH PROVIDER? stringLiteral_Cypher5 LCURLY (SET (
+      userAuthAttribute_Cypher5
    ))+ RCURLY
    ;
 
-userAuthAttribute
-   : ID stringOrParameterExpression
-   | passwordOnly
-   | PASSWORD passwordChangeRequired
+userAuthAttribute_Cypher5: ID stringOrParameterExpression_Cypher5
+   | passwordOnly_Cypher5
+   | PASSWORD passwordChangeRequired_Cypher5
    ;
 
-showUsers
-   : (USER | USERS) (WITH AUTH)? showCommandYield?
+showUsers_Cypher5: (USER | USERS) (WITH AUTH)? showCommandYield_Cypher5?
    ;
 
-showCurrentUser
-   : CURRENT USER showCommandYield?
+showCurrentUser_Cypher5: CURRENT USER showCommandYield_Cypher5?
    ;
 
 // Privilege commands
 
-showSupportedPrivileges
-   : SUPPORTED privilegeToken showCommandYield?
+showSupportedPrivileges_Cypher5: SUPPORTED privilegeToken_Cypher5 showCommandYield_Cypher5?
    ;
 
-showPrivileges
-   : ALL? privilegeToken privilegeAsCommand? showCommandYield?
+showPrivileges_Cypher5: ALL? privilegeToken_Cypher5 privilegeAsCommand_Cypher5? showCommandYield_Cypher5?
    ;
 
-showRolePrivileges
-   : (ROLE | ROLES) roleNames privilegeToken privilegeAsCommand? showCommandYield?
+showRolePrivileges_Cypher5: (ROLE | ROLES) roleNames_Cypher5 privilegeToken_Cypher5 privilegeAsCommand_Cypher5? showCommandYield_Cypher5?
    ;
 
-showUserPrivileges
-   : (USER | USERS) userNames? privilegeToken privilegeAsCommand? showCommandYield?
+showUserPrivileges_Cypher5: (USER | USERS) userNames_Cypher5? privilegeToken_Cypher5 privilegeAsCommand_Cypher5? showCommandYield_Cypher5?
    ;
 
-privilegeAsCommand
-   : AS REVOKE? (COMMAND | COMMANDS)
+privilegeAsCommand_Cypher5: AS REVOKE? (COMMAND | COMMANDS)
    ;
 
-privilegeToken
-   : PRIVILEGE
+privilegeToken_Cypher5: PRIVILEGE
    | PRIVILEGES
    ;
 
-privilege
-   : allPrivilege
-   | createPrivilege
-   | databasePrivilege
-   | dbmsPrivilege
-   | dropPrivilege
-   | loadPrivilege
-   | qualifiedGraphPrivileges
-   | qualifiedGraphPrivilegesWithProperty
-   | removePrivilege
-   | setPrivilege
-   | showPrivilege
-   | writePrivilege
+privilege_Cypher5: allPrivilege_Cypher5
+   | createPrivilege_Cypher5
+   | databasePrivilege_Cypher5
+   | dbmsPrivilege_Cypher5
+   | dropPrivilege_Cypher5
+   | loadPrivilege_Cypher5
+   | qualifiedGraphPrivileges_Cypher5
+   | qualifiedGraphPrivilegesWithProperty_Cypher5
+   | removePrivilege_Cypher5
+   | setPrivilege_Cypher5
+   | showPrivilege_Cypher5
+   | writePrivilege_Cypher5
    ;
 
-allPrivilege
-   : ALL allPrivilegeType? ON allPrivilegeTarget
+allPrivilege_Cypher5: ALL allPrivilegeType_Cypher5? ON allPrivilegeTarget_Cypher5
    ;
 
-allPrivilegeType
-   : (DATABASE | GRAPH | DBMS)? PRIVILEGES
+allPrivilegeType_Cypher5: (DATABASE | GRAPH | DBMS)? PRIVILEGES
    ;
 
-allPrivilegeTarget
-   : (DEFAULT | HOME) (DATABASE | GRAPH)                    # DefaultTarget
-   | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList) # DatabaseVariableTarget
-   | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)       # GraphVariableTarget
-   | DBMS                                                   # DBMSTarget
+allPrivilegeTarget_Cypher5: (DEFAULT | HOME) (DATABASE | GRAPH)                    # DefaultTarget5
+   | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList_Cypher5) # DatabaseVariableTarget5
+   | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList_Cypher5)       # GraphVariableTarget5
+   | DBMS                                                   # DBMSTarget5
    ;
 
-createPrivilege
-   : CREATE (
-      createPrivilegeForDatabase ON databaseScope
-      | actionForDBMS ON DBMS
-      | ON graphScope graphQualifier
+createPrivilege_Cypher5: CREATE (
+      createPrivilegeForDatabase_Cypher5 ON databaseScope_Cypher5
+      | actionForDBMS_Cypher5 ON DBMS
+      | ON graphScope_Cypher5 graphQualifier_Cypher5
    )
    ;
 
-createPrivilegeForDatabase
-   : indexToken
-   | constraintToken
-   | createNodePrivilegeToken
-   | createRelPrivilegeToken
-   | createPropertyPrivilegeToken
+createPrivilegeForDatabase_Cypher5: indexToken_Cypher5
+   | constraintToken_Cypher5
+   | createNodePrivilegeToken_Cypher5
+   | createRelPrivilegeToken_Cypher5
+   | createPropertyPrivilegeToken_Cypher5
    ;
 
-createNodePrivilegeToken
-   : NEW NODE? (LABEL | LABELS)
+createNodePrivilegeToken_Cypher5: NEW NODE? (LABEL | LABELS)
    ;
 
-createRelPrivilegeToken
-   : NEW RELATIONSHIP? (TYPE | TYPES)
+createRelPrivilegeToken_Cypher5: NEW RELATIONSHIP? (TYPE | TYPES)
    ;
 
-createPropertyPrivilegeToken
-   : NEW PROPERTY? (NAME | NAMES)
+createPropertyPrivilegeToken_Cypher5: NEW PROPERTY? (NAME | NAMES)
    ;
 
-actionForDBMS
-   : ALIAS
+actionForDBMS_Cypher5: ALIAS
    | COMPOSITE? DATABASE
    | ROLE
    | USER
    ;
 
-dropPrivilege
-   : DROP (
-      (indexToken | constraintToken) ON databaseScope
-      | actionForDBMS ON DBMS
+dropPrivilege_Cypher5: DROP (
+      (indexToken_Cypher5 | constraintToken_Cypher5) ON databaseScope_Cypher5
+      | actionForDBMS_Cypher5 ON DBMS
    )
    ;
 
-loadPrivilege
-   : LOAD ON (
-      (URL | CIDR) stringOrParameter
+loadPrivilege_Cypher5: LOAD ON (
+      (URL | CIDR) stringOrParameter_Cypher5
       | ALL DATA
    )
    ;
 
-showPrivilege
-   : SHOW (
-      (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER) ON DBMS
+showPrivilege_Cypher5: SHOW (
+      (indexToken_Cypher5 | constraintToken_Cypher5 | transactionToken_Cypher5 userQualifier_Cypher5?) ON databaseScope_Cypher5
+      | (ALIAS | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken_Cypher5 settingQualifier_Cypher5 | USER) ON DBMS
    )
    ;
 
-setPrivilege
-   : SET (
-      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE ACCESS) ON DBMS
-      | LABEL labelsResource ON graphScope
-      | PROPERTY propertiesResource ON graphScope graphQualifier
+setPrivilege_Cypher5: SET (
+      (passwordToken_Cypher5 | USER (STATUS | HOME DATABASE) | DATABASE ACCESS) ON DBMS
+      | LABEL labelsResource_Cypher5 ON graphScope_Cypher5
+      | PROPERTY propertiesResource_Cypher5 ON graphScope_Cypher5 graphQualifier_Cypher5
       | AUTH ON DBMS
    )
    ;
 
-passwordToken
-   : PASSWORD
+passwordToken_Cypher5: PASSWORD
    | PASSWORDS
    ;
 
-removePrivilege
-   : REMOVE (
+removePrivilege_Cypher5: REMOVE (
       (PRIVILEGE | ROLE) ON DBMS
-      | LABEL labelsResource ON graphScope
+      | LABEL labelsResource_Cypher5 ON graphScope_Cypher5
    )
    ;
 
-writePrivilege
-   : WRITE ON graphScope
+writePrivilege_Cypher5: WRITE ON graphScope_Cypher5
    ;
 
-databasePrivilege
-   : (
+databasePrivilege_Cypher5: (
       ACCESS
       | START
       | STOP
-      | (indexToken | constraintToken | NAME) MANAGEMENT?
-      | (TRANSACTION MANAGEMENT? | TERMINATE transactionToken) userQualifier?
+      | (indexToken_Cypher5 | constraintToken_Cypher5 | NAME) MANAGEMENT?
+      | (TRANSACTION MANAGEMENT? | TERMINATE transactionToken_Cypher5) userQualifier_Cypher5?
    )
-   ON databaseScope
+   ON databaseScope_Cypher5
    ;
 
-dbmsPrivilege
-   : (
+dbmsPrivilege_Cypher5: (
       ALTER (ALIAS | DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
       | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER) MANAGEMENT
-      | dbmsPrivilegeExecute
+      | dbmsPrivilegeExecute_Cypher5
       | RENAME (ROLE | USER)
-      | IMPERSONATE userQualifier?
+      | IMPERSONATE userQualifier_Cypher5?
    )
    ON DBMS
    ;
 
-dbmsPrivilegeExecute
-   : EXECUTE (
-      adminToken PROCEDURES
+dbmsPrivilegeExecute_Cypher5: EXECUTE (
+      adminToken_Cypher5 PROCEDURES
       | BOOSTED? (
-         procedureToken executeProcedureQualifier
-         | (USER DEFINED?)? functionToken executeFunctionQualifier
+         procedureToken_Cypher5 executeProcedureQualifier_Cypher5
+         | (USER DEFINED?)? functionToken_Cypher5 executeFunctionQualifier_Cypher5
       )
    )
    ;
 
-adminToken
-   : ADMIN
+adminToken_Cypher5: ADMIN
    | ADMINISTRATOR
    ;
 
-procedureToken
-   : PROCEDURE
+procedureToken_Cypher5: PROCEDURE
    | PROCEDURES
    ;
 
-indexToken
-   : INDEX
+indexToken_Cypher5: INDEX
    | INDEXES
    ;
 
-constraintToken
-   : CONSTRAINT
+constraintToken_Cypher5: CONSTRAINT
    | CONSTRAINTS
    ;
 
-transactionToken
-   : TRANSACTION
+transactionToken_Cypher5: TRANSACTION
    | TRANSACTIONS
    ;
 
-userQualifier
-   : LPAREN (TIMES | userNames) RPAREN
+userQualifier_Cypher5: LPAREN (TIMES | userNames_Cypher5) RPAREN
    ;
 
-executeFunctionQualifier
-   : globs
+executeFunctionQualifier_Cypher5: globs_Cypher5
    ;
 
-executeProcedureQualifier
-   : globs
+executeProcedureQualifier_Cypher5: globs_Cypher5
    ;
 
-settingQualifier
-   : globs
+settingQualifier_Cypher5: globs_Cypher5
    ;
 
-globs
-   : glob (COMMA glob)*
+globs_Cypher5: glob_Cypher5 (COMMA glob_Cypher5)*
    ;
 
-glob
-   : escapedSymbolicNameString globRecursive?
-   | globRecursive
+glob_Cypher5: escapedSymbolicNameString_Cypher5 globRecursive_Cypher5?
+   | globRecursive_Cypher5
    ;
 
-globRecursive
-   : globPart globRecursive?
+globRecursive_Cypher5: globPart_Cypher5 globRecursive_Cypher5?
    ;
 
-globPart
-   : DOT escapedSymbolicNameString?
+globPart_Cypher5: DOT escapedSymbolicNameString_Cypher5?
    | QUESTION
    | TIMES
-   | unescapedSymbolicNameString
+   | unescapedSymbolicNameString_Cypher5
    ;
 
-qualifiedGraphPrivilegesWithProperty
-   : (TRAVERSE | (READ | MATCH) propertiesResource) ON graphScope graphQualifier (LPAREN TIMES RPAREN)?
+qualifiedGraphPrivilegesWithProperty_Cypher5: (TRAVERSE | (READ | MATCH) propertiesResource_Cypher5) ON graphScope_Cypher5 graphQualifier_Cypher5 (LPAREN TIMES RPAREN)?
    ;
 
-qualifiedGraphPrivileges
-   : (DELETE | MERGE propertiesResource) ON graphScope graphQualifier
+qualifiedGraphPrivileges_Cypher5: (DELETE | MERGE propertiesResource_Cypher5) ON graphScope_Cypher5 graphQualifier_Cypher5
    ;
 
-labelsResource
-   : TIMES
-   | nonEmptyStringList
+labelsResource_Cypher5: TIMES
+   | nonEmptyStringList_Cypher5
    ;
 
-propertiesResource
-   : LCURLY (TIMES | nonEmptyStringList) RCURLY
+propertiesResource_Cypher5: LCURLY (TIMES | nonEmptyStringList_Cypher5) RCURLY
    ;
 
 // Returns non-empty list of strings
-nonEmptyStringList
-   : symbolicNameString (COMMA symbolicNameString)*
+nonEmptyStringList_Cypher5: symbolicNameString_Cypher5 (COMMA symbolicNameString_Cypher5)*
    ;
 
-graphQualifier
-   : (
-      graphQualifierToken (TIMES | nonEmptyStringList)
-      | FOR LPAREN variable? (COLON symbolicNameString (BAR symbolicNameString)*)? (RPAREN WHERE expression | (WHERE expression | map) RPAREN)
+graphQualifier_Cypher5: (
+      graphQualifierToken_Cypher5 (TIMES | nonEmptyStringList_Cypher5)
+      | FOR LPAREN variable_Cypher5? (COLON symbolicNameString_Cypher5 (BAR symbolicNameString_Cypher5)*)? (RPAREN WHERE expression_Cypher5 | (WHERE expression_Cypher5 | map_Cypher5) RPAREN)
    )?
    ;
 
-graphQualifierToken
-   : relToken
-   | nodeToken
-   | elementToken
+graphQualifierToken_Cypher5: relToken_Cypher5
+   | nodeToken_Cypher5
+   | elementToken_Cypher5
    ;
 
-relToken
-   : RELATIONSHIP
+relToken_Cypher5: RELATIONSHIP
    | RELATIONSHIPS
    ;
 
-elementToken
-   : ELEMENT
+elementToken_Cypher5: ELEMENT
    | ELEMENTS
    ;
 
-nodeToken
-   : NODE
+nodeToken_Cypher5: NODE
    | NODES
    ;
 
-databaseScope
-   : (DEFAULT | HOME) DATABASE
-   | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList)
+databaseScope_Cypher5: (DEFAULT | HOME) DATABASE
+   | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList_Cypher5)
    ;
 
-graphScope
-   : (DEFAULT | HOME) GRAPH
-   | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)
+graphScope_Cypher5: (DEFAULT | HOME) GRAPH
+   | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList_Cypher5)
    ;
 
 // Database commands
 
-createCompositeDatabase
-   : COMPOSITE DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? commandOptions? waitClause?
+createCompositeDatabase_Cypher5: COMPOSITE DATABASE symbolicAliasNameOrParameter_Cypher5 (IF NOT EXISTS)? commandOptions_Cypher5? waitClause_Cypher5?
    ;
 
-createDatabase
-   : DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
+createDatabase_Cypher5: DATABASE symbolicAliasNameOrParameter_Cypher5 (IF NOT EXISTS)? (TOPOLOGY (primaryTopology_Cypher5 | secondaryTopology_Cypher5)+)? commandOptions_Cypher5? waitClause_Cypher5?
    ;
 
-primaryTopology
-   : UNSIGNED_DECIMAL_INTEGER primaryToken
+primaryTopology_Cypher5: UNSIGNED_DECIMAL_INTEGER primaryToken_Cypher5
    ;
 
-primaryToken
-   : PRIMARY | PRIMARIES
+primaryToken_Cypher5: PRIMARY | PRIMARIES
    ;
 
-secondaryTopology
-   : UNSIGNED_DECIMAL_INTEGER secondaryToken
+secondaryTopology_Cypher5: UNSIGNED_DECIMAL_INTEGER secondaryToken_Cypher5
    ;
 
-secondaryToken
-   : SECONDARY | SECONDARIES
+secondaryToken_Cypher5: SECONDARY | SECONDARIES
    ;
 
-dropDatabase
-   : COMPOSITE? DATABASE symbolicAliasNameOrParameter (IF EXISTS)? aliasAction? ((DUMP | DESTROY) DATA)? waitClause?
+dropDatabase_Cypher5: COMPOSITE? DATABASE symbolicAliasNameOrParameter_Cypher5 (IF EXISTS)? aliasAction_Cypher5? ((DUMP | DESTROY) DATA)? waitClause_Cypher5?
    ;
 
-aliasAction
-   : RESTRICT
+aliasAction_Cypher5: RESTRICT
    | CASCADE (ALIAS | ALIASES)
    ;
 
-alterDatabase
-   : DATABASE symbolicAliasNameOrParameter (IF EXISTS)? (
-      (SET (alterDatabaseAccess | alterDatabaseTopology | alterDatabaseOption))+
-      | (REMOVE OPTION symbolicNameString)+
-   ) waitClause?
+alterDatabase_Cypher5: DATABASE symbolicAliasNameOrParameter_Cypher5 (IF EXISTS)? (
+      (SET (alterDatabaseAccess_Cypher5 | alterDatabaseTopology_Cypher5 | alterDatabaseOption_Cypher5))+
+      | (REMOVE OPTION symbolicNameString_Cypher5)+
+   ) waitClause_Cypher5?
    ;
 
-alterDatabaseAccess
-   : ACCESS READ (ONLY | WRITE)
+alterDatabaseAccess_Cypher5: ACCESS READ (ONLY | WRITE)
    ;
 
-alterDatabaseTopology
-   : TOPOLOGY (primaryTopology | secondaryTopology)+
+alterDatabaseTopology_Cypher5: TOPOLOGY (primaryTopology_Cypher5 | secondaryTopology_Cypher5)+
    ;
 
-alterDatabaseOption
-   : OPTION symbolicNameString expression
+alterDatabaseOption_Cypher5: OPTION symbolicNameString_Cypher5 expression_Cypher5
    ;
 
-startDatabase
-   : START DATABASE symbolicAliasNameOrParameter waitClause?
+startDatabase_Cypher5: START DATABASE symbolicAliasNameOrParameter_Cypher5 waitClause_Cypher5?
    ;
 
-stopDatabase
-   : STOP DATABASE symbolicAliasNameOrParameter waitClause?
+stopDatabase_Cypher5: STOP DATABASE symbolicAliasNameOrParameter_Cypher5 waitClause_Cypher5?
    ;
 
-waitClause
-   : WAIT (UNSIGNED_DECIMAL_INTEGER secondsToken?)?
+waitClause_Cypher5: WAIT (UNSIGNED_DECIMAL_INTEGER secondsToken_Cypher5?)?
    | NOWAIT
    ;
 
-secondsToken
-   : SEC | SECOND | SECONDS;
+secondsToken_Cypher5: SEC | SECOND | SECONDS;
 
-showDatabase
-   : (DEFAULT | HOME) DATABASE showCommandYield?
-   | (DATABASE | DATABASES) symbolicAliasNameOrParameter? showCommandYield?
+showDatabase_Cypher5: (DEFAULT | HOME) DATABASE showCommandYield_Cypher5?
+   | (DATABASE | DATABASES) symbolicAliasNameOrParameter_Cypher5? showCommandYield_Cypher5?
    ;
 
 // Alias commands
 
-aliasName
-   : symbolicAliasNameOrParameter
+aliasName_Cypher5: symbolicAliasNameOrParameter_Cypher5
    ;
 
-databaseName
-   : symbolicAliasNameOrParameter
+databaseName_Cypher5: symbolicAliasNameOrParameter_Cypher5
    ;
 
-createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE databaseName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
+createAlias_Cypher5: ALIAS aliasName_Cypher5 (IF NOT EXISTS)? FOR DATABASE databaseName_Cypher5 (AT stringOrParameter_Cypher5 USER commandNameExpression_Cypher5 PASSWORD passwordExpression_Cypher5 (DRIVER mapOrParameter_Cypher5)?)? (PROPERTIES mapOrParameter_Cypher5)?
    ;
 
-dropAlias
-   : ALIAS aliasName (IF EXISTS)? FOR DATABASE
+dropAlias_Cypher5: ALIAS aliasName_Cypher5 (IF EXISTS)? FOR DATABASE
    ;
 
-alterAlias
-   : ALIAS aliasName (IF EXISTS)? SET DATABASE (
-      alterAliasTarget
-      | alterAliasUser
-      | alterAliasPassword
-      | alterAliasDriver
-      | alterAliasProperties
+alterAlias_Cypher5: ALIAS aliasName_Cypher5 (IF EXISTS)? SET DATABASE (
+      alterAliasTarget_Cypher5
+      | alterAliasUser_Cypher5
+      | alterAliasPassword_Cypher5
+      | alterAliasDriver_Cypher5
+      | alterAliasProperties_Cypher5
    )+
    ;
 
-alterAliasTarget
-   : TARGET databaseName (AT stringOrParameter)?
+alterAliasTarget_Cypher5: TARGET databaseName_Cypher5 (AT stringOrParameter_Cypher5)?
    ;
 
-alterAliasUser
-   : USER commandNameExpression
+alterAliasUser_Cypher5: USER commandNameExpression_Cypher5
    ;
 
-alterAliasPassword
-   : PASSWORD passwordExpression
+alterAliasPassword_Cypher5: PASSWORD passwordExpression_Cypher5
    ;
 
-alterAliasDriver
-   : DRIVER mapOrParameter
+alterAliasDriver_Cypher5: DRIVER mapOrParameter_Cypher5
    ;
 
-alterAliasProperties
-   : PROPERTIES mapOrParameter
+alterAliasProperties_Cypher5: PROPERTIES mapOrParameter_Cypher5
    ;
 
-showAliases
-   : (ALIAS | ALIASES) aliasName? FOR (DATABASE | DATABASES) showCommandYield?
+showAliases_Cypher5: (ALIAS | ALIASES) aliasName_Cypher5? FOR (DATABASE | DATABASES) showCommandYield_Cypher5?
    ;
 
 // Various strings, symbolic names, lists and maps
 
 // Should return an Either[String, Parameter]
-symbolicNameOrStringParameter
-   : symbolicNameString
-   | parameter["STRING"]
+symbolicNameOrStringParameter_Cypher5: symbolicNameString_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
 // Should return an Expression
-commandNameExpression
-   : symbolicNameString
-   | parameter["STRING"]
+commandNameExpression_Cypher5: symbolicNameString_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
-symbolicNameOrStringParameterList
-   : commandNameExpression (COMMA commandNameExpression)*
+symbolicNameOrStringParameterList_Cypher5: commandNameExpression_Cypher5 (COMMA commandNameExpression_Cypher5)*
    ;
 
-symbolicAliasNameList
-   : symbolicAliasNameOrParameter (COMMA symbolicAliasNameOrParameter)*
+symbolicAliasNameList_Cypher5: symbolicAliasNameOrParameter_Cypher5 (COMMA symbolicAliasNameOrParameter_Cypher5)*
    ;
 
-symbolicAliasNameOrParameter
-   : symbolicAliasName
-   | parameter["STRING"]
+symbolicAliasNameOrParameter_Cypher5: symbolicAliasName_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
-symbolicAliasName
-   : symbolicNameString (DOT symbolicNameString)*
+symbolicAliasName_Cypher5: symbolicNameString_Cypher5 (DOT symbolicNameString_Cypher5)*
    ;
 
-stringListLiteral
-   : LBRACKET (stringLiteral (COMMA stringLiteral)*)? RBRACKET
+stringListLiteral_Cypher5: LBRACKET (stringLiteral_Cypher5 (COMMA stringLiteral_Cypher5)*)? RBRACKET
    ;
 
-stringList
-   : stringLiteral (COMMA stringLiteral)+
+stringList_Cypher5: stringLiteral_Cypher5 (COMMA stringLiteral_Cypher5)+
    ;
 
-stringLiteral
-   : STRING_LITERAL1
+stringLiteral_Cypher5: STRING_LITERAL1
    | STRING_LITERAL2
    ;
 
 // Should return an Expression
-stringOrParameterExpression
-   : stringLiteral
-   | parameter["STRING"]
+stringOrParameterExpression_Cypher5: stringLiteral_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
 // Should return an Either[String, Parameter]
-stringOrParameter
-   : stringLiteral
-   | parameter["STRING"]
+stringOrParameter_Cypher5: stringLiteral_Cypher5
+   | parameter_Cypher5["STRING"]
    ;
 
-mapOrParameter
-   : map
-   | parameter["MAP"]
+mapOrParameter_Cypher5: map_Cypher5
+   | parameter_Cypher5["MAP"]
    ;
 
-map
-   : LCURLY (propertyKeyName COLON expression (COMMA propertyKeyName COLON expression)*)? RCURLY
+map_Cypher5: LCURLY (propertyKeyName_Cypher5 COLON expression_Cypher5 (COMMA propertyKeyName_Cypher5 COLON expression_Cypher5)*)? RCURLY
    ;
 
-symbolicNameString
-   : escapedSymbolicNameString
-   | unescapedSymbolicNameString
+symbolicNameString_Cypher5: escapedSymbolicNameString_Cypher5
+   | unescapedSymbolicNameString_Cypher5
    ;
 
-escapedSymbolicNameString
-   : ESCAPED_SYMBOLIC_NAME
+escapedSymbolicNameString_Cypher5: ESCAPED_SYMBOLIC_NAME
    ;
 
-unescapedSymbolicNameString
-   : unescapedLabelSymbolicNameString
+unescapedSymbolicNameString_Cypher5: unescapedLabelSymbolicNameString_Cypher5
    | NOT
    | NULL
    | TYPED
@@ -1778,19 +1452,16 @@ unescapedSymbolicNameString
    | NFKD
    ;
 
-symbolicLabelNameString
-   : escapedSymbolicNameString
-   | unescapedLabelSymbolicNameString
+symbolicLabelNameString_Cypher5: escapedSymbolicNameString_Cypher5
+   | unescapedLabelSymbolicNameString_Cypher5
    ;
 
 // Do not remove this, it is needed for composing the grammar
 // with other ones (e.g. language support ones)
-externalKeywords
-   : IDENTIFIER
+unescapedLabelSymbolicNameString_Cypher5: unescapedLabelSymbolicNameString__Cypher5
    ;
 
-unescapedLabelSymbolicNameString
-   : IDENTIFIER
+unescapedLabelSymbolicNameString__Cypher5: IDENTIFIER
    | ACCESS
    | ACTIVE
    | ADMIN
@@ -2048,9 +1719,7 @@ unescapedLabelSymbolicNameString
    | YIELD
    | ZONE
    | ZONED
-   | externalKeywords
    ;
 
-endOfFile
-   : EOF
+endOfFile_Cypher5: EOF
    ;

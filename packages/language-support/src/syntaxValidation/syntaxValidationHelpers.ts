@@ -10,8 +10,8 @@ import {
   DiagnosticSeverity,
   Position,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import CypherLexer from '../generated-parser/Cypher5CmdLexer';
+import CypherParser from '../generated-parser/Cypher5CmdParser';
 import { isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 

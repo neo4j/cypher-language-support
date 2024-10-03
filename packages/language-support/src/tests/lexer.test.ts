@@ -1,13 +1,13 @@
 import { CharStreams, CommonTokenStream } from 'antlr4';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import Cypher5Lexer from '../generated-parser/Cypher5CmdLexer';
+import Cypher5Parser from '../generated-parser/Cypher5CmdParser';
 import { getTokens } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 
 describe('Lexer tokens', () => {
   test('List of tokens should match generated parser symbolic names', () => {
     // Read in auto-generated symbolic names from the parser and remove special characters
-    const symbolicNames = CypherLexer.symbolicNames;
+    const symbolicNames = Cypher5Lexer.symbolicNames;
 
     // Lexer keyword list which we want to keep up-to-date
     // Note that it is numeric so we need to map to it's corresponding symbolicName
@@ -15,7 +15,7 @@ describe('Lexer tokens', () => {
       const symbolNumber = parseInt(k, 10);
 
       // There is no "-1" position in the symbolic name list so we handle EOF separately
-      if (symbolNumber === CypherParser.EOF) {
+      if (symbolNumber === Cypher5Parser.EOF) {
         return 'EOF';
       }
       return symbolicNames[symbolNumber];
@@ -43,7 +43,7 @@ describe('Lexer tokens', () => {
     keywordTokens.forEach((token) => {
       const tokenName = tokenNames[token];
       const inputStream = CharStreams.fromString(tokenName);
-      const lexer = new CypherLexer(inputStream);
+      const lexer = new Cypher5Lexer(inputStream);
 
       const tokenStream = new CommonTokenStream(lexer);
       tokenStream.fill();
@@ -58,18 +58,18 @@ describe('Lexer tokens', () => {
           tokenName,
           token,
           'symbolic name',
-          CypherLexer.symbolicNames[token],
+          Cypher5Lexer.symbolicNames[token],
         );
         console.error(
           'expected token',
           tokenNames[tokens[0].type],
           tokens[0].type,
           'symbolic name',
-          CypherLexer.symbolicNames[tokens[0].type],
+          Cypher5Lexer.symbolicNames[tokens[0].type],
         );
       }
       expect(tokens[0].type).toBe(token);
-      expect(tokens[1].type).toBe(CypherLexer.EOF);
+      expect(tokens[1].type).toBe(Cypher5Lexer.EOF);
     });
   });
 });

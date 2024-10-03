@@ -5,14 +5,14 @@ import {
 
 import { ParseTreeWalker } from 'antlr4';
 import CypherParser, {
-  CallClauseContext,
-  ExpressionContext,
-  FunctionInvocationContext,
-} from './generated-parser/CypherCmdParser';
+  CallClause_Cypher5Context,
+  Expression_Cypher5Context,
+  FunctionInvocation_Cypher5Context,
+} from './generated-parser/Cypher5CmdParser';
 
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
-import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
+import CypherCmdParserListener from './generated-parser/Cypher5CmdParserListener';
 import { findCaret, isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
@@ -70,7 +70,7 @@ class SignatureHelper extends CypherCmdParserListener {
     super();
   }
 
-  enterExpression = (ctx: ExpressionContext) => {
+  enterExpression_Cypher5 = (ctx: Expression_Cypher5Context) => {
     // If the caret is at (
     if (this.caretToken.type === CypherParser.LPAREN) {
       /* We need to compute the next token that is not 
@@ -106,7 +106,9 @@ class SignatureHelper extends CypherCmdParserListener {
     }
   };
 
-  enterFunctionInvocation = (ctx: FunctionInvocationContext) => {
+  enterFunctionInvocation_Cypher5 = (
+    ctx: FunctionInvocation_Cypher5Context,
+  ) => {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&
@@ -114,7 +116,7 @@ class SignatureHelper extends CypherCmdParserListener {
       // and we won't offer the signature help on just the name
       isDefined(ctx.LPAREN())
     ) {
-      const methodName = ctx.functionName().getText();
+      const methodName = ctx.functionName_Cypher5().getText();
       const previousArguments = ctx.COMMA_list().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
@@ -127,7 +129,7 @@ class SignatureHelper extends CypherCmdParserListener {
     }
   };
 
-  enterCallClause = (ctx: CallClauseContext) => {
+  enterCallClause_Cypher5 = (ctx: CallClause_Cypher5Context) => {
     if (
       ctx.start.start <= this.caretToken.start &&
       this.caretToken.stop <= ctx.stop.stop &&
@@ -135,7 +137,7 @@ class SignatureHelper extends CypherCmdParserListener {
       // and we won't offer the signature help on just the name
       isDefined(ctx.LPAREN())
     ) {
-      const methodName = ctx.procedureName().getText();
+      const methodName = ctx.procedureName_Cypher5().getText();
       const previousArguments = ctx.COMMA_list().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
