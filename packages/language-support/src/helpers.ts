@@ -1,18 +1,29 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
 import antlrDefaultExport, {
+  CharStreams,
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser, {
-  NodePatternContext,
-  RelationshipPatternContext,
-  StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
+import Cypher25Lexer from './generated-parser/Cypher25CmdLexer';
+import Cypher25Parser, {
+  StatementOrCommandContext as Cypher25StatementOrCommand,
+} from './generated-parser/Cypher25CmdParser';
+import Cypher5Lexer from './generated-parser/Cypher5CmdLexer';
+import Cypher5Parser, {
+  NodePatternContext as Cypher5NodePattern,
+  RelationshipPatternContext as Cypher5RelationshipPattern,
+  StatementOrCommandContext as Cypher5StatementOrCommand,
+} from './generated-parser/Cypher5CmdParser';
+import StatementsLexer from './generated-parser/StatementsLexer';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
+
+export interface StatementParsingScaffolding {
+  parser: Cypher5Parser | Cypher25Parser;
+  tokens: Token[];
+}
 
 /* In antlr we have 
 
@@ -31,7 +42,9 @@ export type EnrichedParseTree = ParseTree & {
   parentCtx: ParserRuleContext | undefined;
 };
 
-export function findStopNode(root: StatementsOrCommandsContext) {
+export function findStopNode(
+  root: Cypher5StatementOrCommand | Cypher25StatementOrCommand,
+) {
   let children = root.children;
   let current: ParserRuleContext = root;
 
@@ -84,7 +97,7 @@ type AntlrDefaultExport = {
       getNodeText(
         node: ParserRuleContext,
         s: string[],
-        c: typeof CypherParser,
+        c: typeof Cypher5Parser,
       ): string;
       getChildren(node: ParserRuleContext): ParserRuleContext[];
     };
@@ -95,7 +108,7 @@ export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
-    (p) => p instanceof NodePatternContext,
+    (p) => p instanceof Cypher5NodePattern,
   );
 
   return isDefined(nodePattern);
@@ -104,7 +117,7 @@ export function inNodeLabel(stopNode: ParserRuleContext) {
 export function inRelationshipType(stopNode: ParserRuleContext) {
   const relPattern = findParent(
     stopNode,
-    (p) => p instanceof RelationshipPatternContext,
+    (p) => p instanceof Cypher5RelationshipPattern,
   );
 
   return isDefined(relPattern);
@@ -141,36 +154,79 @@ export function findCaret(
 }
 
 export function splitIntoStatements(
-  tokenStream: CommonTokenStream,
-  lexer: CypherLexer,
-): CommonTokenStream[] {
+  query: string,
+): StatementParsingScaffolding[] {
+  const inputStream = CharStreams.fromString(query);
+  const lexer = new StatementsLexer(inputStream);
+  lexer.removeErrorListeners();
+  const tokenStream = new CommonTokenStream(lexer);
   tokenStream.fill();
-  const tokens = tokenStream.tokens;
-
-  let i = 0;
-  const result: CommonTokenStream[] = [];
-  let chunk: Token[] = [];
+  const result: StatementParsingScaffolding[] = [];
+  let statementStr = '';
+  let isCypher25 = false;
   let offset = 0;
 
-  while (i < tokens.length) {
-    const current = tokens[i].clone();
-    current.tokenIndex -= offset;
+  for (let j = 0; j < tokenStream.size; ++j) {
+    const token = tokenStream.get(j);
 
-    chunk.push(current);
-
-    if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
-    ) {
-      // This does not relex since we are not calling fill on the token stream
-      const tokenStream = new CommonTokenStream(lexer);
-      tokenStream.tokens = chunk;
-      result.push(tokenStream);
-      offset = i + 1;
-      chunk = [];
+    if (token.text !== '<EOF>') {
+      statementStr += token.text;
     }
 
-    i++;
+    if (token.type === StatementsLexer.CYPHER25) {
+      isCypher25 = true;
+    }
+
+    if (
+      token.type === StatementsLexer.SEMICOLON ||
+      token.type == StatementsLexer.EOF
+    ) {
+      if (isCypher25) {
+        const inputStream25 = CharStreams.fromString(statementStr);
+        const lexer25 = new Cypher25Lexer(inputStream25);
+        const tokenStream25 = new CommonTokenStream(lexer25);
+        lexer25.removeErrorListeners();
+        tokenStream25.fill();
+        const chunk = tokenStream25.tokens.map((t) => {
+          const current = t.clone();
+          current.start += offset;
+          current.stop += offset;
+          return current;
+        });
+        const parser = new Cypher5Parser(tokenStream25);
+        parser.removeErrorListeners();
+
+        tokenStream25.tokens = chunk;
+        result.push({
+          parser: parser,
+          tokens: chunk,
+        });
+      } else {
+        const inputStream5 = CharStreams.fromString(statementStr);
+        const lexer5 = new Cypher5Lexer(inputStream5);
+        const tokenStream5 = new CommonTokenStream(lexer5);
+        lexer5.removeErrorListeners();
+        tokenStream5.fill();
+        const chunk = tokenStream5.tokens.map((t) => {
+          const current = t.clone();
+          current.start += offset;
+          current.stop += offset;
+          return current;
+        });
+        const parser = new Cypher5Parser(tokenStream5);
+        parser.removeErrorListeners();
+
+        tokenStream5.tokens = chunk;
+        result.push({
+          parser: parser,
+          tokens: chunk,
+        });
+      }
+
+      offset = j + 1;
+      statementStr = '';
+      isCypher25 = false;
+    }
   }
 
   return result;
@@ -184,7 +240,7 @@ export function findPreviousNonSpace(
   while (i > 0) {
     const token = tokens[--i];
 
-    if (token.type !== CypherParser.SPACE) {
+    if (token.type !== Cypher5Parser.SPACE) {
       return token;
     }
   }
@@ -199,21 +255,25 @@ export function isCommentOpener(
   return thisToken.text === '/' && nextToken?.text === '*';
 }
 
-export const rulesDefiningVariables = [
-  CypherParser.RULE_returnItem,
-  CypherParser.RULE_unwindClause,
-  CypherParser.RULE_subqueryInTransactionsReportParameters,
-  CypherParser.RULE_procedureResultItem,
-  CypherParser.RULE_foreachClause,
-  CypherParser.RULE_loadCSVClause,
-  CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_listItemsPredicate,
-  CypherParser.RULE_listComprehension,
-];
+export const rulesDefiningVariables = {
+  cypher5: [
+    Cypher5Parser.RULE_returnItem,
+    Cypher5Parser.RULE_unwindClause,
+    Cypher5Parser.RULE_subqueryInTransactionsReportParameters,
+    Cypher5Parser.RULE_procedureResultItem,
+    Cypher5Parser.RULE_foreachClause,
+    Cypher5Parser.RULE_loadCSVClause,
+    Cypher5Parser.RULE_reduceExpression,
+    Cypher5Parser.RULE_listItemsPredicate,
+    Cypher5Parser.RULE_listComprehension,
+  ],
+};
 
-export const rulesDefiningOrUsingVariables = [
-  ...rulesDefiningVariables,
-  CypherParser.RULE_pattern,
-  CypherParser.RULE_nodePattern,
-  CypherParser.RULE_relationshipPattern,
-];
+export const rulesDefiningOrUsingVariables = {
+  cypher5: [
+    ...rulesDefiningVariables.cypher5,
+    Cypher5Parser.RULE_pattern,
+    Cypher5Parser.RULE_nodePattern,
+    Cypher5Parser.RULE_relationshipPattern,
+  ],
+};

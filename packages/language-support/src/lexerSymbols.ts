@@ -1,4 +1,4 @@
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherLexer from './generated-parser/Cypher5CmdLexer';
 
 export enum CypherTokenType {
   comment = 'comment',
@@ -146,6 +146,7 @@ export const lexerKeywords = [
   CypherLexer.CSV,
   CypherLexer.CONCURRENT,
   CypherLexer.CURRENT,
+  CypherLexer.CYPHER,
   CypherLexer.DATA,
   CypherLexer.DATABASE,
   CypherLexer.DATABASES,

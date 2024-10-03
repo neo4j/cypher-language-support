@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-parser grammar Cypher5Parser;
+parser grammar Cypher25Parser;
 
 
-options { tokenVocab = Cypher5Lexer; }
+options { tokenVocab = Cypher25Lexer; }
 statements
    : statement (SEMICOLON statement)* SEMICOLON? EOF
    ;
 
 statement
-   : periodicCommitQueryHintFailure? (command | regularQuery)
-   ;
-
-periodicCommitQueryHintFailure
-   : USING PERIODIC COMMIT UNSIGNED_DECIMAL_INTEGER?
+   : command | regularQuery
    ;
 
 regularQuery
@@ -168,7 +164,6 @@ matchMode
 hint
    : USING (((
       INDEX
-      | BTREE INDEX
       | TEXT INDEX
       | RANGE INDEX
       | POINT INDEX
@@ -324,6 +319,10 @@ nodeLabelsIs
 dynamicExpression
    : DOLLAR LPAREN expression RPAREN
    ;
+   
+dynamicAnyAllExpression
+   : DOLLAR (ALL | ANY)? LPAREN expression RPAREN
+   ;
 
 dynamicLabelType
    : COLON dynamicExpression
@@ -405,12 +404,14 @@ labelExpression2Is
 labelExpression1
    : LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
    | PERCENT                        #AnyLabel
+   | dynamicAnyAllExpression        #DynamicLabel
    | symbolicNameString             #LabelName
    ;
 
 labelExpression1Is
    : LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
    | PERCENT                          #AnyLabelIs
+   | dynamicAnyAllExpression          #DynamicLabelIs
    | symbolicLabelNameString          #LabelNameIs
    ;
 
@@ -688,7 +689,7 @@ parameter[String paramType]
    ;
 
 parameterName[String paramType]
-   : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER)
+   : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER | UNSIGNED_OCTAL_INTEGER | EXTENDED_IDENTIFIER)
    ;
 
 functionInvocation
@@ -884,71 +885,45 @@ composableShowCommandClauses
    )
    ;
 
-showBriefAndYield
-   : (BRIEF | VERBOSE) OUTPUT?
-   | yieldClause returnClause?
-   | whereClause
-   ;
-
 showIndexCommand
-   : (
-      FULLTEXT
-      | LOOKUP
-      | POINT
-      | RANGE
-      | TEXT
-      | VECTOR
-   ) showIndexesNoBrief
-   | (ALL | BTREE)? showIndexesAllowBrief
+   : (showIndexType)? showIndexesEnd
    ;
 
-showIndexesAllowBrief
-   : indexToken showBriefAndYield? composableCommandClauses?
-   ;
+showIndexType
+    : ALL
+    | FULLTEXT
+    | LOOKUP
+    | POINT
+    | RANGE
+    | TEXT
+    | VECTOR
+    ;
 
-showIndexesNoBrief
+showIndexesEnd
    : indexToken showCommandYield? composableCommandClauses?
    ;
 
 showConstraintCommand
-   : (NODE | RELATIONSHIP | REL)? constraintAllowYieldType showConstraintsAllowYield # ShowConstraintMulti
-   | (NODE | RELATIONSHIP | REL) UNIQUE showConstraintsAllowYield                    # ShowConstraintUnique
-   | (RELATIONSHIP | REL)? KEY showConstraintsAllowYield                             # ShowConstraintKey
-   | REL EXIST showConstraintsAllowYield                                             # ShowConstraintRelExist
-   | (NODE | RELATIONSHIP)? EXISTS showConstraintsAllowBrief                         # ShowConstraintOldExists
-   | constraintBriefAndYieldType? showConstraintsAllowBriefAndYield                  # ShowConstraintBriefAndYield
+   : ALL? showConstraintsEnd                                                        # ShowConstraintAll
+   | (showConstraintEntity)? constraintExistType showConstraintsEnd                 # ShowConstraintExist
+   | (showConstraintEntity)? KEY showConstraintsEnd                                 # ShowConstraintKey
+   | (showConstraintEntity)? PROPERTY TYPE showConstraintsEnd                       # ShowConstraintPropType
+   | (showConstraintEntity)? (PROPERTY)? (UNIQUE | UNIQUENESS) showConstraintsEnd   # ShowConstraintUnique
    ;
 
-constraintAllowYieldType
-   : UNIQUENESS
-   | constraintExistType
-   | PROPERTY TYPE
-   ;
+showConstraintEntity
+    : NODE                  # nodeEntity
+    | (RELATIONSHIP | REL)  # relEntity
+    ;
 
 constraintExistType
    : EXISTENCE
+   | EXIST
    | PROPERTY EXISTENCE
    | PROPERTY EXIST
    ;
 
-constraintBriefAndYieldType
-   : ALL
-   | UNIQUE
-   | EXIST
-   | NODE KEY
-   | NODE EXIST
-   | RELATIONSHIP EXIST
-   ;
-
-showConstraintsAllowBriefAndYield
-   : constraintToken showBriefAndYield? composableCommandClauses?
-   ;
-
-showConstraintsAllowBrief
-   : constraintToken ((BRIEF | VERBOSE) OUTPUT?)? composableCommandClauses?
-   ;
-
-showConstraintsAllowYield
+showConstraintsEnd
    : constraintToken showCommandYield? composableCommandClauses?
    ;
 
@@ -1010,34 +985,28 @@ commandRelPattern
    ;
 
 createConstraint
-   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? (ON | FOR) (commandNodePattern | commandRelPattern) constraintType commandOptions?
+   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) constraintType commandOptions?
    ;
 
 constraintType
-   : ASSERT EXISTS propertyList                                                  # ConstraintExists
-   | (REQUIRE | ASSERT) propertyList (COLONCOLON | IS (TYPED | COLONCOLON)) type # ConstraintTyped
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey
-   | (REQUIRE | ASSERT) propertyList IS NOT NULL                                 # ConstraintIsNotNull
+   : REQUIRE propertyList (COLONCOLON | IS (TYPED | COLONCOLON)) type # ConstraintTyped
+   | REQUIRE propertyList IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique
+   | REQUIRE propertyList IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey
+   | REQUIRE propertyList IS NOT NULL                                 # ConstraintIsNotNull
    ;
 
 dropConstraint
-   : CONSTRAINT (ON (commandNodePattern | commandRelPattern) ASSERT (EXISTS propertyList | propertyList IS (UNIQUE | NODE KEY | NOT NULL)) | symbolicNameOrStringParameter (IF EXISTS)?)
+   : CONSTRAINT symbolicNameOrStringParameter (IF EXISTS)?
    ;
 
 createIndex
-   : BTREE INDEX createIndex_
-   | RANGE INDEX createIndex_
+   : RANGE INDEX createIndex_
    | TEXT INDEX createIndex_
    | POINT INDEX createIndex_
    | VECTOR INDEX createIndex_
    | LOOKUP INDEX createLookupIndex
    | FULLTEXT INDEX createFulltextIndex
-   | INDEX (ON oldCreateIndex | createIndex_)
-   ;
-
-oldCreateIndex
-   : labelType LPAREN nonEmptyNameList RPAREN
+   | INDEX createIndex_
    ;
 
 createIndex_
@@ -1069,7 +1038,7 @@ lookupIndexRelPattern
    ;
 
 dropIndex
-   : INDEX (ON labelType LPAREN nonEmptyNameList RPAREN | symbolicNameOrStringParameter (IF EXISTS)?)
+   : INDEX symbolicNameOrStringParameter (IF EXISTS)?
    ;
 
 propertyList
@@ -1324,7 +1293,7 @@ allPrivilegeType
    ;
 
 allPrivilegeTarget
-   : (DEFAULT | HOME) (DATABASE | GRAPH)                    # DefaultTarget
+   : HOME (DATABASE | GRAPH)                                # DefaultTarget
    | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList) # DatabaseVariableTarget
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)       # GraphVariableTarget
    | DBMS                                                   # DBMSTarget
@@ -1556,12 +1525,12 @@ nodeToken
    ;
 
 databaseScope
-   : (DEFAULT | HOME) DATABASE
+   : HOME DATABASE
    | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList)
    ;
 
 graphScope
-   : (DEFAULT | HOME) GRAPH
+   : HOME GRAPH
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)
    ;
 
@@ -1640,8 +1609,6 @@ showDatabase
    | (DATABASE | DATABASES) symbolicAliasNameOrParameter? showCommandYield?
    ;
 
-// Alias commands
-
 aliasName
    : symbolicAliasNameOrParameter
    ;
@@ -1649,6 +1616,8 @@ aliasName
 databaseName
    : symbolicAliasNameOrParameter
    ;
+
+// Alias commands
 
 createAlias
    : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE databaseName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
@@ -1806,7 +1775,6 @@ unescapedLabelSymbolicNameString_
    | AS
    | ASC
    | ASCENDING
-   | ASSERT
    | ASSIGN
    | AT
    | AUTH
@@ -1816,8 +1784,6 @@ unescapedLabelSymbolicNameString_
    | BOOSTED
    | BOTH
    | BREAK
-   | BRIEF
-   | BTREE
    | BUILT
    | BY
    | CALL
@@ -1828,7 +1794,6 @@ unescapedLabelSymbolicNameString_
    | COLLECT
    | COMMAND
    | COMMANDS
-   | COMMIT
    | COMPOSITE
    | CONCURRENT
    | CONSTRAINT
@@ -1942,12 +1907,10 @@ unescapedLabelSymbolicNameString_
    | OPTION
    | OR
    | ORDER
-   | OUTPUT
    | PASSWORD
    | PASSWORDS
    | PATH
    | PATHS
-   | PERIODIC
    | PLAINTEXT
    | POINT
    | POPULATED
@@ -2036,7 +1999,6 @@ unescapedLabelSymbolicNameString_
    | USING
    | VALUE
    | VECTOR
-   | VERBOSE
    | VERTEX
    | WAIT
    | WHEN
@@ -2048,7 +2010,6 @@ unescapedLabelSymbolicNameString_
    | YIELD
    | ZONE
    | ZONED
-   | externalKeywords
    ;
 
 endOfFile

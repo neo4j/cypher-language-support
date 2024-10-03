@@ -1,12 +1,19 @@
-parser grammar CypherCmdParser;
+parser grammar Cypher25CmdParser;
 
-import CypherPreParser;
+import Cypher25Parser;
 
-options { tokenVocab = CypherCmdLexer; }
+options { tokenVocab = Cypher25CmdLexer; }
 
-statementsOrCommands: statementOrCommand (SEMICOLON statementOrCommand)* SEMICOLON? EOF;
+statementOrCommand: (preparsedStatement | consoleCommand) SEMICOLON? EOF;
 
-statementOrCommand: (preparsedStatement | consoleCommand);
+preparsedStatement:
+   preparserOption* statement;
+
+cypherVersion:
+   CYPHER UNSIGNED_DECIMAL_INTEGER;
+
+preparserOption:
+   EXPLAIN | PROFILE | cypherVersion;
 
 consoleCommand: COLON (clearCmd | historyCmd | useCmd | paramsCmd);
 
@@ -27,4 +34,4 @@ listCompletionRule: LIST;
 
 useCompletionRule: USE;
 
-externalKeywords: preparserOption | HISTORY | CLEAR | PARAM;
+externalKeywords: preparserOption | CYPHER | HISTORY | CLEAR | PARAM;

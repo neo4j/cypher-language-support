@@ -2,7 +2,7 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4';
 
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import CypherLexer from '../generated-parser/Cypher5CmdLexer';
 
 import { isCommentOpener } from '../helpers';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';

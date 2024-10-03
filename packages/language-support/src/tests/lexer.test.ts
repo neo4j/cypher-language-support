@@ -1,6 +1,6 @@
 import { CharStreams, CommonTokenStream } from 'antlr4';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import CypherLexer from '../generated-parser/Cypher5CmdLexer';
+import CypherParser from '../generated-parser/Cypher5CmdParser';
 import { getTokens } from '../helpers';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 

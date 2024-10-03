@@ -8,11 +8,11 @@ import CypherParser, {
   CallClauseContext,
   ExpressionContext,
   FunctionInvocationContext,
-} from './generated-parser/CypherCmdParser';
+} from './generated-parser/Cypher5CmdParser';
 
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
-import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
+import Cypher5CmdParserListener from './generated-parser/Cypher5CmdParserListener';
 import { findCaret, isDefined } from './helpers';
 import { parserWrapper } from './parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
@@ -64,7 +64,7 @@ function toSignatureHelp(
   return signatureHelp;
 }
 
-class SignatureHelper extends CypherCmdParserListener {
+class SignatureHelper extends Cypher5CmdParserListener {
   result: ParsedMethod;
   constructor(private tokens: Token[], private caretToken: Token) {
     super();

@@ -10,8 +10,8 @@ import {
   DiagnosticSeverity,
   Position,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import Cypher5Lexer from '../generated-parser/Cypher5CmdLexer';
+import Cypher5Parser from '../generated-parser/Cypher5CmdParser';
 import { isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 
@@ -42,14 +42,17 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     if (!this.unfinishedToken) {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
-      const parser = recognizer as CypherParser;
+      const parser = recognizer as Cypher5Parser;
       const ctx = parser._ctx as ParserRuleContext;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
       const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
 
-      if (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment) {
+      if (
+        offendingSymbol.type === Cypher5Lexer.ErrorChar ||
+        unfinishedComment
+      ) {
         let errorMessage: string | undefined = undefined;
 
         if (unfinishedComment) {
@@ -92,7 +95,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
         if (errorMessage) {
           const endColumn =
-            offendingSymbol.type === CypherLexer.EOF
+            offendingSymbol.type === Cypher5Lexer.EOF
               ? startColumn
               : startColumn + offendingSymbol.text.length;
 

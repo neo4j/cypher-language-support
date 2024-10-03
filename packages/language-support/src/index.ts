@@ -22,5 +22,5 @@ export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
 export type { CompletionItem, Neo4jFunction, Neo4jProcedure } from './types';
 export { CypherLexer, CypherParser };
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser from './generated-parser/CypherCmdParser';
+import CypherLexer from './generated-parser/Cypher5CmdLexer';
+import CypherParser from './generated-parser/Cypher5CmdParser';

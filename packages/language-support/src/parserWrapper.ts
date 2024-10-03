@@ -1,23 +1,26 @@
 import type { ParserRuleContext, Token } from 'antlr4';
-import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
+import { CommonTokenStream, ParseTreeListener } from 'antlr4';
 
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import Cypher5Lexer from './generated-parser/Cypher5CmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from './featureFlags';
 import {
-  ClauseContext,
-  default as CypherParser,
-  FunctionNameContext,
-  LabelNameContext,
-  LabelNameIsContext,
-  LabelOrRelTypeContext,
-  ProcedureNameContext,
-  StatementOrCommandContext,
-  StatementsOrCommandsContext,
-  SymbolicNameStringContext,
-  VariableContext,
-} from './generated-parser/CypherCmdParser';
+  default as Cypher25Parser,
+  StatementOrCommandContext as Cypher25Statement,
+} from './generated-parser/Cypher25CmdParser';
+import {
+  ClauseContext as Cypher5Clause,
+  default as Cypher5Parser,
+  FunctionNameContext as Cypher5FunctionName,
+  LabelNameContext as Cypher5LabelName,
+  LabelNameIsContext as Cypher5LabelNameIs,
+  LabelOrRelTypeContext as Cypher5LabelOrRelType,
+  ProcedureNameContext as Cypher5ProcedureName,
+  StatementOrCommandContext as Cypher5Statement,
+  SymbolicNameStringContext as Cypher5SymbolicNameString,
+  VariableContext as Cypher5Variable,
+} from './generated-parser/Cypher5CmdParser';
 import {
   findParent,
   findStopNode,
@@ -27,6 +30,7 @@ import {
   isDefined,
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
+  StatementParsingScaffolding,
 } from './helpers';
 import {
   SyntaxDiagnostic,
@@ -35,11 +39,11 @@ import {
 
 export interface ParsedStatement {
   command: ParsedCommand;
-  parser: CypherParser;
+  parser: Cypher5Parser | Cypher25Parser;
   tokens: Token[];
   // A statement needs to be parsed with the .statements() rule because
   // it's the one that tries to parse until the EOF
-  ctx: StatementsOrCommandsContext;
+  ctx: Cypher5Statement | Cypher25Statement;
   syntaxErrors: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
@@ -58,11 +62,6 @@ export interface ParsingScaffolding {
   statementsScaffolding: StatementParsingScaffolding[];
 }
 
-export interface StatementParsingScaffolding {
-  parser: CypherParser;
-  tokens: Token[];
-}
-
 export enum LabelType {
   nodeLabelType = 'Label',
   relLabelType = 'Relationship type',
@@ -76,9 +75,9 @@ function getLabelType(ctx: ParserRuleContext): LabelType {
 }
 
 function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
-  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
+  const parent = findParent(ctx, (ctx) => ctx instanceof Cypher5Clause);
 
-  if (parent instanceof ClauseContext) {
+  if (parent instanceof Cypher5Clause) {
     const clause = parent;
     return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
   } else {
@@ -111,22 +110,7 @@ export type ParsedFunction = {
 export type ParsedProcedure = ParsedFunction;
 
 export function createParsingScaffolding(query: string): ParsingScaffolding {
-  const inputStream = CharStreams.fromString(query);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
-
-  const statementsScaffolding: StatementParsingScaffolding[] =
-    stmTokenStreams.map((t) => {
-      const tokens = [...t.tokens];
-      const parser = new CypherParser(t);
-      parser.removeErrorListeners();
-
-      return {
-        parser: parser,
-        tokens: tokens,
-      };
-    });
+  const statementsScaffolding = splitIntoStatements(query);
 
   return {
     query: query,
@@ -142,7 +126,7 @@ export function parseStatementsStrs(query: string): string[] {
     const tokenStream = statement.parser?.getTokenStream() ?? [];
     const tokens = getTokens(tokenStream as CommonTokenStream);
     const statementStr = tokens
-      .filter((token) => token.type !== CypherLexer.EOF)
+      .filter((token) => token.type !== Cypher5Lexer.EOF)
       .map((token) => token.text)
       .join('');
 
@@ -156,7 +140,7 @@ export function parseStatementsStrs(query: string): string[] {
 }
 
 /* Parses a query without storing it in the cache */
-export function parse(query: string): StatementOrCommandContext[] {
+export function parse(query: string) {
   const statementScaffolding =
     createParsingScaffolding(query).statementsScaffolding;
   const result = statementScaffolding.map((statement) =>
@@ -178,11 +162,11 @@ export function createParsingResult(query: string): ParsingResult {
       const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
       parser.addErrorListener(errorListener);
-      const ctx = parser.statementsOrCommands();
+      const ctx = parser.statementOrCommand();
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
         tokens.find(
-          (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
+          (t) => t.text !== '<EOF>' && t.type !== Cypher5Lexer.SPACE,
         ) === undefined;
       const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
       const collectedCommand = parseToCommand(ctx, isEmptyStatement);
@@ -228,7 +212,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
+    if (ctx instanceof Cypher5LabelName || ctx instanceof Cypher5LabelNameIs) {
       // If the parent ctx start doesn't coincide with this ctx start,
       // it means the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
@@ -246,7 +230,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
           },
         });
       }
-    } else if (ctx instanceof LabelOrRelTypeContext) {
+    } else if (ctx instanceof Cypher5LabelOrRelType) {
       const symbolicName = ctx.symbolicNameString();
       // Read comment for the label name case
       if (
@@ -286,7 +270,7 @@ class VariableCollector implements ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof VariableContext) {
+    if (ctx instanceof Cypher5Variable) {
       const variable = ctx.symbolicNameString().getText();
       // To avoid suggesting the variable that is currently being typed
       // For example RETURN a| <- we don't want to suggest "a" as a variable
@@ -296,9 +280,9 @@ class VariableCollector implements ParseTreeListener {
       const nextTokenIsEOF =
         nextTokenIndex !== undefined &&
         ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
-          CypherParser.EOF;
+          Cypher5Parser.EOF;
 
-      const definesVariable = rulesDefiningOrUsingVariables.includes(
+      const definesVariable = rulesDefiningOrUsingVariables.cypher5.includes(
         // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
         ctx.parentCtx?.ruleIndex as unknown as number,
       );
@@ -333,8 +317,8 @@ class MethodsCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (
-      ctx instanceof FunctionNameContext ||
-      ctx instanceof ProcedureNameContext
+      ctx instanceof Cypher5FunctionName ||
+      ctx instanceof Cypher5ProcedureName
     ) {
       const methodName = this.getMethodName(ctx);
 
@@ -359,7 +343,7 @@ class MethodsCollector extends ParseTreeListener {
         },
       };
 
-      if (ctx instanceof FunctionNameContext) {
+      if (ctx instanceof Cypher5FunctionName) {
         this.functions.push(result);
       } else {
         this.procedures.push(result);
@@ -368,7 +352,7 @@ class MethodsCollector extends ParseTreeListener {
   }
 
   private getMethodName(
-    ctx: ProcedureNameContext | FunctionNameContext,
+    ctx: Cypher5ProcedureName | Cypher5FunctionName,
   ): string {
     const namespaces = ctx.namespace().symbolicNameString_list();
     const methodName = ctx.symbolicNameString();
@@ -382,7 +366,7 @@ class MethodsCollector extends ParseTreeListener {
     return normalizedName;
   }
 
-  private getNamespaceString(ctx: SymbolicNameStringContext): string {
+  private getNamespaceString(ctx: Cypher5SymbolicNameString): string {
     const text = ctx.getText();
     const isEscaped = Boolean(ctx.escapedSymbolicNameString());
     const hasDot = text.includes('.');
@@ -418,11 +402,9 @@ export type ParsedCommandNoPosition =
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
-  stmts: StatementsOrCommandsContext,
+  stmt: Cypher5Statement | Cypher25Statement,
   isEmptyStatement: boolean,
 ): ParsedCommand {
-  const stmt = stmts.statementOrCommand_list().at(0);
-
   if (stmt) {
     const { start, stop } = stmt;
 
@@ -436,7 +418,7 @@ function parseToCommand(
     }
 
     if (isEmptyStatement) {
-      const { start } = stmts;
+      const { start } = stmt;
       return { type: 'cypher', statement: '', start: start, stop: start };
     }
 
@@ -475,10 +457,12 @@ function parseToCommand(
         if (cypherMap) {
           const names = cypherMap
             ?.propertyKeyName_list()
-            .map((name) => name.getText());
+            // eslint-disable-next-line
+            .map((name) => name.getText() as string);
           const expressions = cypherMap
             ?.expression_list()
-            .map((expr) => expr.getText());
+            // eslint-disable-next-line
+            .map((expr) => expr.getText() as string);
 
           if (names && expressions && names.length === expressions.length) {
             return {
@@ -520,7 +504,7 @@ function parseToCommand(
     }
     return { type: 'parse-error', start, stop };
   }
-  return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
+  return { type: 'parse-error', start: stmt.start, stop: stmt.stop };
 }
 
 function translateTokensToRange(
