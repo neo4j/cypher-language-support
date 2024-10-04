@@ -22,6 +22,7 @@ import { ParsedStatement, ParsingResult } from './parserWrapper';
 
 export interface StatementParsingScaffolding {
   parser: Cypher5Parser | Cypher25Parser;
+  statement: string;
   tokens: Token[];
 }
 
@@ -165,6 +166,9 @@ export function splitIntoStatements(
   let statementStr = '';
   let isCypher25 = false;
   let offset = 0;
+  let lastLine = 0;
+  let lastColumn = 0;
+  let hasJumpedLine = false;
 
   for (let j = 0; j < tokenStream.size; ++j) {
     const token = tokenStream.get(j);
@@ -200,6 +204,7 @@ export function splitIntoStatements(
         result.push({
           parser: parser,
           tokens: chunk,
+          statement: statementStr,
         });
       } else {
         const inputStream5 = CharStreams.fromString(statementStr);
@@ -207,23 +212,49 @@ export function splitIntoStatements(
         const tokenStream5 = new CommonTokenStream(lexer5);
         lexer5.removeErrorListeners();
         tokenStream5.fill();
+        hasJumpedLine = false;
+
         const chunk = tokenStream5.tokens.map((t) => {
           const current = t.clone();
+          if (!hasJumpedLine) {
+            current.column += lastColumn;
+          } else {
+            current.line += lastLine - 1;
+          }
+
+          if (t.text === '\n') {
+            hasJumpedLine = true;
+          }
           current.start += offset;
           current.stop += offset;
           return current;
         });
+
+        lastLine = chunk.at(-1).line;
+        lastColumn = chunk.at(-1).column;
+        offset = chunk.at(-1).start;
+
         const parser = new Cypher5Parser(tokenStream5);
         parser.removeErrorListeners();
 
         tokenStream5.tokens = chunk;
-        result.push({
-          parser: parser,
-          tokens: chunk,
-        });
+
+        if (
+          chunk.find(
+            (token) =>
+              (token.type !== Cypher5Lexer.SPACE &&
+                token.type !== Cypher5Lexer.EOF) ||
+              (token.type === Cypher5Lexer.EOF && token.text !== '<EOF>'),
+          )
+        ) {
+          result.push({
+            parser: parser,
+            tokens: chunk,
+            statement: statementStr,
+          });
+        }
       }
 
-      offset = j + 1;
       statementStr = '';
       isCypher25 = false;
     }

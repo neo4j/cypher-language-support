@@ -169,7 +169,11 @@ export function createParsingResult(query: string): ParsingResult {
           (t) => t.text !== '<EOF>' && t.type !== Cypher5Lexer.SPACE,
         ) === undefined;
       const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
-      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
+      const collectedCommand = parseToCommand(
+        ctx,
+        statementScaffolding.statement,
+        isEmptyStatement,
+      );
 
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
@@ -403,6 +407,7 @@ export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmt: Cypher5Statement | Cypher25Statement,
+  statement: string,
   isEmptyStatement: boolean,
 ): ParsedCommand {
   if (stmt) {
@@ -410,10 +415,6 @@ function parseToCommand(
 
     const cypherStmt = stmt.preparsedStatement();
     if (cypherStmt) {
-      // we get the original text input to preserve whitespace
-      const inputstream = start.getInputStream();
-      const statement = inputstream.getText(start.start, stop.stop);
-
       return { type: 'cypher', statement, start, stop };
     }
 
