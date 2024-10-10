@@ -81,7 +81,7 @@ We're working on adding more features to the extension, such as:
 
 - Improved database connection management
 - Embedded cypher support in other file types
-- Query exectution and result visualization
+- Query execution and result visualization
 - Automatic query formatting
 
 ## Extension settings
