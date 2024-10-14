@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.9
+
+### Patch Changes
+
+- 2e72ac8: Adds errors for undeclared procedures / functions
+
 ## 2.0.0-next.8
 
 ### Patch Changes
