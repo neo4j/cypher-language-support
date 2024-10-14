@@ -1,5 +1,13 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.12
+
+### Patch Changes
+
+- e9621c8: Re-export language support from react codemirror
+- Updated dependencies [2e72ac8]
+  - @neo4j-cypher/language-support@2.0.0-next.9
+
 ## 2.0.0-next.11
 
 ### Patch Changes
