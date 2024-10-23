@@ -161,9 +161,19 @@ export interface CypherEditorProps {
   readonly?: boolean;
 
   /**
-   * String value to assign to the aria-label attribute of the editor
+   * String value to assign to the aria-label attribute of the editor.
    */
   ariaLabel?: string;
+
+  /**
+   * Whether to enable or disable tab focus mode.
+   *
+   * true will allow the brower's default tabbing behavior.
+   * false will enable tab-trapping within the editor.
+   *
+   * @default false
+   */
+  setTabFocusMode?: boolean;
 }
 
 const executeKeybinding = (
@@ -310,6 +320,7 @@ export class CypherEditor extends Component<
     theme: 'light',
     lineNumbers: true,
     newLineOnEnter: false,
+    setTabFocusMode: false,
   };
 
   private debouncedOnChange = this.props.onChange
@@ -333,6 +344,7 @@ export class CypherEditor extends Component<
       featureFlags,
       onExecute,
       newLineOnEnter,
+      setTabFocusMode,
     } = this.props;
 
     this.schemaRef.current = {
@@ -416,6 +428,8 @@ export class CypherEditor extends Component<
       state: this.editorState.current,
       parent: this.editorContainer.current,
     });
+
+    this.editorView.current.setTabFocusMode(setTabFocusMode);
 
     if (this.props.autofocus) {
       this.focus();
