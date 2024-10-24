@@ -2,4 +2,4 @@
 '@neo4j-cypher/react-codemirror': patch
 ---
 
-Expose CodeMirror setTabFocusMode property in the CypherEditor
+Expose moveFocusOnTab property on the CypherEditor component to conditionally disable tab keymappings
