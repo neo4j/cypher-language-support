@@ -161,9 +161,19 @@ export interface CypherEditorProps {
   readonly?: boolean;
 
   /**
-   * String value to assign to the aria-label attribute of the editor
+   * String value to assign to the aria-label attribute of the editor.
    */
   ariaLabel?: string;
+
+  /**
+   * Whether keybindings for inserting indents with the Tab key should be disabled.
+   *
+   * true will not create keybindings for inserting indents.
+   * false will create keybindings for inserting indents.
+   *
+   * @default false
+   */
+  moveFocusOnTab?: boolean;
 }
 
 const executeKeybinding = (
@@ -310,6 +320,7 @@ export class CypherEditor extends Component<
     theme: 'light',
     lineNumbers: true,
     newLineOnEnter: false,
+    moveFocusOnTab: false,
   };
 
   private debouncedOnChange = this.props.onChange
@@ -383,7 +394,7 @@ export class CypherEditor extends Component<
           ]),
         ),
         historyNavigation(this.props),
-        basicNeo4jSetup(),
+        basicNeo4jSetup(this.props),
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
