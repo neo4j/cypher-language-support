@@ -166,14 +166,14 @@ export interface CypherEditorProps {
   ariaLabel?: string;
 
   /**
-   * Whether to enable or disable tab focus mode.
+   * Whether keybindings for inserting indents with the Tab key should be disabled.
    *
-   * true will allow the brower's default tabbing behavior.
-   * false will enable tab-trapping within the editor.
+   * true will not create keybindings for inserting indents.
+   * false will create keybindings for inserting indents.
    *
    * @default false
    */
-  setTabFocusMode?: boolean;
+  moveFocusOnTab?: boolean;
 }
 
 const executeKeybinding = (
@@ -320,7 +320,7 @@ export class CypherEditor extends Component<
     theme: 'light',
     lineNumbers: true,
     newLineOnEnter: false,
-    setTabFocusMode: false,
+    moveFocusOnTab: false,
   };
 
   private debouncedOnChange = this.props.onChange
@@ -344,7 +344,6 @@ export class CypherEditor extends Component<
       featureFlags,
       onExecute,
       newLineOnEnter,
-      setTabFocusMode,
     } = this.props;
 
     this.schemaRef.current = {
@@ -395,7 +394,7 @@ export class CypherEditor extends Component<
           ]),
         ),
         historyNavigation(this.props),
-        basicNeo4jSetup(),
+        basicNeo4jSetup(this.props),
         themeCompartment.of(themeExtension),
         changeListener,
         cypher(this.schemaRef.current),
@@ -428,8 +427,6 @@ export class CypherEditor extends Component<
       state: this.editorState.current,
       parent: this.editorContainer.current,
     });
-
-    this.editorView.current.setTabFocusMode(setTabFocusMode);
 
     if (this.props.autofocus) {
       this.focus();

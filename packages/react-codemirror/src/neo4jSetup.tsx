@@ -61,7 +61,13 @@ const insertTab: StateCommand = (cmd) => {
   return true;
 };
 
-export const basicNeo4jSetup = (): Extension[] => {
+type SetupProps = {
+  moveFocusOnTab?: boolean;
+};
+
+export const basicNeo4jSetup = ({
+  moveFocusOnTab = false,
+}: SetupProps): Extension[] => {
   const keymaps: KeyBinding[] = [
     closeBracketsKeymap,
     defaultKeymap,
@@ -70,22 +76,27 @@ export const basicNeo4jSetup = (): Extension[] => {
     foldKeymap,
     completionKeymap,
     lintKeymap,
-    {
-      key: 'Tab',
-      preventDefault: true,
-      run: acceptCompletion,
-    },
-    {
-      key: 'Tab',
-      preventDefault: true,
-      run: insertTab,
-    },
-    {
-      key: 'Shift-Tab',
-      preventDefault: true,
-      run: indentLess,
-    },
   ].flat();
+
+  if (!moveFocusOnTab) {
+    keymaps.push(
+      {
+        key: 'Tab',
+        preventDefault: true,
+        run: acceptCompletion,
+      },
+      {
+        key: 'Tab',
+        preventDefault: true,
+        run: insertTab,
+      },
+      {
+        key: 'Shift-Tab',
+        preventDefault: true,
+        run: indentLess,
+      },
+    );
+  }
 
   const extensions: Extension[] = [];
 
