@@ -1,25 +1,30 @@
 plugins {
-    id("java")
-    id("org.jetbrains.intellij") version "1.16.1"
+    id("org.jetbrains.intellij.platform") version "2.1.0"
 }
-
-group = "org.neo4j.intellij.lsp"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
-intellij {
-    version.set("2023.3")
-    type.set("IU")
-    plugins.set(listOf("JavaScript"))
+dependencies {
+    intellijPlatform {
+        intellijIdeaUltimate("2024.2.3")
+        bundledPlugin("JavaScript")
+        instrumentationTools()
+    }
 }
+
+group = "org.neo4j.intellij.lsp"
+version = "1.1-SNAPSHOT"
 
 tasks {
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
     }
 
     clean {
@@ -43,8 +48,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("233")
-        untilBuild.set("241.*")
+        sinceBuild.set("242")
+        untilBuild.set("242.*")
     }
 
     signPlugin {
