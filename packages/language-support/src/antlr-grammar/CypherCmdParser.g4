@@ -27,4 +27,5 @@ listCompletionRule: LIST;
 
 useCompletionRule: USE;
 
-externalKeywords: preparserOption | HISTORY | CLEAR | PARAM;
+// This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
+unescapedLabelSymbolicNameString: preparserOption | HISTORY | CLEAR | PARAM | unescapedLabelSymbolicNameString_;
