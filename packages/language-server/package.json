@@ -16,7 +16,7 @@
     "cypher",
     "language server"
   ],
-  "version": "2.0.0-next.9",
+  "version": "2.0.0-next.10",
   "main": "./dist/server.js",
   "types": "src/server.ts",
   "repository": {
@@ -34,7 +34,7 @@
     "cypher-language-server": "./dist/cypher-language-server"
   },
   "dependencies": {
-    "@neo4j-cypher/language-support": "2.0.0-next.8",
+    "@neo4j-cypher/language-support": "2.0.0-next.9",
     "lodash.debounce": "^4.0.8",
     "neo4j-driver": "^5.3.0",
     "vscode-languageserver": "^8.1.0",
