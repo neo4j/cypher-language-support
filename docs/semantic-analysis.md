@@ -1,5 +1,10 @@
 ## Semantic analysis maintenance
 
+There's a file at the root of the repository, `modify-semantic-analysis.js`, which does the necessary modifications to the `semanticAnalysis.js` file. To update the semantic analysis version, just:
+
+- Copy the new `semanticAnalysis.js` version in `./packages/language-support/src/highlighting/syntaxValidation`.
+- Run `node modify-semantic.analysis.js`.
+
 ### Summary
 
 To update the `semanticAnalysis.js` file, follow this steps:

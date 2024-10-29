@@ -325,6 +325,10 @@ dynamicExpression
    : DOLLAR LPAREN expression RPAREN
    ;
 
+dynamicAnyAllExpression
+   : DOLLAR (ALL | ANY)? LPAREN expression RPAREN
+   ;
+
 dynamicLabelType
    : COLON dynamicExpression
    ;
@@ -405,12 +409,14 @@ labelExpression2Is
 labelExpression1
    : LPAREN labelExpression4 RPAREN #ParenthesizedLabelExpression
    | PERCENT                        #AnyLabel
+   | dynamicAnyAllExpression        #DynamicLabel
    | symbolicNameString             #LabelName
    ;
 
 labelExpression1Is
    : LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
    | PERCENT                          #AnyLabelIs
+   | dynamicAnyAllExpression          #DynamicLabelIs
    | symbolicLabelNameString          #LabelNameIs
    ;
 
@@ -1785,11 +1791,11 @@ symbolicLabelNameString
 
 // Do not remove this, it is needed for composing the grammar
 // with other ones (e.g. language support ones)
-externalKeywords
-   : IDENTIFIER
+unescapedLabelSymbolicNameString
+   : unescapedLabelSymbolicNameString_
    ;
 
-unescapedLabelSymbolicNameString
+unescapedLabelSymbolicNameString_
    : IDENTIFIER
    | ACCESS
    | ACTIVE
@@ -2048,7 +2054,6 @@ unescapedLabelSymbolicNameString
    | YIELD
    | ZONE
    | ZONED
-   | externalKeywords
    ;
 
 endOfFile
