@@ -275,6 +275,25 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
+        offsets: {
+          end: 47,
+          start: 46,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 2,
+          },
+          start: {
+            character: 18,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+      {
         message: 'Variable `i` already declared in outer scope',
         offsets: {
           end: 64,
@@ -293,40 +312,23 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message: 'Variable `i` already declared in outer scope',
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
         offsets: {
-          end: 64,
-          start: 63,
+          end: 100,
+          start: 99,
         },
         range: {
           end: {
-            character: 16,
-            line: 3,
+            character: 19,
+            line: 5,
           },
           start: {
-            character: 15,
-            line: 3,
+            character: 18,
+            line: 5,
           },
         },
-        severity: 1,
-      },
-      {
-        message: 'Variable `i` already declared',
-        offsets: {
-          end: 117,
-          start: 75,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 6,
-          },
-          start: {
-            character: 10,
-            line: 4,
-          },
-        },
-        severity: 1,
+        severity: 2,
       },
       {
         message: 'Variable `i` already declared in outer scope',
@@ -341,24 +343,6 @@ describe('Semantic validation spec', () => {
           },
           start: {
             character: 8,
-            line: 6,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message: 'Variable `i` already declared in outer scope',
-        offsets: {
-          end: 117,
-          start: 116,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 6,
-          },
-          start: {
-            character: 15,
             line: 6,
           },
         },
