@@ -8,8 +8,33 @@ env:
   NODE_OPTIONS: '--max_old_space_size=4096'
 
 jobs:
+  canary-release-to-npm:
+    name: 'Canary release to npm'
+    environment: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies with frozen lock file and generate parser
+        run: npm ci
+
+      - name: Build and release canary package to npm
+        run: node ./release-canary.js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   stable-release-to-npm:
     name: 'Stable release to npm'
+    needs: canary-release-to-npm
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
@@ -34,27 +59,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  canary-release-to-npm:
-    name: 'Canary release to npm'
-    environment: publish-npm
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
-
-      - name: Build and release canary package to npm
-        run: node ./release-canary.js
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
