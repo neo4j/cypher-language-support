@@ -154,4 +154,14 @@ RETURN movie {
       ],
     });
   });
+
+  test('correctly completes property keys with backticks', () => {
+    const dbSchema = { propertyKeys: ['foo bar'] };
+    const query = 'MATCH (n) WHERE n.';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [{ label: '`foo bar`', kind: CompletionItemKind.Property }],
+    });
+  });
 });

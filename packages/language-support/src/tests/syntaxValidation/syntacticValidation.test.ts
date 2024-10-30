@@ -188,6 +188,73 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  test('Syntax validation treats labels and relationship types with backticks correctly', () => {
+    const query = `MATCH (n: \`Foo Bar\`)-[r:\`RR QQ\`]->() RETURN n`;
+
+    // With spaces in the label / relationship
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Foo Bar'], relationshipTypes: ['RR QQ'] },
+      }),
+    ).toEqual([]);
+
+    // Without spaces in the label / relationship
+    expect(
+      getDiagnosticsForQuery({
+        query: 'MATCH (n: `Foo`)-[r:`RR`]->() RETURN n',
+        dbSchema: { labels: ['Foo'], relationshipTypes: ['RR'] },
+      }),
+    ).toEqual([]);
+
+    // With incorrect backticked label / rel type
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Foo'], relationshipTypes: ['RR'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Label `Foo Bar` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 19,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Relationship type `RR QQ` is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 31,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
   test('Syntax validation warns on missing rel type when database can be contacted', () => {
     const query = `MATCH (n)-[:Rel]->(m) RETURN n`;
 

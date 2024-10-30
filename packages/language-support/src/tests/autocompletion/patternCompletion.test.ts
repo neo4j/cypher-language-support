@@ -87,6 +87,18 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Correctly completes label with backticks in MATCH', () => {
+    const query = 'MATCH (n:';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat', 'Person', 'Dog', 'Foo Bar'] },
+      expected: [
+        { label: '`Foo Bar`', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test('Correctly completes unstarted label for a first statement when caret is passed', () => {
     const query = 'MATCH (n:); MATCH (m:)';
 
@@ -402,6 +414,18 @@ describe('Type relationship auto-completion', () => {
       dbSchema: { relationshipTypes: ['RelationshipType'] },
       expected: [
         { label: 'RelationshipType', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Correctly completes relationship type with backticks', () => {
+    const query = 'MATCH (n)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema: { relationshipTypes: ['Foo Bar'] },
+      expected: [
+        { label: '`Foo Bar`', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });

@@ -28,13 +28,13 @@ const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => ({
-    label: labelName,
+    label: backtickIfNeeded(labelName),
     kind: CompletionItemKind.TypeParameter,
   })) ?? [];
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
   dbSchema.relationshipTypes?.map((relType) => ({
-    label: relType,
+    label: backtickIfNeeded(relType),
     kind: CompletionItemKind.TypeParameter,
   })) ?? [];
 
@@ -257,10 +257,20 @@ const parameterCompletions = (
       kind: CompletionItemKind.Variable,
     }));
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
-  dbInfo.propertyKeys?.map((propertyKey) => ({
-    label: propertyKey,
-    kind: CompletionItemKind.Property,
-  })) ?? [];
+  dbInfo.propertyKeys?.map((propertyKey) => {
+    return {
+      label: backtickIfNeeded(propertyKey),
+      kind: CompletionItemKind.Property,
+    };
+  }) ?? [];
+
+function backtickIfNeeded(e: string): string {
+  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+    return `\`${e}\``;
+  } else {
+    return e;
+  }
+}
 
 enum ExpectedParameterType {
   String = 'STRING',
