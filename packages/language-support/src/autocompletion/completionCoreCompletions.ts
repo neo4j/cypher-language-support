@@ -7,7 +7,6 @@ import {
   InsertTextFormat,
   Position,
   Range,
-  TextEdit,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
@@ -29,31 +28,29 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
-const labelCompletions = (
-  dbSchema: DbSchema,
-  unfinishedBacktick: boolean,
-  range: Range,
-) =>
+type RangeWithOffsets = Range & { startOffset: number; endOffset: number };
+
+const labelCompletions = (dbSchema: DbSchema, range: RangeWithOffsets) =>
   dbSchema.labels?.map((labelName) => {
     const completionItem: CompletionItem = {
-      label: unfinishedBacktick ? labelName : backtickIfNeeded(labelName),
+      label: backtickIfNeeded(labelName),
       kind: CompletionItemKind.TypeParameter,
     };
-    completionItem.textEdit = TextEdit.replace(range, completionItem.label);
+    if (labelName !== completionItem.label) {
+      completionItem.textEdit = { range: range, newText: completionItem.label };
+    }
     return completionItem;
   }) ?? [];
 
-const reltypeCompletions = (
-  dbSchema: DbSchema,
-  unfinishedBacktick: boolean,
-  range: Range,
-) =>
+const reltypeCompletions = (dbSchema: DbSchema, range: RangeWithOffsets) =>
   dbSchema.relationshipTypes?.map((relType) => {
     const completionItem: CompletionItem = {
-      label: unfinishedBacktick ? relType : backtickIfNeeded(relType),
+      label: backtickIfNeeded(relType),
       kind: CompletionItemKind.TypeParameter,
     };
-    completionItem.textEdit = TextEdit.replace(range, completionItem.label);
+    if (relType !== completionItem.label) {
+      completionItem.textEdit = { range: range, newText: completionItem.label };
+    }
     return completionItem;
   }) ?? [];
 
@@ -277,15 +274,16 @@ const parameterCompletions = (
     }));
 const propertyKeyCompletions = (
   dbInfo: DbSchema,
-  unfinishedBacktick: boolean,
-  range: Range,
+  range: RangeWithOffsets,
 ): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const completionItem: CompletionItem = {
-      label: unfinishedBacktick ? propertyKey : backtickIfNeeded(propertyKey),
+      label: backtickIfNeeded(propertyKey),
       kind: CompletionItemKind.Property,
     };
-    completionItem.textEdit = TextEdit.replace(range, completionItem.label);
+    if (propertyKey !== completionItem.label) {
+      completionItem.textEdit = { range: range, newText: completionItem.label };
+    }
     return completionItem;
   }) ?? [];
 
@@ -424,14 +422,16 @@ export function completionCoreCompletion(
   }
 
   let unfinishedBacktickIdx = -1;
-  let endPosition = Position.create(eof.line - 1, eof.column);
+  let endPosition: Position | undefined = undefined;
+  let endOffset: number | undefined = undefined;
 
   if (tokens[caretIndex].type === CypherLexer.ESCAPED_SYMBOLIC_NAME) {
     unfinishedBacktickIdx = caretIndex;
     endPosition = Position.create(
       tokens[caretIndex + 1].line - 1,
-      tokens[caretIndex + 1].column - 1,
+      tokens[caretIndex + 1].column,
     );
+    endOffset = tokens[caretIndex + 1].start;
   } else {
     unfinishedBacktickIdx = tokens.findIndex(
       (token) => token.type === CypherLexer.ErrorChar && token.text === '`',
@@ -443,11 +443,14 @@ export function completionCoreCompletion(
 
   const startPosition = Position.create(
     tokens[caretIndex].line - 1,
-    tokens[caretIndex].column + 1,
+    tokens[caretIndex].column,
   );
-  const range = Range.create(startPosition, endPosition);
-
-  const unfinishedBacktick = unfinishedBacktickIdx !== -1;
+  const startOffset = tokens[caretIndex].start;
+  const range = {
+    ...Range.create(startPosition, endPosition ?? startPosition),
+    startOffset: startOffset,
+    endOffset: endOffset ?? startOffset,
+  };
 
   codeCompletion.preferredRules = new Set<number>([
     CypherParser.RULE_functionName,
@@ -546,11 +549,7 @@ export function completionCoreCompletion(
           }
         }
 
-        const properties = propertyKeyCompletions(
-          dbSchema,
-          unfinishedBacktick,
-          range,
-        );
+        const properties = propertyKeyCompletions(dbSchema, range);
         return properties;
       }
 
@@ -590,16 +589,16 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return labelCompletions(dbSchema, unfinishedBacktick, range);
+          return labelCompletions(dbSchema, range);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
-          return reltypeCompletions(dbSchema, unfinishedBacktick, range);
+          return reltypeCompletions(dbSchema, range);
         }
 
         return [
-          ...labelCompletions(dbSchema, unfinishedBacktick, range),
-          ...reltypeCompletions(dbSchema, unfinishedBacktick, range),
+          ...labelCompletions(dbSchema, range),
+          ...reltypeCompletions(dbSchema, range),
         ];
       }
 

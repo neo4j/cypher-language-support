@@ -7,10 +7,13 @@ import { autocomplete } from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,
+  TextEdit,
 } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
+import { EditorView } from '@codemirror/view';
+import { vi } from 'vitest';
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {
@@ -124,6 +127,15 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
           const maybeDeprecated = deprecated
             ? { boost: -99, deprecated: true }
             : {};
+          
+          context.state.doc
+          const change = o.textEdit && TextEdit.is(o.textEdit) ?
+            
+            
+            (view: EditorView, completion: Completion, from: number, to: number) => view.dispatch({
+            changes: { from: (o.textEdit as TextEdit).range.start. , to, insert: text }
+          })
+          :  undefined;
 
           return {
             label: o.label,
@@ -132,7 +144,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
               o.kind === CompletionItemKind.Snippet
                 ? // codemirror requires an empty snippet space to be able to tab out of the completion
                   snippet((o.insertText ?? o.label) + '${}')
-                : undefined,
+                : o.textEdit && TextEdit.is(o.textEdit) ? (view: EditorView, completion: Completion, from: number, to: number) => {view.dispatch({
+                  changes: { o.textEdit , to, insert: text },
+                })} ?  undefined,
             detail: o.detail,
             ...maybeDeprecated,
             ...maybeInfo,
