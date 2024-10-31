@@ -501,6 +501,8 @@ describe('Type relationship auto-completion', () => {
                 character: 13,
                 line: 0,
               },
+              startOffset: 13,
+              endOffset: 13,
             },
           },
         },

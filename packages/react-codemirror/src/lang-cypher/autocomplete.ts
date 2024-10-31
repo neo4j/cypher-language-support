@@ -3,6 +3,7 @@ import {
   CompletionSource,
   snippet,
 } from '@codemirror/autocomplete';
+import { EditorView } from '@codemirror/view';
 import { autocomplete } from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
@@ -12,8 +13,6 @@ import {
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
-import { EditorView } from '@codemirror/view';
-import { vi } from 'vitest';
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {
@@ -127,15 +126,34 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
           const maybeDeprecated = deprecated
             ? { boost: -99, deprecated: true }
             : {};
-          
-          context.state.doc
-          const change = o.textEdit && TextEdit.is(o.textEdit) ?
-            
-            
-            (view: EditorView, completion: Completion, from: number, to: number) => view.dispatch({
-            changes: { from: (o.textEdit as TextEdit).range.start. , to, insert: text }
-          })
-          :  undefined;
+
+          context.state.doc;
+
+          // We want to modify backticked elements as a block, i.e. if the cursor is inside
+          // the label `Foo`, and the database contains the label `Foo Bar` I want
+          // to replace the whole thing when auto-completing
+          const backtickedSymbolsEdit =
+            o.textEdit && TextEdit.is(o.textEdit)
+              ? (view: EditorView) => {
+                  const startOffset = (
+                    o.textEdit as { range: { startOffset: number } }
+                  ).range.startOffset;
+                  const endOffset = (
+                    o.textEdit as { range: { endOffset: number } }
+                  ).range.endOffset;
+                  const newCursor = startOffset + o.label.length;
+                  view.dispatch({
+                    changes: {
+                      from: startOffset,
+                      to: endOffset,
+                      insert: o.label,
+                    },
+                    // This is to move the cursor to the end of the backticked thing
+                    selection: { anchor: newCursor, head: newCursor },
+                  });
+                  view;
+                }
+              : undefined;
 
           return {
             label: o.label,
@@ -144,9 +162,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
               o.kind === CompletionItemKind.Snippet
                 ? // codemirror requires an empty snippet space to be able to tab out of the completion
                   snippet((o.insertText ?? o.label) + '${}')
-                : o.textEdit && TextEdit.is(o.textEdit) ? (view: EditorView, completion: Completion, from: number, to: number) => {view.dispatch({
-                  changes: { o.textEdit , to, insert: text },
-                })} ?  undefined,
+                : backtickedSymbolsEdit,
             detail: o.detail,
             ...maybeDeprecated,
             ...maybeInfo,

@@ -177,6 +177,8 @@ RETURN movie {
                 character: 18,
                 line: 0,
               },
+              startOffset: 18,
+              endOffset: 18,
             },
           },
         },
