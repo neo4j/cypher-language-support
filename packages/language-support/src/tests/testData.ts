@@ -11,7 +11,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT',
+          description:
+            'A numeric value from which the absolute number will be returned.',
           name: 'input',
           type: 'INTEGER | FLOAT',
         },
@@ -29,7 +30,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -48,13 +49,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'variable :: ANY',
+          description: 'A variable that can be used within the `WHERE` clause.',
           name: 'variable',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description:
+            'A predicate must hold for all elements in this list for the function to return `true`.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -74,13 +76,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'variable :: ANY',
+          description: 'A variable that can be used within the `WHERE` clause.',
           name: 'variable',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'A list for the predicate to check against.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -99,7 +101,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'ANY',
         },
@@ -118,7 +120,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: ANY',
+          description: 'A path to return nodes and relationships from.',
           name: 'path',
           type: 'ANY',
         },
@@ -136,7 +138,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'ANY',
         },
@@ -155,26 +157,26 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'items :: ANY',
-          name: 'items',
+          description: 'A value to be aggregated.',
+          name: 'item',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value from which the max is selected.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'groupLimit = -1 :: INTEGER',
+          description: 'The limit on the number of items returned.',
           name: 'groupLimit',
           type: 'INTEGER',
         },
       ],
       signature:
-        'apoc.agg.maxItems(items :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
+        'apoc.agg.maxItems(item :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
       isDeprecated: false,
@@ -188,7 +190,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'ANY',
         },
@@ -207,26 +209,26 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'items :: ANY',
-          name: 'items',
+          description: 'A value to be aggregated.',
+          name: 'item',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value from which the min is selected.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'groupLimit = -1 :: INTEGER',
+          description: 'The limit on the number of items returned.',
           name: 'groupLimit',
           type: 'INTEGER',
         },
       ],
       signature:
-        'apoc.agg.minItems(items :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
+        'apoc.agg.minItems(item :: ANY, value :: ANY, groupLimit = -1 :: INTEGER) :: ANY',
       returnDescription: 'ANY',
       aggregating: true,
       isDeprecated: false,
@@ -240,13 +242,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'offset :: INTEGER',
+          description:
+            'The index of the value to be returned, or -1 to return the last item.',
           name: 'offset',
           type: 'INTEGER',
         },
@@ -265,7 +268,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER | FLOAT',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'INTEGER | FLOAT',
         },
@@ -273,8 +276,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
-          description:
-            'percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST<FLOAT>',
+          description: 'The percentiles from which the values are obtained.',
           name: 'percentiles',
           type: 'LIST<FLOAT>',
         },
@@ -294,7 +296,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER | FLOAT',
+          description: 'A value to be multiplied in the aggregate.',
           name: 'value',
           type: 'INTEGER | FLOAT',
         },
@@ -314,21 +316,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'A value to be multiplied in the aggregate.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'from = 0 :: INTEGER',
+          description:
+            'The index from which to start returning values in the specified range.',
           name: 'from',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'to = -1 :: INTEGER',
+          description:
+            'The non-inclusive index of the final value in the range.',
           name: 'to',
           type: 'INTEGER',
         },
@@ -348,7 +352,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER | FLOAT',
+          description: 'A value to be aggregated.',
           name: 'value',
           type: 'INTEGER | FLOAT',
         },
@@ -356,8 +360,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
-          description:
-            'percentiles = [0.5, 0.75, 0.9, 0.95, 0.99] :: LIST<FLOAT>',
+          description: 'The percentiles from which the values are obtained.',
           name: 'percentiles',
           type: 'LIST<FLOAT>',
         },
@@ -377,7 +380,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'object :: ANY',
+          description:
+            'The node or relationship to check the non-existence of.',
           name: 'object',
           type: 'ANY',
         },
@@ -396,14 +400,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'object :: ANY',
+          description: 'The object to return properties from.',
           name: 'object',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'keys = null :: LIST<STRING>',
+          description:
+            'The keys of the properties to be returned (if null then all keys are returned).',
           name: 'keys',
           type: 'LIST<STRING>',
         },
@@ -423,13 +428,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'object :: ANY',
+          description: 'The object to return a property from.',
           name: 'object',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key of the property to return.',
           name: 'key',
           type: 'STRING',
         },
@@ -447,19 +452,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'a :: INTEGER',
+          description: 'The lefthand side value of the bitwise operation.',
           name: 'a',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description: 'The type of bitwise operation to perform.',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'b :: INTEGER',
+          description: 'The righthand side value of the bitwise operation.',
           name: 'b',
           type: 'INTEGER',
         },
@@ -479,7 +484,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<INTEGER | FLOAT>',
+          description: 'The list to return the average from.',
           name: 'coll',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -498,20 +503,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to return the combinations from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'minSelect :: INTEGER',
+          description: 'The minimum selection size of the combination.',
           name: 'minSelect',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'maxSelect = -1 :: INTEGER',
+          description: 'The maximum selection size of the combination.',
           name: 'maxSelect',
           type: 'INTEGER',
         },
@@ -531,13 +536,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to search for the given value.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value in the list to check for the existence of.',
           name: 'value',
           type: 'ANY',
         },
@@ -557,13 +562,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll1 :: LIST<ANY>',
+          description: 'The list to search for the given values in.',
           name: 'coll1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'coll2 :: LIST<ANY>',
+          description:
+            'The list of values in the given list to check for the existence of.',
           name: 'coll2',
           type: 'LIST<ANY>',
         },
@@ -583,13 +589,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll1 :: LIST<ANY>',
+          description: 'The sorted list to search for the given values.',
           name: 'coll1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'coll2 :: LIST<ANY>',
+          description:
+            'The list of values to check for existence of in the given list.',
           name: 'coll2',
           type: 'LIST<ANY>',
         },
@@ -608,7 +615,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to check for duplicates in.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -627,13 +634,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The sorted list to search for the given value.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to check for the existence of in the list.',
           name: 'value',
           type: 'ANY',
         },
@@ -653,7 +660,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to check for duplicates.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -671,13 +678,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list2` and form a disjunction from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list1` and form a disjunction from.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -696,7 +705,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'The list to remove duplicate consecutive values from.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -716,7 +725,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to collect duplicate values from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -735,7 +744,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description:
+            'The list to collect duplicate values and their count from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -754,19 +764,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'items :: STRING',
-          name: 'items',
+          description: 'The item to be present in the returned list.',
+          name: 'item',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description:
+            'The number of times the given item should appear in the returned list.',
           name: 'count',
           type: 'INTEGER',
         },
       ],
       signature:
-        'apoc.coll.fill(items :: STRING, count :: INTEGER) :: LIST<ANY>',
+        'apoc.coll.fill(item :: STRING, count :: INTEGER) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
       isDeprecated: false,
@@ -780,14 +791,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to flatten.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'recursive = false :: BOOLEAN',
+          description: 'Whether nested list items should also be flattened.',
           name: 'recursive',
           type: 'BOOLEAN',
         },
@@ -807,7 +818,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to return items and their count from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -826,7 +837,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to return items and their count from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -845,13 +856,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to find the given value in.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description:
+            'The value to find the first occurrence of in the given list.',
           name: 'value',
           type: 'ANY',
         },
@@ -871,19 +883,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to insert a value into.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description: 'The position in the list to insert the given value.',
           name: 'index',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to be inserted.',
           name: 'value',
           type: 'ANY',
         },
@@ -903,19 +915,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to insert the values into.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description:
+            'The position in the list to start inserting the given values.',
           name: 'index',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'The values to be inserted.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -935,13 +948,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list2` and form an intersection from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list1` and form an intersection from.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -961,13 +976,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list2` and check for equality.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list1` and check for equality.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -987,7 +1004,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'The list to find the maximum in.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -1006,7 +1023,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'The list to find the minimum in.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -1024,13 +1041,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to collect the count of the given value from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'item :: ANY',
+          description: 'The value to count in the given list.',
           name: 'item',
           type: 'ANY',
         },
@@ -1049,13 +1066,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to create pairs from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'offset :: INTEGER',
+          description: 'The offset to make each pair with from the given list.',
           name: 'offset',
           type: 'INTEGER',
         },
@@ -1075,7 +1092,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'The list to create pairs from.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -1094,7 +1111,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'The list to create pairs from.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -1113,13 +1130,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to partition into smaller sublists.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The max size of each partitioned sublist.',
           name: 'batchSize',
           type: 'INTEGER',
         },
@@ -1139,7 +1156,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to return a random item from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -1158,20 +1175,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to return random items from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'itemCount :: INTEGER',
+          description: 'The number of random items to return from the list.',
           name: 'itemCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'allowRepick = false :: BOOLEAN',
+          description:
+            'Whether elements from the original list can be selected more than once.',
           name: 'allowRepick',
           type: 'BOOLEAN',
         },
@@ -1191,20 +1209,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to remove values from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description:
+            'The starting index in the list to begin removing values from.',
           name: 'index',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'length = 1 :: INTEGER',
+          description: 'The number of values to remove.',
           name: 'length',
           type: 'INTEGER',
         },
@@ -1224,13 +1243,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description: 'The list to remove values from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description: 'The values to remove from the given list.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -1249,7 +1268,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<INTEGER | FLOAT>',
+          description: 'The list to return a running total from.',
           name: 'list',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -1268,19 +1287,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to be updated.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description: 'The position of the value in the list to be updated.',
           name: 'index',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The new value to be set.',
           name: 'value',
           type: 'ANY',
         },
@@ -1299,7 +1318,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to be shuffled.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -1317,7 +1336,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to be sorted.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -1336,13 +1355,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<MAP>',
+          description: 'The list of maps to be sorted.',
           name: 'list',
           type: 'LIST<MAP>',
         },
         {
           isDeprecated: false,
-          description: 'prop :: STRING',
+          description:
+            'The property key to be used to sort the list of maps by.',
           name: 'prop',
           type: 'STRING',
         },
@@ -1362,28 +1382,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<MAP>',
+          description: 'The list of maps to be sorted.',
           name: 'coll',
           type: 'LIST<MAP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'orderFields = [] :: LIST<STRING>',
+          description:
+            'The property keys to be used to sort the list of maps by.',
           name: 'orderFields',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'limit = -1 :: INTEGER',
+          description: 'The amount of results to return.',
           name: 'limit',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'skip = 0 :: INTEGER',
+          description: 'The amount to skip by.',
           name: 'skip',
           type: 'INTEGER',
         },
@@ -1403,13 +1424,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<NODE>',
+          description: 'The list of nodes to be sorted.',
           name: 'coll',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'prop :: STRING',
+          description:
+            'The property key on the node to be used to sort the list by.',
           name: 'prop',
           type: 'STRING',
         },
@@ -1428,14 +1450,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<STRING>',
+          description: 'The list of strings to be sorted.',
           name: 'coll',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'conf = {} :: MAP',
+          description:
+            'A map containing a single key `locale` to indicate which language to use when sorting the strings.',
           name: 'conf',
           type: 'MAP',
         },
@@ -1455,14 +1478,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<INTEGER | FLOAT>',
+          description: 'A list to collect the standard deviation from.',
           name: 'list',
           type: 'LIST<INTEGER | FLOAT>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'isBiasCorrected = true :: BOOLEAN',
+          description:
+            'Will perform a sample standard deviation if `isBiasCorrected`, otherwise a population standard deviation is performed.',
           name: 'isBiasCorrected',
           type: 'BOOLEAN',
         },
@@ -1482,13 +1506,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description: 'The list to remove values from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description: 'The list of values to be removed from `list1`.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -1508,7 +1532,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<INTEGER | FLOAT>',
+          description: 'The list of numbers to create a sum from.',
           name: 'coll',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -1527,7 +1551,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<INTEGER | FLOAT>',
+          description:
+            'The list of numbers to create a sum from after each is cast to a java Long value.',
           name: 'coll',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -1545,7 +1570,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list of values to remove all duplicates from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
@@ -1564,13 +1589,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list2` and form a distinct union from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list1` and form a distinct union from.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -1590,13 +1617,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list2` and form a union from.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description:
+            'The list of values to compare against `list1` and form a union from.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -1616,13 +1645,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description: 'The list to zip together with `list2`.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description: 'The list to zip together with `list1`.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -1641,21 +1670,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: STRING',
+          description: 'A JSON stringified list.',
           name: 'list',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the list.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'pathOptions = null :: LIST<STRING>',
+          description:
+            "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL', 'REQUIRE_PROPERTIES', 'SUPPRESS_EXCEPTIONS')",
           name: 'pathOptions',
           type: 'LIST<STRING>',
         },
@@ -1674,21 +1705,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: STRING',
+          description: 'A JSON stringified map.',
           name: 'map',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the map.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'pathOptions = null :: LIST<STRING>',
+          description:
+            "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL', 'REQUIRE_PROPERTIES', 'SUPPRESS_EXCEPTIONS')",
           name: 'pathOptions',
           type: 'LIST<STRING>',
         },
@@ -1708,27 +1741,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node containing a JSON string property.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The property key to convert.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the node property string.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'pathOptions = null :: LIST<STRING>',
+          description:
+            "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL', 'REQUIRE_PROPERTIES', 'SUPPRESS_EXCEPTIONS')",
           name: 'pathOptions',
           type: 'LIST<STRING>',
         },
@@ -1748,27 +1783,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node containing a JSON stringified map.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The property key to convert.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the node property string.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'pathOptions = null :: LIST<STRING>',
+          description:
+            "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL', 'REQUIRE_PROPERTIES', 'SUPPRESS_EXCEPTIONS')",
           name: 'pathOptions',
           type: 'LIST<STRING>',
         },
@@ -1787,7 +1824,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to serialize.',
           name: 'value',
           type: 'ANY',
         },
@@ -1805,7 +1842,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to convert into a list.',
           name: 'value',
           type: 'ANY',
         },
@@ -1823,7 +1860,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: ANY',
+          description: 'The value to convert into a map.',
           name: 'map',
           type: 'ANY',
         },
@@ -1841,7 +1878,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: ANY',
+          description: 'The value to convert into a node.',
           name: 'node',
           type: 'ANY',
         },
@@ -1859,7 +1896,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: ANY',
+          description: 'The value to covert into a node list.',
           name: 'list',
           type: 'ANY',
         },
@@ -1877,7 +1914,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: ANY',
+          description: 'The value to convert into a relationship.',
           name: 'rel',
           type: 'ANY',
         },
@@ -1895,7 +1932,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'relList :: ANY',
+          description: 'The value to convert into a relationship list.',
           name: 'relList',
           type: 'ANY',
         },
@@ -1914,7 +1951,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: ANY',
+          description: 'The list to convert into a set.',
           name: 'list',
           type: 'ANY',
         },
@@ -1933,14 +1970,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to convert into a stringified JSON map.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'ignoreCase = true :: BOOLEAN',
+          description:
+            'Whether or not to ignore the case of the keys when sorting.',
           name: 'ignoreCase',
           type: 'BOOLEAN',
         },
@@ -1982,7 +2020,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'base64Uuid :: STRING',
+          description: 'The string representing a UUID encoded with Base64.',
           name: 'base64Uuid',
           type: 'STRING',
         },
@@ -2001,7 +2039,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'uuid :: STRING',
+          description: 'The UUID represented as a hexadecimal string.',
           name: 'uuid',
           type: 'STRING',
         },
@@ -2019,14 +2057,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The list of labels to assign to the virtual node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'props = {} :: MAP',
+          description: 'The map of properties to assign to the virtual node.',
           name: 'props',
           type: 'MAP',
         },
@@ -2045,25 +2083,26 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: NODE',
+          description: 'The start node to assign to the virtual relationship.',
           name: 'from',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type to assign to the virtual relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description:
+            'The map of properties to assign to the virtual relationship.',
           name: 'props',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'to :: NODE',
+          description: 'The end node to assign to the virtual relationship.',
           name: 'to',
           type: 'NODE',
         },
@@ -2083,13 +2122,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node to generate a virtual node from.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'propertyNames :: LIST<STRING>',
+          description: 'The properties to copy to the virtual node.',
           name: 'propertyNames',
           type: 'LIST<STRING>',
         },
@@ -2109,13 +2148,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher query to execute.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description:
+            'The parameters needed for input to the given Cypher query.',
           name: 'params',
           type: 'MAP',
         },
@@ -2135,13 +2175,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher query to execute.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description:
+            'The parameters needed for input to the given Cypher query.',
           name: 'params',
           type: 'MAP',
         },
@@ -2160,7 +2201,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'url :: STRING',
+          description: 'The URL to extract metadata from.',
           name: 'url',
           type: 'STRING',
         },
@@ -2178,25 +2219,25 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The timestamp to add time to.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description: 'The unit the given timestamp is in.',
           name: 'unit',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'addValue :: INTEGER',
+          description: 'The amount of time to add to the given timestamp.',
           name: 'addValue',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'addUnit :: STRING',
+          description: 'The unit the added value is in.',
           name: 'addUnit',
           type: 'STRING',
         },
@@ -2216,19 +2257,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The timestamp to be converted.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description: 'The unit the given timestamp is in.',
           name: 'unit',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'toUnit :: STRING',
+          description: 'The unit to convert the given timestamp to.',
           name: 'toUnit',
           type: 'STRING',
         },
@@ -2248,20 +2289,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'temporal :: STRING',
+          description: 'A string representation of a temporal value.',
           name: 'temporal',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'currentFormat :: STRING',
+          description: 'The format the given temporal is formatted as.',
           name: 'currentFormat',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=yyyy-MM-dd, type=STRING}',
-          description: 'convertTo = yyyy-MM-dd :: STRING',
+          description: 'The format to convert the given temporal value to.',
           name: 'convertTo',
           type: 'STRING',
         },
@@ -2291,21 +2332,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description:
+            'The timestamp in ms since epoch to return a field from.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=d, type=STRING}',
-          description: 'unit = d :: STRING',
+          description: 'The unit of the field to return the value of.',
           name: 'unit',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=UTC, type=STRING}',
-          description: 'timezone = UTC :: STRING',
+          description: 'The timezone the given timestamp is in.',
           name: 'timezone',
           type: 'STRING',
         },
@@ -2325,7 +2367,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'date :: STRING',
+          description: 'A string representation of a temporal value.',
           name: 'date',
           type: 'STRING',
         },
@@ -2333,7 +2375,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
-          description: 'pattern = yyyy-MM-dd HH:mm:ss :: STRING',
+          description: 'The format the given temporal is formatted as.',
           name: 'pattern',
           type: 'STRING',
         },
@@ -2353,14 +2395,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The timestamp since epoch to format.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=ms, type=STRING}',
-          description: 'unit = ms :: STRING',
+          description: 'The unit of the given timestamp.',
           name: 'unit',
           type: 'STRING',
         },
@@ -2368,14 +2410,14 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
-          description: 'format = yyyy-MM-dd HH:mm:ss :: STRING',
+          description: 'The format to convert the given temporal value to.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'timezone =  :: STRING',
+          description: 'The timezone the given timestamp is in.',
           name: 'timezone',
           type: 'STRING',
         },
@@ -2395,7 +2437,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: STRING',
+          description: 'The datetime to convert to ms.',
           name: 'time',
           type: 'STRING',
         },
@@ -2414,14 +2456,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: STRING',
+          description: 'The datetime to convert.',
           name: 'time',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=ms, type=STRING}',
-          description: 'unit = ms :: STRING',
+          description: 'The conversion unit.',
           name: 'unit',
           type: 'STRING',
         },
@@ -2429,14 +2471,14 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
-          description: 'format = yyyy-MM-dd HH:mm:ss :: STRING',
+          description: 'The format the given datetime is in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'timezone =  :: STRING',
+          description: 'The timezone the given datetime is in.',
           name: 'timezone',
           type: 'STRING',
         },
@@ -2468,14 +2510,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The timestamp since epoch to format.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=ms, type=STRING}',
-          description: 'unit = ms :: STRING',
+          description: 'The unit of the given timestamp.',
           name: 'unit',
           type: 'STRING',
         },
@@ -2495,7 +2537,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description:
+            'The timestamp or datetime string to extract the years from.',
           name: 'value',
           type: 'ANY',
         },
@@ -2503,7 +2546,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
-          description: 'format = yyyy-MM-dd HH:mm:ss :: STRING',
+          description: 'The format the given datetime string is in.',
           name: 'format',
           type: 'STRING',
         },
@@ -2523,13 +2566,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'leftNode :: NODE',
+          description: 'The first node to compare against the second node.',
           name: 'leftNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'rightNode :: NODE',
+          description: 'The second node to compare against the first node.',
           name: 'rightNode',
           type: 'NODE',
         },
@@ -2548,14 +2591,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'object :: ANY',
+          description: 'A node or relationship to hash.',
           name: 'object',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'excludedPropertyKeys = [] :: LIST<STRING>',
+          description: 'Property keys to exclude from the hashing.',
           name: 'excludedPropertyKeys',
           type: 'LIST<STRING>',
         },
@@ -2576,7 +2619,7 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'propertyExcludes = [] :: LIST<STRING>',
+          description: 'Property keys to exclude from the hashing.',
           name: 'propertyExcludes',
           type: 'LIST<STRING>',
         },
@@ -2596,14 +2639,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'object :: ANY',
+          description: 'A node or relationship to hash.',
           name: 'object',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    digestAlgorithm = "MD5" :: STRING,\n    strategy = "LAZY" :: STRING,\n    nodeAllowMap = [] :: MAP<STRING, LIST<STRING>>,\n    relAllowMap = [] :: MAP<STRING, LIST<STRING>>,\n    relDisallowMap = [] :: MAP<STRING, LIST<STRING>>,\n    mapAllowList = [] :: LIST<STRING>,\n    mapDisallowList = [] :: LIST<STRING>,\n    allNodesAllowList = [] :: LIST<STRING>,\n    allNodesDisallowList = [] :: LIST<STRING>,\n    allRelsAllowList = [] :: LIST<STRING>,\n    allRelsDisallowList = [] :: LIST<STRING>\n}',
           name: 'config',
           type: 'MAP',
         },
@@ -2622,21 +2666,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'json :: STRING',
+          description: 'A JSON string.',
           name: 'json',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=$, type=STRING}',
-          description: 'path = $ :: STRING',
+          description: 'The path to extract from the JSON string.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=LIST<STRING>}',
-          description: 'pathOptions = null :: LIST<STRING>',
+          description:
+            'A list of JSON path option enum values: ALWAYS_RETURN_LIST, AS_PATH_LIST, DEFAULT_PATH_LEAF_TO_NULL, REQUIRE_PROPERTIES, SUPPRESS_EXCEPTIONS.',
           name: 'pathOptions',
           type: 'LIST<STRING>',
         },
@@ -2656,13 +2701,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: ANY',
+          description: 'A node to check for the given label on.',
           name: 'node',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The given label to check for existence.',
           name: 'label',
           type: 'STRING',
         },
@@ -2681,19 +2726,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to clean.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The list of property keys to be removed.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'The list of values to be removed.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -2713,14 +2758,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'A nested map to flatten.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=., type=STRING}',
-          description: 'delimiter = . :: STRING',
+          description:
+            'The delimiter used to separate the levels of the flattened map.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -2739,13 +2785,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'A list of keys to create a map from.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'A list of values associated with the keys to create a map from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -2765,13 +2812,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The node labels from which the map will be created.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'prop :: STRING',
+          description: 'The property name to map the returned nodes by.',
           name: 'prop',
           type: 'STRING',
         },
@@ -2790,7 +2837,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'pairs :: LIST<LIST<ANY>>',
+          description: 'A list of pairs to create a map from.',
           name: 'pairs',
           type: 'LIST<LIST<ANY>>',
         },
@@ -2809,7 +2856,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'A list of keys and values listed pairwise to create a map from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -2828,27 +2876,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to extract a value from.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to extract.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=ANY}',
-          description: 'value = null :: ANY',
+          description: 'The default value of the given key.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'fail = true :: BOOLEAN',
+          description:
+            'If a key is not present and no default is provided, it will either throw an exception if true, or return a null value',
           name: 'fail',
           type: 'BOOLEAN',
         },
@@ -2868,13 +2917,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'A list of map values to be grouped.',
           name: 'values',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to group the map values by.',
           name: 'key',
           type: 'STRING',
         },
@@ -2893,13 +2942,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description: 'A list of map values to be grouped.',
           name: 'values',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to group the map values by.',
           name: 'key',
           type: 'STRING',
         },
@@ -2918,13 +2967,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map1 :: MAP',
+          description: 'The first map to merge with the second map.',
           name: 'map1',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'map2 :: MAP',
+          description: 'The second map to merge with the first map.',
           name: 'map2',
           type: 'MAP',
         },
@@ -2943,7 +2992,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'maps :: LIST<MAP>',
+          description: 'A list of maps to merge.',
           name: 'maps',
           type: 'LIST<MAP>',
         },
@@ -2962,27 +3011,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to extract a list of values from.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The list of keys to extract.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<ANY>}',
-          description: 'values = [] :: LIST<ANY>',
+          description: 'The default values of the given keys.',
           name: 'values',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'fail = true :: BOOLEAN',
+          description:
+            'If a key is not present and no default is provided, it will either throw an exception if true, or return a null value',
           name: 'fail',
           type: 'BOOLEAN',
         },
@@ -3002,20 +3052,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to remove from the map.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ recursive = false :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -3035,20 +3085,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The keys to remove from the map.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ recursive = false :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -3067,19 +3117,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to add or update the map with.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to set the given key to.',
           name: 'value',
           type: 'ANY',
         },
@@ -3098,19 +3148,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The key to add or update the map with.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to set the given key to.',
           name: 'value',
           type: 'ANY',
         },
@@ -3130,19 +3180,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'A list of keys to add or update the map with.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'A list of values associated to the keys to add or update the map with.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -3162,13 +3213,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'pairs :: LIST<LIST<ANY>>',
+          description: 'A list of pairs to add or update the map with.',
           name: 'pairs',
           type: 'LIST<LIST<ANY>>',
         },
@@ -3188,13 +3239,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to be updated.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'pairs :: LIST<ANY>',
+          description:
+            'A list of items listed pairwise to add or update the map with.',
           name: 'pairs',
           type: 'LIST<ANY>',
         },
@@ -3213,14 +3265,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to extract the properties from.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'ignoreCase = true :: BOOLEAN',
+          description:
+            'Whether or not to take the case into account when sorting.',
           name: 'ignoreCase',
           type: 'BOOLEAN',
         },
@@ -3240,27 +3293,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to extract a submap from.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The list of keys to extract into a submap.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<ANY>}',
-          description: 'values = [] :: LIST<ANY>',
+          description: 'The default values of the given keys.',
           name: 'values',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'fail = true :: BOOLEAN',
+          description:
+            'If a key is not present and no default is provided, it will either throw an exception if true, or return a null value.',
           name: 'fail',
           type: 'BOOLEAN',
         },
@@ -3280,14 +3334,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'The map to unflatten.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=., type=STRING}',
-          description: 'delimiter = . :: STRING',
+          description:
+            'The delimiter used to separate the levels of the flattened map.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -3307,19 +3362,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'tree :: MAP',
+          description: 'The map to be updated.',
           name: 'tree',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the key to match on.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'data :: LIST<LIST<ANY>>',
+          description:
+            'A list of pairs, where the first item is the value to match with the given key, and the second is a map to add to the tree.',
           name: 'data',
           type: 'LIST<LIST<ANY>>',
         },
@@ -3339,21 +3395,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'map :: MAP',
+          description: 'A map to extract values from.',
           name: 'map',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'keys = [] :: LIST<STRING>',
+          description: 'A list of keys to extract from the given map.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'addNullsForMissing = false :: BOOLEAN',
+          description:
+            'Whether or not to return missing values as null values.',
           name: 'addNullsForMissing',
           type: 'BOOLEAN',
         },
@@ -3372,7 +3429,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3390,7 +3447,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3408,7 +3465,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3515,7 +3572,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3533,7 +3590,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3552,7 +3609,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3570,7 +3627,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3588,7 +3645,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'An angle in radians.',
           name: 'value',
           type: 'FLOAT',
         },
@@ -3606,13 +3663,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'An object to check the type of.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The verification type.',
           name: 'type',
           type: 'STRING',
         },
@@ -3631,7 +3688,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'An object to get the type of.',
           name: 'value',
           type: 'ANY',
         },
@@ -3650,7 +3707,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'props :: ANY',
+          description:
+            'A relationship, node or map to get the property types from.',
           name: 'props',
           type: 'ANY',
         },
@@ -3670,14 +3728,15 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'nodes = [] :: LIST<STRING>',
+          description: 'A list of node labels.',
           name: 'nodes',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'A relationship, node or map to get the property types from. { includeRels = [] :: LIST<STRING> }',
           name: 'config',
           type: 'MAP',
         },
@@ -3696,14 +3755,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node to count the total number of relationships on.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "The relationship types to restrict the count to. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3723,14 +3784,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node for which to count the total number of incoming relationships.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description: 'The relationship type to restrict the count to.',
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3750,14 +3812,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node for which to count the total number of outgoing relationships.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description: 'The relationship type to restrict the count to.',
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3776,7 +3839,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node to return the id from.',
           name: 'node',
           type: 'NODE',
         },
@@ -3794,7 +3857,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node to return labels from.',
           name: 'node',
           type: 'NODE',
         },
@@ -3813,14 +3876,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node to check for the specified relationship types.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "The relationship types to check for on the given node. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3840,14 +3905,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node to return the connected relationship types from.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "If not empty, provides an allow list of relationship types to be returned. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3867,14 +3934,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'The node to check for the specified relationship types.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "The relationship types to check for on the given node. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|....",
           name: 'relTypes',
           type: 'STRING',
         },
@@ -3894,20 +3963,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description:
+            'The node to check if it is directly connected to the second node.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description:
+            'The node to check if it is directly connected to the first node.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'types =  :: STRING',
+          description:
+            "If not empty, provides an allow list of relationship types the nodes can be connected by. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'types',
           type: 'STRING',
         },
@@ -3926,7 +3998,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node to check for being dense or not.',
           name: 'node',
           type: 'NODE',
         },
@@ -3945,14 +4017,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'Nodes to return connected relationship types from.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'types =  :: STRING',
+          description:
+            "If not empty, provides an allow list of relationship types to be returned. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'types',
           type: 'STRING',
         },
@@ -3972,14 +4045,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'Nodes to check for the specified relationship types.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'types =  :: STRING',
+          description:
+            "The relationship types to check for on the given nodes. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'types',
           type: 'STRING',
         },
@@ -3998,7 +4072,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'number :: ANY',
+          description:
+            'A number to be converted to a Roman number represented as a string.',
           name: 'number',
           type: 'ANY',
         },
@@ -4017,13 +4092,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'stringA :: STRING',
+          description:
+            'A string representation of a number to be added to the second number.',
           name: 'stringA',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'stringB :: STRING',
+          description:
+            'A string representation of a number to be added to the first number.',
           name: 'stringB',
           type: 'STRING',
         },
@@ -4043,27 +4120,30 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'stringA :: STRING',
+          description:
+            'A string representation of a number to be divided by the second number.',
           name: 'stringA',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'stringB :: STRING',
+          description:
+            'A string representation of a number to divide the first number by.',
           name: 'stringB',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'precision = 0 :: INTEGER',
+          description: 'The rounding precision.',
           name: 'precision',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=HALF_UP, type=STRING}',
-          description: 'roundingMode = HALF_UP :: STRING',
+          description:
+            'A precision rounding mode (`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP`, `HALF_DOWN`, `HALF_EVEN`).',
           name: 'roundingMode',
           type: 'STRING',
         },
@@ -4083,27 +4163,30 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'stringA :: STRING',
+          description:
+            'A string representation of a number to multiply by the second number.',
           name: 'stringA',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'stringB :: STRING',
+          description:
+            'A string representation of a number to multiply by the first number.',
           name: 'stringB',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'precision = 0 :: INTEGER',
+          description: 'The rounding precision.',
           name: 'precision',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=HALF_UP, type=STRING}',
-          description: 'roundingMode = HALF_UP :: STRING',
+          description:
+            'A precision rounding mode (`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP`, `HALF_DOWN`, `HALF_EVEN`).',
           name: 'roundingMode',
           type: 'STRING',
         },
@@ -4123,13 +4206,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'stringA :: STRING',
+          description:
+            'A string representation of a number to have a second number subtracted from.',
           name: 'stringA',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'stringB :: STRING',
+          description:
+            'A string representation of a number to subtract from the first number.',
           name: 'stringB',
           type: 'STRING',
         },
@@ -4149,7 +4234,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'number :: INTEGER',
+          description: 'An integer to receive the exact value of.',
           name: 'number',
           type: 'INTEGER',
         },
@@ -4168,21 +4253,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'string :: STRING',
+          description: 'A large number represented as a string.',
           name: 'string',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'precision = 0 :: INTEGER',
+          description: 'The rounding precision.',
           name: 'precision',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=HALF_UP, type=STRING}',
-          description: 'roundingMode = HALF_UP :: STRING',
+          description:
+            'A precision rounding mode (`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP`, `HALF_DOWN`, `HALF_EVEN`).',
           name: 'roundingMode',
           type: 'STRING',
         },
@@ -4202,21 +4288,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'string :: STRING',
+          description: 'A large number represented as a string.',
           name: 'string',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'precision = 0 :: INTEGER',
+          description: 'The rounding precision.',
           name: 'precision',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=HALF_UP, type=STRING}',
-          description: 'roundingMode = HALF_UP :: STRING',
+          description:
+            'A precision rounding mode (`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP`, `HALF_DOWN`, `HALF_EVEN`).',
           name: 'roundingMode',
           type: 'STRING',
         },
@@ -4236,21 +4323,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'number :: ANY',
+          description: 'The number to format.',
           name: 'number',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'pattern =  :: STRING',
+          description: 'The pattern to format the number in.',
           name: 'pattern',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'language =  :: STRING',
+          description: 'An ISO-compliant language tag.',
           name: 'language',
           type: 'STRING',
         },
@@ -4270,21 +4357,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to parse a float from.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'pattern =  :: STRING',
+          description: 'The pattern the given string is in.',
           name: 'pattern',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'language =  :: STRING',
+          description: 'An ISO-compliant language tag.',
           name: 'language',
           type: 'STRING',
         },
@@ -4304,21 +4391,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to parse an integer from.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'pattern =  :: STRING',
+          description: 'The pattern the given string is in.',
           name: 'pattern',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'language =  :: STRING',
+          description: 'An ISO-compliant language tag.',
           name: 'language',
           type: 'STRING',
         },
@@ -4337,7 +4424,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'romanNumber :: STRING',
+          description: 'A Roman number to be converted.',
           name: 'romanNumber',
           type: 'STRING',
         },
@@ -4356,13 +4443,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path1 :: PATH',
+          description: 'The first path to combine with the second path.',
           name: 'path1',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'path2 :: PATH',
+          description: 'The second path to combine with the first path.',
           name: 'path2',
           type: 'PATH',
         },
@@ -4381,14 +4468,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The starting node of the new path.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<RELATIONSHIP>}',
-          description: 'rels = [] :: LIST<RELATIONSHIP>',
+          description: 'The list of relationships to create the path from.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -4408,7 +4495,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description:
+            'The path to be converted into a list of nodes and relationships.',
           name: 'path',
           type: 'PATH',
         },
@@ -4427,21 +4515,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path to be sliced.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'offset = 0 :: INTEGER',
+          description: 'The offset to begin the new path from.',
           name: 'offset',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'length = -1 :: INTEGER',
+          description: 'The length of the new path.',
           name: 'length',
           type: 'INTEGER',
         },
@@ -4461,7 +4549,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to get the end node from.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -4479,7 +4567,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to get the id from.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -4498,7 +4586,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to get the start node from.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -4516,7 +4604,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to get the type from.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -4535,13 +4623,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelName :: STRING',
+          description: 'The node label to check for a constraint on.',
           name: 'labelName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: LIST<STRING>',
+          description: 'The property names to check for a constraint on.',
           name: 'propertyName',
           type: 'LIST<STRING>',
         },
@@ -4561,13 +4649,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelName :: STRING',
+          description: 'The node label to check for an index on.',
           name: 'labelName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: LIST<STRING>',
+          description: 'The property names to check for an index on.',
           name: 'propertyName',
           type: 'LIST<STRING>',
         },
@@ -4587,13 +4675,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The relationship type to check for a constraint on.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: LIST<STRING>',
+          description: 'The property names to check for a constraint on.',
           name: 'propertyName',
           type: 'LIST<STRING>',
         },
@@ -4613,13 +4701,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The relationship type to check for an index on.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: LIST<STRING>',
+          description: 'The property names to check for an index on.',
           name: 'propertyName',
           type: 'LIST<STRING>',
         },
@@ -4638,13 +4726,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'score :: INTEGER',
+          description: 'The score to return if the exists is true.',
           name: 'score',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'exists :: BOOLEAN',
+          description: 'Whether or not to return the score.',
           name: 'exists',
           type: 'BOOLEAN',
         },
@@ -4664,25 +4752,25 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'minimumThreshold :: INTEGER',
+          description: 'The minimum threshold for the score.',
           name: 'minimumThreshold',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'eightyPercentValue :: INTEGER',
+          description: 'The eighty percent value.',
           name: 'eightyPercentValue',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'maximumValue :: INTEGER',
+          description: 'The maximum value.',
           name: 'maximumValue',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'score :: INTEGER',
+          description: 'The score.',
           name: 'score',
           type: 'INTEGER',
         },
@@ -4702,14 +4790,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'temporal :: ANY',
+          description: 'A temporal value to be formatted.',
           name: 'temporal',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=yyyy-MM-dd, type=STRING}',
-          description: 'format = yyyy-MM-dd :: STRING',
+          description: 'The format to return the temporal value in.',
           name: 'format',
           type: 'STRING',
         },
@@ -4728,13 +4816,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'The duration value to be formatted into a string.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format to return the duration in.',
           name: 'format',
           type: 'STRING',
         },
@@ -4754,7 +4842,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'time :: STRING',
+          description: 'The date string to be parsed.',
           name: 'time',
           type: 'STRING',
         },
@@ -4762,14 +4850,14 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
-          description: 'format = yyyy-MM-dd HH:mm:ss :: STRING',
+          description: 'The format of the given date string.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=UTC, type=STRING}',
-          description: 'timezone = UTC :: STRING',
+          description: 'The timezone the given string is in.',
           name: 'timezone',
           type: 'STRING',
         },
@@ -4788,7 +4876,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be decoded using base64.',
           name: 'text',
           type: 'STRING',
         },
@@ -4806,7 +4894,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be encoded using base64.',
           name: 'text',
           type: 'STRING',
         },
@@ -4824,7 +4912,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'url :: STRING',
+          description: 'The url to be decoded using base64.',
           name: 'url',
           type: 'STRING',
         },
@@ -4842,7 +4930,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'url :: STRING',
+          description: 'The url to be encoded with base64.',
           name: 'url',
           type: 'STRING',
         },
@@ -4860,14 +4948,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to get the size of in bytes.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=UTF-8, type=STRING}',
-          description: 'charset = UTF-8 :: STRING',
+          description: 'The name of a supported charset.',
           name: 'charset',
           type: 'STRING',
         },
@@ -4886,14 +4974,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to get the bytes from.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=UTF-8, type=STRING}',
-          description: 'charset = UTF-8 :: STRING',
+          description: 'The name of a supported charset.',
           name: 'charset',
           type: 'STRING',
         },
@@ -4912,7 +5000,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be converted to camel case.',
           name: 'text',
           type: 'STRING',
         },
@@ -4930,7 +5018,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string in which to capitalize the first letter.',
           name: 'text',
           type: 'STRING',
         },
@@ -4949,7 +5037,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string in which to capitalize every word.',
           name: 'text',
           type: 'STRING',
         },
@@ -4968,13 +5056,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description:
+            'The string from which a character is taken to be converted into an integer value.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description:
+            'The index of the character in the given string to convert.',
           name: 'index',
           type: 'INTEGER',
         },
@@ -4994,7 +5084,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description:
+            'The string to be stripped of all non-alphanumeric characters and converted to lowercase.',
           name: 'text',
           type: 'STRING',
         },
@@ -5012,7 +5103,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'codepoint :: INTEGER',
+          description: 'An integer to be converted into a character.',
           name: 'codepoint',
           type: 'INTEGER',
         },
@@ -5031,13 +5122,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description:
+            'The first string to be stripped of all non-alphanumeric characters and compared to the second string.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description:
+            'The second string to be stripped of all non-alphanumeric characters and compared to the first string.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5057,7 +5150,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string in which to decapitalize the first letter.',
           name: 'text',
           type: 'STRING',
         },
@@ -5076,7 +5169,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string in which to decapitalize every word.',
           name: 'text',
           type: 'STRING',
         },
@@ -5095,13 +5188,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5121,7 +5214,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description:
+            'The string to be encoded using the double metaphone phonetic encoding.',
           name: 'value',
           type: 'STRING',
         },
@@ -5139,20 +5233,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The format string.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: LIST<ANY>',
+          description:
+            'Arguments referenced by the format specifiers in the format string.',
           name: 'params',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=en, type=STRING}',
-          description: 'language = en :: STRING',
+          description:
+            'An ISO 639 alpha-2 or alpha-3 language code, or a language subtag up to 8 characters in length.',
           name: 'language',
           type: 'STRING',
         },
@@ -5172,13 +5268,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5198,13 +5294,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5224,13 +5320,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description:
+            'The string from which to take a character and convert it into a hexadecimal value represented as a string',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'index :: INTEGER',
+          description:
+            'The index of the character in the given string to convert.',
           name: 'index',
           type: 'INTEGER',
         },
@@ -5249,7 +5347,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER',
+          description:
+            'The value to convert into a hexidecimal value represented as a string.',
           name: 'value',
           type: 'INTEGER',
         },
@@ -5268,27 +5367,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to search for the lookup string in.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'lookup :: STRING',
+          description: 'The lookup string to search for in the given string.',
           name: 'lookup',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'from = 0 :: INTEGER',
+          description: 'The index at which to start the search.',
           name: 'from',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'to = -1 :: INTEGER',
+          description: 'The index at which to stop the search.',
           name: 'to',
           type: 'INTEGER',
         },
@@ -5308,27 +5407,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to search for the lookup string in.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'lookup :: STRING',
+          description: 'The lookup string to search for in the given string.',
           name: 'lookup',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'from = 0 :: INTEGER',
+          description: 'The index at which to start the search.',
           name: 'from',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'to = -1 :: INTEGER',
+          description: 'The index at which to stop the search.',
           name: 'to',
           type: 'INTEGER',
         },
@@ -5348,13 +5447,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5373,13 +5472,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'texts :: LIST<STRING>',
+          description:
+            'The list of strings to be concatenated using the given delimiter.',
           name: 'texts',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'delimiter :: STRING',
+          description: 'The given delimiter to join the given strings with.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -5399,13 +5499,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5425,13 +5525,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -5450,20 +5550,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be padded.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The number of delimiters to pad the given string with.',
           name: 'count',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value= , type=STRING}',
-          description: 'delimiter =   :: STRING',
+          description: 'The delimiter to pad the given string with.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -5483,7 +5583,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description:
+            'The string to encode using US_ENGLISH phonetic soundex.',
           name: 'text',
           type: 'STRING',
         },
@@ -5502,14 +5603,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'length :: INTEGER',
+          description: 'The length of the random string.',
           name: 'length',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=A-Za-z0-9, type=STRING}',
-          description: 'valid = A-Za-z0-9 :: STRING',
+          description: 'The valid characters the random string can contain.',
           name: 'valid',
           type: 'STRING',
         },
@@ -5529,19 +5630,45 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The text to extract matches from.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'regex :: STRING',
+          description: 'The regex pattern to match.',
           name: 'regex',
           type: 'STRING',
         },
       ],
       signature:
         'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
+      returnDescription: 'LIST<ANY>',
+      aggregating: false,
+      isDeprecated: false,
+    },
+    'apoc.text.regexGroupsByName': {
+      name: 'apoc.text.regexGroupsByName',
+      category: '',
+      description:
+        'Returns all groups with their group name matching the given regular expression in the given text.',
+      isBuiltIn: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The text to extract matches from.',
+          name: 'text',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The regex pattern to match.',
+          name: 'regex',
+          type: 'STRING',
+        },
+      ],
+      signature:
+        'apoc.text.regexGroupsByName(text :: STRING, regex :: STRING) :: LIST<ANY>',
       returnDescription: 'LIST<ANY>',
       aggregating: false,
       isDeprecated: false,
@@ -5555,19 +5682,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be modified.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'regex :: STRING',
+          description:
+            'The regular expression pattern to replace in the original string.',
           name: 'regex',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'replacement :: STRING',
+          description: 'The value to be inserted in the original string.',
           name: 'replacement',
           type: 'STRING',
         },
@@ -5587,13 +5715,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'item :: STRING',
+          description: 'The string to be repeated.',
           name: 'item',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The number of times to repeat the given string.',
           name: 'count',
           type: 'INTEGER',
         },
@@ -5612,19 +5740,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be modified.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'regex :: STRING',
+          description:
+            'The regular expression pattern to replace in the original string.',
           name: 'regex',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'replacement :: STRING',
+          description: 'The value to be inserted in the original string.',
           name: 'replacement',
           type: 'STRING',
         },
@@ -5643,20 +5772,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to be padded.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The number of delimiters to pad the given string with.',
           name: 'count',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value= , type=STRING}',
-          description: 'delimiter =   :: STRING',
+          description: 'The delimiter to pad the given string with.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -5676,14 +5805,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string whose whitespace is to be replaced.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-, type=STRING}',
-          description: 'delimiter = - :: STRING',
+          description: 'The delimiter to replace the whitespace with.',
           name: 'delimiter',
           type: 'STRING',
         },
@@ -5702,7 +5831,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to convert to snake case.',
           name: 'text',
           type: 'STRING',
         },
@@ -5721,20 +5850,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'A string to be compared against `text2`.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'A string to be compared against `text1`.',
           name: 'text2',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=en, type=STRING}',
-          description: 'languageTag = en :: STRING',
+          description: 'A language tag string specified by IETF BCP 47.',
           name: 'languageTag',
           type: 'STRING',
         },
@@ -5754,20 +5883,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to split.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'regex :: STRING',
+          description: 'The delimiting regular expression.',
           name: 'regex',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'limit = 0 :: INTEGER',
+          description:
+            'The number of times the regex pattern is applied; if set to 0, it will be applied as many times as possible.',
           name: 'limit',
           type: 'INTEGER',
         },
@@ -5786,7 +5916,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to swap the case of.',
           name: 'text',
           type: 'STRING',
         },
@@ -5804,14 +5934,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to convert to a Cypher property string.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ keepValues :: LIST<ANY> , skipValues :: LIST<ANY> }',
           name: 'config',
           type: 'MAP',
         },
@@ -5830,7 +5960,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to convert to upper case.',
           name: 'text',
           type: 'STRING',
         },
@@ -5848,7 +5978,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to convert to camel case.',
           name: 'text',
           type: 'STRING',
         },
@@ -5866,7 +5996,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to url decode.',
           name: 'text',
           type: 'STRING',
         },
@@ -5884,7 +6014,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The string to url encode.',
           name: 'text',
           type: 'STRING',
         },
@@ -5902,14 +6032,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'data :: STRING',
+          description: 'The string to be compressed.',
           name: 'data',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{ compression = "GZIP" :: ["GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY", "NONE"], charset = "UTF_8" ::["UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE", "UTF-32", "US-ASCII", "ISO-8859-1"] }',
           name: 'config',
           type: 'MAP',
         },
@@ -5928,14 +6059,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'data :: BYTEARRAY',
+          description: 'The bytearray of data to decompress.',
           name: 'data',
           type: 'BYTEARRAY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{ compression = "GZIP" :: ["GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY", "NONE"], charset = "UTF_8" ::["UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE", "UTF-32", "US-ASCII", "ISO-8859-1"] }',
           name: 'config',
           type: 'MAP',
         },
@@ -5955,7 +6087,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to concatenate and generate an md5 checksum from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -5974,7 +6107,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to concatenate and generate a sha1 checksum from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -5993,7 +6127,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to concatenate and generate a sha256 checksum from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -6012,7 +6147,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to concatenate and generate a sha384 checksum from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -6031,7 +6167,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The list of values to concatenate and generate a sha512 checksum from.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -6050,19 +6187,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'predicate :: BOOLEAN',
+          description: 'The predicate to be evaluated.',
           name: 'predicate',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description:
+            'The error message thrown if the predicate evaluates to `true`.',
           name: 'message',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: LIST<ANY>',
+          description: 'Parameters to format the message with.',
           name: 'params',
           type: 'LIST<ANY>',
         },
@@ -6092,28 +6230,30 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'data :: STRING',
+          description: 'The XML data to parse.',
           name: 'data',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=/, type=STRING}',
-          description: 'path = / :: STRING',
+          description: 'An xPath expression.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'A config map describing whether or not to fail on an encountered error; { failOnError = true :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'simple = false :: BOOLEAN',
+          description:
+            'Specify simple mode to make XML elements accessible via a property of the element name prefixed with an `_`.',
           name: 'simple',
           type: 'BOOLEAN',
         },
@@ -6132,7 +6272,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6150,7 +6290,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6169,13 +6309,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'y :: FLOAT',
+          description: 'A y angle in radians.',
           name: 'y',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'x :: FLOAT',
+          description: 'An x angle in radians.',
           name: 'x',
           type: 'FLOAT',
         },
@@ -6194,7 +6334,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT | DURATION',
+          description: 'A value aggregated to form an average.',
           name: 'input',
           type: 'INTEGER | FLOAT | DURATION',
         },
@@ -6203,6 +6343,34 @@ const mockSchema: DbSchema = {
         'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
       returnDescription: 'INTEGER | FLOAT | DURATION',
       aggregating: true,
+      isDeprecated: false,
+    },
+    btrim: {
+      name: 'btrim',
+      category: 'String',
+      description:
+        'Returns the given `STRING` with leading and trailing `trimCharacterString` characters removed.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description:
+            'A value from which the leading and trailing trim character will be removed.',
+          name: 'input',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description:
+            'A character to be removed from the start and end of the given string.',
+          name: 'trimCharacterString',
+          type: 'STRING',
+        },
+      ],
+      signature:
+        'btrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+      returnDescription: 'STRING',
+      aggregating: false,
       isDeprecated: false,
     },
     ceil: {
@@ -6214,7 +6382,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'A value to be rounded to the nearest higher integer.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6232,7 +6400,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description:
+            'A string value whose length in characters is to be calculated.',
           name: 'input',
           type: 'STRING',
         },
@@ -6250,7 +6419,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description:
+            'A string value whose length in characters is to be calculated.',
           name: 'input',
           type: 'STRING',
         },
@@ -6268,7 +6438,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description:
+            'If this is the first non-`NULL` value, it will be returned.',
           name: 'input',
           type: 'ANY',
         },
@@ -6287,7 +6458,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value aggregated into a list.',
           name: 'input',
           type: 'ANY',
         },
@@ -6305,7 +6476,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6323,7 +6494,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6341,7 +6512,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'ANY',
         },
@@ -6361,7 +6532,8 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('date', 'year', 'month', 'day', 'week', 'dayOfWeek', 'quarter', 'dayOfQuarter', 'ordinalDay') as components.",
           name: 'input',
           type: 'ANY',
         },
@@ -6382,7 +6554,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6404,7 +6576,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6426,7 +6598,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6446,7 +6618,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description:
+            "A string representing one of the following: 'day', 'week', 'month', 'weekYear', 'quarter', 'year', 'decade', 'century', 'millennium'.",
           name: 'unit',
           type: 'STRING',
         },
@@ -6454,14 +6627,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=MAP}',
-          description: 'fields = null :: MAP',
+          description:
+            'A list of time components smaller than those specified in `unit` to preserve during truncation.',
           name: 'fields',
           type: 'MAP',
         },
@@ -6482,7 +6657,8 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone', 'epochSeconds', 'epochMillis') as components.",
           name: 'input',
           type: 'ANY',
         },
@@ -6502,13 +6678,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'seconds :: INTEGER | FLOAT',
+          description:
+            'The number of seconds from the UNIX epoch in the UTC time zone.',
           name: 'seconds',
           type: 'INTEGER | FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'nanoseconds :: INTEGER | FLOAT',
+          description:
+            'The number of nanoseconds from the UNIX epoch in the UTC time zone. This can be added to seconds.',
           name: 'nanoseconds',
           type: 'INTEGER | FLOAT',
         },
@@ -6528,7 +6706,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'milliseconds :: INTEGER | FLOAT',
+          description:
+            'The number of milliseconds from the UNIX epoch in the UTC time zone.',
           name: 'milliseconds',
           type: 'INTEGER | FLOAT',
         },
@@ -6550,7 +6729,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6572,7 +6751,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6594,7 +6773,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -6614,7 +6793,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description:
+            "A string representing one of the following: 'microsecond', 'millisecond', 'second', 'minute', 'hour', 'day', 'week', 'month', 'weekYear', 'quarter', 'year', 'decade', 'century', 'millennium'.",
           name: 'unit',
           type: 'STRING',
         },
@@ -6622,14 +6802,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=MAP}',
-          description: 'fields = null :: MAP',
+          description:
+            'A list of time components smaller than those specified in `unit` to preserve during truncation.',
           name: 'fields',
           type: 'MAP',
         },
@@ -6648,7 +6830,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'elementId :: STRING',
+          description: 'An element id of a node or relationship.',
           name: 'elementId',
           type: 'STRING',
         },
@@ -6666,7 +6848,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6684,7 +6866,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description:
+            "A map optionally containing the following keys: 'years', 'quarters', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds', 'microseconds', or 'nanoseconds'.",
           name: 'input',
           type: 'ANY',
         },
@@ -6703,13 +6886,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the starting instant.',
           name: 'from',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'to :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the ending instant.',
           name: 'to',
           type: 'ANY',
         },
@@ -6728,13 +6913,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the starting instant.',
           name: 'from',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'to :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the ending instant.',
           name: 'to',
           type: 'ANY',
         },
@@ -6753,13 +6940,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the starting instant.',
           name: 'from',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'to :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the ending instant.',
           name: 'to',
           type: 'ANY',
         },
@@ -6778,13 +6967,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the starting instant.',
           name: 'from',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'to :: ANY',
+          description:
+            'A temporal instant type (`DATE`, `LOCAL TIME`, `ZONED TIME`, `LOCAL DATETIME`, `ZONED DATETIME`) representing the ending instant.',
           name: 'to',
           type: 'ANY',
         },
@@ -6813,7 +7004,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: NODE | RELATIONSHIP',
+          description: 'An element id of a node or a relationship.',
           name: 'input',
           type: 'NODE | RELATIONSHIP',
         },
@@ -6831,7 +7022,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: RELATIONSHIP',
+          description: 'A relationship.',
           name: 'input',
           type: 'RELATIONSHIP',
         },
@@ -6850,7 +7041,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A pattern to verify the existence of.',
           name: 'input',
           type: 'ANY',
         },
@@ -6869,7 +7060,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description:
+            'A value to which the base of the natural logarithm, e, will be raised.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -6900,7 +7092,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'A value to be rounded to the nearest lower integer.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -7528,7 +7720,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'elementId :: STRING',
+          description: 'An element id of a node or relationship.',
           name: 'elementId',
           type: 'STRING',
         },
@@ -7547,7 +7739,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the graph to be resolved.',
           name: 'name',
           type: 'STRING',
         },
@@ -7576,7 +7768,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graphName :: STRING',
+          description:
+            'The name of the graph from which all associated properties will be returned.',
           name: 'graphName',
           type: 'STRING',
         },
@@ -7594,7 +7787,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -7612,7 +7805,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'A list from which the first element will be returned.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -7630,7 +7823,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: NODE | RELATIONSHIP',
+          description: 'A node or a relationship.',
           name: 'input',
           type: 'NODE | RELATIONSHIP',
         },
@@ -7638,7 +7831,7 @@ const mockSchema: DbSchema = {
       signature: 'id(input :: NODE | RELATIONSHIP) :: INTEGER',
       returnDescription: 'INTEGER',
       aggregating: false,
-      isDeprecated: false,
+      isDeprecated: true,
     },
     isEmpty: {
       name: 'isEmpty',
@@ -7648,7 +7841,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING | MAP | LIST<ANY>',
+          description: 'A value to be checked for emptiness.',
           name: 'input',
           type: 'STRING | MAP | LIST<ANY>',
         },
@@ -7666,7 +7859,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT',
+          description: 'A numeric value to be compared against `NaN`.',
           name: 'input',
           type: 'INTEGER | FLOAT',
         },
@@ -7685,7 +7878,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: NODE | RELATIONSHIP | MAP',
+          description:
+            'A node or relationship from which the names of all properties will be returned.',
           name: 'input',
           type: 'NODE | RELATIONSHIP | MAP',
         },
@@ -7704,7 +7898,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: NODE',
+          description: 'A node whose labels will be returned.',
           name: 'input',
           type: 'NODE',
         },
@@ -7722,7 +7916,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'A list from which the last element will be returned.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -7741,13 +7935,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'original :: STRING',
+          description:
+            'A string value whose rightmost characters will be trimmed.',
           name: 'original',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'length :: INTEGER',
+          description: 'The length of the leftmost characters to be returned.',
           name: 'length',
           type: 'INTEGER',
         },
@@ -7765,7 +7960,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: PATH',
+          description: 'A path whose relationships will be counted.',
           name: 'input',
           type: 'PATH',
         },
@@ -7796,7 +7991,8 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond') as components.",
           name: 'input',
           type: 'ANY',
         },
@@ -7818,7 +8014,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -7840,7 +8036,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -7862,7 +8058,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -7882,7 +8078,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description:
+            "A string representing one of the following: 'microsecond', 'millisecond', 'second', 'minute', 'hour', 'day', 'week', 'month', 'weekYear', 'quarter', 'year', 'decade', 'century', 'millennium'.",
           name: 'unit',
           type: 'STRING',
         },
@@ -7890,14 +8087,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=MAP}',
-          description: 'fields = null :: MAP',
+          description:
+            'A list of time components smaller than those specified in `unit` to preserve during truncation.',
           name: 'fields',
           type: 'MAP',
         },
@@ -7918,7 +8117,8 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour, 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond' as components.",
           name: 'input',
           type: 'ANY',
         },
@@ -7940,7 +8140,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -7962,7 +8162,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -7984,7 +8184,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -8004,7 +8204,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description:
+            "A string representing one of the following: 'day', 'week', 'month', 'weekYear', 'quarter', 'year', 'decade', 'century', 'millennium'.",
           name: 'unit',
           type: 'STRING',
         },
@@ -8012,14 +8213,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `LOCAL TIME`, or `DATE`.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=MAP}',
-          description: 'fields = null :: MAP',
+          description:
+            'A list of time components smaller than those specified in `unit` to preserve during truncation.',
           name: 'fields',
           type: 'MAP',
         },
@@ -8038,7 +8241,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description:
+            'A value for which the natural logarithm will be returned.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8056,7 +8260,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description:
+            'A value for which the common logarithm (base 10) will be returned.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8066,21 +8271,48 @@ const mockSchema: DbSchema = {
       aggregating: false,
       isDeprecated: false,
     },
-    ltrim: {
-      name: 'ltrim',
+    lower: {
+      name: 'lower',
       category: 'String',
-      description:
-        'Returns the given `STRING` with leading whitespace removed.',
+      description: 'Returns the given `STRING` in lowercase.',
       isBuiltIn: true,
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description: 'A string to be converted into lowercase.',
           name: 'input',
           type: 'STRING',
         },
       ],
-      signature: 'ltrim(input :: STRING) :: STRING',
+      signature: 'lower(input :: STRING) :: STRING',
+      returnDescription: 'STRING',
+      aggregating: false,
+      isDeprecated: false,
+    },
+    ltrim: {
+      name: 'ltrim',
+      category: 'String',
+      description:
+        'Returns the given `STRING` with leading `trimCharacterString` characters removed.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description:
+            'A value from which the leading trim character will be removed.',
+          name: 'input',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description:
+            'A character to be removed from the start of the given string.',
+          name: 'trimCharacterString',
+          type: 'STRING',
+        },
+      ],
+      signature:
+        'ltrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
       isDeprecated: false,
@@ -8093,7 +8325,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'ANY',
         },
@@ -8111,7 +8343,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'ANY',
         },
@@ -8130,7 +8362,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: PATH',
+          description: 'A path whose nodes will be returned.',
           name: 'input',
           type: 'PATH',
         },
@@ -8149,13 +8381,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'variable :: ANY',
+          description: 'A variable that can be used within the `WHERE` clause.',
           name: 'variable',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'A list for the predicate to check against.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -8175,13 +8407,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description: 'A value to be normalized.',
           name: 'input',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'normalForm :: [NFC, NFD, NFKC, NFKD]',
+          description:
+            'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
           name: 'normalForm',
           type: '[NFC, NFD, NFKC, NFKD]',
         },
@@ -8201,13 +8434,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'v1 :: ANY',
+          description:
+            'A first value to be returned if the second value is not equivalent.',
           name: 'v1',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'v2 :: ANY',
+          description:
+            'A second value against which the first value is compared.',
           name: 'v2',
           type: 'ANY',
         },
@@ -8226,13 +8461,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'percentile :: FLOAT',
+          description: 'A percentile between 0.0 and 1.0.',
           name: 'percentile',
           type: 'FLOAT',
         },
@@ -8251,13 +8486,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'INTEGER | FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'percentile :: FLOAT',
+          description: 'A percentile between 0.0 and 1.0.',
           name: 'percentile',
           type: 'FLOAT',
         },
@@ -8288,7 +8523,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: MAP',
+          description:
+            'Cartesian 2D: {x :: FLOAT, y :: FLOAT, crs = "cartesian" :: STRING, srid = 7203 :: INTEGER}\n\nCartesian 3D: {x :: FLOAT, y :: FLOAT, z :: FLOAT, crs = "cartesian-3D" :: STRING, srid = 9157 :: INTEGER} \n\nWGS 84 2D: {longitude | x :: FLOAT, latitude | y :: FLOAT, crs = "WGS-84-2D" :: STRING, srid = 4326 :: INTEGER}\n\nWGS 84 3D: {longitude | x :: FLOAT, latitude | y :: FLOAT, height | z :: FLOAT, crs = "WGS-84-3D" :: STRING, srid = 4979 :: INTEGER}',
           name: 'input',
           type: 'MAP',
         },
@@ -8307,13 +8543,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: POINT',
+          description: 'A start point.',
           name: 'from',
           type: 'POINT',
         },
         {
           isDeprecated: false,
-          description: 'to :: POINT',
+          description: 'An end point in the same CRS as the start point.',
           name: 'to',
           type: 'POINT',
         },
@@ -8332,19 +8568,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'point :: POINT',
+          description: 'A point to be confirmed in the bounding box.',
           name: 'point',
           type: 'POINT',
         },
         {
           isDeprecated: false,
-          description: 'lowerLeft :: POINT',
+          description: 'The lower left side point of the bounding box.',
           name: 'lowerLeft',
           type: 'POINT',
         },
         {
           isDeprecated: false,
-          description: 'upperRight :: POINT',
+          description: 'The upper right side point of the bounding box.',
           name: 'upperRight',
           type: 'POINT',
         },
@@ -8364,7 +8600,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: NODE | RELATIONSHIP | MAP',
+          description: 'An entity to return the properties from.',
           name: 'input',
           type: 'NODE | RELATIONSHIP | MAP',
         },
@@ -8382,7 +8618,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in degrees.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8424,19 +8660,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'start :: INTEGER',
+          description: 'The start value of the range.',
           name: 'start',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'end :: INTEGER',
+          description: 'The end value of the range.',
           name: 'end',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'step :: INTEGER',
+          description: 'The size of the increment (default value: 1).',
           name: 'step',
           type: 'INTEGER',
         },
@@ -8456,13 +8692,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'accumulator :: ANY',
+          description:
+            'A variable that holds the result as the list is iterated.',
           name: 'accumulator',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'variable :: LIST<ANY>',
+          description:
+            'A variable that can be used within the reducing expression.',
           name: 'variable',
           type: 'LIST<ANY>',
         },
@@ -8482,7 +8720,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: PATH',
+          description:
+            'The path from which all relationships will be returned.',
           name: 'input',
           type: 'PATH',
         },
@@ -8501,19 +8740,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'original :: STRING',
+          description: 'The string to be modified.',
           name: 'original',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'search :: STRING',
+          description: 'The value to replace in the original string.',
           name: 'search',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'replace :: STRING',
+          description: 'The value to be inserted in the original string.',
           name: 'replace',
           type: 'STRING',
         },
@@ -8533,7 +8772,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING | LIST<ANY>',
+          description: 'The string or list to be reversed.',
           name: 'input',
           type: 'STRING | LIST<ANY>',
         },
@@ -8552,13 +8791,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'original :: STRING',
+          description:
+            'A string value whose leftmost characters will be trimmed.',
           name: 'original',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'length :: INTEGER',
+          description: 'The length of the rightmost characters to be returned.',
           name: 'length',
           type: 'INTEGER',
         },
@@ -8577,19 +8817,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'value :: FLOAT',
+          description: 'A value to be rounded.',
           name: 'value',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'precision :: INTEGER | FLOAT',
+          description: 'The rounding precision.',
           name: 'precision',
           type: 'INTEGER | FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'mode :: STRING',
+          description:
+            'A precision rounding mode (`UP`, `DOWN`, `CEILING`, `FLOOR`, `HALF_UP`, `HALF_DOWN`, `HALF_EVEN`).',
           name: 'mode',
           type: 'STRING',
         },
@@ -8604,17 +8845,26 @@ const mockSchema: DbSchema = {
       name: 'rtrim',
       category: 'String',
       description:
-        'Returns the given `STRING` with trailing whitespace removed.',
+        'Returns the given `STRING` with trailing `trimCharacterString` characters removed.',
       isBuiltIn: true,
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description:
+            'A value from which the leading and trailing trim character will be removed.',
           name: 'input',
           type: 'STRING',
         },
+        {
+          isDeprecated: false,
+          description:
+            'A character to be removed from the start and end of the given string.',
+          name: 'trimCharacterString',
+          type: 'STRING',
+        },
       ],
-      signature: 'rtrim(input :: STRING) :: STRING',
+      signature:
+        'rtrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
       isDeprecated: false,
@@ -8628,7 +8878,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT',
+          description: 'A positive or negative number.',
           name: 'input',
           type: 'INTEGER | FLOAT',
         },
@@ -8646,7 +8896,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8665,13 +8915,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'variable :: ANY',
+          description: 'A variable that can be used within the `WHERE` clause.',
           name: 'variable',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'list :: LIST<ANY>',
+          description: 'A list for the predicate to check against.',
           name: 'list',
           type: 'LIST<ANY>',
         },
@@ -8691,7 +8941,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING | LIST<ANY>',
+          description: 'A value whose length is to be calculated.',
           name: 'input',
           type: 'STRING | LIST<ANY>',
         },
@@ -8710,13 +8960,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'original :: STRING',
+          description: 'The string to be split.',
           name: 'original',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'splitDelimiters :: STRING | LIST<STRING>',
+          description: 'The string with which to split the original string.',
           name: 'splitDelimiters',
           type: 'STRING | LIST<STRING>',
         },
@@ -8735,7 +8985,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'The value to calculate the square root of.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8753,7 +9003,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: RELATIONSHIP',
+          description: 'A relationship.',
           name: 'input',
           type: 'RELATIONSHIP',
         },
@@ -8772,7 +9022,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'The value to calculate the standard deviation of.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8791,7 +9041,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description:
+            'The value to calculate the population standard deviation of.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8810,19 +9061,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'original :: STRING',
+          description: 'The string to be shortened.',
           name: 'original',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'start :: INTEGER',
+          description: 'The start position of the new string.',
           name: 'start',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'length :: INTEGER',
+          description: 'The length of the new string.',
           name: 'length',
           type: 'INTEGER',
         },
@@ -8842,7 +9093,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER | FLOAT | DURATION',
+          description: 'A value to be aggregated.',
           name: 'input',
           type: 'INTEGER | FLOAT | DURATION',
         },
@@ -8861,7 +9112,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: LIST<ANY>',
+          description:
+            'A list from which all but the first element will be returned.',
           name: 'input',
           type: 'LIST<ANY>',
         },
@@ -8879,7 +9131,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: FLOAT',
+          description: 'An angle in radians.',
           name: 'input',
           type: 'FLOAT',
         },
@@ -8899,7 +9151,8 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone') as components.",
           name: 'input',
           type: 'ANY',
         },
@@ -8920,7 +9173,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -8942,7 +9195,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -8964,7 +9217,7 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description: 'A string value representing a time zone.',
           name: 'timezone',
           type: 'ANY',
         },
@@ -8984,7 +9237,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'unit :: STRING',
+          description:
+            "A string representing one of the following: 'microsecond', 'millisecond', 'second', 'minute', 'hour', 'day'.",
           name: 'unit',
           type: 'STRING',
         },
@@ -8992,14 +9246,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
-          description: 'input = DEFAULT_TEMPORAL_ARGUMENT :: ANY',
+          description:
+            'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `ZONED TIME`, or `LOCAL TIME`.',
           name: 'input',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=MAP}',
-          description: 'fields = null :: MAP',
+          description:
+            'A list of time components smaller than those specified in `unit` to preserve during truncation.',
           name: 'fields',
           type: 'MAP',
         },
@@ -9031,7 +9287,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: BOOLEAN | STRING | INTEGER',
+          description: 'A value to be converted into a boolean.',
           name: 'input',
           type: 'BOOLEAN | STRING | INTEGER',
         },
@@ -9050,7 +9306,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: LIST<ANY>',
+          description:
+            'A list of values to be converted into a list of booleans.',
           name: 'input',
           type: 'LIST<ANY>',
         },
@@ -9069,7 +9326,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be converted into a boolean or null.',
           name: 'input',
           type: 'ANY',
         },
@@ -9088,7 +9345,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING | INTEGER | FLOAT',
+          description: 'A value to be converted into a float.',
           name: 'input',
           type: 'STRING | INTEGER | FLOAT',
         },
@@ -9107,7 +9364,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: LIST<ANY>',
+          description:
+            'A list of values to be converted into a list of floats.',
           name: 'input',
           type: 'LIST<ANY>',
         },
@@ -9126,7 +9384,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be converted into a float or null.',
           name: 'input',
           type: 'ANY',
         },
@@ -9145,7 +9403,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: BOOLEAN | STRING | INTEGER | FLOAT',
+          description: 'A value to be converted into an integer.',
           name: 'input',
           type: 'BOOLEAN | STRING | INTEGER | FLOAT',
         },
@@ -9165,7 +9423,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: LIST<ANY>',
+          description:
+            'A list of values to be converted into a list of integers.',
           name: 'input',
           type: 'LIST<ANY>',
         },
@@ -9184,7 +9443,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be converted into an integer or null.',
           name: 'input',
           type: 'ANY',
         },
@@ -9202,7 +9461,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description: 'A string to be converted into lowercase.',
           name: 'input',
           type: 'STRING',
         },
@@ -9221,7 +9480,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be converted into a string.',
           name: 'input',
           type: 'ANY',
         },
@@ -9240,7 +9499,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: LIST<ANY>',
+          description:
+            'A list of values to be converted into a list of strings.',
           name: 'input',
           type: 'LIST<ANY>',
         },
@@ -9259,7 +9519,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to be converted into a string or null.',
           name: 'input',
           type: 'ANY',
         },
@@ -9277,7 +9537,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description: 'A string to be converted into uppercase.',
           name: 'input',
           type: 'STRING',
         },
@@ -9291,17 +9551,33 @@ const mockSchema: DbSchema = {
       name: 'trim',
       category: 'String',
       description:
-        'Returns the given `STRING` with leading and trailing whitespace removed.',
+        'Returns the given `STRING` with leading and/or trailing `trimCharacterString` removed.',
       isBuiltIn: true,
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: STRING',
+          description:
+            'The parts of the string to trim; LEADING, TRAILING, BOTH',
+          name: 'trimSpecification',
+          type: '[LEADING, TRAILING, BOTH]',
+        },
+        {
+          isDeprecated: false,
+          description:
+            'The characters to be removed from the start and/or end of the given string.',
+          name: 'trimCharacterString',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description:
+            'A value from which all leading and/or trailing trim characters will be removed.',
           name: 'input',
           type: 'STRING',
         },
       ],
-      signature: 'trim(input :: STRING) :: STRING',
+      signature:
+        'trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
       isDeprecated: false,
@@ -9315,12 +9591,30 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: RELATIONSHIP',
+          description: 'A relationship.',
           name: 'input',
           type: 'RELATIONSHIP',
         },
       ],
       signature: 'type(input :: RELATIONSHIP) :: STRING',
+      returnDescription: 'STRING',
+      aggregating: false,
+      isDeprecated: false,
+    },
+    upper: {
+      name: 'upper',
+      category: 'String',
+      description: 'Returns the given `STRING` in uppercase.',
+      isBuiltIn: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'A string to be converted into uppercase.',
+          name: 'input',
+          type: 'STRING',
+        },
+      ],
+      signature: 'upper(input :: STRING) :: STRING',
       returnDescription: 'STRING',
       aggregating: false,
       isDeprecated: false,
@@ -9334,7 +9628,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'input :: ANY',
+          description: 'A value to return the type of.',
           name: 'input',
           type: 'ANY',
         },
@@ -9353,13 +9647,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'a :: LIST<INTEGER | FLOAT>',
+          description: 'A list representing the first vector.',
           name: 'a',
           type: 'LIST<INTEGER | FLOAT>',
         },
         {
           isDeprecated: false,
-          description: 'b :: LIST<INTEGER | FLOAT>',
+          description: 'A list representing the second vector.',
           name: 'b',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -9379,13 +9673,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'a :: LIST<INTEGER | FLOAT>',
+          description: 'A list representing the first vector.',
           name: 'a',
           type: 'LIST<INTEGER | FLOAT>',
         },
         {
           isDeprecated: false,
-          description: 'b :: LIST<INTEGER | FLOAT>',
+          description: 'A list representing the second vector.',
           name: 'b',
           type: 'LIST<INTEGER | FLOAT>',
         },
@@ -9407,37 +9701,38 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The node to start the search from.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The node to end the search on.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relTypesAndDirections :: STRING',
+          description:
+            "The relationship types to restrict the algorithm to. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypesAndDirections',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'weightPropertyName :: STRING',
+          description: 'The name of the property to use as the weight.',
           name: 'weightPropertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'latPropertyName :: STRING',
+          description: 'The name of the property to use as the latitude.',
           name: 'latPropertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'lonPropertyName :: STRING',
+          description: 'The name of the property to use as the longitude.',
           name: 'lonPropertyName',
           type: 'STRING',
         },
@@ -9447,13 +9742,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'weight :: FLOAT',
+          description: 'The weight of the given path.',
           name: 'weight',
           type: 'FLOAT',
         },
@@ -9472,25 +9767,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The node to start the search from.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The node to end the search on.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relTypesAndDirections :: STRING',
+          description:
+            "The relationship types to restrict the algorithm to. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypesAndDirections',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{ weight = 'distance' :: STRING, default = Double.MAX_VALUE :: FLOAT, y = 'latitude' :: STRING, x = 'longitude' :: STRING, pointPropName :: STRING }",
           name: 'config',
           type: 'MAP',
         },
@@ -9500,13 +9797,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'weight :: FLOAT',
+          description: 'The weight of the given path.',
           name: 'weight',
           type: 'FLOAT',
         },
@@ -9525,25 +9822,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The node to start the search from.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The node to end the search on.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relTypesAndDirections :: STRING',
+          description:
+            "The relationship types to restrict the algorithm to. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypesAndDirections',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'maxNodes :: INTEGER',
+          description:
+            'The max depth (in terms of nodes) the algorithm will explore.',
           name: 'maxNodes',
           type: 'INTEGER',
         },
@@ -9553,7 +9852,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
@@ -9572,7 +9871,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to look for connected relationships on.',
           name: 'nodes',
           type: 'ANY',
         },
@@ -9581,7 +9880,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationships connected to the given nodes.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -9600,39 +9899,41 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The node to start the search from.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The node to end the search on.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relTypesAndDirections :: STRING',
+          description:
+            "The relationship types to restrict the algorithm to. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypesAndDirections',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'weightPropertyName :: STRING',
+          description: 'The name of the property to use as the weight.',
           name: 'weightPropertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=NaN, type=FLOAT}',
-          description: 'defaultWeight = NaN :: FLOAT',
+          description:
+            'The `defaultWeight` is used when no specific weight is provided for the given relationship or node. The default value for defaultWeight is NaN.',
           name: 'defaultWeight',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'numberOfWantedPaths = 1 :: INTEGER',
+          description: 'The number of wanted paths to return.',
           name: 'numberOfWantedPaths',
           type: 'INTEGER',
         },
@@ -9642,13 +9943,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'weight :: FLOAT',
+          description: 'The weight of the given path.',
           name: 'weight',
           type: 'FLOAT',
         },
@@ -9667,26 +9968,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship that contains the property to which the value will be added.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'The name of the property whose value will be added to.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'number :: INTEGER | FLOAT',
+          description: 'The number to add.',
           name: 'number',
           type: 'INTEGER | FLOAT',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -9696,25 +9998,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -9733,26 +10035,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship that contains the property to which the value will be concatenated.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'The name of the property to be concatenated.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'string :: STRING',
+          description: 'The string value to concatenate with the property.',
           name: 'string',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -9762,25 +10065,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -9799,32 +10102,34 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship that has a property containing a list.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description:
+            'The name of the property into which the value will be inserted.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'position :: INTEGER',
+          description: 'The position in the list to insert the item into.',
           name: 'position',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to insert.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -9834,25 +10139,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -9871,26 +10176,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship that has a property containing a list.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description:
+            'The name of the property from which the value will be removed.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'position :: INTEGER',
+          description: 'The position in the list to remove the item from.',
           name: 'position',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -9900,25 +10207,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -9937,26 +10244,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship that contains the property from which the value will be subtracted.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description:
+            'The name of the property from which the value will be subtracted.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'number :: INTEGER | FLOAT',
+          description: 'The number to subtract.',
           name: 'number',
           type: 'INTEGER | FLOAT',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -9966,25 +10275,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -10002,26 +10311,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description:
+            'The node or relationship with the property to be updated.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'The name of the property to be updated.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'operation :: STRING',
+          description: 'The operation to perform to update the property.',
           name: 'operation',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=5, type=INTEGER}',
-          description: 'retryAttempts = 5 :: INTEGER',
+          description: 'The max retry attempts.',
           name: 'retryAttempts',
           type: 'INTEGER',
         },
@@ -10031,25 +10341,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'container :: ANY',
+          description: 'The updated node or relationship.',
           name: 'container',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The name of the updated property.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'oldValue :: ANY',
+          description: 'The original value on the property.',
           name: 'oldValue',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'newValue :: ANY',
+          description: 'The new value on the property.',
           name: 'newValue',
           type: 'ANY',
         },
@@ -10068,21 +10378,24 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'conditionals :: LIST<ANY>',
+          description:
+            'A list of conditionals, where each conditional is a pair: the first element is a predicate, and the second is a Cypher query to be executed based on that predicate.',
           name: 'conditionals',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'elseQuery =  :: STRING',
+          description:
+            'A Cypher query to evaluate if all conditionals evaluate to false.',
           name: 'elseQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description:
+            'A map of parameters to be used in the executed Cypher query.',
           name: 'params',
           type: 'MAP',
         },
@@ -10092,7 +10405,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the evaluated Cypher query.',
           name: 'value',
           type: 'MAP',
         },
@@ -10111,21 +10424,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'A list of values to deconstruct.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-          description: 'limit = -1 :: INTEGER',
+          description:
+            'The maximum size of elements to deconstruct from the given list.',
           name: 'limit',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=0, type=INTEGER}',
-          description: 'offset = 0 :: INTEGER',
+          description: 'The offset to start deconstructing from.',
           name: 'offset',
           type: 'INTEGER',
         },
@@ -10135,607 +10449,632 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: '_1 :: ANY',
+          description: 'The value of the first item.',
           name: '_1',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_2 :: ANY',
+          description: 'The value of the second item.',
           name: '_2',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_3 :: ANY',
+          description: 'The value of the third item.',
           name: '_3',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_4 :: ANY',
+          description: 'The value of the fourth item.',
           name: '_4',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_5 :: ANY',
+          description: 'The value of the fifth item.',
           name: '_5',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_6 :: ANY',
+          description: 'The value of the sixth item.',
           name: '_6',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_7 :: ANY',
+          description: 'The value of the seventh item.',
           name: '_7',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_8 :: ANY',
+          description: 'The value of the eighth item.',
           name: '_8',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_9 :: ANY',
+          description: 'The value of the ninth item.',
           name: '_9',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_10 :: ANY',
+          description: 'The value of the tenth item.',
           name: '_10',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: '_1s :: STRING',
+          description: 'The value of the first item, if it is a string value.',
           name: '_1s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_2s :: STRING',
+          description: 'The value of the second item, if it is a string value.',
           name: '_2s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_3s :: STRING',
+          description: 'The value of the third item, if it is a string value.',
           name: '_3s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_4s :: STRING',
+          description: 'The value of the fourth item, if it is a string value.',
           name: '_4s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_5s :: STRING',
+          description: 'The value of the fifth item, if it is a string value.',
           name: '_5s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_6s :: STRING',
+          description: 'The value of the sixth item, if it is a string value.',
           name: '_6s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_7s :: STRING',
+          description:
+            'The value of the seventh item, if it is a string value.',
           name: '_7s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_8s :: STRING',
+          description: 'The value of the eighth item, if it is a string value.',
           name: '_8s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_9s :: STRING',
+          description: 'The value of the ninth item, if it is a string value.',
           name: '_9s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_10s :: STRING',
+          description: 'The value of the tenth item, if it is a string value.',
           name: '_10s',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: '_1i :: INTEGER',
+          description:
+            'The value of the first item, if it is an integer value.',
           name: '_1i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_2i :: INTEGER',
+          description:
+            'The value of the second item, if it is an integer value.',
           name: '_2i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_3i :: INTEGER',
+          description:
+            'The value of the third item, if it is an integer value.',
           name: '_3i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_4i :: INTEGER',
+          description:
+            'The value of the fourth item, if it is an integer value.',
           name: '_4i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_5i :: INTEGER',
+          description:
+            'The value of the fifth item, if it is an integer value.',
           name: '_5i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_6i :: INTEGER',
+          description:
+            'The value of the sixth item, if it is an integer value.',
           name: '_6i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_7i :: INTEGER',
+          description:
+            'The value of the seventh item, if it is an integer value.',
           name: '_7i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_8i :: INTEGER',
+          description:
+            'The value of the eighth item, if it is an integer value.',
           name: '_8i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_9i :: INTEGER',
+          description:
+            'The value of the ninth item, if it is an integer value.',
           name: '_9i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_10i :: INTEGER',
+          description:
+            'The value of the tenth item, if it is an integer value.',
           name: '_10i',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: '_1f :: FLOAT',
+          description: 'The value of the first item, if it is a float value.',
           name: '_1f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_2f :: FLOAT',
+          description: 'The value of the second item, if it is a float value.',
           name: '_2f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_3f :: FLOAT',
+          description: 'The value of the third item, if it is a float value.',
           name: '_3f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_4f :: FLOAT',
+          description: 'The value of the fourth item, if it is a float value.',
           name: '_4f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_5f :: FLOAT',
+          description: 'The value of the fifth item, if it is a float value.',
           name: '_5f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_6f :: FLOAT',
+          description: 'The value of the sixth item, if it is a float value.',
           name: '_6f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_7f :: FLOAT',
+          description: 'The value of the seventh item, if it is a float value.',
           name: '_7f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_8f :: FLOAT',
+          description: 'The value of the eighth item, if it is a float value.',
           name: '_8f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_9f :: FLOAT',
+          description: 'The value of the ninth item, if it is a float value.',
           name: '_9f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_10f :: FLOAT',
+          description: 'The value of the tenth item, if it is a float value.',
           name: '_10f',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: '_1b :: BOOLEAN',
+          description: 'The value of the first item, if it is a boolean value.',
           name: '_1b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_2b :: BOOLEAN',
+          description:
+            'The value of the second item, if it is a boolean value.',
           name: '_2b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_3b :: BOOLEAN',
+          description: 'The value of the third item, if it is a boolean value.',
           name: '_3b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_4b :: BOOLEAN',
+          description:
+            'The value of the fourth item, if it is a boolean value.',
           name: '_4b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_5b :: BOOLEAN',
+          description: 'The value of the fifth item, if it is a boolean value.',
           name: '_5b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_6b :: BOOLEAN',
+          description: 'The value of the sixth item, if it is a boolean value.',
           name: '_6b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_7b :: BOOLEAN',
+          description:
+            'The value of the seventh item, if it is a boolean value.',
           name: '_7b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_8b :: BOOLEAN',
+          description:
+            'The value of the eighth item, if it is a boolean value.',
           name: '_8b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_9b :: BOOLEAN',
+          description: 'The value of the ninth item, if it is a boolean value.',
           name: '_9b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_10b :: BOOLEAN',
+          description: 'The value of the tenth item, if it is a boolean value.',
           name: '_10b',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: '_1l :: LIST<ANY>',
+          description: 'The value of the first item, if it is a list value.',
           name: '_1l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_2l :: LIST<ANY>',
+          description: 'The value of the second item, if it is a list value.',
           name: '_2l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_3l :: LIST<ANY>',
+          description: 'The value of the third item, if it is a list value.',
           name: '_3l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_4l :: LIST<ANY>',
+          description: 'The value of the fourth item, if it is a list value.',
           name: '_4l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_5l :: LIST<ANY>',
+          description: 'The value of the fifth item, if it is a list value.',
           name: '_5l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_6l :: LIST<ANY>',
+          description: 'The value of the sixth item, if it is a list value.',
           name: '_6l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_7l :: LIST<ANY>',
+          description: 'The value of the seventh item, if it is a list value.',
           name: '_7l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_8l :: LIST<ANY>',
+          description: 'The value of the eighth item, if it is a list value.',
           name: '_8l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_9l :: LIST<ANY>',
+          description: 'The value of the ninth item, if it is a list value.',
           name: '_9l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_10l :: LIST<ANY>',
+          description: 'The value of the tenth item, if it is a list value.',
           name: '_10l',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: '_1m :: MAP',
+          description: 'The value of the first item, if it is a map value.',
           name: '_1m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_2m :: MAP',
+          description: 'The value of the second item, if it is a map value.',
           name: '_2m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_3m :: MAP',
+          description: 'The value of the third item, if it is a map value.',
           name: '_3m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_4m :: MAP',
+          description: 'The value of the fourth item, if it is a map value.',
           name: '_4m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_5m :: MAP',
+          description: 'The value of the fifth item, if it is a map value.',
           name: '_5m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_6m :: MAP',
+          description: 'The value of the sixth item, if it is a map value.',
           name: '_6m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_7m :: MAP',
+          description: 'The value of the seventh item, if it is a map value.',
           name: '_7m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_8m :: MAP',
+          description: 'The value of the eighth item, if it is a map value.',
           name: '_8m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_9m :: MAP',
+          description: 'The value of the ninth item, if it is a map value.',
           name: '_9m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_10m :: MAP',
+          description: 'The value of the tenth item, if it is a map value.',
           name: '_10m',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: '_1n :: NODE',
+          description: 'The value of the first item, if it is a node value.',
           name: '_1n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_2n :: NODE',
+          description: 'The value of the second item, if it is a node value.',
           name: '_2n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_3n :: NODE',
+          description: 'The value of the third item, if it is a node value.',
           name: '_3n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_4n :: NODE',
+          description: 'The value of the fourth item, if it is a node value.',
           name: '_4n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_5n :: NODE',
+          description: 'The value of the fifth item, if it is a node value.',
           name: '_5n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_6n :: NODE',
+          description: 'The value of the sixth item, if it is a node value.',
           name: '_6n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_7n :: NODE',
+          description: 'The value of the seventh item, if it is a node value.',
           name: '_7n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_8n :: NODE',
+          description: 'The value of the eighth item, if it is a node value.',
           name: '_8n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_9n :: NODE',
+          description: 'The value of the ninth item, if it is a node value.',
           name: '_9n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_10n :: NODE',
+          description: 'The value of the tenth item, if it is a node value.',
           name: '_10n',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: '_1r :: RELATIONSHIP',
+          description:
+            'The value of the first item, if it is a relationship value.',
           name: '_1r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_2r :: RELATIONSHIP',
+          description:
+            'The value of the second item, if it is a relationship value.',
           name: '_2r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_3r :: RELATIONSHIP',
+          description:
+            'The value of the third item, if it is a relationship value.',
           name: '_3r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_4r :: RELATIONSHIP',
+          description:
+            'The value of the fourth item, if it is a relationship value.',
           name: '_4r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_5r :: RELATIONSHIP',
+          description:
+            'The value of the fifth item, if it is a relationship value.',
           name: '_5r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_6r :: RELATIONSHIP',
+          description:
+            'The value of the sixth item, if it is a relationship value.',
           name: '_6r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_7r :: RELATIONSHIP',
+          description:
+            'The value of the seventh item, if it is a relationship value.',
           name: '_7r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_8r :: RELATIONSHIP',
+          description:
+            'The value of the eighth item, if it is a relationship value.',
           name: '_8r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_9r :: RELATIONSHIP',
+          description:
+            'The value of the ninth item, if it is a relationship value.',
           name: '_9r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_10r :: RELATIONSHIP',
+          description:
+            'The value of the tenth item, if it is a relationship value.',
           name: '_10r',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: '_1p :: PATH',
+          description: 'The value of the first item, if it is a path value.',
           name: '_1p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_2p :: PATH',
+          description: 'The value of the second item, if it is a path value.',
           name: '_2p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_3p :: PATH',
+          description: 'The value of the third item, if it is a path value.',
           name: '_3p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_4p :: PATH',
+          description: 'The value of the fourth item, if it is a path value.',
           name: '_4p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_5p :: PATH',
+          description: 'The value of the fifth item, if it is a path value.',
           name: '_5p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_6p :: PATH',
+          description: 'The value of the sixth item, if it is a path value.',
           name: '_6p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_7p :: PATH',
+          description: 'The value of the seventh item, if it is a path value.',
           name: '_7p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_8p :: PATH',
+          description: 'The value of the eighth item, if it is a path value.',
           name: '_8p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_9p :: PATH',
+          description: 'The value of the ninth item, if it is a path value.',
           name: '_9p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: '_10p :: PATH',
+          description: 'The value of the tenth item, if it is a path value.',
           name: '_10p',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'elements :: INTEGER',
+          description: 'The number of deconstructed elements.',
           name: 'elements',
           type: 'INTEGER',
         },
@@ -10753,13 +11092,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to create pairs from.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'offset :: INTEGER',
+          description: 'The offset to make each pair with from the given list.',
           name: 'offset',
           type: 'INTEGER',
         },
@@ -10769,7 +11108,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description: 'The created pair.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -10788,13 +11127,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to partition into smaller sublists.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The max size of each partitioned sublist.',
           name: 'batchSize',
           type: 'INTEGER',
         },
@@ -10804,7 +11143,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description: 'The partitioned list.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -10823,13 +11162,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'coll :: LIST<ANY>',
+          description: 'The list to split into parts.',
           name: 'coll',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value to split the given list by.',
           name: 'value',
           type: 'ANY',
         },
@@ -10839,7 +11178,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description: 'The split list.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -10858,13 +11197,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'list1 :: LIST<ANY>',
+          description: 'The list to zip together with `list2`.',
           name: 'list1',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'list2 :: LIST<ANY>',
+          description: 'The list to zip together with `list1`.',
           name: 'list2',
           type: 'LIST<ANY>',
         },
@@ -10874,7 +11213,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description: 'A zipped pair.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -10893,19 +11232,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node to set the JSON property on.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the property to set.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The property to serialize as a JSON object.',
           name: 'value',
           type: 'ANY',
         },
@@ -10927,21 +11266,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'paths :: LIST<PATH>',
+          description: 'A list of paths to convert into a tree.',
           name: 'paths',
           type: 'LIST<PATH>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'lowerCaseRels = true :: BOOLEAN',
+          description:
+            'Whether or not to convert relationship types to lower case.',
           name: 'lowerCaseRels',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -10951,14 +11292,14 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The resulting tree.',
           name: 'value',
           type: 'MAP',
         },
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'apoc.create.addLabels': {
@@ -10969,13 +11310,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to add labels to.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to add to the nodes.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
@@ -10985,7 +11326,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11004,7 +11345,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path to create a virtual path from.',
           name: 'path',
           type: 'PATH',
         },
@@ -11014,7 +11355,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
@@ -11033,7 +11374,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'paths :: LIST<PATH>',
+          description: 'The paths to create virtual paths from.',
           name: 'paths',
           type: 'LIST<PATH>',
         },
@@ -11043,7 +11384,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The path result.',
           name: 'path',
           type: 'PATH',
         },
@@ -11061,13 +11402,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to assign to the new node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to assign to the new node.',
           name: 'props',
           type: 'MAP',
         },
@@ -11077,7 +11418,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The created node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11095,13 +11436,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to assign to the new nodes.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'props :: LIST<MAP>',
+          description: 'The properties to assign to the new nodes.',
           name: 'props',
           type: 'LIST<MAP>',
         },
@@ -11111,7 +11452,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The created node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11130,25 +11471,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: NODE',
+          description:
+            'The node from which the outgoing relationship will start.',
           name: 'from',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type to assign to the new relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to assign to the new relationship.',
           name: 'props',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'to :: NODE',
+          description:
+            'The node to which the incoming relationship will be connected.',
           name: 'to',
           type: 'NODE',
         },
@@ -11158,7 +11501,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The created relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -11176,13 +11519,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The node to remove labels from.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to remove from the given node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
@@ -11192,7 +11535,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11210,13 +11553,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to remove properties from.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The property keys to remove from the given nodes.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
@@ -11226,7 +11569,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11245,13 +11588,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: ANY',
+          description: 'The relationships to remove properties from.',
           name: 'rels',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The property keys to remove from the given nodes.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
@@ -11261,7 +11604,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -11280,13 +11623,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to set labels on.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to set on the given nodes.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
@@ -11296,7 +11639,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11314,19 +11657,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to set properties on.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description: 'The property keys to set on the given nodes.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The values to assign to the properties on the given nodes.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -11336,7 +11680,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11354,19 +11698,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description: 'The nodes to set a property on.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the property key to set.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value of the property to set.',
           name: 'value',
           type: 'ANY',
         },
@@ -11376,7 +11720,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11394,19 +11738,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: ANY',
+          description: 'The relationships to set properties on.',
           name: 'rels',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description:
+            'The keys of the properties to set on the given relationships.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: LIST<ANY>',
+          description:
+            'The values of the properties to set on the given relationships.',
           name: 'values',
           type: 'LIST<ANY>',
         },
@@ -11416,7 +11762,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -11434,19 +11780,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: ANY',
+          description: 'The relationships to set a property on.',
           name: 'rels',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the property key to set.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The value of the property to set.',
           name: 'value',
           type: 'ANY',
         },
@@ -11456,7 +11802,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -11474,7 +11820,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The number of UUID values to generate.',
           name: 'count',
           type: 'INTEGER',
         },
@@ -11484,13 +11830,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'row :: INTEGER',
+          description: 'The row number of the generated UUID.',
           name: 'row',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'uuid :: STRING',
+          description: 'The generated UUID value.',
           name: 'uuid',
           type: 'STRING',
         },
@@ -11508,13 +11854,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to assign to the new virtual node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to assign to the new virtual node.',
           name: 'props',
           type: 'MAP',
         },
@@ -11524,7 +11870,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The created virtual node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11542,13 +11888,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to assign to the new virtual node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'props :: LIST<MAP>',
+          description: 'The properties to assign to the new virtual nodes.',
           name: 'props',
           type: 'LIST<MAP>',
         },
@@ -11558,7 +11904,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The created virtual node.',
           name: 'node',
           type: 'NODE',
         },
@@ -11576,25 +11922,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'from :: NODE',
+          description:
+            'The node to connect the outgoing virtual relationship from.',
           name: 'from',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type to assign to the new virtual relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description:
+            'The properties to assign to the new virtual relationship.',
           name: 'props',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'to :: NODE',
+          description:
+            'The node to which the incoming virtual relationship will be connected.',
           name: 'to',
           type: 'NODE',
         },
@@ -11604,7 +11953,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The created virtual relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -11622,59 +11971,61 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelsN :: LIST<STRING>',
+          description: 'The labels to assign to the new virtual start node.',
           name: 'labelsN',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'n :: MAP',
+          description:
+            'The properties to assign to the new virtual start node.',
           name: 'n',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
-          name: 'relType',
+          description: 'The type to assign to the new virtual relationship.',
+          name: 'arelType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description:
+            'The properties to assign to the new virtual relationship.',
           name: 'props',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'labelsM :: LIST<STRING>',
+          description: 'The labels to assign to the new virtual node.',
           name: 'labelsM',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'm :: MAP',
+          description: 'The properties to assign to the new virtual node.',
           name: 'm',
           type: 'MAP',
         },
       ],
       signature:
-        'apoc.create.virtualPath(labelsN :: LIST<STRING>, n :: MAP, relType :: STRING, props :: MAP, labelsM :: LIST<STRING>, m :: MAP) :: (from :: NODE, rel :: RELATIONSHIP, to :: NODE)',
+        'apoc.create.virtualPath(labelsN :: LIST<STRING>, n :: MAP, arelType :: STRING, props :: MAP, labelsM :: LIST<STRING>, m :: MAP) :: (from :: NODE, rel :: RELATIONSHIP, to :: NODE)',
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'from :: NODE',
+          description: 'The created virtual start node.',
           name: 'from',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The created virtual relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'to :: NODE',
+          description: 'The created virtual end node.',
           name: 'to',
           type: 'NODE',
         },
@@ -11693,13 +12044,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -11709,7 +12060,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'value',
           type: 'MAP',
         },
@@ -11728,13 +12079,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -11744,7 +12095,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'value',
           type: 'MAP',
         },
@@ -11763,20 +12114,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statements to run, semicolon separated (;).',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statements.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ statistics = true :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -11786,13 +12137,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'row :: INTEGER',
+          description: 'The row number of the run Cypher statement.',
           name: 'row',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'result :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'result',
           type: 'MAP',
         },
@@ -11811,20 +12162,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statements to run, semicolon separated (;).',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statements.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ statistics = true :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -11834,13 +12185,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'row :: INTEGER',
+          description: 'The row number of the run Cypher statement.',
           name: 'row',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'result :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'result',
           type: 'MAP',
         },
@@ -11859,13 +12210,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher schema statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -11875,7 +12226,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'value',
           type: 'MAP',
         },
@@ -11894,19 +12245,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'timeout :: INTEGER',
+          description: 'The maximum time the statement can run for.',
           name: 'timeout',
           type: 'INTEGER',
         },
@@ -11916,7 +12267,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'value',
           type: 'MAP',
         },
@@ -11934,13 +12285,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -11950,7 +12301,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the Cypher statement.',
           name: 'value',
           type: 'MAP',
         },
@@ -11969,21 +12320,24 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'conditionals :: LIST<ANY>',
+          description:
+            'A list of conditionals, where each conditional is a pair: the first element is a predicate, and the second is a Cypher query to be executed based on that predicate.',
           name: 'conditionals',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'elseQuery =  :: STRING',
+          description:
+            'A Cypher query to evaluate if all conditionals evaluate to false.',
           name: 'elseQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description:
+            'A map of parameters to be used in the executed Cypher query.',
           name: 'params',
           type: 'MAP',
         },
@@ -11993,7 +12347,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the evaluated Cypher query.',
           name: 'value',
           type: 'MAP',
         },
@@ -12012,37 +12366,37 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'condition :: BOOLEAN',
+          description:
+            'The predicate that determines whether to execute the `ifQuery`.',
           name: 'condition',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'ifQuery :: STRING',
+          description: 'The Cypher statement to run if the condition is true.',
           name: 'ifQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'elseQuery =  :: STRING',
+          description: 'The Cypher statement to run if the condition is false.',
           name: 'elseQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
       ],
       signature:
-        'apoc.do.when(condition :: BOOLEAN, ifQuery :: STRING, elseQuery =  :: STRING, params = {} :: MAP) :: (value :: MAP)',
+        'apoc.do.when(condition :: BOOLEAN, ifQuery :: STRING, elseQuery :: STRING, params = {} :: MAP) :: (value :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the evaluated Cypher query.',
           name: 'value',
           type: 'MAP',
         },
@@ -12063,73 +12417,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file containing the movies example.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'Where the examples were sourced from.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the movies file was in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of nodes imported.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of relationships imported.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of properties imported.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the import.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the import was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the import was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the import ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the import.',
           name: 'data',
           type: 'ANY',
         },
@@ -12147,14 +12501,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to export the data to.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12164,73 +12518,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12248,20 +12602,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to export the data to.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'graph :: ANY',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12271,73 +12625,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12356,20 +12710,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query to use to collect the data for export.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12379,73 +12734,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12464,7 +12819,7 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12474,7 +12829,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: BYTEARRAY',
+          description: 'The data as a bytearray.',
           name: 'value',
           type: 'BYTEARRAY',
         },
@@ -12492,14 +12847,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: ANY',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12509,7 +12864,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: BYTEARRAY',
+          description: 'The data as a bytearray.',
           name: 'value',
           type: 'BYTEARRAY',
         },
@@ -12527,14 +12882,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query used to collect the data for export.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ batchSize = 2000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -12544,7 +12899,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: BYTEARRAY',
+          description: 'The data as a bytearray.',
           name: 'value',
           type: 'BYTEARRAY',
         },
@@ -12562,13 +12917,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        differentiateNulls = false :: BOOLEAN,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -12578,73 +12935,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12663,25 +13020,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'A list of nodes to export.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'A list of relationships to export.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        differentiateNulls = false :: BOOLEAN,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -12691,73 +13050,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12775,19 +13134,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        differentiateNulls = false :: BOOLEAN,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -12797,73 +13158,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12882,19 +13243,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query used to collect the data for export.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None':: STRING,\n        charset = 'UTF_8' :: STRING,\n        differentiateNulls = false :: BOOLEAN,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -12904,73 +13267,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -12990,14 +13353,16 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'file =  :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13007,91 +13372,91 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'cypherStatements :: ANY',
+          description: 'The executed Cypher Statements.',
           name: 'cypherStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'nodeStatements :: ANY',
+          description: 'The executed node statements.',
           name: 'nodeStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relationshipStatements :: ANY',
+          description: 'The executed relationship statements.',
           name: 'relationshipStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'schemaStatements :: ANY',
+          description: 'The executed schema statements.',
           name: 'schemaStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'cleanupStatements :: ANY',
+          description: 'The executed cleanup statements.',
           name: 'cleanupStatements',
           type: 'ANY',
         },
@@ -13110,27 +13475,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'A list of nodes to export.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'A list of relationships to export.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'file =  :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13140,91 +13507,91 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'cypherStatements :: ANY',
+          description: 'The executed Cypher Statements.',
           name: 'cypherStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'nodeStatements :: ANY',
+          description: 'The executed node statements.',
           name: 'nodeStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relationshipStatements :: ANY',
+          description: 'The executed relationship statements.',
           name: 'relationshipStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'schemaStatements :: ANY',
+          description: 'The executed schema statements.',
           name: 'schemaStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'cleanupStatements :: ANY',
+          description: 'The executed cleanup statements.',
           name: 'cleanupStatements',
           type: 'ANY',
         },
@@ -13243,115 +13610,116 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'file =  :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
       ],
       signature:
-        'apoc.export.cypher.graph(graph :: MAP, file =  :: STRING, config = {} :: MAP) :: (file :: STRING, batches :: INTEGER, source :: STRING, format :: STRING, nodes :: INTEGER, relationships :: INTEGER, properties :: INTEGER, time :: INTEGER, rows :: INTEGER, batchSize :: INTEGER, cypherStatements :: ANY, nodeStatements :: ANY, relationshipStatements :: ANY, schemaStatements :: ANY, cleanupStatements :: ANY)',
+        'apoc.export.cypher.graph(graph :: MAP, file :: STRING, config = {} :: MAP) :: (file :: STRING, batches :: INTEGER, source :: STRING, format :: STRING, nodes :: INTEGER, relationships :: INTEGER, properties :: INTEGER, time :: INTEGER, rows :: INTEGER, batchSize :: INTEGER, cypherStatements :: ANY, nodeStatements :: ANY, relationshipStatements :: ANY, schemaStatements :: ANY, cleanupStatements :: ANY)',
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'cypherStatements :: ANY',
+          description: 'The executed Cypher Statements.',
           name: 'cypherStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'nodeStatements :: ANY',
+          description: 'The executed node statements.',
           name: 'nodeStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relationshipStatements :: ANY',
+          description: 'The executed relationship statements.',
           name: 'relationshipStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'schemaStatements :: ANY',
+          description: 'The executed schema statements.',
           name: 'schemaStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'cleanupStatements :: ANY',
+          description: 'The executed cleanup statements.',
           name: 'cleanupStatements',
           type: 'ANY',
         },
@@ -13370,21 +13738,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The query used to collect the data for export.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'file =  :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13394,91 +13764,91 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'cypherStatements :: ANY',
+          description: 'The executed Cypher Statements.',
           name: 'cypherStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'nodeStatements :: ANY',
+          description: 'The executed node statements.',
           name: 'nodeStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relationshipStatements :: ANY',
+          description: 'The executed relationship statements.',
           name: 'relationshipStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'schemaStatements :: ANY',
+          description: 'The executed schema statements.',
           name: 'schemaStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'cleanupStatements :: ANY',
+          description: 'The executed cleanup statements.',
           name: 'cleanupStatements',
           type: 'ANY',
         },
@@ -13498,14 +13868,16 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'file =  :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13515,91 +13887,91 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'cypherStatements :: ANY',
+          description: 'The executed Cypher Statements.',
           name: 'cypherStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'nodeStatements :: ANY',
+          description: 'The executed node statements.',
           name: 'nodeStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relationshipStatements :: ANY',
+          description: 'The executed relationship statements.',
           name: 'relationshipStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'schemaStatements :: ANY',
+          description: 'The executed schema statements.',
           name: 'schemaStatements',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'cleanupStatements :: ANY',
+          description: 'The executed cleanup statements.',
           name: 'cleanupStatements',
           type: 'ANY',
         },
@@ -13617,13 +13989,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13633,73 +14007,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -13718,25 +14092,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'A list of nodes to export.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'A list of relationships to export.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13746,73 +14122,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -13830,19 +14206,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13852,73 +14230,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -13937,19 +14315,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The query used to collect the data for export.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -13959,73 +14339,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -14043,14 +14423,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14060,73 +14442,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -14145,26 +14527,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'A list of nodes to export.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'A list of relationships to export.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14174,73 +14558,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -14258,20 +14642,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The graph to export.',
           name: 'graph',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14281,73 +14667,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -14366,20 +14752,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The query used to collect the data for export.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description:
+            'The name of the file to which the data will be exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        stream = false :: BOOLEAN,\n        batchSize = 20000 :: INTEGER,\n        bulkImport = true :: BOOLEAN,\n        timeoutSeconds = 100 :: INTEGER,\n        compression = 'None' :: STRING,\n        charset = 'UTF_8' :: STRING,\n        sampling = false :: BOOLEAN,\n        samplingConfig :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14389,73 +14777,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to which the data was exported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description: 'A summary of the exported data.',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format the file is exported in.',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of exported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of exported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of exported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the export.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the export was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the export was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the export ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the export.',
           name: 'data',
           type: 'ANY',
         },
@@ -14474,19 +14862,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description:
+            'An object to extract nodes and relationships from. It can be of type; NODE | RELATIONSHIP | PATH | LIST<ANY>.',
           name: 'data',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to be present in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14496,7 +14885,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14515,25 +14904,25 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to create the graph from.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to include in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14543,7 +14932,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14562,13 +14951,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to be present in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14578,7 +14967,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14597,25 +14986,25 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The nodes to include in the resulting graph.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'The relationship to include in the resulting graph.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to include in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14625,7 +15014,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14644,14 +15033,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'json :: ANY',
+          description: 'A JSON object to generate a graph from.',
           name: 'json',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        write = false :: BOOLEAN,\n        labelField = 'type' :: STRING.\n        idField = 'id' :: STRING,\n        generateID = true :: BOOLEAN,\n        defaultLabel = '' :: STRING,\n        skipValidation = false :: BOOLEAN,\n        mappings = {} :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14661,7 +15051,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14680,19 +15070,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'A path to extract the nodes and relationships from.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name to give the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to include in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14702,7 +15092,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14721,19 +15111,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'paths :: LIST<PATH>',
+          description:
+            'A list of paths to extract nodes and relationships from.',
           name: 'paths',
           type: 'LIST<PATH>',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the resulting graph.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'props :: MAP',
+          description: 'The properties to include in the resulting graph.',
           name: 'props',
           type: 'MAP',
         },
@@ -14743,7 +15134,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: MAP',
+          description: 'The resulting graph.',
           name: 'graph',
           type: 'MAP',
         },
@@ -14762,14 +15153,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'json :: ANY',
+          description: 'The JSON object to validate.',
           name: 'json',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        write = false :: BOOLEAN,\n        labelField = 'type' :: STRING.\n        idField = 'id' :: STRING,\n        generateID = true :: BOOLEAN,\n        defaultLabel = '' :: STRING,\n        skipValidation = false :: BOOLEAN,\n        mappings = {} :: MAP\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -14779,7 +15171,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'row :: MAP',
+          description: 'The result of the validation.',
           name: 'row',
           type: 'MAP',
         },
@@ -14798,7 +15190,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'proc :: STRING',
+          description: 'A keyword to filter the results by.',
           name: 'proc',
           type: 'STRING',
         },
@@ -14808,49 +15200,49 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'Whether it is a function or a procedure.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the function or procedure.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text :: STRING',
+          description: 'The description of the function or procedure.',
           name: 'text',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'signature :: STRING',
+          description: 'The signature of the function or procedure.',
           name: 'signature',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'roles :: LIST<STRING>',
+          description: 'This value is always null.',
           name: 'roles',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'writes :: BOOLEAN',
+          description: 'This value is always null.',
           name: 'writes',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'core :: BOOLEAN',
+          description: 'If the function or procedure belongs to APOC Core.',
           name: 'core',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'isDeprecated :: BOOLEAN',
+          description: 'If the function or procedure is deprecated.',
           name: 'isDeprecated',
           type: 'BOOLEAN',
         },
@@ -14869,19 +15261,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<MAP>',
+          description:
+            'List of map values of where to import the node values from; { fileName :: STRING, data :: BYTEARRAY, labels :: LIST<STRING> }.',
           name: 'nodes',
           type: 'LIST<MAP>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<MAP>',
+          description:
+            'List of map values specifying where to import relationship values from: { fileName :: STRING, data :: BYTEARRAY, type :: STRING }.',
           name: 'rels',
           type: 'LIST<MAP>',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    delimiter = "," :: STRING,\n    arrayDelimiter = ";" :: STRING,\n    ignoreDuplicateNodes = false :: BOOLEAN,\n    quotationCharacter = """ :: STRING,\n    stringIds = true :: BOOLEAN,\n    skipLines = 1 :: INTEGER,\n    ignoreBlankString = false :: BOOLEAN,\n    ignoreEmptyCellArray = false :: BOOLEAN,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"],\n    charset = "UTF-8" :: STRING,\n    batchSize = 2000 :: INTEGER\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -14891,73 +15286,74 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file from which the data was imported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description:
+            'The source of the imported data: "file", "binary" or "file/binary".',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format of the file: ["csv", "graphml", "json"].',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of imported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of imported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of imported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the import.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the import was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the import was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the import ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the import.',
           name: 'data',
           type: 'ANY',
         },
@@ -14975,13 +15371,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrBinaryFile :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrBinaryFile',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    readLabels = false :: BOOLEAN,\n    defaultRelationshipType = "RELATED" :: STRING,\n    storeNodeIds = false :: BOOLEAN,\n    batchSize = 20000 :: INTEGER,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"],\n    source = {} :: MAP,\n    target = {} :: MAP\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -14991,73 +15389,74 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file from which the data was imported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description:
+            'The source of the imported data: "file", "binary" or "file/binary".',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format of the file: ["csv", "graphml", "json"].',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of imported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of imported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of imported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the import.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the import was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the import was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the import ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the import.',
           name: 'data',
           type: 'ANY',
         },
@@ -15075,14 +15474,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrBinaryFile :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrBinaryFile',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    unwindBatchSize = 5000 :: INTEGER,\n    txBatchSize = 5000 :: INTEGER,\n    importIdName = "neo4jImportId" :: STRING,\n    nodePropertyMappings = {} :: MAP,\n    relPropertyMappings = {} :: MAP,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"],\n    cleanup = false :: BOOLEAN,\n    nodePropFilter = {} :: MAP,\n    relPropFilter = {} :: MAP\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -15092,73 +15493,74 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file from which the data was imported.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'source :: STRING',
+          description:
+            'The source of the imported data: "file", "binary" or "file/binary".',
           name: 'source',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'format :: STRING',
+          description: 'The format of the file: ["csv", "graphml", "json"].',
           name: 'format',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: INTEGER',
+          description: 'The number of imported nodes.',
           name: 'nodes',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: INTEGER',
+          description: 'The number of imported relationships.',
           name: 'relationships',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'properties :: INTEGER',
+          description: 'The number of imported properties.',
           name: 'properties',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'time :: INTEGER',
+          description: 'The duration of the import.',
           name: 'time',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rows :: INTEGER',
+          description: 'The number of rows returned.',
           name: 'rows',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The size of the batches the import was run in.',
           name: 'batchSize',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the import was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'Whether the import ran successfully.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'data :: ANY',
+          description: 'The data returned by the import.',
           name: 'data',
           type: 'ANY',
         },
@@ -15176,14 +15578,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrBinary :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrBinary',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    connectCharacters = false :: BOOLEAN,\n    filterLeadingWhitespace = false :: BOOLEAN,\n    delimiter = " " :: STRING,\n    label :: STRING,\n    relType :: STRING,\n    charactersForTag :: MAP\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -15193,7 +15597,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'An imported node.',
           name: 'node',
           type: 'NODE',
         },
@@ -15212,14 +15616,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'file :: STRING',
+          description: 'The name of the file to import data from.',
           name: 'file',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: 'This value is never used.',
           name: 'config',
           type: 'MAP',
         },
@@ -15229,7 +15633,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'A map of data loaded from the given file.',
           name: 'value',
           type: 'MAP',
         },
@@ -15248,14 +15652,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'source :: BYTEARRAY',
+          description: 'The data to load.',
           name: 'source',
           type: 'BYTEARRAY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: 'This value is never used.',
           name: 'config',
           type: 'MAP',
         },
@@ -15265,7 +15669,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'A map of data loaded from the given file.',
           name: 'value',
           type: 'MAP',
         },
@@ -15284,21 +15688,24 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrKeyOrBinary :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrKeyOrBinary',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the list.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    failOnError = true :: BOOLEAN,\n    pathOptions :: LIST<STRING>,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -15308,7 +15715,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'A map of data loaded from the given file.',
           name: 'value',
           type: 'MAP',
         },
@@ -15327,21 +15734,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'url :: STRING',
+          description: 'The path to the JSON file.',
           name: 'url',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the list.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    failOnError = true :: BOOLEAN,\n    pathOptions :: LIST<STRING>,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2"", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -15351,7 +15760,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'Data loaded from the given file.',
           name: 'value',
           type: 'ANY',
         },
@@ -15370,33 +15779,36 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrKeyOrBinary :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrKeyOrBinary',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'headers :: MAP',
+          description: 'Headers to be used when connecting to the given URL.',
           name: 'headers',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'payload :: STRING',
+          description: 'The payload to send when connecting to the given URL.',
           name: 'payload',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'path =  :: STRING',
+          description:
+            'A JSON path expression used to extract a certain part from the list.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    failOnError = true :: BOOLEAN,\n    pathOptions :: LIST<STRING>,\n    compression = ""NONE"" :: [""NONE"", ""BYTES"", ""GZIP"", ""BZIP2"", ""DEFLATE"", ""BLOCK_LZ4"", ""FRAMED_SNAPPY”]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -15406,7 +15818,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'A map of data loaded from the given file.',
           name: 'value',
           type: 'MAP',
         },
@@ -15425,28 +15837,31 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'urlOrBinary :: ANY',
+          description:
+            'The name of the file or binary data to import the data from.',
           name: 'urlOrBinary',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=/, type=STRING}',
-          description: 'path = / :: STRING',
+          description:
+            'An xPath expression to select nodes from the given XML document.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    failOnError = true :: BOOLEAN,\n    headers = {} :: MAP,\n    compression = "NONE" :: ["NONE", "BYTES", "GZIP", "BZIP2", "DEFLATE", "BLOCK_LZ4", "FRAMED_SNAPPY"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'simple = false :: BOOLEAN',
+          description: 'Whether or not to parse the given XML in simple mode.',
           name: 'simple',
           type: 'BOOLEAN',
         },
@@ -15456,7 +15871,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'A map of data loaded from the given file.',
           name: 'value',
           type: 'MAP',
         },
@@ -15475,13 +15890,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of nodes to acquire a write lock on.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'The list of relationships to acquire a write lock on.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -15502,7 +15917,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of nodes to acquire a write lock on.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
@@ -15522,7 +15937,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of nodes to acquire a read lock on.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
@@ -15542,7 +15957,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'The list of relationships to acquire a read lock on.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -15562,7 +15977,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description: 'The list of relationships to acquire a write lock on.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -15583,14 +15998,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: STRING',
+          description: 'The name of the log file to read.',
           name: 'path',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ last :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -15600,19 +16015,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'lineNo :: INTEGER',
+          description: 'The line number.',
           name: 'lineNo',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'line :: STRING',
+          description: 'The content of the line.',
           name: 'line',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'path :: STRING',
+          description: 'The path to the log file.',
           name: 'path',
           type: 'STRING',
         },
@@ -15631,19 +16046,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The label of the nodes to perform the regression on.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyY :: STRING',
+          description: 'The name of the y property.',
           name: 'propertyY',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyX :: STRING',
+          description: 'The name of the x property.',
           name: 'propertyX',
           type: 'STRING',
         },
@@ -15653,25 +16068,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'r2 :: FLOAT',
+          description: 'The coefficient of determination.',
           name: 'r2',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'avgX :: FLOAT',
+          description: 'The average of the x values.',
           name: 'avgX',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'avgY :: FLOAT',
+          description: 'The average of the y values.',
           name: 'avgY',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'slope :: FLOAT',
+          description: 'The calculated slope.',
           name: 'slope',
           type: 'FLOAT',
         },
@@ -15690,27 +16105,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description:
+            'The list of labels used for the generated MERGE statement.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the node that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onCreateProps = {} :: MAP',
+          description: 'Properties that are merged when a node is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description: 'Properties that are merged when a node is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15720,7 +16136,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -15739,27 +16155,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description:
+            'The list of labels used for the generated MERGE statement.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the node that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onCreateProps = {} :: MAP',
+          description: 'Properties that are merged when a node is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description: 'Properties that are merged when a node is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15769,7 +16186,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -15788,27 +16205,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description:
+            'The list of labels used for the generated MERGE statement.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the node that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onCreateProps = {} :: MAP',
+          description: 'Properties that are merged when a node is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description: 'Properties that are merged when a node is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15818,13 +16236,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'stats :: MAP',
+          description: 'The returned query statistics.',
           name: 'stats',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -15843,27 +16261,28 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description:
+            'The list of labels used for the generated MERGE statement.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the node that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onCreateProps = {} :: MAP',
+          description: 'Properties that are merged when a node is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description: 'Properties that are merged when a node is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15873,13 +16292,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'stats :: MAP',
+          description: 'The returned query statistics.',
           name: 'stats',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The updated node.',
           name: 'node',
           type: 'NODE',
         },
@@ -15898,38 +16317,40 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The start node of the relationship.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type of the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the relationship that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'onCreateProps :: MAP',
+          description:
+            'Properties that are merged when a relationship is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The end node of the relationship.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description:
+            'Properties that are merged when a relationship is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15939,7 +16360,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -15958,38 +16379,40 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The start node of the relationship.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type of the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the relationship that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'onCreateProps :: MAP',
+          description:
+            'Properties that are merged when a relationship is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The end node of the relationship.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description:
+            'Properties that are merged when a relationship is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -15999,7 +16422,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -16018,38 +16441,40 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The start node of the relationship.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type of the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the relationship that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'onCreateProps :: MAP',
+          description:
+            'Properties that are merged when a relationship is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The end node of the relationship.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description:
+            'Properties that are merged when a relationship is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -16059,13 +16484,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'stats :: MAP',
+          description: 'The returned query statistics.',
           name: 'stats',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -16084,38 +16509,40 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: NODE',
+          description: 'The start node of the relationship.',
           name: 'startNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type of the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'identProps :: MAP',
+          description: 'Properties on the relationship that are always merged.',
           name: 'identProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'onCreateProps :: MAP',
+          description:
+            'Properties that are merged when a relationship is created.',
           name: 'onCreateProps',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The end node of the relationship.',
           name: 'endNode',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'onMatchProps = {} :: MAP',
+          description:
+            'Properties that are merged when a relationship is matched.',
           name: 'onMatchProps',
           type: 'MAP',
         },
@@ -16125,13 +16552,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'stats :: MAP',
+          description: 'The returned query statistics.',
           name: 'stats',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The updated relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -16150,7 +16577,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'Number of nodes to sample, setting sample to `-1` will remove sampling; { sample = 1000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -16160,85 +16588,89 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The label or type name.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The property name.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The count of seen values.',
           name: 'count',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'unique :: BOOLEAN',
+          description: 'If all seen values are unique.',
           name: 'unique',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'index :: BOOLEAN',
+          description: 'If an index exists for this property.',
           name: 'index',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'existence :: BOOLEAN',
+          description: 'If an existence constraint exists for this property.',
           name: 'existence',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The type represented by this row.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'array :: BOOLEAN',
+          description:
+            'Indicates whether the property is an array. If the type column is "RELATIONSHIP," this will be true if there is at least one node with two outgoing relationships of the type specified by the label or property column.',
           name: 'array',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'sample :: LIST<ANY>',
+          description: 'This is always null.',
           name: 'sample',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'left :: INTEGER',
+          description:
+            'The ratio (rounded down) of the count of outgoing relationships for a specific label and relationship type relative to the total count of those patterns.',
           name: 'left',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'right :: INTEGER',
+          description:
+            'The ratio (rounded down) of the count of incoming relationships for a specific label and relationship type relative to the total count of those patterns.',
           name: 'right',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'other :: LIST<STRING>',
+          description: 'The labels of connect nodes.',
           name: 'other',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'otherLabels :: LIST<STRING>',
+          description:
+            'For uniqueness constraints, this field shows other labels present on nodes that also contain the uniqueness constraint.',
           name: 'otherLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'elementType :: STRING',
+          description: 'Whether this refers to a node or a relationship.',
           name: 'elementType',
           type: 'STRING',
         },
@@ -16257,14 +16689,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graph :: ANY',
+          description: 'The graph to extract metadata from.',
           name: 'graph',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'Number of nodes to sample, setting sample to `-1` will remove sampling; { sample = 1000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -16274,85 +16707,89 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The label or type name.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'property :: STRING',
+          description: 'The property name.',
           name: 'property',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The count of seen values.',
           name: 'count',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'unique :: BOOLEAN',
+          description: 'If all seen values are unique.',
           name: 'unique',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'index :: BOOLEAN',
+          description: 'If an index exists for this property.',
           name: 'index',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'existence :: BOOLEAN',
+          description: 'If an existence constraint exists for this property.',
           name: 'existence',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The type represented by this row.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'array :: BOOLEAN',
+          description:
+            'Indicates whether the property is an array. If the type column is "RELATIONSHIP," this will be true if there is at least one node with two outgoing relationships of the type specified by the label or property column.',
           name: 'array',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'sample :: LIST<ANY>',
+          description: 'This is always null.',
           name: 'sample',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'left :: INTEGER',
+          description:
+            'The ratio (rounded down) of the count of outgoing relationships for a specific label and relationship type relative to the total count of those patterns.',
           name: 'left',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'right :: INTEGER',
+          description:
+            'The ratio (rounded down) of the count of incoming relationships for a specific label and relationship type relative to the total count of those patterns.',
           name: 'right',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'other :: LIST<STRING>',
+          description: 'The labels of connect nodes.',
           name: 'other',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'otherLabels :: LIST<STRING>',
+          description:
+            'For uniqueness constraints, this field shows other labels present on nodes that also contain the uniqueness constraint.',
           name: 'otherLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'elementType :: STRING',
+          description: 'Whether this refers to a node or a relationship.',
           name: 'elementType',
           type: 'STRING',
         },
@@ -16371,7 +16808,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'The number of nodes whose relationships are checked to remove false positives and the number of relationships to read per sampled node. A value of -1 will read all; { sample = 1 :: INTEGER, maxRels = -1 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -16381,13 +16819,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'Nodes representing the meta data.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'Relationships representing the meta data.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -16406,14 +16844,15 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=ANY}',
-          description: 'graph = {} :: ANY',
+          description: 'The graph to extract metadata from.',
           name: 'graph',
           type: 'ANY',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'The number of nodes whose relationships are checked to remove false positives and the number of relationships to read per sampled node. A value of -1 will read all; { sample = 1 :: INTEGER, maxRels = -1 :: INTEGER, addRelationshipsBetweenNodes = true :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -16423,13 +16862,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'Nodes representing the meta data.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'Relationships representing the meta data.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -16447,9 +16886,9 @@ const mockSchema: DbSchema = {
       worksOnSystem: false,
       argumentDescription: [
         {
-          isDeprecated: false,
+          isDeprecated: true,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: 'Empty map (deprecated).',
           name: 'config',
           type: 'MAP',
         },
@@ -16459,13 +16898,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'Nodes representing the meta data.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'Relationships representing the meta data.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -16485,7 +16924,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n        includeLabels = [] :: LIST<STRING>,\n        includeRels = [] :: LIST<STRING>,\n        excludeLabels = [] :: LIST<STRING>,\n        excludeRels = [] :: LIST<STRING>,\n        sample = 1000 :: INTEGER,\n        maxRels = 100 :: INTEGER\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -16495,43 +16935,44 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodeType :: STRING',
+          description: 'The type of the node.',
           name: 'nodeType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodeLabels :: LIST<STRING>',
+          description: 'The labels on the node.',
           name: 'nodeLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'The name of the property.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyTypes :: LIST<STRING>',
+          description: 'The types this property has.',
           name: 'propertyTypes',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'mandatory :: BOOLEAN',
+          description:
+            'Whether or not this property exists on all nodes of the given type.',
           name: 'mandatory',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'propertyObservations :: INTEGER',
+          description: 'The number of times this property was observed.',
           name: 'propertyObservations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'totalObservations :: INTEGER',
+          description: 'The number of times the label was seen.',
           name: 'totalObservations',
           type: 'INTEGER',
         },
@@ -16551,7 +16992,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n        includeLabels = [] :: LIST<STRING>,\n        includeRels = [] :: LIST<STRING>,\n        excludeLabels = [] :: LIST<STRING>,\n        excludeRels = [] :: LIST<STRING>,\n        sample = 1000 :: INTEGER,\n        maxRels = 100 :: INTEGER\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -16561,49 +17003,50 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The type of the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'sourceNodeLabels :: LIST<STRING>',
+          description: 'The labels belonging to the start node.',
           name: 'sourceNodeLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'targetNodeLabels :: LIST<STRING>',
+          description: 'The labels belonging to the end node.',
           name: 'targetNodeLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'The name of the property.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyTypes :: LIST<STRING>',
+          description: 'The types this property has.',
           name: 'propertyTypes',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'mandatory :: BOOLEAN',
+          description:
+            'Whether or not this property exists on all nodes of the given type.',
           name: 'mandatory',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'propertyObservations :: INTEGER',
+          description: 'The number of times this property was observed.',
           name: 'propertyObservations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'totalObservations :: INTEGER',
+          description: 'The number of times the label was seen.',
           name: 'totalObservations',
           type: 'INTEGER',
         },
@@ -16623,7 +17066,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            'Number of nodes to sample, setting sample to `-1` will remove sampling; { sample = 1000 :: INTEGER }',
           name: 'config',
           type: 'MAP',
         },
@@ -16632,7 +17076,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'Meta information represented as a map.',
           name: 'value',
           type: 'MAP',
         },
@@ -16654,55 +17098,57 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'labelCount :: INTEGER',
+          description: 'The total number of distinct node labels.',
           name: 'labelCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relTypeCount :: INTEGER',
+          description: 'The total number of distinct relationship types.',
           name: 'relTypeCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'propertyKeyCount :: INTEGER',
+          description: 'The count of property keys.',
           name: 'propertyKeyCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'nodeCount :: INTEGER',
+          description: 'The total number of nodes.',
           name: 'nodeCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'relCount :: INTEGER',
+          description: 'The total number of relationships.',
           name: 'relCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'labels :: MAP',
+          description: 'A map of labels to their count.',
           name: 'labels',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'relTypes :: MAP',
+          description:
+            'A map of relationship types per start or end node label.',
           name: 'relTypes',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'relTypesCount :: MAP',
+          description: 'A map of relationship types to their count.',
           name: 'relTypesCount',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'stats :: MAP',
+          description:
+            'A map containing all the given return fields from this procedure.',
           name: 'stats',
           type: 'MAP',
         },
@@ -16720,7 +17166,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    excludeLabels :: LIST<STRING>,\n    includeLabels :: LIST<STRING>,\n    includeRels :: LIST<STRING>,\n    maxRels = -1 :: INTEGER,\n    sample = 1 :: INTEGER\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -16730,13 +17177,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'Nodes representing the meta data.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'Relationships representing the meta data.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -16755,21 +17202,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16779,7 +17227,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'A neighboring node.',
           name: 'node',
           type: 'NODE',
         },
@@ -16798,21 +17246,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16822,7 +17271,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER',
+          description:
+            'The total count of neighboring nodes at the given hop distance.',
           name: 'value',
           type: 'INTEGER',
         },
@@ -16841,21 +17291,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The max number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16865,7 +17316,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description:
+            'A list of neighboring nodes at a distinct hop distance.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
@@ -16884,21 +17336,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The max number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16908,7 +17361,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description:
+            'A list of neighbor counts for each distinct hop distance.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -16927,21 +17381,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The max number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16951,7 +17406,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'A neighboring node.',
           name: 'node',
           type: 'NODE',
         },
@@ -16970,21 +17425,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The starting node for the algorithm.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            "A list of relationship types to follow. Relationship types are represented using APOC's rel-direction-pattern syntax; `[<]RELATIONSHIP_TYPE1[>]|[<]RELATIONSHIP_TYPE2[>]|...`.",
           name: 'relTypes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=1, type=INTEGER}',
-          description: 'distance = 1 :: INTEGER',
+          description: 'The max number of hops to take.',
           name: 'distance',
           type: 'INTEGER',
         },
@@ -16994,7 +17450,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER',
+          description:
+            'The total count of neighboring nodes within the given hop distance.',
           name: 'value',
           type: 'INTEGER',
         },
@@ -17013,14 +17470,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of node values to merge.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    mergeRels :: BOOLEAN,\n    selfRef :: BOOLEAN,\n    produceSelfRef = true :: BOOLEAN,\n    preserveExistingSelfRels = true :: BOOLEAN,\n    countMerge = true :: BOOLEAN,\n    collapsedLabel :: BOOLEAN,\n    singleElementAsArray = false :: BOOLEAN,\n    avoidDuplicates = false :: BOOLEAN,\n    relationshipSelectionStrategy = "incoming" :: ["incoming", "outgoing", "merge"]\n    properties :: ["overwrite", "discard", "combine"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17030,19 +17488,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'from :: NODE',
+          description: 'The recently collapsed virtual node.',
           name: 'from',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'A relationship connected to the collapsed node.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'to :: NODE',
+          description: 'A node connected to the other end of the relationship.',
           name: 'to',
           type: 'NODE',
         },
@@ -17061,14 +17519,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of nodes to check for path cycles.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    maxDepth :: INTEGER,\n    relTypes = [] :: LIST<STRING>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17078,7 +17537,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'A path containing a found cycle.',
           name: 'path',
           type: 'PATH',
         },
@@ -17096,13 +17555,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description:
+            'The nodes to be deleted. Nodes can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>`.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The number of node values to delete in a single batch.',
           name: 'batchSize',
           type: 'INTEGER',
         },
@@ -17112,7 +17572,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: INTEGER',
+          description: 'The number of deleted nodes.',
           name: 'value',
           type: 'INTEGER',
         },
@@ -17130,7 +17590,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description:
+            'The nodes to be returned. Nodes can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>`.',
           name: 'nodes',
           type: 'ANY',
         },
@@ -17139,7 +17600,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'A node.',
           name: 'node',
           type: 'NODE',
         },
@@ -17158,13 +17619,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description:
+            "The list of node labels to aggregate over. Use `['*']` to indicate all node labels should be looked at.",
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'groupByProperties :: LIST<STRING>',
+          description: 'The property keys to group the nodes by.',
           name: 'groupByProperties',
           type: 'LIST<STRING>',
         },
@@ -17172,14 +17634,16 @@ const mockSchema: DbSchema = {
           isDeprecated: false,
           default:
             'DefaultParameterValue{value=[{*=count}, {*=count}], type=LIST<MAP>}',
-          description: 'aggregations = [{*=count}, {*=count}] :: LIST<MAP>',
+          description:
+            'The first map specifies the node properties to aggregate with their corresponding aggregation functions, while the second map specifies the relationship properties for aggregation.',
           name: 'aggregations',
           type: 'LIST<MAP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    includeRels :: STRING | LIST<STRING>\n    excludeRels :: STRING | LIST<STRING>,\n    orphans = true :: BOOLEAN,\n    selfRels = true :: BOOLEAN,\n    limitNodes = -1 :: INTEGER,\n    limitRels = -1 :: INTEGER,\n    relsPerNode = -1 :: INTEGER,\n    filter :: MAP\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17189,25 +17653,26 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'A list of grouped nodes represented as virtual nodes.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description:
+            'A list of grouped relationships represented as virtual relationships.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The grouping node.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'relationship :: RELATIONSHIP',
+          description: 'The grouping relationship.',
           name: 'relationship',
           type: 'RELATIONSHIP',
         },
@@ -17226,20 +17691,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The list of nodes to be linked.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The relationship type name to link the nodes with.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ avoidDuplicates = false :: BOOLEAN }',
           name: 'config',
           type: 'MAP',
         },
@@ -17260,7 +17725,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: ANY',
+          description:
+            'The relationships to be returned. Relationships can be of type `STRING` (elementId()), `INTEGER` (id()), `RELATIONSHIP`, or `LIST<STRING | INTEGER | RELATIONSHIP>',
           name: 'rels',
           type: 'ANY',
         },
@@ -17269,7 +17735,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'A relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -17288,31 +17754,35 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: ANY',
+          description:
+            'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>`.',
           name: 'startNode',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relFilter :: STRING',
+          description:
+            'An allow list of types allowed on the returned relationships.',
           name: 'relFilter',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'labelFilter :: STRING',
+          description: 'An allow list of labels allowed on the returned nodes.',
           name: 'labelFilter',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'minDepth :: INTEGER',
+          description:
+            'The minimum number of hops allowed in the returned paths.',
           name: 'minDepth',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'maxDepth :: INTEGER',
+          description:
+            'The maximum number of hops allowed in the returned paths.',
           name: 'maxDepth',
           type: 'INTEGER',
         },
@@ -17322,7 +17792,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The expanded path.',
           name: 'path',
           type: 'PATH',
         },
@@ -17341,13 +17811,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: ANY',
+          description:
+            'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>.',
           name: 'startNode',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    minLevel = -1 :: INTEGER,\n    maxLevel = -1 :: INTEGER,\n    relationshipFilter :: STRING,\n    labelFilter :: STRING,\n    beginSequenceAtStart = true :: BOOLEAN,\n    uniqueness = "RELATIONSHIP_PATH" :: STRING,\n    bfs = true :: BOOLEAN,\n    filterStartNode = false :: BOOLEAN,\n    limit = -1 :: INTEGER,\n    optional = false :: BOOLEAN,\n    endNodes :: LIST<NODES>,\n    terminatorNodes:: LIST<NODES>,\n    allowlistNodes:: LIST<NODES>,\n    denylistNodes:: LIST<NODES>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17357,7 +17829,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The expanded path.',
           name: 'path',
           type: 'PATH',
         },
@@ -17376,13 +17848,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: ANY',
+          description:
+            'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>.',
           name: 'startNode',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    minLevel = -1 :: INTEGER,\n    maxLevel = -1 :: INTEGER,\n    relationshipFilter :: STRING,\n    labelFilter :: STRING,\n    beginSequenceAtStart = true :: BOOLEAN,\n    uniqueness = "RELATIONSHIP_PATH" :: STRING,\n    bfs = true :: BOOLEAN,\n    filterStartNode = false :: BOOLEAN,\n    limit = -1 :: INTEGER,\n    optional = false :: BOOLEAN,\n    endNodes :: LIST<NODES>,\n    terminatorNodes:: LIST<NODES>,\n    allowlistNodes:: LIST<NODES>,\n    denylistNodes:: LIST<NODES>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17392,7 +17866,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'A spanning tree path.',
           name: 'path',
           type: 'PATH',
         },
@@ -17411,13 +17885,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: ANY',
+          description:
+            'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>.',
           name: 'startNode',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    minLevel = -1 :: INTEGER,\n    maxLevel = -1 :: INTEGER,\n    relationshipFilter :: STRING,\n    labelFilter :: STRING,\n    beginSequenceAtStart = true :: BOOLEAN,\n    uniqueness = "RELATIONSHIP_PATH" :: STRING,\n    bfs = true :: BOOLEAN,\n    filterStartNode = false :: BOOLEAN,\n    limit = -1 :: INTEGER,\n    optional = false :: BOOLEAN,\n    endNodes :: LIST<NODES>,\n    terminatorNodes:: LIST<NODES>,\n    allowlistNodes:: LIST<NODES>,\n    denylistNodes:: LIST<NODES>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17427,13 +17903,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'Nodes part of the returned subgraph.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'Relationships part of the returned subgraph.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -17452,13 +17928,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'startNode :: ANY',
+          description:
+            'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>`.',
           name: 'startNode',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    minLevel = -1 :: INTEGER,\n    maxLevel = -1 :: INTEGER,\n    relationshipFilter :: STRING,\n    labelFilter :: STRING,\n    beginSequenceAtStart = true :: BOOLEAN,\n    uniqueness = "RELATIONSHIP_PATH" :: STRING,\n    bfs = true :: BOOLEAN,\n    filterStartNode = false :: BOOLEAN,\n    limit = -1 :: INTEGER,\n    optional = false :: BOOLEAN,\n    endNodes :: LIST<NODES>,\n    terminatorNodes:: LIST<NODES>,\n    allowlistNodes:: LIST<NODES>,\n    denylistNodes:: LIST<NODES>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17468,9 +17946,54 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'Nodes part of the returned subgraph.',
           name: 'node',
           type: 'NODE',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'apoc.paths.toJsonTree': {
+      name: 'apoc.paths.toJsonTree',
+      description:
+        'Creates a stream of nested documents representing the graph as a tree by traversing outgoing relationships.',
+      mode: 'DEFAULT',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'A list of paths to convert into a tree.',
+          name: 'paths',
+          type: 'LIST<PATH>',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
+          description:
+            'Whether or not to convert relationship types to lower case.',
+          name: 'lowerCaseRels',
+          type: 'BOOLEAN',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description:
+            '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
+          name: 'config',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'apoc.paths.toJsonTree(paths :: LIST<PATH>, lowerCaseRels = true :: BOOLEAN, config = {} :: MAP) :: (value :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The resulting tree.',
+          name: 'value',
+          type: 'MAP',
         },
       ],
       admin: false,
@@ -17486,7 +18009,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job to cancel.',
           name: 'name',
           type: 'STRING',
         },
@@ -17496,31 +18019,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description: 'The delay on the job.',
           name: 'delay',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description: 'The rate of the job.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'If the job has completed.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'cancelled :: BOOLEAN',
+          description: 'If the job has been cancelled.',
           name: 'cancelled',
           type: 'BOOLEAN',
         },
@@ -17538,14 +18061,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -17555,55 +18078,55 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'updates :: INTEGER',
+          description: 'The total number of updates.',
           name: 'updates',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'executions :: INTEGER',
+          description: 'The total number of executions.',
           name: 'executions',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'runtime :: INTEGER',
+          description: 'The total time taken in nanoseconds.',
           name: 'runtime',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of run batches.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'batchErrors :: MAP',
+          description: 'Errors returned from the failed batches.',
           name: 'batchErrors',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'failedCommits :: INTEGER',
+          description: 'The number of failed commits.',
           name: 'failedCommits',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'commitErrors :: MAP',
+          description: 'Errors returned from the failed commits.',
           name: 'commitErrors',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'wasTerminated :: BOOLEAN',
+          description: 'If the job was terminated.',
           name: 'wasTerminated',
           type: 'BOOLEAN',
         },
@@ -17622,19 +18145,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description:
+            'The Cypher statement to run, returning a count on each run indicating the remaining iterations.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description:
+            'The delay in seconds to wait between each job execution.',
           name: 'delay',
           type: 'INTEGER',
         },
@@ -17644,31 +18169,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description: 'The delay on the job.',
           name: 'delay',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description: 'The rate of the job.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'If the job has completed.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'cancelled :: BOOLEAN',
+          description: 'If the job has been cancelled.',
           name: 'cancelled',
           type: 'BOOLEAN',
         },
@@ -17687,19 +18212,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'cypherIterate :: STRING',
+          description: 'The first Cypher statement to be run.',
           name: 'cypherIterate',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'cypherAction :: STRING',
+          description:
+            'The Cypher statement to run for each item returned by the initial Cypher statement.',
           name: 'cypherAction',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'config :: MAP',
+          description:
+            '{\n    batchSize = 10000 :: INTEGER,\n    parallel = false :: BOOLEAN,\n    retries = 0 :: INTEGER,\n    batchMode = "BATCH" :: STRING,\n    params = {} :: MAP,\n    concurrency :: INTEGER,\n    failedParams = -1 :: INTEGER,\n    planner = "DEFAULT" :: ["DEFAULT", "COST", "IDP", "DP"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -17709,79 +18236,84 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The total number of batches.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The number of processed input rows.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'timeTaken :: INTEGER',
+          description: 'The duration taken in seconds.',
           name: 'timeTaken',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'committedOperations :: INTEGER',
+          description: 'The number of successful inner queries (actions).',
           name: 'committedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedOperations :: INTEGER',
+          description: 'The number of failed inner queries (actions).',
           name: 'failedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'retries :: INTEGER',
+          description: 'The number of retries.',
           name: 'retries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'errorMessages :: MAP',
+          description:
+            'A map of batch error messages paired with their corresponding error counts.',
           name: 'errorMessages',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'batch :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'batch',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'operations :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'operations',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'wasTerminated :: BOOLEAN',
+          description: 'If the transaction was terminated before completion.',
           name: 'wasTerminated',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'failedParams :: MAP',
+          description:
+            'Parameters of failed batches. The key is the batch number as a STRING and the value is a list of batch parameters.',
           name: 'failedParams',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'updateStatistics :: MAP',
+          description:
+            '{\n    nodesCreated :: INTEGER,\n    nodesDeleted :: INTEGER,\n    relationshipsCreated :: INTEGER,\n    relationshipsDeleted :: INTEGER,\n    propertiesSet :: INTEGER,\n    labelsAdded :: INTEGER,\n    labelsRemoved :: INTEGER\n}\n',
           name: 'updateStatistics',
           type: 'MAP',
         },
@@ -17802,31 +18334,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description: 'The delay on the job.',
           name: 'delay',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description: 'The rate of the job.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'If the job has completed.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'cancelled :: BOOLEAN',
+          description: 'If the job has been cancelled.',
           name: 'cancelled',
           type: 'BOOLEAN',
         },
@@ -17845,26 +18377,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description:
+            'The delay in seconds to wait between each job execution.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{ params = {} :: MAP }',
           name: 'config',
           type: 'MAP',
         },
@@ -17874,31 +18407,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description: 'The delay on the job.',
           name: 'delay',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description: 'The rate of the job.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'If the job has completed.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'cancelled :: BOOLEAN',
+          description: 'If the job has been cancelled.',
           name: 'cancelled',
           type: 'BOOLEAN',
         },
@@ -17917,20 +18450,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The Cypher statement to run.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description: '{ params = {} :: MAP }',
           name: 'params',
           type: 'MAP',
         },
@@ -17940,31 +18473,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the job.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delay :: INTEGER',
+          description: 'The delay on the job.',
           name: 'delay',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'rate :: INTEGER',
+          description: 'The rate of the job.',
           name: 'rate',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'done :: BOOLEAN',
+          description: 'If the job has completed.',
           name: 'done',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'cancelled :: BOOLEAN',
+          description: 'If the job has been cancelled.',
           name: 'cancelled',
           type: 'BOOLEAN',
         },
@@ -17984,7 +18517,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    dropSchema = true :: BOOLEAN,\n    batchSize = 10000 :: INTEGER,\n    parallel = false :: BOOLEAN,\n    retries = 0 :: INTEGER,\n    batchMode = "BATCH" :: STRING,\n    params = {} :: MAP,\n    concurrency :: INTEGER,\n    failedParams = -1 :: INTEGER,\n    planner = "DEFAULT" :: ["DEFAULT", "COST", "IDP", "DP"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18005,43 +18539,45 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'sourceKey :: STRING',
+          description: 'The property key to add to the on the new node.',
           name: 'sourceKey',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The relationship type to connect to the new node.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'outgoing :: BOOLEAN',
+          description: 'Whether the relationship should be outgoing or not.',
           name: 'outgoing',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The label of the new node.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'targetKey :: STRING',
+          description:
+            'The name by which the source key value will be referenced on the new node.',
           name: 'targetKey',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'copiedKeys :: LIST<STRING>',
+          description:
+            'A list of additional property keys to be copied to the new node.',
           name: 'copiedKeys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'batchSize :: INTEGER',
+          description: 'The max size of each batch.',
           name: 'batchSize',
           type: 'INTEGER',
         },
@@ -18063,21 +18599,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The nodes to be cloned.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'withRelationships = false :: BOOLEAN',
+          description:
+            'Whether or not the connected relationships should also be cloned.',
           name: 'withRelationships',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-          description: 'skipProperties = [] :: LIST<STRING>',
+          description:
+            'Whether or not to skip the node properties when cloning.',
           name: 'skipProperties',
           type: 'LIST<STRING>',
         },
@@ -18087,19 +18625,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: NODE',
+          description: 'The copied entity.',
           name: 'output',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18118,21 +18656,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The nodes to be cloned.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<RELATIONSHIP>}',
-          description: 'rels = [] :: LIST<RELATIONSHIP>',
+          description:
+            'The relationships to be cloned. If left empty all relationships between the given nodes will be cloned.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    standinNodes :: LIST<LIST<NODE>>,\n    skipProperties :: LIST<STRING>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18142,19 +18682,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: NODE',
+          description: 'The copied entity.',
           name: 'output',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18173,14 +18713,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'paths :: LIST<PATH>',
+          description: 'The paths to be cloned.',
           name: 'paths',
           type: 'LIST<PATH>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    standinNodes :: LIST<LIST<NODE>>,\n    skipProperties :: LIST<STRING>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18190,19 +18731,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: NODE',
+          description: 'The copied entity.',
           name: 'output',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18221,13 +18762,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: ANY',
+          description:
+            'The nodes to collapse. Nodes can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>`.',
           name: 'nodes',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'The name of the resulting relationship type.',
           name: 'relType',
           type: 'STRING',
         },
@@ -18237,19 +18779,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The id of the given relationship.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: RELATIONSHIP',
+          description: 'The id of the new relationship with the updated type.',
           name: 'output',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'The message if an error occurred.',
           name: 'error',
           type: 'STRING',
         },
@@ -18268,20 +18810,22 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description:
+            'The path containing the nodes to delete and the remaining nodes to reconnect.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The nodes to delete.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    relationshipSelectionStrategy = "incoming" :: ["incoming", "outgoing", "merge"]\n    properties :: ["overwrite", "discard", "combine"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18291,13 +18835,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The remaining nodes.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description: 'The new connecting relationships.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -18316,25 +18860,26 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: ANY',
+          description:
+            'The relationships to turn into new nodes. Relationships can be of type `STRING` (elementId()), `INTEGER` (id()), `RELATIONSHIP`, or `LIST<STRING | INTEGER | RELATIONSHIP>`.',
           name: 'rels',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels to be added to the new nodes.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'outType :: STRING',
+          description: 'The type of the outgoing relationship.',
           name: 'outType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'inType :: STRING',
+          description: 'The type of the ingoing relationship.',
           name: 'inType',
           type: 'STRING',
         },
@@ -18344,19 +18889,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: NODE',
+          description: 'The copied entity.',
           name: 'output',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18375,13 +18920,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to redirect.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'newNode :: NODE',
+          description: 'The node to redirect the given relationship to.',
           name: 'newNode',
           type: 'NODE',
         },
@@ -18391,19 +18936,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: RELATIONSHIP',
+          description: 'The copied entity.',
           name: 'output',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18421,7 +18966,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to reverse.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -18431,19 +18976,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The internal id of the original entity.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: RELATIONSHIP',
+          description: 'The copied entity.',
           name: 'output',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'Any error that occurred during the copy process.',
           name: 'error',
           type: 'STRING',
         },
@@ -18462,14 +19007,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description: 'The nodes to be merged onto the first node.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    mergeRels :: BOOLEAN,\n    selfRef :: BOOLEAN,\n    produceSelfRef = true :: BOOLEAN,\n    preserveExistingSelfRels = true :: BOOLEAN,\n    countMerge = true :: BOOLEAN,\n    collapsedLabel :: BOOLEAN,\n    singleElementAsArray = false :: BOOLEAN,\n    avoidDuplicates = false :: BOOLEAN,\n    relationshipSelectionStrategy = "incoming" :: ["incoming", "outgoing", "merge"]\n    properties :: ["overwrite", ""discard", "combine"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18479,7 +19025,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The merged node.',
           name: 'node',
           type: 'NODE',
         },
@@ -18498,14 +19044,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rels :: LIST<RELATIONSHIP>',
+          description:
+            'The relationships to be merged onto the first relationship.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    mergeRels :: BOOLEAN,\n    selfRef :: BOOLEAN,\n    produceSelfRef = true :: BOOLEAN,\n    preserveExistingSelfRels = true :: BOOLEAN,\n    countMerge = true :: BOOLEAN,\n    collapsedLabel :: BOOLEAN,\n    singleElementAsArray = false :: BOOLEAN,\n    avoidDuplicates = false :: BOOLEAN,\n    relationshipSelectionStrategy = "incoming" :: ["incoming", "outgoing", "merge"]\n    properties :: ["overwrite", "discard", "combine"]\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18515,7 +19063,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The merged relationship.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
@@ -18533,25 +19081,26 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'entity :: ANY',
+          description:
+            'The node or relationship whose properties will be normalized to booleans.',
           name: 'entity',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'propertyKey :: STRING',
+          description: 'The name of the property key to normalize.',
           name: 'propertyKey',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'trueValues :: LIST<ANY>',
+          description: 'The possible representations of true values.',
           name: 'trueValues',
           type: 'LIST<ANY>',
         },
         {
           isDeprecated: false,
-          description: 'falseValues :: LIST<ANY>',
+          description: 'The possible representations of false values.',
           name: 'falseValues',
           type: 'LIST<ANY>',
         },
@@ -18573,20 +19122,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'oldLabel :: STRING',
+          description: 'The label to rename.',
           name: 'oldLabel',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'newLabel :: STRING',
+          description: 'The new name to give the label.',
           name: 'newLabel',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<NODE>}',
-          description: 'nodes = [] :: LIST<NODE>',
+          description:
+            'The nodes to apply the new name to. If this list is empty, all nodes with the old label will be renamed.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
@@ -18596,73 +19146,75 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the operation was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The total number of renamings performed.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'timeTaken :: INTEGER',
+          description: 'The time taken to complete the operation.',
           name: 'timeTaken',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'committedOperations :: INTEGER',
+          description: 'The total number of committed operations.',
           name: 'committedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedOperations :: INTEGER',
+          description: 'The total number of failed operations.',
           name: 'failedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The total number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'retries :: INTEGER',
+          description: 'The total number of retries.',
           name: 'retries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'errorMessages :: MAP',
+          description: 'The collected error messages.',
           name: 'errorMessages',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'batch :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'batch',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'operations :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'operations',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'constraints :: LIST<STRING>',
+          description: 'Constraints associated with the given label or type.',
           name: 'constraints',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'indexes :: LIST<STRING>',
+          description: 'Indexes associated with the given label or type.',
           name: 'indexes',
           type: 'LIST<STRING>',
         },
@@ -18681,27 +19233,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'oldName :: STRING',
+          description: 'The property to rename.',
           name: 'oldName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'newName :: STRING',
+          description: 'The new name to give the property.',
           name: 'newName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<NODE>}',
-          description: 'nodes = [] :: LIST<NODE>',
+          description:
+            'The nodes to apply the new name to. If this list is empty, all nodes with the old property name will be renamed.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    batchSize = 100000 :: INTEGER,\n    concurrency :: INTEGER,\n    retries = 0 :: INTEGER,\n    parallel = true :: BOOLEAN,\n    batchMode = "BATCH" :: STRING\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18711,73 +19265,75 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the operation was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The total number of renamings performed.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'timeTaken :: INTEGER',
+          description: 'The time taken to complete the operation.',
           name: 'timeTaken',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'committedOperations :: INTEGER',
+          description: 'The total number of committed operations.',
           name: 'committedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedOperations :: INTEGER',
+          description: 'The total number of failed operations.',
           name: 'failedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The total number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'retries :: INTEGER',
+          description: 'The total number of retries.',
           name: 'retries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'errorMessages :: MAP',
+          description: 'The collected error messages.',
           name: 'errorMessages',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'batch :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'batch',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'operations :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'operations',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'constraints :: LIST<STRING>',
+          description: 'Constraints associated with the given label or type.',
           name: 'constraints',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'indexes :: LIST<STRING>',
+          description: 'Indexes associated with the given label or type.',
           name: 'indexes',
           type: 'LIST<STRING>',
         },
@@ -18796,27 +19352,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'oldType :: STRING',
+          description: 'The type to rename.',
           name: 'oldType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'newType :: STRING',
+          description: 'The new type for the relationship.',
           name: 'newType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<RELATIONSHIP>}',
-          description: 'rels = [] :: LIST<RELATIONSHIP>',
+          description:
+            'The relationships to apply the new name to. If this list is empty, all relationships with the old type will be renamed.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    batchSize = 100000 :: INTEGER,\n    concurrency :: INTEGER,\n    retries = 0 :: INTEGER,\n    parallel = true :: BOOLEAN,\n    batchMode = "BATCH" :: STRING\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18826,73 +19384,75 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the operation was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The total number of renamings performed.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'timeTaken :: INTEGER',
+          description: 'The time taken to complete the operation.',
           name: 'timeTaken',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'committedOperations :: INTEGER',
+          description: 'The total number of committed operations.',
           name: 'committedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedOperations :: INTEGER',
+          description: 'The total number of failed operations.',
           name: 'failedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The total number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'retries :: INTEGER',
+          description: 'The total number of retries.',
           name: 'retries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'errorMessages :: MAP',
+          description: 'The collected error messages.',
           name: 'errorMessages',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'batch :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'batch',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'operations :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'operations',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'constraints :: LIST<STRING>',
+          description: 'Constraints associated with the given label or type.',
           name: 'constraints',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'indexes :: LIST<STRING>',
+          description: 'Indexes associated with the given label or type.',
           name: 'indexes',
           type: 'LIST<STRING>',
         },
@@ -18911,27 +19471,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'oldName :: STRING',
+          description: 'The property to rename.',
           name: 'oldName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'newName :: STRING',
+          description: 'The new name to give the property.',
           name: 'newName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<RELATIONSHIP>}',
-          description: 'rels = [] :: LIST<RELATIONSHIP>',
+          description:
+            'The relationships to apply the new name to. If this list is empty, all relationships with the old properties name will be renamed.',
           name: 'rels',
           type: 'LIST<RELATIONSHIP>',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    batchSize = 100000 :: INTEGER,\n    concurrency :: INTEGER,\n    retries = 0 :: INTEGER,\n    parallel = true :: BOOLEAN,\n    batchMode = "BATCH" :: STRING\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -18941,73 +19503,75 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'batches :: INTEGER',
+          description: 'The number of batches the operation was run in.',
           name: 'batches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The total number of renamings performed.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'timeTaken :: INTEGER',
+          description: 'The time taken to complete the operation.',
           name: 'timeTaken',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'committedOperations :: INTEGER',
+          description: 'The total number of committed operations.',
           name: 'committedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedOperations :: INTEGER',
+          description: 'The total number of failed operations.',
           name: 'failedOperations',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'failedBatches :: INTEGER',
+          description: 'The total number of failed batches.',
           name: 'failedBatches',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'retries :: INTEGER',
+          description: 'The total number of retries.',
           name: 'retries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'errorMessages :: MAP',
+          description: 'The collected error messages.',
           name: 'errorMessages',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'batch :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'batch',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'operations :: MAP',
+          description:
+            '{\n     total :: INTEGER,\n     failed :: INTEGER,\n     committed :: INTEGER,\n     errors :: MAP\n}\n',
           name: 'operations',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'constraints :: LIST<STRING>',
+          description: 'Constraints associated with the given label or type.',
           name: 'constraints',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'indexes :: LIST<STRING>',
+          description: 'Indexes associated with the given label or type.',
           name: 'indexes',
           type: 'LIST<STRING>',
         },
@@ -19025,13 +19589,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to change the type of.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'newType :: STRING',
+          description: 'The new type for the relationship.',
           name: 'newType',
           type: 'STRING',
         },
@@ -19041,19 +19605,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The id of the given relationship.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: RELATIONSHIP',
+          description: 'The id of the new relationship with the updated type.',
           name: 'output',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'The message if an error occurred.',
           name: 'error',
           type: 'STRING',
         },
@@ -19072,13 +19636,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'rel :: RELATIONSHIP',
+          description: 'The relationship to redirect.',
           name: 'rel',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'endNode :: NODE',
+          description: 'The new end node the relationship should point to.',
           name: 'endNode',
           type: 'NODE',
         },
@@ -19088,19 +19652,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'input :: INTEGER',
+          description: 'The id of the given relationship.',
           name: 'input',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'output :: RELATIONSHIP',
+          description: 'The id of the new relationship with the updated type.',
           name: 'output',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'error :: STRING',
+          description: 'The message if an error occurred.',
           name: 'error',
           type: 'STRING',
         },
@@ -19119,20 +19683,23 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexes :: MAP',
+          description:
+            'A map that pairs labels with lists of properties to create indexes from.',
           name: 'indexes',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'constraints :: MAP',
+          description:
+            'A map that pairs labels with lists of properties to create constraints from.',
           name: 'constraints',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-          description: 'dropExisting = true :: BOOLEAN',
+          description:
+            'Whether or not to drop all other existing indexes and constraints.',
           name: 'dropExisting',
           type: 'BOOLEAN',
         },
@@ -19142,31 +19709,34 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'label :: ANY',
+          description: 'The label associated with the constraint or index.',
           name: 'label',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description:
+            'The property key associated with the constraint or index.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'keys :: LIST<STRING>',
+          description:
+            'The property keys associated with the constraint or index.',
           name: 'keys',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'unique :: BOOLEAN',
+          description: 'Whether or not this is a uniqueness constraint.',
           name: 'unique',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'action :: STRING',
+          description:
+            'The action applied to this constraint or index; can be ["KEPT", "CREATED", "DROPPED"]',
           name: 'action',
           type: 'STRING',
         },
@@ -19186,7 +19756,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    labels :: LIST<STRING>,\n    excludeLabels :: LIST<STRING>,\n    relationships :: LIST<STRING>,\n    excludeRelationships :: LIST<STRING>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -19196,61 +19767,64 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'A generated name for the index or constraint.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'label :: ANY',
+          description: 'The label associated with the constraint or index.',
           name: 'label',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'properties :: LIST<STRING>',
+          description:
+            'The property keys associated with the constraint or index.',
           name: 'properties',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'status :: STRING',
+          description: 'The status of the constraint or index.',
           name: 'status',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The type of the index or constraint.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'failure :: STRING',
+          description: 'If a failure has occurred.',
           name: 'failure',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'populationProgress :: FLOAT',
+          description: 'The percentage of the constraint or index population. ',
           name: 'populationProgress',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'size :: INTEGER',
+          description:
+            'The number of entries in the given constraint or index.',
           name: 'size',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'valuesSelectivity :: FLOAT',
+          description:
+            'A ratio between 0.0 and 1.0, representing how many unique values were seen from the sampling.',
           name: 'valuesSelectivity',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'userDescription :: STRING',
+          description: 'A descriptor of the constraint or index.',
           name: 'userDescription',
           type: 'STRING',
         },
@@ -19269,13 +19843,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The node label to find distinct properties on.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the property to find distinct values of.',
           name: 'key',
           type: 'STRING',
         },
@@ -19285,7 +19859,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: LIST<ANY>',
+          description: 'The list of distinct values for the given property.',
           name: 'value',
           type: 'LIST<ANY>',
         },
@@ -19305,14 +19879,14 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'label =  :: STRING',
+          description: 'The node label to count distinct properties on.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'key =  :: STRING',
+          description: 'The name of the property to count distinct values of.',
           name: 'key',
           type: 'STRING',
         },
@@ -19322,25 +19896,25 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'The label of the node.',
           name: 'label',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the property key.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The distinct value.',
           name: 'value',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'count :: INTEGER',
+          description: 'The number of occurrences of the value.',
           name: 'count',
           type: 'INTEGER',
         },
@@ -19360,7 +19934,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            '{\n    labels :: LIST<STRING>,\n    excludeLabels :: LIST<STRING>,\n    relationships :: LIST<STRING>,\n    excludeRelationships :: LIST<STRING>\n}\n',
           name: 'config',
           type: 'MAP',
         },
@@ -19370,31 +19945,33 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'A generated name for the index or constraint.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The type of the index or constraint.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'properties :: LIST<STRING>',
+          description:
+            'The property keys associated with the constraint or index.',
           name: 'properties',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'status :: STRING',
+          description: 'The status of the constraint or index.',
           name: 'status',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'relationshipType :: ANY',
+          description:
+            'The relationship type associated with the constraint or index.',
           name: 'relationshipType',
           type: 'ANY',
         },
@@ -19413,19 +19990,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelPropertyMap :: ANY',
+          description:
+            'A map that pairs labels with lists of properties. This can also be represented as a JSON string.',
           name: 'labelPropertyMap',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description:
+            'The search operator, can be one of: ["exact", "starts with", "ends with", "contains", "<", ">", "=", "<>", "<=", ">=", "=~"].',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The search value.',
           name: 'value',
           type: 'STRING',
         },
@@ -19435,19 +20014,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: INTEGER',
+          description: 'The id of the found node.',
           name: 'id',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels of the found node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: MAP',
+          description: 'The matched values of the found node.',
           name: 'values',
           type: 'MAP',
         },
@@ -19466,19 +20045,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelPropertyMap :: ANY',
+          description:
+            'A map that pairs labels with lists of properties. This can also be represented as a JSON string.',
           name: 'labelPropertyMap',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description:
+            'The search operator, can be one of: ["exact", "starts with", "ends with", "contains", "<", ">", "=", "<>", "<=", ">=", "=~"].',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The search value.',
           name: 'value',
           type: 'STRING',
         },
@@ -19488,7 +20069,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The found node.',
           name: 'node',
           type: 'NODE',
         },
@@ -19507,19 +20088,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelPropertyMap :: ANY',
+          description:
+            'A map that pairs labels with lists of properties. This can also be represented as a JSON string.',
           name: 'labelPropertyMap',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description:
+            'The search operator, can be one of: ["exact", "starts with", "ends with", "contains", "<", ">", "=", "<>", "<=", ">=", "=~"].',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The search value.',
           name: 'value',
           type: 'STRING',
         },
@@ -19529,7 +20112,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The found node.',
           name: 'node',
           type: 'NODE',
         },
@@ -19548,19 +20131,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelPropertyMap :: ANY',
+          description:
+            'A map that pairs labels with lists of properties. This can also be represented as a JSON string.',
           name: 'labelPropertyMap',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description:
+            'The search operator, can be one of: ["exact", "starts with", "ends with", "contains", "<", ">", "=", "<>", "<=", ">=", "=~"].',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description: 'The search value.',
           name: 'value',
           type: 'ANY',
         },
@@ -19570,19 +20155,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: INTEGER',
+          description: 'The id of the found node.',
           name: 'id',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels of the found node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: MAP',
+          description: 'The matched values of the found node.',
           name: 'values',
           type: 'MAP',
         },
@@ -19601,19 +20186,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'labelPropertyMap :: ANY',
+          description:
+            'A map that pairs labels with lists of properties. This can also be represented as a JSON string.',
           name: 'labelPropertyMap',
           type: 'ANY',
         },
         {
           isDeprecated: false,
-          description: 'operator :: STRING',
+          description:
+            'The search operator, can be one of: ["exact", "starts with", "ends with", "contains", "<", ">", "=", "<>", "<=", ">=", "=~"].',
           name: 'operator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The search value.',
           name: 'value',
           type: 'STRING',
         },
@@ -19623,19 +20210,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: INTEGER',
+          description: 'The id of the found node.',
           name: 'id',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'labels :: LIST<STRING>',
+          description: 'The labels of the found node.',
           name: 'labels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'values :: MAP',
+          description: 'The matched values of the found node.',
           name: 'values',
           type: 'MAP',
         },
@@ -19654,28 +20241,30 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'location :: STRING',
+          description: 'The location to search for.',
           name: 'location',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=100, type=INTEGER}',
-          description: 'maxResults = 100 :: INTEGER',
+          description: 'The maximum number of returned results.',
           name: 'maxResults',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'quotaException = false :: BOOLEAN',
+          description:
+            'Whether or not to throw an exception when the maximum request quota is reached.',
           name: 'quotaException',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        provider = 'osm' :: STRING,\n        url :: STRING,\n        reverseUrl: :: STRING,\n        key :: STRING\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -19685,31 +20274,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'location :: MAP',
+          description: 'A detailed map of information on the found location.',
           name: 'location',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'A map of returned data from the given provider.',
           name: 'data',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'latitude :: FLOAT',
+          description: 'The latitude of the found location.',
           name: 'latitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'longitude :: FLOAT',
+          description: 'The longitude of the found location.',
           name: 'longitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'A description of the found location.',
           name: 'description',
           type: 'STRING',
         },
@@ -19728,14 +20317,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'location :: STRING',
+          description: 'The location to search for.',
           name: 'location',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        provider = 'osm' :: STRING,\n        url :: STRING,\n        reverseUrl: :: STRING,\n        key :: STRING\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -19745,31 +20335,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'location :: MAP',
+          description: 'A detailed map of information on the found location.',
           name: 'location',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'A map of returned data from the given provider.',
           name: 'data',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'latitude :: FLOAT',
+          description: 'The latitude of the found location.',
           name: 'latitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'longitude :: FLOAT',
+          description: 'The longitude of the found location.',
           name: 'longitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'A description of the found location.',
           name: 'description',
           type: 'STRING',
         },
@@ -19788,27 +20378,29 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'latitude :: FLOAT',
+          description: 'The latitude of the location.',
           name: 'latitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'longitude :: FLOAT',
+          description: 'The longitude of the location.',
           name: 'longitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-          description: 'quotaException = false :: BOOLEAN',
+          description:
+            'Whether or not to throw an exception when the maximum request quota is reached.',
           name: 'quotaException',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description:
+            "{\n        provider = 'osm' :: STRING,\n        url :: STRING,\n        reverseUrl: :: STRING,\n        key :: STRING\n}\n",
           name: 'config',
           type: 'MAP',
         },
@@ -19818,31 +20410,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'location :: MAP',
+          description: 'A detailed map of information on the found location.',
           name: 'location',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'A map of returned data from the given provider.',
           name: 'data',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'latitude :: FLOAT',
+          description: 'The latitude of the found location.',
           name: 'latitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'longitude :: FLOAT',
+          description: 'The longitude of the found location.',
           name: 'longitude',
           type: 'FLOAT',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'A description of the found location.',
           name: 'description',
           type: 'STRING',
         },
@@ -19861,7 +20453,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'paths :: LIST<PATH>',
+          description:
+            'A list of paths to be sorted by the sum of distances, calculated based on the latitude/longitude values in the nodes.',
           name: 'paths',
           type: 'LIST<PATH>',
         },
@@ -19871,13 +20464,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'path :: PATH',
+          description: 'The sorted path result.',
           name: 'path',
           type: 'PATH',
         },
         {
           isDeprecated: false,
-          description: 'distance :: FLOAT',
+          description: 'The distance between the nodes.',
           name: 'distance',
           type: 'FLOAT',
         },
@@ -19897,7 +20490,8 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'relTypes =  :: STRING',
+          description:
+            'The relationship types to calculate the percentile grouping over. If this is empty or omitted, all relationships are used.',
           name: 'relTypes',
           type: 'STRING',
         },
@@ -19907,73 +20501,73 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The type of the relationship.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'direction :: STRING',
+          description: 'The direction of the relationship.',
           name: 'direction',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'total :: INTEGER',
+          description: 'The total observed relationships.',
           name: 'total',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p50 :: INTEGER',
+          description: 'The 50th percentile grouping.',
           name: 'p50',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p75 :: INTEGER',
+          description: 'The 75th percentile grouping.',
           name: 'p75',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p90 :: INTEGER',
+          description: 'The 90th percentile grouping.',
           name: 'p90',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p95 :: INTEGER',
+          description: 'The 95th percentile grouping.',
           name: 'p95',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p99 :: INTEGER',
+          description: 'The 99th percentile grouping.',
           name: 'p99',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'p999 :: INTEGER',
+          description: 'The 99.9th percentile grouping.',
           name: 'p999',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'max :: INTEGER',
+          description: 'The max value.',
           name: 'max',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'min :: INTEGER',
+          description: 'The min value.',
           name: 'min',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'mean :: FLOAT',
+          description: 'The mean value.',
           name: 'mean',
           type: 'FLOAT',
         },
@@ -19992,13 +20586,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'text1 :: STRING',
+          description: 'The first string to be compared against the second.',
           name: 'text1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'text2 :: STRING',
+          description: 'The second string to be compared against the first.',
           name: 'text2',
           type: 'STRING',
         },
@@ -20008,19 +20602,20 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'phonetic1 :: STRING',
+          description: 'The phonetic representation of the first string.',
           name: 'phonetic1',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'phonetic2 :: STRING',
+          description: 'The phonetic representation of the second string.',
           name: 'phonetic2',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'delta :: INTEGER',
+          description:
+            'The soundex character difference between the two given strings.',
           name: 'delta',
           type: 'INTEGER',
         },
@@ -20039,26 +20634,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to add.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The query to run when triggered.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'config',
           type: 'MAP',
         },
@@ -20068,37 +20664,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20116,13 +20713,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database to drop the trigger from.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to drop.',
           name: 'name',
           type: 'STRING',
         },
@@ -20132,37 +20729,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20180,7 +20778,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database to drop the triggers from.',
           name: 'databaseName',
           type: 'STRING',
         },
@@ -20190,37 +20788,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20239,32 +20838,33 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database to add the trigger to.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to add.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'statement :: STRING',
+          description: 'The query to run when triggered.',
           name: 'statement',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'config',
           type: 'MAP',
         },
@@ -20274,37 +20874,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20326,37 +20927,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20374,7 +20976,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to pause.',
           name: 'name',
           type: 'STRING',
         },
@@ -20384,37 +20986,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20432,7 +21035,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to drop.',
           name: 'name',
           type: 'STRING',
         },
@@ -20442,37 +21045,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20493,37 +21097,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20541,7 +21146,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to resume.',
           name: 'name',
           type: 'STRING',
         },
@@ -20551,37 +21156,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20599,7 +21205,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database to show triggers on.',
           name: 'databaseName',
           type: 'STRING',
         },
@@ -20609,37 +21215,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20657,13 +21264,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database the trigger is on.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to resume.',
           name: 'name',
           type: 'STRING',
         },
@@ -20673,37 +21280,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20721,13 +21329,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database the trigger is on.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger to drop.',
           name: 'name',
           type: 'STRING',
         },
@@ -20737,37 +21345,38 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the trigger.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description: 'The query belonging to the trigger.',
           name: 'query',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'selector :: MAP',
+          description:
+            '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
           name: 'selector',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'params :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'installed :: BOOLEAN',
+          description: 'Whether or not the trigger was installed.',
           name: 'installed',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'paused :: BOOLEAN',
+          description: 'Whether or not the trigger was paused.',
           name: 'paused',
           type: 'BOOLEAN',
         },
@@ -20786,7 +21395,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'duration :: INTEGER',
+          description: 'The milliseconds to sleep.',
           name: 'duration',
           type: 'INTEGER',
         },
@@ -20806,19 +21415,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'predicate :: BOOLEAN',
+          description: 'The predicate to check against.',
           name: 'predicate',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description:
+            'The error message to throw if the given predicate evaluates to true.',
           name: 'message',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'params :: LIST<ANY>',
+          description: 'The parameters for the given error message.',
           name: 'params',
           type: 'LIST<ANY>',
         },
@@ -21070,27 +21680,27 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'condition :: BOOLEAN',
+          description: 'The predicate deciding if to run the `ifQuery`or not.',
           name: 'condition',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'ifQuery :: STRING',
+          description: 'The Cypher statement to run if the condition is true.',
           name: 'ifQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'elseQuery =  :: STRING',
+          description: 'The Cypher statement to run if the condition is false.',
           name: 'elseQuery',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'params = {} :: MAP',
+          description: 'The parameters for the given Cypher statement.',
           name: 'params',
           type: 'MAP',
         },
@@ -21100,7 +21710,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: MAP',
+          description: 'The result returned from the evaluated Cypher query.',
           name: 'value',
           type: 'MAP',
         },
@@ -21121,7 +21731,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The change identifier.',
           name: 'id',
           type: 'STRING',
         },
@@ -21142,7 +21752,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The change identifier.',
           name: 'id',
           type: 'STRING',
         },
@@ -21162,14 +21772,14 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'from =  :: STRING',
+          description: 'The change identifier to query changes from.',
           name: 'from',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<MAP>}',
-          description: 'selectors = [] :: LIST<MAP>',
+          description: 'An optional list of selectors to filter out changes.',
           name: 'selectors',
           type: 'LIST<MAP>',
         },
@@ -21179,31 +21789,35 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description:
+            'The change identifier for this change event. Used to continue querying from this change event.',
           name: 'id',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'txId :: INTEGER',
+          description:
+            'A number identifying which transaction the change happened in, unique in combination with seq.',
           name: 'txId',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'seq :: INTEGER',
+          description:
+            'A number used for ordering changes that happened in the same transaction.',
           name: 'seq',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'metadata :: MAP',
+          description:
+            'Metadata from the transaction that caused this change event.',
           name: 'metadata',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'event :: MAP',
+          description: 'The retrieved changes on the affected entity.',
           name: 'event',
           type: 'MAP',
         },
@@ -21222,14 +21836,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the awaited index.',
           name: 'indexName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=300, type=INTEGER}',
-          description: 'timeOutSeconds = 300 :: INTEGER',
+          description: 'The maximum time to wait in seconds.',
           name: 'timeOutSeconds',
           type: 'INTEGER',
         },
@@ -21252,7 +21866,7 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=300, type=INTEGER}',
-          description: 'timeOutSeconds = 300 :: INTEGER',
+          description: 'The maximum time to wait in seconds.',
           name: 'timeOutSeconds',
           type: 'INTEGER',
         },
@@ -21275,7 +21889,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The change identifier.',
           name: 'id',
           type: 'STRING',
         },
@@ -21296,7 +21910,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The change identifier.',
           name: 'id',
           type: 'STRING',
         },
@@ -21316,14 +21930,14 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'from =  :: STRING',
+          description: 'The change identifier to query changes from.',
           name: 'from',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=[], type=LIST<MAP>}',
-          description: 'selectors = [] :: LIST<MAP>',
+          description: 'An optional list of selectors to filter out changes.',
           name: 'selectors',
           type: 'LIST<MAP>',
         },
@@ -21333,31 +21947,35 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description:
+            'The change identifier for this change event. Used to continue querying from this change event.',
           name: 'id',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'txId :: INTEGER',
+          description:
+            'A number identifying which transaction the change happened in, unique in combination with seq.',
           name: 'txId',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'seq :: INTEGER',
+          description:
+            'A number used for ordering changes that happened in the same transaction.',
           name: 'seq',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'metadata :: MAP',
+          description:
+            'Metadata from the transaction that caused this change event.',
           name: 'metadata',
           type: 'MAP',
         },
         {
           isDeprecated: false,
-          description: 'event :: MAP',
+          description: 'The retrieved changes on the affected entity.',
           name: 'event',
           type: 'MAP',
         },
@@ -21378,13 +21996,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'success :: BOOLEAN',
+          description: 'Whether the checkpoint has successfully completed.',
           name: 'success',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -21404,7 +22022,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'Information about the number of cleared query caches.',
           name: 'value',
           type: 'STRING',
         },
@@ -21423,19 +22041,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node on which the new property will be stored.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the new property.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'vector :: ANY',
+          description: 'The object containing the embedding.',
           name: 'vector',
           type: 'ANY',
         },
@@ -21457,19 +22075,20 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'relationship :: RELATIONSHIP',
+          description:
+            'The relationship on which the new property will be stored.',
           name: 'relationship',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the new property.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'vector :: ANY',
+          description: 'The object containing the embedding.',
           name: 'vector',
           type: 'ANY',
         },
@@ -21491,19 +22110,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node on which the new property will be stored.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'key :: STRING',
+          description: 'The name of the new property.',
           name: 'key',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'vector :: ANY',
+          description: 'The object containing the embedding.',
           name: 'vector',
           type: 'ANY',
         },
@@ -21513,7 +22132,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description: 'The node on which the vector property was set.',
           name: 'node',
           type: 'NODE',
         },
@@ -21531,7 +22150,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'newLabel :: STRING',
+          description: 'Label name.',
           name: 'newLabel',
           type: 'STRING',
         },
@@ -21551,7 +22170,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'newProperty :: STRING',
+          description: 'Property name.',
           name: 'newProperty',
           type: 'STRING',
         },
@@ -21571,7 +22190,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'newRelationshipType :: STRING',
+          description: 'Relationship type name.',
           name: 'newRelationshipType',
           type: 'STRING',
         },
@@ -21609,19 +22228,20 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'analyzer :: STRING',
+          description: 'The name of the analyzer.',
           name: 'analyzer',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'The  description of the analyzer.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'stopwords :: LIST<STRING>',
+          description:
+            'The stopwords used by the analyzer to tokenize strings.',
           name: 'stopwords',
           type: 'LIST<STRING>',
         },
@@ -21640,20 +22260,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the full-text index.',
           name: 'indexName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'queryString :: STRING',
+          description: 'The string to find approximate matches for.',
           name: 'queryString',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'options = {} :: MAP',
+          description:
+            '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
           name: 'options',
           type: 'MAP',
         },
@@ -21663,13 +22284,15 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'A node which contains a property similar to the query string.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'score :: FLOAT',
+          description:
+            'The score measuring how similar the node property is to the query string.',
           name: 'score',
           type: 'FLOAT',
         },
@@ -21688,20 +22311,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the full-text index.',
           name: 'indexName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'queryString :: STRING',
+          description: 'The string to find approximate matches for.',
           name: 'queryString',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'options = {} :: MAP',
+          description:
+            '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
           name: 'options',
           type: 'MAP',
         },
@@ -21711,13 +22335,15 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'relationship :: RELATIONSHIP',
+          description:
+            'A relationship which contains a property similar to the query string.',
           name: 'relationship',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'score :: FLOAT',
+          description:
+            'The score measuring how similar the relationship property is to the query string.',
           name: 'score',
           type: 'FLOAT',
         },
@@ -21782,19 +22408,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the vector index.',
           name: 'indexName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'numberOfNearestNeighbours :: INTEGER',
+          description: 'The size of the vector neighbourhood.',
           name: 'numberOfNearestNeighbours',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'query :: ANY',
+          description: 'The object to find approximate matches for.',
           name: 'query',
           type: 'ANY',
         },
@@ -21804,13 +22430,15 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'node :: NODE',
+          description:
+            'A node which contains a vector property similar to the query object.',
           name: 'node',
           type: 'NODE',
         },
         {
           isDeprecated: false,
-          description: 'score :: FLOAT',
+          description:
+            'The score measuring how similar the node property is to the query object.',
           name: 'score',
           type: 'FLOAT',
         },
@@ -21829,19 +22457,19 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the vector index.',
           name: 'indexName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'numberOfNearestNeighbours :: INTEGER',
+          description: 'The size of the vector neighbourhood.',
           name: 'numberOfNearestNeighbours',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'query :: ANY',
+          description: 'The object to find approximate matches for.',
           name: 'query',
           type: 'ANY',
         },
@@ -21851,13 +22479,15 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'relationship :: RELATIONSHIP',
+          description:
+            'A relationship which contains a vector property similar to the query object.',
           name: 'relationship',
           type: 'RELATIONSHIP',
         },
         {
           isDeprecated: false,
-          description: 'score :: FLOAT',
+          description:
+            'The score measuring how similar the relationship property is to the query object.',
           name: 'score',
           type: 'FLOAT',
         },
@@ -21878,19 +22508,20 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The id of the database.',
           name: 'id',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the database.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'creationDate :: STRING',
+          description:
+            'The creation date of the database, formatted according to the ISO-8601 Standard.',
           name: 'creationDate',
           type: 'STRING',
         },
@@ -21911,7 +22542,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'label :: STRING',
+          description: 'A label within the database.',
           name: 'label',
           type: 'STRING',
         },
@@ -21932,25 +22563,27 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'mode :: STRING',
+          description:
+            'The locking mode this lock is using, either "SHARED" or "EXCLUSIVE".',
           name: 'mode',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'resourceType :: STRING',
+          description:
+            'The type of resource (e.g. nodes, relationships, labels) this lock protects.',
           name: 'resourceType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'resourceId :: INTEGER',
+          description: 'The id of the resource this lock protects.',
           name: 'resourceId',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'transactionId :: STRING',
+          description: 'The id of the transaction that owns this lock.',
           name: 'transactionId',
           type: 'STRING',
         },
@@ -21971,7 +22604,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'success :: BOOLEAN',
+          description:
+            'Whether or not the connection call to the database has been successful.',
           name: 'success',
           type: 'BOOLEAN',
         },
@@ -21991,7 +22625,7 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=300, type=INTEGER}',
-          description: 'timeOutSeconds = 300 :: INTEGER',
+          description: 'The maximum time to wait in seconds.',
           name: 'timeOutSeconds',
           type: 'INTEGER',
         },
@@ -22013,7 +22647,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'propertyKey :: STRING',
+          description: 'A property key in the database.',
           name: 'propertyKey',
           type: 'STRING',
         },
@@ -22034,7 +22668,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'relationshipType :: STRING',
+          description: 'A relationship type in the database.',
           name: 'relationshipType',
           type: 'STRING',
         },
@@ -22053,7 +22687,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'indexName :: STRING',
+          description: 'The name of the index.',
           name: 'indexName',
           type: 'STRING',
         },
@@ -22090,31 +22724,32 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodeType :: STRING',
+          description: 'A name generated from the labels on the node.',
           name: 'nodeType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nodeLabels :: LIST<STRING>',
+          description: 'A list containing the labels on a category of node.',
           name: 'nodeLabels',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'A property key on a category of node.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyTypes :: LIST<STRING>',
+          description: 'All types of a property belonging to a node category.',
           name: 'propertyTypes',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'mandatory :: BOOLEAN',
+          description:
+            'Whether or not the property is present on all nodes belonging to a node category.',
           name: 'mandatory',
           type: 'BOOLEAN',
         },
@@ -22136,25 +22771,27 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'relType :: STRING',
+          description: 'A name generated from the type on the relationship.',
           name: 'relType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyName :: STRING',
+          description: 'A property key on a category of relationship.',
           name: 'propertyName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'propertyTypes :: LIST<STRING>',
+          description:
+            'All types of a property belonging to a relationship category.',
           name: 'propertyTypes',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'mandatory :: BOOLEAN',
+          description:
+            'Whether or not the property is present on all relationships belonging to a relationship category.',
           name: 'mandatory',
           type: 'BOOLEAN',
         },
@@ -22176,13 +22813,15 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'nodes :: LIST<NODE>',
+          description:
+            'A list of virtual nodes representing each label in the database.',
           name: 'nodes',
           type: 'LIST<NODE>',
         },
         {
           isDeprecated: false,
-          description: 'relationships :: LIST<RELATIONSHIP>',
+          description:
+            'A list of virtual relationships representing all combinations between start and end nodes in the database.',
           name: 'relationships',
           type: 'LIST<RELATIONSHIP>',
         },
@@ -22201,7 +22840,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description:
+            "The section to clear. The only available section is: 'QUERIES'.",
           name: 'section',
           type: 'STRING',
         },
@@ -22211,19 +22851,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'The section cleared.',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'success :: BOOLEAN',
+          description: 'Whether the section was successfully cleared.',
           name: 'success',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22242,14 +22882,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description:
+            "The section to collect. The only available section is: 'QUERIES'.",
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{durationSeconds = -1 :: INTEGER}',
           name: 'config',
           type: 'MAP',
         },
@@ -22259,19 +22900,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'The section collected.',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'success :: BOOLEAN',
+          description: 'Whether the section was successfully collected.',
           name: 'success',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22290,14 +22931,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description:
+            "A section of stats to retrieve: ('GRAPH COUNTS', 'TOKENS', 'QUERIES', 'META').",
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{maxInvocations = 100 :: INTEGER}',
           name: 'config',
           type: 'MAP',
         },
@@ -22307,13 +22949,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'The section retrieved.',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'Data pertaining to the retrieved statistics.',
           name: 'data',
           type: 'MAP',
         },
@@ -22332,14 +22974,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'graphToken :: STRING',
+          description: 'The name of the graph token.',
           name: 'graphToken',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value={}, type=MAP}',
-          description: 'config = {} :: MAP',
+          description: '{maxInvocations = 100 :: INTEGER}',
           name: 'config',
           type: 'MAP',
         },
@@ -22349,13 +22991,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'The section retrieved.',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'Data pertaining to the retrieved statistics.',
           name: 'data',
           type: 'MAP',
         },
@@ -22377,13 +23019,14 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'String with the message "QUERIES".',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'status :: STRING',
+          description:
+            'The status of the QueryCollector: "idle" or "collecting".',
           name: 'status',
           type: 'STRING',
         },
@@ -22408,7 +23051,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description:
+            "The section to stop. The only available section is: 'QUERIES'.",
           name: 'section',
           type: 'STRING',
         },
@@ -22418,19 +23062,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'section :: STRING',
+          description: 'The stopped section.',
           name: 'section',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'success :: BOOLEAN',
+          description: 'Whether the section was successfully stopped.',
           name: 'success',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22448,13 +23092,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'setting :: STRING',
+          description: 'The name of the setting.',
           name: 'setting',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The setting value to verify.',
           name: 'value',
           type: 'STRING',
         },
@@ -22464,13 +23108,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'valid :: BOOLEAN',
+          description: 'Whether or not the setting value is valid.',
           name: 'valid',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22483,55 +23127,67 @@ const mockSchema: DbSchema = {
     'dbms.cluster.checkConnectivity': {
       name: 'dbms.cluster.checkConnectivity',
       description:
-        "Check the connectivity of this instance to other cluster members. Not all ports are relevant to all members. Valid values for 'port-name' are: [CLUSTER, RAFT]",
+        "Check the connectivity of this instance to other cluster members. Not all ports are relevant to all members. Valid values for 'port-name' are: [CLUSTER, INTRA_BOLT, RAFT]",
       mode: 'DBMS',
       worksOnSystem: true,
       argumentDescription: [
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=STRING}',
-          description: 'port-name = null :: STRING',
+          description: "The name of the port: ('CLUSTER', 'RAFT').",
           name: 'port-name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=STRING}',
-          description: 'server = null :: STRING',
+          description: 'The id of the server to check connectivity of.',
           name: 'server',
           type: 'STRING',
         },
       ],
       signature:
-        'dbms.cluster.checkConnectivity(port-name = null :: STRING, server = null :: STRING) :: (serverId :: STRING, mode-constraint :: STRING, port-name :: STRING, port-address :: STRING, result :: STRING)',
+        'dbms.cluster.checkConnectivity(port-name = null :: STRING, server = null :: STRING) :: (serverId :: STRING, name :: STRING, address :: STRING, mode-constraint :: STRING, port-name :: STRING, port-address :: STRING, result :: STRING)',
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'serverId :: STRING',
+          description: 'The id of the checked server.',
           name: 'serverId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'mode-constraint :: STRING',
+          description: 'name :: STRING',
+          name: 'name',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'address :: STRING',
+          name: 'address',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The instance mode constraint of the server.',
           name: 'mode-constraint',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'port-name :: STRING',
+          description: 'The name of the checked port.',
           name: 'port-name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'port-address :: STRING',
+          description: 'The address of the checked port.',
           name: 'port-address',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'result :: STRING',
+          description: 'Whether the check was successful or not.',
           name: 'result',
           type: 'STRING',
         },
@@ -22550,14 +23206,230 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'server :: STRING',
+          description: 'The name or id of the server to be cordoned.',
           name: 'server',
           type: 'STRING',
         },
       ],
       signature: 'dbms.cluster.cordonServer(server :: STRING)',
       returnDescription: [],
-      admin: true,
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.deallocateDatabaseFromServer': {
+      name: 'dbms.cluster.deallocateDatabaseFromServer',
+      description:
+        'Deallocate a specific user database from a specific server.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The id of the server to deallocate from.',
+          name: 'server',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the database to deallocate.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
+          description: 'Set to `true` to dry run the procedure.',
+          name: 'dryrun',
+          type: 'BOOLEAN',
+        },
+      ],
+      signature:
+        'dbms.cluster.deallocateDatabaseFromServer(server :: STRING, database :: STRING, dryrun = false :: BOOLEAN) :: (database :: STRING, fromServerName :: STRING, fromServerId :: STRING, toServerName :: STRING, toServerId :: STRING, mode :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'fromServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'fromServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'toServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'toServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The mode in which the database is hosted.',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.deallocateDatabaseFromServers': {
+      name: 'dbms.cluster.deallocateDatabaseFromServers',
+      description:
+        'Deallocate a specific user database from a list of servers.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The ids of the servers to deallocate from.',
+          name: 'servers',
+          type: 'LIST<STRING>',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the database to deallocate.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
+          description: 'Set to `true` to dry run the procedure.',
+          name: 'dryrun',
+          type: 'BOOLEAN',
+        },
+      ],
+      signature:
+        'dbms.cluster.deallocateDatabaseFromServers(servers :: LIST<STRING>, database :: STRING, dryrun = false :: BOOLEAN) :: (database :: STRING, fromServerName :: STRING, fromServerId :: STRING, toServerName :: STRING, toServerId :: STRING, mode :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'fromServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'fromServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'toServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'toServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The mode in which the database is hosted.',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.deallocateNumberOfDatabases': {
+      name: 'dbms.cluster.deallocateNumberOfDatabases',
+      description:
+        'Deallocate a number of user databases from a specific server.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The id of the server to deallocate from.',
+          name: 'server',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The number of databases to deallocate.',
+          name: 'number',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
+          description: 'Set to `true` to dry run the procedure.',
+          name: 'dryrun',
+          type: 'BOOLEAN',
+        },
+      ],
+      signature:
+        'dbms.cluster.deallocateNumberOfDatabases(server :: STRING, number :: INTEGER, dryrun = false :: BOOLEAN) :: (database :: STRING, fromServerName :: STRING, fromServerId :: STRING, toServerName :: STRING, toServerId :: STRING, mode :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'fromServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'fromServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'toServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'toServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The mode in which the database is hosted.',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
       option: {
         deprecated: false,
       },
@@ -22573,31 +23445,32 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'orientation :: STRING',
+          description: 'Direction of the protocol (inbound or outbound).',
           name: 'orientation',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'remoteAddress :: STRING',
+          description: 'The socket address this protocol is available on.',
           name: 'remoteAddress',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'applicationProtocol :: STRING',
+          description: 'The name of the protocol.',
           name: 'applicationProtocol',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'applicationProtocolVersion :: INTEGER',
+          description: 'The version of the protocol.',
           name: 'applicationProtocolVersion',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'modifierProtocols :: STRING',
+          description:
+            'Installed modifier protocols, for example, compression.',
           name: 'modifierProtocols',
           type: 'STRING',
         },
@@ -22616,13 +23489,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description:
+            'The name of the database to toggle the secondary replication process for.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'pause :: BOOLEAN',
+          description:
+            'Whether or not to enable/disable the secondary replication process.',
           name: 'pause',
           type: 'BOOLEAN',
         },
@@ -22632,7 +23507,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'state :: STRING',
+          description:
+            'The current state of the secondary replication process.',
           name: 'state',
           type: 'STRING',
         },
@@ -22640,6 +23516,165 @@ const mockSchema: DbSchema = {
       admin: true,
       option: {
         deprecated: true,
+      },
+    },
+    'dbms.cluster.reallocateDatabase': {
+      name: 'dbms.cluster.reallocateDatabase',
+      description: 'Reallocate a specific database.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database to reallocate.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
+          description: 'Set to `true` to dry run the procedure.',
+          name: 'dryrun',
+          type: 'BOOLEAN',
+        },
+      ],
+      signature:
+        'dbms.cluster.reallocateDatabase(database :: STRING, dryrun = false :: BOOLEAN) :: (database :: STRING, fromServerName :: STRING, fromServerId :: STRING, toServerName :: STRING, toServerId :: STRING, mode :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'fromServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'fromServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'toServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'toServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The mode in which the database is hosted.',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.reallocateNumberOfDatabases': {
+      name: 'dbms.cluster.reallocateNumberOfDatabases',
+      description: 'Reallocate a specified number of user databases.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'The number of databases to reallocate.',
+          name: 'number',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
+          description: 'Set to `true` to dry run the procedure.',
+          name: 'dryrun',
+          type: 'BOOLEAN',
+        },
+      ],
+      signature:
+        'dbms.cluster.reallocateNumberOfDatabases(number :: INTEGER, dryrun = false :: BOOLEAN) :: (database :: STRING, fromServerName :: STRING, fromServerId :: STRING, toServerName :: STRING, toServerId :: STRING, mode :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'The name of the database.',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'fromServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'fromServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The name of the server.',
+          name: 'toServerName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The id of the server.',
+          name: 'toServerId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'The mode in which the database is hosted.',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.recreateDatabase': {
+      name: 'dbms.cluster.recreateDatabase',
+      description:
+        'Recreates a database while keeping all RBAC settings. The procedure initiates a process, which when complete, will have synchronized and started all database instances within the cluster.',
+      mode: 'WRITE',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'database :: STRING',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'options = {} :: MAP',
+          name: 'options',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'dbms.cluster.recreateDatabase(database :: STRING, options = {} :: MAP)',
+      returnDescription: [],
+      admin: false,
+      option: {
+        deprecated: false,
       },
     },
     'dbms.cluster.routing.getRoutingTable': {
@@ -22651,14 +23686,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'context :: MAP',
+          description: 'Routing context, for example, routing policies.',
           name: 'context',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=STRING}',
-          description: 'database = null :: STRING',
+          description: 'The database to get a routing table for.',
           name: 'database',
           type: 'STRING',
         },
@@ -22668,20 +23703,21 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'ttl :: INTEGER',
+          description: 'Time to live (in seconds) for the routing table.',
           name: 'ttl',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'servers :: LIST<MAP>',
+          description:
+            'Servers grouped by whether they are readers, writers, or routers.',
           name: 'servers',
           type: 'LIST<MAP>',
         },
       ],
       admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'dbms.cluster.secondaryReplicationDisable': {
@@ -22693,13 +23729,15 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description:
+            'The name of the database to toggle the secondary replication process for.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'pause :: BOOLEAN',
+          description:
+            'Whether or not to enable/disable the secondary replication process.',
           name: 'pause',
           type: 'BOOLEAN',
         },
@@ -22709,7 +23747,8 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'state :: STRING',
+          description:
+            'The current state of the secondary replication process.',
           name: 'state',
           type: 'STRING',
         },
@@ -22728,13 +23767,163 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'autoEnable :: BOOLEAN',
+          description: 'Whether or not to automatically enable free servers.',
           name: 'autoEnable',
           type: 'BOOLEAN',
         },
       ],
       signature:
         'dbms.cluster.setAutomaticallyEnableFreeServers(autoEnable :: BOOLEAN)',
+      returnDescription: [],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.showParallelDiscoveryState': {
+      name: 'dbms.cluster.showParallelDiscoveryState',
+      description:
+        'Compare the states of Discovery service V1 and Discovery service V2.',
+      mode: 'DBMS',
+      worksOnSystem: true,
+      argumentDescription: [],
+      signature:
+        'dbms.cluster.showParallelDiscoveryState() :: (mode :: STRING, stateComparison :: STRING, v1ServerCount :: STRING, v2ServerCount :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'mode :: STRING',
+          name: 'mode',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'stateComparison :: STRING',
+          name: 'stateComparison',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'v1ServerCount :: STRING',
+          name: 'v1ServerCount',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'v2ServerCount :: STRING',
+          name: 'v2ServerCount',
+          type: 'STRING',
+        },
+      ],
+      admin: true,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.statusCheck': {
+      name: 'dbms.cluster.statusCheck',
+      description: 'Performs a rafted status check.',
+      mode: 'DBMS',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'databases :: LIST<STRING>',
+          name: 'databases',
+          type: 'LIST<STRING>',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value=null, type=INTEGER}',
+          description: 'timeoutMilliseconds = null :: INTEGER',
+          name: 'timeoutMilliseconds',
+          type: 'INTEGER',
+        },
+      ],
+      signature:
+        'dbms.cluster.statusCheck(databases :: LIST<STRING>, timeoutMilliseconds = null :: INTEGER) :: (database :: STRING, serverId :: STRING, serverName :: STRING, address :: STRING, replicationSuccessful :: BOOLEAN, memberStatus :: STRING, recognisedLeader :: STRING, recognisedLeaderTerm :: INTEGER, requester :: BOOLEAN, error :: STRING)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'database :: STRING',
+          name: 'database',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'serverId :: STRING',
+          name: 'serverId',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'serverName :: STRING',
+          name: 'serverName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'address :: STRING',
+          name: 'address',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'replicationSuccessful :: BOOLEAN',
+          name: 'replicationSuccessful',
+          type: 'BOOLEAN',
+        },
+        {
+          isDeprecated: false,
+          description: 'memberStatus :: STRING',
+          name: 'memberStatus',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'recognisedLeader :: STRING',
+          name: 'recognisedLeader',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'recognisedLeaderTerm :: INTEGER',
+          name: 'recognisedLeaderTerm',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'requester :: BOOLEAN',
+          name: 'requester',
+          type: 'BOOLEAN',
+        },
+        {
+          isDeprecated: false,
+          description: 'error :: STRING',
+          name: 'error',
+          type: 'STRING',
+        },
+      ],
+      admin: true,
+      option: {
+        deprecated: false,
+      },
+    },
+    'dbms.cluster.switchDiscoveryServiceVersion': {
+      name: 'dbms.cluster.switchDiscoveryServiceVersion',
+      description:
+        'Allows you to select which discovery service should be started.\nPossible values are:\n\n* `V1_ONLY` -- it runs only discovery service v1.\n* `V1_OVER_V2` -- it runs both Discovery Service V1 and Discovery Service V2, where V1 is the main service and V2 runs in the background.\n* `V2_OVER_V1` -- it runs both Discovery Service V1 and Discovery Service V2, where V2 is the main service and V1 runs in the background.\n* `V2_ONLY` -- it runs only discovery service v2.',
+      mode: 'DBMS',
+      worksOnSystem: true,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'mode :: STRING',
+          name: 'mode',
+          type: 'STRING',
+        },
+      ],
+      signature: 'dbms.cluster.switchDiscoveryServiceVersion(mode :: STRING)',
       returnDescription: [],
       admin: true,
       option: {
@@ -22749,16 +23938,16 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'server :: STRING',
+          description: 'The name or id of the server to be uncordoned.',
           name: 'server',
           type: 'STRING',
         },
       ],
       signature: 'dbms.cluster.uncordonServer(server :: STRING)',
       returnDescription: [],
-      admin: true,
+      admin: false,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'dbms.components': {
@@ -22772,19 +23961,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the component.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'versions :: LIST<STRING>',
+          description: 'The installed versions of the component.',
           name: 'versions',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'edition :: STRING',
+          description: 'The Neo4j edition of the DBMS.',
           name: 'edition',
           type: 'STRING',
         },
@@ -22805,19 +23994,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The id of the DBMS.',
           name: 'id',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the DBMS.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'creationDate :: STRING',
+          description: 'The creation date of the DBMS.',
           name: 'creationDate',
           type: 'STRING',
         },
@@ -22835,7 +24024,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'id :: STRING',
+          description: 'The id of the connection to kill.',
           name: 'id',
           type: 'STRING',
         },
@@ -22845,19 +24034,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'connectionId :: STRING',
+          description: 'The id of the connection killed.',
           name: 'connectionId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'username :: STRING',
+          description: 'The username of the user of the killed connection.',
           name: 'username',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22876,7 +24065,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'ids :: LIST<STRING>',
+          description: 'The ids of the connections to kill.',
           name: 'ids',
           type: 'LIST<STRING>',
         },
@@ -22886,19 +24075,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'connectionId :: STRING',
+          description: 'The id of the connection killed.',
           name: 'connectionId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'username :: STRING',
+          description: 'The username of the user of the killed connection.',
           name: 'username',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'message :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'message',
           type: 'STRING',
         },
@@ -22917,7 +24106,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'queryId :: STRING',
+          description: 'The id of the query to check for active locks on.',
           name: 'queryId',
           type: 'STRING',
         },
@@ -22927,19 +24116,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'mode :: STRING',
+          description: "The lock type: ('SHARED', 'EXCLUSIVE').",
           name: 'mode',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'resourceType :: STRING',
+          description: 'The locked resource.',
           name: 'resourceType',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'resourceId :: INTEGER',
+          description: 'The id of the locked resource.',
           name: 'resourceId',
           type: 'INTEGER',
         },
@@ -22960,19 +24149,22 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description:
+            'The full name of the capability (e.g. "dbms.instance.version").',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description:
+            'The capability description (e.g. "Neo4j version this instance is running").',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: ANY',
+          description:
+            'The capability object if it is present in the system (e.g. "5.20.0").',
           name: 'value',
           type: 'ANY',
         },
@@ -22991,7 +24183,7 @@ const mockSchema: DbSchema = {
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=, type=STRING}',
-          description: 'searchString =  :: STRING',
+          description: 'A string that filters on the name of config settings.',
           name: 'searchString',
           type: 'STRING',
         },
@@ -23001,49 +24193,49 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the setting.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'The description of the setting.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The set value of the setting.',
           name: 'value',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'dynamic :: BOOLEAN',
+          description: 'If the setting can be set dynamically or not.',
           name: 'dynamic',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'defaultValue :: STRING',
+          description: 'The default value of the setting.',
           name: 'defaultValue',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'startupValue :: STRING',
+          description: 'The value of the setting when the database started.',
           name: 'startupValue',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'explicitlySet :: BOOLEAN',
+          description: 'Whether or not the setting was explicitly set.',
           name: 'explicitlySet',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'validValues :: STRING',
+          description: 'A description of the valid values.',
           name: 'validValues',
           type: 'STRING',
         },
@@ -23065,43 +24257,44 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'connectionId :: STRING',
+          description: 'The id of the connection.',
           name: 'connectionId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'connectTime :: STRING',
+          description:
+            'The time the connection was established, formatted according to the ISO-8601 Standard.',
           name: 'connectTime',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'connector :: STRING',
+          description: 'The protocol of the connector.',
           name: 'connector',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'username :: STRING',
+          description: 'The username of the connected user.',
           name: 'username',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'userAgent :: STRING',
+          description: 'The active agent.',
           name: 'userAgent',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'serverAddress :: STRING',
+          description: 'The address of the connected server.',
           name: 'serverAddress',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'clientAddress :: STRING',
+          description: 'The address of the connected client.',
           name: 'clientAddress',
           type: 'STRING',
         },
@@ -23123,61 +24316,61 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'pool :: STRING',
+          description: 'The name of the memory pool.',
           name: 'pool',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'heapMemoryUsed :: STRING',
+          description: 'The amount of heap memory used.',
           name: 'heapMemoryUsed',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'heapMemoryUsedBytes :: STRING',
+          description: 'The amount of heap memory used in bytes.',
           name: 'heapMemoryUsedBytes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nativeMemoryUsed :: STRING',
+          description: 'The amount of native memory used.',
           name: 'nativeMemoryUsed',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'nativeMemoryUsedBytes :: STRING',
+          description: 'The amount of native memory used in bytes.',
           name: 'nativeMemoryUsedBytes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'freeMemory :: STRING',
+          description: 'The amount of free memory.',
           name: 'freeMemory',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'freeMemoryBytes :: STRING',
+          description: 'The amount of free memory in bytes.',
           name: 'freeMemoryBytes',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'totalPoolMemory :: STRING',
+          description: 'The total pool memory.',
           name: 'totalPoolMemory',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'totalPoolMemoryBytes :: STRING',
+          description: 'The total pool memory in bytes.',
           name: 'totalPoolMemoryBytes',
           type: 'STRING',
         },
@@ -23195,20 +24388,21 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description:
+            'The name of the database to set the quarantine status of.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'setStatus :: BOOLEAN',
+          description: 'Whether or not to quarantine the database.',
           name: 'setStatus',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=No reason given, type=STRING}',
-          description: 'reason = No reason given :: STRING',
+          description: 'The reason to quarantine the database.',
           name: 'reason',
           type: 'STRING',
         },
@@ -23218,19 +24412,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database.',
           name: 'databaseName',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'quarantined :: BOOLEAN',
+          description: 'Whether or not the database is quarantined.',
           name: 'quarantined',
           type: 'BOOLEAN',
         },
         {
           isDeprecated: false,
-          description: 'result :: STRING',
+          description: 'Details about the outcome of the procedure.',
           name: 'result',
           type: 'STRING',
         },
@@ -23249,7 +24443,8 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'query :: STRING',
+          description:
+            "A query for MBeans on this MBeanServer (e.g. '*:*,name=*neo4j*' for all metrics in neo4j database).",
           name: 'query',
           type: 'STRING',
         },
@@ -23259,19 +24454,20 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'name :: STRING',
+          description: 'The name of the metric.',
           name: 'name',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'The description of the metric.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'attributes :: MAP',
+          description:
+            'A collection with the attributes (values) of that metric.',
           name: 'attributes',
           type: 'MAP',
         },
@@ -23290,14 +24486,14 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'context :: MAP',
+          description: 'Routing context, for example, routing policies.',
           name: 'context',
           type: 'MAP',
         },
         {
           isDeprecated: false,
           default: 'DefaultParameterValue{value=null, type=STRING}',
-          description: 'database = null :: STRING',
+          description: 'The database to get a routing table for.',
           name: 'database',
           type: 'STRING',
         },
@@ -23307,13 +24503,14 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'ttl :: INTEGER',
+          description: 'Time to live (in seconds) for the routing table.',
           name: 'ttl',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'servers :: LIST<MAP>',
+          description:
+            'Servers grouped by whether they are readers, writers, or routers.',
           name: 'servers',
           type: 'LIST<MAP>',
         },
@@ -23335,61 +24532,61 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'jobId :: STRING',
+          description: 'The id of the failed job.',
           name: 'jobId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'group :: STRING',
+          description: 'The category of the failed job.',
           name: 'group',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'database :: STRING',
+          description: 'The name of the database the job failed in.',
           name: 'database',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'submitter :: STRING',
+          description: 'The creator of the failed job.',
           name: 'submitter',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'Information about the failed job.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The interval of the failed job.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'submitted :: STRING',
+          description: 'The submission time of the failed job.',
           name: 'submitted',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'executionStart :: STRING',
+          description: 'The start time of the failed job.',
           name: 'executionStart',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'failureTime :: STRING',
+          description: 'The failure time of the failed job.',
           name: 'failureTime',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'failureDescription :: STRING',
+          description: 'Information about the job failure.',
           name: 'failureDescription',
           type: 'STRING',
         },
@@ -23411,13 +24608,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'group :: STRING',
+          description: 'The name of the job group.',
           name: 'group',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'threads :: INTEGER',
+          description: 'The number of active threads in that job group.',
           name: 'threads',
           type: 'INTEGER',
         },
@@ -23439,67 +24636,67 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'jobId :: STRING',
+          description: 'The id of the job.',
           name: 'jobId',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'group :: STRING',
+          description: 'The category of the job.',
           name: 'group',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'submitted :: STRING',
+          description: 'The submission time of the job.',
           name: 'submitted',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'database :: STRING',
+          description: 'The name of the database the job is in.',
           name: 'database',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'submitter :: STRING',
+          description: 'The creator of the job.',
           name: 'submitter',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'Information about the job.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'type :: STRING',
+          description: 'The interval of the job.',
           name: 'type',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'scheduledAt :: STRING',
+          description: 'The start time of the job.',
           name: 'scheduledAt',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'period :: STRING',
+          description: 'The interval for jobs run periodically.',
           name: 'period',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'state :: STRING',
+          description: "The state of the job: ('EXECUTING', 'SCHEDULED').",
           name: 'state',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'currentStateDescription :: STRING',
+          description: 'A description of the job state.',
           name: 'currentStateDescription',
           type: 'STRING',
         },
@@ -23531,13 +24728,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'setting :: STRING',
+          description: 'The name of the setting.',
           name: 'setting',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'value :: STRING',
+          description: 'The value to set.',
           name: 'value',
           type: 'STRING',
         },
@@ -23558,7 +24755,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'allocator :: STRING',
+          description: 'The name of the allocator.',
           name: 'allocator',
           type: 'STRING',
         },
@@ -23567,7 +24764,7 @@ const mockSchema: DbSchema = {
       returnDescription: [],
       admin: true,
       option: {
-        deprecated: false,
+        deprecated: true,
       },
     },
     'dbms.setDefaultAllocationNumbers': {
@@ -23579,13 +24776,13 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'primaries :: INTEGER',
+          description: 'The default number of primaries.',
           name: 'primaries',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'secondaries :: INTEGER',
+          description: 'The default number of secondaries.',
           name: 'secondaries',
           type: 'INTEGER',
         },
@@ -23607,7 +24804,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'databaseName :: STRING',
+          description: 'The name of the database.',
           name: 'databaseName',
           type: 'STRING',
         },
@@ -23617,7 +24814,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'result :: STRING',
+          description: 'Information about the default database.',
           name: 'result',
           type: 'STRING',
         },
@@ -23638,19 +24835,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'username :: STRING',
+          description: 'The name of the current user.',
           name: 'username',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'roles :: LIST<STRING>',
+          description: 'The roles assigned to the current user.',
           name: 'roles',
           type: 'LIST<STRING>',
         },
         {
           isDeprecated: false,
-          description: 'flags :: LIST<STRING>',
+          description: 'The flags set on the current user.',
           name: 'flags',
           type: 'LIST<STRING>',
         },
@@ -23672,31 +24869,31 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'allocator :: STRING',
+          description: 'The name of the allocator.',
           name: 'allocator',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'defaultPrimariesCount :: INTEGER',
+          description: 'The default number of primaries.',
           name: 'defaultPrimariesCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'defaultSecondariesCount :: INTEGER',
+          description: 'The default number of secondaries.',
           name: 'defaultSecondariesCount',
           type: 'INTEGER',
         },
         {
           isDeprecated: false,
-          description: 'defaultDatabase :: STRING',
+          description: 'The name of the default database.',
           name: 'defaultDatabase',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'autoEnableFreeServers :: BOOLEAN',
+          description: 'Whether or not to automatically enable free servers.',
           name: 'autoEnableFreeServers',
           type: 'BOOLEAN',
         },
@@ -23718,13 +24915,13 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'status :: STRING',
+          description: 'The upgrade status of the system database.',
           name: 'status',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'upgradeResult :: STRING',
+          description: 'Information about the upgrade outcome.',
           name: 'upgradeResult',
           type: 'STRING',
         },
@@ -23746,19 +24943,19 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'status :: STRING',
+          description: 'The upgrade status of the system database.',
           name: 'status',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'description :: STRING',
+          description: 'Information describing the upgrade status.',
           name: 'description',
           type: 'STRING',
         },
         {
           isDeprecated: false,
-          description: 'resolution :: STRING',
+          description: 'Information about the steps necessary to upgrade.',
           name: 'resolution',
           type: 'STRING',
         },
@@ -25966,7 +27163,7 @@ const mockSchema: DbSchema = {
     'gds.articleRank.stats': {
       name: 'gds.articleRank.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'Article Rank is a variant of the Page Rank algorithm, which measures the transitive influence or connectivity of nodes.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -26349,6 +27546,542 @@ const mockSchema: DbSchema = {
       ],
       signature:
         'gds.articleRank.write.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.mutate': {
+      name: 'gds.articulationPoints.mutate',
+      description:
+        'Algorithm that finds nodes that disconnect components if removed',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.mutate(graphName :: STRING, configuration = {} :: MAP) :: (articulationPointCount :: INTEGER, nodePropertiesWritten :: INTEGER, mutateMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'articulationPointCount :: INTEGER',
+          name: 'articulationPointCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodePropertiesWritten :: INTEGER',
+          name: 'nodePropertiesWritten',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'mutateMillis :: INTEGER',
+          name: 'mutateMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'computeMillis :: INTEGER',
+          name: 'computeMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.mutate.estimate': {
+      name: 'gds.articulationPoints.mutate.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.mutate.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.stats': {
+      name: 'gds.articulationPoints.stats',
+      description:
+        'Algorithm that finds nodes that disconnect components if removed',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.stats(graphName :: STRING, configuration = {} :: MAP) :: (articulationPointCount :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'articulationPointCount :: INTEGER',
+          name: 'articulationPointCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'computeMillis :: INTEGER',
+          name: 'computeMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.stats.estimate': {
+      name: 'gds.articulationPoints.stats.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.stats.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.stream': {
+      name: 'gds.articulationPoints.stream',
+      description:
+        'Algorithm that finds nodes that disconnect components if removed',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.stream(graphName :: STRING, configuration = {} :: MAP) :: (nodeId :: INTEGER)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'nodeId :: INTEGER',
+          name: 'nodeId',
+          type: 'INTEGER',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.stream.estimate': {
+      name: 'gds.articulationPoints.stream.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.stream.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.write': {
+      name: 'gds.articulationPoints.write',
+      description:
+        'Algorithm that finds nodes that disconnect components if removed',
+      mode: 'WRITE',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.write(graphName :: STRING, configuration = {} :: MAP) :: (articulationPointCount :: INTEGER, nodePropertiesWritten :: INTEGER, writeMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'articulationPointCount :: INTEGER',
+          name: 'articulationPointCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodePropertiesWritten :: INTEGER',
+          name: 'nodePropertiesWritten',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'writeMillis :: INTEGER',
+          name: 'writeMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'computeMillis :: INTEGER',
+          name: 'computeMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.articulationPoints.write.estimate': {
+      name: 'gds.articulationPoints.write.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.articulationPoints.write.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -27152,7 +28885,7 @@ const mockSchema: DbSchema = {
     'gds.beta.graphSage.mutate.estimate': {
       name: 'gds.beta.graphSage.mutate.estimate',
       description:
-        'The GraphSage algorithm inductively computes embeddings for nodes based on a their features and neighborhoods.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -29574,7 +31307,7 @@ const mockSchema: DbSchema = {
     'gds.betweenness.stats': {
       name: 'gds.betweenness.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result.',
+        'Betweenness centrality measures the relative information flow that passes through a node.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -30331,7 +32064,7 @@ const mockSchema: DbSchema = {
     'gds.bfs.stream.estimate': {
       name: 'gds.bfs.stream.estimate',
       description:
-        'BFS is a traversal algorithm, which explores all of the neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -30351,6 +32084,131 @@ const mockSchema: DbSchema = {
       ],
       signature:
         'gds.bfs.stream.estimate(graphName :: ANY, configuration = {} :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.bridges.stream': {
+      name: 'gds.bridges.stream',
+      description:
+        'Bridges find relationships that disconnect  components if removed',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.bridges.stream(graphName :: STRING, configuration = {} :: MAP) :: (from :: INTEGER, to :: INTEGER)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'from :: INTEGER',
+          name: 'from',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'to :: INTEGER',
+          name: 'to',
+          type: 'INTEGER',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.bridges.stream.estimate': {
+      name: 'gds.bridges.stream.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.bridges.stream.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -31429,7 +33287,7 @@ const mockSchema: DbSchema = {
     'gds.degree.mutate.estimate': {
       name: 'gds.degree.mutate.estimate',
       description:
-        'Degree centrality measures the number of incoming and outgoing relationships from a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -31572,7 +33430,7 @@ const mockSchema: DbSchema = {
     'gds.degree.stats.estimate': {
       name: 'gds.degree.stats.estimate',
       description:
-        'Degree centrality measures the number of incoming and outgoing relationships from a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -31697,7 +33555,7 @@ const mockSchema: DbSchema = {
     'gds.degree.stream.estimate': {
       name: 'gds.degree.stream.estimate',
       description:
-        'Degree centrality measures the number of incoming and outgoing relationships from a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -31852,7 +33710,7 @@ const mockSchema: DbSchema = {
     'gds.degree.write.estimate': {
       name: 'gds.degree.write.estimate',
       description:
-        'Degree centrality measures the number of incoming and outgoing relationships from a node.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -32132,7 +33990,7 @@ const mockSchema: DbSchema = {
     'gds.dfs.stream.estimate': {
       name: 'gds.dfs.stream.estimate',
       description:
-        'Depth-first search (DFS) is an algorithm for traversing or searching tree or graph data structures. The algorithm starts at the root node (selecting some arbitrary node as the root node in the case of a graph) and explores as far as possible along each branch before backtracking.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -32827,86 +34685,6 @@ const mockSchema: DbSchema = {
         deprecated: false,
       },
     },
-    'gds.ephemeral.database.create': {
-      name: 'gds.ephemeral.database.create',
-      description: 'Creates an ephemeral database from a GDS graph.',
-      mode: 'READ',
-      worksOnSystem: false,
-      argumentDescription: [
-        {
-          isDeprecated: false,
-          description: 'dbName :: STRING',
-          name: 'dbName',
-          type: 'STRING',
-        },
-        {
-          isDeprecated: false,
-          description: 'graphName :: STRING',
-          name: 'graphName',
-          type: 'STRING',
-        },
-      ],
-      signature:
-        'gds.ephemeral.database.create(dbName :: STRING, graphName :: STRING) :: (dbName :: STRING, graphName :: STRING, createMillis :: INTEGER)',
-      returnDescription: [
-        {
-          isDeprecated: false,
-          description: 'dbName :: STRING',
-          name: 'dbName',
-          type: 'STRING',
-        },
-        {
-          isDeprecated: false,
-          description: 'graphName :: STRING',
-          name: 'graphName',
-          type: 'STRING',
-        },
-        {
-          isDeprecated: false,
-          description: 'createMillis :: INTEGER',
-          name: 'createMillis',
-          type: 'INTEGER',
-        },
-      ],
-      admin: false,
-      option: {
-        deprecated: true,
-      },
-    },
-    'gds.ephemeral.database.drop': {
-      name: 'gds.ephemeral.database.drop',
-      description: 'Drop an ephemeral database backed by an in-memory graph',
-      mode: 'WRITE',
-      worksOnSystem: false,
-      argumentDescription: [
-        {
-          isDeprecated: false,
-          description: 'dbName :: STRING',
-          name: 'dbName',
-          type: 'STRING',
-        },
-      ],
-      signature:
-        'gds.ephemeral.database.drop(dbName :: STRING) :: (dbName :: STRING, dropMillis :: INTEGER)',
-      returnDescription: [
-        {
-          isDeprecated: false,
-          description: 'dbName :: STRING',
-          name: 'dbName',
-          type: 'STRING',
-        },
-        {
-          isDeprecated: false,
-          description: 'dropMillis :: INTEGER',
-          name: 'dropMillis',
-          type: 'INTEGER',
-        },
-      ],
-      admin: false,
-      option: {
-        deprecated: true,
-      },
-    },
     'gds.fastRP.mutate': {
       name: 'gds.fastRP.mutate',
       description:
@@ -32976,7 +34754,7 @@ const mockSchema: DbSchema = {
     'gds.fastRP.mutate.estimate': {
       name: 'gds.fastRP.mutate.estimate',
       description:
-        'Random Projection produces node embeddings via the fastrp algorithm',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -33113,7 +34891,7 @@ const mockSchema: DbSchema = {
     'gds.fastRP.stats.estimate': {
       name: 'gds.fastRP.stats.estimate',
       description:
-        'Random Projection produces node embeddings via the fastrp algorithm',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -33238,7 +35016,7 @@ const mockSchema: DbSchema = {
     'gds.fastRP.stream.estimate': {
       name: 'gds.fastRP.stream.estimate',
       description:
-        'Random Projection produces node embeddings via the fastrp algorithm',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -33387,7 +35165,7 @@ const mockSchema: DbSchema = {
     'gds.fastRP.write.estimate': {
       name: 'gds.fastRP.write.estimate',
       description:
-        'Random Projection produces node embeddings via the fastrp algorithm',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -34539,7 +36317,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.nodeProperties.write(graphName :: STRING, nodeProperties :: ANY, nodeLabels = [*] :: ANY, configuration = {} :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, nodeProperties :: LIST<STRING>, propertiesWritten :: INTEGER)',
+        'gds.graph.nodeProperties.write(graphName :: STRING, nodeProperties :: ANY, nodeLabels = [*] :: ANY, configuration = {} :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, nodeProperties :: LIST<STRING>, propertiesWritten :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -34564,6 +36342,12 @@ const mockSchema: DbSchema = {
           description: 'propertiesWritten :: INTEGER',
           name: 'propertiesWritten',
           type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
         },
       ],
       admin: false,
@@ -35002,7 +36786,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.relationship.write(graphName :: STRING, relationshipType :: STRING, relationshipProperty =  :: STRING, configuration = {} :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, relationshipType :: STRING, relationshipProperty :: STRING, relationshipsWritten :: INTEGER, propertiesWritten :: INTEGER)',
+        'gds.graph.relationship.write(graphName :: STRING, relationshipType :: STRING, relationshipProperty =  :: STRING, configuration = {} :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, relationshipType :: STRING, relationshipProperty :: STRING, relationshipsWritten :: INTEGER, propertiesWritten :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -35040,6 +36824,12 @@ const mockSchema: DbSchema = {
           name: 'propertiesWritten',
           type: 'INTEGER',
         },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
       ],
       admin: false,
       option: {
@@ -35066,10 +36856,10 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          default: 'DefaultParameterValue{value=[*], type=LIST<STRING>}',
-          description: 'relationshipTypes = [*] :: LIST<STRING>',
+          default: 'DefaultParameterValue{value=[*], type=ANY}',
+          description: 'relationshipTypes = [*] :: ANY',
           name: 'relationshipTypes',
-          type: 'LIST<STRING>',
+          type: 'ANY',
         },
         {
           isDeprecated: false,
@@ -35080,7 +36870,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.relationshipProperties.stream(graphName :: STRING, relationshipProperties :: LIST<STRING>, relationshipTypes = [*] :: LIST<STRING>, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING, relationshipProperty :: STRING, propertyValue :: INTEGER | FLOAT)',
+        'gds.graph.relationshipProperties.stream(graphName :: STRING, relationshipProperties :: LIST<STRING>, relationshipTypes = [*] :: ANY, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING, relationshipProperty :: STRING, propertyValue :: INTEGER | FLOAT)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -35151,7 +36941,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.relationshipProperties.write(graphName :: STRING, relationshipType :: STRING, relationshipProperties :: LIST<STRING>, configuration :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, relationshipType :: STRING, relationshipProperties :: LIST<STRING>, relationshipsWritten :: INTEGER, propertiesWritten :: INTEGER)',
+        'gds.graph.relationshipProperties.write(graphName :: STRING, relationshipType :: STRING, relationshipProperties :: LIST<STRING>, configuration :: MAP) :: (writeMillis :: INTEGER, graphName :: STRING, relationshipType :: STRING, relationshipProperties :: LIST<STRING>, relationshipsWritten :: INTEGER, propertiesWritten :: INTEGER, configuration :: MAP)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -35189,6 +36979,12 @@ const mockSchema: DbSchema = {
           name: 'propertiesWritten',
           type: 'INTEGER',
         },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
       ],
       admin: false,
       option: {
@@ -35215,10 +37011,10 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          default: 'DefaultParameterValue{value=[*], type=LIST<STRING>}',
-          description: 'relationshipTypes = [*] :: LIST<STRING>',
+          default: 'DefaultParameterValue{value=[*], type=ANY}',
+          description: 'relationshipTypes = [*] :: ANY',
           name: 'relationshipTypes',
-          type: 'LIST<STRING>',
+          type: 'ANY',
         },
         {
           isDeprecated: false,
@@ -35229,7 +37025,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.relationshipProperty.stream(graphName :: STRING, relationshipProperty :: STRING, relationshipTypes = [*] :: LIST<STRING>, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING, propertyValue :: INTEGER | FLOAT)',
+        'gds.graph.relationshipProperty.stream(graphName :: STRING, relationshipProperty :: STRING, relationshipTypes = [*] :: ANY, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING, propertyValue :: INTEGER | FLOAT)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -35328,10 +37124,10 @@ const mockSchema: DbSchema = {
         },
         {
           isDeprecated: false,
-          default: 'DefaultParameterValue{value=[*], type=LIST<STRING>}',
-          description: 'relationshipTypes = [*] :: LIST<STRING>',
+          default: 'DefaultParameterValue{value=[*], type=ANY}',
+          description: 'relationshipTypes = [*] :: ANY',
           name: 'relationshipTypes',
-          type: 'LIST<STRING>',
+          type: 'ANY',
         },
         {
           isDeprecated: false,
@@ -35342,7 +37138,7 @@ const mockSchema: DbSchema = {
         },
       ],
       signature:
-        'gds.graph.relationships.stream(graphName :: STRING, relationshipTypes = [*] :: LIST<STRING>, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING)',
+        'gds.graph.relationships.stream(graphName :: STRING, relationshipTypes = [*] :: ANY, configuration = {} :: MAP) :: (sourceNodeId :: INTEGER, targetNodeId :: INTEGER, relationshipType :: STRING)',
       returnDescription: [
         {
           isDeprecated: false,
@@ -35820,7 +37616,7 @@ const mockSchema: DbSchema = {
     'gds.hashgnn.mutate.estimate': {
       name: 'gds.hashgnn.mutate.estimate',
       description:
-        'HashGNN creates node embeddings by hashing and message passing.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -35945,7 +37741,7 @@ const mockSchema: DbSchema = {
     'gds.hashgnn.stream.estimate': {
       name: 'gds.hashgnn.stream.estimate',
       description:
-        'HashGNN creates node embeddings by hashing and message passing.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -36773,7 +38569,7 @@ const mockSchema: DbSchema = {
     'gds.influenceMaximization.celf.stats': {
       name: 'gds.influenceMaximization.celf.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'The Cost Effective Lazy Forward (CELF) algorithm aims to find k nodes that maximize the expected spread of influence in the network.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -36952,7 +38748,7 @@ const mockSchema: DbSchema = {
     'gds.influenceMaximization.celf.stream.estimate': {
       name: 'gds.influenceMaximization.celf.stream.estimate',
       description:
-        'The Cost Effective Lazy Forward (CELF) algorithm aims to find k nodes that maximize the expected spread of influence in the network.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -38065,7 +39861,8 @@ const mockSchema: DbSchema = {
     },
     'gds.kcore.stats.estimate': {
       name: 'gds.kcore.stats.estimate',
-      description: 'It computes the k-core values in a network',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -38342,7 +40139,8 @@ const mockSchema: DbSchema = {
     },
     'gds.kcore.write.estimate': {
       name: 'gds.kcore.write.estimate',
-      description: 'It computes the k-core values in a network',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -41216,7 +43014,7 @@ const mockSchema: DbSchema = {
     'gds.leiden.stats': {
       name: 'gds.leiden.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result.',
+        'Leiden is a community detection algorithm, which guarantees that communities are well connected',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -42024,7 +43822,7 @@ const mockSchema: DbSchema = {
     'gds.localClusteringCoefficient.stats': {
       name: 'gds.localClusteringCoefficient.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result.',
+        'The local clustering coefficient is a metric quantifying how connected the neighborhood of a node is.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -42638,7 +44436,7 @@ const mockSchema: DbSchema = {
     'gds.louvain.stats': {
       name: 'gds.louvain.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result.',
+        'The Louvain method for community detection is an algorithm for detecting communities in networks.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -43187,7 +44985,7 @@ const mockSchema: DbSchema = {
     'gds.maxkcut.mutate.estimate': {
       name: 'gds.maxkcut.mutate.estimate',
       description:
-        'Approximate Maximum k-cut maps each node into one of k disjoint communities trying to maximize the sum of weights of relationships between these communities.',
+        'Returns an estimation of the memory consumption for that procedure.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -43781,7 +45579,7 @@ const mockSchema: DbSchema = {
     'gds.modularity.stats': {
       name: 'gds.modularity.stats',
       description:
-        'The Modularity procedure computes the modularity scores for a given set of communities/',
+        'The Modularity procedure computes the modularity scores for a given set of communities',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -43942,7 +45740,7 @@ const mockSchema: DbSchema = {
     'gds.modularity.stream': {
       name: 'gds.modularity.stream',
       description:
-        'The Modularity procedure computes the modularity scores for a given set of communities/',
+        'The Modularity procedure computes the modularity scores for a given set of communities',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -46547,7 +48345,7 @@ const mockSchema: DbSchema = {
     'gds.pageRank.stats': {
       name: 'gds.pageRank.stats',
       description:
-        'Executes the algorithm and returns result statistics without writing the result to Neo4j.',
+        'Page Rank is an algorithm that measures the transitive influence or connectivity of nodes.',
       mode: 'READ',
       worksOnSystem: false,
       argumentDescription: [
@@ -47124,6 +48922,155 @@ const mockSchema: DbSchema = {
           description: 'creationTime :: ZONED DATETIME',
           name: 'creationTime',
           type: 'ZONED DATETIME',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.randomWalk.mutate': {
+      name: 'gds.randomWalk.mutate',
+      description:
+        'Random Walk is an algorithm that provides random paths in a graph. It’s similar to how a drunk person traverses a city.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphName :: STRING',
+          name: 'graphName',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          default: 'DefaultParameterValue{value={}, type=MAP}',
+          description: 'configuration = {} :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.randomWalk.mutate(graphName :: STRING, configuration = {} :: MAP) :: (nodePropertiesWritten :: INTEGER, mutateMillis :: INTEGER, postProcessingMillis :: INTEGER, preProcessingMillis :: INTEGER, computeMillis :: INTEGER, configuration :: MAP)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'nodePropertiesWritten :: INTEGER',
+          name: 'nodePropertiesWritten',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'mutateMillis :: INTEGER',
+          name: 'mutateMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'postProcessingMillis :: INTEGER',
+          name: 'postProcessingMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'preProcessingMillis :: INTEGER',
+          name: 'preProcessingMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'computeMillis :: INTEGER',
+          name: 'computeMillis',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'configuration :: MAP',
+          name: 'configuration',
+          type: 'MAP',
+        },
+      ],
+      admin: false,
+      option: {
+        deprecated: false,
+      },
+    },
+    'gds.randomWalk.mutate.estimate': {
+      name: 'gds.randomWalk.mutate.estimate',
+      description:
+        'Returns an estimation of the memory consumption for that procedure.',
+      mode: 'READ',
+      worksOnSystem: false,
+      argumentDescription: [
+        {
+          isDeprecated: false,
+          description: 'graphNameOrConfiguration :: ANY',
+          name: 'graphNameOrConfiguration',
+          type: 'ANY',
+        },
+        {
+          isDeprecated: false,
+          description: 'algoConfiguration :: MAP',
+          name: 'algoConfiguration',
+          type: 'MAP',
+        },
+      ],
+      signature:
+        'gds.randomWalk.mutate.estimate(graphNameOrConfiguration :: ANY, algoConfiguration :: MAP) :: (requiredMemory :: STRING, treeView :: STRING, mapView :: MAP, bytesMin :: INTEGER, bytesMax :: INTEGER, nodeCount :: INTEGER, relationshipCount :: INTEGER, heapPercentageMin :: FLOAT, heapPercentageMax :: FLOAT)',
+      returnDescription: [
+        {
+          isDeprecated: false,
+          description: 'requiredMemory :: STRING',
+          name: 'requiredMemory',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'treeView :: STRING',
+          name: 'treeView',
+          type: 'STRING',
+        },
+        {
+          isDeprecated: false,
+          description: 'mapView :: MAP',
+          name: 'mapView',
+          type: 'MAP',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMin :: INTEGER',
+          name: 'bytesMin',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'bytesMax :: INTEGER',
+          name: 'bytesMax',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'nodeCount :: INTEGER',
+          name: 'nodeCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'relationshipCount :: INTEGER',
+          name: 'relationshipCount',
+          type: 'INTEGER',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMin :: FLOAT',
+          name: 'heapPercentageMin',
+          type: 'FLOAT',
+        },
+        {
+          isDeprecated: false,
+          description: 'heapPercentageMax :: FLOAT',
+          name: 'heapPercentageMax',
+          type: 'FLOAT',
         },
       ],
       admin: false,
@@ -53119,7 +55066,7 @@ const mockSchema: DbSchema = {
       returnDescription: [
         {
           isDeprecated: false,
-          description: 'metadata :: MAP',
+          description: 'Metadata about the transaction.',
           name: 'metadata',
           type: 'MAP',
         },
@@ -53138,7 +55085,7 @@ const mockSchema: DbSchema = {
       argumentDescription: [
         {
           isDeprecated: false,
-          description: 'data :: MAP',
+          description: 'Metadata to attach to the transaction.',
           name: 'data',
           type: 'MAP',
         },
