@@ -36,13 +36,13 @@ interface ParsedMethod {
 export function toSignatureInformation(
   curr: Neo4jFunction | Neo4jProcedure,
 ): SignatureInformation {
-  const { name, argumentDescription, description } = curr;
+  const { signature, argumentDescription, description } = curr;
 
   return SignatureInformation.create(
-    name,
+    signature,
     description,
     ...argumentDescription.map((arg) => ({
-      label: arg.name,
+      label: `${arg.name} :: ${arg.type}`,
       documentation: arg.description,
     })),
   );
