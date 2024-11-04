@@ -8,12 +8,8 @@ export default class CypherRunner {
 
   constructor() {}
 
-  async run(connection: Connection, uri: Uri, input: string) {
-    const statements = parseStatementsStrs(input);
-    await this.runStatements(connection, uri, statements);
-  }
-
-  async runStatements(connection: Connection, uri: Uri, statements: string[]) {
+  async run(connection: Connection, uri: Uri, input: string[]) {
+    const statements = input.flatMap(parseStatementsStrs);
     const filePath = uri.toString();
 
     if (this.results.has(filePath)) {

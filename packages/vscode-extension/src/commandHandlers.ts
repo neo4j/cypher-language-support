@@ -199,17 +199,13 @@ export async function runCypher(): Promise<void> {
     const documentUri = editor.document.uri;
 
     if (selections.length === 0) {
-      const documentText = editor.document.getText();
-      await cypherRunner.run(activeConnection, documentUri, documentText);
+      const text = editor.document.getText();
+      await cypherRunner.run(activeConnection, documentUri, Array.of(text));
     } else {
-      const statements = selections.map((selection) => {
+      const text = selections.map((selection) => {
         return editor.document.getText(selection);
       });
-      await cypherRunner.runStatements(
-        activeConnection,
-        documentUri,
-        statements,
-      );
+      await cypherRunner.run(activeConnection, documentUri, text);
     }
   }
 }
