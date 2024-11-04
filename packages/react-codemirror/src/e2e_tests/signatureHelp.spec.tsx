@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Locator } from 'playwright/test';
@@ -9,6 +10,8 @@ type TooltipExpectations = {
   includes?: string[];
   excludes?: string[];
 };
+
+const importCsvProc = testData.mockSchema.procedures['apoc.import.csv'];
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -83,8 +86,9 @@ test('Signature help shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      'nodes :: LIST<MAP>',
-      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+      testData.mockSchema.procedures['apoc.import.csv'].argumentDescription[0]
+        .description,
+      testData.mockSchema.procedures['apoc.import.csv'].description,
     ],
   });
 });
@@ -103,8 +107,8 @@ test('Signature help shows the description for the first argument when the curso
 
   await testTooltip(tooltip, {
     includes: [
-      'nodes :: LIST<MAP>',
-      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+      importCsvProc.argumentDescription[0].description,
+      importCsvProc.description,
     ],
   });
 });
@@ -127,8 +131,8 @@ test('Signature help shows the description for the second argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      'rels :: LIST<MAP>',
-      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+      importCsvProc.argumentDescription[1].description,
+      importCsvProc.description,
     ],
   });
 });
@@ -147,8 +151,8 @@ test('Signature help shows the description for the second argument when the curs
 
   await testTooltip(tooltip, {
     includes: [
-      'rels :: LIST<MAP>',
-      'Imports `NODE` and `RELATIONSHIP` values with the given labels and types from the provided CSV file',
+      importCsvProc.argumentDescription[1].description,
+      importCsvProc.description,
     ],
   });
 });

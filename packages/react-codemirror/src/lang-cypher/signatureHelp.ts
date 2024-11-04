@@ -1,7 +1,10 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import { signatureHelp } from '@neo4j-cypher/language-support';
-import { SignatureInformation } from 'vscode-languageserver-types';
+import {
+  MarkupContent,
+  SignatureInformation,
+} from 'vscode-languageserver-types';
 import { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
 
@@ -38,24 +41,32 @@ const createSignatureHelpElement =
 
     const signatureLabel = document.createElement('div');
     signatureLabel.className = 'cm-signature-help-panel-name';
-    signatureLabel.appendChild(document.createTextNode(`${signature.label}(`));
+    const methodName = signature.label.slice(0, signature.label.indexOf('('));
+    const returnType = signature.label.slice(signature.label.indexOf(')') + 1);
+    signatureLabel.appendChild(document.createTextNode(`${methodName}(`));
+    let currentParamDescription: string | undefined = undefined;
 
     parameters.forEach((param, index) => {
-      if (typeof param.documentation === 'string') {
+      if (typeof param.label === 'string') {
         const span = document.createElement('span');
-        span.appendChild(document.createTextNode(param.documentation));
+        span.appendChild(document.createTextNode(param.label));
         if (index !== parameters.length - 1) {
           span.appendChild(document.createTextNode(', '));
         }
 
         if (index === activeParameter) {
           span.className = 'cm-signature-help-panel-current-argument';
+          const paramDoc = param.documentation;
+          currentParamDescription = MarkupContent.is(paramDoc)
+            ? paramDoc.value
+            : paramDoc;
         }
         signatureLabel.appendChild(span);
       }
     });
 
     signatureLabel.appendChild(document.createTextNode(')'));
+    signatureLabel.appendChild(document.createTextNode(returnType));
 
     contents.appendChild(signatureLabel);
 
@@ -64,11 +75,18 @@ const createSignatureHelpElement =
 
     contents.appendChild(separator);
 
-    const description = document.createElement('div');
-    description.className = 'cm-signature-help-panel-description';
-    description.appendChild(document.createTextNode(doc));
-
-    contents.appendChild(description);
+    if (currentParamDescription !== undefined) {
+      const argDescription = document.createElement('div');
+      argDescription.className = 'cm-signature-help-panel-arg-description';
+      argDescription.appendChild(
+        document.createTextNode(currentParamDescription),
+      );
+      contents.appendChild(argDescription);
+    }
+    const methodDescription = document.createElement('div');
+    methodDescription.className = 'cm-signature-help-panel-description';
+    methodDescription.appendChild(document.createTextNode(doc));
+    contents.appendChild(methodDescription);
 
     return { dom };
   };
