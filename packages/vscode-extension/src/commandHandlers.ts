@@ -192,8 +192,24 @@ export async function runCypher(): Promise<void> {
       return;
     }
 
-    const documentText = editor.document.getText();
+    const selections = editor.selections.filter(
+      (selection) => !selection.isEmpty && editor.document.getText(selection),
+    );
+
     const documentUri = editor.document.uri;
-    await cypherRunner.run(activeConnection, documentUri, documentText);
+
+    if (selections.length === 0) {
+      const documentText = editor.document.getText();
+      await cypherRunner.run(activeConnection, documentUri, documentText);
+    } else {
+      const statements = selections.map((selection) => {
+        return editor.document.getText(selection);
+      });
+      await cypherRunner.runStatements(
+        activeConnection,
+        documentUri,
+        statements,
+      );
+    }
   }
 }
