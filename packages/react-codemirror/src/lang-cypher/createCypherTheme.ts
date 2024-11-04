@@ -121,6 +121,9 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-name': {
       padding: '5px',
     },
+    '& .cm-signature-help-panel-arg-description': {
+      padding: '5px',
+    },
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
