@@ -40,7 +40,7 @@ export async function openFixtureFile(
           // eslint-disable-next-line
           new vscode.Position(0, 0), // Start at the beginning of the first line
           // eslint-disable-next-line
-          new vscode.Position(lastLine, document.lineAt(lastLine).text.length), // End of the first line
+          new vscode.Position(lastLine, document.lineAt(lastLine).text.length),
         );
       }
     },

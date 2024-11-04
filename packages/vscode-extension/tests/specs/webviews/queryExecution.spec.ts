@@ -34,7 +34,9 @@ suite('Query results testing', () => {
     const resultsWebview = (await workbench.getAllWebviews()).at(0);
     await resultsWebview.open();
 
+    // Take the first line query result summary
     const firstCreateSummary = await (await $('#query-summary')).getText();
+    // Select the second tab to get the query result for the second line
     await (
       await $(
         '#resultDiv > div > div.ndl-tabs.ndl-large.ndl-underline-tab.label > button:nth-child(2)',
