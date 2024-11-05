@@ -12,7 +12,7 @@ suite('Query results testing', () => {
 
   test('should correctly execute a valid Cypher', async () => {
     await openFixtureFile(browser, 'valid.cypher');
-    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE);
+    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER);
     const webviews = await workbench.getAllWebviews();
     await expect(webviews.length).toBe(1);
 
@@ -27,7 +27,7 @@ suite('Query results testing', () => {
 
   test('should correctly execute a valid Cypher when highlighting several statements', async () => {
     await openFixtureFile(browser, 'multiline.cypher', { selectLines: 2 });
-    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE);
+    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER);
     const webviews = await workbench.getAllWebviews();
     await expect(webviews.length).toBe(1);
 
@@ -57,7 +57,7 @@ suite('Query results testing', () => {
 
   test('should error on invalid cypher', async () => {
     await openFixtureFile(browser, 'invalid.cypher');
-    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE);
+    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER);
     const webviews = await workbench.getAllWebviews();
     await expect(webviews.length).toBe(1);
 

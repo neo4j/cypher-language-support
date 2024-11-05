@@ -63,7 +63,7 @@ export function registerDisposables(): Disposable[] {
         databaseInformationTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE, runCypher),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, runCypher),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),

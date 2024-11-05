@@ -66,13 +66,13 @@
         "title": "Switch to database"
       },
       {
-        "command": "neo4j.runCypherFile",
-        "title": "Neo4j: Run Cypher Statements in a file"
+        "command": "neo4j.runCypher",
+        "title": "Neo4j: Run Cypher Statements"
       }
     ],
     "keybindings": [
       {
-        "command": "neo4j.runCypherFile",
+        "command": "neo4j.runCypher",
         "key": "ctrl+alt+space",
         "mac": "ctrl+cmd+space"
       }
@@ -88,6 +88,13 @@
       }
     ],
     "menus": {
+      "editor/context": [
+        {
+          "command": "neo4j.runCypher",
+          "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
+          "group": "z_commands"
+        }
+      ],
       "commandPalette": [
         {
           "command": "neo4j.deleteConnection",
