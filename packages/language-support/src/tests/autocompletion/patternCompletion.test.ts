@@ -107,7 +107,7 @@ describe('MATCH auto-completion', () => {
     });
   });
 
-  test('Correctly completes label with backticks in MATCH with label started', () => {
+  test('Correctly completes started label with backticks in MATCH', () => {
     const query = 'MATCH (n:F';
 
     testCompletions({

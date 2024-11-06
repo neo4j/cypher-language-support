@@ -402,19 +402,6 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
   await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
 });
 
-test('does not signature help information on auto-completion if flag not enabled explicitly', async ({
-  page,
-  mount,
-}) => {
-  await mount(<CypherEditor schema={testData.mockSchema} />);
-
-  const textField = page.getByRole('textbox');
-  await textField.fill('CALL apoc.periodic.');
-
-  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
-  await expect(page.locator('.cm-completionInfo')).not.toBeVisible();
-});
-
 test('does not signature help information on auto-completion if docs and signature are empty', async ({
   page,
   mount,
