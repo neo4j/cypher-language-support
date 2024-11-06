@@ -1,5 +1,12 @@
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
-import { commands, ConfigurationChangeEvent, Selection, window } from 'vscode';
+import {
+  commands,
+  ConfigurationChangeEvent,
+  Selection,
+  TextEditor,
+  window,
+  workspace,
+} from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
@@ -175,12 +182,29 @@ export async function switchToDatabase(
   displayMessageForSwitchDatabaseResult(database, result);
 }
 
-export function sortByPosition(a: Selection, b: Selection): number {
+function sortByPosition(a: Selection, b: Selection): number {
   const lineDiff = a.start.line - b.start.line;
   if (lineDiff !== 0) return lineDiff;
 
   const columnDiff = a.start.character - b.start.character;
   return columnDiff;
+}
+
+function getSelectedText(editor: TextEditor): string {
+  const selections = editor.selections.filter(
+    (selection) => !selection.isEmpty && editor.document.getText(selection),
+  );
+  const text =
+    selections.length === 0
+      ? editor.document.getText()
+      : selections
+          .sort(sortByPosition)
+          .map((selection) => {
+            return editor.document.getText(selection);
+          })
+          .join(' ');
+
+  return text;
 }
 
 export async function runCypher(): Promise<void> {
@@ -200,21 +224,23 @@ export async function runCypher(): Promise<void> {
       return;
     }
 
-    const selections = editor.selections.filter(
-      (selection) => !selection.isEmpty && editor.document.getText(selection),
-    );
-
+    const selectedText = getSelectedText(editor);
     const documentUri = editor.document.uri;
+    await cypherRunner.run(activeConnection, documentUri, selectedText);
+  }
+}
 
-    const text =
-      selections.length === 0
-        ? editor.document.getText()
-        : selections
-            .sort(sortByPosition)
-            .map((selection) => {
-              return editor.document.getText(selection);
-            })
-            .join(' ');
-    await cypherRunner.run(activeConnection, documentUri, text);
+export async function cypherFileFromSelection(): Promise<void> {
+  const editor = window.activeTextEditor;
+
+  if (editor) {
+    const selectedText = getSelectedText(editor);
+
+    // Creates a new Cypher document with the selection
+    const textDocument = await workspace.openTextDocument({
+      content: selectedText,
+      language: 'cypher',
+    });
+    await window.showTextDocument(textDocument);
   }
 }

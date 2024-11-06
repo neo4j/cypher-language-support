@@ -1,5 +1,9 @@
 # neo4j-for-vscode
 
+## 1.5.1
+
+- Fixes bug with auto-completions
+
 ## 1.5.0
 
 - Adds ability to execute highlighted queries
