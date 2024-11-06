@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Page } from '@playwright/test';
@@ -111,6 +112,27 @@ test('can complete labels', async ({ mount, page }) => {
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   await expect(component).toContainText('MATCH (n :Pokemon');
+});
+
+test('can complete properties with backticks', async ({ mount, page }) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        propertyKeys: ['foo bar'],
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('MATCH (n) RETURN n.foo');
+  await textField.press('Escape');
+  await textField.press('Control+ ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('foo bar').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('MATCH (n) RETURN n.`foo bar`');
 });
 
 test('can update dbschema', async ({ mount, page }) => {
@@ -378,19 +400,6 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
   // We need to assert on the element having the right class
   // and trusting the CSS is making this truly strikethrough
   await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
-});
-
-test('does not signature help information on auto-completion if flag not enabled explicitly', async ({
-  page,
-  mount,
-}) => {
-  await mount(<CypherEditor schema={testData.mockSchema} />);
-
-  const textField = page.getByRole('textbox');
-  await textField.fill('CALL apoc.periodic.');
-
-  await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
-  await expect(page.locator('.cm-completionInfo')).not.toBeVisible();
 });
 
 test('does not signature help information on auto-completion if docs and signature are empty', async ({

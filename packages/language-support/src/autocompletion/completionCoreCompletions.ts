@@ -26,17 +26,33 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
+function backtickIfNeeded(e: string): string | undefined {
+  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
+
 const labelCompletions = (dbSchema: DbSchema) =>
-  dbSchema.labels?.map((labelName) => ({
-    label: labelName,
-    kind: CompletionItemKind.TypeParameter,
-  })) ?? [];
+  dbSchema.labels?.map((labelName) => {
+    const result: CompletionItem = {
+      label: labelName,
+      kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(labelName),
+    };
+    return result;
+  }) ?? [];
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
-  dbSchema.relationshipTypes?.map((relType) => ({
-    label: relType,
-    kind: CompletionItemKind.TypeParameter,
-  })) ?? [];
+  dbSchema.relationshipTypes?.map((relType) => {
+    const result: CompletionItem = {
+      label: relType,
+      kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(relType),
+    };
+    return result;
+  }) ?? [];
 
 const functionNameCompletions = (
   candidateRule: CandidateRule,
@@ -257,10 +273,14 @@ const parameterCompletions = (
       kind: CompletionItemKind.Variable,
     }));
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
-  dbInfo.propertyKeys?.map((propertyKey) => ({
-    label: propertyKey,
-    kind: CompletionItemKind.Property,
-  })) ?? [];
+  dbInfo.propertyKeys?.map((propertyKey) => {
+    const result: CompletionItem = {
+      label: propertyKey,
+      kind: CompletionItemKind.Property,
+      insertText: backtickIfNeeded(propertyKey),
+    };
+    return result;
+  }) ?? [];
 
 enum ExpectedParameterType {
   String = 'STRING',

@@ -87,6 +87,47 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Correctly completes label with backticks in MATCH', () => {
+    const query = 'MATCH (n:';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat', 'Foo Bar'] },
+      expected: [
+        {
+          label: 'Cat',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
+  test('Correctly completes started label with backticks in MATCH', () => {
+    const query = 'MATCH (n:F';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat', 'Foo Bar'] },
+      expected: [
+        // This first completion would not be offered in a client
+        {
+          label: 'Cat',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
   test('Correctly completes unstarted label for a first statement when caret is passed', () => {
     const query = 'MATCH (n:); MATCH (m:)';
 
@@ -402,6 +443,46 @@ describe('Type relationship auto-completion', () => {
       dbSchema: { relationshipTypes: ['RelationshipType'] },
       expected: [
         { label: 'RelationshipType', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Correctly completes relationship type with backticks', () => {
+    const query = 'MATCH (n)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar'] },
+      expected: [
+        {
+          label: 'Rel',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
+  test('Correctly completes started relationship type with backticks', () => {
+    const query = 'MATCH (n)-[r:Foo';
+
+    testCompletions({
+      query,
+      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar'] },
+      expected: [
+        {
+          label: 'Rel',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
       ],
     });
   });
