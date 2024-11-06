@@ -164,55 +164,26 @@ RETURN movie {
       expected: [
         { label: 'prop', kind: CompletionItemKind.Property },
         {
-          label: '`foo bar`',
+          label: 'foo bar',
+          insertText: '`foo bar`',
           kind: CompletionItemKind.Property,
-          textEdit: {
-            newText: '`foo bar`',
-            range: {
-              end: {
-                character: 18,
-                line: 0,
-              },
-              start: {
-                character: 18,
-                line: 0,
-              },
-              startOffset: 18,
-              endOffset: 18,
-            },
-          },
         },
       ],
     });
   });
 
-  test('correctly completes property keys with backticks and caret', () => {
+  test('correctly completes started property keys with backticks', () => {
     const dbSchema = { propertyKeys: ['foo bar', 'prop'] };
-    const query = 'MATCH (n) WHERE n.`foo bar` RETURN n';
+    const query = 'MATCH (n) WHERE n.foo';
     testCompletions({
       query,
       dbSchema,
-      offset: 'MATCH (n) WHERE n.`foo b'.length,
       expected: [
         { label: 'prop', kind: CompletionItemKind.Property },
         {
-          label: '`foo bar`',
+          label: 'foo bar',
+          insertText: '`foo bar`',
           kind: CompletionItemKind.Property,
-          textEdit: {
-            newText: '`foo bar`',
-            range: {
-              end: {
-                character: 27,
-                line: 0,
-              },
-              start: {
-                character: 18,
-                line: 0,
-              },
-              startOffset: 18,
-              endOffset: 27,
-            },
-          },
         },
       ],
     });

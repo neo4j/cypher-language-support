@@ -3,12 +3,10 @@ import {
   CompletionSource,
   snippet,
 } from '@codemirror/autocomplete';
-import { EditorView } from '@codemirror/view';
 import { autocomplete } from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,
-  TextEdit,
 } from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
@@ -85,95 +83,49 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       context.explicit,
     );
 
-    if (config.featureFlags?.signatureInfoOnAutoCompletions) {
-      return {
-        from: context.matchBefore(/(\w|\$)*$/).from,
-        options: options.map((o) => {
-          let maybeInfo = {};
-          let emptyInfo = true;
-          const newDiv = document.createElement('div');
+    return {
+      from: context.matchBefore(/(\w|\$)*$/).from,
+      options: options.map((o) => {
+        let maybeInfo = {};
+        let emptyInfo = true;
+        const newDiv = document.createElement('div');
 
-          if (o.signature) {
-            const header = document.createElement('p');
-            header.setAttribute('class', 'cm-completionInfo-signature');
-            header.textContent = o.signature;
-            if (header.textContent.length > 0) {
-              emptyInfo = false;
-              newDiv.appendChild(header);
-            }
+        if (o.signature) {
+          const header = document.createElement('p');
+          header.setAttribute('class', 'cm-completionInfo-signature');
+          header.textContent = o.signature;
+          if (header.textContent.length > 0) {
+            emptyInfo = false;
+            newDiv.appendChild(header);
           }
+        }
 
-          if (o.documentation) {
-            const paragraph = document.createElement('p');
-            paragraph.textContent = getDocString(o.documentation);
-            if (paragraph.textContent.length > 0) {
-              emptyInfo = false;
-              newDiv.appendChild(paragraph);
-            }
+        if (o.documentation) {
+          const paragraph = document.createElement('p');
+          paragraph.textContent = getDocString(o.documentation);
+          if (paragraph.textContent.length > 0) {
+            emptyInfo = false;
+            newDiv.appendChild(paragraph);
           }
+        }
 
-          if (!emptyInfo) {
-            maybeInfo = {
-              info: () => Promise.resolve(newDiv),
-            };
-          }
-          const deprecated =
-            o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ??
-            false;
-          // The negative boost moves the deprecation down the list
-          // so we offer the user the completions that are
-          // deprecated the last
-          const maybeDeprecated = deprecated
-            ? { boost: -99, deprecated: true }
-            : {};
-
-          context.state.doc;
-
-          // We want to modify backticked elements as a block, i.e. if the cursor is inside
-          // the label `Foo`, and the database contains the label `Foo Bar` I want
-          // to replace the whole thing when auto-completing
-          const backtickedSymbolsEdit =
-            o.textEdit && TextEdit.is(o.textEdit)
-              ? (view: EditorView) => {
-                  const startOffset = (
-                    o.textEdit as { range: { startOffset: number } }
-                  ).range.startOffset;
-                  const endOffset = (
-                    o.textEdit as { range: { endOffset: number } }
-                  ).range.endOffset;
-                  const newCursor = startOffset + o.label.length;
-                  view.dispatch({
-                    changes: {
-                      from: startOffset,
-                      to: endOffset,
-                      insert: o.label,
-                    },
-                    // This is to move the cursor to the end of the backticked thing
-                    selection: { anchor: newCursor, head: newCursor },
-                  });
-                  view;
-                }
-              : undefined;
-
-          return {
-            label: o.label,
-            type: completionKindToCodemirrorIcon(o.kind),
-            apply:
-              o.kind === CompletionItemKind.Snippet
-                ? // codemirror requires an empty snippet space to be able to tab out of the completion
-                  snippet((o.insertText ?? o.label) + '${}')
-                : backtickedSymbolsEdit,
-            detail: o.detail,
-            ...maybeDeprecated,
-            ...maybeInfo,
+        if (!emptyInfo) {
+          maybeInfo = {
+            info: () => Promise.resolve(newDiv),
           };
-        }),
-      };
-    } else {
-      return {
-        from: context.matchBefore(/(\w|\$)*$/).from,
-        options: options.map((o) => ({
-          label: o.label,
+        }
+        const deprecated =
+          o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
+        // The negative boost moves the deprecation down the list
+        // so we offer the user the completions that are
+        // deprecated the last
+        const maybeDeprecated = deprecated
+          ? { boost: -99, deprecated: true }
+          : {};
+
+        return {
+          label: o.insertText ? o.insertText : o.label,
+          displayLabel: o.label,
           type: completionKindToCodemirrorIcon(o.kind),
           apply:
             o.kind === CompletionItemKind.Snippet
@@ -181,7 +133,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
                 snippet((o.insertText ?? o.label) + '${}')
               : undefined,
           detail: o.detail,
-        })),
-      };
-    }
+          ...maybeDeprecated,
+          ...maybeInfo,
+        };
+      }),
+    };
   };

@@ -5,8 +5,6 @@ import {
   CompletionItemKind,
   CompletionItemTag,
   InsertTextFormat,
-  Position,
-  Range,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
@@ -28,30 +26,32 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
-type RangeWithOffsets = Range & { startOffset: number; endOffset: number };
+function backtickIfNeeded(e: string): string | undefined {
+  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
 
-const labelCompletions = (dbSchema: DbSchema, range: RangeWithOffsets) =>
+const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
-    const completionItem: CompletionItem = {
-      label: backtickIfNeeded(labelName),
+    const result: CompletionItem = {
+      label: labelName,
       kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(labelName),
     };
-    if (labelName !== completionItem.label) {
-      completionItem.textEdit = { range: range, newText: completionItem.label };
-    }
-    return completionItem;
+    return result;
   }) ?? [];
 
-const reltypeCompletions = (dbSchema: DbSchema, range: RangeWithOffsets) =>
+const reltypeCompletions = (dbSchema: DbSchema) =>
   dbSchema.relationshipTypes?.map((relType) => {
-    const completionItem: CompletionItem = {
-      label: backtickIfNeeded(relType),
+    const result: CompletionItem = {
+      label: relType,
       kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(relType),
     };
-    if (relType !== completionItem.label) {
-      completionItem.textEdit = { range: range, newText: completionItem.label };
-    }
-    return completionItem;
+    return result;
   }) ?? [];
 
 const functionNameCompletions = (
@@ -272,28 +272,15 @@ const parameterCompletions = (
       label: `$${paramName}`,
       kind: CompletionItemKind.Variable,
     }));
-const propertyKeyCompletions = (
-  dbInfo: DbSchema,
-  range: RangeWithOffsets,
-): CompletionItem[] =>
+const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
-    const completionItem: CompletionItem = {
-      label: backtickIfNeeded(propertyKey),
+    const result: CompletionItem = {
+      label: propertyKey,
       kind: CompletionItemKind.Property,
+      insertText: backtickIfNeeded(propertyKey),
     };
-    if (propertyKey !== completionItem.label) {
-      completionItem.textEdit = { range: range, newText: completionItem.label };
-    }
-    return completionItem;
+    return result;
   }) ?? [];
-
-function backtickIfNeeded(e: string): string {
-  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
-    return `\`${e}\``;
-  } else {
-    return e;
-  }
-}
 
 enum ExpectedParameterType {
   String = 'STRING',
@@ -421,37 +408,6 @@ export function completionCoreCompletion(
     caretIndex--;
   }
 
-  let unfinishedBacktickIdx = -1;
-  let endPosition: Position | undefined = undefined;
-  let endOffset: number | undefined = undefined;
-
-  if (tokens[caretIndex].type === CypherLexer.ESCAPED_SYMBOLIC_NAME) {
-    unfinishedBacktickIdx = caretIndex;
-    endPosition = Position.create(
-      tokens[caretIndex + 1].line - 1,
-      tokens[caretIndex + 1].column,
-    );
-    endOffset = tokens[caretIndex + 1].start;
-  } else {
-    unfinishedBacktickIdx = tokens.findIndex(
-      (token) => token.type === CypherLexer.ErrorChar && token.text === '`',
-    );
-    if (unfinishedBacktickIdx !== -1) {
-      caretIndex = unfinishedBacktickIdx;
-    }
-  }
-
-  const startPosition = Position.create(
-    tokens[caretIndex].line - 1,
-    tokens[caretIndex].column,
-  );
-  const startOffset = tokens[caretIndex].start;
-  const range = {
-    ...Range.create(startPosition, endPosition ?? startPosition),
-    startOffset: startOffset,
-    endOffset: endOffset ?? startOffset,
-  };
-
   codeCompletion.preferredRules = new Set<number>([
     CypherParser.RULE_functionName,
     CypherParser.RULE_procedureName,
@@ -549,8 +505,7 @@ export function completionCoreCompletion(
           }
         }
 
-        const properties = propertyKeyCompletions(dbSchema, range);
-        return properties;
+        return propertyKeyCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_variable) {
@@ -589,17 +544,14 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return labelCompletions(dbSchema, range);
+          return labelCompletions(dbSchema);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
-          return reltypeCompletions(dbSchema, range);
+          return reltypeCompletions(dbSchema);
         }
 
-        return [
-          ...labelCompletions(dbSchema, range),
-          ...reltypeCompletions(dbSchema, range),
-        ];
+        return [...labelCompletions(dbSchema), ...reltypeCompletions(dbSchema)];
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict

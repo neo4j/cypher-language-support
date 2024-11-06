@@ -1,8 +1,4 @@
-import {
-  CompletionItem as VSCodeCompletionItem,
-  InsertReplaceEdit,
-  Range,
-} from 'vscode-languageserver-types';
+import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
 
 export type ReturnDescription = {
   name: string;
@@ -44,14 +40,5 @@ export type Neo4jFunction = {
 };
 
 export type CompletionItem = VSCodeCompletionItem & {
-  textEdit?:
-    | {
-        range: Range & {
-          startOffset: number;
-          endOffset: number;
-        };
-        newText: string;
-      }
-    | InsertReplaceEdit;
   signature?: string;
 };

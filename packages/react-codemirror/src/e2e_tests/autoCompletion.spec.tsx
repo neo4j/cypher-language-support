@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Page } from '@playwright/test';
@@ -111,6 +112,27 @@ test('can complete labels', async ({ mount, page }) => {
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   await expect(component).toContainText('MATCH (n :Pokemon');
+});
+
+test('can complete properties with backticks', async ({ mount, page }) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        propertyKeys: ['foo bar'],
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('MATCH (n) RETURN n.foo');
+  await textField.press('Escape');
+  await textField.press('Control+ ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('foo bar').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('MATCH (n) RETURN n.`foo bar`');
 });
 
 test('can update dbschema', async ({ mount, page }) => {

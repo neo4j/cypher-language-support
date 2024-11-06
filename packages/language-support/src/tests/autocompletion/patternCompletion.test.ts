@@ -99,34 +99,19 @@ describe('MATCH auto-completion', () => {
           kind: CompletionItemKind.TypeParameter,
         },
         {
-          label: '`Foo Bar`',
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
           kind: CompletionItemKind.TypeParameter,
-          textEdit: {
-            newText: '`Foo Bar`',
-            range: {
-              end: {
-                character: 9,
-                line: 0,
-              },
-              start: {
-                character: 9,
-                line: 0,
-              },
-              startOffset: 9,
-              endOffset: 9,
-            },
-          },
         },
       ],
     });
   });
 
-  test('Correctly completes label with backticks in MATCH with caret', () => {
-    const query = 'MATCH (n:`Foo`) RETURN n';
+  test('Correctly completes label with backticks in MATCH with label started', () => {
+    const query = 'MATCH (n:F';
 
     testCompletions({
       query,
-      offset: 'MATCH (n:`F'.length,
       dbSchema: { labels: ['Cat', 'Foo Bar'] },
       expected: [
         // This first completion would not be offered in a client
@@ -135,23 +120,9 @@ describe('MATCH auto-completion', () => {
           kind: CompletionItemKind.TypeParameter,
         },
         {
-          label: '`Foo Bar`',
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
           kind: CompletionItemKind.TypeParameter,
-          textEdit: {
-            newText: '`Foo Bar`',
-            range: {
-              end: {
-                character: 14,
-                line: 0,
-              },
-              start: {
-                character: 9,
-                line: 0,
-              },
-              startOffset: 9,
-              endOffset: 14,
-            },
-          },
         },
       ],
     });
@@ -488,34 +459,19 @@ describe('Type relationship auto-completion', () => {
           kind: CompletionItemKind.TypeParameter,
         },
         {
-          label: '`Foo Bar`',
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
           kind: CompletionItemKind.TypeParameter,
-          textEdit: {
-            newText: '`Foo Bar`',
-            range: {
-              end: {
-                character: 13,
-                line: 0,
-              },
-              start: {
-                character: 13,
-                line: 0,
-              },
-              startOffset: 13,
-              endOffset: 13,
-            },
-          },
         },
       ],
     });
   });
 
-  test('Correctly completes relationship type with backticks and caret', () => {
-    const query = 'MATCH (n)-[r:`Foo`]->(m) RETURN m';
+  test('Correctly completes started relationship type with backticks', () => {
+    const query = 'MATCH (n)-[r:Foo';
 
     testCompletions({
       query,
-      offset: 'MATCH (n)-[r:`F'.length,
       dbSchema: { relationshipTypes: ['Rel', 'Foo Bar'] },
       expected: [
         {
@@ -523,23 +479,9 @@ describe('Type relationship auto-completion', () => {
           kind: CompletionItemKind.TypeParameter,
         },
         {
-          label: '`Foo Bar`',
+          label: 'Foo Bar',
+          insertText: '`Foo Bar`',
           kind: CompletionItemKind.TypeParameter,
-          textEdit: {
-            newText: '`Foo Bar`',
-            range: {
-              end: {
-                character: 18,
-                line: 0,
-              },
-              start: {
-                character: 13,
-                line: 0,
-              },
-              startOffset: 13,
-              endOffset: 18,
-            },
-          },
         },
       ],
     });

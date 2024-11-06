@@ -22,7 +22,6 @@ export type CypherConfig = {
   lint?: boolean;
   showSignatureTooltipBelow?: boolean;
   featureFlags?: {
-    signatureInfoOnAutoCompletions?: boolean;
     consoleCommands?: boolean;
   };
   schema?: DbSchema;
