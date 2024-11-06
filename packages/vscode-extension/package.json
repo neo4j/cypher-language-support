@@ -68,6 +68,10 @@
       {
         "command": "neo4j.runCypher",
         "title": "Neo4j: Run Cypher Statements"
+      },
+      {
+        "command": "neo4j.cypherFileFromSelection",
+        "title": "Neo4j: Create Cypher file from selection"
       }
     ],
     "keybindings": [
@@ -92,6 +96,11 @@
         {
           "command": "neo4j.runCypher",
           "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
+          "group": "z_commands"
+        },
+        {
+          "command": "neo4j.cypherFileFromSelection",
+          "when": "editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
           "group": "z_commands"
         }
       ],

@@ -8,6 +8,7 @@ export const CONSTANTS = {
     DISCONNECT_COMMAND: 'neo4j.disconnect',
     SWITCH_DATABASE_COMMAND: 'neo4j.switchDatabase',
     RUN_CYPHER: 'neo4j.runCypher',
+    CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
   },
   MESSAGES: {
     CONNECTED_MESSAGE: 'Connected to Neo4j.',
