@@ -8,7 +8,6 @@ before(async () => {
     writeEnvFile: false,
   });
   const port = container.getMappedPort(7687);
-
   const workbench = await browser.getWorkbench();
   const activityBar = workbench.getActivityBar();
   const neo4jTile = await activityBar.getViewControl('Neo4j');

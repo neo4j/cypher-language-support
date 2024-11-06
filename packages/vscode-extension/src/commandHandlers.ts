@@ -1,5 +1,5 @@
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
-import { commands, ConfigurationChangeEvent, window } from 'vscode';
+import { commands, ConfigurationChangeEvent, Selection, window } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
@@ -175,6 +175,14 @@ export async function switchToDatabase(
   displayMessageForSwitchDatabaseResult(database, result);
 }
 
+export function sortByPosition(a: Selection, b: Selection): number {
+  const lineDiff = a.start.line - b.start.line;
+  if (lineDiff !== 0) return lineDiff;
+
+  const columnDiff = a.start.character - b.start.character;
+  return columnDiff;
+}
+
 export async function runCypher(): Promise<void> {
   const cypherRunner = getQueryRunner();
 
@@ -192,8 +200,21 @@ export async function runCypher(): Promise<void> {
       return;
     }
 
-    const documentText = editor.document.getText();
+    const selections = editor.selections.filter(
+      (selection) => !selection.isEmpty && editor.document.getText(selection),
+    );
+
     const documentUri = editor.document.uri;
-    await cypherRunner.run(activeConnection, documentUri, documentText);
+
+    const text =
+      selections.length === 0
+        ? editor.document.getText()
+        : selections
+            .sort(sortByPosition)
+            .map((selection) => {
+              return editor.document.getText(selection);
+            })
+            .join(' ');
+    await cypherRunner.run(activeConnection, documentUri, text);
   }
 }
