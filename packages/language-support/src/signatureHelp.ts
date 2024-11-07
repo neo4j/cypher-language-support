@@ -36,15 +36,35 @@ interface ParsedMethod {
 export function toSignatureInformation(
   curr: Neo4jFunction | Neo4jProcedure,
 ): SignatureInformation {
-  const { signature, argumentDescription, description } = curr;
+  const { name, argumentDescription, description } = curr;
+  const argDescriptions = argumentDescription.map((arg) => {
+    let label = '';
+
+    // If there's a default value, it has the shape
+    // DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}
+    if (arg.default) {
+      const startIndex = arg.default.indexOf('value=') + 'value='.length;
+      const endIndex = arg.default.indexOf(', type=', startIndex);
+      const defaultArg = arg.default.substring(startIndex, endIndex);
+
+      label = `${arg.name} = ${defaultArg} :: ${arg.type}`;
+    } else {
+      label = `${arg.name} :: ${arg.type}`;
+    }
+
+    return {
+      label: label,
+      documentation: arg.description,
+    };
+  });
+
+  const argsString = argDescriptions.map((arg) => arg.label).join(', ');
+  const signature = `${name}(${argsString})`;
 
   return SignatureInformation.create(
     signature,
     description,
-    ...argumentDescription.map((arg) => ({
-      label: `${arg.name} :: ${arg.type}`,
-      documentation: arg.description,
-    })),
+    ...argDescriptions,
   );
 }
 
