@@ -10,6 +10,7 @@ env:
 jobs:
   canary-release-to-npm:
     name: 'Canary release to npm'
+    needs: stable-release-to-npm
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +35,6 @@ jobs:
 
   stable-release-to-npm:
     name: 'Stable release to npm'
-    needs: canary-release-to-npm
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
