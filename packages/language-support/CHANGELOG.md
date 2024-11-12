@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.11
+
+### Patch Changes
+
+- bccf518: Fixes signature help bug with arguments that include a default value
+
 ## 2.0.0-next.10
 
 ### Patch Changes

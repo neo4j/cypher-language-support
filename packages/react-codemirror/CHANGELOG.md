@@ -1,5 +1,13 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.14
+
+### Patch Changes
+
+- d85c1e0: Fixes bug with auto-completions
+- Updated dependencies [bccf518]
+  - @neo4j-cypher/language-support@2.0.0-next.11
+
 ## 2.0.0-next.13
 
 ### Patch Changes
