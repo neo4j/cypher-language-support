@@ -30,7 +30,7 @@
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
     "prepublishOnly": "npm run generate && npm run test",
     "test": "vitest run",
-    "generate": "cd tests && generate.sh",
+    "generate": "cd tests && sh generate.sh",
     "eslint": "eslint .",
     "clean": "rm -rf dist"
   },

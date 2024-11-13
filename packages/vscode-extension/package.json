@@ -299,7 +299,7 @@
     "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild.js --production",
-    "bundle-ndl": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl",
+    "bundle-ndl": "cp ./node_modules/@neo4j-ndl/base/lib/neo4j-ds-styles.css ./resources/styles/ndl.css",
     "bundle-extension:dev": "node ./esbuild.js",
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist --platform=browser",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers && npm run bundle-ndl",
