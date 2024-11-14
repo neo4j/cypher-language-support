@@ -1295,15 +1295,15 @@ IDENTIFIER
    ;
 
 ARROW_LINE
-   : [\-\u00AD‐‑‒–—―﹘﹣－]
+   : [\-\u00AD\u2010\u2011\u2012\u2013\u2014\u2015\ufe58\ufe63\uff0d]
    ;
 
 ARROW_LEFT_HEAD
-   : [⟨〈﹤＜]
+   : [\u27e8\u3008\ufe64\uff1c\u003c]
    ;
 
 ARROW_RIGHT_HEAD
-   : [⟩〉﹥＞]
+   : [\u27e9\u3009\ufe65\uff1e]
    ;
 
 fragment LETTER
