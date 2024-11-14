@@ -301,7 +301,7 @@
     "bundle-extension": "node ./esbuild.js --production",
     "bundle-ndl": "cp ./node_modules/@neo4j-ndl/base/lib/neo4j-ds-styles.css ./resources/styles/ndl.css",
     "bundle-extension:dev": "node ./esbuild.js",
-    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist --platform=browser",
+    "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers && npm run bundle-ndl",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
