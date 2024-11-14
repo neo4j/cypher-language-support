@@ -9,6 +9,7 @@ import {
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
+  CallClauseContext,
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
 import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
@@ -19,7 +20,7 @@ import {
   tokenNames,
 } from '../lexerSymbols';
 
-import { ParsedStatement } from '../parserWrapper';
+import { getMethodName, ParsedStatement } from '../parserWrapper';
 
 import { _internalFeatureFlags } from '../featureFlags';
 import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
@@ -53,6 +54,17 @@ const reltypeCompletions = (dbSchema: DbSchema) =>
     };
     return result;
   }) ?? [];
+
+const procedureReturnCompletions = (
+  procedureName: string,
+  dbSchema: DbSchema,
+): CompletionItem[] => {
+  return (
+    dbSchema?.procedures[procedureName]?.returnDescription?.map((x) => {
+      return { label: x.name, kind: CompletionItemKind.Variable };
+    }) ?? []
+  );
+};
 
 const functionNameCompletions = (
   candidateRule: CandidateRule,
@@ -419,6 +431,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_leftArrow,
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
+    CypherParser.RULE_procedureResultItem,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -453,6 +466,16 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
+      if (
+        ruleNumber === CypherParser.RULE_procedureResultItem &&
+        parsingResult.stopNode.parentCtx instanceof CallClauseContext
+      ) {
+        const procedureNameCtx =
+          parsingResult.stopNode.parentCtx.procedureName();
+        const name = getMethodName(procedureNameCtx); //parentCtx.procedureName().getText()
+        return procedureReturnCompletions(name, dbSchema);
+      }
+
       if (ruleNumber === CypherParser.RULE_functionName) {
         return functionNameCompletions(candidateRule, tokens, dbSchema);
       }
