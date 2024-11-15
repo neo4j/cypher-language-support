@@ -318,6 +318,39 @@ describe('Procedures auto-completion', () => {
     });
   });
 
+  test('Correctly completes YIELD when we have started the return value name', () => {
+    const query1 = 'CALL dbms.components() YIELD n';
+    const query2 = 'CALL dbms.components() YIELD name, ed';
+    const query3 = 'CALL dbms.components() YIELD name, edition,';
+    testCompletions({
+      query: query1,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query2,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query3,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
   test('Correctly completes YIELD when we have backticks in the procedure name', () => {
     const query1 = 'CALL `dbms`.`components`() YIELD ';
     const query2 = 'CALL db.`stats`.`collect`   () YIELD ';

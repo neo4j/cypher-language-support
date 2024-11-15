@@ -12,7 +12,11 @@ import CypherParser, {
   CallClauseContext,
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
-import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
+import {
+  findParent,
+  findPreviousNonSpace,
+  rulesDefiningVariables,
+} from '../helpers';
 import {
   CypherTokenType,
   lexerKeywords,
@@ -466,14 +470,16 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
-      if (
-        ruleNumber === CypherParser.RULE_procedureResultItem &&
-        parsingResult.stopNode.parentCtx instanceof CallClauseContext
-      ) {
-        const procedureNameCtx =
-          parsingResult.stopNode.parentCtx.procedureName();
-        const name = getMethodName(procedureNameCtx); //parentCtx.procedureName().getText()
-        return procedureReturnCompletions(name, dbSchema);
+      if (ruleNumber === CypherParser.RULE_procedureResultItem) {
+        const callContext = findParent(
+          parsingResult.stopNode.parentCtx,
+          (x) => x instanceof CallClauseContext,
+        );
+        if (callContext instanceof CallClauseContext) {
+          const procedureNameCtx = callContext.procedureName();
+          const name = getMethodName(procedureNameCtx);
+          return procedureReturnCompletions(name, dbSchema);
+        }
       }
 
       if (ruleNumber === CypherParser.RULE_functionName) {
