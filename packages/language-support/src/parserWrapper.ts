@@ -417,7 +417,8 @@ export type ParsedCommandNoPosition =
   | { type: 'disconnect' }
   | { type: 'server'; operation: string }
   | { type: 'welcome' }
-  | { type: 'parse-error' };
+  | { type: 'parse-error' }
+  | { type: 'sysinfo' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -547,6 +548,11 @@ function parseToCommand(
       const welcomeCmd = consoleCmd.welcomeCmd();
       if (welcomeCmd) {
         return { type: 'welcome', start, stop };
+      }
+
+      const sysInfoCmd = consoleCmd.sysInfoCmd();
+      if (sysInfoCmd) {
+        return { type: 'sysinfo', start, stop };
       }
 
       return { type: 'parse-error', start, stop };

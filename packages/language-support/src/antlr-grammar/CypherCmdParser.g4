@@ -17,6 +17,7 @@ consoleCommand: COLON (
     | connectCmd
     | disconnectCmd
     | welcomeCmd
+    | sysInfoCmd
 );
 
 paramsCmd: PARAM paramsArgs?;
@@ -39,7 +40,7 @@ connectCmd: CONNECT;
 
 disconnectCmd: DISCONNECT;
 
-sysinfoCmd: SYSINFO;
+sysInfoCmd: SYSINFO;
 
 welcomeCmd: WELCOME;
 
@@ -59,5 +60,6 @@ unescapedLabelSymbolicNameString:
     | CONNECT
     | DISCONNECT
     | WELCOME
+    | SYSINFO
     | unescapedLabelSymbolicNameString_
     ;
