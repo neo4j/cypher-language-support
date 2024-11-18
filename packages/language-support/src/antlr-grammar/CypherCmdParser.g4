@@ -31,7 +31,7 @@ historyCmd: HISTORY;
 
 useCmd: useCompletionRule symbolicAliasName?;
 
-serverCmd: SERVER serverArgs?;
+serverCmd: serverCompletionRule serverArgs;
 
 serverArgs: (CONNECT | DISCONNECT);
 
@@ -48,13 +48,14 @@ listCompletionRule: LIST;
 
 useCompletionRule: USE;
 
+serverCompletionRule: SERVER;
+
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
 unescapedLabelSymbolicNameString: 
     preparserOption 
     | HISTORY
     | CLEAR
     | PARAM
-    | SERVER
     | CONNECT
     | DISCONNECT
     | WELCOME

@@ -39,6 +39,7 @@ describe('sanity checks', () => {
   beforeAll(() => {
     _internalFeatureFlags.consoleCommands = true;
   });
+
   afterAll(() => {
     _internalFeatureFlags.consoleCommands = false;
   });
@@ -46,6 +47,8 @@ describe('sanity checks', () => {
   test('parses simple commands without args ', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
+    expectParsedCommands(':connect', [{ type: 'connect' }]);
+    expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
   });
 
   test('properly highlights simple commands', () => {
@@ -93,11 +96,59 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+    expect(applySyntaxColouring(':connect')).toEqual([
+      {
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 1,
+          startOffset: 1,
+        },
+        token: 'connect',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':disconnect')).toEqual([
+      {
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 10,
+        position: {
+          line: 0,
+          startCharacter: 1,
+          startOffset: 1,
+        },
+        token: 'disconnect',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
+      { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'welcome' },
+      { kind: 23, label: 'disconnect' },
+      { kind: 23, label: 'connect' },
       { kind: 23, label: 'param' },
       { kind: 23, label: 'history' },
       { kind: 23, label: 'clear' },
@@ -134,7 +185,10 @@ describe('sanity checks', () => {
   });
 
   test('handles misspelled or non-existing command', () => {
-    expectErrorMessage(':foo', 'Expected any of param, history, clear or use');
+    expectErrorMessage(
+      ':foo',
+      'Expected any of welcome, disconnect, connect, param, history, clear, server or use',
+    );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
   });
@@ -443,6 +497,109 @@ describe('parameters', () => {
         position: { line: 0, startCharacter: 16, startOffset: 16 },
         token: '}',
         tokenType: 'bracket',
+      },
+    ]);
+  });
+});
+
+describe.only('server', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.consoleCommands = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = false;
+  });
+
+  test('basic server usage', () => {
+    expectParsedCommands(':server connect', [
+      { type: 'server', operation: 'connect' },
+    ]);
+    expectParsedCommands(':server disconnect', [
+      { type: 'server', operation: 'disconnect' },
+    ]);
+  });
+
+  test('autocompletes operation', () => {
+    const mapCompletions = autocomplete(':server conn', {
+      functions: {
+        'duration.inSeconds': {
+          ...testData.emptyFunction,
+          name: 'duration.inSeconds',
+        },
+      },
+    });
+
+    const expected = [
+      { kind: 23, label: 'connect' },
+      { kind: 23, label: 'disconnect' },
+    ];
+
+    expected.forEach((completion) => {
+      expect(mapCompletions).toContainEqual(completion);
+    });
+  });
+
+  test('incorrect usage of :server', () => {
+    expectErrorMessage(':server', 'Expected connect or disconnect');
+    expectErrorMessage(':server xyz', 'Expected connect or disconnect');
+  });
+
+  test('highlights :server properly', () => {
+    expect(applySyntaxColouring(':server')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'server',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':server connect')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'server',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 7,
+        position: { line: 0, startCharacter: 8, startOffset: 8 },
+        token: 'connect',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':server disconnect')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 6,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'server',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 10,
+        position: { line: 0, startCharacter: 8, startOffset: 8 },
+        token: 'disconnect',
+        tokenType: 'consoleCommand',
       },
     ]);
   });

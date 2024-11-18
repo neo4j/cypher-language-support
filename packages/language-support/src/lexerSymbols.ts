@@ -371,7 +371,6 @@ export const lexerConsoleCmds = [
   CypherLexer.HISTORY,
   CypherLexer.PARAM,
   CypherLexer.CLEAR,
-  CypherLexer.SERVER,
   CypherLexer.CONNECT,
   CypherLexer.DISCONNECT,
   CypherLexer.WELCOME,

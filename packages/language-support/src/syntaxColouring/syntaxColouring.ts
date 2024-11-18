@@ -20,6 +20,7 @@ import {
   PropertyKeyNameContext,
   ReduceExpressionContext,
   RightArrowContext,
+  ServerCompletionRuleContext,
   StringLiteralContext,
   StringsLiteralContext,
   SymbolicNameStringContext,
@@ -247,6 +248,16 @@ class SyntaxHighlighter extends CypherParserListener {
     const use = ctx.USE();
 
     this.addToken(use.symbol, CypherTokenType.consoleCommand, use.getText());
+  };
+
+  exitServerCompletionRule = (ctx: ServerCompletionRuleContext) => {
+    const server = ctx.SERVER();
+
+    this.addToken(
+      server.symbol,
+      CypherTokenType.consoleCommand,
+      server.getText(),
+    );
   };
 
   exitParamsArgs = (ctx: ParamsArgsContext) => {
