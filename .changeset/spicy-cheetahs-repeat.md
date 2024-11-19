@@ -2,4 +2,4 @@
 "@neo4j-cypher/language-support": patch
 ---
 
-Add support for welcome, connect, disconnect and server console commands
+Add support for sysinfo, welcome, connect, disconnect and server console commands
