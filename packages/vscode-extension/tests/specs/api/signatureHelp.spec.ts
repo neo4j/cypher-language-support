@@ -1,5 +1,5 @@
 import {
-  testData,
+  testData_v5,
   toSignatureInformation,
 } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
@@ -66,7 +66,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.functions.abs,
+          testData_v5.mockSchema.functions.abs,
         ) as vscode.SignatureInformation,
       ],
     };
@@ -86,7 +86,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData_v5.mockSchema.procedures['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -106,7 +106,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData_v5.mockSchema.procedures['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -126,7 +126,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData_v5.mockSchema.procedures['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -148,7 +148,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData_v5.mockSchema.procedures['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };

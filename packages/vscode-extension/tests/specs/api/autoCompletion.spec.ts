@@ -1,4 +1,4 @@
-import { testData } from '@neo4j-cypher/language-support';
+import { testData_v5 } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CompletionItemTag } from 'vscode-languageclient';
@@ -10,7 +10,7 @@ type InclusionTestArgs = {
   expected: vscode.CompletionItem[];
 };
 
-const { functions, procedures } = testData.mockSchema;
+const { functions, procedures } = testData_v5.mockSchema;
 
 export async function testCompletionContains({
   textFile,

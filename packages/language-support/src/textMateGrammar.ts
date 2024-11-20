@@ -1,4 +1,5 @@
-import { keywordNames, operatorSymbols } from './lexerSymbols';
+// We should change Cypher 5 for Cypher 25 here
+import { keywordNames, operatorSymbols } from './Cypher5/lexerSymbols';
 
 const keywordRegex = new Array(...keywordNames.values()).join('|');
 const operatorsRegex = new Array(...operatorSymbols.values())

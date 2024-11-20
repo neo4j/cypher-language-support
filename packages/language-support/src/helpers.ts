@@ -1,82 +1,26 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore There is a default export but not in the types
 import antlrDefaultExport, {
+  CharStreams,
   CommonTokenStream,
   ParserRuleContext,
-  ParseTree,
   Token,
 } from 'antlr4';
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser, {
-  NodePatternContext,
-  RelationshipPatternContext,
-  StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
-import { ParsedStatement, ParsingResult } from './parserWrapper';
-
-/* In antlr we have 
-
-        ParseTree
-           / \
-          /   \
-TerminalNode   RuleContext
-                \
-                ParserRuleContext                 
-
-Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
-This type fixes that because it's what we need to traverse the tree most
-of the time
-*/
-export type EnrichedParseTree = ParseTree & {
-  parentCtx: ParserRuleContext | undefined;
-};
-
-export function findStopNode(root: StatementsOrCommandsContext) {
-  let children = root.children;
-  let current: ParserRuleContext = root;
-
-  while (children && children.length > 0) {
-    let index = children.length - 1;
-    let child = children[index];
-
-    while (
-      index > 0 &&
-      (child === root.EOF() ||
-        child.getText() === '' ||
-        child.getText().startsWith('<missing'))
-    ) {
-      index--;
-      child = children[index];
-    }
-    current = child as ParserRuleContext;
-    children = current.children;
-  }
-
-  return current;
-}
-
-export function findParent(
-  leaf: EnrichedParseTree | undefined,
-  condition: (node: EnrichedParseTree) => boolean,
-): EnrichedParseTree {
-  let current: EnrichedParseTree | undefined = leaf;
-
-  while (current && !condition(current)) {
-    current = current.parentCtx;
-  }
-
-  return current;
-}
-
-export function getTokens(tokenStream: CommonTokenStream): Token[] {
-  // FIXME The type of .tokens is string[], it seems wrong in the antlr4 library
-  // Fix this after we've raised an issue and a PR and has been corrected in antlr4
-  return tokenStream.tokens as unknown as Token[];
-}
-
-export function isDefined(x: unknown) {
-  return x !== null && x !== undefined;
-}
+import {
+  SemanticTokensLegend,
+  SemanticTokenTypes,
+  SignatureInformation,
+} from 'vscode-languageserver-types';
+import CypherParser_v25 from './Cypher25/generated-parser/CypherCmdParser';
+import CypherParser_v5 from './Cypher5/generated-parser/CypherCmdParser';
+import { DbSchema } from './dbSchema';
+import PreParserLexer from './PreParser/generated-preparser/PreParserLexer';
+import PreParserParser from './PreParser/generated-preparser/PreParserParser';
+import {
+  CypherTokenType,
+  CypherVersion,
+  Neo4jFunction,
+  Neo4jProcedure,
+  TokenPosition,
+} from './types';
 
 type AntlrDefaultExport = {
   tree: {
@@ -84,7 +28,7 @@ type AntlrDefaultExport = {
       getNodeText(
         node: ParserRuleContext,
         s: string[],
-        c: typeof CypherParser,
+        c: typeof CypherParser_v5 | CypherParser_v25,
       ): string;
       getChildren(node: ParserRuleContext): ParserRuleContext[];
     };
@@ -92,128 +36,114 @@ type AntlrDefaultExport = {
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
-export function inNodeLabel(stopNode: ParserRuleContext) {
-  const nodePattern = findParent(
-    stopNode,
-    (p) => p instanceof NodePatternContext,
-  );
+export const syntaxColouringLegend: SemanticTokensLegend = {
+  tokenModifiers: [],
+  tokenTypes: Object.keys(SemanticTokenTypes),
+};
 
-  return isDefined(nodePattern);
-}
+const semanticTokenTypesNumber: Map<string, number> = new Map(
+  syntaxColouringLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
+);
 
-export function inRelationshipType(stopNode: ParserRuleContext) {
-  const relPattern = findParent(
-    stopNode,
-    (p) => p instanceof RelationshipPatternContext,
-  );
+export function mapCypherToSemanticTokenIndex(
+  cypherTokenType: CypherTokenType,
+): number | undefined {
+  const tokenMappings: { [key in CypherTokenType]?: SemanticTokenTypes } = {
+    [CypherTokenType.comment]: SemanticTokenTypes.comment,
+    [CypherTokenType.predicateFunction]: SemanticTokenTypes.function,
+    [CypherTokenType.keyword]: SemanticTokenTypes.keyword,
+    [CypherTokenType.keywordLiteral]: SemanticTokenTypes.string,
+    [CypherTokenType.stringLiteral]: SemanticTokenTypes.string,
+    [CypherTokenType.numberLiteral]: SemanticTokenTypes.number,
+    [CypherTokenType.booleanLiteral]: SemanticTokenTypes.number,
+    [CypherTokenType.operator]: SemanticTokenTypes.operator,
+    [CypherTokenType.separator]: SemanticTokenTypes.operator,
+    [CypherTokenType.punctuation]: SemanticTokenTypes.operator,
+    [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
+    [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
+    [CypherTokenType.property]: SemanticTokenTypes.property,
+    [CypherTokenType.label]: SemanticTokenTypes.type,
+    [CypherTokenType.variable]: SemanticTokenTypes.variable,
+    [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
+    [CypherTokenType.consoleCommand]: SemanticTokenTypes.macro,
+  };
 
-  return isDefined(relPattern);
-}
+  const semanticTokenType = tokenMappings[cypherTokenType];
 
-export function findCaret(
-  parsingResult: ParsingResult,
-  caretPosition: number,
-): { statement: ParsedStatement; token: Token } | undefined {
-  const statements = parsingResult.statementsParsing;
-  let i = 0;
-  let result: { statement: ParsedStatement; token: Token } = undefined;
-  let keepLooking = true;
-
-  while (i < statements.length && keepLooking) {
-    let j = 0;
-    const statement = statements[i];
-    const tokens = statement.tokens;
-
-    while (j < tokens.length && keepLooking) {
-      const currentToken = tokens[j];
-      keepLooking = currentToken.start <= caretPosition;
-
-      if (currentToken.channel === 0 && keepLooking) {
-        result = { statement: statement, token: currentToken };
-      }
-
-      j++;
-    }
-    i++;
-  }
-
-  return result;
-}
-
-export function splitIntoStatements(
-  tokenStream: CommonTokenStream,
-  lexer: CypherLexer,
-): CommonTokenStream[] {
-  tokenStream.fill();
-  const tokens = tokenStream.tokens;
-
-  let i = 0;
-  const result: CommonTokenStream[] = [];
-  let chunk: Token[] = [];
-  let offset = 0;
-
-  while (i < tokens.length) {
-    const current = tokens[i].clone();
-    current.tokenIndex -= offset;
-
-    chunk.push(current);
-
-    if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
-    ) {
-      // This does not relex since we are not calling fill on the token stream
-      const tokenStream = new CommonTokenStream(lexer);
-      tokenStream.tokens = chunk;
-      result.push(tokenStream);
-      offset = i + 1;
-      chunk = [];
-    }
-
-    i++;
-  }
-
-  return result;
-}
-
-export function findPreviousNonSpace(
-  tokens: Token[],
-  index: number,
-): Token | undefined {
-  let i = index;
-  while (i > 0) {
-    const token = tokens[--i];
-
-    if (token.type !== CypherParser.SPACE) {
-      return token;
-    }
+  if (semanticTokenType) {
+    return semanticTokenTypesNumber.get(semanticTokenType);
   }
 
   return undefined;
 }
 
-export function isCommentOpener(
-  thisToken: Token,
-  nextToken: Token | undefined,
-): boolean {
-  return thisToken.text === '/' && nextToken?.text === '*';
+export function tokenPositionToString(tokenPosition: TokenPosition): string {
+  return `${tokenPosition.line},${tokenPosition.startCharacter}`;
 }
 
-export const rulesDefiningVariables = [
-  CypherParser.RULE_returnItem,
-  CypherParser.RULE_unwindClause,
-  CypherParser.RULE_subqueryInTransactionsReportParameters,
-  CypherParser.RULE_procedureResultItem,
-  CypherParser.RULE_foreachClause,
-  CypherParser.RULE_loadCSVClause,
-  CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_listItemsPredicate,
-  CypherParser.RULE_listComprehension,
-];
+export function getTokenPosition(token: Token): TokenPosition {
+  return {
+    line: token.line - 1,
+    startCharacter: token.column,
+    startOffset: token.start,
+  };
+}
 
-export const rulesDefiningOrUsingVariables = [
-  ...rulesDefiningVariables,
-  CypherParser.RULE_pattern,
-  CypherParser.RULE_nodePattern,
-  CypherParser.RULE_relationshipPattern,
-];
+export function cypherVersion(
+  query: string,
+  dbSchema: DbSchema,
+): CypherVersion {
+  const defaultLanguage: CypherVersion =
+    dbSchema.dbInfos?.find((db) => db.name === dbSchema.currentDatabase)
+      .defaultLanguage ?? 'cypher 25';
+  const inputStream = CharStreams.fromString(query);
+  const lexer = new PreParserLexer(inputStream);
+  lexer.removeErrorListeners();
+  const tokenStream = new CommonTokenStream(lexer);
+  const preparser = new PreParserParser(tokenStream);
+  preparser.removeErrorListeners();
+  const version = preparser.cypherVersion();
+
+  if (version === null) {
+    return defaultLanguage;
+  }
+  if (version.cypherFive() != null) {
+    return 'cypher 5';
+  }
+  return 'cypher 25';
+}
+
+export function toSignatureInformation(
+  curr: Neo4jFunction | Neo4jProcedure,
+): SignatureInformation {
+  const { name, argumentDescription, description } = curr;
+  const argDescriptions = argumentDescription.map((arg) => {
+    let label = '';
+
+    // If there's a default value, it has the shape
+    // DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}
+    if (arg.default) {
+      const startIndex = arg.default.indexOf('value=') + 'value='.length;
+      const endIndex = arg.default.indexOf(', type=', startIndex);
+      const defaultArg = arg.default.substring(startIndex, endIndex);
+
+      label = `${arg.name} = ${defaultArg} :: ${arg.type}`;
+    } else {
+      label = `${arg.name} :: ${arg.type}`;
+    }
+
+    return {
+      label: label,
+      documentation: arg.description,
+    };
+  });
+
+  const argsString = argDescriptions.map((arg) => arg.label).join(', ');
+  const signature = `${name}(${argsString})`;
+
+  return SignatureInformation.create(
+    signature,
+    description,
+    ...argDescriptions,
+  );
+}

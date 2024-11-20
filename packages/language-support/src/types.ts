@@ -1,4 +1,76 @@
-import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
+import {
+  CompletionItem as VSCodeCompletionItem,
+  Diagnostic,
+  SemanticTokenTypes,
+} from 'vscode-languageserver-types';
+
+export type CypherVersion = 'cypher 5' | 'cypher 25';
+
+export interface DbInfo {
+  name: string;
+  defaultLanguage?: CypherVersion;
+}
+
+export enum CypherTokenType {
+  comment = 'comment',
+  keyword = 'keyword',
+  label = 'label',
+  predicateFunction = 'predicateFunction',
+  function = 'function',
+  procedure = 'procedure',
+  variable = 'variable',
+  paramDollar = 'paramDollar',
+  paramValue = 'paramValue',
+  symbolicName = 'symbolicName',
+  operator = 'operator',
+  stringLiteral = 'stringLiteral',
+  numberLiteral = 'numberLiteral',
+  booleanLiteral = 'booleanLiteral',
+  keywordLiteral = 'keywordLiteral',
+  property = 'property',
+  namespace = 'namespace',
+  bracket = 'bracket',
+  separator = 'separator',
+  punctuation = 'punctuation',
+  none = 'none',
+  consoleCommand = 'consoleCommand',
+}
+
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
+
+export interface TokenPosition {
+  line: number;
+  startCharacter: number;
+  startOffset: number;
+}
+
+export interface ParsedCypherToken {
+  position: TokenPosition;
+  length: number;
+  tokenType: CypherTokenType;
+  token: string;
+  bracketInfo?: BracketInfo;
+}
+
+export interface BracketInfo {
+  bracketType: BracketType;
+  bracketLevel: number;
+}
+
+export enum BracketType {
+  bracket = 'bracket',
+  parenthesis = 'parenthesis',
+  curly = 'curly',
+}
+
+export interface ColouredToken {
+  position: TokenPosition;
+  length: number;
+  tokenColour: SemanticTokenTypes;
+  token: string;
+}
 
 export type ReturnDescription = {
   name: string;

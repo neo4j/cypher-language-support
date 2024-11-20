@@ -1,8 +1,14 @@
-import { applySyntaxColouring } from '@neo4j-cypher/language-support';
+import { applySyntaxColouring, DbSchema } from '@neo4j-cypher/language-support';
 import React from 'react';
 
-export function TokenTable({ document }: { document: string }) {
-  const tokens = applySyntaxColouring(document);
+export function TokenTable({
+  document,
+  dbSchema,
+}: {
+  document: string;
+  dbSchema: DbSchema;
+}) {
+  const tokens = applySyntaxColouring(document, dbSchema);
 
   const tableHeadings = ['text', 'type', 'startIndex'];
 

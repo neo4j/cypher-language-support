@@ -1,9 +1,10 @@
-import { Neo4jFunction, Neo4jProcedure } from './types';
+import { DbInfo, Neo4jFunction, Neo4jProcedure } from './types';
 
 export interface DbSchema {
   labels?: string[];
   relationshipTypes?: string[];
-  databaseNames?: string[];
+  currentDatabase?: string;
+  dbInfos?: DbInfo[];
   aliasNames?: string[];
   userNames?: string[];
   roleNames?: string[];

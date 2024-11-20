@@ -1,4 +1,4 @@
-import { testData } from '@neo4j-cypher/language-support';
+import { testData_v5 } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
@@ -35,7 +35,7 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
       prompt="neo4j>"
       theme="dark"
       lint
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
     />,
   );
 
@@ -47,33 +47,48 @@ test('benchmarking & performance test session', async ({ mount, page }) => {
 
   // set and unset large query a few times
   await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
+    <CypherEditor
+      value={testData_v5.largeQuery}
+      schema={testData_v5.mockSchema}
+    />,
   );
   await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
+    <CypherEditor value="" schema={testData_v5.mockSchema} />,
   );
 
   await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
+    <CypherEditor
+      value={testData_v5.largeQuery}
+      schema={testData_v5.mockSchema}
+    />,
   );
   await component.update(<CypherEditor value="" />);
 
   await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
+    <CypherEditor
+      value={testData_v5.largeQuery}
+      schema={testData_v5.mockSchema}
+    />,
   );
   await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
-  );
-
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
-  await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
+    <CypherEditor value="" schema={testData_v5.mockSchema} />,
   );
 
   await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
+    <CypherEditor
+      value={testData_v5.largeQuery}
+      schema={testData_v5.mockSchema}
+    />,
+  );
+  await component.update(
+    <CypherEditor value="" schema={testData_v5.mockSchema} />,
+  );
+
+  await component.update(
+    <CypherEditor
+      value={testData_v5.largeQuery}
+      schema={testData_v5.mockSchema}
+    />,
   );
 
   await editorPage.getEditor().pressSequentially(`

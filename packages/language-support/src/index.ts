@@ -1,26 +1,30 @@
 export type { ParserRuleContext } from 'antlr4';
-export { autocomplete } from './autocompletion/autocompletion';
+export { testData as testData_v25 } from './Cypher25/tests/testData';
+export { testData as testData_v5 } from './Cypher5/tests/testData';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
-export { antlrUtils } from './helpers';
-export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
-export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
-  applySyntaxColouring,
+  antlrUtils,
   mapCypherToSemanticTokenIndex,
   syntaxColouringLegend,
-} from './syntaxColouring/syntaxColouring';
-export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
+  toSignatureInformation,
+} from './helpers';
 export {
+  applySyntaxColouring,
+  autocomplete,
   lintCypherQuery,
+  signatureHelp,
   validateSemantics,
   validateSyntax,
-} from './syntaxValidation/syntaxValidation';
-export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidationHelpers';
-export { testData } from './tests/testData';
+} from './langSupport';
+export { parse, parseAndCache, parseStatementsStrs } from './parserWrapper';
 export { textMateGrammar } from './textMateGrammar';
-export type { CompletionItem, Neo4jFunction, Neo4jProcedure } from './types';
-export { CypherLexer, CypherParser };
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser from './generated-parser/CypherCmdParser';
+export { CypherTokenType } from './types';
+export type {
+  CompletionItem,
+  CypherVersion,
+  Neo4jFunction,
+  Neo4jProcedure,
+  ParsedCypherToken,
+  SyntaxDiagnostic,
+} from './types';

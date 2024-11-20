@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { testData } from '@neo4j-cypher/language-support';
+import { testData_v5 } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { Locator } from 'playwright/test';
 import { CypherEditor } from '../CypherEditor';
@@ -11,7 +11,7 @@ type TooltipExpectations = {
   excludes?: string[];
 };
 
-const importCsvProc = testData.mockSchema.procedures['apoc.import.csv'];
+const importCsvProc = testData_v5.mockSchema.procedures['apoc.import.csv'];
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -42,7 +42,7 @@ test('Signature help works for functions', async ({ page, mount }) => {
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -58,7 +58,7 @@ test('Signature help works for procedures', async ({ page, mount }) => {
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -77,7 +77,7 @@ test('Signature help shows the description for the first argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -86,9 +86,9 @@ test('Signature help shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      testData.mockSchema.procedures['apoc.import.csv'].argumentDescription[0]
-        .description,
-      testData.mockSchema.procedures['apoc.import.csv'].description,
+      testData_v5.mockSchema.procedures['apoc.import.csv']
+        .argumentDescription[0].description,
+      testData_v5.mockSchema.procedures['apoc.import.csv'].description,
     ],
   });
 });
@@ -100,7 +100,7 @@ test('Signature help shows the description for the first argument when the curso
   const query = 'CALL apoc.import.csv()';
 
   await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={21} />,
+    <CypherEditor value={query} schema={testData_v5.mockSchema} offset={21} />,
   );
 
   const tooltip = page.locator('.cm-signature-help-panel');
@@ -122,7 +122,7 @@ test('Signature help shows the description for the second argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -144,7 +144,7 @@ test('Signature help shows the description for the second argument when the curs
   const query = 'CALL apoc.import.csv(nodes,)';
 
   await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={27} />,
+    <CypherEditor value={query} schema={testData_v5.mockSchema} offset={27} />,
   );
 
   const tooltip = page.locator('.cm-signature-help-panel');
@@ -164,7 +164,7 @@ test('Signature help shows the description for the second argument when the curs
   const query = 'CALL apoc.import.csv(nodes,  )';
 
   await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={28} />,
+    <CypherEditor value={query} schema={testData_v5.mockSchema} offset={28} />,
   );
 
   const tooltip = page.locator('.cm-signature-help-panel');
@@ -186,7 +186,7 @@ test('Signature help shows description for arguments with a space following a se
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -210,7 +210,7 @@ test('Signature help shows the description for the third argument', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -234,7 +234,7 @@ test('Signature help works on multiline queries', async ({ page, mount }) => {
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -258,7 +258,7 @@ test('Signature help only shows the description past the last argument', async (
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -283,7 +283,7 @@ test('Signature help does not show any help when method finished', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -302,7 +302,7 @@ test('Signature help does not blow up on empty query', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -323,7 +323,7 @@ test('Signature help is shown below the text by default', async ({
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       autofocus={true}
     />,
   );
@@ -346,7 +346,7 @@ test('Setting showSignatureTooltipBelow to true shows the signature help above t
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       showSignatureTooltipBelow={true}
       autofocus={true}
     />,
@@ -370,7 +370,7 @@ test('Setting showSignatureTooltipBelow to false shows the signature help above 
   await mount(
     <CypherEditor
       value={query}
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       showSignatureTooltipBelow={false}
       autofocus={true}
     />,

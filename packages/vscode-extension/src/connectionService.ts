@@ -305,14 +305,12 @@ export function getConnectionDatabases(): Pick<
   const schemaPoller = getSchemaPoller();
   const databases = schemaPoller.connection?.databases ?? [];
 
-  if (
-    !schemaPoller.metadata ||
-    !schemaPoller.metadata.dbSchema?.databaseNames
-  ) {
+  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema?.dbInfos) {
     return databases;
   }
 
-  return schemaPoller.metadata.dbSchema.databaseNames.map((name) => {
+  return schemaPoller.metadata.dbSchema.dbInfos.map((db) => {
+    const name = db.name;
     const database = databases.find((db) => db.name === name);
     if (!database) {
       return {

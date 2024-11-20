@@ -14,7 +14,7 @@ WHERE variable.property = "String"
 RETURN variable;`;
 
 test('correctly parses all cypher token types to style tags', () => {
-  const tokens = applySyntaxColouring(cypherQueryWithAllTokenTypes);
+  const tokens = applySyntaxColouring(cypherQueryWithAllTokenTypes, {});
   const tokenTypes = tokens.map((token) => token.tokenType);
   expect(tokenTypes).toEqual([
     'keyword',

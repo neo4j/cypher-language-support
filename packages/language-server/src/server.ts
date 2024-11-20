@@ -88,7 +88,7 @@ documents.onDidChangeContent((change) =>
 
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(
-  applySyntaxColouringForDocument(documents),
+  applySyntaxColouringForDocument(documents, neo4jSchemaPoller),
 );
 
 // Trigger the signature help, providing info about functions / procedures

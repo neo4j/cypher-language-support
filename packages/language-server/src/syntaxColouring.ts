@@ -2,6 +2,7 @@ import {
   applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
 } from '@neo4j-cypher/language-support';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import {
   SemanticTokensBuilder,
   SemanticTokensParams,
@@ -11,12 +12,16 @@ import {
 
 export function applySyntaxColouringForDocument(
   documents: TextDocuments<TextDocument>,
+  neo4j: Neo4jSchemaPoller,
 ) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = applySyntaxColouring(textDocument.getText());
+    const tokens = applySyntaxColouring(
+      textDocument.getText(),
+      neo4j.metadata?.dbSchema ?? {},
+    );
 
     const builder = new SemanticTokensBuilder();
 

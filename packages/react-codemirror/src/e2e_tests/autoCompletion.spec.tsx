@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { testData } from '@neo4j-cypher/language-support';
+import { testData_v5 } from '@neo4j-cypher/language-support/dist/types';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Page } from '@playwright/test';
 import { CypherEditor } from '../CypherEditor';
@@ -200,7 +200,7 @@ test('can complete functions', async ({ page, mount }) => {
       schema={{
         functions: {
           function123: {
-            ...testData.emptyFunction,
+            ...testData_v5.emptyFunction,
             name: 'function123',
           },
         },
@@ -227,7 +227,7 @@ test('can complete procedures', async ({ page, mount }) => {
     <CypherEditor
       schema={{
         procedures: {
-          'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
+          'db.ping': { ...testData_v5.emptyProcedure, name: 'db.ping' },
         },
       }}
     />,
@@ -310,14 +310,14 @@ test('shows signature help information on auto-completion for procedures', async
 }) => {
   await mount(
     <CypherEditor
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
       }}
     />,
   );
   const procName = 'apoc.periodic.iterate';
-  const procedure = testData.mockSchema.procedures[procName];
+  const procedure = testData_v5.mockSchema.procedures[procName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('CALL apoc.periodic.');
@@ -335,14 +335,14 @@ test('shows signature help information on auto-completion for functions', async 
 }) => {
   await mount(
     <CypherEditor
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
       }}
     />,
   );
   const fnName = 'apoc.coll.combinations';
-  const fn = testData.mockSchema.functions[fnName];
+  const fn = testData_v5.mockSchema.functions[fnName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('RETURN apoc.coll.');
@@ -363,7 +363,7 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
   await mount(
     <CypherEditor
       schema={{
-        procedures: { [procName]: testData.mockSchema.procedures[procName] },
+        procedures: { [procName]: testData_v5.mockSchema.procedures[procName] },
       }}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
@@ -387,7 +387,7 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
   await mount(
     <CypherEditor
       schema={{
-        functions: { [fnName]: testData.mockSchema.functions[fnName] },
+        functions: { [fnName]: testData_v5.mockSchema.functions[fnName] },
       }}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
@@ -408,7 +408,7 @@ test('does not signature help information on auto-completion if docs and signatu
 }) => {
   await mount(
     <CypherEditor
-      schema={testData.mockSchema}
+      schema={testData_v5.mockSchema}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
       }}
@@ -431,7 +431,7 @@ test('shows signature help information on auto-completion if description is not 
       schema={{
         procedures: {
           'db.ping': {
-            ...testData.emptyProcedure,
+            ...testData_v5.emptyProcedure,
             description: 'foo',
             signature: '',
             name: 'db.ping',
@@ -460,7 +460,7 @@ test('shows signature help information on auto-completion if signature is not em
       schema={{
         procedures: {
           'db.ping': {
-            ...testData.emptyProcedure,
+            ...testData_v5.emptyProcedure,
             description: '',
             signature: 'foo',
             name: 'db.ping',

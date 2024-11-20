@@ -1,6 +1,6 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
-import { parserWrapper, validateSyntax } from '@neo4j-cypher/language-support';
+import { parseAndCache, validateSyntax } from '@neo4j-cypher/language-support';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
@@ -51,10 +51,11 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
     }
 
     // we want to avoid the ANTLR4 reparse in the worker thread, this should hit our main thread cache
-    const parse = parserWrapper.parse(query);
+    const parse = parseAndCache(query, config.schema ?? {});
     const statements = parse.statementsParsing;
 
     const anySyntacticError = statements.some(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       (statement) => statement.syntaxErrors.length !== 0,
     );
 

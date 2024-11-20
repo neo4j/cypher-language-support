@@ -1,9 +1,7 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import { DbSchema, testData_v5 } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
-import { useMemo, useState } from 'react';
-import { Tree } from 'react-d3-tree';
+import { useState } from 'react';
 import { TokenTable } from './TokenTable';
-import { getDebugTree } from './treeUtil';
 
 const demos = {
   allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 
@@ -35,20 +33,15 @@ export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
   const [showCodemirrorParse, setShowCodemirrorParse] = useState(false);
-  const [showAntlrParse, setShowAntlrParse] = useState(false);
   const [showConfigPanel, setShowConfigPanel] = useState(false);
   const [commandRanCount, setCommandRanCount] = useState(0);
   const [darkMode, setDarkMode] = useState(false);
 
-  const [schema, setSchema] = useState<DbSchema>(testData.mockSchema);
+  const [schema, setSchema] = useState<DbSchema>(testData_v5.mockSchema);
   const [schemaText, setSchemaText] = useState<string>(
-    JSON.stringify(testData.mockSchema, undefined, 2),
+    JSON.stringify(testData_v5.mockSchema, undefined, 2),
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
-
-  const treeData = useMemo(() => {
-    return getDebugTree(value);
-  }, [value]);
 
   return (
     <div className={darkMode ? 'dark' : ''}>
@@ -121,7 +114,9 @@ export function App() {
                 "commands" ran so far: {commandRanCount}
               </span>
             )}
-            {!!showCodemirrorParse && <TokenTable document={value} />}
+            {!!showCodemirrorParse && (
+              <TokenTable document={value} dbSchema={schema} />
+            )}
           </div>
           {showConfigPanel && (
             <div className="auto min-w-[500px] w-2/6 flex flex-col gap-5 bg-white dark:bg-gray-600 p-10 rounded-lg shadow-lg">
@@ -142,14 +137,6 @@ export function App() {
                 />
                 Dark Mode
               </label>
-              <label className="flex gap-1">
-                <input
-                  type="checkbox"
-                  checked={showAntlrParse}
-                  onChange={() => setShowAntlrParse((s) => !s)}
-                />
-                Show antlr parse tree
-              </label>
               {schemaError && <div className="text-red-500">{schemaError}</div>}
               <textarea
                 value={schemaText}
@@ -169,15 +156,6 @@ export function App() {
             </div>
           )}
         </div>
-        {showAntlrParse && (
-          <div id="treeWrapper" className="w-full h-screen">
-            <Tree
-              data={treeData}
-              orientation="vertical"
-              translate={{ x: document.body.clientWidth / 2, y: 50 }}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

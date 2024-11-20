@@ -1,6 +1,7 @@
 import { parseStatementsStrs } from '@neo4j-cypher/language-support';
 import { Uri } from 'vscode';
 import { Connection } from './connectionService';
+import { getSchemaPoller } from './contextService';
 import ResultWindow from './webviews/resultWindow';
 
 export default class CypherRunner {
@@ -9,7 +10,9 @@ export default class CypherRunner {
   constructor() {}
 
   async run(connection: Connection, uri: Uri, input: string) {
-    const statements = parseStatementsStrs(input);
+    const schemaPoller = getSchemaPoller();
+    const dbSchema = schemaPoller.metadata?.dbSchema ?? {};
+    const statements = parseStatementsStrs(input, dbSchema);
     const filePath = uri.toString();
 
     if (this.results.has(filePath)) {
