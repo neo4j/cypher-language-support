@@ -99,7 +99,7 @@ export function cypherVersionInQuery(query: string): CypherVersion | undefined {
   const version = preparser.cypherVersion();
   if (version.cypherFive() != null) {
     return 'cypher 5';
-  } else if (version.cypherTwentyFive != null) {
+  } else if (version.cypherTwentyFive() != null) {
     return 'cypher 25';
   }
 
@@ -109,7 +109,7 @@ export function cypherVersionInQuery(query: string): CypherVersion | undefined {
 export function currentDbCypherVersion(dbSchema: DbSchema) {
   const dbLanguageVersion: CypherVersion =
     dbSchema.dbInfos?.find((db) => db.name === dbSchema.currentDatabase)
-      .defaultLanguage ?? 'cypher 25';
+      ?.defaultLanguage ?? 'cypher 25';
 
   return dbLanguageVersion;
 }

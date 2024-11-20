@@ -15,4 +15,11 @@ export default defineWorkspace([
       globals: true,
     },
   },
+  {
+    test: {
+      name: 'language-agnostic',
+      include: ['src/tests/**/*test.ts'],
+      globals: true,
+    },
+  },
 ]);
