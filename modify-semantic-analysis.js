@@ -3,7 +3,7 @@ var fs = require('fs');
 
 var file = path.resolve(
   __dirname,
-  './packages/language-support/src/syntaxValidation/semanticAnalysis.js',
+  './packages/language-support/src/semanticAnalysis.js',
 );
 
 fs.readFile(file, 'utf8', function (err, data) {
