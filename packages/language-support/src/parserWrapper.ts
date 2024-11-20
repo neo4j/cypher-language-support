@@ -413,7 +413,12 @@ export type ParsedCommandNoPosition =
     }
   | { type: 'list-parameters' }
   | { type: 'clear-parameters' }
-  | { type: 'parse-error' };
+  | { type: 'connect' }
+  | { type: 'disconnect' }
+  | { type: 'server'; operation: string }
+  | { type: 'welcome' }
+  | { type: 'parse-error' }
+  | { type: 'sysinfo' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -514,6 +519,40 @@ function parseToCommand(
         if (list) {
           return { type: 'list-parameters', start, stop };
         }
+      }
+
+      const connectCmd = consoleCmd.connectCmd();
+      if (connectCmd) {
+        return { type: 'connect', start, stop };
+      }
+
+      const disconnectCmd = consoleCmd.disconnectCmd();
+      if (disconnectCmd) {
+        return { type: 'disconnect', start, stop };
+      }
+
+      const serverCmd = consoleCmd.serverCmd();
+      const serverArgs = serverCmd?.serverArgs();
+      if (serverCmd && serverArgs) {
+        const connect = serverArgs.CONNECT();
+        if (connect) {
+          return { type: 'server', operation: 'connect', start, stop };
+        }
+
+        const disconnect = serverArgs.DISCONNECT();
+        if (disconnect) {
+          return { type: 'server', operation: 'disconnect', start, stop };
+        }
+      }
+
+      const welcomeCmd = consoleCmd.welcomeCmd();
+      if (welcomeCmd) {
+        return { type: 'welcome', start, stop };
+      }
+
+      const sysInfoCmd = consoleCmd.sysInfoCmd();
+      if (sysInfoCmd) {
+        return { type: 'sysinfo', start, stop };
       }
 
       return { type: 'parse-error', start, stop };

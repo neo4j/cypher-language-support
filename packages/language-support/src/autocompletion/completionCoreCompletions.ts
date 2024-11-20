@@ -426,6 +426,7 @@ export function completionCoreCompletion(
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
+          CypherParser.RULE_serverCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -561,6 +562,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_listCompletionRule) {
         return [{ label: 'list', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_serverCompletionRule) {
+        return [{ label: 'server', kind: CompletionItemKind.Event }];
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
