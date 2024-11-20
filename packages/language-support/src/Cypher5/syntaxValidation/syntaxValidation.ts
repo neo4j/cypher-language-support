@@ -302,6 +302,7 @@ export function validateSemantics(
 
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
+            cmd.version,
             dbSchema,
           );
 

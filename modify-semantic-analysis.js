@@ -20,22 +20,12 @@ fs.readFile(file, 'utf8', function (err, data) {
   );
 
   result = result.replace(
-    `    cnsa_Main_$callClinit();
-    var$1 = var$1.data;
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);`,
-    `    cnsa_Main_$callClinit();`,
-  );
-
-  result = result.replace(
-    `    cnsa_Main_$callClinit();
-    var$1 = var$1.data;
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);`,
+    `      cnsa_Main_$callClinit();
+      var$1 = var$1.data;
+      cnsa_Main_updateSignatureResolver(null);
+      cnsa_Main_analyzeQuery(var$1[0], $rt_s(1));
+      cnsa_Main_updateSignatureResolver(null);
+      cnsa_Main_analyzeQuery(var$1[0], $rt_s(2));`,
     `    cnsa_Main_$callClinit();`,
   );
 
@@ -51,7 +41,7 @@ $rt_exports.main([]);
 $rt_exports.updateSignatureResolver = cnsa_Main_updateSignatureResolver;
 
 // Export the analyze function as well
-$rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));`,
+$rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0], $args.data[1]));`,
   );
   fs.writeFile(file, result, 'utf8', function (err) {
     if (err) return console.log(err);

@@ -89,13 +89,7 @@ export function getTokenPosition(token: Token): TokenPosition {
   };
 }
 
-export function cypherVersion(
-  query: string,
-  dbSchema: DbSchema,
-): CypherVersion {
-  const defaultLanguage: CypherVersion =
-    dbSchema.dbInfos?.find((db) => db.name === dbSchema.currentDatabase)
-      .defaultLanguage ?? 'cypher 25';
+export function cypherVersionInQuery(query: string): CypherVersion | undefined {
   const inputStream = CharStreams.fromString(query);
   const lexer = new PreParserLexer(inputStream);
   lexer.removeErrorListeners();
@@ -103,14 +97,34 @@ export function cypherVersion(
   const preparser = new PreParserParser(tokenStream);
   preparser.removeErrorListeners();
   const version = preparser.cypherVersion();
-
-  if (version === null) {
-    return defaultLanguage;
-  }
   if (version.cypherFive() != null) {
     return 'cypher 5';
+  } else if (version.cypherTwentyFive != null) {
+    return 'cypher 25';
   }
-  return 'cypher 25';
+
+  return undefined;
+}
+
+export function currentDbCypherVersion(dbSchema: DbSchema) {
+  const dbLanguageVersion: CypherVersion =
+    dbSchema.dbInfos?.find((db) => db.name === dbSchema.currentDatabase)
+      .defaultLanguage ?? 'cypher 25';
+
+  return dbLanguageVersion;
+}
+
+export function cypherVersion(
+  query: string,
+  dbSchema: DbSchema,
+): CypherVersion {
+  const explicitCypyherVersion = cypherVersionInQuery(query);
+
+  if (explicitCypyherVersion) {
+    return explicitCypyherVersion;
+  } else {
+    return currentDbCypherVersion(dbSchema);
+  }
 }
 
 export function toSignatureInformation(

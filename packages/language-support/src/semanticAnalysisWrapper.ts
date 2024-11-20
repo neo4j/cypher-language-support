@@ -6,7 +6,9 @@ import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import { DbSchema } from './dbSchema';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import { currentDbCypherVersion } from './helpers';
 import { semanticAnalysis, updateSignatureResolver } from './semanticAnalysis';
+import { CypherVersion } from './types';
 
 export interface SemanticAnalysisResult {
   errors: SemanticAnalysisElement[];
@@ -29,6 +31,7 @@ type SemanticAnalysisElementNoSeverity = Omit<
 
 export function wrappedSemanticAnalysis(
   query: string,
+  cypherVersion: CypherVersion,
   dbSchema: DbSchema,
 ): SemanticAnalysisResult {
   try {
@@ -38,7 +41,11 @@ export function wrappedSemanticAnalysis(
       procedures: Object.values(dbSchema.procedures ?? {}),
       functions: Object.values(dbSchema.functions ?? {}),
     });
-    semanticAnalysis([query], (a) => {
+
+    const parserVersion: CypherVersion = cypherVersion
+      ? cypherVersion
+      : currentDbCypherVersion(dbSchema);
+    semanticAnalysis([query, parserVersion], (a) => {
       semanticErrorsResult = a;
     });
     const errors: SemanticAnalysisElementNoSeverity[] =

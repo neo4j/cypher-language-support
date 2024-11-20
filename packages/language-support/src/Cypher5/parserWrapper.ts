@@ -5,7 +5,8 @@ import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from '../featureFlags';
-import { SyntaxDiagnostic } from '../types';
+import { cypherVersionInQuery } from '../helpers';
+import { CypherVersion, SyntaxDiagnostic } from '../types';
 import {
   ClauseContext,
   default as CypherParser,
@@ -401,7 +402,7 @@ type RuleTokens = {
 
 export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
-  | { type: 'cypher'; statement: string }
+  | { type: 'cypher'; statement: string; version?: CypherVersion }
   | { type: 'use'; database?: string /* missing implies default db */ }
   | { type: 'clear' }
   | { type: 'history' }
@@ -424,18 +425,34 @@ function parseToCommand(
   if (stmt) {
     const { start, stop } = stmt;
 
-    const cypherStmt = stmt.preparsedStatement();
+    const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
+      // stripping the preparser part of it
       const inputstream = start.getInputStream();
-      const statement = inputstream.getText(start.start, stop.stop);
+      const stmtStart = cypherStmt.start;
+      const stmtStop = cypherStmt.stop;
+      const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
 
-      return { type: 'cypher', statement, start, stop };
+      return {
+        type: 'cypher',
+        statement,
+        start: stmtStart,
+        stop: stmtStop,
+        version: cypherVersionInQuery(
+          inputstream.getText(start.start, stmtStart.start),
+        ),
+      };
     }
 
     if (isEmptyStatement) {
       const { start } = stmts;
-      return { type: 'cypher', statement: '', start: start, stop: start };
+      return {
+        type: 'cypher',
+        statement: '',
+        start: start,
+        stop: start,
+      };
     }
 
     const consoleCmd = stmt.consoleCommand();
