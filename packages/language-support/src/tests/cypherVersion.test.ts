@@ -147,4 +147,38 @@ describe('Cypher versions spec', () => {
       },
     ]);
   });
+
+  test('CYPHER directive is case insensitive', () => {
+    const query = 'cypher 5 MATCH (n)-[r]->(m) SET r += m';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          currentDatabase: 'neo4j',
+          dbInfos: [{ name: 'neo4j', defaultLanguage: 'cypher 25' }],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 38,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 38,
+            line: 0,
+          },
+          start: {
+            character: 37,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
 });

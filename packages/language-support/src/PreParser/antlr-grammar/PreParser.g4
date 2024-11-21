@@ -1,5 +1,5 @@
 grammar PreParser;
-
+options { caseInsensitive = true; }
 
 query:
     cypherVersion? CHAR* EOF;
