@@ -35,7 +35,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "antlr4": "*"
+    "antlr4": "4.13.2"
   },
   "devDependencies": {
     "@types/node": "18.15.0",

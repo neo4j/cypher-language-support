@@ -42,7 +42,7 @@
     "node": ">=18.18.2"
   },
   "dependencies": {
-    "antlr4": "*",
+    "antlr4": "4.13.2",
     "antlr4-c3": "*",
     "fastest-levenshtein": "^1.0.16",
     "vscode-languageserver-types": "^3.17.3"
