@@ -380,7 +380,6 @@ describe('Procedures auto-completion', () => {
       query: query2,
       dbSchema,
       expected: [
-        { label: 'name', kind: CompletionItemKind.Variable },
         { label: 'versions', kind: CompletionItemKind.Variable },
         { label: 'edition', kind: CompletionItemKind.Variable },
       ],
@@ -388,11 +387,7 @@ describe('Procedures auto-completion', () => {
     testCompletions({
       query: query3,
       dbSchema,
-      expected: [
-        { label: 'name', kind: CompletionItemKind.Variable },
-        { label: 'versions', kind: CompletionItemKind.Variable },
-        { label: 'versions', kind: CompletionItemKind.Variable },
-      ],
+      expected: [{ label: 'versions', kind: CompletionItemKind.Variable }],
     });
   });
 
