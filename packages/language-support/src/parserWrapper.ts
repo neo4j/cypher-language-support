@@ -13,6 +13,7 @@ import {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   ProcedureNameContext,
+  ProcedureResultItemContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
@@ -304,6 +305,12 @@ class VariableCollector implements ParseTreeListener {
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {
+        this.variables.push(variable);
+      }
+    }
+    if (ctx instanceof ProcedureResultItemContext) {
+      const variable = ctx.symbolicNameString().getText();
+      if (variable) {
         this.variables.push(variable);
       }
     }

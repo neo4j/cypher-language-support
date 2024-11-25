@@ -318,6 +318,51 @@ describe('Procedures auto-completion', () => {
     });
   });
 
+  test('Does not autocomplete duplicate variables for YIELD', () => {
+    const query1 = 'CALL dbms.components() YIELD name,  ';
+    const query2 = 'CALL dbms.components() YIELD versions,  ve';
+
+    testCompletions({
+      query: query1,
+      dbSchema,
+      excluded: [{ label: 'name', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletions({
+      query: query2,
+      dbSchema,
+      excluded: [{ label: 'versions', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('Correctly completes RETURN when we have variables from a YIELD statement', () => {
+    const query1 = 'CALL dbms.components() YIELD name, edition RETURN ';
+    const query2 = 'CALL dbms.components() YIELD name, versions RETURN ';
+    const query3 =
+      'CALL dbms.components() YIELD name, edition RETURN edition, nam';
+    testCompletions({
+      query: query1,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query2,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query3,
+      dbSchema,
+      expected: [{ label: 'name', kind: CompletionItemKind.Variable }],
+    });
+  });
+
   test('Correctly completes YIELD when we have started the return value name', () => {
     const query1 = 'CALL dbms.components() YIELD n';
     const query2 = 'CALL dbms.components() YIELD name, ed';

@@ -477,8 +477,13 @@ export function completionCoreCompletion(
         );
         if (callContext instanceof CallClauseContext) {
           const procedureNameCtx = callContext.procedureName();
+          const existingYieldItems = callContext
+            .procedureResultItem_list()
+            .map((a) => a.getText());
           const name = getMethodName(procedureNameCtx);
-          return procedureReturnCompletions(name, dbSchema);
+          return procedureReturnCompletions(name, dbSchema).filter(
+            (a) => !existingYieldItems.includes(a?.label),
+          );
         }
       }
 
