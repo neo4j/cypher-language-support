@@ -64,7 +64,7 @@ const procedureReturnCompletions = (
   dbSchema: DbSchema,
 ): CompletionItem[] => {
   return (
-    dbSchema?.procedures[procedureName]?.returnDescription?.map((x) => {
+    dbSchema?.procedures?.[procedureName]?.returnDescription?.map((x) => {
       return { label: x.name, kind: CompletionItemKind.Variable };
     }) ?? []
   );
