@@ -13,6 +13,7 @@ import {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   ProcedureNameContext,
+  ProcedureResultItemContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
@@ -307,7 +308,40 @@ class VariableCollector implements ParseTreeListener {
         this.variables.push(variable);
       }
     }
+    if (ctx instanceof ProcedureResultItemContext) {
+      const variable = ctx.symbolicNameString().getText();
+      if (variable) {
+        this.variables.push(variable);
+      }
+    }
   }
+}
+
+export function getMethodName(
+  ctx: ProcedureNameContext | FunctionNameContext,
+): string {
+  const namespaces = ctx.namespace().symbolicNameString_list();
+  const methodName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, methodName]
+    .map((symbolicName) => {
+      return getNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
 }
 
 // This listener collects all functions and procedures
@@ -336,7 +370,7 @@ class MethodsCollector extends ParseTreeListener {
       ctx instanceof FunctionNameContext ||
       ctx instanceof ProcedureNameContext
     ) {
-      const methodName = this.getMethodName(ctx);
+      const methodName = getMethodName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -365,33 +399,6 @@ class MethodsCollector extends ParseTreeListener {
         this.procedures.push(result);
       }
     }
-  }
-
-  private getMethodName(
-    ctx: ProcedureNameContext | FunctionNameContext,
-  ): string {
-    const namespaces = ctx.namespace().symbolicNameString_list();
-    const methodName = ctx.symbolicNameString();
-
-    const normalizedName = [...namespaces, methodName]
-      .map((symbolicName) => {
-        return this.getNamespaceString(symbolicName);
-      })
-      .join('.');
-
-    return normalizedName;
-  }
-
-  private getNamespaceString(ctx: SymbolicNameStringContext): string {
-    const text = ctx.getText();
-    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
-    const hasDot = text.includes('.');
-
-    if (isEscaped && !hasDot) {
-      return text.slice(1, -1);
-    }
-
-    return text;
   }
 }
 
