@@ -8,11 +8,7 @@
     },
     "@neo4j-cypher/language-support#build": {
       "outputs": ["src/generated-parser/**", "dist/**"],
-      "dependsOn": ["antlr4#build", "antlr4-c3#build"]
-    },
-    "antlr4-c3#build": {
-      "dependsOn": ["antlr4#build"],
-      "outputs": ["dist/**"]
+      "dependsOn": ["antlr4-c3#build"]
     },
     "@neo4j-cypher/language-server#build": {
       "dependsOn": [

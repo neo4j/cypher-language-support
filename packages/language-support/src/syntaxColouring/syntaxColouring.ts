@@ -32,7 +32,7 @@ import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import { CypherLexer } from '..';
+import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
