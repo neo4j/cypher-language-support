@@ -155,6 +155,25 @@ RETURN movie {
     });
   });
 
+  test('Completes node property keys with numbers and underscores without backticks in MATCH', () => {
+    const query = 'MATCH (n) WHERE n.';
+
+    testCompletions({
+      query,
+      dbSchema: { propertyKeys: ['Cat12', 'Foo_Bar'] },
+      expected: [
+        {
+          label: 'Cat12',
+          kind: CompletionItemKind.Property,
+        },
+        {
+          label: 'Foo_Bar',
+          kind: CompletionItemKind.Property,
+        },
+      ],
+    });
+  });
+
   test('correctly completes property keys with backticks', () => {
     const dbSchema = { propertyKeys: ['foo bar', 'prop'] };
     const query = 'MATCH (n) WHERE n.';
