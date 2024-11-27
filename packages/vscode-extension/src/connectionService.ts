@@ -307,12 +307,13 @@ export function getConnectionDatabases(): Pick<
 
   if (
     !schemaPoller.metadata ||
-    !schemaPoller.metadata.dbSchema?.databaseNames
+    !schemaPoller.metadata.dbSchema?.databasesInfo
   ) {
     return databases;
   }
 
-  return schemaPoller.metadata.dbSchema.databaseNames.map((name) => {
+  return schemaPoller.metadata.dbSchema.databasesInfo.map((dbInfo) => {
+    const name = dbInfo.name;
     const database = databases.find((db) => db.name === name);
     if (!database) {
       return {
