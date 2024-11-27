@@ -11,7 +11,7 @@ import {
 import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signatureHelp';
-import { cypherLinter, semanticAnalysisLinter } from './syntaxValidation';
+import { semanticAnalysisLinter } from './syntaxValidation';
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
@@ -45,7 +45,6 @@ export function cypher(config: CypherConfig) {
       override: [cypherAutocomplete(config)],
       optionClass: completionStyles,
     }),
-    cypherLinter(config),
     semanticAnalysisLinter(config),
     signatureHelpTooltip(config),
   ]);

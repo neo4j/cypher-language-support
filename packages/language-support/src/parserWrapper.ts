@@ -20,6 +20,7 @@ import {
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
+  cypherVersionInQuery,
   findParent,
   findStopNode,
   getTokens,
@@ -33,6 +34,7 @@ import {
   SyntaxDiagnostic,
   SyntaxErrorsListener,
 } from './syntaxValidation/syntaxValidationHelpers';
+import { CypherVersion } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -410,7 +412,7 @@ type RuleTokens = {
 
 export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
-  | { type: 'cypher'; statement: string }
+  | { type: 'cypher'; version?: CypherVersion; statement: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
   | { type: 'clear' }
   | { type: 'history' }
@@ -447,12 +449,25 @@ function parseToCommand(
       const stmtStop = cypherStmt.stop;
       const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
 
-      return { type: 'cypher', statement, start: stmtStart, stop: stmtStop };
+      return {
+        type: 'cypher',
+        statement,
+        start: stmtStart,
+        stop: stmtStop,
+        version: cypherVersionInQuery(
+          inputstream.getText(start.start, stmtStart.start),
+        ),
+      };
     }
 
     if (isEmptyStatement) {
       const { start } = stmts;
-      return { type: 'cypher', statement: '', start: start, stop: start };
+      return {
+        type: 'cypher',
+        statement: '',
+        start: start,
+        stop: start,
+      };
     }
 
     const consoleCmd = stmt.consoleCommand();

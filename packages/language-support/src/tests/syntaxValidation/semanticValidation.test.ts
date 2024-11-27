@@ -1,8 +1,35 @@
 import { _internalFeatureFlags } from '../../featureFlags';
+import { validateSemantics } from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
+  test('Transpiled semantic analysis includes the syntactic errors', () => {
+    const query = 'METCH (n) RETURN m';
+
+    expect(validateSemantics(query, {})).toEqual([
+      {
+        message:
+          "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH' (line 1, column 1 (offset: 0))",
+        offsets: {
+          end: 18,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 

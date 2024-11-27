@@ -1,5 +1,12 @@
 import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
 
+export interface DbInfo {
+  name: string;
+  defaultLanguage?: CypherVersion;
+}
+
+export type CypherVersion = 'cypher 25' | 'cypher 5';
+
 export type ReturnDescription = {
   name: string;
   description: string;

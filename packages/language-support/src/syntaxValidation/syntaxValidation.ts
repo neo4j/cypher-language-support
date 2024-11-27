@@ -2,6 +2,7 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
+import { currentDbCypherVersion } from '../helpers';
 import {
   LabelOrRelType,
   LabelType,
@@ -10,7 +11,7 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction } from '../types';
+import { CypherVersion, Neo4jFunction } from '../types';
 import {
   SemanticAnalysisElement,
   wrappedSemanticAnalysis,
@@ -255,27 +256,22 @@ export function lintCypherQuery(
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const syntaxErrors = validateSyntax(query, dbSchema);
-  // If there are any syntactic errors in the query, do not run the semantic validation
-  if (syntaxErrors.find((d) => d.severity === DiagnosticSeverity.Error)) {
-    return syntaxErrors;
-  }
-
   const semanticErrors = validateSemantics(query, dbSchema);
-  return syntaxErrors.concat(semanticErrors);
+  const errors = syntaxErrors
+    .concat(semanticErrors)
+    .sort(sortByPositionAndMessage);
+
+  return errors;
 }
 
-export function validateSyntax(
-  query: string,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
+function validateSyntax(query: string, dbSchema: DbSchema): SyntaxDiagnostic[] {
   if (query.length === 0) {
     return [];
   }
   const statements = parserWrapper.parse(query);
   const result = statements.statementsParsing.flatMap((statement) => {
-    const syntaxErrors = statement.syntaxErrors;
     const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    return syntaxErrors.concat(labelWarnings).sort(sortByPositionAndMessage);
+    return labelWarnings.sort(sortByPositionAndMessage);
   });
 
   return result;
@@ -292,29 +288,29 @@ export function validateSemantics(
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
     const semanticErrors = statements.flatMap((current) => {
-      if (current.syntaxErrors.length === 0) {
-        const cmd = current.command;
-        if (cmd.type === 'cypher' && cmd.statement.length > 0) {
-          const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
-          const procedureErrors = errorOnUndeclaredProcedures(
-            current,
-            dbSchema,
-          );
+      const cmd = current.command;
+      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+        const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
+        const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
 
-          const { notifications, errors } = wrappedSemanticAnalysis(
-            cmd.statement,
-            dbSchema,
-          );
+        const parserVersion: CypherVersion = cmd.version
+          ? cmd.version
+          : currentDbCypherVersion(dbSchema);
 
-          const elements = notifications.concat(errors);
-          const semanticDiagnostics = fixSemanticAnalysisPositions({
-            semanticElements: elements,
-            parseResult: current,
-          });
-          return semanticDiagnostics
-            .concat(functionErrors, procedureErrors)
-            .sort(sortByPositionAndMessage);
-        }
+        const { notifications, errors } = wrappedSemanticAnalysis(
+          cmd.statement,
+          dbSchema,
+          parserVersion,
+        );
+
+        const elements = notifications.concat(errors);
+        const semanticDiagnostics = fixSemanticAnalysisPositions({
+          semanticElements: elements,
+          parseResult: current,
+        });
+        return semanticDiagnostics
+          .concat(functionErrors, procedureErrors)
+          .sort(sortByPositionAndMessage);
       }
       return [];
     });

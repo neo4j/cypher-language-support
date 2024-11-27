@@ -12,11 +12,7 @@ export {
   syntaxColouringLegend,
 } from './syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
-export {
-  lintCypherQuery,
-  validateSemantics,
-  validateSyntax,
-} from './syntaxValidation/syntaxValidation';
+export { lintCypherQuery } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidationHelpers';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';

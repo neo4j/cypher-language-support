@@ -8,4 +8,7 @@ preparsedStatement:
    preparserOption? statement;
 
 preparserOption:
-   EXPLAIN | PROFILE;
+   EXPLAIN | PROFILE | cypherOption;
+
+cypherOption:
+   CYPHER UNSIGNED_DECIMAL_INTEGER;

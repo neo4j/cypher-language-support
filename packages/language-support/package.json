@@ -48,8 +48,9 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {
+    "gen-preparser": "antlr4 -Dlanguage=TypeScript src/PreParser/antlr-grammar/PreParser.g4 -o src/PreParser/generated-preparser/ -Xexact-output-dir",
     "gen-parser": "antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "build": "npm run gen-parser && concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
+    "build": "npm run gen-preparser && npm run gen-parser && concurrently 'npm:build-types' 'npm:build-esm' 'npm:build-commonjs'",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "build-esm": "esbuild ./src/index.ts --bundle --format=esm --sourcemap --outfile=dist/esm/index.mjs",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",

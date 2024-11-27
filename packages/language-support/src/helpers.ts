@@ -1,11 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
 import antlrDefaultExport, {
+  CharStreams,
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
   Token,
 } from 'antlr4';
+import { DbSchema } from './dbSchema';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
@@ -13,6 +15,34 @@ import CypherParser, {
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
+import PreParserLexer from './PreParser/generated-preparser/PreParserLexer';
+import PreParserParser from './PreParser/generated-preparser/PreParserParser';
+import { CypherVersion } from './types';
+
+export function cypherVersionInQuery(query: string): CypherVersion | undefined {
+  const inputStream = CharStreams.fromString(query);
+  const lexer = new PreParserLexer(inputStream);
+  lexer.removeErrorListeners();
+  const tokenStream = new CommonTokenStream(lexer);
+  const preparser = new PreParserParser(tokenStream);
+  preparser.removeErrorListeners();
+  const version = preparser.cypherVersion();
+  if (version.cypherFive() != null) {
+    return 'cypher 5';
+  } else if (version.cypherTwentyFive() != null) {
+    return 'cypher 25';
+  }
+
+  return undefined;
+}
+
+export function currentDbCypherVersion(dbSchema: DbSchema) {
+  const dbLanguageVersion: CypherVersion =
+    dbSchema.databasesInfo?.find((db) => db.name === dbSchema.currentDatabase)
+      ?.defaultLanguage ?? 'cypher 25';
+
+  return dbLanguageVersion;
+}
 
 /* In antlr we have 
 

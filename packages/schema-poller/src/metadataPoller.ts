@@ -99,9 +99,11 @@ export class MetadataPoller {
       prefetchedData: { databases },
       onRefetchDone: (result) => {
         if (result.success) {
-          this.dbSchema.databaseNames = result.data.databases.flatMap(
-            (db) => db.name,
-          );
+          this.dbSchema.databasesInfo = result.data.databases.flatMap((db) => {
+            return {
+              name: db.name,
+            };
+          });
           this.dbSchema.aliasNames = result.data.databases.flatMap(
             (db) => db.aliases ?? [],
           );

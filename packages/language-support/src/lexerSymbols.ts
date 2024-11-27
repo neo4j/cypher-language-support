@@ -365,6 +365,7 @@ export const lexerKeywords = [
   // Preparser tokens
   CypherLexer.EXPLAIN,
   CypherLexer.PROFILE,
+  CypherLexer.CYPHER,
 ];
 
 export const lexerConsoleCmds = [

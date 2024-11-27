@@ -4,7 +4,7 @@ import { testCompletions } from './completionAssertionHelpers';
 
 describe('Can complete database names', () => {
   const dbSchema: DbSchema = {
-    databaseNames: ['db1', 'db2', 'movies'],
+    databasesInfo: [{ name: 'db1' }, { name: 'db2' }, { name: 'movies' }],
     aliasNames: ['myMovies', 'scoped.alias', 'a.b.c.d'],
     parameters: {
       param1: 'something',

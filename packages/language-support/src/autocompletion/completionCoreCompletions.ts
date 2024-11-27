@@ -725,7 +725,7 @@ function completeAliasName({
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
     ...parameterSuggestions,
-    ...(dbSchema.databaseNames ?? [])
+    ...(dbSchema.databasesInfo.map((db) => db.name) ?? [])
       .concat(dbSchema.aliasNames ?? [])
       .map((databaseName) => ({
         label: databaseName,

@@ -234,7 +234,10 @@ describe(':use', () => {
 
   test('completes database & alias names', () => {
     expect(
-      autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] }),
+      autocomplete(':use ', {
+        databasesInfo: [{ name: 'foo' }],
+        aliasNames: ['bar'],
+      }),
     ).toEqual([
       { kind: 12, label: 'foo' },
       { kind: 12, label: 'bar' },
