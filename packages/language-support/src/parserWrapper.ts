@@ -435,10 +435,11 @@ function parseToCommand(
   stmts: StatementsOrCommandsContext,
   isEmptyStatement: boolean,
 ): ParsedCommand {
-  const stmt = stmts.statementOrCommand_list().at(0);
+  const stmtsOrCommands = stmts.statementOrCommand_list();
+  const stmt = stmtsOrCommands.at(0);
 
   if (stmt) {
-    const { start, stop } = stmt;
+    const { start, stop } = stmts;
 
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
@@ -446,14 +447,13 @@ function parseToCommand(
       // stripping the preparser part of it
       const inputstream = start.getInputStream();
       const stmtStart = cypherStmt.start;
-      const stmtStop = cypherStmt.stop;
-      const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
+      const statement = inputstream.getText(stmtStart.start, stop.stop);
 
       return {
         type: 'cypher',
         statement,
         start: stmtStart,
-        stop: stmtStop,
+        stop: stop,
         version: cypherVersionInQuery(
           inputstream.getText(start.start, stmtStart.start),
         ),
