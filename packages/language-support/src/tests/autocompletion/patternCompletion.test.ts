@@ -87,6 +87,25 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Completes label with numbers and underscores without backticks in MATCH', () => {
+    const query = 'MATCH (n:';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat12', 'Foo_Bar'] },
+      expected: [
+        {
+          label: 'Cat12',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo_Bar',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
   test('Correctly completes label with backticks in MATCH', () => {
     const query = 'MATCH (n:';
 

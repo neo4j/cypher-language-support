@@ -32,7 +32,7 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
 function backtickIfNeeded(e: string): string | undefined {
-  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+  if (/\s/.test(e) || /[^a-zA-Z0-9_]/.test(e)) {
     return `\`${e}\``;
   } else {
     return undefined;
