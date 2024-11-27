@@ -203,7 +203,6 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       expected: [
         { kind: 14, label: 'IF NOT EXISTS' },
         { kind: 14, label: 'FOR' },
-        { kind: 14, label: 'ON' },
       ],
     });
   });

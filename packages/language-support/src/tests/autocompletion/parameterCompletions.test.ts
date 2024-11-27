@@ -83,7 +83,7 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
   test('Suggests parameter in options field of create constraint', () => {
     const query =
-      'CREATE CONSTRAINT abc ON (n:person) ASSERT EXISTS n.name OPTIONS ';
+      'CREATE CONSTRAINT abc FOR (n:Person) REQUIRE n.name IS NOT NULL OPTIONS ';
     testCompletions({
       query,
       dbSchema,

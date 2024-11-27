@@ -88,6 +88,7 @@ export const lexerGarbage = [
 
 export const identifier = [
   CypherLexer.IDENTIFIER,
+  CypherLexer.EXTENDED_IDENTIFIER,
   CypherLexer.ESCAPED_SYMBOLIC_NAME,
 ];
 
@@ -112,7 +113,6 @@ export const lexerKeywords = [
   CypherLexer.AS,
   CypherLexer.ASC,
   CypherLexer.ASCENDING,
-  CypherLexer.ASSERT,
   CypherLexer.ASSIGN,
   CypherLexer.AT,
   CypherLexer.AUTH,
@@ -122,8 +122,6 @@ export const lexerKeywords = [
   CypherLexer.BOOSTED,
   CypherLexer.BOTH,
   CypherLexer.BREAK,
-  CypherLexer.BRIEF,
-  CypherLexer.BTREE,
   CypherLexer.BUILT,
   CypherLexer.BY,
   CypherLexer.CALL,
@@ -134,7 +132,6 @@ export const lexerKeywords = [
   CypherLexer.COLLECT,
   CypherLexer.COMMAND,
   CypherLexer.COMMANDS,
-  CypherLexer.COMMIT,
   CypherLexer.COMPOSITE,
   CypherLexer.CONSTRAINT,
   CypherLexer.CONSTRAINTS,
@@ -255,12 +252,10 @@ export const lexerKeywords = [
   CypherLexer.OPTIONS,
   CypherLexer.OR,
   CypherLexer.ORDER,
-  CypherLexer.OUTPUT,
   CypherLexer.PASSWORD,
   CypherLexer.PASSWORDS,
   CypherLexer.PATH,
   CypherLexer.PATHS,
-  CypherLexer.PERIODIC,
   CypherLexer.PLAINTEXT,
   CypherLexer.POINT,
   CypherLexer.POPULATED,
@@ -350,7 +345,6 @@ export const lexerKeywords = [
   CypherLexer.USING,
   CypherLexer.VALUE,
   CypherLexer.VECTOR,
-  CypherLexer.VERBOSE,
   CypherLexer.VERTEX,
   CypherLexer.WAIT,
   CypherLexer.WHEN,
