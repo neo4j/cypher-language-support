@@ -100,6 +100,51 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Semantic errors work when we also have preparser options', () => {
+    const query = `EXPLAIN MATCH (n);
+                   PROFILE MATCH (m) RETURN n`;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 17,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 64,
+          start: 63,
+        },
+        range: {
+          end: {
+            character: 45,
+            line: 1,
+          },
+          start: {
+            character: 44,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Surfaces notifications correctly', () => {
     const query = `
     MATCH (shadowed)
