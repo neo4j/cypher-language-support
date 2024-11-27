@@ -9,9 +9,14 @@ import {
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
+  CallClauseContext,
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
-import { findPreviousNonSpace, rulesDefiningVariables } from '../helpers';
+import {
+  findParent,
+  findPreviousNonSpace,
+  rulesDefiningVariables,
+} from '../helpers';
 import {
   CypherTokenType,
   lexerKeywords,
@@ -19,24 +24,51 @@ import {
   tokenNames,
 } from '../lexerSymbols';
 
-import { ParsedStatement } from '../parserWrapper';
+import { getMethodName, ParsedStatement } from '../parserWrapper';
 
 import { _internalFeatureFlags } from '../featureFlags';
 import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
+function backtickIfNeeded(e: string): string | undefined {
+  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
+
 const labelCompletions = (dbSchema: DbSchema) =>
-  dbSchema.labels?.map((labelName) => ({
-    label: labelName,
-    kind: CompletionItemKind.TypeParameter,
-  })) ?? [];
+  dbSchema.labels?.map((labelName) => {
+    const result: CompletionItem = {
+      label: labelName,
+      kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(labelName),
+    };
+    return result;
+  }) ?? [];
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
-  dbSchema.relationshipTypes?.map((relType) => ({
-    label: relType,
-    kind: CompletionItemKind.TypeParameter,
-  })) ?? [];
+  dbSchema.relationshipTypes?.map((relType) => {
+    const result: CompletionItem = {
+      label: relType,
+      kind: CompletionItemKind.TypeParameter,
+      insertText: backtickIfNeeded(relType),
+    };
+    return result;
+  }) ?? [];
+
+const procedureReturnCompletions = (
+  procedureName: string,
+  dbSchema: DbSchema,
+): CompletionItem[] => {
+  return (
+    dbSchema?.procedures?.[procedureName]?.returnDescription?.map((x) => {
+      return { label: x.name, kind: CompletionItemKind.Variable };
+    }) ?? []
+  );
+};
 
 const functionNameCompletions = (
   candidateRule: CandidateRule,
@@ -257,10 +289,14 @@ const parameterCompletions = (
       kind: CompletionItemKind.Variable,
     }));
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
-  dbInfo.propertyKeys?.map((propertyKey) => ({
-    label: propertyKey,
-    kind: CompletionItemKind.Property,
-  })) ?? [];
+  dbInfo.propertyKeys?.map((propertyKey) => {
+    const result: CompletionItem = {
+      label: propertyKey,
+      kind: CompletionItemKind.Property,
+      insertText: backtickIfNeeded(propertyKey),
+    };
+    return result;
+  }) ?? [];
 
 enum ExpectedParameterType {
   String = 'STRING',
@@ -399,6 +435,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_leftArrow,
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
+    CypherParser.RULE_procedureResultItem,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -406,6 +443,7 @@ export function completionCoreCompletion(
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
+          CypherParser.RULE_serverCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -433,6 +471,23 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
+      if (ruleNumber === CypherParser.RULE_procedureResultItem) {
+        const callContext = findParent(
+          parsingResult.stopNode.parentCtx,
+          (x) => x instanceof CallClauseContext,
+        );
+        if (callContext instanceof CallClauseContext) {
+          const procedureNameCtx = callContext.procedureName();
+          const existingYieldItems = callContext
+            .procedureResultItem_list()
+            .map((a) => a.getText());
+          const name = getMethodName(procedureNameCtx);
+          return procedureReturnCompletions(name, dbSchema).filter(
+            (a) => !existingYieldItems.includes(a?.label),
+          );
+        }
+      }
+
       if (ruleNumber === CypherParser.RULE_functionName) {
         return functionNameCompletions(candidateRule, tokens, dbSchema);
       }
@@ -541,6 +596,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_listCompletionRule) {
         return [{ label: 'list', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_serverCompletionRule) {
+        return [{ label: 'server', kind: CompletionItemKind.Event }];
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {

@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.4.0",
+  "version": "1.5.2",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -66,13 +66,17 @@
         "title": "Switch to database"
       },
       {
-        "command": "neo4j.runCypherFile",
-        "title": "Neo4j: Run Cypher Statements in a file"
+        "command": "neo4j.runCypher",
+        "title": "Neo4j: Run Cypher Statements"
+      },
+      {
+        "command": "neo4j.cypherFileFromSelection",
+        "title": "Neo4j: Create Cypher file from selection"
       }
     ],
     "keybindings": [
       {
-        "command": "neo4j.runCypherFile",
+        "command": "neo4j.runCypher",
         "key": "ctrl+alt+space",
         "mac": "ctrl+cmd+space"
       }
@@ -88,6 +92,18 @@
       }
     ],
     "menus": {
+      "editor/context": [
+        {
+          "command": "neo4j.runCypher",
+          "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
+          "group": "z_commands"
+        },
+        {
+          "command": "neo4j.cypherFileFromSelection",
+          "when": "editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
+          "group": "z_commands"
+        }
+      ],
       "commandPalette": [
         {
           "command": "neo4j.deleteConnection",
@@ -282,11 +298,11 @@
     "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "npm run build",
     "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
-    "bundle-extension": "node ./esbuild.js --production",
-    "bundle-ndl": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
-    "bundle-extension:dev": "node ./esbuild.js",
+    "bundle-extension": "node ./esbuild-extension.js --production",
+    "update-ndl-css": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
+    "bundle-extension:dev": "node ./esbuild-extension.js",
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
-    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers && npm run bundle-ndl",
+    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
     "test:e2e": "npm run build && npm run test:apiAndUnit && npm run test:webviews",
@@ -294,7 +310,7 @@
     "test:webviews": "wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.10",
+    "@neo4j-cypher/language-server": "2.0.0-next.12",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "^5.12.0",
@@ -317,7 +333,8 @@
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
     "typescript": "^4.9.5",
-    "wdio-vscode-service": "^6.1.0",
+    "vscode-languageserver-textdocument": "^1.0.12",
+    "wdio-vscode-service": "^6.1.2",
     "wdio-wait-for": "^3.0.11"
   }
 }

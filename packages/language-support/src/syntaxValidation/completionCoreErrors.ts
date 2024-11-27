@@ -50,6 +50,7 @@ export function completionCoreErrormessage(
       ? {
           [CypherParser.RULE_useCompletionRule]: 'use',
           [CypherParser.RULE_listCompletionRule]: 'list',
+          [CypherParser.RULE_serverCompletionRule]: 'server',
         }
       : { [CypherParser.RULE_consoleCommand]: null }),
   };

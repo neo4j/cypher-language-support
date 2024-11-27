@@ -16,19 +16,36 @@ export async function waitUntilNotification(
   );
 }
 
+type OpenFileOptions = {
+  selectLines?: number;
+};
+
 export async function openFixtureFile(
   browser: WebdriverIO.Browser,
   fileName: string,
+  options: OpenFileOptions = {},
 ) {
   await browser.executeWorkbench(
-    async (vscode, __dirname, fileName) => {
+    async (vscode, __dirname, fileName, options: OpenFileOptions) => {
       const textDocumentUri = `${__dirname}/../../tests/fixtures/${fileName}`;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line
       const document = await vscode.workspace.openTextDocument(textDocumentUri);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.window.showTextDocument(document);
+      // eslint-disable-next-line
+      const editor = await vscode.window.showTextDocument(document);
+
+      if (options.selectLines && options.selectLines > 0) {
+        const lastLine = options.selectLines - 1;
+        // eslint-disable-next-line
+        editor.selection = new vscode.Selection(
+          // eslint-disable-next-line
+          new vscode.Position(0, 0), // Start at the beginning of the first line
+          // eslint-disable-next-line
+          new vscode.Position(lastLine, document.lineAt(lastLine).text.length),
+        );
+      }
     },
     __dirname,
     fileName,
+    options,
   );
 }

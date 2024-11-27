@@ -1,4 +1,4 @@
-GRAMMAR_DIR=${PWD}/tests
+GRAMMAR_DIR=${PWD}
 
 antlr4 -Dlanguage=TypeScript \
   -no-listener -no-visitor \

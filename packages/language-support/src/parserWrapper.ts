@@ -13,6 +13,7 @@ import {
   LabelNameIsContext,
   LabelOrRelTypeContext,
   ProcedureNameContext,
+  ProcedureResultItemContext,
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
@@ -307,7 +308,40 @@ class VariableCollector implements ParseTreeListener {
         this.variables.push(variable);
       }
     }
+    if (ctx instanceof ProcedureResultItemContext) {
+      const variable = ctx.symbolicNameString().getText();
+      if (variable) {
+        this.variables.push(variable);
+      }
+    }
   }
+}
+
+export function getMethodName(
+  ctx: ProcedureNameContext | FunctionNameContext,
+): string {
+  const namespaces = ctx.namespace().symbolicNameString_list();
+  const methodName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, methodName]
+    .map((symbolicName) => {
+      return getNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
 }
 
 // This listener collects all functions and procedures
@@ -336,7 +370,7 @@ class MethodsCollector extends ParseTreeListener {
       ctx instanceof FunctionNameContext ||
       ctx instanceof ProcedureNameContext
     ) {
-      const methodName = this.getMethodName(ctx);
+      const methodName = getMethodName(ctx);
 
       const startTokenIndex = ctx.start.tokenIndex;
       const stopTokenIndex = ctx.stop.tokenIndex;
@@ -366,33 +400,6 @@ class MethodsCollector extends ParseTreeListener {
       }
     }
   }
-
-  private getMethodName(
-    ctx: ProcedureNameContext | FunctionNameContext,
-  ): string {
-    const namespaces = ctx.namespace().symbolicNameString_list();
-    const methodName = ctx.symbolicNameString();
-
-    const normalizedName = [...namespaces, methodName]
-      .map((symbolicName) => {
-        return this.getNamespaceString(symbolicName);
-      })
-      .join('.');
-
-    return normalizedName;
-  }
-
-  private getNamespaceString(ctx: SymbolicNameStringContext): string {
-    const text = ctx.getText();
-    const isEscaped = Boolean(ctx.escapedSymbolicNameString());
-    const hasDot = text.includes('.');
-
-    if (isEscaped && !hasDot) {
-      return text.slice(1, -1);
-    }
-
-    return text;
-  }
 }
 
 type CypherCmd = { type: 'cypher'; query: string };
@@ -413,7 +420,12 @@ export type ParsedCommandNoPosition =
     }
   | { type: 'list-parameters' }
   | { type: 'clear-parameters' }
-  | { type: 'parse-error' };
+  | { type: 'connect' }
+  | { type: 'disconnect' }
+  | { type: 'server'; operation: string }
+  | { type: 'welcome' }
+  | { type: 'parse-error' }
+  | { type: 'sysinfo' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -426,13 +438,16 @@ function parseToCommand(
   if (stmt) {
     const { start, stop } = stmt;
 
-    const cypherStmt = stmt.preparsedStatement();
+    const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
+      // stripping the preparser part of it
       const inputstream = start.getInputStream();
-      const statement = inputstream.getText(start.start, stop.stop);
+      const stmtStart = cypherStmt.start;
+      const stmtStop = cypherStmt.stop;
+      const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
 
-      return { type: 'cypher', statement, start, stop };
+      return { type: 'cypher', statement, start: stmtStart, stop: stmtStop };
     }
 
     if (isEmptyStatement) {
@@ -514,6 +529,40 @@ function parseToCommand(
         if (list) {
           return { type: 'list-parameters', start, stop };
         }
+      }
+
+      const connectCmd = consoleCmd.connectCmd();
+      if (connectCmd) {
+        return { type: 'connect', start, stop };
+      }
+
+      const disconnectCmd = consoleCmd.disconnectCmd();
+      if (disconnectCmd) {
+        return { type: 'disconnect', start, stop };
+      }
+
+      const serverCmd = consoleCmd.serverCmd();
+      const serverArgs = serverCmd?.serverArgs();
+      if (serverCmd && serverArgs) {
+        const connect = serverArgs.CONNECT();
+        if (connect) {
+          return { type: 'server', operation: 'connect', start, stop };
+        }
+
+        const disconnect = serverArgs.DISCONNECT();
+        if (disconnect) {
+          return { type: 'server', operation: 'disconnect', start, stop };
+        }
+      }
+
+      const welcomeCmd = consoleCmd.welcomeCmd();
+      if (welcomeCmd) {
+        return { type: 'welcome', start, stop };
+      }
+
+      const sysInfoCmd = consoleCmd.sysInfoCmd();
+      if (sysInfoCmd) {
+        return { type: 'sysinfo', start, stop };
       }
 
       return { type: 'parse-error', start, stop };

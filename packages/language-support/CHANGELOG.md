@@ -1,5 +1,17 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.11
+
+### Patch Changes
+
+- bccf518: Fixes signature help bug with arguments that include a default value
+
+## 2.0.0-next.10
+
+### Patch Changes
+
+- 8760c02: Adds backticking to labels, rel types and property names on auto-completions
+
 ## 2.0.0-next.9
 
 ### Patch Changes

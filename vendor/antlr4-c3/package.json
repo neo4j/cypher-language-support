@@ -30,12 +30,12 @@
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
     "prepublishOnly": "npm run generate && npm run test",
     "test": "vitest run",
-    "generate": "tests/generate.sh",
+    "generate": "cd tests && sh generate.sh",
     "eslint": "eslint .",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "antlr4": "*"
+    "antlr4": "4.13.2"
   },
   "devDependencies": {
     "@types/node": "18.15.0",

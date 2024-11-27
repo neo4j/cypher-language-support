@@ -36,15 +36,19 @@ export async function createTestDatabase(): Promise<void> {
     },
   );
 
+  const neo4jSession = driver.session({ database: 'neo4j' });
+  await neo4jSession.run('CREATE (n {`foo bar`: "something"})');
+  await neo4jSession.close();
+
   const systemSession = driver.session({ database: 'system' });
   await systemSession.run('CREATE DATABASE movies IF NOT EXISTS WAIT;');
   await systemSession.close();
 
-  const session = driver.session({ database: 'movies' });
-  await session.run(
+  const moviesSession = driver.session({ database: 'movies' });
+  await moviesSession.run(
     'CREATE (p:Person { name: "Keanu Reeves" })-[:ACTED_IN]->(m:Movie { title: "The Matrix" }) RETURN p;',
   );
-  await session.close();
+  await moviesSession.close();
 
   await driver.close();
 }

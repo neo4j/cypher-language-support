@@ -1,5 +1,18 @@
 # neo4j-for-vscode
 
+## 1.5.2
+
+- Fixes signature help bug with arguments that include a default value
+
+## 1.5.1
+
+- Fixes bug with auto-completions
+
+## 1.5.0
+
+- Adds ability to execute highlighted queries
+- Adds autocompletion for backticked elements
+
 ## 1.4.0
 
 - Adds errors for non existing procedures and functions

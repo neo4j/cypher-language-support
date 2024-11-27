@@ -72,6 +72,23 @@ suite('Auto completion spec', () => {
     });
   });
 
+  test('Completes started property with backticks', async () => {
+    const position = new vscode.Position(1, 22);
+
+    const expected: vscode.CompletionItem[] = [
+      {
+        label: 'foo bar',
+        insertText: '`foo bar`',
+        kind: vscode.CompletionItemKind.Property,
+      },
+    ];
+    await testCompletionContains({
+      textFile: 'auto-completion.cypher',
+      position: position,
+      expected: expected,
+    });
+  });
+
   test('Shows signature help information on auto-completion for procedures', async () => {
     const position = new vscode.Position(0, 18);
     const expected: vscode.CompletionItem[] = [

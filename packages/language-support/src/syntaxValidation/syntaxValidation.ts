@@ -23,12 +23,14 @@ function detectNonDeclaredLabel(
   dbRelationshipTypes: Set<string>,
 ): SyntaxDiagnostic | undefined {
   const labelName = labelOrRelType.labelText;
+  const normalizedLabelName = labelName.replace(/^`|`$/g, '');
   const notInDatabase =
     (labelOrRelType.labeltype === LabelType.nodeLabelType &&
-      !dbLabels.has(labelName)) ||
+      !dbLabels.has(normalizedLabelName)) ||
     (labelOrRelType.labeltype === LabelType.relLabelType &&
-      !dbRelationshipTypes.has(labelName)) ||
-    (!dbLabels.has(labelName) && !dbRelationshipTypes.has(labelName));
+      !dbRelationshipTypes.has(normalizedLabelName)) ||
+    (!dbLabels.has(normalizedLabelName) &&
+      !dbRelationshipTypes.has(normalizedLabelName));
 
   if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
     const labelChunks = labelName.split('\n');

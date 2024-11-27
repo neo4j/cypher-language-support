@@ -18,6 +18,7 @@ describe('Procedures auto-completion', () => {
       'db.stats.retrieve': procedures['db.stats.retrieve'],
       'db.stats.collect': procedures['db.stats.collect'],
       'db.stats.clear': procedures['db.stats.clear'],
+      'dbms.components': procedures['dbms.components'],
       'cdc.current': procedures['cdc.current'],
       'jwt.security.requestAccess': {
         ...testData.emptyProcedure,
@@ -286,6 +287,141 @@ describe('Procedures auto-completion', () => {
           tags: [CompletionItemTag.Deprecated],
         },
       ],
+    });
+  });
+
+  test('Correctly completes YIELD', () => {
+    const query = 'CALL dbms.components() YIELD ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
+  test('Correctly completes YIELD when we have extra spaces in the procedure name', () => {
+    const query = 'CALL dbms    .    components  () YIELD ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
+  test('Does not autocomplete duplicate variables for YIELD', () => {
+    const query1 = 'CALL dbms.components() YIELD name,  ';
+    const query2 = 'CALL dbms.components() YIELD versions,  ve';
+
+    testCompletions({
+      query: query1,
+      dbSchema,
+      excluded: [{ label: 'name', kind: CompletionItemKind.Variable }],
+    });
+
+    testCompletions({
+      query: query2,
+      dbSchema,
+      excluded: [{ label: 'versions', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('Correctly completes RETURN when we have variables from a YIELD statement', () => {
+    const query1 = 'CALL dbms.components() YIELD name, edition RETURN ';
+    const query2 = 'CALL dbms.components() YIELD name, versions RETURN ';
+    const query3 =
+      'CALL dbms.components() YIELD name, edition RETURN edition, nam';
+    testCompletions({
+      query: query1,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query2,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query3,
+      dbSchema,
+      expected: [{ label: 'name', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('Correctly completes YIELD when we have started the return value name', () => {
+    const query1 = 'CALL dbms.components() YIELD n';
+    const query2 = 'CALL dbms.components() YIELD name, ed';
+    const query3 = 'CALL dbms.components() YIELD name, edition,';
+    testCompletions({
+      query: query1,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query2,
+      dbSchema,
+      expected: [
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query3,
+      dbSchema,
+      expected: [{ label: 'versions', kind: CompletionItemKind.Variable }],
+    });
+  });
+
+  test('Correctly completes YIELD when we have backticks in the procedure name', () => {
+    const query1 = 'CALL `dbms`.`components`() YIELD ';
+    const query2 = 'CALL db.`stats`.`collect`   () YIELD ';
+
+    testCompletions({
+      query: query1,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Variable },
+        { label: 'versions', kind: CompletionItemKind.Variable },
+        { label: 'edition', kind: CompletionItemKind.Variable },
+      ],
+    });
+    testCompletions({
+      query: query2,
+      dbSchema,
+      expected: [
+        { label: 'section', kind: CompletionItemKind.Variable },
+        { label: 'success', kind: CompletionItemKind.Variable },
+        { label: 'message', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
+  test('Returns empty YIELD elements when procedure does not exist', () => {
+    const query = 'CALL does.not.exist() YIELD ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [],
     });
   });
 });

@@ -365,6 +365,10 @@ export const lexerConsoleCmds = [
   CypherLexer.HISTORY,
   CypherLexer.PARAM,
   CypherLexer.CLEAR,
+  CypherLexer.CONNECT,
+  CypherLexer.DISCONNECT,
+  CypherLexer.WELCOME,
+  CypherLexer.SYSINFO,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {

@@ -154,4 +154,38 @@ RETURN movie {
       ],
     });
   });
+
+  test('correctly completes property keys with backticks', () => {
+    const dbSchema = { propertyKeys: ['foo bar', 'prop'] };
+    const query = 'MATCH (n) WHERE n.';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'prop', kind: CompletionItemKind.Property },
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: CompletionItemKind.Property,
+        },
+      ],
+    });
+  });
+
+  test('correctly completes started property keys with backticks', () => {
+    const dbSchema = { propertyKeys: ['foo bar', 'prop'] };
+    const query = 'MATCH (n) WHERE n.foo';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'prop', kind: CompletionItemKind.Property },
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: CompletionItemKind.Property,
+        },
+      ],
+    });
+  });
 });

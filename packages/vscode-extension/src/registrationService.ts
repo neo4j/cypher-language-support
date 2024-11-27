@@ -1,6 +1,7 @@
 import { commands, Disposable, window, workspace } from 'vscode';
 import {
   createOrShowConnectionPanelForConnectionItem,
+  cypherFileFromSelection,
   handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
@@ -63,10 +64,14 @@ export function registerDisposables(): Disposable[] {
         databaseInformationTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER_FILE, runCypher),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, runCypher),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.CYPHER_FILE_FROM_SELECTION,
+      cypherFileFromSelection,
     ),
   );
 
