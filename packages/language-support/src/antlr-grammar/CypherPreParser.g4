@@ -8,4 +8,4 @@ preparsedStatement:
    preparserOption? statement;
 
 preparserOption:
-   EXPLAIN | PROFILE;
+   EXPLAIN | PROFILE | CYPHER (UNSIGNED_DECIMAL_INTEGER | IDENTIFIER EQ (IDENTIFIER | numberLiteral))*;

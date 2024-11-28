@@ -100,6 +100,186 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Semantic errors work using empty preparser options. Like CYPHER <rest of query', () => {
+    const query = `CYPHER MATCH (n);
+                   CYPHER MATCH (m) RETURN n`;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 16,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 62,
+          start: 61,
+        },
+        range: {
+          end: {
+            character: 44,
+            line: 1,
+          },
+          start: {
+            character: 43,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Semantic errors work using both version syntax and key-value syntax for preparser options. Like CYPHER <version> <option> = <value>', () => {
+    const query = `CYPHER 25 runtime = pipelined timeout = 1000 MATCH (n);
+                   CYPHER 5 timeout= 555 MATCH (m) RETURN n`;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 54,
+          start: 45,
+        },
+        range: {
+          end: {
+            character: 54,
+            line: 0,
+          },
+          start: {
+            character: 45,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 115,
+          start: 114,
+        },
+        range: {
+          end: {
+            character: 59,
+            line: 1,
+          },
+          start: {
+            character: 58,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Semantic errors work with preparser option CYPHER <option> = <value>', () => {
+    const query = `CYPHER runtime = pipelined timeout   = 1000 MATCH (n);
+                   CYPHER planner=cost MATCH (m) RETURN n`;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 53,
+          start: 44,
+        },
+        range: {
+          end: {
+            character: 53,
+            line: 0,
+          },
+          start: {
+            character: 44,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 112,
+          start: 111,
+        },
+        range: {
+          end: {
+            character: 57,
+            line: 1,
+          },
+          start: {
+            character: 56,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Semantic errors work with preparser option CYPHER <version>', () => {
+    const query = `CYPHER 25 MATCH (n);
+                   CYPHER 5 MATCH (m) RETURN n`;
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 19,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `n` not defined',
+        offsets: {
+          end: 67,
+          start: 66,
+        },
+        range: {
+          end: {
+            character: 46,
+            line: 1,
+          },
+          start: {
+            character: 45,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Semantic errors work when we also have preparser options', () => {
     const query = `EXPLAIN MATCH (n);
                    PROFILE MATCH (m) RETURN n`;
