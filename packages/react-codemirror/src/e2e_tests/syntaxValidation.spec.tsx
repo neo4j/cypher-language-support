@@ -86,6 +86,20 @@ test('Errors for multiline undefined labels are highlighted correctly', async ({
   await editorPage.checkWarningMessage('Bar`', expectedMsg);
 });
 
+test.only('Semantic errors work in firefox', async ({
+  browserName,
+  page,
+  mount,
+}) => {
+  test.skip(browserName !== 'firefox');
+  const editorPage = new CypherEditorPage(page);
+  const query = 'MATCH (n:OperationalPoint)--(m:OperationalPoint) RETURN s,m,n';
+
+  await mount(<CypherEditor value={query} />);
+
+  await editorPage.checkErrorMessage('s,m,n', 'Variable `s` not defined');
+});
+
 test('Semantic errors are surfaced when there are no syntactic errors', async ({
   page,
   mount,

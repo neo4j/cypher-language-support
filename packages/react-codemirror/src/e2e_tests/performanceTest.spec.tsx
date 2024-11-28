@@ -10,7 +10,12 @@ declare global {
   }
 }
 
-test('benchmarking & performance test session', async ({ mount, page }) => {
+test('benchmarking & performance test session', async ({
+  browserName,
+  mount,
+  page,
+}) => {
+  test.skip(browserName !== 'chromium');
   const client = await page.context().newCDPSession(page);
   if (process.env.BENCHMARKING === 'true') {
     test.setTimeout(1000000);
