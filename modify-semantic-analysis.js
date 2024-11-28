@@ -51,7 +51,12 @@ $rt_exports.main([]);
 $rt_exports.updateSignatureResolver = cnsa_Main_updateSignatureResolver;
 
 // Export the analyze function as well
-$rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));`,
+$rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
+
+// Warm up the semantic analysis
+$rt_exports.semanticAnalysis(["MATCH (n)"], (a) => {});
+$rt_exports.semanticAnalysis(["MATCH (n) RETURN m"], (a) => {});
+$rt_exports.semanticAnalysis(["MATCH (p = (a)--(b))+ (p = (c)--(d)) RETURN p"], (a) => {});`,
   );
   fs.writeFile(file, result, 'utf8', function (err) {
     if (err) return console.log(err);
