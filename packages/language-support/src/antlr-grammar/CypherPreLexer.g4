@@ -7,3 +7,6 @@ EXPLAIN:
 
 PROFILE:
    P R O F I L E;
+
+CYPHER:
+   C Y P H E R;
