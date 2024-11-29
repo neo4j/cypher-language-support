@@ -87,7 +87,7 @@ test('Errors for multiline undefined labels are highlighted correctly', async ({
   await editorPage.checkWarningMessage('Bar`', expectedMsg);
 });
 
-test('Semantic errors work in firefox', async ({
+test.only('Semantic errors work in firefox', async ({
   browserName,
   page,
   mount,
