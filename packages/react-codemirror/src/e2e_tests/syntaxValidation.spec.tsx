@@ -1,4 +1,3 @@
-import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
@@ -95,7 +94,7 @@ test.only('Semantic errors work in firefox', async ({
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n:OperationalPoint)--(m:OperationalPoint) RETURN s,m,n';
 
-  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+  await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage('s,m,n', 'Variable `s` not defined');
 });
@@ -105,7 +104,6 @@ test.only('Semantic errors are surfaced when there are no syntactic errors', asy
   page,
   mount,
 }) => {
-  test.skip(browserName !== 'firefox');
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n) RETURN m';
 

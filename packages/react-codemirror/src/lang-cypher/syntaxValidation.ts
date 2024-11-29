@@ -43,6 +43,7 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
   config,
 ) =>
   linter(async (view) => {
+    console.log('Entra al linter');
     if (!config.lint) {
       return [];
     }
@@ -76,7 +77,7 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
         config.schema ?? {},
       );
       const result = await lastSemanticJob;
-      console.log('after lastSemanticJob');
+      console.log('before lastSemanticJob');
 
       return result.map((diag) => {
         return {
