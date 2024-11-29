@@ -10,7 +10,7 @@ import WorkerURL from './lintWorker?worker&url';
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
   workerOpts: { type: 'module' },
-  workerTerminateTimeout: 2000,
+  workerTerminateTimeout: 5000,
 });
 
 let lastSemanticJob: LinterTask | undefined;
@@ -21,8 +21,10 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       return [];
     }
 
+    console.log('before validateSyntax');
     const query = view.state.doc.toString();
     const syntaxErrors = validateSyntax(query, config.schema ?? {});
+    console.log('after validateSyntax');
 
     return syntaxErrors.map(
       (diagnostic): Diagnostic => ({
@@ -68,11 +70,13 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+      console.log('before lastSemanticJob');
       lastSemanticJob = proxyWorker.validateSemantics(
         query,
         config.schema ?? {},
       );
       const result = await lastSemanticJob;
+      console.log('after lastSemanticJob');
 
       return result.map((diag) => {
         return {

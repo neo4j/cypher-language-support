@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
-test.use({ viewport: { width: 1000, height: 500 } });
+test.use({ viewport: { width: 2000, height: 1000 } });
 test('Prop lint set to false disables syntax validation', async ({
   page,
   mount,
