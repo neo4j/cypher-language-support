@@ -92,7 +92,6 @@ test.only('Semantic errors work in firefox', async ({
   page,
   mount,
 }) => {
-  test.skip(browserName !== 'firefox');
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n:OperationalPoint)--(m:OperationalPoint) RETURN s,m,n';
 
@@ -101,10 +100,12 @@ test.only('Semantic errors work in firefox', async ({
   await editorPage.checkErrorMessage('s,m,n', 'Variable `s` not defined');
 });
 
-test('Semantic errors are surfaced when there are no syntactic errors', async ({
+test.only('Semantic errors are surfaced when there are no syntactic errors', async ({
+  browserName,
   page,
   mount,
 }) => {
+  test.skip(browserName !== 'firefox');
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n) RETURN m';
 
