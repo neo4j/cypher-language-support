@@ -27,6 +27,8 @@ type SemanticAnalysisElementNoSeverity = Omit<
   'severity'
 >;
 
+let previousSchema: DbSchema | undefined = undefined;
+
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
@@ -34,13 +36,20 @@ export function wrappedSemanticAnalysis(
   try {
     let semanticErrorsResult = undefined;
 
-    updateSignatureResolver({
-      procedures: Object.values(dbSchema.procedures ?? {}),
-      functions: Object.values(dbSchema.functions ?? {}),
-    });
+    if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
+      previousSchema = dbSchema;
+      const procedures = Object.values(dbSchema.procedures ?? {});
+      const functions = Object.values(dbSchema.functions ?? {});
+      updateSignatureResolver({
+        procedures: procedures,
+        functions: functions,
+      });
+    }
+
     semanticAnalysis([query], (a) => {
       semanticErrorsResult = a;
     });
+
     const errors: SemanticAnalysisElementNoSeverity[] =
       semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElementNoSeverity[] =

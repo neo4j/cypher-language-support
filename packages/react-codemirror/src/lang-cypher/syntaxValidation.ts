@@ -20,11 +20,8 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (!config.lint) {
       return [];
     }
-
-    console.log('before validateSyntax');
     const query = view.state.doc.toString();
     const syntaxErrors = validateSyntax(query, config.schema ?? {});
-    console.log('after validateSyntax');
 
     return syntaxErrors.map(
       (diagnostic): Diagnostic => ({
@@ -43,7 +40,6 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
   config,
 ) =>
   linter(async (view) => {
-    console.log('Entra al linter');
     if (!config.lint) {
       return [];
     }
@@ -71,13 +67,11 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      console.log('before lastSemanticJob');
       lastSemanticJob = proxyWorker.validateSemantics(
         query,
         config.schema ?? {},
       );
       const result = await lastSemanticJob;
-      console.log('before lastSemanticJob');
 
       return result.map((diag) => {
         return {
