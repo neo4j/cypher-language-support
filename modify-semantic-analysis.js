@@ -20,38 +20,10 @@ fs.readFile(file, 'utf8', function (err, data) {
   );
 
   result = result.replace(
-    `    cnsa_Main_$callClinit();
-    var$1 = var$1.data;
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);`,
-    `    cnsa_Main_$callClinit();`,
-  );
-
-  result = result.replace(
-    `    cnsa_Main_$callClinit();
-    var$1 = var$1.data;
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);
-    cnsa_Main_updateSignatureResolver(null);
-    cnsa_Main_analyzeQuery(var$1[0]);`,
-    `    cnsa_Main_$callClinit();`,
-  );
-
-  result = result.replace(
-    `$rt_exports.main = $rt_export_main;`,
+    `export { $rt_export_main as main };`,
     `
-$rt_exports.main = $rt_export_main;
-
-// Initialize everything
-$rt_exports.main([]);
-
-// Export the signature registry updater
-$rt_exports.updateSignatureResolver = cnsa_Main_updateSignatureResolver;
-
-// Export the analyze function as well
-$rt_exports.semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));`,
+let semanticAnalysis = $rt_mainStarter(($args) => cnsa_Main_analyzeQuery($args.data[0]));
+export { cnsa_Main_updateSignatureResolver as updateSignatureResolver, semanticAnalysis };`,
   );
   fs.writeFile(file, result, 'utf8', function (err) {
     if (err) return console.log(err);
