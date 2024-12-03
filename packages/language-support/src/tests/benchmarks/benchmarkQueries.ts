@@ -1,4 +1,4 @@
-export const simpleQuery = `MATCH (a:Person)-[:FRIEND_OF]->(b:Person), (b)-[:WORKS_AT]->(c:Company) WHERE c.name = 'Company Corp' RETURN a, b, c`;
+export const simpleQuery = `MATCH (a:Person)-[:FRIEND_OF]->(b:Person), (b)-[:WORKS_AT]->(c:Company) WERE c.name = 'Company Corp' RETURN a, b, c`;
 
 export const createMovieDb = `CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
 CREATE (Keanu:Person {name:'Keanu Reeves', born:1964})
@@ -613,7 +613,7 @@ CALL {
 WITH * ORDER BY isWinningMove DESC
 LIMIT 1
 
-SET candidate.state = $symbol`;
+SE candidate.state = $symbol`;
 
 export const autocompletionQueries = {
   databaseName: 'ALTER ALIAS a.b.c. ',
@@ -2453,7 +2453,7 @@ CREATE
 (Marshadow)-[:HAS]->(MarshadowZenithMarshadow)
 
 
-CREATE 
+CEATE 
 (Bulbasaur)-[:IS]->(Grass), 
 (Bulbasaur)-[:IS]->(Poison), 
 (Ivysaur)-[:IS]->(Grass), 

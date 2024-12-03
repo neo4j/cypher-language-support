@@ -1,21 +1,9 @@
 /* eslint-disable no-console */
 import Benchmark from 'benchmark';
-import { autocomplete } from '../../autocompletion/autocompletion';
-import { parse, parserWrapper } from '../../parserWrapper';
-import { signatureHelp } from '../../signatureHelp';
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
-import {
-  lintCypherQuery,
-  validateSyntax,
-} from '../../syntaxValidation/syntaxValidation';
+import { parserWrapper } from '../../parserWrapper';
+import { validateSyntax } from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
-import {
-  autocompletionQueries,
-  createMovieDb,
-  largePokemonquery,
-  simpleQuery,
-  tictactoe,
-} from './benchmarkQueries';
+import { largePokemonquery, simpleQuery, tictactoe } from './benchmarkQueries';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';
@@ -26,108 +14,116 @@ Benchmark.options.maxTime = 1;
 const suite = new Benchmark.Suite();
 
 suite
-  .add('simple - parse', function () {
-    parse(simpleQuery);
-  })
-  .add('simple - highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(simpleQuery);
-  })
-  .add('simple - validate syntax', function () {
+  // .add('simple - parse', function () {
+  //   parse(simpleQuery);
+  // })
+  // .add('simple - highlight', function () {
+  //   parserWrapper.clearCache();
+  //   applySyntaxColouring(simpleQuery);
+  // })
+  .add('simple query - validate syntax', function () {
     parserWrapper.clearCache();
     validateSyntax(simpleQuery, testData.mockSchema);
   })
-  .add('simple - autocomplete next statement', function () {
+  .add('tictactoe query - validate syntax', function () {
     parserWrapper.clearCache();
-    autocomplete(simpleQuery, testData.mockSchema);
+    validateSyntax(tictactoe, testData.mockSchema);
   })
-  .add('movies - parse', function () {
-    parse(createMovieDb);
-  })
-  .add('movies - highlight', function () {
+  .add('large query - validate syntax', function () {
     parserWrapper.clearCache();
-    applySyntaxColouring(createMovieDb);
-  })
-  .add('movies - validate syntax', function () {
-    parserWrapper.clearCache();
-    lintCypherQuery(createMovieDb, testData.mockSchema);
-  })
-  .add('movies - autocomplete next statement', function () {
-    parserWrapper.clearCache();
-    autocomplete(createMovieDb, testData.mockSchema);
-  })
-  .add('movies - signature help', function () {
-    const subQuery = createMovieDb + periodicIterate;
-    const query = createMovieDb + periodicIterate + periodicIterateFirstArg;
-    parserWrapper.clearCache();
-    signatureHelp(query, testData.mockSchema, query.length - 1);
-    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
-  })
-  .add('tictactoe - parse', function () {
-    parserWrapper.clearCache();
-    parse(tictactoe);
-  })
-  .add('tictactoe - highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(tictactoe);
-  })
-  .add('tictactoe - validate syntax', function () {
-    parserWrapper.clearCache();
-    lintCypherQuery(tictactoe, testData.mockSchema);
-  })
-  .add('tictactoe - autocomplete next statement - no Schema', function () {
-    parserWrapper.clearCache();
-    autocomplete(tictactoe, {});
-  })
-  .add('tictactoe - autocomplete next statement - medium Schema', function () {
-    parserWrapper.clearCache();
-    autocomplete(tictactoe, testData.mockSchema);
-  })
-  .add('tictactoe - signature help', function () {
-    const subQuery = tictactoe + periodicIterate;
-    const query = tictactoe + periodicIterate + periodicIterateFirstArg;
-    parserWrapper.clearCache();
-    signatureHelp(query, testData.mockSchema, query.length - 1);
-    signatureHelp(query, testData.mockSchema, subQuery.length - 1);
-  })
-  .add('pokemon - parse', function () {
-    parserWrapper.clearCache();
-    parse(largePokemonquery);
-  })
-  .add('pokemon - parserwrapper parse', function () {
-    parserWrapper.clearCache();
-    parserWrapper.parse(largePokemonquery);
-  })
-  .add('pokemon - syntax highlight', function () {
-    parserWrapper.clearCache();
-    applySyntaxColouring(largePokemonquery);
-  })
-  .add('pokemon - signature help', function () {
-    const subQuery = largePokemonquery + periodicIterate;
-    const query = largePokemonquery + periodicIterate + periodicIterateFirstArg;
-    parserWrapper.clearCache();
-    // This mimics getting the cursor back in the query and retriggering signature help
-    signatureHelp(query, testData.mockSchema, query.length);
-    signatureHelp(query, testData.mockSchema, subQuery.length);
-  })
-  .add('multistatement - autocompletion', function () {
-    const query = tictactoe + ';\n' + tictactoe;
-    const subQuery = tictactoe;
-    parserWrapper.clearCache();
-    // This mimics getting the cursor back in the query and retriggering auto-completion
-    autocomplete(query, testData.mockSchema);
-    autocomplete(query, testData.mockSchema, subQuery.length);
+    validateSyntax(largePokemonquery, testData.mockSchema);
   });
+// .add('simple - autocomplete next statement', function () {
+//   parserWrapper.clearCache();
+//   autocomplete(simpleQuery, testData.mockSchema);
+// })
+// .add('movies - parse', function () {
+//   parse(createMovieDb);
+// })
+// .add('movies - highlight', function () {
+//   parserWrapper.clearCache();
+//   applySyntaxColouring(createMovieDb);
+// })
+// .add('movies - validate syntax', function () {
+//   parserWrapper.clearCache();
+//   validateSyntax(createMovieDb, testData.mockSchema);
+// })
+// .add('movies - autocomplete next statement', function () {
+//   parserWrapper.clearCache();
+//   autocomplete(createMovieDb, testData.mockSchema);
+// })
+// .add('movies - signature help', function () {
+//   const subQuery = createMovieDb + periodicIterate;
+//   const query = createMovieDb + periodicIterate + periodicIterateFirstArg;
+//   parserWrapper.clearCache();
+//   signatureHelp(query, testData.mockSchema, query.length - 1);
+//   signatureHelp(query, testData.mockSchema, subQuery.length - 1);
+// })
+// .add('tictactoe - parse', function () {
+//   parserWrapper.clearCache();
+//   parse(tictactoe);
+// })
+// .add('tictactoe - highlight', function () {
+//   parserWrapper.clearCache();
+//   applySyntaxColouring(tictactoe);
+// })
+// .add('tictactoe - validate syntax', function () {
+//   parserWrapper.clearCache();
+//   validateSyntax(tictactoe, testData.mockSchema);
+// });
+// .add('tictactoe - autocomplete next statement - no Schema', function () {
+//   parserWrapper.clearCache();
+//   autocomplete(tictactoe, {});
+// })
+// .add('tictactoe - autocomplete next statement - medium Schema', function () {
+//   parserWrapper.clearCache();
+//   autocomplete(tictactoe, testData.mockSchema);
+// })
+// .add('tictactoe - signature help', function () {
+//   const subQuery = tictactoe + periodicIterate;
+//   const query = tictactoe + periodicIterate + periodicIterateFirstArg;
+//   parserWrapper.clearCache();
+//   signatureHelp(query, testData.mockSchema, query.length - 1);
+//   signatureHelp(query, testData.mockSchema, subQuery.length - 1);
+// })
+// .add('pokemon - parse', function () {
+//   parserWrapper.clearCache();
+//   parse(largePokemonquery);
+// })
+// .add('pokemon - parserwrapper parse', function () {
+//   parserWrapper.clearCache();
+//   parserWrapper.parse(largePokemonquery);
+// })
+// .add('pokemon - syntax highlight', function () {
+//   parserWrapper.clearCache();
+//   applySyntaxColouring(largePokemonquery);
+// })
+// .add('pokemon - signature help', function () {
+//   const subQuery = largePokemonquery + periodicIterate;
+//   const query = largePokemonquery + periodicIterate + periodicIterateFirstArg;
+//   parserWrapper.clearCache();
+//   // This mimics getting the cursor back in the query and retriggering signature help
+//   signatureHelp(query, testData.mockSchema, query.length);
+//   signatureHelp(query, testData.mockSchema, subQuery.length);
+// })
+// .add('multistatement - autocompletion', function () {
+//   const query = tictactoe + ';\n' + tictactoe;
+//   const subQuery = tictactoe;
+//   parserWrapper.clearCache();
+//   // This mimics getting the cursor back in the query and retriggering auto-completion
+//   autocomplete(query, testData.mockSchema);
+//   autocomplete(query, testData.mockSchema, subQuery.length);
+// });
 
-Object.entries(autocompletionQueries).forEach(([name, query]) => {
-  suite.add(`autocomplete - ${name} (parse.time.only)`, function () {
-    parse(query);
-  });
-  suite.add(`autocomplete - ${name}`, function () {
-    parserWrapper.clearCache();
-    autocomplete(query, testData.mockSchema);
-  });
-});
+// Object.entries(autocompletionQueries).forEach(([name, query]) => {
+//   suite.add(`autocomplete - ${name} (parse.time.only)`, function () {
+//     parse(query);
+//   });
+//   suite.add(`autocomplete - ${name}`, function () {
+//     parserWrapper.clearCache();
+//     autocomplete(query, testData.mockSchema);
+//   });
+// });
 
 suite
   .on('cycle', function (event: { target: { toString: () => string } }) {
