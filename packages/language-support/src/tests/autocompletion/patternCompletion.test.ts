@@ -92,35 +92,8 @@ describe('MATCH auto-completion', () => {
 
     testCompletions({
       query,
-      dbSchema: { labels: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein'] },
-      expected: [
-        {
-          label: 'Cat12',
-          kind: CompletionItemKind.TypeParameter,
-        },
-        {
-          label: 'Foo_Bar',
-          kind: CompletionItemKind.TypeParameter,
-        },
-        {
-          label: 'Glögg',
-          kind: CompletionItemKind.TypeParameter,
-        },
-        {
-          label: 'Glühwein',
-          kind: CompletionItemKind.TypeParameter,
-        },
-      ],
-    });
-  });
-
-  test('Completes relationship types with numbers, underscores and non-english letters without backticks in MATCH', () => {
-    const query = 'MATCH (n)-[:';
-
-    testCompletions({
-      query,
       dbSchema: {
-        relationshipTypes: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein'],
+        labels: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein', '_GingerBread_'],
       },
       expected: [
         {
@@ -137,6 +110,49 @@ describe('MATCH auto-completion', () => {
         },
         {
           label: 'Glühwein',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '_GingerBread_',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
+  test('Completes relationship types with numbers, underscores and non-english letters without backticks in MATCH', () => {
+    const query = 'MATCH (n)-[:';
+
+    testCompletions({
+      query,
+      dbSchema: {
+        relationshipTypes: [
+          'Cat12',
+          'Foo_Bar',
+          'Glögg',
+          'Glühwein',
+          '_GingerBread_',
+        ],
+      },
+      expected: [
+        {
+          label: 'Cat12',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo_Bar',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glögg',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glühwein',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '_GingerBread_',
           kind: CompletionItemKind.TypeParameter,
         },
       ],

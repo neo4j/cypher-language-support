@@ -160,7 +160,15 @@ RETURN movie {
 
     testCompletions({
       query,
-      dbSchema: { propertyKeys: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein'] },
+      dbSchema: {
+        propertyKeys: [
+          'Cat12',
+          'Foo_Bar',
+          'Glögg',
+          'Glühwein',
+          '_GingerBread_',
+        ],
+      },
       expected: [
         {
           label: 'Cat12',
@@ -176,6 +184,10 @@ RETURN movie {
         },
         {
           label: 'Glühwein',
+          kind: CompletionItemKind.Property,
+        },
+        {
+          label: '_GingerBread_',
           kind: CompletionItemKind.Property,
         },
       ],
