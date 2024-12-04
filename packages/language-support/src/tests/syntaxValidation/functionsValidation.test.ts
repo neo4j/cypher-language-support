@@ -1,7 +1,44 @@
+import { DiagnosticTag } from 'vscode-languageserver-types';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Functions semantic validation spec', () => {
+  test('Syntax validation warns on deprecated function when database can be contacted', () => {
+    const query = `RETURN id()`;
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual(
+      expect.arrayContaining([
+        {
+          tags: [DiagnosticTag.Deprecated],
+          offsets: {
+            end: 9,
+            start: 7,
+          },
+          message: 'Function id is deprecated.',
+          range: {
+            end: {
+              character: 9,
+              line: 0,
+            },
+            start: {
+              character: 7,
+              line: 0,
+            },
+          },
+          severity: 2,
+        },
+      ]),
+    );
+  });
+
   test('Syntax validation errors on missing function when database can be contacted', () => {
     const query = `RETURN dontpanic("marvin")`;
 

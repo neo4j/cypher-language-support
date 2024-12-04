@@ -1,4 +1,8 @@
-import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import {
+  DiagnosticSeverity,
+  DiagnosticTag,
+  Position,
+} from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
@@ -136,6 +140,60 @@ function generateProcedureNotFoundError(
   };
 
   return error;
+}
+
+function generateProcedureDeprecatedWarning(
+  parsedProcedure: ParsedProcedure,
+): SyntaxDiagnostic {
+  const rawText = parsedProcedure.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedProcedure.line - 1;
+  const startColumn = parsedProcedure.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const warning: SyntaxDiagnostic = {
+    tags: [DiagnosticTag.Deprecated],
+    severity: DiagnosticSeverity.Warning,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedProcedure.offsets,
+    message: `Procedure ${parsedProcedure.name} is deprecated.`,
+  };
+
+  return warning;
+}
+
+function generateFunctionDeprecatedWarning(
+  parsedFunction: ParsedFunction,
+): SyntaxDiagnostic {
+  const rawText = parsedFunction.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedFunction.line - 1;
+  const startColumn = parsedFunction.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const warning: SyntaxDiagnostic = {
+    tags: [DiagnosticTag.Deprecated],
+    severity: DiagnosticSeverity.Warning,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedFunction.offsets,
+    message: `Function ${parsedFunction.name} is deprecated.`,
+  };
+
+  return warning;
 }
 
 function warnOnUndeclaredLabels(
@@ -300,6 +358,14 @@ export function validateSemantics(
             current,
             dbSchema,
           );
+          const procedureWarnings = warningOnDeprecatedProcedure(
+            current,
+            dbSchema,
+          );
+          const functionWarnings = warningOnDeprecatedFunction(
+            current,
+            dbSchema,
+          );
 
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
@@ -312,7 +378,12 @@ export function validateSemantics(
             parseResult: current,
           });
           return semanticDiagnostics
-            .concat(functionErrors, procedureErrors)
+            .concat(
+              functionErrors,
+              procedureErrors,
+              functionWarnings,
+              procedureWarnings,
+            )
             .sort(sortByPositionAndMessage);
         }
       }
@@ -323,6 +394,43 @@ export function validateSemantics(
   }
 
   return [];
+}
+
+function warningOnDeprecatedProcedure(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  if (dbSchema.procedures) {
+    const proceduresInQuery = parsingResult.collectedProcedures;
+
+    proceduresInQuery.forEach((parsedProcedure) => {
+      const procedureDeprecated =
+        dbSchema.procedures?.[parsedProcedure.name]?.option?.deprecated;
+      if (procedureDeprecated) {
+        warnings.push(generateProcedureDeprecatedWarning(parsedProcedure));
+      }
+    });
+  }
+  return warnings;
+}
+
+function warningOnDeprecatedFunction(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  if (dbSchema.functions) {
+    const functionsInQuery = parsingResult.collectedFunctions;
+    functionsInQuery.forEach((parsedFunction) => {
+      const functionDeprecated =
+        dbSchema.functions?.[parsedFunction.name]?.isDeprecated;
+      if (functionDeprecated) {
+        warnings.push(generateFunctionDeprecatedWarning(parsedFunction));
+      }
+    });
+  }
+  return warnings;
 }
 
 function errorOnUndeclaredFunctions(
