@@ -24,7 +24,7 @@ paramsCmd: PARAM paramsArgs?;
 
 paramsArgs: (CLEAR | listCompletionRule | map | lambda);
 
-lambda: unescapedSymbolicNameString EQ GT expression;
+lambda: symbolicNameString EQ GT expression;
 
 clearCmd: CLEAR;
 
