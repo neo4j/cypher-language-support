@@ -509,7 +509,7 @@ function parseToCommand(
         }
 
         const lambda = paramArgs.lambda();
-        const name = lambda?.symbolicNameString()?.getText();
+        const name = lambda?.parameterName()?.getText();
         const expression = lambda?.expression()?.getText();
         if (name && expression) {
           return {
