@@ -692,7 +692,11 @@ function completeAliasName({
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return parameterSuggestions;
+    return parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickIfNeeded(completionItem.label),
+    }));
   }
 
   // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
@@ -702,7 +706,11 @@ function completeAliasName({
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return parameterSuggestions;
+    return parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickIfNeeded(completionItem.label),
+    }));
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -716,10 +724,15 @@ function completeAliasName({
     )
   ) {
     return [
-      ...parameterSuggestions,
+      ...parameterSuggestions.map((completionItem) => ({
+        label: completionItem.label,
+        kind: completionItem.kind,
+        insertText: backtickIfNeeded(completionItem.label), //TODO: necessary? it seems rn we cant create backticked param in cmd
+      })),
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
+        insertText: backtickIfNeeded(aliasName),
       })),
     ];
   }
@@ -732,6 +745,7 @@ function completeAliasName({
       .map((databaseName) => ({
         label: databaseName,
         kind: CompletionItemKind.Value,
+        insertText: backtickIfNeeded(databaseName),
       })),
   ];
 }
@@ -767,7 +781,11 @@ function completeSymbolicName({
     // so target should be non-existent
     (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
   ) {
-    return parameterSuggestions;
+    return parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickIfNeeded(completionItem.label),
+    }));
   }
 
   const rulesThatAcceptExistingUsers = [
@@ -786,7 +804,11 @@ function completeSymbolicName({
       })),
     ];
 
-    return result;
+    return result.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickIfNeeded(completionItem.label),
+    }));
   }
 
   const rulesThatAcceptExistingRoles = [
@@ -802,7 +824,11 @@ function completeSymbolicName({
         label: roleName,
         kind: CompletionItemKind.Value,
       })),
-    ];
+    ].map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickIfNeeded(completionItem.label),
+    }));
   }
 
   return [];
