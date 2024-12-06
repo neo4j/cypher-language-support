@@ -21,7 +21,9 @@ RETURN variable;`;
     ),
   );
   keywordcolors.every((kw) =>
-    expect(kw).toEqual(lightThemeConstants.highlightStyles.keyword),
+    expect(kw).toEqual(
+      lightThemeConstants.highlightStyles.keyword.toLowerCase(),
+    ),
   );
 
   const labelReltype = await Promise.all(
@@ -30,34 +32,34 @@ RETURN variable;`;
     ),
   );
   labelReltype.every((kw) =>
-    expect(kw).toEqual(lightThemeConstants.highlightStyles.label),
+    expect(kw).toEqual(lightThemeConstants.highlightStyles.label.toLowerCase()),
   );
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('parameter')),
-  ).toEqual(lightThemeConstants.highlightStyles.paramValue);
+  ).toEqual(lightThemeConstants.highlightStyles.paramValue.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('property')),
-  ).toEqual(lightThemeConstants.highlightStyles.property);
+  ).toEqual(lightThemeConstants.highlightStyles.property.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('false')),
-  ).toEqual(lightThemeConstants.highlightStyles.booleanLiteral);
+  ).toEqual(lightThemeConstants.highlightStyles.booleanLiteral.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('String')),
-  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral);
+  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('comment')),
-  ).toEqual(lightThemeConstants.highlightStyles.comment);
+  ).toEqual(lightThemeConstants.highlightStyles.comment.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(
       page.getByText('1234', { exact: true }),
     ),
-  ).toEqual(lightThemeConstants.highlightStyles.numberLiteral);
+  ).toEqual(lightThemeConstants.highlightStyles.numberLiteral.toLowerCase());
 
   expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
 });
@@ -80,7 +82,9 @@ RETURN variable;`;
     ),
   );
   keywordcolors.every((kw) =>
-    expect(kw).toEqual(darkThemeConstants.highlightStyles.keyword),
+    expect(kw).toEqual(
+      darkThemeConstants.highlightStyles.keyword.toLowerCase(),
+    ),
   );
 
   const labelReltype = await Promise.all(
@@ -89,34 +93,34 @@ RETURN variable;`;
     ),
   );
   labelReltype.every((kw) =>
-    expect(kw).toEqual(darkThemeConstants.highlightStyles.label),
+    expect(kw).toEqual(darkThemeConstants.highlightStyles.label.toLowerCase()),
   );
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('parameter')),
-  ).toEqual(darkThemeConstants.highlightStyles.paramValue);
+  ).toEqual(darkThemeConstants.highlightStyles.paramValue.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('property')),
-  ).toEqual(darkThemeConstants.highlightStyles.property);
+  ).toEqual(darkThemeConstants.highlightStyles.property.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('false')),
-  ).toEqual(darkThemeConstants.highlightStyles.booleanLiteral);
+  ).toEqual(darkThemeConstants.highlightStyles.booleanLiteral.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('String')),
-  ).toEqual(darkThemeConstants.highlightStyles.stringLiteral);
+  ).toEqual(darkThemeConstants.highlightStyles.stringLiteral.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('comment')),
-  ).toEqual(darkThemeConstants.highlightStyles.comment);
+  ).toEqual(darkThemeConstants.highlightStyles.comment.toLowerCase());
 
   expect(
     await editorPage.getHexColorOfLocator(
       page.getByText('1234', { exact: true }),
     ),
-  ).toEqual(darkThemeConstants.highlightStyles.numberLiteral);
+  ).toEqual(darkThemeConstants.highlightStyles.numberLiteral.toLowerCase());
 
   expect(await editorPage.editorBackgroundIsUnset()).toEqual(false);
 });
@@ -129,7 +133,7 @@ test('can live switch theme ', async ({ page, mount }) => {
     await editorPage.getHexColorOfLocator(
       page.getByText('RETURN', { exact: true }),
     ),
-  ).toEqual(lightThemeConstants.highlightStyles.keyword);
+  ).toEqual(lightThemeConstants.highlightStyles.keyword.toLowerCase());
 
   await component.update(<CypherEditor theme="dark" value="RETURN" />);
 
@@ -137,7 +141,7 @@ test('can live switch theme ', async ({ page, mount }) => {
     await editorPage.getHexColorOfLocator(
       page.getByText('RETURN', { exact: true }),
     ),
-  ).toEqual(darkThemeConstants.highlightStyles.keyword);
+  ).toEqual(darkThemeConstants.highlightStyles.keyword.toLowerCase());
 });
 
 test('respects prop to allow overriding bkg color', async ({ page, mount }) => {
@@ -162,7 +166,7 @@ multilinestring";`;
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('multilinestring')),
-  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral);
+  ).toEqual(lightThemeConstants.highlightStyles.stringLiteral.toLowerCase());
 });
 
 test('highlights multiline label correctly', async ({ page, mount }) => {
@@ -177,7 +181,7 @@ Label\`)
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('Label')),
-  ).toEqual(lightThemeConstants.highlightStyles.label);
+  ).toEqual(lightThemeConstants.highlightStyles.label.toLowerCase());
 });
 
 test('highlights multiline comment correctly', async ({ page, mount }) => {
@@ -192,5 +196,5 @@ comment
 
   expect(
     await editorPage.getHexColorOfLocator(page.getByText('comment')),
-  ).toEqual(lightThemeConstants.highlightStyles.comment);
+  ).toEqual(lightThemeConstants.highlightStyles.comment.toLowerCase());
 });
