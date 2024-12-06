@@ -11,7 +11,7 @@ export const lightThemeConstants: ThemeOptions = {
   editorSettings: {
     background: '#FEFEFE',
     foreground: '#545454',
-    gutterForeground: '#6c6c6c',
+    gutterForeground: '#a3a7ae',
     selection: tokens.colors.neutral['20'],
     textMatchingSelection: tokens.colors.lavender['15'],
     cursor: '#000000',
