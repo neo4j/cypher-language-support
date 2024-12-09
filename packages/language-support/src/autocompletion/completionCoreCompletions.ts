@@ -782,7 +782,6 @@ function completeSymbolicName({
     return parameterSuggestions.map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      //insertText: backtickIfNeeded(completionItem.label),
     }));
   }
 
@@ -805,7 +804,6 @@ function completeSymbolicName({
     return result.map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      //insertText: backtickIfNeeded(completionItem.label),
     }));
   }
 
@@ -825,7 +823,6 @@ function completeSymbolicName({
     ].map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      //insertText: backtickIfNeeded(completionItem.label),
     }));
   }
 
