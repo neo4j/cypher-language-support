@@ -4,8 +4,14 @@ import { testCompletions } from './completionAssertionHelpers';
 
 describe('Can complete database names', () => {
   const dbSchema: DbSchema = {
-    databaseNames: ['db1', 'db2', 'movies'],
-    aliasNames: ['myMovies', 'scoped.alias', 'a.b.c.d'],
+    databaseNames: ['db1', 'db2', 'movies', 'financial reports, neo4j_server'],
+    aliasNames: [
+      'myMovies',
+      'scoped.alias',
+      'a.b.c.d',
+      'panama papers1',
+      'office-db',
+    ],
     parameters: {
       param1: 'something',
       param2: 1337,
@@ -14,6 +20,32 @@ describe('Can complete database names', () => {
       },
     },
   };
+
+  test('Correctly completes database names/aliases with special symbols using backticks', () => {
+    const query = 'SHOW DATABASE ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: 'financial reports',
+          kind: CompletionItemKind.Keyword,
+          insertText: '`financial reports`',
+        },
+        {
+          label: 'panama papers1',
+          kind: CompletionItemKind.Keyword,
+          insertText: '`panama papers1`',
+        },
+        {
+          label: 'office-db',
+          kind: CompletionItemKind.Keyword,
+          insertText: '`office-db`',
+        },
+      ],
+    });
+  });
 
   test('Correctly completes database names and aliases in SHOW DATABASE', () => {
     const query = 'SHOW DATABASE ';
@@ -27,6 +59,7 @@ describe('Can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
+        { label: 'neo4j_server', kind: CompletionItemKind.Variable },
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
