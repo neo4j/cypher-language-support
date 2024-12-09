@@ -4,7 +4,13 @@ import { testCompletions } from './completionAssertionHelpers';
 
 describe('Can complete database names', () => {
   const dbSchema: DbSchema = {
-    databaseNames: ['db1', 'db2', 'movies', 'financial reports, neo4j_server'],
+    databaseNames: [
+      'db1',
+      'db2',
+      'movies',
+      'financial reports',
+      'neo4j_server',
+    ],
     aliasNames: [
       'myMovies',
       'scoped.alias',
@@ -30,17 +36,17 @@ describe('Can complete database names', () => {
       expected: [
         {
           label: 'financial reports',
-          kind: CompletionItemKind.Keyword,
+          kind: CompletionItemKind.Value,
           insertText: '`financial reports`',
         },
         {
           label: 'panama papers1',
-          kind: CompletionItemKind.Keyword,
+          kind: CompletionItemKind.Value,
           insertText: '`panama papers1`',
         },
         {
           label: 'office-db',
-          kind: CompletionItemKind.Keyword,
+          kind: CompletionItemKind.Value,
           insertText: '`office-db`',
         },
       ],
@@ -59,7 +65,7 @@ describe('Can complete database names', () => {
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-        { label: 'neo4j_server', kind: CompletionItemKind.Variable },
+        { label: 'neo4j_server', kind: CompletionItemKind.Value },
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
@@ -100,7 +106,7 @@ describe('Can complete database names', () => {
     });
   });
 
-  test("Doesn't suggest existing database names or aliases when createing database", () => {
+  test("Doesn't suggest existing database names or aliases when creating database", () => {
     const query = 'CREATE DATABASE ';
 
     testCompletions({

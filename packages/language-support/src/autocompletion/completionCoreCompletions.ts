@@ -41,6 +41,16 @@ function backtickIfNeeded(e: string): string | undefined {
   }
 }
 
+function backtickDbNameIfNeeded(e: string): string | undefined {
+  if (e == null || e == '') {
+    return undefined;
+  } else if (/[^\p{L}\p{N}_.]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
+
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
     const result: CompletionItem = {
@@ -692,11 +702,7 @@ function completeAliasName({
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-      insertText: backtickIfNeeded(completionItem.label),
-    }));
+    return parameterSuggestions;
   }
 
   // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
@@ -706,11 +712,7 @@ function completeAliasName({
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-      insertText: backtickIfNeeded(completionItem.label),
-    }));
+    return parameterSuggestions;
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -724,15 +726,11 @@ function completeAliasName({
     )
   ) {
     return [
-      ...parameterSuggestions.map((completionItem) => ({
-        label: completionItem.label,
-        kind: completionItem.kind,
-        insertText: backtickIfNeeded(completionItem.label), //TODO: necessary? it seems rn we cant create backticked param in cmd
-      })),
+      ...parameterSuggestions,
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
-        insertText: backtickIfNeeded(aliasName),
+        insertText: backtickDbNameIfNeeded(aliasName),
       })),
     ];
   }
@@ -745,7 +743,7 @@ function completeAliasName({
       .map((databaseName) => ({
         label: databaseName,
         kind: CompletionItemKind.Value,
-        insertText: backtickIfNeeded(databaseName),
+        insertText: backtickDbNameIfNeeded(databaseName),
       })),
   ];
 }
