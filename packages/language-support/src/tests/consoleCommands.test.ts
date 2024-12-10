@@ -475,7 +475,7 @@ describe('parameters', () => {
         length: 1,
         position: { line: 0, startCharacter: 7, startOffset: 7 },
         token: 'x',
-        tokenType: 'symbolicName',
+        tokenType: 'variable',
       },
       {
         length: 1,
