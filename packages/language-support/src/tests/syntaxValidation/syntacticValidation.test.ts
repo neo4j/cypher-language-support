@@ -1046,6 +1046,7 @@ describe('Syntactic validation spec', () => {
 
   test.each([
     `MATCH (n:Test1) RETURN n.profile`,
+    `MATCH (n:MyLabel) RETURN n.CYPHER`,
     `CREATE (n:Test1 {explain: 'Explain'});`,
     `RETURN { clear: 'Clear', params: 'params', history: 'history'}`,
   ])(
