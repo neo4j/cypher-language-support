@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
+import { testData } from '@neo4j-cypher/language-support';
 
 test.use({ viewport: { width: 1000, height: 500 } });
 test('Prop lint set to false disables syntax validation', async ({
@@ -153,4 +154,35 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
     '-1',
     "Invalid input. '-1' is not a valid value. Must be a positive integer",
   );
+});
+
+test('Strikethroughs are shown for deprecated functions', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `RETURN id()`;
+
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+  await expect(editorPage.page.locator('.cm-deprecated-element').last()).toBeVisible(
+    { timeout: 3000 },
+  );
+  await editorPage.checkWarningMessage(
+    'id',
+    "Function id is deprecated.",
+  );
+
+});
+
+test('Strikethroughs are shown for deprecated procedures', async ({ page, mount }) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `CALL apoc.create.uuids()`;
+
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+  await expect(editorPage.page.locator('.cm-deprecated-element').last()).toBeVisible(
+    { timeout: 3000 },
+  );
+
+  await editorPage.checkWarningMessage(
+    'apoc.create.uuids',
+    "Procedure apoc.create.uuids is deprecated.",
+  );
+
 });
