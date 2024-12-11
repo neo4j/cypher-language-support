@@ -27,7 +27,7 @@ describe('Can complete database names', () => {
     },
   };
 
-  test('Correctly completes database names/aliases with special symbols using backticks', () => {
+  test('Correctly completes database names/aliases with special symbols using backticks for SHOW DATABASE', () => {
     const query = 'SHOW DATABASE ';
 
     testCompletions({
@@ -39,6 +39,27 @@ describe('Can complete database names', () => {
           kind: CompletionItemKind.Value,
           insertText: '`financial reports`',
         },
+        {
+          label: 'panama papers1',
+          kind: CompletionItemKind.Value,
+          insertText: '`panama papers1`',
+        },
+        {
+          label: 'office-db',
+          kind: CompletionItemKind.Value,
+          insertText: '`office-db`',
+        },
+      ],
+    });
+  });
+
+  test('Correctly completes aliases with special symbols using backticks for SHOW ALIAS', () => {
+    const query = 'SHOW ALIAS ';
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
         {
           label: 'panama papers1',
           kind: CompletionItemKind.Value,
