@@ -7,6 +7,9 @@ options { tokenVocab = CypherPreLexer; }
 preparsedStatement:
    preparserOption? statement;
 
+preparserKeyword:
+   EXPLAIN | PROFILE | CYPHER; 
+
 preparserOption:
    EXPLAIN | PROFILE | cypherOptions;
 
