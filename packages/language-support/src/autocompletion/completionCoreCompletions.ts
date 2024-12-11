@@ -702,7 +702,11 @@ function completeAliasName({
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return parameterSuggestions;
+    return parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickDbNameIfNeeded(completionItem.label),
+    }));
   }
 
   // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
@@ -712,7 +716,11 @@ function completeAliasName({
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return parameterSuggestions;
+    return parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickDbNameIfNeeded(completionItem.label),
+    }));
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -726,7 +734,11 @@ function completeAliasName({
     )
   ) {
     return [
-      ...parameterSuggestions,
+      ...parameterSuggestions.map((completionItem) => ({
+        label: completionItem.label,
+        kind: completionItem.kind,
+        insertText: backtickDbNameIfNeeded(completionItem.label),
+      })),
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
@@ -737,7 +749,11 @@ function completeAliasName({
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
-    ...parameterSuggestions,
+    ...parameterSuggestions.map((completionItem) => ({
+      label: completionItem.label,
+      kind: completionItem.kind,
+      insertText: backtickDbNameIfNeeded(completionItem.label),
+    })),
     ...(dbSchema.databaseNames ?? [])
       .concat(dbSchema.aliasNames ?? [])
       .map((databaseName) => ({
@@ -779,10 +795,7 @@ function completeSymbolicName({
     // so target should be non-existent
     (ruleList.includes(CypherParser.RULE_renameUser) && afterToToken)
   ) {
-    return parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-    }));
+    return parameterSuggestions;
   }
 
   const rulesThatAcceptExistingUsers = [
@@ -801,10 +814,7 @@ function completeSymbolicName({
       })),
     ];
 
-    return result.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-    }));
+    return result;
   }
 
   const rulesThatAcceptExistingRoles = [
@@ -820,10 +830,7 @@ function completeSymbolicName({
         label: roleName,
         kind: CompletionItemKind.Value,
       })),
-    ].map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-    }));
+    ];
   }
 
   return [];
