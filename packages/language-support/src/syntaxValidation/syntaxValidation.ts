@@ -66,6 +66,35 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
+function generateSyntaxDiagnostic(
+  parsedProcOrFunc: ParsedProcedure,
+  severity: DiagnosticSeverity,
+  message: string,
+  deprecation: boolean = false,
+): SyntaxDiagnostic {
+  const rawText = parsedProcOrFunc.rawText;
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedProcOrFunc.line - 1;
+  const startColumn = parsedProcOrFunc.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const error: SyntaxDiagnostic = {
+    severity,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedProcOrFunc.offsets,
+    message,
+    ...(deprecation ? { tags: [DiagnosticTag.Deprecated] } : {}),
+  };
+  return error;
+}
+
 function detectNonDeclaredFunction(
   parsedFunction: ParsedFunction,
   functionsSchema: Record<string, Neo4jFunction>,
@@ -93,107 +122,43 @@ function detectNonDeclaredFunction(
 function generateFunctionNotFoundError(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
-  const rawText = parsedFunction.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedFunction.line - 1;
-  const startColumn = parsedFunction.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
-
-  const error: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Error,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedFunction.offsets,
-    message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-  };
-
-  return error;
+  return generateSyntaxDiagnostic(
+    parsedFunction,
+    DiagnosticSeverity.Error,
+    `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  );
 }
 
 function generateProcedureNotFoundError(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
-  const rawText = parsedProcedure.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedProcedure.line - 1;
-  const startColumn = parsedProcedure.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
-
-  const error: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Error,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedProcedure.offsets,
-    message: `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-  };
-
-  return error;
+  return generateSyntaxDiagnostic(
+    parsedProcedure,
+    DiagnosticSeverity.Error,
+    `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  );
 }
 
 function generateProcedureDeprecatedWarning(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
-  const rawText = parsedProcedure.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedProcedure.line - 1;
-  const startColumn = parsedProcedure.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
-
-  const warning: SyntaxDiagnostic = {
-    tags: [DiagnosticTag.Deprecated],
-    severity: DiagnosticSeverity.Warning,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedProcedure.offsets,
-    message: `Procedure ${parsedProcedure.name} is deprecated.`,
-  };
-
-  return warning;
+  return generateSyntaxDiagnostic(
+    parsedProcedure,
+    DiagnosticSeverity.Warning,
+    `Procedure ${parsedProcedure.name} is deprecated.`,
+    true,
+  );
 }
 
 function generateFunctionDeprecatedWarning(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
-  const rawText = parsedFunction.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedFunction.line - 1;
-  const startColumn = parsedFunction.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
-
-  const warning: SyntaxDiagnostic = {
-    tags: [DiagnosticTag.Deprecated],
-    severity: DiagnosticSeverity.Warning,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedFunction.offsets,
-    message: `Function ${parsedFunction.name} is deprecated.`,
-  };
-
-  return warning;
+  return generateSyntaxDiagnostic(
+    parsedFunction,
+    DiagnosticSeverity.Warning,
+    `Function ${parsedFunction.name} is deprecated.`,
+    true,
+  );
 }
 
 function warnOnUndeclaredLabels(
