@@ -1,3 +1,4 @@
+import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
@@ -84,6 +85,20 @@ test('Errors for multiline undefined labels are highlighted correctly', async ({
 
   await editorPage.checkWarningMessage('`Foo', expectedMsg);
   await editorPage.checkWarningMessage('Bar`', expectedMsg);
+});
+
+test('Semantic errors work in firefox', async ({
+  browserName,
+  page,
+  mount,
+}) => {
+  test.skip(browserName !== 'firefox');
+  const editorPage = new CypherEditorPage(page);
+  const query = 'MATCH (n:OperationalPoint)--(m:OperationalPoint) RETURN s,m,n';
+
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+
+  await editorPage.checkErrorMessage('s,m,n', 'Variable `s` not defined');
 });
 
 test('Semantic errors are surfaced when there are no syntactic errors', async ({
