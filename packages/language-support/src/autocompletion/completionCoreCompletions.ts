@@ -32,7 +32,9 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
 function backtickIfNeeded(e: string): string | undefined {
-  if (/\s/.test(e) || /[^a-zA-Z]/.test(e)) {
+  if (e == null || e == '') {
+    return undefined;
+  } else if (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
     return `\`${e}\``;
   } else {
     return undefined;
@@ -478,12 +480,12 @@ export function completionCoreCompletion(
         );
         if (callContext instanceof CallClauseContext) {
           const procedureNameCtx = callContext.procedureName();
-          const existingYieldItems = callContext
-            .procedureResultItem_list()
-            .map((a) => a.getText());
+          const existingYieldItems = new Set(
+            callContext.procedureResultItem_list().map((a) => a.getText()),
+          );
           const name = getMethodName(procedureNameCtx);
           return procedureReturnCompletions(name, dbSchema).filter(
-            (a) => !existingYieldItems.includes(a?.label),
+            (a) => !existingYieldItems.has(a?.label),
           );
         }
       }

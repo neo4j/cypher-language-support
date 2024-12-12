@@ -1,5 +1,11 @@
 # neo4j-for-vscode
 
+## 1.6.0
+
+- Updates grammar to LTS version
+- Preparser option bugfix
+- Adds YIELD autocompletions
+
 ## 1.5.2
 
 - Fixes signature help bug with arguments that include a default value

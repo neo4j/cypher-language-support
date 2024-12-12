@@ -714,7 +714,7 @@ namespace
    ;
 
 variable
-   : symbolicNameString
+   : symbolicVariableNameString
    ;
 
 // Returns non-list of propertyKeyNames
@@ -985,7 +985,7 @@ showTransactions
    ;
 
 terminateTransactions
-   : transactionToken namesAndClauses
+   : transactionToken stringsOrExpression showCommandYield? composableCommandClauses?
    ;
 
 showSettings
@@ -1170,7 +1170,7 @@ reallocateDatabases
 // Role commands
 
 createRole
-   : ROLE commandNameExpression (IF NOT EXISTS)? (AS COPY OF commandNameExpression)?
+   : IMMUTABLE? ROLE commandNameExpression (IF NOT EXISTS)? (AS COPY OF commandNameExpression)?
    ;
 
 dropRole
@@ -1582,7 +1582,7 @@ createDatabase
    ;
 
 primaryTopology
-   : UNSIGNED_DECIMAL_INTEGER primaryToken
+   : uIntOrIntParameter primaryToken
    ;
 
 primaryToken
@@ -1590,7 +1590,7 @@ primaryToken
    ;
 
 secondaryTopology
-   : UNSIGNED_DECIMAL_INTEGER secondaryToken
+   : uIntOrIntParameter secondaryToken
    ;
 
 secondaryToken
@@ -1754,6 +1754,13 @@ stringOrParameter
    | parameter["STRING"]
    ;
 
+// Should return an Either[Integer, Parameter]
+// There is no unsigned integer Cypher Type so the parameter permits signed values.
+uIntOrIntParameter
+    :UNSIGNED_DECIMAL_INTEGER
+    | parameter["INTEGER"]
+    ;
+
 mapOrParameter
    : map
    | parameter["MAP"]
@@ -1761,6 +1768,19 @@ mapOrParameter
 
 map
    : LCURLY (propertyKeyName COLON expression (COMMA propertyKeyName COLON expression)*)? RCURLY
+   ;
+
+symbolicVariableNameString
+   : escapedSymbolicVariableNameString
+   | unescapedSymbolicVariableNameString
+   ;
+
+escapedSymbolicVariableNameString
+   : escapedSymbolicNameString
+   ;
+
+unescapedSymbolicVariableNameString
+   : unescapedSymbolicNameString
    ;
 
 symbolicNameString
