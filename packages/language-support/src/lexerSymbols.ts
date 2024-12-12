@@ -23,6 +23,7 @@ export enum CypherTokenType {
   punctuation = 'punctuation',
   none = 'none',
   consoleCommand = 'consoleCommand',
+  settingValue = 'settingValue',
 }
 
 export const lexerOperators = [

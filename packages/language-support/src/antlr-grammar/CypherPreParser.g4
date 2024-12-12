@@ -17,7 +17,13 @@ cypherOptions:
    CYPHER cypherVersion? cypherOption*;
 
 cypherOption:
-   IDENTIFIER EQ (IDENTIFIER | numberLiteral);
+   cypherOptionName EQ cypherOptionValue;
+
+cypherOptionValue:
+   (IDENTIFIER | numberLiteral);
+
+cypherOptionName:
+   IDENTIFIER;
 
 cypherVersion:
    UNSIGNED_DECIMAL_INTEGER;

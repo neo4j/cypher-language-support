@@ -4,6 +4,8 @@ import {
   ArrowLineContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
+  CypherOptionNameContext,
+  CypherOptionValueContext,
   FunctionNameContext,
   KeywordLiteralContext,
   LabelNameContext,
@@ -74,6 +76,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
     [CypherTokenType.property]: SemanticTokenTypes.property,
+    [CypherTokenType.settingValue]: SemanticTokenTypes.enumMember,
     [CypherTokenType.label]: SemanticTokenTypes.type,
     [CypherTokenType.variable]: SemanticTokenTypes.variable,
     [CypherTokenType.symbolicName]: SemanticTokenTypes.variable,
@@ -109,6 +112,14 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     }
   }
+
+  exitCypherOptionValue = (ctx: CypherOptionValueContext) => {
+    this.addToken(ctx.start, CypherTokenType.settingValue, ctx.getText());
+  };
+
+  exitCypherOptionName = (ctx: CypherOptionNameContext) => {
+    this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
+  };
 
   exitLabelName = (ctx: LabelNameContext) => {
     this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
@@ -338,7 +349,7 @@ export function applySyntaxColouring(
   /* Get a second pass at the colouring correcting the colours
      using structural information from the parsing tree
   
-     This allows to correclty colour things that are
+     This allows to correctly colour things that are
      recognized as keywords by the lexer in positions
      where they are not keywords (e.g. MATCH (MATCH: MATCH))
   */
