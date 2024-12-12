@@ -65,7 +65,7 @@ export class CypherEditorPage {
     expectedMsg: string,
   ) {
     await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
-      { timeout: 5000 },
+      { timeout: 3000 },
     );
 
     await this.page.getByText(queryChunk, { exact: true }).hover();

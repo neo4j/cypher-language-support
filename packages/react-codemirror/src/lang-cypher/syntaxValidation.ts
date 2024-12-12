@@ -10,7 +10,7 @@ import WorkerURL from './lintWorker?worker&url';
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
   workerOpts: { type: 'module' },
-  workerTerminateTimeout: 5000,
+  workerTerminateTimeout: 2000,
 });
 
 let lastSemanticJob: LinterTask | undefined;
@@ -20,6 +20,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (!config.lint) {
       return [];
     }
+
     const query = view.state.doc.toString();
     const syntaxErrors = validateSyntax(query, config.schema ?? {});
 
