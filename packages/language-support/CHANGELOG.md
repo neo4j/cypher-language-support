@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.12
+
+### Patch Changes
+
+- 88fbe63: Modified backtick insertion to only happen when really necessary
+- 22081b0: Adds autocompletions following YIELD in a procedure call
+- 62ac442: Add support for sysinfo, welcome, connect, disconnect and server console commands
+
 ## 2.0.0-next.11
 
 ### Patch Changes
