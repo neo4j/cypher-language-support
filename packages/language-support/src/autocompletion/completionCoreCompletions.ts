@@ -51,6 +51,22 @@ function backtickDbNameIfNeeded(e: string): string | undefined {
   }
 }
 
+function backtickParamIfNeeded(e: string): string | undefined {
+  if (e == null || e == '') {
+    return undefined;
+  }
+  const namePart = e.slice(1);
+  if (e[0] == '$') {
+    if (/[^\p{L}\p{N}_]/u.test(namePart) || /[^\p{L}_]/u.test(namePart[0])) {
+      return '$' + `\`${namePart}\``;
+    } else {
+      return undefined;
+    }
+  } else {
+    return backtickIfNeeded(e);
+  }
+}
+
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
     const result: CompletionItem = {
@@ -705,7 +721,7 @@ function completeAliasName({
     return parameterSuggestions.map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      insertText: backtickDbNameIfNeeded(completionItem.label),
+      insertText: backtickParamIfNeeded(completionItem.label),
     }));
   }
 
@@ -719,7 +735,7 @@ function completeAliasName({
     return parameterSuggestions.map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      insertText: backtickDbNameIfNeeded(completionItem.label),
+      insertText: backtickParamIfNeeded(completionItem.label),
     }));
   }
 
@@ -737,7 +753,7 @@ function completeAliasName({
       ...parameterSuggestions.map((completionItem) => ({
         label: completionItem.label,
         kind: completionItem.kind,
-        insertText: backtickDbNameIfNeeded(completionItem.label),
+        insertText: backtickParamIfNeeded(completionItem.label),
       })),
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
@@ -752,7 +768,7 @@ function completeAliasName({
     ...parameterSuggestions.map((completionItem) => ({
       label: completionItem.label,
       kind: completionItem.kind,
-      insertText: backtickDbNameIfNeeded(completionItem.label),
+      insertText: backtickParamIfNeeded(completionItem.label),
     })),
     ...(dbSchema.databaseNames ?? [])
       .concat(dbSchema.aliasNames ?? [])

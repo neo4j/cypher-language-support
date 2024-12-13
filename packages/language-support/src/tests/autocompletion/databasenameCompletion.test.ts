@@ -49,6 +49,11 @@ describe('Can complete database names', () => {
           kind: CompletionItemKind.Value,
           insertText: '`office-db`',
         },
+        {
+          label: '$param 4',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`param 4`',
+        },
       ],
     });
   });
@@ -69,6 +74,11 @@ describe('Can complete database names', () => {
           label: 'office-db',
           kind: CompletionItemKind.Value,
           insertText: '`office-db`',
+        },
+        {
+          label: '$param 4',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`param 4`',
         },
       ],
     });
