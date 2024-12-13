@@ -1,4 +1,8 @@
-import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import {
+  DiagnosticSeverity,
+  DiagnosticTag,
+  Position,
+} from 'vscode-languageserver-types';
 
 import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
@@ -33,33 +37,49 @@ function detectNonDeclaredLabel(
       !dbRelationshipTypes.has(normalizedLabelName));
 
   if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
-    const labelChunks = labelName.split('\n');
-    const linesOffset = labelChunks.length - 1;
-    const lineIndex = labelOrRelType.line - 1;
-    const startColumn = labelOrRelType.column;
-    const endColumn =
-      linesOffset == 0
-        ? startColumn + labelName.length
-        : labelChunks.at(-1)?.length ?? 0;
-
-    const warning: SyntaxDiagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, startColumn),
-        end: Position.create(lineIndex + linesOffset, endColumn),
-      },
-      offsets: labelOrRelType.offsets,
-      message:
-        labelOrRelType.labeltype +
-        ' ' +
-        labelName +
-        " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-    };
-
-    return warning;
+    const message =
+      labelOrRelType.labeltype +
+      ' ' +
+      labelName +
+      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
+    return generateSyntaxDiagnostic(
+      labelName,
+      labelOrRelType,
+      DiagnosticSeverity.Warning,
+      message,
+    );
   }
 
   return undefined;
+}
+
+function generateSyntaxDiagnostic(
+  rawText: string,
+  parsedText: ParsedProcedure | LabelOrRelType,
+  severity: DiagnosticSeverity,
+  message: string,
+  deprecation: boolean = false,
+): SyntaxDiagnostic {
+  const nameChunks = rawText.split('\n');
+  const linesOffset = nameChunks.length - 1;
+  const lineIndex = parsedText.line - 1;
+  const startColumn = parsedText.column;
+  const endColumn =
+    linesOffset == 0
+      ? startColumn + rawText.length
+      : nameChunks.at(-1)?.length ?? 0;
+
+  const error: SyntaxDiagnostic = {
+    severity,
+    range: {
+      start: Position.create(lineIndex, startColumn),
+      end: Position.create(lineIndex + linesOffset, endColumn),
+    },
+    offsets: parsedText.offsets,
+    message,
+    ...(deprecation ? { tags: [DiagnosticTag.Deprecated] } : {}),
+  };
+  return error;
 }
 
 function detectNonDeclaredFunction(
@@ -89,53 +109,47 @@ function detectNonDeclaredFunction(
 function generateFunctionNotFoundError(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
-  const rawText = parsedFunction.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedFunction.line - 1;
-  const startColumn = parsedFunction.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
-
-  const error: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Error,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedFunction.offsets,
-    message: `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-  };
-
-  return error;
+  return generateSyntaxDiagnostic(
+    parsedFunction.rawText,
+    parsedFunction,
+    DiagnosticSeverity.Error,
+    `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  );
 }
 
 function generateProcedureNotFoundError(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
-  const rawText = parsedProcedure.rawText;
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedProcedure.line - 1;
-  const startColumn = parsedProcedure.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
+  return generateSyntaxDiagnostic(
+    parsedProcedure.rawText,
+    parsedProcedure,
+    DiagnosticSeverity.Error,
+    `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  );
+}
 
-  const error: SyntaxDiagnostic = {
-    severity: DiagnosticSeverity.Error,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedProcedure.offsets,
-    message: `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-  };
+function generateProcedureDeprecatedWarning(
+  parsedProcedure: ParsedProcedure,
+): SyntaxDiagnostic {
+  return generateSyntaxDiagnostic(
+    parsedProcedure.rawText,
+    parsedProcedure,
+    DiagnosticSeverity.Warning,
+    `Procedure ${parsedProcedure.name} is deprecated.`,
+    true,
+  );
+}
 
-  return error;
+function generateFunctionDeprecatedWarning(
+  parsedFunction: ParsedFunction,
+): SyntaxDiagnostic {
+  return generateSyntaxDiagnostic(
+    parsedFunction.rawText,
+    parsedFunction,
+    DiagnosticSeverity.Warning,
+    `Function ${parsedFunction.name} is deprecated.`,
+    true,
+  );
 }
 
 function warnOnUndeclaredLabels(
@@ -300,6 +314,14 @@ export function validateSemantics(
             current,
             dbSchema,
           );
+          const procedureWarnings = warningOnDeprecatedProcedure(
+            current,
+            dbSchema,
+          );
+          const functionWarnings = warningOnDeprecatedFunction(
+            current,
+            dbSchema,
+          );
 
           const { notifications, errors } = wrappedSemanticAnalysis(
             cmd.statement,
@@ -312,7 +334,12 @@ export function validateSemantics(
             parseResult: current,
           });
           return semanticDiagnostics
-            .concat(functionErrors, procedureErrors)
+            .concat(
+              functionErrors,
+              procedureErrors,
+              functionWarnings,
+              procedureWarnings,
+            )
             .sort(sortByPositionAndMessage);
         }
       }
@@ -323,6 +350,43 @@ export function validateSemantics(
   }
 
   return [];
+}
+
+function warningOnDeprecatedProcedure(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  if (dbSchema.procedures) {
+    const proceduresInQuery = parsingResult.collectedProcedures;
+
+    proceduresInQuery.forEach((parsedProcedure) => {
+      const procedureDeprecated =
+        dbSchema.procedures?.[parsedProcedure.name]?.option?.deprecated;
+      if (procedureDeprecated) {
+        warnings.push(generateProcedureDeprecatedWarning(parsedProcedure));
+      }
+    });
+  }
+  return warnings;
+}
+
+function warningOnDeprecatedFunction(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  if (dbSchema.functions) {
+    const functionsInQuery = parsingResult.collectedFunctions;
+    functionsInQuery.forEach((parsedFunction) => {
+      const functionDeprecated =
+        dbSchema.functions?.[parsedFunction.name]?.isDeprecated;
+      if (functionDeprecated) {
+        warnings.push(generateFunctionDeprecatedWarning(parsedFunction));
+      }
+    });
+  }
+  return warnings;
 }
 
 function errorOnUndeclaredFunctions(

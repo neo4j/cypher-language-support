@@ -1,7 +1,7 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
 import { parserWrapper, validateSyntax } from '@neo4j-cypher/language-support';
-import { DiagnosticSeverity } from 'vscode-languageserver-types';
+import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from './lintWorker';
@@ -74,15 +74,22 @@ export const semanticAnalysisLinter: (config: CypherConfig) => Extension = (
       );
       const result = await lastSemanticJob;
 
-      return result.map((diag) => {
+      const a: Diagnostic[] = result.map((diagnostic) => {
         return {
-          from: diag.offsets.start,
-          to: diag.offsets.end,
+          from: diagnostic.offsets.start,
+          to: diagnostic.offsets.end,
           severity:
-            diag.severity === DiagnosticSeverity.Error ? 'error' : 'warning',
-          message: diag.message,
+            diagnostic.severity === DiagnosticSeverity.Error
+              ? 'error'
+              : 'warning',
+          message: diagnostic.message,
+          ...(diagnostic.tags !== undefined &&
+          diagnostic.tags.includes(DiagnosticTag.Deprecated)
+            ? { markClass: 'cm-deprecated-element' }
+            : {}),
         };
       });
+      return a;
     } catch (err) {
       if (!(err instanceof workerpool.Promise.CancellationError)) {
         console.error(String(err) + ' ' + query);
