@@ -24,6 +24,7 @@ describe('Can complete database names', () => {
       param3: {
         property: 'value',
       },
+      'param 4': 'something else',
     },
   };
 
