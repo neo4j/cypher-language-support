@@ -37,46 +37,33 @@ function detectNonDeclaredLabel(
       !dbRelationshipTypes.has(normalizedLabelName));
 
   if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
-    const labelChunks = labelName.split('\n');
-    const linesOffset = labelChunks.length - 1;
-    const lineIndex = labelOrRelType.line - 1;
-    const startColumn = labelOrRelType.column;
-    const endColumn =
-      linesOffset == 0
-        ? startColumn + labelName.length
-        : labelChunks.at(-1)?.length ?? 0;
-
-    const warning: SyntaxDiagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: Position.create(lineIndex, startColumn),
-        end: Position.create(lineIndex + linesOffset, endColumn),
-      },
-      offsets: labelOrRelType.offsets,
-      message:
-        labelOrRelType.labeltype +
-        ' ' +
-        labelName +
-        " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-    };
-
-    return warning;
+    const message =
+      labelOrRelType.labeltype +
+      ' ' +
+      labelName +
+      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
+    return generateSyntaxDiagnostic(
+      labelName,
+      labelOrRelType,
+      DiagnosticSeverity.Warning,
+      message,
+    );
   }
 
   return undefined;
 }
 
 function generateSyntaxDiagnostic(
-  parsedProcOrFunc: ParsedProcedure,
+  rawText: string,
+  parsedText: ParsedProcedure | LabelOrRelType,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
 ): SyntaxDiagnostic {
-  const rawText = parsedProcOrFunc.rawText;
   const nameChunks = rawText.split('\n');
   const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedProcOrFunc.line - 1;
-  const startColumn = parsedProcOrFunc.column;
+  const lineIndex = parsedText.line - 1;
+  const startColumn = parsedText.column;
   const endColumn =
     linesOffset == 0
       ? startColumn + rawText.length
@@ -88,7 +75,7 @@ function generateSyntaxDiagnostic(
       start: Position.create(lineIndex, startColumn),
       end: Position.create(lineIndex + linesOffset, endColumn),
     },
-    offsets: parsedProcOrFunc.offsets,
+    offsets: parsedText.offsets,
     message,
     ...(deprecation ? { tags: [DiagnosticTag.Deprecated] } : {}),
   };
@@ -123,6 +110,7 @@ function generateFunctionNotFoundError(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
+    parsedFunction.rawText,
     parsedFunction,
     DiagnosticSeverity.Error,
     `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
@@ -133,6 +121,7 @@ function generateProcedureNotFoundError(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
+    parsedProcedure.rawText,
     parsedProcedure,
     DiagnosticSeverity.Error,
     `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
@@ -143,6 +132,7 @@ function generateProcedureDeprecatedWarning(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
+    parsedProcedure.rawText,
     parsedProcedure,
     DiagnosticSeverity.Warning,
     `Procedure ${parsedProcedure.name} is deprecated.`,
@@ -154,6 +144,7 @@ function generateFunctionDeprecatedWarning(
   parsedFunction: ParsedFunction,
 ): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
+    parsedFunction.rawText,
     parsedFunction,
     DiagnosticSeverity.Warning,
     `Function ${parsedFunction.name} is deprecated.`,
