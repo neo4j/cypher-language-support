@@ -130,24 +130,32 @@ function generateProcedureNotFoundError(
 
 function generateProcedureDeprecatedWarning(
   parsedProcedure: ParsedProcedure,
+  deprecatedBy: string | undefined,
 ): SyntaxDiagnostic {
+  const procDeprecatedWarning = `Procedure ${parsedProcedure.name} is deprecated.`;
   return generateSyntaxDiagnostic(
     parsedProcedure.rawText,
     parsedProcedure,
     DiagnosticSeverity.Warning,
-    `Procedure ${parsedProcedure.name} is deprecated.`,
+    deprecatedBy
+      ? procDeprecatedWarning + ` ${deprecatedBy}`
+      : procDeprecatedWarning,
     true,
   );
 }
 
 function generateFunctionDeprecatedWarning(
   parsedFunction: ParsedFunction,
+  deprecatedBy: string | undefined,
 ): SyntaxDiagnostic {
+  const funcDeprecatedWarning = `Function ${parsedFunction.name} is deprecated.`;
   return generateSyntaxDiagnostic(
     parsedFunction.rawText,
     parsedFunction,
     DiagnosticSeverity.Warning,
-    `Function ${parsedFunction.name} is deprecated.`,
+    deprecatedBy
+      ? funcDeprecatedWarning + ` ${deprecatedBy}`
+      : funcDeprecatedWarning,
     true,
   );
 }
@@ -361,10 +369,13 @@ function warningOnDeprecatedProcedure(
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
-      const procedureDeprecated =
-        dbSchema.procedures?.[parsedProcedure.name]?.option?.deprecated;
+      const proc = dbSchema.procedures?.[parsedProcedure.name];
+      const procedureDeprecated = proc?.option?.deprecated;
+      const deprecatedBy = proc?.deprecatedBy;
       if (procedureDeprecated) {
-        warnings.push(generateProcedureDeprecatedWarning(parsedProcedure));
+        warnings.push(
+          generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy),
+        );
       }
     });
   }
@@ -379,10 +390,13 @@ function warningOnDeprecatedFunction(
   if (dbSchema.functions) {
     const functionsInQuery = parsingResult.collectedFunctions;
     functionsInQuery.forEach((parsedFunction) => {
-      const functionDeprecated =
-        dbSchema.functions?.[parsedFunction.name]?.isDeprecated;
+      const fn = dbSchema.functions?.[parsedFunction.name];
+      const functionDeprecated = fn?.isDeprecated;
+      const deprecatedBy = fn?.deprecatedBy;
       if (functionDeprecated) {
-        warnings.push(generateFunctionDeprecatedWarning(parsedFunction));
+        warnings.push(
+          generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy),
+        );
       }
     });
   }
