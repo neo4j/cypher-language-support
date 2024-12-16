@@ -76,6 +76,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
     [CypherTokenType.property]: SemanticTokenTypes.property,
+    [CypherTokenType.setting]: SemanticTokenTypes.enum,
     [CypherTokenType.settingValue]: SemanticTokenTypes.enumMember,
     [CypherTokenType.label]: SemanticTokenTypes.type,
     [CypherTokenType.variable]: SemanticTokenTypes.variable,
@@ -118,7 +119,7 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitCypherOptionName = (ctx: CypherOptionNameContext) => {
-    this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
+    this.addToken(ctx.start, CypherTokenType.setting, ctx.getText());
   };
 
   exitLabelName = (ctx: LabelNameContext) => {

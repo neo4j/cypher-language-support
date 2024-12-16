@@ -24,6 +24,7 @@ export enum CypherTokenType {
   none = 'none',
   consoleCommand = 'consoleCommand',
   settingValue = 'settingValue',
+  setting = 'setting',
 }
 
 export const lexerOperators = [
