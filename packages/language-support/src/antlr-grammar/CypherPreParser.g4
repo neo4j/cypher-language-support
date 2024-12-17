@@ -5,13 +5,13 @@ import Cypher5Parser;
 options { tokenVocab = CypherPreLexer; }
 
 preparsedStatement:
-   (analysisKeyword? cypherOptions? | cypherOptions? analysisKeyword?) statement;
+   preparserOption* statement;
 
 preparserKeyword:
-   analysisKeyword | CYPHER; 
+   EXPLAIN | PROFILE | CYPHER; 
 
-analysisKeyword:
-   EXPLAIN | PROFILE;
+preparserOption:
+   EXPLAIN | PROFILE | cypherOptions;
 
 cypherOptions:
    CYPHER cypherVersion? cypherOption*;
