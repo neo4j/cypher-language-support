@@ -375,7 +375,7 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
 
   // We need to assert on the element having the right class
   // and trusting the CSS is making this truly strikethrough
-  await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
+  await expect(page.locator('.cm-deprecated-element')).toBeVisible();
 });
 
 test('shows deprecated function as strikethrough on auto-completion', async ({
@@ -399,7 +399,7 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
 
   // We need to assert on the element having the right class
   // and trusting the CSS is making this truly strikethrough
-  await expect(page.locator('.cm-deprecated-completion')).toBeVisible();
+  await expect(page.locator('.cm-deprecated-element')).toBeVisible();
 });
 
 test('does not signature help information on auto-completion if docs and signature are empty', async ({

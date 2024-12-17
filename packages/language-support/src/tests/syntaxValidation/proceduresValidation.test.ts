@@ -1,7 +1,44 @@
+import { DiagnosticTag } from 'vscode-languageserver-types';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Procedures semantic validation spec', () => {
+  test('Syntax validation warns on deprecated procedure when database can be contacted', () => {
+    const query = `CALL db.create.setVectorProperty()`;
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual(
+      expect.arrayContaining([
+        {
+          tags: [DiagnosticTag.Deprecated],
+          offsets: {
+            end: 32,
+            start: 5,
+          },
+          message: 'Procedure db.create.setVectorProperty is deprecated.',
+          range: {
+            end: {
+              character: 32,
+              line: 0,
+            },
+            start: {
+              character: 5,
+              line: 0,
+            },
+          },
+          severity: 2,
+        },
+      ]),
+    );
+  });
+
   test('Syntax validation warns on missing procedures when database can be contacted', () => {
     const query = `CALL dontpanic("marvin")`;
 

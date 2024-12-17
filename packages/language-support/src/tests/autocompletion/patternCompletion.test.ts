@@ -108,12 +108,84 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Completes label with numbers, underscores and non-english letters without backticks in MATCH', () => {
+    const query = 'MATCH (n:';
+
+    testCompletions({
+      query,
+      dbSchema: {
+        labels: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein', '_GingerBread_'],
+      },
+      expected: [
+        {
+          label: 'Cat12',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo_Bar',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glögg',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glühwein',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '_GingerBread_',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
+  test('Completes relationship types with numbers, underscores and non-english letters without backticks in MATCH', () => {
+    const query = 'MATCH (n)-[:';
+
+    testCompletions({
+      query,
+      dbSchema: {
+        relationshipTypes: [
+          'Cat12',
+          'Foo_Bar',
+          'Glögg',
+          'Glühwein',
+          '_GingerBread_',
+        ],
+      },
+      expected: [
+        {
+          label: 'Cat12',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Foo_Bar',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glögg',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: 'Glühwein',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '_GingerBread_',
+          kind: CompletionItemKind.TypeParameter,
+        },
+      ],
+    });
+  });
+
   test('Correctly completes label with backticks in MATCH', () => {
     const query = 'MATCH (n:';
 
     testCompletions({
       query,
-      dbSchema: { labels: ['Cat', 'Foo Bar'] },
+      dbSchema: { labels: ['Cat', 'Foo Bar', '1Foo'] },
       expected: [
         {
           label: 'Cat',
@@ -122,6 +194,11 @@ describe('MATCH auto-completion', () => {
         {
           label: 'Foo Bar',
           insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '1Foo',
+          insertText: '`1Foo`',
           kind: CompletionItemKind.TypeParameter,
         },
       ],
@@ -133,7 +210,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletions({
       query,
-      dbSchema: { labels: ['Cat', 'Foo Bar'] },
+      dbSchema: { labels: ['Cat', 'Foo Bar', '1Foo'] },
       expected: [
         // This first completion would not be offered in a client
         {
@@ -143,6 +220,11 @@ describe('MATCH auto-completion', () => {
         {
           label: 'Foo Bar',
           insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '1Foo',
+          insertText: '`1Foo`',
           kind: CompletionItemKind.TypeParameter,
         },
       ],
@@ -473,7 +555,7 @@ describe('Type relationship auto-completion', () => {
 
     testCompletions({
       query,
-      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar'] },
+      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar', '1Foo'] },
       expected: [
         {
           label: 'Rel',
@@ -482,6 +564,11 @@ describe('Type relationship auto-completion', () => {
         {
           label: 'Foo Bar',
           insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '1Foo',
+          insertText: '`1Foo`',
           kind: CompletionItemKind.TypeParameter,
         },
       ],
@@ -493,7 +580,7 @@ describe('Type relationship auto-completion', () => {
 
     testCompletions({
       query,
-      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar'] },
+      dbSchema: { relationshipTypes: ['Rel', 'Foo Bar', '1Foo'] },
       expected: [
         {
           label: 'Rel',
@@ -502,6 +589,11 @@ describe('Type relationship auto-completion', () => {
         {
           label: 'Foo Bar',
           insertText: '`Foo Bar`',
+          kind: CompletionItemKind.TypeParameter,
+        },
+        {
+          label: '1Foo',
+          insertText: '`1Foo`',
           kind: CompletionItemKind.TypeParameter,
         },
       ],
