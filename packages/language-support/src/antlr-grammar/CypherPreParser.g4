@@ -5,7 +5,7 @@ import Cypher5Parser;
 options { tokenVocab = CypherPreLexer; }
 
 preparsedStatement:
-   (analysisKeyword cypherOptions | cypherOptions analysisKeyword)? statement;
+   (analysisKeyword? cypherOptions? | cypherOptions? analysisKeyword?) statement;
 
 preparserKeyword:
    analysisKeyword | CYPHER; 
