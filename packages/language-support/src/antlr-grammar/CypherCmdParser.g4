@@ -53,7 +53,7 @@ serverCompletionRule: SERVER;
 
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
 unescapedLabelSymbolicNameString: 
-    preparserOption 
+    preparserKeyword 
     | HISTORY
     | CLEAR
     | PARAM

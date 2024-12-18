@@ -49,7 +49,7 @@ export const completionStyles: (
   completion: Completion & { deprecated?: boolean },
 ) => string = (completion) => {
   if (completion.deprecated) {
-    return 'cm-deprecated-completion';
+    return 'cm-deprecated-element';
   } else {
     return null;
   }

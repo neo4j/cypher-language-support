@@ -23,6 +23,8 @@ export enum CypherTokenType {
   punctuation = 'punctuation',
   none = 'none',
   consoleCommand = 'consoleCommand',
+  settingValue = 'settingValue',
+  setting = 'setting',
 }
 
 export const lexerOperators = [
@@ -365,6 +367,7 @@ export const lexerKeywords = [
   // Preparser tokens
   CypherLexer.EXPLAIN,
   CypherLexer.PROFILE,
+  CypherLexer.CYPHER,
 ];
 
 export const lexerConsoleCmds = [
