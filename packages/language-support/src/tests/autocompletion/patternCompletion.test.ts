@@ -42,6 +42,27 @@ describe('MATCH auto-completion', () => {
     });
   });
 
+  test('Correctly completes even with preparser options', () => {
+    const query = 'CYPHER 25 runtime=pipelined MATCH (n:P';
+
+    testCompletions({
+      query,
+      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
+      expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
+    });
+
+    const query2 = 'CYPHER 25 runtime=pipelined MATCH (n:Person)-[:W';
+
+    testCompletions({
+      query: query2,
+      dbSchema: {
+        labels: ['Cat', 'Person', 'Dog'],
+        relationshipTypes: ['WALKS', 'OWNS'],
+      },
+      expected: [{ label: 'WALKS', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
   test("Doesn't complete label before : is entered", () => {
     const query = 'MATCH (n';
 
