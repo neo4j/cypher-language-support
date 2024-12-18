@@ -51,22 +51,6 @@ function backtickDbNameIfNeeded(e: string): string | undefined {
   }
 }
 
-function backtickParamIfNeeded(e: string): string | undefined {
-  if (e == null || e == '') {
-    return undefined;
-  }
-  const namePart = e.slice(1);
-  if (e[0] == '$') {
-    if (/[^\p{L}\p{N}_]/u.test(namePart) || /[^\p{L}_]/u.test(namePart[0])) {
-      return '$' + `\`${namePart}\``;
-    } else {
-      return undefined;
-    }
-  } else {
-    return backtickIfNeeded(e);
-  }
-}
-
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
     const result: CompletionItem = {
@@ -312,10 +296,16 @@ const parameterCompletions = (
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
     )
-    .map(([paramName]) => ({
-      label: `$${paramName}`,
-      kind: CompletionItemKind.Variable,
-    }));
+    .map(([paramName]) => {
+      const backtickedName = backtickIfNeeded(paramName);
+      return {
+        label: `$${paramName}`,
+        kind: CompletionItemKind.Variable,
+        ...(backtickedName != undefined
+          ? { insertText: `$${backtickIfNeeded(paramName)}` }
+          : {}),
+      };
+    });
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const result: CompletionItem = {
@@ -718,11 +708,7 @@ function completeAliasName({
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-      insertText: backtickParamIfNeeded(completionItem.label),
-    }));
+    return parameterSuggestions;
   }
 
   // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
@@ -732,11 +718,7 @@ function completeAliasName({
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-      insertText: backtickParamIfNeeded(completionItem.label),
-    }));
+    return parameterSuggestions;
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -750,11 +732,7 @@ function completeAliasName({
     )
   ) {
     return [
-      ...parameterSuggestions.map((completionItem) => ({
-        label: completionItem.label,
-        kind: completionItem.kind,
-        insertText: backtickParamIfNeeded(completionItem.label),
-      })),
+      ...parameterSuggestions,
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
@@ -765,11 +743,7 @@ function completeAliasName({
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
   return [
-    ...parameterSuggestions.map((completionItem) => ({
-      label: completionItem.label,
-      kind: completionItem.kind,
-      insertText: backtickParamIfNeeded(completionItem.label),
-    })),
+    ...parameterSuggestions,
     ...(dbSchema.databaseNames ?? [])
       .concat(dbSchema.aliasNames ?? [])
       .map((databaseName) => ({
