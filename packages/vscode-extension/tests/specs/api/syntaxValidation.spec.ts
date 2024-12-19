@@ -72,25 +72,10 @@ export async function testSyntaxValidation({
 
 suite('Syntax validation spec', () => {
   test.only('Suggests replacements for deprecated functions/procedures', async () => {
-    // We open a file that is not saved on disk
-    // and change the language manually to Cypher
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
     await openDocument(docUri);
-
-    // const editor = vscode.window.activeTextEditor;
-
-    // await editor.edit((editBuilder) =>
-    //   editBuilder.replace(
-    //     // Select the whole file
-    //     new vscode.Range(
-    //       new vscode.Position(0, 0),
-    //       new vscode.Position(100, 0),
-    //     ),
-    //     'CALL apoc.create.uuids(5); RETURN apoc.create.uuid();',
-    //   ),
-    // );
 
     await testSyntaxValidation({
       textFile,

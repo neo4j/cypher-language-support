@@ -75,7 +75,7 @@ connection.onInitialized(() => {
 
 documents.onDidChangeContent((change) =>
   lintDocument(
-    change,
+    change.document,
     (diagnostics: Diagnostic[]) => {
       void connection.sendDiagnostics({
         uri: change.document.uri,
@@ -102,6 +102,21 @@ connection.onNotification(
     changeConnection(connectionSettings);
   },
 );
+
+connection.onNotification('relintDocuments', () => {
+  void documents.all().map((document) =>
+    lintDocument(
+      document,
+      (diagnostics: Diagnostic[]) => {
+        void connection.sendDiagnostics({
+          uri: document.uri,
+          diagnostics,
+        });
+      },
+      neo4jSchemaPoller,
+    ),
+  );
+});
 
 connection.onNotification('connectionDisconnected', () => {
   disconnect();
