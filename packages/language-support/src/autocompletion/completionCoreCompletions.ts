@@ -301,7 +301,7 @@ const parameterCompletions = (
       return {
         label: `$${paramName}`,
         kind: CompletionItemKind.Variable,
-        ...(backtickedName != undefined
+        ...(backtickedName
           ? { insertText: `$${backtickIfNeeded(paramName)}` }
           : {}),
       };
