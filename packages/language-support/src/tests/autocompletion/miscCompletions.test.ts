@@ -14,12 +14,15 @@ describe('Misc auto-completion', () => {
     });
   });
 
-  test('Correctly completes cypher keyword and version together', () => {
+  test('Correctly completes CYPHER when keyword is not finished, optionally with version', () => {
     const query = 'CYP';
 
     testCompletions({
       query,
-      expected: [{ label: 'CYPHER 5', kind: CompletionItemKind.Keyword }],
+      expected: [
+        { label: 'CYPHER 5', kind: CompletionItemKind.Keyword },
+        { label: 'CYPHER', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 
