@@ -31,6 +31,8 @@ import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
+const versions = ['5'];
+
 function backtickIfNeeded(e: string): string | undefined {
   if (e == null || e == '') {
     return undefined;
@@ -40,6 +42,24 @@ function backtickIfNeeded(e: string): string | undefined {
     return undefined;
   }
 }
+
+const versionCompletions = () =>
+  versions.map((v) => {
+    const result: CompletionItem = {
+      label: v,
+      kind: CompletionItemKind.EnumMember,
+    };
+    return result;
+  });
+
+const cypherVersionCompletions = () =>
+  versions.map((v) => {
+    const result: CompletionItem = {
+      label: 'CYPHER ' + v,
+      kind: CompletionItemKind.Keyword,
+    };
+    return result;
+  });
 
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
@@ -438,6 +458,8 @@ export function completionCoreCompletion(
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
     CypherParser.RULE_procedureResultItem,
+    CypherParser.RULE_cypherVersion,
+    CypherParser.RULE_cypher,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -473,6 +495,20 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
+      if (ruleNumber === CypherParser.RULE_cypher) {
+        return [
+          ...cypherVersionCompletions(),
+          {
+            label: 'CYPHER',
+            kind: CompletionItemKind.Keyword,
+          },
+        ];
+      }
+
+      if (ruleNumber === CypherParser.RULE_cypherVersion) {
+        return versionCompletions();
+      }
+
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
           parsingResult.stopNode.parentCtx,
