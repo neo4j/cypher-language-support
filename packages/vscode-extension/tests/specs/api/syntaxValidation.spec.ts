@@ -64,14 +64,14 @@ export async function testSyntaxValidation({
           });
           resolve();
         } catch (e) {
-          reject();
+          reject(e);
         }
       }),
   );
 }
 
 suite('Syntax validation spec', () => {
-  test.only('Suggests replacements for deprecated functions/procedures', async () => {
+  test('Suggests replacements for deprecated functions/procedures', async () => {
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -82,11 +82,19 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
-            new vscode.Position(0, 9),
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
           ),
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-          vscode.DiagnosticSeverity.Error,
+          "Procedure apoc.create.uuids is deprecated. Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
+          'Function apoc.create.uuid is deprecated. Neo4j randomUUID() function',
+          vscode.DiagnosticSeverity.Warning,
         ),
       ],
     });
