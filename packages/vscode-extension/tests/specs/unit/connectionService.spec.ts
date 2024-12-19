@@ -305,10 +305,23 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-
-      sandbox.assert.calledOnceWithExactly(
-        sendNotificationSpy,
+      sandbox.assert.calledThrice(sendNotificationSpy);
+      // We disconnect the schema poller
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(0),
+        'relintDocuments',
+        undefined,
+      );
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(1),
         'connectionDisconnected',
+        undefined,
+      );
+      // The connection is disconnected (it's not active) so
+      // we ask the document to relint
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(2),
+        'relintDocuments',
         undefined,
       );
     });
@@ -324,9 +337,17 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-
-      sandbox.assert.calledOnceWithExactly(
-        sendNotificationSpy,
+      // Simulates the db poller has already fetched the schema
+      mockSchemaPoller.events.emit('schemaFetched');
+      sandbox.assert.calledThrice(sendNotificationSpy);
+      // We disconnect the schema poller
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(0),
+        'relintDocuments',
+        undefined,
+      );
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(1),
         'connectionUpdated',
         {
           trace: { server: 'off' },
@@ -336,6 +357,12 @@ suite('Connection service spec', () => {
           user: 'neo4j',
           password: 'mock-password',
         },
+      );
+      // We ask to relint the document once the schema is fetched
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(2),
+        'relintDocuments',
+        undefined,
       );
     });
 
@@ -354,7 +381,12 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      sandbox.assert.notCalled(sendNotificationSpy);
+      // We disconnect the schema poller
+      sandbox.assert.calledOnceWithExactly(
+        sendNotificationSpy,
+        'relintDocuments',
+        undefined,
+      );
     });
 
     test('Should call schemaPoller.connect when connection.state is activating', async () => {

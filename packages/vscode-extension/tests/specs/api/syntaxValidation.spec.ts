@@ -71,27 +71,6 @@ export async function testSyntaxValidation({
 }
 
 suite('Syntax validation spec', () => {
-  test.only('Suggests replacements for deprecated functions/procedures', async () => {
-    const textFile = 'deprecated-by.cypher';
-    const docUri = getDocumentUri(textFile);
-
-    await openDocument(docUri);
-
-    await testSyntaxValidation({
-      textFile,
-      expected: [
-        new vscode.Diagnostic(
-          new vscode.Range(
-            new vscode.Position(0, 0),
-            new vscode.Position(0, 9),
-          ),
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-          vscode.DiagnosticSeverity.Error,
-        ),
-      ],
-    });
-  });
-
   test('Correctly validates empty cypher statement', async () => {
     const textFile = 'syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
