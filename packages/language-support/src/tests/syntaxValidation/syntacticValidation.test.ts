@@ -36,7 +36,7 @@ describe('Syntactic validation spec', () => {
           start: 0,
         },
         message:
-          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LIMIT, LOAD, MATCH, MERGE, NODETACH, OFFSET, OPTIONAL, ORDER, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, SKIP, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
+          'Expected any of ALTER, CALL, CREATE, CYPHER, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LIMIT, LOAD, MATCH, MERGE, NODETACH, OFFSET, OPTIONAL, ORDER, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, SKIP, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
         range: {
           end: {
             character: 3,
@@ -1046,6 +1046,7 @@ describe('Syntactic validation spec', () => {
 
   test.each([
     `MATCH (n:Test1) RETURN n.profile`,
+    `MATCH (n:MyLabel) RETURN n.CYPHER`,
     `CREATE (n:Test1 {explain: 'Explain'});`,
     `RETURN { clear: 'Clear', params: 'params', history: 'history'}`,
   ])(

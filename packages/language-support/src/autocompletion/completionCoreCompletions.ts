@@ -41,6 +41,16 @@ function backtickIfNeeded(e: string): string | undefined {
   }
 }
 
+function backtickDbNameIfNeeded(e: string): string | undefined {
+  if (e == null || e == '') {
+    return undefined;
+  } else if (/[^\p{L}\p{N}_.]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
+
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
     const result: CompletionItem = {
@@ -286,10 +296,16 @@ const parameterCompletions = (
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
     )
-    .map(([paramName]) => ({
-      label: `$${paramName}`,
-      kind: CompletionItemKind.Variable,
-    }));
+    .map(([paramName]) => {
+      const backtickedName = backtickIfNeeded(paramName);
+      return {
+        label: `$${paramName}`,
+        kind: CompletionItemKind.Variable,
+        ...(backtickedName
+          ? { insertText: `$${backtickIfNeeded(paramName)}` }
+          : {}),
+      };
+    });
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const result: CompletionItem = {
@@ -720,6 +736,7 @@ function completeAliasName({
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
+        insertText: backtickDbNameIfNeeded(aliasName),
       })),
     ];
   }
@@ -732,6 +749,7 @@ function completeAliasName({
       .map((databaseName) => ({
         label: databaseName,
         kind: CompletionItemKind.Value,
+        insertText: backtickDbNameIfNeeded(databaseName),
       })),
   ];
 }

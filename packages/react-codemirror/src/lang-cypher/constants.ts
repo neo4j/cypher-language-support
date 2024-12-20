@@ -40,6 +40,8 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   relationship: NodeType.define({ id: 26, name: 'label' }),
   boolean: NodeType.define({ id: 27, name: 'booleanLiteral' }),
   number: NodeType.define({ id: 28, name: 'numberLiteral' }),
+  setting: NodeType.define({ id: 29, name: 'setting' }),
+  settingValue: NodeType.define({ id: 30, name: 'settingValue' }),
 });
 
 export type PrismSpecificTokenType =
@@ -78,6 +80,8 @@ export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   punctuation: tags.punctuation,
   separator: tags.separator,
   consoleCommand: tags.macroName,
+  setting: tags.attributeName,
+  settingValue: tags.attributeValue,
 };
 
 export const parserAdapterNodeSet = (nodes: Record<string, NodeType>) =>
