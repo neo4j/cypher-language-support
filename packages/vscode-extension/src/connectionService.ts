@@ -508,7 +508,6 @@ function disconnectFromSchemaPoller(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.disconnect();
   schemaPoller.events.removeAllListeners();
-  void sendNotificationToLanguageClient('relintDocuments');
 }
 
 /**
@@ -537,9 +536,6 @@ function attachSchemaPollerConnectionFailedEventListeners(): void {
 function attachSchemaPollerConnectionEventListeners(): void {
   const schemaPoller = getSchemaPoller();
   schemaPoller.events.removeAllListeners();
-  schemaPoller.events.once('schemaFetched', () => {
-    void sendNotificationToLanguageClient('relintDocuments');
-  });
   schemaPoller.events.on('schemaFetched', () => {
     databaseInformationTreeDataProvider.refresh();
     connectionTreeDataProvider.refresh();

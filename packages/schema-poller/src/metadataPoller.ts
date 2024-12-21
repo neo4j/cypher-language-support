@@ -192,9 +192,9 @@ export class MetadataPoller {
     this.dbPollingInterval = undefined;
   }
 
-  startBackgroundPolling(intervalSeconds = 30) {
+  async startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
-    void this.fetchDbSchema();
+    await this.fetchDbSchema();
     this.dbPollingInterval = setInterval(
       () => void this.fetchDbSchema(),
       intervalSeconds * 1000,

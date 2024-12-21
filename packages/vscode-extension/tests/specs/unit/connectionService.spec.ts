@@ -193,7 +193,7 @@ suite('Connection service spec', () => {
       assert.strictEqual(returnedPassword2, 'mock-password-2');
     });
 
-    test.only('Should notify language server when a Connection is deleted', async () => {
+    test('Should notify language server when a Connection is deleted', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -203,20 +203,14 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      sendNotificationSpy.resetHistory();
+
       await connection.deleteConnectionAndUpdateDatabaseConnection(
         mockConnection.key,
       );
 
-      sandbox.assert.calledTwice(sendNotificationSpy);
       sandbox.assert.calledWithExactly(
-        sendNotificationSpy.getCall(0),
+        sendNotificationSpy,
         'connectionDisconnected',
-        undefined,
-      );
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(1),
-        'relintDocuments',
         undefined,
       );
     });
@@ -311,23 +305,10 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      sandbox.assert.calledThrice(sendNotificationSpy);
-      // We disconnect the schema poller
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(0),
-        'relintDocuments',
-        undefined,
-      );
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(1),
+
+      sandbox.assert.calledOnceWithExactly(
+        sendNotificationSpy,
         'connectionDisconnected',
-        undefined,
-      );
-      // The connection is disconnected (it's not active) so
-      // we ask the document to relint
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(2),
-        'relintDocuments',
         undefined,
       );
     });
@@ -343,17 +324,9 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-      // Simulates the db poller has already fetched the schema
-      mockSchemaPoller.events.emit('schemaFetched');
-      sandbox.assert.calledThrice(sendNotificationSpy);
-      // We disconnect the schema poller
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(0),
-        'relintDocuments',
-        undefined,
-      );
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(1),
+
+      sandbox.assert.calledOnceWithExactly(
+        sendNotificationSpy,
         'connectionUpdated',
         {
           trace: { server: 'off' },
@@ -363,12 +336,6 @@ suite('Connection service spec', () => {
           user: 'neo4j',
           password: 'mock-password',
         },
-      );
-      // We ask to relint the document once the schema is fetched
-      sandbox.assert.calledWith(
-        sendNotificationSpy.getCall(2),
-        'relintDocuments',
-        undefined,
       );
     });
 
@@ -387,12 +354,7 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      // We disconnect the schema poller
-      sandbox.assert.calledOnceWithExactly(
-        sendNotificationSpy,
-        'relintDocuments',
-        undefined,
-      );
+      sandbox.assert.notCalled(sendNotificationSpy);
     });
 
     test('Should call schemaPoller.connect when connection.state is activating', async () => {

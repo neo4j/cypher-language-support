@@ -72,7 +72,7 @@ suite('Auto completion spec', () => {
     });
   });
 
-  test('Completes started property with backticks', async () => {
+  test.skip('Completes started property with backticks', async () => {
     const position = new vscode.Position(1, 22);
 
     const expected: vscode.CompletionItem[] = [

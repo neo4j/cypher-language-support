@@ -8,7 +8,11 @@ import {
   newUntitledFileWithContent,
   openDocument,
 } from '../../helpers';
-import { defaultConnectionKey } from '../../suiteSetup';
+import {
+  connectDefault,
+  defaultConnectionKey,
+  disconnectDefault,
+} from '../../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;
@@ -97,6 +101,41 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
+    });
+  });
+
+  test('Relints when database connected / disconnected', async () => {
+    const textFile = 'deprecated-by.cypher';
+    const docUri = getDocumentUri(textFile);
+
+    await openDocument(docUri);
+
+    const deprecationErrors = [
+      new vscode.Diagnostic(
+        new vscode.Range(new vscode.Position(0, 5), new vscode.Position(0, 22)),
+        "Procedure apoc.create.uuids is deprecated. Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+        vscode.DiagnosticSeverity.Warning,
+      ),
+      new vscode.Diagnostic(
+        new vscode.Range(new vscode.Position(1, 7), new vscode.Position(1, 23)),
+        'Function apoc.create.uuid is deprecated. Neo4j randomUUID() function',
+        vscode.DiagnosticSeverity.Warning,
+      ),
+    ];
+    // We should be connected by default so the errors will be there initially
+    await testSyntaxValidation({
+      textFile,
+      expected: deprecationErrors,
+    });
+    await disconnectDefault();
+    await testSyntaxValidation({
+      textFile,
+      expected: [],
+    });
+    await connectDefault();
+    await testSyntaxValidation({
+      textFile,
+      expected: deprecationErrors,
     });
   });
 
