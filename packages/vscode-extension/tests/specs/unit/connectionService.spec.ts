@@ -193,7 +193,7 @@ suite('Connection service spec', () => {
       assert.strictEqual(returnedPassword2, 'mock-password-2');
     });
 
-    test('Should notify language server when a Connection is deleted', async () => {
+    test.only('Should notify language server when a Connection is deleted', async () => {
       const sendNotificationSpy = sandbox.spy(
         mockLanguageClient,
         'sendNotification',
@@ -203,14 +203,20 @@ suite('Connection service spec', () => {
         mockConnection,
         'mock-password',
       );
-
+      sendNotificationSpy.resetHistory();
       await connection.deleteConnectionAndUpdateDatabaseConnection(
         mockConnection.key,
       );
 
+      sandbox.assert.calledTwice(sendNotificationSpy);
       sandbox.assert.calledWithExactly(
-        sendNotificationSpy,
+        sendNotificationSpy.getCall(0),
         'connectionDisconnected',
+        undefined,
+      );
+      sandbox.assert.calledWith(
+        sendNotificationSpy.getCall(1),
+        'relintDocuments',
         undefined,
       );
     });
