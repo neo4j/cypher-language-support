@@ -105,7 +105,7 @@ connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jSettings) => {
     changeConnection(connectionSettings);
-    neo4jSchemaPoller.events.on('connectionConnected', relintAllDocuments);
+    neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
 );
 

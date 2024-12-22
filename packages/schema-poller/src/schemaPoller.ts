@@ -164,7 +164,7 @@ export class Neo4jSchemaPoller {
     );
 
     this.metadata = new MetadataPoller(databases, this.connection, this.events);
-    await this.metadata.startBackgroundPolling();
+    this.metadata.startBackgroundPolling();
   }
 
   private async initializeDriver(
