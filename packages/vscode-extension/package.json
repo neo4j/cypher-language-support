@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "preview": true,
   "categories": [
     "Programming Languages",

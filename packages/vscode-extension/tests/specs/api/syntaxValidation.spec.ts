@@ -8,7 +8,11 @@ import {
   newUntitledFileWithContent,
   openDocument,
 } from '../../helpers';
-import { defaultConnectionKey } from '../../suiteSetup';
+import {
+  connectDefault,
+  defaultConnectionKey,
+  disconnectDefault,
+} from '../../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | undefined;
@@ -71,6 +75,41 @@ export async function testSyntaxValidation({
 }
 
 suite('Syntax validation spec', () => {
+  test('Relints when database connected / disconnected', async () => {
+    const textFile = 'deprecated-by.cypher';
+    const docUri = getDocumentUri(textFile);
+
+    await openDocument(docUri);
+
+    const deprecationErrors = [
+      new vscode.Diagnostic(
+        new vscode.Range(new vscode.Position(0, 5), new vscode.Position(0, 22)),
+        'Procedure apoc.create.uuids is deprecated.',
+        vscode.DiagnosticSeverity.Warning,
+      ),
+      new vscode.Diagnostic(
+        new vscode.Range(new vscode.Position(1, 7), new vscode.Position(1, 23)),
+        'Function apoc.create.uuid is deprecated.',
+        vscode.DiagnosticSeverity.Warning,
+      ),
+    ];
+    // We should be connected by default so the errors will be there initially
+    await testSyntaxValidation({
+      textFile,
+      expected: deprecationErrors,
+    });
+    await disconnectDefault();
+    await testSyntaxValidation({
+      textFile,
+      expected: [],
+    });
+    await connectDefault();
+    await testSyntaxValidation({
+      textFile,
+      expected: deprecationErrors,
+    });
+  });
+
   test('Correctly validates empty cypher statement', async () => {
     const textFile = 'syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
