@@ -15,18 +15,34 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
+import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { Neo4jSettings } from './types';
 
 const connection = createConnection(ProposedFeatures.all);
 
-import { cleanupWorkers, lintDocument } from './linting';
-
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
+
+async function lintSingleDocument(document: TextDocument): Promise<void> {
+  return lintDocument(
+    document,
+    (diagnostics: Diagnostic[]) => {
+      void connection.sendDiagnostics({
+        uri: document.uri,
+        diagnostics,
+      });
+    },
+    neo4jSchemaPoller,
+  );
+}
+
+function relintAllDocuments() {
+  void documents.all().map(lintSingleDocument);
+}
 
 connection.onInitialize(() => {
   const result: InitializeResult = {
@@ -73,18 +89,7 @@ connection.onInitialized(() => {
   );
 });
 
-documents.onDidChangeContent((change) =>
-  lintDocument(
-    change,
-    (diagnostics: Diagnostic[]) => {
-      void connection.sendDiagnostics({
-        uri: change.document.uri,
-        diagnostics,
-      });
-    },
-    neo4jSchemaPoller,
-  ),
-);
+documents.onDidChangeContent((change) => lintSingleDocument(change.document));
 
 // Trigger the syntax colouring
 connection.languages.semanticTokens.on(
@@ -100,11 +105,13 @@ connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jSettings) => {
     changeConnection(connectionSettings);
+    neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
 );
 
 connection.onNotification('connectionDisconnected', () => {
   disconnect();
+  relintAllDocuments();
 });
 
 documents.listen(connection);
