@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.13
+
+### Patch Changes
+
+- 84a12fc: Added parsing of CYPHER <version> and CYPHER <optionName> = <value>
+- d329252: Adds deprecation warning tags on deprecated functions/procedures
+- b0e419e: Adds backticking when needed on autocompletions of aliases and database names
+
 ## 2.0.0-next.12
 
 ### Patch Changes
