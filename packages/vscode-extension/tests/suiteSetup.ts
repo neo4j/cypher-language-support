@@ -25,6 +25,18 @@ export async function saveDefaultConnection(): Promise<void> {
   );
 }
 
+export async function connectDefault(): Promise<void> {
+  await vscode.commands.executeCommand(CONSTANTS.COMMANDS.CONNECT_COMMAND, {
+    key: defaultConnectionKey,
+  });
+}
+
+export async function disconnectDefault(): Promise<void> {
+  await vscode.commands.executeCommand(CONSTANTS.COMMANDS.DISCONNECT_COMMAND, {
+    key: defaultConnectionKey,
+  });
+}
+
 export async function createTestDatabase(): Promise<void> {
   const { scheme, host, port, user, password } = getNeo4jConfiguration();
 
