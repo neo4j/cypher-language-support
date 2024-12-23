@@ -28,43 +28,47 @@ test.fail(
 );
 
 // TODO Fix this test
-test.skip('onExecute updates should override debounce updates', async ({
-  mount,
-  page,
-}) => {
-  const editorPage = new CypherEditorPage(page);
-  let value = '';
+test.fixme(
+  'onExecute updates should override debounce updates',
+  async ({ mount, page }) => {
+    const editorPage = new CypherEditorPage(page);
+    let value = '';
 
-  const onExecute = () => {
-    value = '';
-    void component.update(
+    const onExecute = () => {
+      value = '';
+      void component.update(
+        <CypherEditor
+          value={value}
+          onChange={onChange}
+          onExecute={onExecute}
+        />,
+      );
+    };
+
+    const onChange = (val: string) => {
+      value = val;
+      void component.update(
+        <CypherEditor value={val} onChange={onChange} onExecute={onExecute} />,
+      );
+    };
+
+    const component = await mount(
       <CypherEditor value={value} onChange={onChange} onExecute={onExecute} />,
     );
-  };
 
-  const onChange = (val: string) => {
-    value = val;
-    void component.update(
-      <CypherEditor value={val} onChange={onChange} onExecute={onExecute} />,
-    );
-  };
+    await editorPage.getEditor().pressSequentially('RETURN 1');
+    await editorPage.getEditor().press('Enter');
+    await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
+    await expect(component).not.toContainText('RETURN 1');
 
-  const component = await mount(
-    <CypherEditor value={value} onChange={onChange} onExecute={onExecute} />,
-  );
-
-  await editorPage.getEditor().pressSequentially('RETURN 1');
-  await editorPage.getEditor().press('Enter');
-  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
-  await expect(component).not.toContainText('RETURN 1');
-
-  await editorPage.getEditor().pressSequentially('RETURN 1');
-  await editorPage.getEditor().pressSequentially('');
-  await editorPage.getEditor().pressSequentially('RETURN 1');
-  await editorPage.getEditor().press('Enter');
-  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
-  await expect(component).not.toContainText('RETURN 1');
-});
+    await editorPage.getEditor().pressSequentially('RETURN 1');
+    await editorPage.getEditor().pressSequentially('');
+    await editorPage.getEditor().pressSequentially('RETURN 1');
+    await editorPage.getEditor().press('Enter');
+    await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
+    await expect(component).not.toContainText('RETURN 1');
+  },
+);
 
 test('onExecute should fire after debounced updates', async ({
   mount,
