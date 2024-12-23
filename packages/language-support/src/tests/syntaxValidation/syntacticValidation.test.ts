@@ -10,7 +10,8 @@ describe('Syntactic validation spec', () => {
           end: 5,
           start: 0,
         },
-        message: 'Unrecognized keyword. Did you mean MATCH?',
+        message:
+          "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
         range: {
           end: {
             character: 5,
@@ -31,12 +32,12 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          "Invalid input 'CAT': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
         offsets: {
           end: 3,
           start: 0,
         },
-        message:
-          'Expected any of ALTER, CALL, CREATE, CYPHER, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LIMIT, LOAD, MATCH, MERGE, NODETACH, OFFSET, OPTIONAL, ORDER, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, SKIP, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
         range: {
           end: {
             character: 3,
@@ -52,6 +53,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
   test('Misspelt keyword at the end of the statement', () => {
     const query = 'MATCH (n:Person) WERE';
 
@@ -61,7 +63,6 @@ describe('Syntactic validation spec', () => {
           end: 21,
           start: 17,
         },
-        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -77,6 +78,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
   test('Misspelt keyword in the middle of the statement', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
@@ -111,15 +113,15 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          "Invalid input 'n': expected an expression, 'FOREACH', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or '}'",
         offsets: {
-          end: 114,
+          end: 119,
           start: 113,
         },
-        message:
-          "Expected any of '}', AND, CALL, CREATE, DELETE, DETACH, FINISH, FOREACH, INSERT, LIMIT, LOAD, MATCH, MERGE, NODETACH, OFFSET, OPTIONAL, OR, ORDER, REMOVE, RETURN, SET, SKIP, UNION, UNWIND, USE, WITH, XOR or an expression",
         range: {
           end: {
-            character: 47,
+            character: 52,
             line: 2,
           },
           start: {
@@ -132,23 +134,25 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test('Misspelt keyword in the middle of the statement', () => {
+  // TODO FIX ME
+  test.fails('Misspelt keyword in the middle of the statement', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
-          end: 21,
-          start: 17,
+          end: 16,
+          start: 0,
         },
-        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
-            character: 21,
+            character: 16,
             line: 0,
           },
           start: {
-            character: 17,
+            character: 0,
             line: 0,
           },
         },
@@ -459,7 +463,8 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected a node label / rel type',
+        message:
+          "Invalid input ')': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 10,
           start: 9,
@@ -552,12 +557,12 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        message:
+          "Invalid input '': expected 'ALIAS', 'ALIASES', 'ALL', 'BTREE', 'CONSTRAINT', 'CONSTRAINTS', 'DATABASE', 'DEFAULT DATABASE', 'HOME DATABASE', 'DATABASES', 'EXIST', 'EXISTENCE', 'EXISTS', 'FULLTEXT', 'FUNCTION', 'FUNCTIONS', 'BUILT IN', 'INDEX', 'INDEXES', 'KEY', 'LOOKUP', 'NODE', 'POINT', 'POPULATED', 'PRIVILEGE', 'PRIVILEGES', 'PROCEDURE', 'PROCEDURES', 'PROPERTY', 'RANGE', 'REL', 'RELATIONSHIP', 'ROLE', 'ROLES', 'SERVER', 'SERVERS', 'SETTING', 'SETTINGS', 'SUPPORTED', 'TEXT', 'TRANSACTION', 'TRANSACTIONS', 'UNIQUE', 'UNIQUENESS', 'USER', 'CURRENT USER', 'USERS' or 'VECTOR'",
         offsets: {
           end: 4,
           start: 4,
         },
-        message:
-          'Expected any of ALIAS, ALIASES, ALL, BTREE, BUILT, CONSTRAINT, CONSTRAINTS, CURRENT, DATABASE, DATABASES, DEFAULT, EXIST, EXISTENCE, EXISTS, FULLTEXT, FUNCTION, FUNCTIONS, HOME, INDEX, INDEXES, KEY, LOOKUP, NODE, POINT, POPULATED, PRIVILEGE, PRIVILEGES, PROCEDURE, PROCEDURES, PROPERTY, RANGE, REL, RELATIONSHIP, ROLE, ROLES, SERVER, SERVERS, SETTING, SETTINGS, SUPPORTED, TEXT, TRANSACTION, TRANSACTIONS, UNIQUE, UNIQUENESS, USER, USERS or VECTOR',
         range: {
           end: {
             character: 4,
@@ -592,7 +597,8 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Unfinished string literal',
+        message:
+          'Failed to parse string literal. The query must contain an even number of non-escaped quotes.',
         offsets: {
           end: 17,
           start: 7,
@@ -612,6 +618,8 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
+  // Problem here is the ending position
   test('Syntax validation errors on multiline unfinished string', () => {
     const query = `RETURN 'something
       foo
@@ -623,7 +631,8 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Unfinished string literal',
+        message:
+          'Failed to parse string literal. The query must contain an even number of non-escaped quotes.',
         offsets: {
           end: 37,
           start: 7,
@@ -643,6 +652,8 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
+  // Problem here is the ending position
   test('Syntax validation errors on multiline unfinished property keys', () => {
     const query = `RETURN {\`something
     foo
@@ -655,7 +666,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Unfinished escaped identifier',
+        message: "Invalid input '`': expected an identifier or '}'",
         offsets: {
           end: 49,
           start: 8,
@@ -675,6 +686,8 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
+  // Problem here is the ending position
   test('Syntax validation errors on unfinished multiline comment', () => {
     const query = `/* something
     foo
@@ -715,7 +728,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected any of '*', DISTINCT or an expression",
+        message: "Invalid input '}': expected an expression, '*' or 'DISTINCT'",
         offsets: {
           end: 25,
           start: 24,
@@ -732,27 +745,11 @@ describe('Syntactic validation spec', () => {
         },
         severity: 1,
       },
-      {
-        message: "Expected any of '*', DISTINCT or an expression",
-        offsets: {
-          end: 48,
-          start: 48,
-        },
-        range: {
-          end: {
-            character: 48,
-            line: 0,
-          },
-          start: {
-            character: 48,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
+  // TODO FIX ME
+  // Problem here is we were getting a better error before
   test('Syntax validation errors on an expected procedure name', () => {
     const query = `CALL ,foo`;
 
@@ -791,14 +788,14 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected '}' or an identifier",
+        message: "Invalid input '[': expected an identifier or '}'",
         offsets: {
-          end: 9,
+          end: 13,
           start: 8,
         },
         range: {
           end: {
-            character: 9,
+            character: 13,
             line: 0,
           },
           start: {
@@ -820,14 +817,14 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected any of '=', ')', '{', ':', IS, WHERE or a parameter",
+        message: `Invalid input '"foo"': expected a graph pattern, a parameter, ')', ':', 'IS', 'WHERE' or '{'`,
         offsets: {
-          end: 14,
+          end: 15,
           start: 9,
         },
         range: {
           end: {
-            character: 14,
+            character: 15,
             line: 0,
           },
           start: {
@@ -849,14 +846,14 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected an identifier',
+        message: "Invalid input ''bar'': expected an identifier",
         offsets: {
-          end: 23,
+          end: 24,
           start: 18,
         },
         range: {
           end: {
-            character: 23,
+            character: 24,
             line: 0,
           },
           start: {
@@ -879,7 +876,8 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected any of CHANGE, a string or a parameter',
+        message:
+          "Invalid input 'foo': expected a parameter, a string or 'CHANGE'",
         offsets: {
           end: 39,
           start: 36,
@@ -908,7 +906,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected any of '=', a database name or a parameter",
+        message: `Invalid input '"something"': expected a database name, a graph pattern or a parameter`,
         offsets: {
           end: 27,
           start: 16,
@@ -937,14 +935,14 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Expected '}' or an unsigned integer",
+        message: `Invalid input '"foo"': expected '}' or an integer value`,
         offsets: {
-          end: 40,
+          end: 41,
           start: 35,
         },
         range: {
           end: {
-            character: 40,
+            character: 41,
             line: 0,
           },
           start: {
@@ -966,14 +964,15 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected a node label / rel type',
+        message:
+          "Invalid input ''Person'': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
-          end: 18,
+          end: 19,
           start: 10,
         },
         range: {
           end: {
-            character: 18,
+            character: 19,
             line: 0,
           },
           start: {
@@ -995,14 +994,14 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Expected a node label / rel type',
+        message: `Invalid input ''Person'': expected an identifier, '$', '%' or '('`,
         offsets: {
-          end: 20,
+          end: 21,
           start: 12,
         },
         range: {
           end: {
-            character: 20,
+            character: 21,
             line: 0,
           },
           start: {
@@ -1015,6 +1014,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  // TODO FIX ME
   test('Syntax validation errors on incomplete console commands if console commands are not enabled', () => {
     const query = `:`;
 

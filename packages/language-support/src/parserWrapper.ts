@@ -437,15 +437,14 @@ function parseToCommand(
 
   if (stmt) {
     const { start, stop } = stmt;
-
+    const inputstream = start.getInputStream();
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       // stripping the preparser part of it
-      const inputstream = start.getInputStream();
       const stmtStart = cypherStmt.start;
       const stmtStop = cypherStmt.stop;
-      const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
+      const statement = inputstream.getText(stmtStart.start, stop.stop);
 
       return { type: 'cypher', statement, start: stmtStart, stop: stmtStop };
     }
@@ -567,7 +566,8 @@ function parseToCommand(
 
       return { type: 'parse-error', start, stop };
     }
-    return { type: 'parse-error', start, stop };
+    const statement = inputstream.getText(start.start, stop.stop);
+    return { type: 'cypher', statement, start: start, stop: stop };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }
