@@ -22,7 +22,8 @@ describe('Procedures semantic validation spec', () => {
             end: 32,
             start: 5,
           },
-          message: 'Procedure db.create.setVectorProperty is deprecated.',
+          message:
+            'Procedure db.create.setVectorProperty is deprecated. Use db.create.setNodeVectorProperty instead.',
           range: {
             end: {
               character: 32,

@@ -128,6 +128,14 @@ function generateProcedureNotFoundError(
   );
 }
 
+function sanitizeDeprecatedBy(deprecatedBy: string) {
+  if (/[\p{L}\p{N}_]+(\.[\p{L}\p{N}_]+)*/u.test(deprecatedBy)) {
+    return `Use ${deprecatedBy} instead.`;
+  } else {
+    return deprecatedBy;
+  }
+}
+
 function generateProcedureDeprecatedWarning(
   parsedProcedure: ParsedProcedure,
   deprecatedBy: string | undefined,
@@ -138,7 +146,7 @@ function generateProcedureDeprecatedWarning(
     parsedProcedure,
     DiagnosticSeverity.Warning,
     deprecatedBy
-      ? procDeprecatedWarning + ` ${deprecatedBy}`
+      ? procDeprecatedWarning + ` ${sanitizeDeprecatedBy(deprecatedBy)}`
       : procDeprecatedWarning,
     true,
   );
@@ -154,7 +162,7 @@ function generateFunctionDeprecatedWarning(
     parsedFunction,
     DiagnosticSeverity.Warning,
     deprecatedBy
-      ? funcDeprecatedWarning + ` ${deprecatedBy}`
+      ? funcDeprecatedWarning + ` ${sanitizeDeprecatedBy(deprecatedBy)}`
       : funcDeprecatedWarning,
     true,
   );
@@ -372,11 +380,12 @@ function warningOnDeprecatedProcedure(
       const proc = dbSchema.procedures?.[parsedProcedure.name];
       const procedureDeprecated = proc?.option?.deprecated;
       const deprecatedBy = proc?.deprecatedBy;
-      if (procedureDeprecated) {
-        warnings.push(
-          generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy),
-        );
-      }
+      if (deprecatedBy)
+        if (procedureDeprecated) {
+          warnings.push(
+            generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy),
+          );
+        }
     });
   }
   return warnings;

@@ -39,6 +39,41 @@ describe('Functions semantic validation spec', () => {
     );
   });
 
+  test('Syntax validation sanitizes deprecated by information', () => {
+    const query = `RETURN apoc.text.regreplace("Neo4j GraphQL Neo4j GraphQL", "GraphQL", "GRANDstack") AS output;`;
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Function apoc.text.regreplace is deprecated. Use apoc.text.replace instead.',
+        offsets: {
+          end: 27,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 2,
+        tags: [2],
+      },
+    ]);
+  });
+
   test('Syntax validation errors on missing function when database can be contacted', () => {
     const query = `RETURN dontpanic("marvin")`;
 
