@@ -122,12 +122,6 @@ function resizableEditor(): Extension {
   );
 
   return [
-    EditorView.theme({
-      '&': {
-        position: 'relative',
-        resize: 'none',
-      },
-    }),
     resizeHandlePlugin,
   ];
 }
