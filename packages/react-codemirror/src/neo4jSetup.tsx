@@ -40,6 +40,7 @@ import {
 
 import { lintKeymap } from '@codemirror/lint';
 import { getIconForType } from './icons';
+import resizableEditor from './resizableEditor';
 
 const insertTab: StateCommand = (cmd) => {
   // if there is a selection we should indent the selected text, but if not insert
@@ -153,6 +154,8 @@ export const basicNeo4jSetup = ({
       { key: 'Escape', run: closeCompletionsOrClearSnippets },
     ]),
   );
+
+  extensions.push(resizableEditor())
 
   return extensions;
 };
