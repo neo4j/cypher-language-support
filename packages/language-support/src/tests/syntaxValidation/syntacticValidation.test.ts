@@ -53,12 +53,13 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
   test('Misspelt keyword at the end of the statement', () => {
     const query = 'MATCH (n:Person) WERE';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          "Invalid input 'WERE': expected a graph pattern, 'FOREACH', ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
         offsets: {
           end: 21,
           start: 17,
@@ -78,17 +79,17 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
   test('Misspelt keyword in the middle of the statement', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message:
+          "Invalid input 'WERE': expected a graph pattern, 'FOREACH', ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
         offsets: {
           end: 21,
           start: 17,
         },
-        message: 'Unexpected token. Did you mean WHERE?',
         range: {
           end: {
             character: 21,
@@ -619,7 +620,6 @@ describe('Syntactic validation spec', () => {
   });
 
   // TODO FIX ME
-  // Problem here is the ending position
   test('Syntax validation errors on multiline unfinished string', () => {
     const query = `RETURN 'something
       foo

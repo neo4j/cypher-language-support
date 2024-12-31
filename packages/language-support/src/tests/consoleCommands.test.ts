@@ -650,8 +650,8 @@ describe('command parser also handles cypher', () => {
 
   test('can split cypher into statements', () => {
     expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
-      { statement: 'CALL db.info()', type: 'cypher' },
-      { statement: 'RETURN 123', type: 'cypher' },
+      { statement: 'CALL db.info();', type: 'cypher' },
+      { statement: 'RETURN 123;', type: 'cypher' },
       { statement: 'SHOW DATABASES', type: 'cypher' },
     ]);
   });
@@ -665,9 +665,9 @@ describe('command parser also handles cypher', () => {
           parameters: [{ name: 'x', expression: '23' }],
           type: 'set-parameters',
         },
-        { statement: 'RETURN $x', type: 'cypher' },
+        { statement: 'RETURN $x;', type: 'cypher' },
         { database: 'system', type: 'use' },
-        { statement: 'SHOW DATABASES', type: 'cypher' },
+        { statement: 'SHOW DATABASES;', type: 'cypher' },
         { statement: '', type: 'cypher' },
       ],
     );
