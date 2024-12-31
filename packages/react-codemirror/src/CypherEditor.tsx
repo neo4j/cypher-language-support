@@ -174,6 +174,16 @@ export interface CypherEditorProps {
    * @default false
    */
   moveFocusOnTab?: boolean;
+
+  /**
+   * Whether the editor should be resizable.
+   * 
+   * true will initialize the editor with the resizable editor extension, 
+   * enabling the editor to be resized dynamically.
+   * 
+   * @default false
+   */
+  resizeable?: boolean;
 }
 
 const executeKeybinding = (
@@ -321,15 +331,16 @@ export class CypherEditor extends Component<
     lineNumbers: true,
     newLineOnEnter: false,
     moveFocusOnTab: false,
+    resizeable: false,
   };
 
   private debouncedOnChange = this.props.onChange
     ? debounce(
-        ((value, viewUpdate) => {
-          this.props.onChange(value, viewUpdate);
-        }) satisfies CypherEditorProps['onChange'],
-        DEBOUNCE_TIME,
-      )
+      ((value, viewUpdate) => {
+        this.props.onChange(value, viewUpdate);
+      }) satisfies CypherEditorProps['onChange'],
+      DEBOUNCE_TIME,
+    )
     : undefined;
 
   componentDidMount(): void {
@@ -369,18 +380,18 @@ export class CypherEditor extends Component<
 
     const changeListener = this.debouncedOnChange
       ? [
-          EditorView.updateListener.of((upt: ViewUpdate) => {
-            const wasUserEdit = !upt.transactions.some((tr) =>
-              tr.annotation(ExternalEdit),
-            );
+        EditorView.updateListener.of((upt: ViewUpdate) => {
+          const wasUserEdit = !upt.transactions.some((tr) =>
+            tr.annotation(ExternalEdit),
+          );
 
-            if (upt.docChanged && wasUserEdit) {
-              const doc = upt.state.doc;
-              const value = doc.toString();
-              this.debouncedOnChange(value, upt);
-            }
-          }),
-        ]
+          if (upt.docChanged && wasUserEdit) {
+            const doc = upt.state.doc;
+            const value = doc.toString();
+            this.debouncedOnChange(value, upt);
+          }
+        }),
+      ]
       : [];
 
     this.editorState.current = EditorState.create({
@@ -416,8 +427,8 @@ export class CypherEditor extends Component<
         ),
         this.props.ariaLabel
           ? EditorView.contentAttributes.of({
-              'aria-label': this.props.ariaLabel,
-            })
+            'aria-label': this.props.ariaLabel,
+          })
           : [],
       ],
       doc: this.props.value,
@@ -465,7 +476,7 @@ export class CypherEditor extends Component<
     const didChangeTheme =
       prevProps.theme !== this.props.theme ||
       prevProps.overrideThemeBackgroundColor !==
-        this.props.overrideThemeBackgroundColor;
+      this.props.overrideThemeBackgroundColor;
 
     if (didChangeTheme) {
       this.editorView.current.dispatch({

@@ -64,10 +64,12 @@ const insertTab: StateCommand = (cmd) => {
 
 type SetupProps = {
   moveFocusOnTab?: boolean;
+  resizeable?: boolean;
 };
 
 export const basicNeo4jSetup = ({
   moveFocusOnTab = false,
+  resizeable = false
 }: SetupProps): Extension[] => {
   const keymaps: KeyBinding[] = [
     closeBracketsKeymap,
@@ -155,7 +157,9 @@ export const basicNeo4jSetup = ({
     ]),
   );
 
-  extensions.push(resizableEditor())
+  if (resizeable) {
+    extensions.push(resizableEditor())
+  }
 
   return extensions;
 };

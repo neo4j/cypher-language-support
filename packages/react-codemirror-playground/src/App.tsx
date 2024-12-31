@@ -88,9 +88,8 @@ export function App() {
                 <button
                   key={demoName}
                   className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded 
-                ${
-                  selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
-                }`}
+                ${selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
+                    }`}
                   onClick={() => {
                     setSelectedDemoName(demoName);
                     setValue(demos[demoName]);
@@ -114,6 +113,7 @@ export function App() {
               schema={schema}
               featureFlags={{ signatureInfoOnAutoCompletions: true }}
               ariaLabel="Cypher Editor"
+              resizeable={true}
             />
 
             {commandRanCount > 0 && (
