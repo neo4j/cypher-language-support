@@ -43,6 +43,7 @@ export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
     },
     signature: { type: 'string' },
     worksOnSystem: { type: 'boolean' },
+    deprecatedBy: { type: 'string', nullable: true },
   },
   required: [
     'admin',
@@ -82,7 +83,7 @@ export function listProcedures(
   const query = `SHOW PROCEDURES ${
     executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
   }
-YIELD name, description, mode, worksOnSystem, argumentDescription, signature, returnDescription, admin, option`;
+YIELD *`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {

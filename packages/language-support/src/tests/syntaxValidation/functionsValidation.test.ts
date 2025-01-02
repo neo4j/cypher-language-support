@@ -3,7 +3,7 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Functions semantic validation spec', () => {
-  test('Syntax validation warns on deprecated function when database can be contacted', () => {
+  test('Syntax validation warns on deprecated function when database can be contacted and deprecated by is not present', () => {
     const query = `RETURN id()`;
     expect(
       getDiagnosticsForQuery({
@@ -37,6 +37,41 @@ describe('Functions semantic validation spec', () => {
         },
       ]),
     );
+  });
+
+  test('Syntax validation warns on deprecated function when database can be contacted and deprecated by is present', () => {
+    const query = `RETURN apoc.text.regreplace("Neo4j GraphQL Neo4j GraphQL", "GraphQL", "GRANDstack") AS output;`;
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Function apoc.text.regreplace is deprecated. Alternative: apoc.text.replace',
+        offsets: {
+          end: 27,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 2,
+        tags: [2],
+      },
+    ]);
   });
 
   test('Syntax validation errors on missing function when database can be contacted', () => {

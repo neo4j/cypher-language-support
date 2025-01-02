@@ -39,6 +39,7 @@ export const functionSchema: JSONSchemaType<Neo4jFunction> = {
     returnDescription: { type: 'string' },
     signature: { type: 'string' },
     isDeprecated: { type: 'boolean', default: false },
+    deprecatedBy: { type: 'string', nullable: true },
   },
   required: [
     'aggregating',
@@ -68,7 +69,7 @@ export function listFunctions(
   const query = `SHOW FUNCTIONS ${
     executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
   }
-YIELD name, category, description, isBuiltIn, argumentDescription, signature, returnDescription, aggregating, isDeprecated`;
+YIELD *`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
