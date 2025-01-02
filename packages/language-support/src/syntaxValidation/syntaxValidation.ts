@@ -128,14 +128,6 @@ function generateProcedureNotFoundError(
   );
 }
 
-function sanitizeDeprecatedBy(deprecatedBy: string) {
-  if (/[\p{L}\p{N}_]+(\.[\p{L}\p{N}_]+)*/u.test(deprecatedBy)) {
-    return `Use ${deprecatedBy} instead.`;
-  } else {
-    return deprecatedBy;
-  }
-}
-
 function generateProcedureDeprecatedWarning(
   parsedProcedure: ParsedProcedure,
   deprecatedBy: string | undefined,
@@ -146,7 +138,7 @@ function generateProcedureDeprecatedWarning(
     parsedProcedure,
     DiagnosticSeverity.Warning,
     deprecatedBy
-      ? procDeprecatedWarning + ` ${sanitizeDeprecatedBy(deprecatedBy)}`
+      ? procDeprecatedWarning + ` Alternative: ${deprecatedBy}`
       : procDeprecatedWarning,
     true,
   );
@@ -162,7 +154,7 @@ function generateFunctionDeprecatedWarning(
     parsedFunction,
     DiagnosticSeverity.Warning,
     deprecatedBy
-      ? funcDeprecatedWarning + ` ${sanitizeDeprecatedBy(deprecatedBy)}`
+      ? funcDeprecatedWarning + ` Alternative: ${deprecatedBy}`
       : funcDeprecatedWarning,
     true,
   );
