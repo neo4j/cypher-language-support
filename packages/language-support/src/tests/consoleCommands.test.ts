@@ -317,6 +317,25 @@ describe('parameters', () => {
     ]);
   });
 
+  test('allows setting parameters with escaped name', () => {
+    expectParsedCommands(':param `foo foo` => bar', [
+      {
+        type: 'set-parameters',
+        parameters: [{ name: '`foo foo`', expression: 'bar' }],
+      },
+    ]);
+
+    expectParsedCommands(':param {`a a a`: 2, `b-b-b`: rand()}', [
+      {
+        type: 'set-parameters',
+        parameters: [
+          { name: '`a a a`', expression: '2' },
+          { name: '`b-b-b`', expression: 'rand()' },
+        ],
+      },
+    ]);
+  });
+
   test('autocompletes expressions', () => {
     const arrowCompletions = autocomplete(':param foo => ', {
       functions: {
