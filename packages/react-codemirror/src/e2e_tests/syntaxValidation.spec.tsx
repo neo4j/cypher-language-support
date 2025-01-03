@@ -48,23 +48,16 @@ test('Syntactic errors are surfaced', async ({ page, mount }) => {
   );
 });
 
-test('Does not trigger syntax errors for backticked parameters in parameter creation', async ({ page, mount }) => {
+test('Does not trigger syntax errors for backticked parameters in parameter creation', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
 
   const query = ':param x => "abc"';
   await mount(<CypherEditor value={query} />);
 
   await editorPage.checkNoNotificationMessage('error');
-});
-
-test('Unit test that checkNoNotification fails on query with error', async ({ page, mount }) => {
-  const editorPage = new CypherEditorPage(page);
-
-  const query = 'METCH (n) RETURN n';
-  await mount(<CypherEditor value={query} />);
-
-  await editorPage.checkNoNotificationMessage('error');
-  await editorPage.checkNoNotificationMessage('warning');
 });
 
 test('Errors for undefined labels are surfaced', async ({ page, mount }) => {

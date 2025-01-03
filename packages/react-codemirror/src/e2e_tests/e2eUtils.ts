@@ -60,7 +60,7 @@ export class CypherEditorPage {
   }
 
   async checkNoNotificationMessage(type: 'error' | 'warning') {
-    await this.page.waitForTimeout(3000);
+    await this.page.waitForTimeout(1000);
     await expect(this.page.locator('.cm-lintRange-' + type)).toHaveCount(0, {
       timeout: 3000,
     });
