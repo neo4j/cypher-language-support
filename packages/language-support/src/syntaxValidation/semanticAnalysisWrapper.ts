@@ -7,7 +7,7 @@ import { DbSchema } from '../dbSchema';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
-import { SyntaxDiagnostic } from './syntaxValidationHelpers';
+import { SyntaxDiagnostic } from './syntaxValidation';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];

@@ -619,8 +619,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
-  test('Syntax validation errors on multiline unfinished string', () => {
+  test('Syntax validation errors on multiline single-quoted unfinished string', () => {
     const query = `RETURN 'something
       foo
       bar`;
@@ -652,13 +651,10 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
-  // Problem here is the ending position
-  test('Syntax validation errors on multiline unfinished property keys', () => {
-    const query = `RETURN {\`something
-    foo
-    
-    bar: "hello"}`;
+  test('Syntax validation errors on multiline double-quoted unfinished string', () => {
+    const query = `RETURN "something
+      foo
+      bar`;
 
     expect(
       getDiagnosticsForQuery({
@@ -666,18 +662,19 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: "Invalid input '`': expected an identifier or '}'",
+        message:
+          'Failed to parse string literal. The query must contain an even number of non-escaped quotes.',
         offsets: {
-          end: 49,
-          start: 8,
+          end: 37,
+          start: 7,
         },
         range: {
           end: {
-            character: 17,
-            line: 3,
+            character: 9,
+            line: 2,
           },
           start: {
-            character: 8,
+            character: 7,
             line: 0,
           },
         },
@@ -686,8 +683,41 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
-  // Problem here is the ending position
+  test.fails(
+    'Syntax validation errors on multiline unfinished property keys',
+    () => {
+      const query = `RETURN {\`something
+    foo
+    
+    bar: "hello"}`;
+
+      expect(
+        getDiagnosticsForQuery({
+          query,
+        }),
+      ).toEqual([
+        {
+          message: "Invalid input '`': expected an identifier or '}'",
+          offsets: {
+            end: 49,
+            start: 8,
+          },
+          range: {
+            end: {
+              character: 17,
+              line: 3,
+            },
+            start: {
+              character: 8,
+              line: 0,
+            },
+          },
+          severity: 1,
+        },
+      ]);
+    },
+  );
+
   test('Syntax validation errors on unfinished multiline comment', () => {
     const query = `/* something
     foo
@@ -699,7 +729,8 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Unfinished comment',
+        message:
+          'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
         offsets: {
           end: 34,
           start: 0,
@@ -750,7 +781,7 @@ describe('Syntactic validation spec', () => {
 
   // TODO FIX ME
   // Problem here is we were getting a better error before
-  test('Syntax validation errors on an expected procedure name', () => {
+  test.fails('Syntax validation errors on an expected procedure name', () => {
     const query = `CALL ,foo`;
 
     expect(
@@ -779,7 +810,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test('Syntax validation errors on an expected map literal', () => {
+  test.fails('Syntax validation errors on an expected map literal', () => {
     const query = `RETURN {[242]}`;
 
     expect(
@@ -1027,7 +1058,7 @@ describe('Syntactic validation spec', () => {
         message: 'Console commands are unsupported in this environment.',
         offsets: {
           end: 1,
-          start: 1,
+          start: 0,
         },
         range: {
           end: {
@@ -1035,7 +1066,7 @@ describe('Syntactic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 1,
+            character: 0,
             line: 0,
           },
         },

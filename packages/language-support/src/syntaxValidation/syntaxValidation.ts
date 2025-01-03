@@ -1,4 +1,5 @@
 import {
+  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
@@ -15,7 +16,10 @@ import {
 } from '../parserWrapper';
 import { Neo4jFunction } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
-import { SyntaxDiagnostic } from './syntaxValidationHelpers';
+
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -229,7 +233,7 @@ export function lintCypherQuery(
   if (query.length > 0) {
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
-    const semanticErrors = statements.flatMap((current) => {
+    const errors = statements.flatMap((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
@@ -263,10 +267,11 @@ export function lintCypherQuery(
           )
           .sort(sortByPositionAndMessage);
       }
-      return [];
+      // There could be console command errors
+      return current.syntaxErrors;
     });
 
-    return semanticErrors;
+    return errors;
   }
 
   return [];

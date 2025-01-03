@@ -29,10 +29,7 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import {
-  SyntaxDiagnostic,
-  SyntaxErrorsListener,
-} from './syntaxValidation/syntaxValidationHelpers';
+import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -176,17 +173,15 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
-      const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
-      parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
-      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
+      const syntaxErrors = [];
+      const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
 
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
@@ -431,12 +426,18 @@ export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmts: StatementsOrCommandsContext,
+  tokens: Token[],
   isEmptyStatement: boolean,
 ): ParsedCommand {
   const stmt = stmts.statementOrCommand_list().at(0);
 
   if (stmt) {
-    const { start, stop } = stmts;
+    const start = stmts.start;
+    let stop = stmts.stop;
+
+    if (stop && stop.type === CypherLexer.SEMICOLON) {
+      stop = tokens[stop.tokenIndex - 1];
+    }
     const inputstream = start.getInputStream();
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
@@ -588,7 +589,7 @@ function translateTokensToRange(
 }
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
-    .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
+    .filter((cmd) => cmd.type !== 'cypher')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
         message: 'Console commands are unsupported in this environment.',

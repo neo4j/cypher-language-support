@@ -5,19 +5,12 @@ import {
   Token,
 } from 'antlr4';
 import type { ParserRuleContext } from 'antlr4-c3';
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  Position,
-} from 'vscode-languageserver-types';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import { isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
-
-export type SyntaxDiagnostic = Diagnostic & {
-  offsets: { start: number; end: number };
-};
+import { SyntaxDiagnostic } from './syntaxValidation';
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];

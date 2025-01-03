@@ -13,7 +13,7 @@ export {
 } from './syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
 export { lintCypherQuery } from './syntaxValidation/syntaxValidation';
-export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidationHelpers';
+export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
 export type { CompletionItem, Neo4jFunction, Neo4jProcedure } from './types';
