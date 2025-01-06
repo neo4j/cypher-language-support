@@ -19,7 +19,6 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (!config.lint) {
       return [];
     }
-
     const query = view.state.doc.toString();
     if (query.length === 0) {
       return [];
@@ -31,7 +30,11 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.lintCypherQuery(query, config.schema ?? {});
+      lastSemanticJob = proxyWorker.lintCypherQuery(
+        query,
+        config.schema ?? {},
+        config.featureFlags ?? {},
+      );
       const result = await lastSemanticJob;
 
       const a: Diagnostic[] = result.map((diagnostic) => {
