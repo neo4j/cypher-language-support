@@ -30,6 +30,7 @@ import {
   splitIntoStatements,
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -173,15 +174,20 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
+      const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
+      parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const syntaxErrors = [];
       const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
+      const syntaxErrors =
+        collectedCommand.type !== 'cypher' && !isEmptyStatement
+          ? errorListener.errors
+          : [];
 
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));

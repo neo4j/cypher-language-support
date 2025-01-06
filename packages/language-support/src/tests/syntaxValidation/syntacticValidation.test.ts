@@ -1045,7 +1045,6 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
   test('Syntax validation errors on incomplete console commands if console commands are not enabled', () => {
     const query = `:`;
 
