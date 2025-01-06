@@ -16,6 +16,7 @@ import {
   ListItemsPredicateContext,
   NumberLiteralContext,
   ParameterContext,
+  ParameterNameContext,
   ParamsArgsContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
@@ -185,6 +186,10 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitVariable = (ctx: VariableContext) => {
+    this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+  };
+
+  exitParameterName = (ctx: ParameterNameContext) => {
     this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
   };
 
