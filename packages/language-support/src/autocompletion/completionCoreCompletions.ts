@@ -43,6 +43,16 @@ function backtickIfNeeded(e: string): string | undefined {
   }
 }
 
+function backtickDbNameIfNeeded(e: string): string | undefined {
+  if (e == null || e == '') {
+    return undefined;
+  } else if (/[^\p{L}\p{N}_.]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
+    return `\`${e}\``;
+  } else {
+    return undefined;
+  }
+}
+
 const versionCompletions = () =>
   versions.map((v) => {
     const result: CompletionItem = {
@@ -306,10 +316,16 @@ const parameterCompletions = (
     .filter(([_, paramType]) =>
       isExpectedParameterType(expectedType, paramType),
     )
-    .map(([paramName]) => ({
-      label: `$${paramName}`,
-      kind: CompletionItemKind.Variable,
-    }));
+    .map(([paramName]) => {
+      const backtickedName = backtickIfNeeded(paramName);
+      return {
+        label: `$${paramName}`,
+        kind: CompletionItemKind.Variable,
+        ...(backtickedName
+          ? { insertText: `$${backtickIfNeeded(paramName)}` }
+          : {}),
+      };
+    });
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const result: CompletionItem = {
@@ -458,8 +474,6 @@ export function completionCoreCompletion(
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
     CypherParser.RULE_procedureResultItem,
-    CypherParser.RULE_cypherVersion,
-    CypherParser.RULE_cypher,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -495,20 +509,6 @@ export function completionCoreCompletion(
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {
       const [ruleNumber, candidateRule] = candidate;
-      if (ruleNumber === CypherParser.RULE_cypher) {
-        return [
-          ...cypherVersionCompletions(),
-          {
-            label: 'CYPHER',
-            kind: CompletionItemKind.Keyword,
-          },
-        ];
-      }
-
-      if (ruleNumber === CypherParser.RULE_cypherVersion) {
-        return versionCompletions();
-      }
-
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
           parsingResult.stopNode.parentCtx,
@@ -756,6 +756,7 @@ function completeAliasName({
       ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
+        insertText: backtickDbNameIfNeeded(aliasName),
       })),
     ];
   }
@@ -768,6 +769,7 @@ function completeAliasName({
       .map((databaseName) => ({
         label: databaseName,
         kind: CompletionItemKind.Value,
+        insertText: backtickDbNameIfNeeded(databaseName),
       })),
   ];
 }
