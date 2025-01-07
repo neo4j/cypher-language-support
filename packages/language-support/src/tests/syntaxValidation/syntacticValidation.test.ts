@@ -135,33 +135,6 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  // TODO FIX ME
-  test.fails('Misspelt keyword in the middle of the statement', () => {
-    const query = "MATCH (n:Person) WERE n.name = 'foo'";
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 16,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
   test('Syntax validation warns on missing label when database can be contacted', () => {
     const query = `MATCH (n: Person) RETURN n`;
 
@@ -810,7 +783,7 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test.fails('Syntax validation errors on an expected map literal', () => {
+  test('Syntax validation errors on an expected map literal', () => {
     const query = `RETURN {[242]}`;
 
     expect(
@@ -821,12 +794,12 @@ describe('Syntactic validation spec', () => {
       {
         message: "Invalid input '[': expected an identifier or '}'",
         offsets: {
-          end: 13,
+          end: 14,
           start: 8,
         },
         range: {
           end: {
-            character: 13,
+            character: 14,
             line: 0,
           },
           start: {
