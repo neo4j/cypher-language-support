@@ -5,6 +5,27 @@ import {
 } from './completionAssertionHelpers';
 
 describe('Misc auto-completion', () => {
+  test('Correctly completes cypher version number', () => {
+    const query = 'CYPHER ';
+
+    testCompletions({
+      query,
+      expected: [{ label: '5', kind: CompletionItemKind.EnumMember }],
+    });
+  });
+
+  test('Correctly completes CYPHER when keyword is not finished, optionally with version', () => {
+    const query = 'CYP';
+
+    testCompletions({
+      query,
+      expected: [
+        { label: 'CYPHER 5', kind: CompletionItemKind.Keyword },
+        { label: 'CYPHER', kind: CompletionItemKind.Keyword },
+      ],
+    });
+  });
+
   test('Correctly completes empty statement', () => {
     const query = '';
 

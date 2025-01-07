@@ -13,8 +13,11 @@ preparserKeyword:
 preparserOption:
    EXPLAIN | PROFILE | cypherOptions;
 
+cypher: 
+   CYPHER;
+
 cypherOptions:
-   CYPHER cypherVersion? cypherOption*;
+   cypher cypherVersion? cypherOption*;
 
 cypherOption:
    cypherOptionName EQ cypherOptionValue;
