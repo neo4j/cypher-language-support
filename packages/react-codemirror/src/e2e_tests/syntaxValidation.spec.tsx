@@ -49,6 +49,18 @@ test('Syntactic errors are surfaced', async ({ page, mount }) => {
   );
 });
 
+test('Does not trigger syntax errors for backticked parameters in parameter creation', async ({
+  page,
+  mount,
+}) => {
+  const editorPage = new CypherEditorPage(page);
+
+  const query = ':param x => "abc"';
+  await mount(<CypherEditor value={query} />);
+
+  await editorPage.checkNoNotificationMessage('error');
+});
+
 test('Errors for undefined labels are surfaced', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'MATCH (n: Person) RETURN n';

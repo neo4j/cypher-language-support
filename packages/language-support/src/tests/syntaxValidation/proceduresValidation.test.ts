@@ -1,4 +1,3 @@
-import { DiagnosticTag } from 'vscode-languageserver-types';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
@@ -14,29 +13,50 @@ describe('Procedures semantic validation spec', () => {
           procedures: testData.mockSchema.procedures,
         },
       }),
-    ).toEqual(
-      expect.arrayContaining([
-        {
-          tags: [DiagnosticTag.Deprecated],
-          offsets: {
-            end: 32,
-            start: 5,
-          },
-          message: 'Procedure db.create.setVectorProperty is deprecated.',
-          range: {
-            end: {
-              character: 32,
-              line: 0,
-            },
-            start: {
-              character: 5,
-              line: 0,
-            },
-          },
-          severity: 2,
+    ).toEqual([
+      {
+        message: `Procedure call does not provide the required number of arguments: got 0 expected at least 3 (total: 3, 0 of which have default values).
+
+Procedure db.create.setVectorProperty has signature: db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: node :: NODE
+meaning that it expects at least 3 arguments of types NODE, STRING, ANY
+`,
+        offsets: {
+          end: 34,
+          start: 0,
         },
-      ]),
-    );
+        range: {
+          end: {
+            character: 34,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Procedure db.create.setVectorProperty is deprecated. Alternative: db.create.setNodeVectorProperty',
+        offsets: {
+          end: 32,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 2,
+        tags: [2],
+      },
+    ]);
   });
 
   test('Syntax validation warns on missing procedures when database can be contacted', () => {

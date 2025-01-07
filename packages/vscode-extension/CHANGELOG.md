@@ -1,5 +1,11 @@
 # neo4j-for-vscode
 
+## 1.6.1
+
+- Makes the editor relint all documents when connecting / disconnecting from a database
+- Adds warnings for deprecated procedures / functions
+- Improves backticking of completions
+
 ## 1.6.0
 
 - Updates grammar to LTS version
