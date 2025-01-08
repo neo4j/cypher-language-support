@@ -59,6 +59,42 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
     ]);
   });
 
+  test('Syntax validation error on procedure used as function returns helpful message', () => {
+    const query = `RETURN apoc.create.uuids(50)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Function apoc.create.uuids is not present in the database. Did you mean to call the procedure apoc.create.uuids? Procedures must be called inside a CALL clause.',
+        offsets: {
+          end: 24,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Syntax validation warns on missing procedures when database can be contacted', () => {
     const query = `CALL dontpanic("marvin")`;
 

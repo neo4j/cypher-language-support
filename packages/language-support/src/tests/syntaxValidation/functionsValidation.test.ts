@@ -74,6 +74,42 @@ describe('Functions semantic validation spec', () => {
     ]);
   });
 
+  test('Syntax validation error on function used as procedure returns helpful message', () => {
+    const query = `CALL abs(-50) YIELD *`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Procedure abs is not present in the database. Did you mean to call the function abs? Only procedures can be called inside a CALL clause.',
+        offsets: {
+          end: 8,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 8,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Syntax validation errors on missing function when database can be contacted', () => {
     const query = `RETURN dontpanic("marvin")`;
 
