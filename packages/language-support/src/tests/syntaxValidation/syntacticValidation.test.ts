@@ -117,12 +117,12 @@ describe('Syntactic validation spec', () => {
         message:
           "Invalid input 'n': expected an expression, 'FOREACH', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or '}'",
         offsets: {
-          end: 119,
+          end: 114,
           start: 113,
         },
         range: {
           end: {
-            character: 52,
+            character: 47,
             line: 2,
           },
           start: {
@@ -794,12 +794,12 @@ describe('Syntactic validation spec', () => {
       {
         message: "Invalid input '[': expected an identifier or '}'",
         offsets: {
-          end: 14,
+          end: 9,
           start: 8,
         },
         range: {
           end: {
-            character: 14,
+            character: 9,
             line: 0,
           },
           start: {
@@ -823,12 +823,12 @@ describe('Syntactic validation spec', () => {
       {
         message: `Invalid input '"foo"': expected a graph pattern, a parameter, ')', ':', 'IS', 'WHERE' or '{'`,
         offsets: {
-          end: 15,
+          end: 14,
           start: 9,
         },
         range: {
           end: {
-            character: 15,
+            character: 14,
             line: 0,
           },
           start: {
@@ -852,12 +852,12 @@ describe('Syntactic validation spec', () => {
       {
         message: "Invalid input ''bar'': expected an identifier",
         offsets: {
-          end: 24,
+          end: 23,
           start: 18,
         },
         range: {
           end: {
-            character: 24,
+            character: 23,
             line: 0,
           },
           start: {
@@ -941,12 +941,12 @@ describe('Syntactic validation spec', () => {
       {
         message: `Invalid input '"foo"': expected '}' or an integer value`,
         offsets: {
-          end: 41,
+          end: 40,
           start: 35,
         },
         range: {
           end: {
-            character: 41,
+            character: 40,
             line: 0,
           },
           start: {
@@ -971,12 +971,12 @@ describe('Syntactic validation spec', () => {
         message:
           "Invalid input ''Person'': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
-          end: 19,
+          end: 18,
           start: 10,
         },
         range: {
           end: {
-            character: 19,
+            character: 18,
             line: 0,
           },
           start: {
@@ -1000,12 +1000,12 @@ describe('Syntactic validation spec', () => {
       {
         message: `Invalid input ''Person'': expected an identifier, '$', '%' or '('`,
         offsets: {
-          end: 21,
+          end: 20,
           start: 12,
         },
         range: {
           end: {
-            character: 21,
+            character: 20,
             line: 0,
           },
           start: {
