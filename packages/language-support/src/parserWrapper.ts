@@ -29,10 +29,8 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import {
-  SyntaxDiagnostic,
-  SyntaxErrorsListener,
-} from './syntaxValidation/syntaxValidationHelpers';
+import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -185,8 +183,11 @@ export function createParsingResult(query: string): ParsingResult {
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const syntaxErrors = isEmptyStatement ? [] : errorListener.errors;
-      const collectedCommand = parseToCommand(ctx, isEmptyStatement);
+      const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
+      const syntaxErrors =
+        collectedCommand.type !== 'cypher' && !isEmptyStatement
+          ? errorListener.errors
+          : [];
 
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
@@ -431,23 +432,27 @@ export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmts: StatementsOrCommandsContext,
+  tokens: Token[],
   isEmptyStatement: boolean,
 ): ParsedCommand {
   const stmt = stmts.statementOrCommand_list().at(0);
 
   if (stmt) {
-    const { start, stop } = stmt;
+    const start = stmts.start;
+    let stop = stmts.stop;
 
+    if (stop && stop.type === CypherLexer.SEMICOLON) {
+      stop = tokens[stop.tokenIndex - 1];
+    }
+    const inputstream = start.getInputStream();
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       // stripping the preparser part of it
-      const inputstream = start.getInputStream();
       const stmtStart = cypherStmt.start;
-      const stmtStop = cypherStmt.stop;
-      const statement = inputstream.getText(stmtStart.start, stmtStop.stop);
+      const statement = inputstream.getText(stmtStart.start, stop.stop);
 
-      return { type: 'cypher', statement, start: stmtStart, stop: stmtStop };
+      return { type: 'cypher', statement, start: stmtStart, stop: stop };
     }
 
     if (isEmptyStatement) {
@@ -567,7 +572,8 @@ function parseToCommand(
 
       return { type: 'parse-error', start, stop };
     }
-    return { type: 'parse-error', start, stop };
+    const statement = inputstream.getText(start.start, stop.stop);
+    return { type: 'cypher', statement, start: start, stop: stop };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }
@@ -589,7 +595,7 @@ function translateTokensToRange(
 }
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
-    .filter((cmd) => cmd.type !== 'cypher' && cmd.type !== 'parse-error')
+    .filter((cmd) => cmd.type !== 'cypher')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
         message: 'Console commands are unsupported in this environment.',

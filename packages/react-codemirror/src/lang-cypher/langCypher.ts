@@ -4,14 +4,11 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import {
-  _internalFeatureFlags,
-  type DbSchema,
-} from '@neo4j-cypher/language-support';
+import { type DbSchema } from '@neo4j-cypher/language-support';
 import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signatureHelp';
-import { cypherLinter, semanticAnalysisLinter } from './syntaxValidation';
+import { cypherLinter } from './syntaxValidation';
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
@@ -30,12 +27,6 @@ export type CypherConfig = {
 };
 
 export function cypher(config: CypherConfig) {
-  const featureFlags = config.featureFlags;
-  // We allow to override the consoleCommands feature flag
-  if (featureFlags.consoleCommands !== undefined) {
-    _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
-  }
-
   const parserAdapter = new ParserAdapter(facet, config);
 
   const cypherLanguage = new Language(facet, parserAdapter, [], 'cypher');
@@ -46,7 +37,6 @@ export function cypher(config: CypherConfig) {
       optionClass: completionStyles,
     }),
     cypherLinter(config),
-    semanticAnalysisLinter(config),
     signatureHelpTooltip(config),
   ]);
 }

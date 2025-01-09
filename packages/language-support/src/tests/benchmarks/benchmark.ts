@@ -4,10 +4,7 @@ import { autocomplete } from '../../autocompletion/autocompletion';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { signatureHelp } from '../../signatureHelp';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
-import {
-  lintCypherQuery,
-  validateSyntax,
-} from '../../syntaxValidation/syntaxValidation';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
 import {
   autocompletionQueries,
@@ -35,7 +32,7 @@ suite
   })
   .add('simple - validate syntax', function () {
     parserWrapper.clearCache();
-    validateSyntax(simpleQuery, testData.mockSchema);
+    lintCypherQuery(simpleQuery, testData.mockSchema);
   })
   .add('simple - autocomplete next statement', function () {
     parserWrapper.clearCache();

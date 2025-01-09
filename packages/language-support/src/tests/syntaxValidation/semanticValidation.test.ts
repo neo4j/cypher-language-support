@@ -8,7 +8,8 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Unrecognized keyword. Did you mean MATCH?',
+        message:
+          "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
         offsets: {
           end: 5,
           start: 0,

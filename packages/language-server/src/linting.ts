@@ -1,4 +1,3 @@
-import { validateSyntax } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
@@ -26,25 +25,19 @@ async function rawLintDocument(
   }
 
   const dbSchema = neo4j.metadata?.dbSchema ?? {};
-  const syntaxErrors = validateSyntax(query, dbSchema);
+  try {
+    if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
+      void lastSemanticJob.cancel();
+    }
 
-  sendDiagnostics(syntaxErrors);
+    const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+    lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+    const result = await lastSemanticJob;
 
-  if (syntaxErrors.length === 0) {
-    try {
-      if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
-        void lastSemanticJob.cancel();
-      }
-
-      const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.validateSemantics(query, dbSchema);
-      const result = await lastSemanticJob;
-
-      sendDiagnostics(result);
-    } catch (err) {
-      if (!(err instanceof workerpool.Promise.CancellationError)) {
-        console.error(err);
-      }
+    sendDiagnostics(result);
+  } catch (err) {
+    if (!(err instanceof workerpool.Promise.CancellationError)) {
+      console.error(err);
     }
   }
 }
