@@ -75,7 +75,43 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
     ).toEqual([
       {
         message:
-          'Function apoc.create.uuids is not present in the database. Did you mean to call the procedure apoc.create.uuids? Procedures must be called inside a CALL clause.',
+          'apoc.create.uuids is a procedure, not a function. Did you mean to call the procedure apoc.create.uuids inside a CALL clause?',
+        offsets: {
+          end: 24,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Using improved message for procedure used as function is case sensitive', () => {
+    const query = `RETURN apoc.cReAtE.uuids(50)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.cReAtE.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
         offsets: {
           end: 24,
           start: 7,

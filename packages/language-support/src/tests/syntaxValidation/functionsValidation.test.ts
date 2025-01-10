@@ -90,7 +90,7 @@ describe('Functions semantic validation spec', () => {
     ).toEqual([
       {
         message:
-          'Procedure abs is not present in the database. Did you mean to call the function abs? Only procedures can be called inside a CALL clause.',
+          'abs is a function, not a procedure. Did you mean to use the function abs with a RETURN instead of a CALL clause?',
         offsets: {
           end: 8,
           start: 5,
@@ -98,6 +98,78 @@ describe('Functions semantic validation spec', () => {
         range: {
           end: {
             character: 8,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Using improved message for function used as procedure is not case sensitive for built-in functions', () => {
+    const query = `CALL aBs(-50) YIELD *`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'aBs is a function, not a procedure. Did you mean to use the function aBs with a RETURN instead of a CALL clause?',
+        offsets: {
+          end: 8,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 8,
+            line: 0,
+          },
+          start: {
+            character: 5,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Using improved message for function used as procedure is case sensitive for external functions', () => {
+    const query = `CALL apoc.text.TOUpperCase("message") YIELD *`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Procedure apoc.text.TOUpperCase is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 26,
+          start: 5,
+        },
+        range: {
+          end: {
+            character: 26,
             line: 0,
           },
           start: {

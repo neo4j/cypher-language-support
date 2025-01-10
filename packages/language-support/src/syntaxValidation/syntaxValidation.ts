@@ -89,10 +89,8 @@ function detectNonDeclaredFunction(
 ): SyntaxDiagnostic | undefined {
   const exists = functionExists(parsedFunction, functionsSchema);
   if (!exists) {
-    let existsAsProcedure = false;
-    if (procedureSchema) {
-      existsAsProcedure = Boolean(procedureSchema[parsedFunction.name]);
-    }
+    const existsAsProcedure =
+      procedureSchema && Boolean(procedureSchema[parsedFunction.name]);
     if (existsAsProcedure) {
       return generateProcedureUsedAsFunctionError(parsedFunction);
     }
@@ -101,7 +99,7 @@ function detectNonDeclaredFunction(
 }
 
 function functionExists(
-  functionCandidate: ParsedFunction  ,
+  functionCandidate: ParsedFunction,
   functionsSchema: Record<string, Neo4jFunction>,
 ): boolean {
   if (!functionCandidate || !functionsSchema) {
@@ -115,15 +113,11 @@ function functionExists(
     functionsSchema[lowercaseFunctionName];
 
   // Built-in functions are case-insensitive in the database
-  if (
+  return (
     functionExistsWithExactName ||
     (caseInsensitiveFunctionInDatabase &&
       caseInsensitiveFunctionInDatabase.isBuiltIn)
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  );
 }
 
 function generateFunctionUsedAsProcedureError(
@@ -133,7 +127,7 @@ function generateFunctionUsedAsProcedureError(
     parsedProcedure.rawText,
     parsedProcedure,
     DiagnosticSeverity.Error,
-    `Procedure ${parsedProcedure.name} is not present in the database. Did you mean to call the function ${parsedProcedure.name}? Only procedures can be called inside a CALL clause.`,
+    `${parsedProcedure.name} is a function, not a procedure. Did you mean to use the function ${parsedProcedure.name} with a RETURN instead of a CALL clause?`,
   );
 }
 
@@ -155,7 +149,7 @@ function generateProcedureUsedAsFunctionError(
     parsedFunction.rawText,
     parsedFunction,
     DiagnosticSeverity.Error,
-    `Function ${parsedFunction.name} is not present in the database. Did you mean to call the procedure ${parsedFunction.name}? Procedures must be called inside a CALL clause.`,
+    `${parsedFunction.name} is a procedure, not a function. Did you mean to call the procedure ${parsedFunction.name} inside a CALL clause?`,
   );
 }
 
