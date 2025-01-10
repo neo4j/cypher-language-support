@@ -14,7 +14,7 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction } from '../types';
+import { Neo4jFunction, Neo4jProcedure } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
 
 export type SyntaxDiagnostic = Diagnostic & {
@@ -85,25 +85,50 @@ function generateSyntaxDiagnostic(
 function detectNonDeclaredFunction(
   parsedFunction: ParsedFunction,
   functionsSchema: Record<string, Neo4jFunction>,
+  procedureSchema: Record<string, Neo4jProcedure>,
 ): SyntaxDiagnostic | undefined {
-  const lowercaseFunctionName = parsedFunction.name.toLowerCase();
+  const exists = functionExists(parsedFunction, functionsSchema);
+  if (!exists) {
+    const existsAsProcedure =
+      procedureSchema && Boolean(procedureSchema[parsedFunction.name]);
+    if (existsAsProcedure) {
+      return generateProcedureUsedAsFunctionError(parsedFunction);
+    }
+    return generateFunctionNotFoundError(parsedFunction);
+  }
+}
+
+function functionExists(
+  functionCandidate: ParsedFunction,
+  functionsSchema: Record<string, Neo4jFunction>,
+): boolean {
+  if (!functionCandidate || !functionsSchema) {
+    return false;
+  }
+  const functionExistsWithExactName = Boolean(
+    functionsSchema[functionCandidate.name],
+  );
+  const lowercaseFunctionName = functionCandidate.name.toLowerCase();
   const caseInsensitiveFunctionInDatabase =
     functionsSchema[lowercaseFunctionName];
 
   // Built-in functions are case-insensitive in the database
-  if (
-    caseInsensitiveFunctionInDatabase &&
-    caseInsensitiveFunctionInDatabase.isBuiltIn
-  ) {
-    return undefined;
-  }
-
-  const functionExistsWithExactName = Boolean(
-    functionsSchema[parsedFunction.name],
+  return (
+    functionExistsWithExactName ||
+    (caseInsensitiveFunctionInDatabase &&
+      caseInsensitiveFunctionInDatabase.isBuiltIn)
   );
-  if (!functionExistsWithExactName) {
-    return generateFunctionNotFoundError(parsedFunction);
-  }
+}
+
+function generateFunctionUsedAsProcedureError(
+  parsedProcedure: ParsedProcedure,
+): SyntaxDiagnostic {
+  return generateSyntaxDiagnostic(
+    parsedProcedure.rawText,
+    parsedProcedure,
+    DiagnosticSeverity.Error,
+    `${parsedProcedure.name} is a function, not a procedure. Did you mean to use the function ${parsedProcedure.name} with a RETURN instead of a CALL clause?`,
+  );
 }
 
 function generateFunctionNotFoundError(
@@ -114,6 +139,17 @@ function generateFunctionNotFoundError(
     parsedFunction,
     DiagnosticSeverity.Error,
     `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
+  );
+}
+
+function generateProcedureUsedAsFunctionError(
+  parsedFunction: ParsedFunction,
+): SyntaxDiagnostic {
+  return generateSyntaxDiagnostic(
+    parsedFunction.rawText,
+    parsedFunction,
+    DiagnosticSeverity.Error,
+    `${parsedFunction.name} is a procedure, not a function. Did you mean to call the procedure ${parsedFunction.name} inside a CALL clause?`,
   );
 }
 
@@ -342,6 +378,7 @@ function errorOnUndeclaredFunctions(
       const warning = detectNonDeclaredFunction(
         parsedFunction,
         dbSchema.functions,
+        dbSchema.procedures,
       );
 
       if (warning) warnings.push(warning);
@@ -365,7 +402,15 @@ function errorOnUndeclaredProcedures(
         dbSchema.procedures[parsedProcedure.name],
       );
       if (!procedureExists) {
-        errors.push(generateProcedureNotFoundError(parsedProcedure));
+        const existsAsFunction = functionExists(
+          parsedProcedure,
+          dbSchema.functions,
+        );
+        if (existsAsFunction) {
+          errors.push(generateFunctionUsedAsProcedureError(parsedProcedure));
+        } else {
+          errors.push(generateProcedureNotFoundError(parsedProcedure));
+        }
       }
     });
   }
