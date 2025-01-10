@@ -1,5 +1,12 @@
 # neo4j-for-vscode
 
+## 1.7.0
+
+- Adds "deprecated by" to deprecation warnings when available
+- Adds support for parameters to have escaped names
+- Adds autocompletions for Cypher version
+- Adds support for CYPHER preparser options (runtime, planner, etc)
+
 ## 1.6.1
 
 - Makes the editor relint all documents when connecting / disconnecting from a database

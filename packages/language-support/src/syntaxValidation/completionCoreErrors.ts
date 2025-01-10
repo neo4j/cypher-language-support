@@ -127,14 +127,6 @@ export function completionCoreErrormessage(
   ];
 
   if (options.length === 0) {
-    // options length is 0 should only happen when RULE_consoleCommand is hit and there are no other options
-    if (
-      ruleCandidates.find(
-        (ruleNumber) => ruleNumber === CypherParser.RULE_consoleCommand,
-      )
-    ) {
-      return 'Console commands are unsupported in this environment.';
-    }
     return undefined;
   }
 

@@ -33,7 +33,7 @@ test('Can turn linting back on', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'METCH',
-    'Unrecognized keyword. Did you mean MATCH?',
+    `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
 });
 
@@ -45,7 +45,7 @@ test('Syntactic errors are surfaced', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'METCH',
-    'Unrecognized keyword. Did you mean MATCH?',
+    `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
 });
 
@@ -182,33 +182,34 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
   );
 });
 
-test('Strikethroughs are shown for deprecated functions', async ({ page, mount }) => {
+test('Strikethroughs are shown for deprecated functions', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
   const query = `RETURN id()`;
 
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
-  await expect(editorPage.page.locator('.cm-deprecated-element').last()).toBeVisible(
-    { timeout: 3000 },
-  );
-  await editorPage.checkWarningMessage(
-    'id',
-    "Function id is deprecated.",
-  );
-
+  await expect(
+    editorPage.page.locator('.cm-deprecated-element').last(),
+  ).toBeVisible({ timeout: 3000 });
+  await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
 });
 
-test('Strikethroughs are shown for deprecated procedures', async ({ page, mount }) => {
+test('Strikethroughs are shown for deprecated procedures', async ({
+  page,
+  mount,
+}) => {
   const editorPage = new CypherEditorPage(page);
   const query = `CALL apoc.create.uuids()`;
 
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
-  await expect(editorPage.page.locator('.cm-deprecated-element').last()).toBeVisible(
-    { timeout: 3000 },
-  );
+  await expect(
+    editorPage.page.locator('.cm-deprecated-element').last(),
+  ).toBeVisible({ timeout: 3000 });
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
-    "Procedure apoc.create.uuids is deprecated.",
+    'Procedure apoc.create.uuids is deprecated.',
   );
-
 });

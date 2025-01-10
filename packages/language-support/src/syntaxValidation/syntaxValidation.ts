@@ -1,10 +1,10 @@
 import {
+  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
 } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from '../dbSchema';
 import {
   LabelOrRelType,
@@ -15,11 +15,11 @@ import {
   parserWrapper,
 } from '../parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from '../types';
-import {
-  SemanticAnalysisElement,
-  wrappedSemanticAnalysis,
-} from './semanticAnalysisWrapper';
-import { SyntaxDiagnostic } from './syntaxValidationHelpers';
+import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
+
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -221,80 +221,6 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-type FixSemanticPositionsArgs = {
-  semanticElements: SemanticAnalysisElement[];
-  parseResult: ParsedStatement;
-};
-
-function fixSemanticAnalysisPositions({
-  semanticElements,
-  parseResult,
-}: FixSemanticPositionsArgs): SyntaxDiagnostic[] {
-  const cmd = parseResult.command;
-  return semanticElements.map((e) => {
-    let token: Token | undefined = undefined;
-
-    const start = Position.create(
-      e.position.line - 1 + cmd.start.line - 1,
-      e.position.column - 1 + (e.position.line === 1 ? cmd.start.column : 0),
-    );
-
-    const startOffset = e.position.offset + cmd.start.start;
-    const toExplore: ParseTree[] = [parseResult.ctx];
-
-    while (toExplore.length > 0) {
-      const current: ParseTree = toExplore.pop();
-
-      if (current instanceof ParserRuleContext) {
-        const startToken = current.start;
-        const stopToken = current.stop;
-
-        if (
-          startToken.start <= startOffset &&
-          stopToken &&
-          startOffset <= stopToken.stop
-        ) {
-          token = stopToken;
-          if (startToken.start < startOffset && current.children) {
-            current.children.forEach((child) => toExplore.push(child));
-          }
-        }
-      }
-    }
-
-    if (token === undefined) {
-      return {
-        severity: e.severity,
-        message: e.message,
-        range: {
-          start: start,
-          end: start,
-        },
-        offsets: {
-          start: startOffset,
-          end: startOffset,
-        },
-      };
-    } else {
-      return {
-        severity: e.severity,
-        message: e.message,
-        range: {
-          start: start,
-          end: Position.create(
-            token.line - 1,
-            token.column + token.text.length,
-          ),
-        },
-        offsets: {
-          start: startOffset,
-          end: token.stop + 1,
-        },
-      };
-    }
-  });
-}
-
 export function sortByPositionAndMessage(
   a: SyntaxDiagnostic,
   b: SyntaxDiagnostic,
@@ -308,89 +234,88 @@ export function sortByPositionAndMessage(
   return a.message > b.message ? 1 : -1;
 }
 
-export function lintCypherQuery(
-  query: string,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const syntaxErrors = validateSyntax(query, dbSchema);
-  // If there are any syntactic errors in the query, do not run the semantic validation
-  if (syntaxErrors.find((d) => d.severity === DiagnosticSeverity.Error)) {
-    return syntaxErrors;
-  }
+type FixSemanticPositionsArgs = {
+  semanticDiagnostics: SyntaxDiagnostic[];
+  parseResult: ParsedStatement;
+};
 
-  const semanticErrors = validateSemantics(query, dbSchema);
-  return syntaxErrors.concat(semanticErrors);
-}
+function fixOffsets({
+  semanticDiagnostics,
+  parseResult,
+}: FixSemanticPositionsArgs): SyntaxDiagnostic[] {
+  const cmd = parseResult.command;
+  return semanticDiagnostics.map((e) => {
+    const { range, offsets } = e;
+    const lineAdjust = cmd.start.line - 1;
+    const colAdjust = range.start.line === 0 ? cmd.start.column : 0;
+    const offsetAdjust = cmd.start.start;
 
-export function validateSyntax(
-  query: string,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  if (query.length === 0) {
-    return [];
-  }
-  const statements = parserWrapper.parse(query);
-  const result = statements.statementsParsing.flatMap((statement) => {
-    const syntaxErrors = statement.syntaxErrors;
-    const labelWarnings = warnOnUndeclaredLabels(statement, dbSchema);
-    return syntaxErrors.concat(labelWarnings).sort(sortByPositionAndMessage);
+    const start = Position.create(
+      range.start.line + lineAdjust,
+      range.start.character + colAdjust,
+    );
+
+    const end = Position.create(
+      range.end.line + lineAdjust,
+      range.end.character + colAdjust,
+    );
+
+    const adjustedRange = { start, end };
+    const adjustedOffset = {
+      start: offsets.start + offsetAdjust,
+      end: offsets.end + offsetAdjust,
+    };
+
+    return { ...e, range: adjustedRange, offsets: adjustedOffset };
   });
-
-  return result;
 }
 
-/**
- * Assumes the provided query has no parse errors
- */
-export function validateSemantics(
+export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   if (query.length > 0) {
     const cachedParse = parserWrapper.parse(query);
     const statements = cachedParse.statementsParsing;
-    const semanticErrors = statements.flatMap((current) => {
-      if (current.syntaxErrors.length === 0) {
-        const cmd = current.command;
-        if (cmd.type === 'cypher' && cmd.statement.length > 0) {
-          const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
-          const procedureErrors = errorOnUndeclaredProcedures(
-            current,
-            dbSchema,
-          );
-          const procedureWarnings = warningOnDeprecatedProcedure(
-            current,
-            dbSchema,
-          );
-          const functionWarnings = warningOnDeprecatedFunction(
-            current,
-            dbSchema,
-          );
+    const errors = statements.flatMap((current) => {
+      const cmd = current.command;
+      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+        const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
+        const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
+        const procedureWarnings = warningOnDeprecatedProcedure(
+          current,
+          dbSchema,
+        );
+        const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
+        const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
 
-          const { notifications, errors } = wrappedSemanticAnalysis(
-            cmd.statement,
-            dbSchema,
-          );
+        const { notifications, errors } = wrappedSemanticAnalysis(
+          cmd.statement,
+          dbSchema,
+        );
 
-          const elements = notifications.concat(errors);
-          const semanticDiagnostics = fixSemanticAnalysisPositions({
-            semanticElements: elements,
-            parseResult: current,
-          });
-          return semanticDiagnostics
-            .concat(
-              functionErrors,
-              procedureErrors,
-              functionWarnings,
-              procedureWarnings,
-            )
-            .sort(sortByPositionAndMessage);
-        }
+        // This contains both the syntax and the semantic errors
+        const rawSemanticDiagnostics = notifications.concat(errors);
+        const semanticDiagnostics = fixOffsets({
+          semanticDiagnostics: rawSemanticDiagnostics,
+          parseResult: current,
+        });
+
+        return semanticDiagnostics
+          .concat(
+            labelWarnings,
+            functionErrors,
+            procedureErrors,
+            functionWarnings,
+            procedureWarnings,
+          )
+          .sort(sortByPositionAndMessage);
       }
-      return [];
+      // There could be console command errors
+      return current.syntaxErrors;
     });
 
-    return semanticErrors;
+    return errors;
   }
 
   return [];
