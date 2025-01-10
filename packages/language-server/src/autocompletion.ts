@@ -21,21 +21,17 @@ export function doAutoCompletion(
     const position: Position = completionParams.position;
     const offset = textDocument.offsetAt(position);
 
-    const triggerPhrase = 'yield ';
+    const yieldTriggerPhrase = 'yield ';
     const text = textDocument.getText().slice(0, offset);
     const precedingText = text
-      .slice(Math.max(0, offset - triggerPhrase.length), offset)
+      .slice(Math.max(0, offset - yieldTriggerPhrase.length), offset)
       .toLowerCase();
-    //const precedingCharacter =
-    const shouldTriggerYieldCompletion =
-      precedingText === triggerPhrase &&
+    const yieldTriggered =
+      precedingText === yieldTriggerPhrase &&
       completionParams.context?.triggerCharacter === ' ';
-    const shouldDoManualSingleCharacterOrInwordCompletion =
+    const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
-    if (
-      shouldTriggerYieldCompletion ||
-      shouldDoManualSingleCharacterOrInwordCompletion
-    ) {
+    if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
       const completions: CompletionItem[] = autocomplete(
         // TODO This is a temporary hack because completions are not working well
         textDocument.getText().slice(0, offset),

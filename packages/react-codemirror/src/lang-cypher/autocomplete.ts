@@ -62,10 +62,10 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const triggerCharacters = ['.', ':', '{', '$', ')'];
     const lastCharacter = documentText.at(offset - 1);
     const yieldTriggerPhrase = 'yield ';
-    const caseInsensitiveEndPhrase = documentText
+    const precedingText = documentText
       .slice(Math.max(0, offset - yieldTriggerPhrase.length), offset)
       .toLowerCase();
-    const yieldTriggered = yieldTriggerPhrase === caseInsensitiveEndPhrase;
+    const yieldTriggered = yieldTriggerPhrase === precedingText;
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
 
