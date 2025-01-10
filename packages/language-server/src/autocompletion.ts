@@ -21,26 +21,42 @@ export function doAutoCompletion(
     const position: Position = completionParams.position;
     const offset = textDocument.offsetAt(position);
 
-    const completions: CompletionItem[] = autocomplete(
-      // TODO This is a temporary hack because completions are not working well
-      textDocument.getText().slice(0, offset),
-      neo4j.metadata?.dbSchema ?? {},
-      offset,
-      completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
-    );
+    const triggerPhrase = 'yield ';
+    const text = textDocument.getText().slice(0, offset);
+    const precedingText = text
+      .slice(Math.max(0, offset - triggerPhrase.length), offset)
+      .toLowerCase();
+    //const precedingCharacter =
+    const shouldTriggerYieldCompletion =
+      precedingText === triggerPhrase &&
+      completionParams.context?.triggerCharacter === ' ';
+    const shouldDoManualSingleCharacterOrInwordCompletion =
+      completionParams.context?.triggerCharacter !== ' ';
+    if (
+      shouldTriggerYieldCompletion ||
+      shouldDoManualSingleCharacterOrInwordCompletion
+    ) {
+      const completions: CompletionItem[] = autocomplete(
+        // TODO This is a temporary hack because completions are not working well
+        textDocument.getText().slice(0, offset),
+        neo4j.metadata?.dbSchema ?? {},
+        offset,
+        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
+      );
 
-    const result = completions.map((item) => {
-      if (item.signature) {
-        return {
-          ...item,
-          detail: item.detail + ' ' + item.signature,
-          signature: undefined,
-        };
-      } else {
-        return item;
-      }
-    });
+      const result = completions.map((item) => {
+        if (item.signature) {
+          return {
+            ...item,
+            detail: item.detail + ' ' + item.signature,
+            signature: undefined,
+          };
+        } else {
+          return item;
+        }
+      });
 
-    return result;
+      return result;
+    }
   };
 }

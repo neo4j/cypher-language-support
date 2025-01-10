@@ -58,15 +58,22 @@ export const completionStyles: (
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const documentText = context.state.doc.toString();
-
+    const offset = context.pos;
     const triggerCharacters = ['.', ':', '{', '$', ')'];
-    const lastCharacter = documentText.at(context.pos - 1);
-
+    const lastCharacter = documentText.at(offset - 1);
+    const yieldTriggerPhrase = 'yield ';
+    const caseInsensitiveEndPhrase = documentText
+      .slice(Math.max(0, offset - yieldTriggerPhrase.length), offset)
+      .toLowerCase();
+    const yieldTriggered = yieldTriggerPhrase === caseInsensitiveEndPhrase;
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
 
     const shouldTriggerCompletion =
-      inWord || context.explicit || triggerCharacters.includes(lastCharacter);
+      inWord ||
+      context.explicit ||
+      triggerCharacters.includes(lastCharacter) ||
+      yieldTriggered;
 
     if (config.useLightVersion && !context.explicit) {
       return null;
@@ -78,9 +85,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
 
     const options = autocomplete(
       // TODO This is a temporary hack because completions are not working well
-      documentText.slice(0, context.pos),
+      documentText.slice(0, offset),
       config.schema ?? {},
-      context.pos,
+      offset,
       context.explicit,
     );
 
