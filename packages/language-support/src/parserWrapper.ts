@@ -7,6 +7,7 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
+  CypherVersionContext,
   default as CypherParser,
   FunctionNameContext,
   LabelNameContext,
@@ -45,6 +46,7 @@ export interface ParsedStatement {
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  cypherVersion?: string;
 }
 
 export interface ParsingResult {
@@ -174,8 +176,14 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
+      const preparserFinder = new PreparserCollector();
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
+      parser._parseListeners = [
+        labelsCollector,
+        variableFinder,
+        methodsFinder,
+        preparserFinder,
+      ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -204,6 +212,7 @@ export function createParsingResult(query: string): ParsingResult {
         collectedVariables: variableFinder.variables,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        cypherVersion: preparserFinder.cypherVersion,
       };
     });
 
@@ -399,6 +408,30 @@ class MethodsCollector extends ParseTreeListener {
       } else {
         this.procedures.push(result);
       }
+    }
+  }
+}
+
+class PreparserCollector extends ParseTreeListener {
+  public cypherVersion: string;
+
+  constructor() {
+    super();
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof CypherVersionContext) {
+      this.cypherVersion = ctx.getText();
     }
   }
 }

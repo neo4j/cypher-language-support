@@ -51,6 +51,7 @@ function copySettingSeverity(
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
+  parsedVersion: string,
 ): SemanticAnalysisResult {
   try {
     if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
@@ -63,7 +64,15 @@ export function wrappedSemanticAnalysis(
       });
     }
 
-    const semanticErrorsResult = analyzeQuery(query, 'cypher 5');
+    const validCypherVersions = ['5'];
+    let cypherVersion = 'cypher 5';
+
+    if (parsedVersion && validCypherVersions.includes(parsedVersion)) {
+      cypherVersion = 'cypher ' + parsedVersion;
+    } else if (dbSchema.defaultLanguage) {
+      cypherVersion = dbSchema.defaultLanguage;
+    }
+    const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;

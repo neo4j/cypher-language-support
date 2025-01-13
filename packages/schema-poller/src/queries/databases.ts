@@ -30,6 +30,7 @@ export type Database = {
   writer?: boolean;
   access?: string;
   constituents?: string[];
+  defaultLanguage?: string; // to be introduced
 };
 
 /**

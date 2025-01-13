@@ -11,4 +11,5 @@ export interface DbSchema {
   propertyKeys?: string[];
   procedures?: Record<string, Neo4jProcedure>;
   functions?: Record<string, Neo4jFunction>;
+  defaultLanguage?: string;
 }
