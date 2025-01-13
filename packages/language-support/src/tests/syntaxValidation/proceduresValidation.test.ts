@@ -59,6 +59,78 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
     ]);
   });
 
+  test('Syntax validation error on procedure used as function returns helpful message', () => {
+    const query = `RETURN apoc.create.uuids(50)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'apoc.create.uuids is a procedure, not a function. Did you mean to call the procedure apoc.create.uuids inside a CALL clause?',
+        offsets: {
+          end: 24,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Using improved message for procedure used as function is case sensitive', () => {
+    const query = `RETURN apoc.cReAtE.uuids(50)`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          functions: testData.mockSchema.functions,
+          procedures: testData.mockSchema.procedures,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.cReAtE.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 24,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Syntax validation warns on missing procedures when database can be contacted', () => {
     const query = `CALL dontpanic("marvin")`;
 
