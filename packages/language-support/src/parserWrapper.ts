@@ -10,7 +10,6 @@ import {
   default as CypherParser,
   FunctionNameContext,
   LabelNameContext,
-  LabelNameIsContext,
   LabelOrRelTypeContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
@@ -230,7 +229,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
+    if (ctx instanceof LabelNameContext) {
       // If the parent ctx start doesn't coincide with this ctx start,
       // it means the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
@@ -310,7 +309,7 @@ class VariableCollector implements ParseTreeListener {
       }
     }
     if (ctx instanceof ProcedureResultItemContext) {
-      const variable = ctx.symbolicNameString().getText();
+      const variable = ctx.getText();
       if (variable) {
         this.variables.push(variable);
       }
