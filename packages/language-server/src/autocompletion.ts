@@ -10,6 +10,18 @@ import { autocomplete } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
+function shouldAutoCompleteYield(query: string, offset: number) {
+  const yieldTriggerPhrase = 'yield ';
+  const text = query.slice(0, offset);
+  const yieldStart = offset - yieldTriggerPhrase.length;
+  if (yieldStart >= 0) {
+    const precedingText = text.slice(yieldStart, offset);
+    return precedingText.toLowerCase() === yieldTriggerPhrase;
+  } else {
+    return false;
+  }
+}
+
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
   neo4j: Neo4jSchemaPoller,
@@ -21,14 +33,10 @@ export function doAutoCompletion(
     const position: Position = completionParams.position;
     const offset = textDocument.offsetAt(position);
 
-    const yieldTriggerPhrase = 'yield ';
-    const text = textDocument.getText().slice(0, offset);
-    const precedingText = text
-      .slice(Math.max(0, offset - yieldTriggerPhrase.length), offset)
-      .toLowerCase();
-    const yieldTriggered =
-      precedingText === yieldTriggerPhrase &&
-      completionParams.context?.triggerCharacter === ' ';
+    const yieldTriggered = shouldAutoCompleteYield(
+      textDocument.getText(),
+      offset,
+    );
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {

@@ -55,17 +55,25 @@ export const completionStyles: (
   }
 };
 
+function shouldAutoCompleteYield(query: string, offset: number) {
+  const yieldTriggerPhrase = 'yield ';
+  const text = query.slice(0, offset);
+  const yieldStart = offset - yieldTriggerPhrase.length;
+  if (yieldStart >= 0) {
+    const precedingText = text.slice(yieldStart, offset);
+    return precedingText.toLowerCase() === yieldTriggerPhrase;
+  } else {
+    return false;
+  }
+}
+
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const documentText = context.state.doc.toString();
     const offset = context.pos;
     const triggerCharacters = ['.', ':', '{', '$', ')'];
     const lastCharacter = documentText.at(offset - 1);
-    const yieldTriggerPhrase = 'yield ';
-    const precedingText = documentText
-      .slice(Math.max(0, offset - yieldTriggerPhrase.length), offset)
-      .toLowerCase();
-    const yieldTriggered = yieldTriggerPhrase === precedingText;
+    const yieldTriggered = shouldAutoCompleteYield(documentText, offset);
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
 
