@@ -7,20 +7,9 @@ import {
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
 import { autocomplete } from '@neo4j-cypher/language-support';
+import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support/src/autocompletion/autocompletionHelpers';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
-function shouldAutoCompleteYield(query: string, offset: number) {
-  const yieldTriggerPhrase = 'yield ';
-  const text = query.slice(0, offset);
-  const yieldStart = offset - yieldTriggerPhrase.length;
-  if (yieldStart >= 0) {
-    const precedingText = text.slice(yieldStart, offset);
-    return precedingText.toLowerCase() === yieldTriggerPhrase;
-  } else {
-    return false;
-  }
-}
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,

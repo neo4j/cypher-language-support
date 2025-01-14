@@ -4,6 +4,7 @@ import {
   snippet,
 } from '@codemirror/autocomplete';
 import { autocomplete } from '@neo4j-cypher/language-support';
+import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support/src/autocompletion/autocompletionHelpers';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -54,18 +55,6 @@ export const completionStyles: (
     return null;
   }
 };
-
-function shouldAutoCompleteYield(query: string, offset: number) {
-  const yieldTriggerPhrase = 'yield ';
-  const text = query.slice(0, offset);
-  const yieldStart = offset - yieldTriggerPhrase.length;
-  if (yieldStart >= 0) {
-    const precedingText = text.slice(yieldStart, offset);
-    return precedingText.toLowerCase() === yieldTriggerPhrase;
-  } else {
-    return false;
-  }
-}
 
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
