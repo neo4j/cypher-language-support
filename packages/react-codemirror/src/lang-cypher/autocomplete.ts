@@ -3,8 +3,10 @@ import {
   CompletionSource,
   snippet,
 } from '@codemirror/autocomplete';
-import { autocomplete } from '@neo4j-cypher/language-support';
-import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support/src/autocompletion/autocompletionHelpers';
+import {
+  autocomplete,
+  shouldAutoCompleteYield,
+} from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,

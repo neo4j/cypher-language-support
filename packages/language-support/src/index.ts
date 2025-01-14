@@ -1,5 +1,6 @@
 export type { ParserRuleContext } from 'antlr4';
 export { autocomplete } from './autocompletion/autocompletion';
+export { shouldAutoCompleteYield } from './autocompletion/autoCompletionHelpers';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
 export { antlrUtils } from './helpers';

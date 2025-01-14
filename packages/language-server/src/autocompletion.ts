@@ -6,8 +6,10 @@ import {
 } from 'vscode-languageserver/node';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
-import { autocomplete } from '@neo4j-cypher/language-support';
-import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support/src/autocompletion/autocompletionHelpers';
+import {
+  autocomplete,
+  shouldAutoCompleteYield,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
