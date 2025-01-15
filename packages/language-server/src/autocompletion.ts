@@ -6,7 +6,10 @@ import {
 } from 'vscode-languageserver/node';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
-import { autocomplete } from '@neo4j-cypher/language-support';
+import {
+  autocomplete,
+  shouldAutoCompleteYield,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
@@ -20,11 +23,10 @@ export function doAutoCompletion(
 
     const position: Position = completionParams.position;
     const offset = textDocument.offsetAt(position);
-    const yieldTriggered = false;
-    // const yieldTriggered = shouldAutoCompleteYield(
-    //   textDocument.getText(),
-    //   offset,
-    // );
+    const yieldTriggered = shouldAutoCompleteYield(
+      textDocument.getText(),
+      offset,
+    );
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {

@@ -3,7 +3,10 @@ import {
   CompletionSource,
   snippet,
 } from '@codemirror/autocomplete';
-import { autocomplete } from '@neo4j-cypher/language-support';
+import {
+  autocomplete,
+  shouldAutoCompleteYield,
+} from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -61,7 +64,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const offset = context.pos;
     const triggerCharacters = ['.', ':', '{', '$', ')'];
     const lastCharacter = documentText.at(offset - 1);
-    const yieldTriggered = false; //shouldAutoCompleteYield(documentText, offset);
+    const yieldTriggered = shouldAutoCompleteYield(documentText, offset);
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
 
