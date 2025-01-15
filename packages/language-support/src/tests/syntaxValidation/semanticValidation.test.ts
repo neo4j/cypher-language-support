@@ -3,6 +3,53 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
+  test('Semantic analysis is dependant on cypher version', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+  });
+
+  test('Semantic analysis defaults to cypher 5 when no default version is given, and no version is given in query', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+  });
+
+  //TODO: Maybe this should actually yield a warning
+  test('Semantic analysis defaults to cypher 5 when faulty version is given', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 800 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+  });
+
+  test('Semantic analysis uses default language if no language is defined in query', () => {
+    const query1 = 'MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({
+      query: query1,
+      dbSchema: { defaultLanguage: 'cypher 25' },
+    });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+  });
+
+  test('In-query version takes priority for semantic analysis even if defaultLanguage is defined', () => {
+    const query1 = 'CYPHER 5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({
+      query: query1,
+      dbSchema: { defaultLanguage: 'cypher 25' },
+    });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+  });
+
   test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 

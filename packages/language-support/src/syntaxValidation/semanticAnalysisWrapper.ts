@@ -64,12 +64,16 @@ export function wrappedSemanticAnalysis(
       });
     }
 
-    const validCypherVersions = ['5'];
+    const validCypherVersions = ['cypher 5', 'cypher 25'];
     let cypherVersion = 'cypher 5';
+    const fullParsedVersion = 'cypher ' + parsedVersion;
 
-    if (parsedVersion && validCypherVersions.includes(parsedVersion)) {
-      cypherVersion = 'cypher ' + parsedVersion;
-    } else if (dbSchema.defaultLanguage) {
+    if (parsedVersion && validCypherVersions.includes(fullParsedVersion)) {
+      cypherVersion = fullParsedVersion;
+    } else if (
+      dbSchema.defaultLanguage &&
+      validCypherVersions.includes(dbSchema.defaultLanguage)
+    ) {
       cypherVersion = dbSchema.defaultLanguage;
     }
     const semanticErrorsResult = analyzeQuery(query, cypherVersion);
