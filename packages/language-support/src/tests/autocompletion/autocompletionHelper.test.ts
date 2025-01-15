@@ -1,4 +1,4 @@
-import { shouldAutoCompleteYield } from '../../autocompletion/autoCompletionHelpers';
+import { shouldAutoCompleteYield } from '../../autocompletion/autocompletionHelpers';
 
 test('shouldAutoCompleteYield does not produce false negatives', () => {
   const query = 'MATCH dbms.components() YIELD ';
