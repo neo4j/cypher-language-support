@@ -32,7 +32,7 @@ describe('Semantic validation spec', () => {
     const query1 = 'MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({
       query: query1,
-      dbSchema: { defaultLanguage: 'cypher 25' },
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
@@ -43,7 +43,7 @@ describe('Semantic validation spec', () => {
     const query1 = 'CYPHER 5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({
       query: query1,
-      dbSchema: { defaultLanguage: 'cypher 25' },
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });

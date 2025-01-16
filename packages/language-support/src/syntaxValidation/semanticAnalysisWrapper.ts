@@ -67,14 +67,15 @@ export function wrappedSemanticAnalysis(
     const validCypherVersions = ['cypher 5', 'cypher 25'];
     let cypherVersion = 'cypher 5';
     const fullParsedVersion = 'cypher ' + parsedVersion;
+    const defaultVersion = dbSchema.defaultLanguage?.toLowerCase();
 
     if (parsedVersion && validCypherVersions.includes(fullParsedVersion)) {
       cypherVersion = fullParsedVersion;
     } else if (
       dbSchema.defaultLanguage &&
-      validCypherVersions.includes(dbSchema.defaultLanguage)
+      validCypherVersions.includes(defaultVersion)
     ) {
-      cypherVersion = dbSchema.defaultLanguage;
+      cypherVersion = defaultVersion;
     }
     const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
