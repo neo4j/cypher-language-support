@@ -37,7 +37,6 @@ export function completionCoreErrormessage(
   const rulesOfInterest: Record<number, string | null> = {
     [CypherParser.RULE_expression9]: 'an expression',
     [CypherParser.RULE_labelExpression2]: 'a node label / rel type',
-    [CypherParser.RULE_labelExpression2Is]: 'a node label / rel type',
     [CypherParser.RULE_procedureName]: 'a procedure name',
     [CypherParser.RULE_stringLiteral]: 'a string',
     [CypherParser.RULE_numberLiteral]: 'a number literal',
