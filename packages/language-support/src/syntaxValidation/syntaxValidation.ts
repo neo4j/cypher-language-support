@@ -29,16 +29,16 @@ function detectNonDeclaredLabel(
   const labelName = labelOrRelType.labelText;
   const normalizedLabelName = labelName.replace(/^`|`$/g, '');
   const notInDatabase =
-    (labelOrRelType.labeltype === LabelType.nodeLabelType &&
+    (labelOrRelType.labelType === LabelType.nodeLabelType &&
       !dbLabels.has(normalizedLabelName)) ||
-    (labelOrRelType.labeltype === LabelType.relLabelType &&
+    (labelOrRelType.labelType === LabelType.relLabelType &&
       !dbRelationshipTypes.has(normalizedLabelName)) ||
     (!dbLabels.has(normalizedLabelName) &&
       !dbRelationshipTypes.has(normalizedLabelName));
 
   if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
     const message =
-      labelOrRelType.labeltype +
+      labelOrRelType.labelType +
       ' ' +
       labelName +
       " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";

@@ -86,7 +86,7 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
 }
 
 export type LabelOrRelType = {
-  labeltype: LabelType;
+  labelType: LabelType;
   labelText: string;
   couldCreateNewLabel: boolean;
   line: number;
@@ -237,7 +237,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // RETURN would be idenfified as the label in that case
       if (ctx.parentCtx && ctx.parentCtx.start === ctx.start) {
         this.labelOrRelTypes.push({
-          labeltype: getLabelType(ctx),
+          labelType: getLabelType(ctx),
           labelText: ctx.getText(),
           couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
@@ -257,7 +257,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         ctx.parentCtx.start === ctx.start
       ) {
         this.labelOrRelTypes.push({
-          labeltype: getLabelType(ctx),
+          labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
           couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,

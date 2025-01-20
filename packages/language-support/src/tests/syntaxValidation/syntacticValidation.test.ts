@@ -1062,4 +1062,32 @@ describe('Syntactic validation spec', () => {
       ).toEqual([]);
     },
   );
+
+  test('Existing relationship types are not incorrectly reported inside node predicates', () => {
+    const query = `MATCH ()-[]->*(n WHERE COUNT{ (n)-[:R]->()} = 0) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: ['R'],
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Existing node labels are not incorrectly reported inside relationship predicates', () => {
+    const query = `MATCH ()-[r WHERE COUNT{ (n:A)-[]->()} = 0]->() RETURN r`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['A'],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([]);
+  });
 });
