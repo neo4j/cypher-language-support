@@ -8,7 +8,7 @@ describe('Semantic validation spec', () => {
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+    expect(diagnostics1[0]?.message).not.toEqual(diagnostics2[0].message);
   });
 
   test('Semantic analysis defaults to cypher 5 when no default version is given, and no version is given in query', () => {
@@ -17,6 +17,7 @@ describe('Semantic validation spec', () => {
     const query2 = 'MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
     expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toMatchInlineSnapshot();
   });
 
   //TODO: Maybe this should actually yield a warning
@@ -32,7 +33,7 @@ describe('Semantic validation spec', () => {
     const query1 = 'MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({
       query: query1,
-      dbSchema: { defaultLanguage: 'CYPHER 25' },
+      dbSchema: { defaultLanguage: 'cypher 25' },
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
@@ -43,7 +44,7 @@ describe('Semantic validation spec', () => {
     const query1 = 'CYPHER 5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({
       query: query1,
-      dbSchema: { defaultLanguage: 'CYPHER 25' },
+      dbSchema: { defaultLanguage: 'cypher 25' },
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });

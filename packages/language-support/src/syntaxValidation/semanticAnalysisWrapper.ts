@@ -4,6 +4,7 @@
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
+import { CypherVersion } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
@@ -51,7 +52,7 @@ function copySettingSeverity(
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
-  parsedVersion: string,
+  parsedVersion?: CypherVersion,
 ): SemanticAnalysisResult {
   try {
     if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
@@ -64,19 +65,9 @@ export function wrappedSemanticAnalysis(
       });
     }
 
-    const validCypherVersions = ['cypher 5', 'cypher 25'];
-    let cypherVersion = 'cypher 5';
-    const fullParsedVersion = 'cypher ' + parsedVersion;
-    const defaultVersion = dbSchema.defaultLanguage?.toLowerCase();
-
-    if (parsedVersion && validCypherVersions.includes(fullParsedVersion)) {
-      cypherVersion = fullParsedVersion;
-    } else if (
-      dbSchema.defaultLanguage &&
-      validCypherVersions.includes(defaultVersion)
-    ) {
-      cypherVersion = defaultVersion;
-    }
+    const cypherVersion: CypherVersion =
+      parsedVersion ??
+      (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'cypher 5');
     const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =

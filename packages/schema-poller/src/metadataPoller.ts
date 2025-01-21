@@ -1,4 +1,5 @@
 import {
+  CypherVersion,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
@@ -110,7 +111,10 @@ export class MetadataPoller {
             (db) => db.name === this.connection.currentDb,
           );
           if (currentDb) {
-            this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
+            this.dbSchema.defaultLanguage =
+              currentDb?.defaultLanguage?.toLowerCase() as
+                | CypherVersion
+                | undefined;
           }
         }
       },

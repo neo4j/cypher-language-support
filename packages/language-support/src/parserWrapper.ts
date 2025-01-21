@@ -32,6 +32,7 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
+import { CypherVersion } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -46,7 +47,7 @@ export interface ParsedStatement {
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
-  cypherVersion?: string;
+  cypherVersion?: CypherVersion;
 }
 
 export interface ParsingResult {
@@ -413,7 +414,7 @@ class MethodsCollector extends ParseTreeListener {
 }
 
 class PreparserCollector extends ParseTreeListener {
-  public cypherVersion: string;
+  public cypherVersion: CypherVersion;
 
   constructor() {
     super();
@@ -431,7 +432,12 @@ class PreparserCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
-      this.cypherVersion = ctx.getText();
+      this.cypherVersion =
+        ctx.getText() === '5'
+          ? 'cypher 5'
+          : ctx.getText() === '25'
+          ? 'cypher 25'
+          : undefined;
     }
   }
 }
