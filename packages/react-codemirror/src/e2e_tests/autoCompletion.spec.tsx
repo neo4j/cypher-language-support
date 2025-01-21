@@ -199,9 +199,11 @@ test('can complete functions', async ({ page, mount }) => {
     <CypherEditor
       schema={{
         functions: {
-          function123: {
-            ...testData.emptyFunction,
-            name: 'function123',
+          'cypher 5': {
+            function123: {
+              ...testData.emptyFunction,
+              name: 'function123',
+            },
           },
         },
       }}
@@ -227,7 +229,9 @@ test('can complete procedures', async ({ page, mount }) => {
     <CypherEditor
       schema={{
         procedures: {
-          'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
+          'cypher 5': {
+            'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
+          },
         },
       }}
     />,
@@ -317,7 +321,7 @@ test('shows signature help information on auto-completion for procedures', async
     />,
   );
   const procName = 'apoc.periodic.iterate';
-  const procedure = testData.mockSchema.procedures[procName];
+  const procedure = testData.mockSchema.procedures['cypher 5'][procName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('CALL apoc.periodic.');
@@ -342,7 +346,7 @@ test('shows signature help information on auto-completion for functions', async 
     />,
   );
   const fnName = 'apoc.coll.combinations';
-  const fn = testData.mockSchema.functions[fnName];
+  const fn = testData.mockSchema.functions['cypher 5'][fnName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('RETURN apoc.coll.');
@@ -363,7 +367,11 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
   await mount(
     <CypherEditor
       schema={{
-        procedures: { [procName]: testData.mockSchema.procedures[procName] },
+        procedures: {
+          'cypher 5': {
+            [procName]: testData.mockSchema.procedures['cypher 5'][procName],
+          },
+        },
       }}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
@@ -387,7 +395,11 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
   await mount(
     <CypherEditor
       schema={{
-        functions: { [fnName]: testData.mockSchema.functions[fnName] },
+        functions: {
+          'cypher 5': {
+            [fnName]: testData.mockSchema.functions['cypher 5'][fnName],
+          },
+        },
       }}
       featureFlags={{
         signatureInfoOnAutoCompletions: true,
@@ -430,11 +442,13 @@ test('shows signature help information on auto-completion if description is not 
     <CypherEditor
       schema={{
         procedures: {
-          'db.ping': {
-            ...testData.emptyProcedure,
-            description: 'foo',
-            signature: '',
-            name: 'db.ping',
+          'cypher 5': {
+            'db.ping': {
+              ...testData.emptyProcedure,
+              description: 'foo',
+              signature: '',
+              name: 'db.ping',
+            },
           },
         },
       }}
@@ -459,11 +473,13 @@ test('shows signature help information on auto-completion if signature is not em
     <CypherEditor
       schema={{
         procedures: {
-          'db.ping': {
-            ...testData.emptyProcedure,
-            description: '',
-            signature: 'foo',
-            name: 'db.ping',
+          'cypher 5': {
+            'db.ping': {
+              ...testData.emptyProcedure,
+              description: '',
+              signature: 'foo',
+              name: 'db.ping',
+            },
           },
         },
       }}

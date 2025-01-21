@@ -339,17 +339,21 @@ describe('parameters', () => {
   test('autocompletes expressions', () => {
     const arrowCompletions = autocomplete(':param foo => ', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'cypher 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });
     const mapCompletions = autocomplete(':param {a:  ', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'cypher 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });
@@ -566,9 +570,11 @@ describe('server', () => {
   test('autocompletes operation', () => {
     const mapCompletions = autocomplete(':server conn', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'cypher 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });

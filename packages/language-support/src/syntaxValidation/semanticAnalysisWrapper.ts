@@ -7,6 +7,7 @@ import { DbSchema } from '../dbSchema';
 import { CypherVersion } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import { resolveCypherVersion } from '../helpers';
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
@@ -65,9 +66,7 @@ export function wrappedSemanticAnalysis(
       });
     }
 
-    const cypherVersion: CypherVersion =
-      parsedVersion ??
-      (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'cypher 5');
+    const cypherVersion = resolveCypherVersion(parsedVersion, dbSchema);
     const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =

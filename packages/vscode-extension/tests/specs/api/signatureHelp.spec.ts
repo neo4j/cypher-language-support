@@ -66,7 +66,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.functions.abs,
+          testData.mockSchema.functions['cypher 5']['abs'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -86,7 +86,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -106,7 +106,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -126,7 +126,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -148,7 +148,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };

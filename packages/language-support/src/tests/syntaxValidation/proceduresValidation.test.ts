@@ -176,25 +176,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'cypher 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -502,25 +504,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'cypher 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -541,25 +545,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'cypher 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -833,42 +839,44 @@ meaning that it expects at least 1 argument of type ANY
         dbSchema: {
           functions: {},
           procedures: {
-            'apoc.meta.graphSample': {
-              name: 'apoc.meta.graphSample',
-              description:
-                'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
-              mode: 'DEFAULT',
-              worksOnSystem: false,
-              argumentDescription: [
-                {
-                  isDeprecated: false,
-                  default: 'DefaultParameterValue{value={}, type=MAP}',
-                  description: 'config = {} :: MAP',
-                  name: 'config',
-                  type: 'MAP',
-                },
-              ],
+            'cypher 5': {
+              'apoc.meta.graphSample': {
+                name: 'apoc.meta.graphSample',
+                description:
+                  'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
+                mode: 'DEFAULT',
+                worksOnSystem: false,
+                argumentDescription: [
+                  {
+                    isDeprecated: false,
+                    default: 'DefaultParameterValue{value={}, type=MAP}',
+                    description: 'config = {} :: MAP',
+                    name: 'config',
+                    type: 'MAP',
+                  },
+                ],
 
-              signature:
-                'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
-              returnDescription: [
-                {
-                  isDeprecated: true,
-                  description: 'nodes :: LIST<NODE>',
-                  name: 'nodes',
-                  type: 'LIST<NODE>',
-                },
-                {
-                  isDeprecated: false,
-                  description: 'relationships :: LIST<RELATIONSHIP>',
-                  name: 'relationships',
-                  type: 'LIST<RELATIONSHIP>',
-                },
-              ],
+                signature:
+                  'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
+                returnDescription: [
+                  {
+                    isDeprecated: true,
+                    description: 'nodes :: LIST<NODE>',
+                    name: 'nodes',
+                    type: 'LIST<NODE>',
+                  },
+                  {
+                    isDeprecated: false,
+                    description: 'relationships :: LIST<RELATIONSHIP>',
+                    name: 'relationships',
+                    type: 'LIST<RELATIONSHIP>',
+                  },
+                ],
 
-              admin: false,
-              option: {
-                deprecated: false,
+                admin: false,
+                option: {
+                  deprecated: false,
+                },
               },
             },
           },

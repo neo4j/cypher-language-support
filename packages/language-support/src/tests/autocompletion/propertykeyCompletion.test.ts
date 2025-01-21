@@ -7,9 +7,11 @@ describe('property key completions', () => {
   const dbSchema: DbSchema = {
     propertyKeys: ['name', 'type', 'level'],
     functions: {
-      'apoc.util.sleep': {
-        ...testData.emptyFunction,
-        name: 'apoc.util.sleep',
+      'cypher 5': {
+        'apoc.util.sleep': {
+          ...testData.emptyFunction,
+          name: 'apoc.util.sleep',
+        },
       },
     },
   };

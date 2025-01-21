@@ -9,7 +9,7 @@ export interface DbSchema {
   roleNames?: string[];
   parameters?: Record<string, unknown>;
   propertyKeys?: string[];
-  procedures?: Record<string, Neo4jProcedure>;
-  functions?: Record<string, Neo4jFunction>;
+  procedures?: Partial<Record<CypherVersion, Record<string, Neo4jProcedure>>>;
+  functions?: Partial<Record<CypherVersion, Record<string, Neo4jFunction>>>;
   defaultLanguage?: CypherVersion;
 }
