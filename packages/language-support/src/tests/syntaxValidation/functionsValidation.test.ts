@@ -730,4 +730,209 @@ describe('Functions semantic validation spec', () => {
       },
     ]);
   });
+
+  test('Deprecations and removals for functions are based on the cypher version', () => {
+    const dbSchema = {
+      functions: {
+        'cypher 5': {
+          'apoc.create.uuid': {
+            name: 'apoc.create.uuid',
+            category: '',
+            description: 'Returns a UUID.',
+            signature: 'apoc.create.uuid(config :: MAP) :: STRING',
+            isBuiltIn: false,
+            argumentDescription: [
+              {
+                isDeprecated: true,
+                description: '',
+                name: 'config',
+                type: 'MAP',
+              },
+            ],
+            returnDescription: 'STRING',
+            aggregating: false,
+            isDeprecated: false,
+            deprecatedBy: 'Neo4j randomUUID() function',
+          },
+        },
+        'cypher 25': {
+          'apoc.create.uuid': {
+            name: 'apoc.create.uuid',
+            category: '',
+            description: 'Returns a UUID.',
+            signature: 'apoc.create.uuid() :: STRING',
+            isBuiltIn: false,
+            argumentDescription: [],
+            returnDescription: 'STRING',
+            aggregating: false,
+            isDeprecated: false,
+            deprecatedBy: 'Neo4j randomUUID() function',
+          },
+        },
+      },
+    };
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 RETURN apoc.create.uuid()',
+        dbSchema: dbSchema,
+      }),
+    ).toMatchInlineSnapshot([
+      {
+        message: `Function call does not provide the required number of arguments: expected 1 got 0.
+
+Function apoc.create.uuid has signature: apoc.create.uuid(config :: MAP) :: STRING
+meaning that it expects 1 argument of type MAP`,
+        offsets: {
+          end: 34,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 34,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "The function has a deprecated field. ('config' used by 'apoc.create.uuid' is deprecated.)",
+        offsets: {
+          end: 34,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 34,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 RETURN apoc.create.uuid()',
+        dbSchema: dbSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Errors and notifications for functions are different based on the cypher version', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 5 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: `Procedure call provides too many arguments: got 4 expected no more than 3.
+
+Procedure apoc.cypher.runTimeboxed has signature: apoc.cypher.runTimeboxed(statement :: STRING, params :: MAP, timeout :: INTEGER) :: value :: MAP
+meaning that it expects at least 3 arguments of types STRING, MAP, INTEGER
+`,
+        offsets: {
+          end: 297,
+          start: 20,
+        },
+        range: {
+          end: {
+            character: 74,
+            line: 6,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 25 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Warnings for procedures misused as functions are different depending on cypher the version', () => {
+    // Procedure misused as function, but deprecated in Cypher5, so removed in Cypher25
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 RETURN apoc.create.uuids(5)',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'apoc.create.uuids is a procedure, not a function. Did you mean to call the procedure apoc.create.uuids inside a CALL clause?',
+        offsets: {
+          end: 33,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 RETURN apoc.create.uuids(5)',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.create.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 34,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 34,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

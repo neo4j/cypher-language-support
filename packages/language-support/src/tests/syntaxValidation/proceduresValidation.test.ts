@@ -904,4 +904,169 @@ meaning that it expects at least 1 argument of type ANY
       },
     ]);
   });
+
+  test('Deprecations and removals for procedures are based on the cypher version', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 CALL apoc.export.arrow.stream.all()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'Procedure apoc.export.arrow.stream.all is deprecated. Alternative: This procedure is being moved to APOC Extended.',
+        offsets: {
+          end: 42,
+          start: 14,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 2,
+        tags: [2],
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 CALL apoc.export.arrow.stream.all()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Procedure apoc.export.arrow.stream.all is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 43,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 43,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Errors and notifications for procedures are different based on the cypher version', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 5 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: `Procedure call provides too many arguments: got 4 expected no more than 3.
+
+Procedure apoc.cypher.runTimeboxed has signature: apoc.cypher.runTimeboxed(statement :: STRING, params :: MAP, timeout :: INTEGER) :: value :: MAP
+meaning that it expects at least 3 arguments of types STRING, MAP, INTEGER
+`,
+        offsets: {
+          end: 297,
+          start: 20,
+        },
+        range: {
+          end: {
+            character: 74,
+            line: 6,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 25 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Warnings for functions misused as procedures are different depending on cypher the version', () => {
+    // Function misused as procedure, but deprecated in Cypher5, so removed in Cypher25
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 CALL apoc.create.uuid()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'apoc.create.uuid is a function, not a procedure. Did you mean to use the function apoc.create.uuid with a RETURN instead of a CALL clause?',
+        offsets: {
+          end: 30,
+          start: 14,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 CALL apoc.create.uuid()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Procedure apoc.create.uuid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 31,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

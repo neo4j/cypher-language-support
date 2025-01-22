@@ -74796,7 +74796,7 @@ const mockSchema: DbSchema = {
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
-          'apoc.cypher.runTimeboxed(statement :: STRING, params :: MAP, timeout :: INTEGER) :: (value :: MAP)',
+          'apoc.cypher.runTimeboxed(statement :: STRING, params :: MAP, timeout :: INTEGER, config = {} :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -74815,6 +74815,14 @@ const mockSchema: DbSchema = {
             description: 'The maximum time the statement can run for.',
             name: 'timeout',
             type: 'INTEGER',
+          },
+          {
+            name: 'config',
+            description:
+              '{ failOnError = false :: BOOLEAN, appendStatusRow = false :: BOOLEAN }',
+            isDeprecated: false,
+            default: 'DefaultParameterValue{value={}, type=MAP}',
+            type: 'MAP',
           },
         ],
         returnDescription: [
