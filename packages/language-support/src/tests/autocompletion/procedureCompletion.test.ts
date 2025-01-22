@@ -27,6 +27,7 @@ describe('Procedures auto-completion', () => {
           ...testData.emptyProcedure,
           name: 'jwt.security.requestAccess',
         },
+        'apoc.create.uuids': procedures['cypher 5']['apoc.create.uuids'],
       },
     },
   };
@@ -428,6 +429,41 @@ describe('Procedures auto-completion', () => {
       query,
       dbSchema,
       expected: [],
+    });
+  });
+
+  test('Procedures are completed based on cypher version', () => {
+    // apoc.create.uuids was deprecated in Cypher 5 and removed in Cypher 25
+    testCompletions({
+      query: 'CYPHER 5 CALL apoc.create.',
+      dbSchema,
+      expected: [
+        {
+          label: 'uuids',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+          signature: procedures['cypher 5']['apoc.create.uuids'].signature,
+          documentation:
+            procedures['cypher 5']['apoc.create.uuids'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
+    });
+
+    testCompletions({
+      query: 'CYPHER 25 CALL apoc.create.',
+      dbSchema,
+      excluded: [
+        {
+          label: 'uuids',
+          kind: CompletionItemKind.Method,
+          detail: '(procedure)',
+          signature: procedures['cypher 5']['apoc.create.uuids'].signature,
+          documentation:
+            procedures['cypher 5']['apoc.create.uuids'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
     });
   });
 });

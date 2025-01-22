@@ -397,4 +397,37 @@ describe('function invocations', () => {
       ],
     });
   });
+
+  test('Functions are completed based on cypher version', () => {
+    // apoc.create.uuid was deprecated in Cypher 5 and removed in Cypher 25
+    testCompletions({
+      query: 'CYPHER 5 RETURN apoc.create.',
+      dbSchema,
+      expected: [
+        {
+          label: 'uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+          signature: functions['cypher 5']['apoc.create.uuid'].signature,
+          documentation: functions['cypher 5']['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
+    });
+
+    testCompletions({
+      query: 'CYPHER 25 RETURN apoc.create.',
+      dbSchema,
+      excluded: [
+        {
+          label: 'uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+          signature: functions['cypher 5']['apoc.create.uuid'].signature,
+          documentation: functions['cypher 5']['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
+    });
+  });
 });

@@ -23,9 +23,8 @@ export function testSignatureHelp(
 describe('Procedures signature help', () => {
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
-  const signature = toSignatureInformation(
-    dbSchema.procedures['cypher 5'][procedureName],
-  );
+  const procedure = dbSchema.procedures['cypher 5'][procedureName];
+  const signature = toSignatureInformation(procedure);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -228,14 +227,37 @@ describe('Procedures signature help', () => {
       expectedArgIndex(1),
     );
   });
+
+  test('Signature help depends on cypher version', () => {
+    const dbSchema = {
+      functions: {},
+      procedures: {
+        'cypher 5': {
+          [procedureName]: procedure,
+        },
+        'cypher 25': {},
+      },
+    };
+
+    testSignatureHelp(
+      'CYPHER 5 CALL apoc.do.when(',
+      dbSchema,
+      expectedArgIndex(0),
+    );
+
+    testSignatureHelp('CYPHER 25 CALL apoc.do.when(', dbSchema, {
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [],
+    });
+  });
 });
 
 describe('Functions signature help', () => {
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
-  const signature = toSignatureInformation(
-    dbSchema.functions['cypher 5'][functionName],
-  );
+  const fn = dbSchema.functions['cypher 5'][functionName];
+  const signature = toSignatureInformation(fn);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -416,5 +438,29 @@ describe('Functions signature help', () => {
       dbSchema,
       expectedArgIndex(1),
     );
+  });
+
+  test('Signature help depends on cypher version', () => {
+    const dbSchema = {
+      procedures: {},
+      functions: {
+        'cypher 5': {
+          [functionName]: fn,
+        },
+        'cypher 25': {},
+      },
+    };
+
+    testSignatureHelp(
+      'CYPHER 5 RETURN apoc.coll.combinations(',
+      dbSchema,
+      expectedArgIndex(0),
+    );
+
+    testSignatureHelp('CYPHER 25 RETURN apoc.coll.combinations(', dbSchema, {
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [],
+    });
   });
 });
