@@ -777,7 +777,7 @@ describe('Functions semantic validation spec', () => {
         query: 'CYPHER 5 RETURN apoc.create.uuid()',
         dbSchema: dbSchema,
       }),
-    ).toMatchInlineSnapshot([
+    ).toEqual([
       {
         message: `Function call does not provide the required number of arguments: expected 1 got 0.
 

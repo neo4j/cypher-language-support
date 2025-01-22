@@ -95,15 +95,20 @@ suite('Auto completion spec', () => {
       {
         label: 'resume',
         kind: vscode.CompletionItemKind.Method,
-        detail: '(procedure) ' + procedures['apoc.trigger.resume'].signature,
-        documentation: procedures['apoc.trigger.resume'].description,
+        detail:
+          '(procedure) ' +
+          procedures['cypher 5']['apoc.trigger.resume'].signature,
+        documentation:
+          procedures['cypher 5']['apoc.trigger.resume'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'start',
         kind: vscode.CompletionItemKind.Method,
-        detail: '(procedure) ' + procedures['apoc.trigger.start'].signature,
-        documentation: procedures['apoc.trigger.start'].description,
+        detail:
+          '(procedure) ' +
+          procedures['cypher 5']['apoc.trigger.start'].signature,
+        documentation: procedures['cypher 5']['apoc.trigger.start'].description,
       },
     ];
     await testCompletionContains({
@@ -119,15 +124,19 @@ suite('Auto completion spec', () => {
       {
         label: 'uuid',
         kind: vscode.CompletionItemKind.Function,
-        detail: '(function) ' + functions['apoc.create.uuid'].signature,
-        documentation: functions['apoc.create.uuid'].description,
+        detail:
+          '(function) ' + functions['cypher 5']['apoc.create.uuid'].signature,
+        documentation: functions['cypher 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'uuidBase64',
         kind: vscode.CompletionItemKind.Function,
-        detail: '(function) ' + functions['apoc.create.uuidBase64'].signature,
-        documentation: functions['apoc.create.uuidBase64'].description,
+        detail:
+          '(function) ' +
+          functions['cypher 5']['apoc.create.uuidBase64'].signature,
+        documentation:
+          functions['cypher 5']['apoc.create.uuidBase64'].description,
       },
     ];
     await testCompletionContains({
