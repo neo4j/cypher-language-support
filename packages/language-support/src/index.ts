@@ -16,6 +16,7 @@ export { lintCypherQuery } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
+export { cypherVersions } from './types';
 export type {
   CompletionItem,
   CypherVersion,

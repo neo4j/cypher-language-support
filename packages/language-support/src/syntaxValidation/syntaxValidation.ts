@@ -417,7 +417,7 @@ function errorOnUndeclaredProcedures(
 
     proceduresInQuery.forEach((parsedProcedure) => {
       const procedureExists = Boolean(
-        dbSchema.procedures[parsedProcedure.name],
+        dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name],
       );
       if (!procedureExists) {
         const existsAsFunction = functionExists(

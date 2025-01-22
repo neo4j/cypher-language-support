@@ -23,7 +23,9 @@ export function testSignatureHelp(
 describe('Procedures signature help', () => {
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
-  const signature = toSignatureInformation(dbSchema.procedures[procedureName]);
+  const signature = toSignatureInformation(
+    dbSchema.procedures['cypher 5'][procedureName],
+  );
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -231,7 +233,9 @@ describe('Procedures signature help', () => {
 describe('Functions signature help', () => {
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
-  const signature = toSignatureInformation(dbSchema.functions[functionName]);
+  const signature = toSignatureInformation(
+    dbSchema.functions['cypher 5'][functionName],
+  );
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {

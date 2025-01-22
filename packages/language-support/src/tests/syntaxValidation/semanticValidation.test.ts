@@ -17,7 +17,28 @@ describe('Semantic validation spec', () => {
     const query2 = 'MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
     expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
-    expect(diagnostics1).toMatchInlineSnapshot();
+    expect(diagnostics1).toMatchInlineSnapshot(`
+      [
+        {
+          "message": "The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.",
+          "offsets": {
+            "end": 39,
+            "start": 38,
+          },
+          "range": {
+            "end": {
+              "character": 39,
+              "line": 0,
+            },
+            "start": {
+              "character": 38,
+              "line": 0,
+            },
+          },
+          "severity": 2,
+        },
+      ]
+    `);
   });
 
   //TODO: Maybe this should actually yield a warning

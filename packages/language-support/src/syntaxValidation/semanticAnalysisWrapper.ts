@@ -4,7 +4,7 @@
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import { CypherVersion } from '../types';
+import { CypherVersion, cypherVersions } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { resolveCypherVersion } from '../helpers';
@@ -58,11 +58,21 @@ export function wrappedSemanticAnalysis(
   try {
     if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
       previousSchema = dbSchema;
-      const procedures = Object.values(dbSchema.procedures ?? {});
-      const functions = Object.values(dbSchema.functions ?? {});
-      updateSignatureResolver({
-        procedures: procedures,
-        functions: functions,
+
+      cypherVersions.forEach((cypherVersion) => {
+        const procedures = Object.values(
+          dbSchema?.procedures?.[cypherVersion] ?? {},
+        );
+        const functions = Object.values(
+          dbSchema?.functions?.[cypherVersion] ?? {},
+        );
+        updateSignatureResolver(
+          {
+            procedures: procedures,
+            functions: functions,
+          },
+          cypherVersion,
+        );
       });
     }
 

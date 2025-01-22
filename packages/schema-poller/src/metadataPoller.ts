@@ -1,5 +1,6 @@
 import {
   CypherVersion,
+  cypherVersions,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
@@ -119,9 +120,7 @@ export class MetadataPoller {
           );
           if (currentDb) {
             this.dbSchema.defaultLanguage =
-              currentDb?.defaultLanguage?.toLowerCase() as
-                | CypherVersion
-                | undefined;
+              currentDb?.defaultLanguage?.toLowerCase();
           }
         }
       },
@@ -160,11 +159,11 @@ export class MetadataPoller {
       },
     });
 
-    const cypherVersions: (CypherVersion | undefined)[] = isNewerNeo4j
-      ? ['cypher 5', 'cypher 25']
+    const versions: (CypherVersion | undefined)[] = isNewerNeo4j
+      ? cypherVersions
       : [undefined];
 
-    cypherVersions.forEach((cypherVersion) => {
+    versions.forEach((cypherVersion) => {
       const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'cypher 5';
       this.procedures[effectiveCypherVersion] = new QueryPoller({
         connection,
@@ -217,8 +216,8 @@ export class MetadataPoller {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
-      ...Object.values(this.procedures).map((version) => version.refetch()),
-      ...Object.values(this.functions).map((version) => version.refetch()),
+      ...Object.values(this.procedures).map((version) => version?.refetch()),
+      ...Object.values(this.functions).map((version) => version?.refetch()),
     ]);
     this.events.emit('schemaFetched');
   }
