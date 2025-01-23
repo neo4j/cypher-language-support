@@ -11,7 +11,6 @@ import {
   default as CypherParser,
   FunctionNameContext,
   LabelNameContext,
-  LabelNameIsContext,
   LabelOrRelTypeContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
@@ -89,7 +88,7 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
 }
 
 export type LabelOrRelType = {
-  labeltype: LabelType;
+  labelType: LabelType;
   labelText: string;
   couldCreateNewLabel: boolean;
   line: number;
@@ -240,14 +239,14 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 
   exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext || ctx instanceof LabelNameIsContext) {
+    if (ctx instanceof LabelNameContext) {
       // If the parent ctx start doesn't coincide with this ctx start,
       // it means the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
       // RETURN would be idenfified as the label in that case
       if (ctx.parentCtx && ctx.parentCtx.start === ctx.start) {
         this.labelOrRelTypes.push({
-          labeltype: getLabelType(ctx),
+          labelType: getLabelType(ctx),
           labelText: ctx.getText(),
           couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
@@ -267,7 +266,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         ctx.parentCtx.start === ctx.start
       ) {
         this.labelOrRelTypes.push({
-          labeltype: getLabelType(ctx),
+          labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
           couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
@@ -320,7 +319,7 @@ class VariableCollector implements ParseTreeListener {
       }
     }
     if (ctx instanceof ProcedureResultItemContext) {
-      const variable = ctx.symbolicNameString().getText();
+      const variable = ctx.getText();
       if (variable) {
         this.variables.push(variable);
       }

@@ -61,5 +61,5 @@ unescapedLabelSymbolicNameString:
     | DISCONNECT
     | WELCOME
     | SYSINFO
-    | unescapedLabelSymbolicNameString_
+    | unescapedSymbolicNameString_
     ;

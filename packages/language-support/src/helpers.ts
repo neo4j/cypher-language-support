@@ -97,19 +97,23 @@ export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
-    (p) => p instanceof NodePatternContext,
+    (p) =>
+      p instanceof NodePatternContext ||
+      p instanceof RelationshipPatternContext,
   );
 
-  return isDefined(nodePattern);
+  return nodePattern instanceof NodePatternContext;
 }
 
 export function inRelationshipType(stopNode: ParserRuleContext) {
   const relPattern = findParent(
     stopNode,
-    (p) => p instanceof RelationshipPatternContext,
+    (p) =>
+      p instanceof NodePatternContext ||
+      p instanceof RelationshipPatternContext,
   );
 
-  return isDefined(relPattern);
+  return relPattern instanceof RelationshipPatternContext;
 }
 
 export function findCaret(
