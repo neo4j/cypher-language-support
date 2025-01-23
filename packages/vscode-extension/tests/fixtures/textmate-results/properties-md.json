@@ -173,7 +173,7 @@
   },
   {
     "character": "output",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
   },
   {
     "character": " ",
@@ -225,7 +225,7 @@
   },
   {
     "character": "output",
-    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher keyword"
+    "type": "text.html.markdown markup.fenced_code.block.markdown meta.embedded.block.cypher variable"
   },
   {
     "character": " ",

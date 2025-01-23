@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-parser grammar Cypher5Parser;
+parser grammar Cypher25Parser;
 
 
-options { tokenVocab = Cypher5Lexer; }
+options { tokenVocab = Cypher25Lexer; }
 statements
    : statement (SEMICOLON statement)* SEMICOLON? EOF
    ;
 
 statement
-   : periodicCommitQueryHintFailure? (command | regularQuery)
-   ;
-
-periodicCommitQueryHintFailure
-   : USING PERIODIC COMMIT UNSIGNED_DECIMAL_INTEGER?
+   : command | regularQuery
    ;
 
 regularQuery
@@ -36,6 +32,7 @@ regularQuery
 
 singleQuery
    : clause+
+   | useClause? LCURLY regularQuery RCURLY
    ;
 
 clause
@@ -168,7 +165,6 @@ matchMode
 hint
    : USING (((
       INDEX
-      | BTREE INDEX
       | TEXT INDEX
       | RANGE INDEX
       | POINT INDEX
@@ -203,7 +199,7 @@ procedureArgument
    ;
 
 procedureResultItem
-   : symbolicNameString (AS variable)?
+   : yieldItemName = variable (AS yieldItemAlias = variable)?
    ;
 
 loadCSVClause
@@ -281,12 +277,16 @@ patternElement
    ;
 
 selector
-   : ANY SHORTEST pathToken?                                  # AnyShortestPath
-   | ALL SHORTEST pathToken?                                  # AllShortestPath
-   | ANY UNSIGNED_DECIMAL_INTEGER? pathToken?                 # AnyPath
-   | ALL pathToken?                                           # AllPath
-   | SHORTEST UNSIGNED_DECIMAL_INTEGER? pathToken? groupToken # ShortestGroup
-   | SHORTEST UNSIGNED_DECIMAL_INTEGER pathToken?             # AnyShortestPath
+   : ANY SHORTEST pathToken?                                         # AnyShortestPath
+   | ALL SHORTEST pathToken?                                         # AllShortestPath
+   | ANY nonNegativeIntegerSpecification? pathToken?                 # AnyPath
+   | ALL pathToken?                                                  # AllPath
+   | SHORTEST nonNegativeIntegerSpecification? pathToken? groupToken # ShortestGroup
+   | SHORTEST nonNegativeIntegerSpecification pathToken?             # AnyShortestPath
+   ;
+   
+nonNegativeIntegerSpecification
+   : UNSIGNED_DECIMAL_INTEGER | parameter["INTEGER"]
    ;
 
 groupToken
@@ -302,11 +302,13 @@ pathPatternNonEmpty
    ;
 
 nodePattern
-   : LPAREN variable? labelExpression? properties? (WHERE expression)? RPAREN
+   : LPAREN WHERE expression RPAREN //prioritize the WHERE keyword
+   | LPAREN variable? labelExpression? properties? (WHERE expression)? RPAREN
    ;
 
 insertNodePattern
-   : LPAREN variable? insertNodeLabelExpression? map? RPAREN
+   : LPAREN WHERE expression RPAREN //prioritize the WHERE keyword
+   | LPAREN variable? insertNodeLabelExpression? map? RPAREN
    ;
 
 parenthesizedPath
@@ -351,11 +353,17 @@ properties
    ;
 
 relationshipPattern
-   : leftArrow? arrowLine (LBRACKET variable? labelExpression? pathLength? properties? (WHERE expression)? RBRACKET)? arrowLine rightArrow?
+   : leftArrow? arrowLine
+     ( LBRACKET WHERE expression RBRACKET //prioritize the WHERE keyword
+     | LBRACKET variable? labelExpression? pathLength? properties? (WHERE expression)? RBRACKET
+     )? arrowLine rightArrow?
    ;
 
 insertRelationshipPattern
-   : leftArrow? arrowLine LBRACKET variable? insertRelationshipLabelExpression map? RBRACKET arrowLine rightArrow?
+   : leftArrow? arrowLine
+     ( LBRACKET WHERE expression RBRACKET //prioritize the WHERE keyword
+     | LBRACKET variable? insertRelationshipLabelExpression map? RBRACKET
+     ) arrowLine rightArrow?
    ;
 
 leftArrow
@@ -378,32 +386,19 @@ pathLength
    ;
 
 labelExpression
-   : COLON labelExpression4
-   | IS labelExpression4Is
+   : (COLON | IS) labelExpression4
    ;
 
 labelExpression4
    : labelExpression3 (BAR COLON? labelExpression3)*
    ;
 
-labelExpression4Is
-   : labelExpression3Is (BAR COLON? labelExpression3Is)*
-   ;
-
 labelExpression3
    : labelExpression2 ((AMPERSAND | COLON) labelExpression2)*
    ;
 
-labelExpression3Is
-   : labelExpression2Is ((AMPERSAND | COLON) labelExpression2Is)*
-   ;
-
 labelExpression2
    : EXCLAMATION_MARK* labelExpression1
-   ;
-
-labelExpression2Is
-   : EXCLAMATION_MARK* labelExpression1Is
    ;
 
 labelExpression1
@@ -411,13 +406,6 @@ labelExpression1
    | PERCENT                        #AnyLabel
    | dynamicAnyAllExpression        #DynamicLabel
    | symbolicNameString             #LabelName
-   ;
-
-labelExpression1Is
-   : LPAREN labelExpression4Is RPAREN #ParenthesizedLabelExpressionIs
-   | PERCENT                          #AnyLabelIs
-   | dynamicAnyAllExpression          #DynamicLabelIs
-   | symbolicLabelNameString          #LabelNameIs
    ;
 
 insertNodeLabelExpression
@@ -473,6 +461,7 @@ comparisonExpression6
    | IS NOT? NULL                                     # NullComparison
    | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type # TypeComparison
    | IS NOT? normalForm? NORMALIZED                   # NormalFormComparison
+   | labelExpression                                  # LabelComparison
    ;
 
 normalForm
@@ -505,7 +494,6 @@ expression2
 
 postFix
    : property                                                           # PropertyPostfix
-   | labelExpression                                                    # LabelPostfix
    | LBRACKET expression RBRACKET                                       # IndexPostfix
    | LBRACKET fromExp = expression? DOTDOT toExp = expression? RBRACKET # RangePostfix
    ;
@@ -580,20 +568,16 @@ extendedCaseAlternative
 
 // Making changes here? Consider looking at comparisonExpression6 and expression8 too.
 extendedWhen
-   : (REGEQ | STARTS WITH | ENDS WITH) expression6 # WhenStringOrList
-   | IS NOT? NULL                                  # WhenNull
-   | (IS NOT? TYPED | COLONCOLON) type             # WhenType
-   | IS NOT? normalForm? NORMALIZED                # WhenForm
-   | (
-      EQ
-      | NEQ
-      | INVALID_NEQ
-      | LE
-      | GE
-      | LT
-      | GT
-   ) expression7                                   # WhenComparator
-   | expression                                    # WhenEquals
+   : (
+     EQ
+     | INVALID_NEQ
+     | NEQ
+     | LE
+     | GE
+     | LT
+     | GT ) expression7    # WhenSimpleComparison
+   | comparisonExpression6 # WhenAdvancedComparison
+   | expression            # WhenEquals
    ;
 
 // Observe that this is not possible to write as:
@@ -694,7 +678,7 @@ parameter[String paramType]
    ;
 
 parameterName[String paramType]
-   : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER)
+   : (symbolicNameString | UNSIGNED_DECIMAL_INTEGER | UNSIGNED_OCTAL_INTEGER | EXTENDED_IDENTIFIER)
    ;
 
 functionInvocation
@@ -890,71 +874,45 @@ composableShowCommandClauses
    )
    ;
 
-showBriefAndYield
-   : (BRIEF | VERBOSE) OUTPUT?
-   | yieldClause returnClause?
-   | whereClause
-   ;
-
 showIndexCommand
-   : (
-      FULLTEXT
-      | LOOKUP
-      | POINT
-      | RANGE
-      | TEXT
-      | VECTOR
-   ) showIndexesNoBrief
-   | (ALL | BTREE)? showIndexesAllowBrief
+   : (showIndexType)? showIndexesEnd
    ;
 
-showIndexesAllowBrief
-   : indexToken showBriefAndYield? composableCommandClauses?
-   ;
+showIndexType
+    : ALL
+    | FULLTEXT
+    | LOOKUP
+    | POINT
+    | RANGE
+    | TEXT
+    | VECTOR
+    ;
 
-showIndexesNoBrief
+showIndexesEnd
    : indexToken showCommandYield? composableCommandClauses?
    ;
 
 showConstraintCommand
-   : (NODE | RELATIONSHIP | REL)? constraintAllowYieldType showConstraintsAllowYield # ShowConstraintMulti
-   | (NODE | RELATIONSHIP | REL) UNIQUE showConstraintsAllowYield                    # ShowConstraintUnique
-   | (RELATIONSHIP | REL)? KEY showConstraintsAllowYield                             # ShowConstraintKey
-   | REL EXIST showConstraintsAllowYield                                             # ShowConstraintRelExist
-   | (NODE | RELATIONSHIP)? EXISTS showConstraintsAllowBrief                         # ShowConstraintOldExists
-   | constraintBriefAndYieldType? showConstraintsAllowBriefAndYield                  # ShowConstraintBriefAndYield
+   : ALL? showConstraintsEnd                                                        # ShowConstraintAll
+   | (showConstraintEntity)? constraintExistType showConstraintsEnd                 # ShowConstraintExist
+   | (showConstraintEntity)? KEY showConstraintsEnd                                 # ShowConstraintKey
+   | (showConstraintEntity)? PROPERTY TYPE showConstraintsEnd                       # ShowConstraintPropType
+   | (showConstraintEntity)? (PROPERTY)? (UNIQUE | UNIQUENESS) showConstraintsEnd   # ShowConstraintUnique
    ;
 
-constraintAllowYieldType
-   : UNIQUENESS
-   | constraintExistType
-   | PROPERTY TYPE
-   ;
+showConstraintEntity
+    : NODE                  # nodeEntity
+    | (RELATIONSHIP | REL)  # relEntity
+    ;
 
 constraintExistType
    : EXISTENCE
+   | EXIST
    | PROPERTY EXISTENCE
    | PROPERTY EXIST
    ;
 
-constraintBriefAndYieldType
-   : ALL
-   | UNIQUE
-   | EXIST
-   | NODE KEY
-   | NODE EXIST
-   | RELATIONSHIP EXIST
-   ;
-
-showConstraintsAllowBriefAndYield
-   : constraintToken showBriefAndYield? composableCommandClauses?
-   ;
-
-showConstraintsAllowBrief
-   : constraintToken ((BRIEF | VERBOSE) OUTPUT?)? composableCommandClauses?
-   ;
-
-showConstraintsAllowYield
+showConstraintsEnd
    : constraintToken showCommandYield? composableCommandClauses?
    ;
 
@@ -1016,34 +974,28 @@ commandRelPattern
    ;
 
 createConstraint
-   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? (ON | FOR) (commandNodePattern | commandRelPattern) constraintType commandOptions?
+   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) constraintType commandOptions?
    ;
 
 constraintType
-   : ASSERT EXISTS propertyList                                                  # ConstraintExists
-   | (REQUIRE | ASSERT) propertyList (COLONCOLON | IS (TYPED | COLONCOLON)) type # ConstraintTyped
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique
-   | (REQUIRE | ASSERT) propertyList IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey
-   | (REQUIRE | ASSERT) propertyList IS NOT NULL                                 # ConstraintIsNotNull
+   : REQUIRE propertyList (COLONCOLON | IS (TYPED | COLONCOLON)) type # ConstraintTyped
+   | REQUIRE propertyList IS (NODE | RELATIONSHIP | REL)? UNIQUE      # ConstraintIsUnique
+   | REQUIRE propertyList IS (NODE | RELATIONSHIP | REL)? KEY         # ConstraintKey
+   | REQUIRE propertyList IS NOT NULL                                 # ConstraintIsNotNull
    ;
 
 dropConstraint
-   : CONSTRAINT (ON (commandNodePattern | commandRelPattern) ASSERT (EXISTS propertyList | propertyList IS (UNIQUE | NODE KEY | NOT NULL)) | symbolicNameOrStringParameter (IF EXISTS)?)
+   : CONSTRAINT symbolicNameOrStringParameter (IF EXISTS)?
    ;
 
 createIndex
-   : BTREE INDEX createIndex_
-   | RANGE INDEX createIndex_
+   : RANGE INDEX createIndex_
    | TEXT INDEX createIndex_
    | POINT INDEX createIndex_
    | VECTOR INDEX createIndex_
    | LOOKUP INDEX createLookupIndex
    | FULLTEXT INDEX createFulltextIndex
-   | INDEX (ON oldCreateIndex | createIndex_)
-   ;
-
-oldCreateIndex
-   : labelType LPAREN nonEmptyNameList RPAREN
+   | INDEX createIndex_
    ;
 
 createIndex_
@@ -1075,7 +1027,7 @@ lookupIndexRelPattern
    ;
 
 dropIndex
-   : INDEX (ON labelType LPAREN nonEmptyNameList RPAREN | symbolicNameOrStringParameter (IF EXISTS)?)
+   : INDEX symbolicNameOrStringParameter (IF EXISTS)?
    ;
 
 propertyList
@@ -1330,7 +1282,7 @@ allPrivilegeType
    ;
 
 allPrivilegeTarget
-   : (DEFAULT | HOME) (DATABASE | GRAPH)                    # DefaultTarget
+   : HOME (DATABASE | GRAPH)                                # DefaultTarget
    | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList) # DatabaseVariableTarget
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)       # GraphVariableTarget
    | DBMS                                                   # DBMSTarget
@@ -1562,23 +1514,23 @@ nodeToken
    ;
 
 databaseScope
-   : (DEFAULT | HOME) DATABASE
+   : HOME DATABASE
    | (DATABASE | DATABASES) (TIMES | symbolicAliasNameList)
    ;
 
 graphScope
-   : (DEFAULT | HOME) GRAPH
+   : HOME GRAPH
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)
    ;
 
 // Database commands
 
 createCompositeDatabase
-   : COMPOSITE DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? commandOptions? waitClause?
+   : COMPOSITE DATABASE databaseName (IF NOT EXISTS)? commandOptions? waitClause?
    ;
 
 createDatabase
-   : DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
+   : DATABASE databaseName (IF NOT EXISTS)? (TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
    ;
 
 primaryTopology
@@ -1646,18 +1598,22 @@ showDatabase
    | (DATABASE | DATABASES) symbolicAliasNameOrParameter? showCommandYield?
    ;
 
-// Alias commands
-
 aliasName
    : symbolicAliasNameOrParameter
    ;
 
-databaseName
+aliasTargetName
    : symbolicAliasNameOrParameter
    ;
 
+databaseName
+   : symbolicNameOrStringParameter
+   ;
+
+// Alias commands
+
 createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE databaseName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
    ;
 
 dropAlias
@@ -1675,7 +1631,7 @@ alterAlias
    ;
 
 alterAliasTarget
-   : TARGET databaseName (AT stringOrParameter)?
+   : TARGET aliasTargetName (AT stringOrParameter)?
    ;
 
 alterAliasUser
@@ -1792,30 +1748,13 @@ escapedSymbolicNameString
    : ESCAPED_SYMBOLIC_NAME
    ;
 
-unescapedSymbolicNameString
-   : unescapedLabelSymbolicNameString
-   | NOT
-   | NULL
-   | TYPED
-   | NORMALIZED
-   | NFC
-   | NFD
-   | NFKC
-   | NFKD
-   ;
-
-symbolicLabelNameString
-   : escapedSymbolicNameString
-   | unescapedLabelSymbolicNameString
-   ;
-
 // Do not remove this, it is needed for composing the grammar
 // with other ones (e.g. language support ones)
-unescapedLabelSymbolicNameString
-   : unescapedLabelSymbolicNameString_
+unescapedSymbolicNameString
+   : unescapedSymbolicNameString_
    ;
 
-unescapedLabelSymbolicNameString_
+unescapedSymbolicNameString_
    : IDENTIFIER
    | ACCESS
    | ACTIVE
@@ -1832,7 +1771,6 @@ unescapedLabelSymbolicNameString_
    | AS
    | ASC
    | ASCENDING
-   | ASSERT
    | ASSIGN
    | AT
    | AUTH
@@ -1842,8 +1780,6 @@ unescapedLabelSymbolicNameString_
    | BOOSTED
    | BOTH
    | BREAK
-   | BRIEF
-   | BTREE
    | BUILT
    | BY
    | CALL
@@ -1854,7 +1790,6 @@ unescapedLabelSymbolicNameString_
    | COLLECT
    | COMMAND
    | COMMANDS
-   | COMMIT
    | COMPOSITE
    | CONCURRENT
    | CONSTRAINT
@@ -1952,13 +1887,20 @@ unescapedLabelSymbolicNameString_
    | NAMES
    | NAN
    | NEW
+   | NFC
+   | NFD
+   | NFKC
+   | NFKD
    | NODE
    | NODETACH
    | NODES
    | NONE
    | NORMALIZE
+   | NORMALIZED
+   | NOT
    | NOTHING
    | NOWAIT
+   | NULL
    | OF
    | OFFSET
    | ON
@@ -1968,12 +1910,10 @@ unescapedLabelSymbolicNameString_
    | OPTION
    | OR
    | ORDER
-   | OUTPUT
    | PASSWORD
    | PASSWORDS
    | PATH
    | PATHS
-   | PERIODIC
    | PLAINTEXT
    | POINT
    | POPULATED
@@ -2050,6 +1990,7 @@ unescapedLabelSymbolicNameString_
    | TRIM
    | TRUE
    | TYPE
+   | TYPED
    | TYPES
    | UNION
    | UNIQUE
@@ -2062,7 +2003,6 @@ unescapedLabelSymbolicNameString_
    | USING
    | VALUE
    | VECTOR
-   | VERBOSE
    | VERTEX
    | WAIT
    | WHEN

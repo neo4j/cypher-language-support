@@ -116,7 +116,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('suggests variables for index hint rule', () => {
-    const query = 'match (n) USING BTREE INDEX ';
+    const query = 'match (n) USING RANGE INDEX ';
 
     testCompletions({
       query,
