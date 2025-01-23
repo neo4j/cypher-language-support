@@ -228,7 +228,7 @@ describe('Procedures signature help', () => {
     );
   });
 
-  test('Signature help depends on cypher version', () => {
+  test('Procedures signature help depends on cypher version', () => {
     const dbSchema = {
       functions: {},
       procedures: {
@@ -440,7 +440,7 @@ describe('Functions signature help', () => {
     );
   });
 
-  test('Signature help depends on cypher version', () => {
+  test('Functions signature help depends on cypher version', () => {
     const dbSchema = {
       procedures: {},
       functions: {

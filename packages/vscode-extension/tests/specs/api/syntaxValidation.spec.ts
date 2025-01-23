@@ -19,6 +19,10 @@ type InclusionTestArgs = {
   expected: vscode.Diagnostic[];
 };
 
+function rangeToString(range: vscode.Range) {
+  return `${range.start.line}:${range.start.character} to ${range.end.line}:${range.end.character}`;
+}
+
 export async function testSyntaxValidation({
   docUri,
   expected,
@@ -36,24 +40,26 @@ export async function testSyntaxValidation({
           assert.equal(
             diagnostics.length,
             expected.length,
-            `Different length for the diagnostics ${diagnostics.length} vs ${expected.length}`,
+            `Different length for the diagnostics. Actual: ${diagnostics.length} vs expected: ${expected.length}`,
           );
           diagnostics.forEach((diagnostic, i) => {
             const expectedDiagnostic = expected[i];
             assert.equal(
               diagnostic.message,
               expectedDiagnostic.message,
-              'Different message',
+              `Different message. Actual: ${diagnostic.message} vs expected: ${expectedDiagnostic.message}`,
             );
             assert.deepEqual(
               diagnostic.range,
               expectedDiagnostic.range,
-              `Different Range`,
+              `Different Range. Actual: ${rangeToString(
+                diagnostic.range,
+              )} vs expected: ${rangeToString(expectedDiagnostic.range)}`,
             );
             assert.equal(
               diagnostic.severity,
               expectedDiagnostic.severity,
-              'Different Severity',
+              `Different Severity ${diagnostic.severity} vs expected: ${expectedDiagnostic.severity}`,
             );
           });
           resolve();
