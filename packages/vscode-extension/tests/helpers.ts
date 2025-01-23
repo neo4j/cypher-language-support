@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { Uri, window, workspace } from 'vscode';
+import { TextDocument, Uri, window, workspace } from 'vscode';
 import { Connection } from '../src/connectionService';
 import { getNonce } from '../src/getNonce';
 
@@ -14,11 +14,14 @@ export async function openDocument(docUri: Uri) {
   }
 }
 
-export async function newUntitledFileWithContent(content: string) {
+export async function newUntitledFileWithContent(
+  content: string,
+): Promise<TextDocument> {
   try {
     // The language server will not be activated automatically
     const document = await workspace.openTextDocument({ content: content });
     await window.showTextDocument(document);
+    return document;
   } catch (e) {
     console.error(e);
   }

@@ -15,29 +15,19 @@ import {
 } from '../../suiteSetup';
 
 type InclusionTestArgs = {
-  textFile: string | undefined;
+  docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
 };
 
 export async function testSyntaxValidation({
-  textFile,
+  docUri,
   expected,
 }: InclusionTestArgs) {
   await eventually(
     () =>
       new Promise((resolve, reject) => {
-        let diagnostics: vscode.Diagnostic[];
-        if (textFile) {
-          const docUri = getDocumentUri(textFile);
-          diagnostics = vscode.languages.getDiagnostics(docUri);
-        } else {
-          // We need to filter diagnostics for untitled files
-          // because there could be other opened files
-          diagnostics = vscode.languages
-            .getDiagnostics()
-            .filter(([uri]) => uri.scheme === 'untitled')
-            .flatMap(([, diagnostics]) => diagnostics);
-        }
+        const diagnostics: vscode.Diagnostic[] =
+          vscode.languages.getDiagnostics(docUri);
 
         try {
           // We need to test diagnostics one by one
@@ -46,7 +36,7 @@ export async function testSyntaxValidation({
           assert.equal(
             diagnostics.length,
             expected.length,
-            'Different length for the diagnostics',
+            `Different length for the diagnostics ${diagnostics.length} vs ${expected.length}`,
           );
           diagnostics.forEach((diagnostic, i) => {
             const expectedDiagnostic = expected[i];
@@ -82,7 +72,7 @@ suite('Syntax validation spec', () => {
     await openDocument(docUri);
 
     await testSyntaxValidation({
-      textFile,
+      docUri,
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
@@ -124,17 +114,17 @@ suite('Syntax validation spec', () => {
     ];
     // We should be connected by default so the errors will be there initially
     await testSyntaxValidation({
-      textFile,
+      docUri,
       expected: deprecationErrors,
     });
     await disconnectDefault();
     await testSyntaxValidation({
-      textFile,
+      docUri,
       expected: [],
     });
     await connectDefault();
     await testSyntaxValidation({
-      textFile,
+      docUri,
       expected: deprecationErrors,
     });
   });
@@ -161,7 +151,7 @@ suite('Syntax validation spec', () => {
     // We need to wait here because diagnostics are eventually
     // consistent i.e. they don't show up immediately
     await testSyntaxValidation({
-      textFile: 'syntax-validation.cypher',
+      docUri,
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
@@ -186,7 +176,7 @@ suite('Syntax validation spec', () => {
     );
 
     await testSyntaxValidation({
-      textFile: 'syntax-validation.cypher',
+      docUri,
       expected: [],
     });
   });
@@ -194,14 +184,14 @@ suite('Syntax validation spec', () => {
   test('Correctly validates a non cypher file when selecting cypher language mode', async () => {
     // We open a file that is not saved on disk
     // and change the language manually to Cypher
-    await newUntitledFileWithContent('MATCH (m)');
+    const textDocument = await newUntitledFileWithContent('MATCH (m)');
     const editor = vscode.window.activeTextEditor;
     await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
 
     // We need to wait here because diagnostics are eventually
     // consistent i.e. they don't show up immediately
     await testSyntaxValidation({
-      textFile: undefined,
+      docUri: textDocument.uri,
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
@@ -235,7 +225,7 @@ suite('Syntax validation spec', () => {
 
     // assert that we have missing labels
     await testSyntaxValidation({
-      textFile: textFile,
+      docUri,
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
@@ -283,7 +273,7 @@ suite('Syntax validation spec', () => {
 
     // assert that we no longer have missing labels
     await testSyntaxValidation({
-      textFile: textFile,
+      docUri,
       expected: [],
     });
 
@@ -298,17 +288,17 @@ suite('Syntax validation spec', () => {
   test('Errors and warnings are version Cypher version dependant', async () => {
     // We open a file that is not saved on disk
     // and change the language manually to Cypher
-    await newUntitledFileWithContent(`
+    const textDocument = await newUntitledFileWithContent(`
       CYPHER 5 CALL apoc.create.uuids(5);
       CYPHER 25 CALL apoc.create.uuids(5)
-  `);
+    `);
     const editor = vscode.window.activeTextEditor;
     await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
 
     // We need to wait here because diagnostics are eventually
     // consistent i.e. they don't show up immediately
     await testSyntaxValidation({
-      textFile: undefined,
+      docUri: textDocument.uri,
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
