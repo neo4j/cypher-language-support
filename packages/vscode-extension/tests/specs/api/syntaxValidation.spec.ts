@@ -294,4 +294,39 @@ suite('Syntax validation spec', () => {
       password,
     );
   });
+
+  test('Errors and warnings are version Cypher version dependant', async () => {
+    // We open a file that is not saved on disk
+    // and change the language manually to Cypher
+    await newUntitledFileWithContent(`
+      CYPHER 5 CALL apoc.create.uuids(5);
+      CYPHER 25 CALL apoc.create.uuids(5)
+  `);
+    const editor = vscode.window.activeTextEditor;
+    await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
+
+    // We need to wait here because diagnostics are eventually
+    // consistent i.e. they don't show up immediately
+    await testSyntaxValidation({
+      textFile: undefined,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 20),
+            new vscode.Position(1, 37),
+          ),
+          "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(2, 21),
+            new vscode.Position(2, 38),
+          ),
+          "Procedure apoc.create.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Error,
+        ),
+      ],
+    });
+  });
 });

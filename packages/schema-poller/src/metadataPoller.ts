@@ -4,6 +4,7 @@ import {
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
+  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';
@@ -100,6 +101,7 @@ export class MetadataPoller {
     private readonly events: EventEmitter,
   ) {
     const isNewerNeo4j =
+      _internalFeatureFlags.cypher25 ||
       databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
 
     this.databases = new QueryPoller({
