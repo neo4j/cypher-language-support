@@ -11,7 +11,8 @@ type TooltipExpectations = {
   excludes?: string[];
 };
 
-const importCsvProc = testData.mockSchema.procedures['apoc.import.csv'];
+const importCsvProc =
+  testData.mockSchema.procedures['cypher 5']['apoc.import.csv'];
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -86,9 +87,9 @@ test('Signature help shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      testData.mockSchema.procedures['apoc.import.csv'].argumentDescription[0]
-        .description,
-      testData.mockSchema.procedures['apoc.import.csv'].description,
+      testData.mockSchema.procedures['cypher 5']['apoc.import.csv']
+        .argumentDescription[0].description,
+      testData.mockSchema.procedures['cypher 5']['apoc.import.csv'].description,
     ],
   });
 });
