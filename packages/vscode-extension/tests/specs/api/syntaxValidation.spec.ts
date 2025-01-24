@@ -7,6 +7,7 @@ import {
   getNeo4jConfiguration,
   newUntitledFileWithContent,
   openDocument,
+  rangeToString,
 } from '../../helpers';
 import {
   connectDefault,
@@ -18,10 +19,6 @@ type InclusionTestArgs = {
   docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
 };
-
-function rangeToString(range: vscode.Range) {
-  return `${range.start.line}:${range.start.character} to ${range.end.line}:${range.end.character}`;
-}
 
 export async function testSyntaxValidation({
   docUri,
@@ -298,9 +295,6 @@ suite('Syntax validation spec', () => {
       CYPHER 5 CALL apoc.create.uuids(5);
       CYPHER 25 CALL apoc.create.uuids(5)
     `);
-    const editor = vscode.window.activeTextEditor;
-    await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
-
     // We need to wait here because diagnostics are eventually
     // consistent i.e. they don't show up immediately
     await testSyntaxValidation({

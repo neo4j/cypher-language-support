@@ -7,6 +7,7 @@ import antlrDefaultExport, {
   Token,
 } from 'antlr4';
 import { DbSchema } from './dbSchema';
+import { _internalFeatureFlags } from './featureFlags';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
@@ -209,11 +210,15 @@ export function resolveCypherVersion(
   parsedVersion: CypherVersion | undefined,
   dbSchema: DbSchema,
 ) {
-  const cypherVersion: CypherVersion =
-    parsedVersion ??
-    (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'cypher 5');
+  if (_internalFeatureFlags.cypher25) {
+    const cypherVersion: CypherVersion =
+      parsedVersion ??
+      (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'cypher 5');
 
-  return cypherVersion;
+    return cypherVersion;
+  } else {
+    return 'cypher 5';
+  }
 }
 
 export const rulesDefiningVariables = [

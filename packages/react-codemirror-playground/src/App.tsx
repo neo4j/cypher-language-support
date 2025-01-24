@@ -112,7 +112,6 @@ export function App() {
               theme={darkMode ? 'dark' : 'light'}
               history={Object.values(demos)}
               schema={schema}
-              featureFlags={{ signatureInfoOnAutoCompletions: true }}
               ariaLabel="Cypher Editor"
             />
 

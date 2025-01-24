@@ -20,6 +20,7 @@ export type CypherConfig = {
   showSignatureTooltipBelow?: boolean;
   featureFlags?: {
     consoleCommands?: boolean;
+    cypher25?: boolean;
   };
   schema?: DbSchema;
   useLightVersion: boolean;

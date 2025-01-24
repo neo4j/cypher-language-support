@@ -312,14 +312,7 @@ test('shows signature help information on auto-completion for procedures', async
   page,
   mount,
 }) => {
-  await mount(
-    <CypherEditor
-      schema={testData.mockSchema}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
-    />,
-  );
+  await mount(<CypherEditor schema={testData.mockSchema} />);
   const procName = 'apoc.periodic.iterate';
   const procedure = testData.mockSchema.procedures['cypher 5'][procName];
 
@@ -337,14 +330,7 @@ test('shows signature help information on auto-completion for functions', async 
   page,
   mount,
 }) => {
-  await mount(
-    <CypherEditor
-      schema={testData.mockSchema}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
-    />,
-  );
+  await mount(<CypherEditor schema={testData.mockSchema} />);
   const fnName = 'apoc.coll.combinations';
   const fn = testData.mockSchema.functions['cypher 5'][fnName];
 
@@ -373,9 +359,6 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
           },
         },
       }}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
     />,
   );
   const textField = page.getByRole('textbox');
@@ -401,9 +384,6 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
           },
         },
       }}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
     />,
   );
   const textField = page.getByRole('textbox');
@@ -418,14 +398,7 @@ test('does not signature help information on auto-completion if docs and signatu
   page,
   mount,
 }) => {
-  await mount(
-    <CypherEditor
-      schema={testData.mockSchema}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
-    />,
-  );
+  await mount(<CypherEditor schema={testData.mockSchema} />);
 
   const textField = page.getByRole('textbox');
   await textField.fill('C');
@@ -451,9 +424,6 @@ test('shows signature help information on auto-completion if description is not 
             },
           },
         },
-      }}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
       }}
     />,
   );
@@ -483,9 +453,6 @@ test('shows signature help information on auto-completion if signature is not em
           },
         },
       }}
-      featureFlags={{
-        signatureInfoOnAutoCompletions: true,
-      }}
     />,
   );
 
@@ -494,4 +461,42 @@ test('shows signature help information on auto-completion if signature is not em
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
   await expect(page.locator('.cm-completionInfo')).toBeVisible();
+});
+
+test('completions are cypher version dependant', async ({ page, mount }) => {
+  await mount(
+    <CypherEditor
+      schema={{
+        functions: {
+          'cypher 5': {
+            cypher5Function: {
+              ...testData.emptyFunction,
+              name: 'cypher5Function',
+            },
+          },
+          'cypher 25': {
+            cypher25Function: {
+              ...testData.emptyFunction,
+              name: 'cypher25Function',
+            },
+          },
+        },
+      }}
+      featureFlags={{ cypher25: true }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('CYPHER 5 RETURN cypher');
+
+  await expect(
+    page.locator('.cm-tooltip-autocomplete').getByText('cypher5Function'),
+  ).toBeVisible();
+
+  await textField.fill('CYPHER 25 RETURN cypher');
+
+  await expect(
+    page.locator('.cm-tooltip-autocomplete').getByText('cypher25Function'),
+  ).toBeVisible();
 });

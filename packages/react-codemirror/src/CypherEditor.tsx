@@ -13,7 +13,10 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  _internalFeatureFlags,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -99,7 +102,7 @@ export interface CypherEditorProps {
    */
   featureFlags?: {
     consoleCommands?: boolean;
-    signatureInfoOnAutoCompletions?: boolean;
+    cypher25?: boolean;
   };
   /**
    * The schema to use for autocompletion and linting.
@@ -345,6 +348,10 @@ export class CypherEditor extends Component<
       onExecute,
       newLineOnEnter,
     } = this.props;
+
+    if (featureFlags.cypher25) {
+      _internalFeatureFlags.cypher25 = featureFlags.cypher25;
+    }
 
     this.schemaRef.current = {
       schema,
