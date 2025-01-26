@@ -463,7 +463,7 @@ test('shows signature help information on auto-completion if signature is not em
   await expect(page.locator('.cm-completionInfo')).toBeVisible();
 });
 
-test('completions are cypher version dependant', async ({ page, mount }) => {
+test('completions depend on the Cypher version', async ({ page, mount }) => {
   await mount(
     <CypherEditor
       schema={{

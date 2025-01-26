@@ -213,3 +213,31 @@ test('Strikethroughs are shown for deprecated procedures', async ({
     'Procedure apoc.create.uuids is deprecated.',
   );
 });
+
+test('Syntax validation depends on the Cypher version', async ({
+  page,
+  mount,
+}) => {
+  await mount(
+    <CypherEditor
+      schema={testData.mockSchema}
+      featureFlags={{ cypher25: true }}
+    />,
+  );
+
+  const editorPage = new CypherEditorPage(page);
+  const textField = page.getByRole('textbox');
+  await textField.fill('CYPHER 5 CALL apoc.create.uuids(5)');
+
+  await editorPage.checkWarningMessage(
+    'apoc.create.uuids',
+    'Procedure apoc.create.uuids is deprecated.',
+  );
+
+  await textField.fill('CYPHER 25 CALL apoc.create.uuids(5)');
+
+  await editorPage.checkErrorMessage(
+    'apoc.create.uuids',
+    'Procedure apoc.create.uuids is not present in the database.',
+  );
+});

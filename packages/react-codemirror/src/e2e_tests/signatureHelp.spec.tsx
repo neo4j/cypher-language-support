@@ -383,3 +383,63 @@ test('Setting showSignatureTooltipBelow to false shows the signature help above 
     timeout: 2000,
   });
 });
+
+test('Signature help depends on the Cypher version', async ({
+  page,
+  mount,
+}) => {
+  const cypher5ArgDescription = 'The Cypher 5 statement to run.';
+  const cypher25ArgDescription = 'The Cypher 25 statement to run.';
+
+  await mount(
+    <CypherEditor
+      schema={{
+        functions: {
+          'cypher 5': {
+            cypher5Function: {
+              ...testData.emptyFunction,
+              argumentDescription: [
+                {
+                  isDeprecated: false,
+                  description: cypher5ArgDescription,
+                  name: 'statement',
+                  type: 'STRING',
+                },
+              ],
+              name: 'cypher5Function',
+            },
+          },
+          'cypher 25': {
+            cypher25Function: {
+              ...testData.emptyFunction,
+              argumentDescription: [
+                {
+                  isDeprecated: false,
+                  description: cypher25ArgDescription,
+                  name: 'statement',
+                  type: 'STRING',
+                },
+              ],
+              name: 'cypher25Function',
+            },
+          },
+        },
+      }}
+      featureFlags={{ cypher25: true }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+  await textField.fill('CYPHER 5 RETURN cypher5Function(');
+  const tooltip = page.locator('.cm-signature-help-panel');
+
+  await testTooltip(tooltip, {
+    includes: [cypher5ArgDescription],
+  });
+
+  await textField.fill('CYPHER 25 RETURN cypher25Function(');
+
+  await testTooltip(tooltip, {
+    includes: [cypher25ArgDescription],
+  });
+});

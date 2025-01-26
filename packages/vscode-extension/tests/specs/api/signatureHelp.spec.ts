@@ -187,7 +187,7 @@ suite('Signature help spec', () => {
     });
   });
 
-  test('Signature help is cypher version dependant', async () => {
+  test('Signature help depends on the Cypher version', async () => {
     const textDocument = await newUntitledFileWithContent(`
           CYPHER 5 RETURN apoc.create.uuid( ;
           CYPHER 25 RETURN apoc.create.uuid(

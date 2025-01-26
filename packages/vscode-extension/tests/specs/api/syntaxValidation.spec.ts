@@ -288,7 +288,7 @@ suite('Syntax validation spec', () => {
     );
   });
 
-  test('Errors and warnings are version Cypher version dependant', async () => {
+  test('Errors and warnings depend on the Cypher version', async () => {
     // We open a file that is not saved on disk
     // and change the language manually to Cypher
     const textDocument = await newUntitledFileWithContent(`

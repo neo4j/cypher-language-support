@@ -177,7 +177,7 @@ suite('Auto completion spec', () => {
     });
   });
 
-  test('Completions are Cypher version dependant', async () => {
+  test('Completions depends on the Cypher version', async () => {
     const textDocument = await newUntitledFileWithContent(`
       CYPHER 5 RETURN ;
       CYPHER 25 RETURN 
