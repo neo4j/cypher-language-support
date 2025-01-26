@@ -1,5 +1,6 @@
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
+import { _internalFeatureFlags } from '../featureFlags';
 import {
   emptyResult,
   signatureHelp,
@@ -21,6 +22,14 @@ export function testSignatureHelp(
 }
 
 describe('Procedures signature help', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
   const procedure = dbSchema.procedures['cypher 5'][procedureName];
@@ -254,6 +263,14 @@ describe('Procedures signature help', () => {
 });
 
 describe('Functions signature help', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
   const fn = dbSchema.functions['cypher 5'][functionName];

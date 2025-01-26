@@ -3,10 +3,19 @@ import {
   CompletionItemTag,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
+import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('function invocations', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   const dbSchema: DbSchema = testData.mockSchema;
   const functions = dbSchema.functions;
 

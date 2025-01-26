@@ -1,7 +1,16 @@
+import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Procedures semantic validation spec', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   test('Syntax validation warns on deprecated procedure when database can be contacted', () => {
     const query = `CALL db.create.setVectorProperty()`;
     expect(

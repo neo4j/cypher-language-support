@@ -3,6 +3,14 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   test('Semantic analysis is dependant on cypher version', () => {
     const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
