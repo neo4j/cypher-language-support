@@ -65,16 +65,12 @@ export function wrappedSemanticAnalysis(
       });
     }
 
-    const validCypherVersions = ['CYPHER 5', 'CYPHER 25'];
     let cypherVersion = 'CYPHER 5';
     const defaultVersion = dbSchema.defaultLanguage?.toUpperCase();
 
-    if (parsedVersion && validCypherVersions.includes(parsedVersion)) {
+    if (parsedVersion) {
       cypherVersion = parsedVersion;
-    } else if (
-      dbSchema.defaultLanguage &&
-      validCypherVersions.includes(defaultVersion)
-    ) {
+    } else if (dbSchema.defaultLanguage) {
       cypherVersion = defaultVersion;
     }
     const semanticErrorsResult = analyzeQuery(

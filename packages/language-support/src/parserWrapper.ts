@@ -432,7 +432,12 @@ class CypherVersionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
-      this.cypherVersion = `CYPHER ${ctx.getText()}` as CypherVersion;
+      this.cypherVersion =
+        ctx.getText() === '5'
+          ? 'CYPHER 5'
+          : ctx.getText() === '25'
+          ? 'CYPHER 25'
+          : undefined;
     }
   }
 }
