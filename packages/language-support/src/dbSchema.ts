@@ -1,4 +1,4 @@
-import { Neo4jFunction, Neo4jProcedure } from './types';
+import { CypherVersion, Neo4jFunction, Neo4jProcedure } from './types';
 
 export interface DbSchema {
   labels?: string[];
@@ -11,4 +11,5 @@ export interface DbSchema {
   propertyKeys?: string[];
   procedures?: Record<string, Neo4jProcedure>;
   functions?: Record<string, Neo4jFunction>;
+  defaultLanguage?: CypherVersion;
 }

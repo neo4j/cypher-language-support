@@ -3,6 +3,217 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
+  test('Semantic analysis is dependant on cypher version', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 39,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 38,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message: 'Type mismatch: expected Map but was Node',
+        offsets: {
+          end: 39,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 38,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Semantic analysis defaults to cypher 5 when no default version is given, and no version is given in query', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 39,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 38,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 29,
+          start: 28,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 28,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  //TODO: Maybe this should actually yield a warning - to be fixed in follow-up, ignoring for now
+  test('Semantic analysis defaults to cypher 5 when faulty version is given', () => {
+    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 800 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+  });
+
+  test('Semantic analysis uses default language if no language is defined in query', () => {
+    const query1 = 'MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({
+      query: query1,
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
+    });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message: 'Type mismatch: expected Map but was Node',
+        offsets: {
+          end: 29,
+          start: 28,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 28,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message: 'Type mismatch: expected Map but was Node',
+        offsets: {
+          end: 39,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 38,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('In-query version takes priority for semantic analysis even if defaultLanguage is defined', () => {
+    const query1 = 'CYPHER 5 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics1 = getDiagnosticsForQuery({
+      query: query1,
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
+    });
+    const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 38,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 38,
+            line: 0,
+          },
+          start: {
+            character: 37,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message: 'Type mismatch: expected Map but was Node',
+        offsets: {
+          end: 39,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 38,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Does not trigger semantic errors when there are syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 

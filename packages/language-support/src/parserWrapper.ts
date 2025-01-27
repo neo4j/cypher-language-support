@@ -7,6 +7,7 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
+  CypherVersionContext,
   default as CypherParser,
   FunctionNameContext,
   LabelNameContext,
@@ -30,6 +31,7 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
+import { CypherVersion } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -44,6 +46,7 @@ export interface ParsedStatement {
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  cypherVersion?: CypherVersion;
 }
 
 export interface ParsingResult {
@@ -173,8 +176,14 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
+      const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(tokens);
-      parser._parseListeners = [labelsCollector, variableFinder, methodsFinder];
+      parser._parseListeners = [
+        labelsCollector,
+        variableFinder,
+        methodsFinder,
+        cypherVersionCollector,
+      ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -203,6 +212,7 @@ export function createParsingResult(query: string): ParsingResult {
         collectedVariables: variableFinder.variables,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        cypherVersion: cypherVersionCollector.cypherVersion,
       };
     });
 
@@ -398,6 +408,35 @@ class MethodsCollector extends ParseTreeListener {
       } else {
         this.procedures.push(result);
       }
+    }
+  }
+}
+
+class CypherVersionCollector extends ParseTreeListener {
+  public cypherVersion: CypherVersion;
+
+  constructor() {
+    super();
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof CypherVersionContext) {
+      this.cypherVersion =
+        ctx.getText() === '5'
+          ? 'CYPHER 5'
+          : ctx.getText() === '25'
+          ? 'CYPHER 25'
+          : undefined;
     }
   }
 }

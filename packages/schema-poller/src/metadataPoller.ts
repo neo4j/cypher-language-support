@@ -105,6 +105,13 @@ export class MetadataPoller {
           this.dbSchema.aliasNames = result.data.databases.flatMap(
             (db) => db.aliases ?? [],
           );
+          const dbs = result.data.databases;
+          const currentDb = dbs.find(
+            (db) => db.name === this.connection.currentDb,
+          );
+          if (currentDb) {
+            this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
+          }
         }
       },
     });

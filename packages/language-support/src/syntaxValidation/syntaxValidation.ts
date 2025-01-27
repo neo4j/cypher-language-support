@@ -292,6 +292,7 @@ export function lintCypherQuery(
         const { notifications, errors } = wrappedSemanticAnalysis(
           cmd.statement,
           dbSchema,
+          current.cypherVersion,
         );
 
         // This contains both the syntax and the semantic errors
