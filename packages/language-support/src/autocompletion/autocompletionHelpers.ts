@@ -5,7 +5,6 @@ export function shouldAutoCompleteYield(query: string, offset: number) {
   if (yieldStart >= 0) {
     const precedingText = text.slice(yieldStart, offset);
     return precedingText.toLowerCase() === yieldTriggerPhrase;
-  } else {
-    return false;
   }
+  return false;
 }
