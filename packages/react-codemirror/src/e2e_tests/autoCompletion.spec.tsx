@@ -194,6 +194,44 @@ test('can complete rel types', async ({ page, mount }) => {
   await expect(component).toContainText('MATCH (n)-[:KNOWS');
 });
 
+test('can complete YIELD clauses without manual trigger', async ({ page, mount }) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        procedures: testData.mockSchema.procedures,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('CALL dbms.components() YIELD ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('edition').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('CALL dbms.components() YIELD edition');
+});
+
+test('automatic yield trigger is not case sensitive', async ({ page, mount }) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        procedures: testData.mockSchema.procedures,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('CALL dbms.components() yIeLd ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('edition').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('CALL dbms.components() yIeLd edition');
+});
+
 test('can complete functions', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
