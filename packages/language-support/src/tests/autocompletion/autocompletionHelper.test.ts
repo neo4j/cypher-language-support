@@ -2,12 +2,12 @@ import { shouldAutoCompleteYield } from '../../autocompletion/autocompletionHelp
 
 test('shouldAutoCompleteYield does not produce false negatives', () => {
   const query = 'CALL dbms.components() YIELD ';
-  expect(shouldAutoCompleteYield(query, 30)).toBe(true);
+  expect(shouldAutoCompleteYield(query, 29)).toBe(true);
 });
 
 test('shouldAutoCompleteYield is not case sensitive', () => {
   const query = 'CALL dbms.components() yIeLd ';
-  expect(shouldAutoCompleteYield(query, 30)).toBe(true);
+  expect(shouldAutoCompleteYield(query, 29)).toBe(true);
 });
 
 test('shouldAutoCompleteYield does not produce false positives', () => {
