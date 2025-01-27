@@ -32,6 +32,7 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
+import { CypherVersion } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -46,7 +47,7 @@ export interface ParsedStatement {
   collectedVariables: string[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
-  cypherVersion?: string;
+  cypherVersion?: CypherVersion;
 }
 
 export interface ParsingResult {
@@ -176,13 +177,13 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
-      const preparserFinder = new PreparserCollector();
+      const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [
         labelsCollector,
         variableFinder,
         methodsFinder,
-        preparserFinder,
+        cypherVersionCollector,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -212,7 +213,7 @@ export function createParsingResult(query: string): ParsingResult {
         collectedVariables: variableFinder.variables,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
-        cypherVersion: preparserFinder.cypherVersion,
+        cypherVersion: cypherVersionCollector.cypherVersion,
       };
     });
 
@@ -412,8 +413,8 @@ class MethodsCollector extends ParseTreeListener {
   }
 }
 
-class PreparserCollector extends ParseTreeListener {
-  public cypherVersion: string;
+class CypherVersionCollector extends ParseTreeListener {
+  public cypherVersion: CypherVersion;
 
   constructor() {
     super();
@@ -431,7 +432,7 @@ class PreparserCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
-      this.cypherVersion = ctx.getText();
+      this.cypherVersion = `CYPHER ${ctx.getText()}` as CypherVersion;
     }
   }
 }

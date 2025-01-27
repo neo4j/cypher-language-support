@@ -7,7 +7,7 @@ export type ReturnDescription = {
   isDeprecated: boolean;
 };
 
-export type CypherVersion = 'cypher 25' | 'cypher 5';
+export type CypherVersion = 'CYPHER 25' | 'CYPHER 5';
 
 // we could parse this string for better types in the future
 export type Neo4jStringType = string;

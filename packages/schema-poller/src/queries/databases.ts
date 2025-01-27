@@ -1,3 +1,4 @@
+import { CypherVersion } from '@neo4j-cypher/language-support/dist/types/types';
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
@@ -30,7 +31,7 @@ export type Database = {
   writer?: boolean;
   access?: string;
   constituents?: string[];
-  defaultLanguage?: string; // to be introduced
+  defaultLanguage?: CypherVersion;
 };
 
 /**
