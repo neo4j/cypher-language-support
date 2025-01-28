@@ -26,6 +26,7 @@ import CypherCmdParser, {
   RelationshipPatternContext,
   RightArrowContext,
   StatementsOrCommandsContext,
+  SubqueryClauseContext,
   WhereClauseContext,
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
@@ -311,6 +312,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.addSpace();
     }
     this.visit(ctx.RCURLY());
+  };
+
+  visitSubqueryClause = (ctx: SubqueryClauseContext) => {
+    this.visitIfNotNull(ctx.OPTIONAL());
+    this.visit(ctx.CALL());
+    this.visitIfNotNull(ctx.subqueryScope());
+    this.addSpace();
+    this.visit(ctx.LCURLY());
+    this.addIndentation();
+    this.breakLine();
+    this.visit(ctx.regularQuery());
+    this.breakLine();
+    this.removeIndentation();
+    this.visit(ctx.RCURLY());
+    this.breakLine();
+    this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
   };
 
   // Handled separately because we want ON CREATE before ON MATCH

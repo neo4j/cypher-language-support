@@ -64,6 +64,19 @@ RETURN map`;
     const expected = `RETURN split('original', 'i')`;
     expect(formatQuery(query)).toEqual(expected);
   });
+
+  test('should format call subqueries', () => {
+    const query = `UNWIND range(1,100) as _ CALL { MATCH (source:object)
+  MATCH (target:object) RETURN source, target } RETURN count('*')`;
+    const expected = `UNWIND range(1, 100) AS _
+CALL {
+  MATCH (source:object)
+  MATCH (target:object)
+  RETURN source, target
+}
+RETURN count('*')`;
+    expect(formatQuery(query)).toEqual(expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
