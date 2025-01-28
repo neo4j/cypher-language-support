@@ -322,6 +322,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
   };
 
+  // Handled separately because it wants indentation and line breaks
   visitSubqueryClause = (ctx: SubqueryClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
     this.visit(ctx.CALL());
