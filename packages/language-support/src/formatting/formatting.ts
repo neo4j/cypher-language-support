@@ -233,7 +233,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addCommentsAfter(node);
   };
 
-  // Handled separately because the dollar should not
+  // Handled separately because the dollar should not be treated
+  // as an operator
   visitParameter = (ctx: ParameterContext) => {
     this.visitTerminalRaw(ctx.DOLLAR());
     this.visit(ctx.parameterName());
