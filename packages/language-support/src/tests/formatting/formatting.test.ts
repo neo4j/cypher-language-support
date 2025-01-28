@@ -75,7 +75,7 @@ RETURN map`;
   test('no padding space within function call parentheses', () => {
     const query = `RETURN split( 'original', 'i' )`;
     const expected = `RETURN split('original', 'i')`;
-    expect(formatQuery(query)).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 
   test('should format call subqueries', () => {
@@ -88,7 +88,7 @@ CALL {
   RETURN source, target
 }
 RETURN count('*')`;
-    expect(formatQuery(query)).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 
   test('should format call subqueries with ()', () => {
@@ -96,7 +96,7 @@ RETURN count('*')`;
     const expected = `CALL () {
   RETURN 'hello' AS innerReturn
 }`;
-    expect(formatQuery(query)).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 });
 
@@ -260,7 +260,7 @@ AS Rand, $pArAm AS MAP RETURN Rand, MAP.property_key, count(N)`;
     const expected = `CREATE (N:Label {Prop: 0})
 WITH N, RAND() AS Rand, $pArAm AS MAP
 RETURN Rand, MAP.property_key, count(N)`;
-    expect(formatQuery(query)).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 });
 
@@ -274,6 +274,6 @@ describe('various edgecases', () => {
   test('should not add space for parameter access', () => {
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
-    expect(formatQuery(query)).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 });
