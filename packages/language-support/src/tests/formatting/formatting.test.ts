@@ -58,6 +58,12 @@ RETURN length(p)`;
 RETURN map`;
     expect(formatQuery(query)).toEqual(expected);
   });
+
+  test('no padding space within function call parentheses', () => {
+    const query = `RETURN split( 'original', 'i' )`;
+    const expected = `RETURN split('original', 'i')`;
+    expect(formatQuery(query)).toEqual(expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
