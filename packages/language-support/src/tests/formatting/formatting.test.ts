@@ -240,6 +240,15 @@ RETURN emptyList`;
     const expected = 'RETURN -1, -2, -3';
     expect(formatQuery(query)).toEqual(expected);
   });
+
+  test('param example', () => {
+    const query = `CREATE (N:Label {Prop: 0}) WITH N, RAND()
+AS Rand, $pArAm AS MAP RETURN Rand, MAP.property_key, count(N)`;
+    const expected = `CREATE (N:Label {Prop: 0})
+WITH N, RAND() AS Rand, $pArAm AS MAP
+RETURN Rand, MAP.property_key, count(N)`;
+    expect(formatQuery(query)).toEqual(expected);
+  });
 });
 
 describe('various edgecases', () => {

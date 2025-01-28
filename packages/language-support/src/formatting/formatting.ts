@@ -22,6 +22,7 @@ import CypherCmdParser, {
   MergeClauseContext,
   NodePatternContext,
   NumberLiteralContext,
+  ParameterContext,
   PropertyContext,
   RelationshipPatternContext,
   RightArrowContext,
@@ -230,6 +231,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.buffer.push(result);
     this.addCommentsAfter(node);
+  };
+
+  // Handled separately because the dollar should not
+  visitParameter = (ctx: ParameterContext) => {
+    this.visitTerminalRaw(ctx.DOLLAR());
+    this.visit(ctx.parameterName());
   };
 
   // Literals have casing rules, see
