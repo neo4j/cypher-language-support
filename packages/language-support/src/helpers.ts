@@ -213,11 +213,11 @@ export function resolveCypherVersion(
   if (_internalFeatureFlags.cypher25) {
     const cypherVersion: CypherVersion =
       parsedVersion ??
-      (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'cypher 5');
+      (dbSchema.defaultLanguage ? dbSchema.defaultLanguage : 'CYPHER 5');
 
     return cypherVersion;
   } else {
-    return 'cypher 5';
+    return 'CYPHER 5';
   }
 }
 

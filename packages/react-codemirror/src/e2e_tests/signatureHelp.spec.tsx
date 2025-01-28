@@ -12,7 +12,7 @@ type TooltipExpectations = {
 };
 
 const importCsvProc =
-  testData.mockSchema.procedures['cypher 5']['apoc.import.csv'];
+  testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'];
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -87,9 +87,9 @@ test('Signature help shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      testData.mockSchema.procedures['cypher 5']['apoc.import.csv']
+      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv']
         .argumentDescription[0].description,
-      testData.mockSchema.procedures['cypher 5']['apoc.import.csv'].description,
+      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'].description,
     ],
   });
 });
@@ -395,7 +395,7 @@ test('Signature help depends on the Cypher version', async ({
     <CypherEditor
       schema={{
         functions: {
-          'cypher 5': {
+          'CYPHER 5': {
             cypher5Function: {
               ...testData.emptyFunction,
               argumentDescription: [
@@ -409,7 +409,7 @@ test('Signature help depends on the Cypher version', async ({
               name: 'cypher5Function',
             },
           },
-          'cypher 25': {
+          'CYPHER 25': {
             cypher25Function: {
               ...testData.emptyFunction,
               argumentDescription: [

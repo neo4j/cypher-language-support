@@ -176,13 +176,13 @@ export function createParsingResult(query: string): ParsingResult {
       const labelsCollector = new LabelAndRelTypesCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
-      const preparserFinder = new PreparserCollector();
+      const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(tokens);
       parser._parseListeners = [
         labelsCollector,
         variableFinder,
         methodsFinder,
-        preparserFinder,
+        cypherVersionCollector,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -212,7 +212,7 @@ export function createParsingResult(query: string): ParsingResult {
         collectedVariables: variableFinder.variables,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
-        cypherVersion: preparserFinder.cypherVersion,
+        cypherVersion: cypherVersionCollector.cypherVersion,
       };
     });
 
@@ -412,7 +412,7 @@ class MethodsCollector extends ParseTreeListener {
   }
 }
 
-class PreparserCollector extends ParseTreeListener {
+class CypherVersionCollector extends ParseTreeListener {
   public cypherVersion: CypherVersion;
 
   constructor() {
@@ -433,9 +433,9 @@ class PreparserCollector extends ParseTreeListener {
     if (ctx instanceof CypherVersionContext) {
       this.cypherVersion =
         ctx.getText() === '5'
-          ? 'cypher 5'
+          ? 'CYPHER 5'
           : ctx.getText() === '25'
-          ? 'cypher 25'
+          ? 'CYPHER 25'
           : undefined;
     }
   }

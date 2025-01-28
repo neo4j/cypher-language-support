@@ -194,12 +194,56 @@ test('can complete rel types', async ({ page, mount }) => {
   await expect(component).toContainText('MATCH (n)-[:KNOWS');
 });
 
+test('can complete YIELD clauses without manual trigger', async ({
+  page,
+  mount,
+}) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        procedures: testData.mockSchema.procedures,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('CALL dbms.components() YIELD ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('edition').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('CALL dbms.components() YIELD edition');
+});
+
+test('automatic yield trigger is not case sensitive', async ({
+  page,
+  mount,
+}) => {
+  const component = await mount(
+    <CypherEditor
+      schema={{
+        procedures: testData.mockSchema.procedures,
+      }}
+    />,
+  );
+
+  const textField = page.getByRole('textbox');
+
+  await textField.fill('CALL dbms.components() yIeLd ');
+
+  await page.locator('.cm-tooltip-autocomplete').getByText('edition').click();
+  await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
+
+  await expect(component).toContainText('CALL dbms.components() yIeLd edition');
+});
+
 test('can complete functions', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
         functions: {
-          'cypher 5': {
+          'CYPHER 5': {
             function123: {
               ...testData.emptyFunction,
               name: 'function123',
@@ -229,7 +273,7 @@ test('can complete procedures', async ({ page, mount }) => {
     <CypherEditor
       schema={{
         procedures: {
-          'cypher 5': {
+          'CYPHER 5': {
             'db.ping': { ...testData.emptyProcedure, name: 'db.ping' },
           },
         },
@@ -314,7 +358,7 @@ test('shows signature help information on auto-completion for procedures', async
 }) => {
   await mount(<CypherEditor schema={testData.mockSchema} />);
   const procName = 'apoc.periodic.iterate';
-  const procedure = testData.mockSchema.procedures['cypher 5'][procName];
+  const procedure = testData.mockSchema.procedures['CYPHER 5'][procName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('CALL apoc.periodic.');
@@ -332,7 +376,7 @@ test('shows signature help information on auto-completion for functions', async 
 }) => {
   await mount(<CypherEditor schema={testData.mockSchema} />);
   const fnName = 'apoc.coll.combinations';
-  const fn = testData.mockSchema.functions['cypher 5'][fnName];
+  const fn = testData.mockSchema.functions['CYPHER 5'][fnName];
 
   const textField = page.getByRole('textbox');
   await textField.fill('RETURN apoc.coll.');
@@ -354,8 +398,8 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
     <CypherEditor
       schema={{
         procedures: {
-          'cypher 5': {
-            [procName]: testData.mockSchema.procedures['cypher 5'][procName],
+          'CYPHER 5': {
+            [procName]: testData.mockSchema.procedures['CYPHER 5'][procName],
           },
         },
       }}
@@ -379,8 +423,8 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
     <CypherEditor
       schema={{
         functions: {
-          'cypher 5': {
-            [fnName]: testData.mockSchema.functions['cypher 5'][fnName],
+          'CYPHER 5': {
+            [fnName]: testData.mockSchema.functions['CYPHER 5'][fnName],
           },
         },
       }}
@@ -415,7 +459,7 @@ test('shows signature help information on auto-completion if description is not 
     <CypherEditor
       schema={{
         procedures: {
-          'cypher 5': {
+          'CYPHER 5': {
             'db.ping': {
               ...testData.emptyProcedure,
               description: 'foo',
@@ -443,7 +487,7 @@ test('shows signature help information on auto-completion if signature is not em
     <CypherEditor
       schema={{
         procedures: {
-          'cypher 5': {
+          'CYPHER 5': {
             'db.ping': {
               ...testData.emptyProcedure,
               description: '',
@@ -468,13 +512,13 @@ test('completions depend on the Cypher version', async ({ page, mount }) => {
     <CypherEditor
       schema={{
         functions: {
-          'cypher 5': {
+          'CYPHER 5': {
             cypher5Function: {
               ...testData.emptyFunction,
               name: 'cypher5Function',
             },
           },
-          'cypher 25': {
+          'CYPHER 25': {
             cypher25Function: {
               ...testData.emptyFunction,
               name: 'cypher25Function',

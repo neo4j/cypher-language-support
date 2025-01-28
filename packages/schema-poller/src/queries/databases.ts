@@ -1,4 +1,4 @@
-import { CypherVersion } from '@neo4j-cypher/language-support/dist/types';
+import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 

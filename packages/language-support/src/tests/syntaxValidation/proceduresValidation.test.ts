@@ -185,7 +185,7 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            'cypher 5': {
+            'CYPHER 5': {
               mockProcedure: {
                 name: 'mockProcedure',
                 description:
@@ -513,7 +513,7 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            'cypher 5': {
+            'CYPHER 5': {
               mockProcedure: {
                 name: 'mockProcedure',
                 description:
@@ -554,7 +554,7 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            'cypher 5': {
+            'CYPHER 5': {
               mockProcedure: {
                 name: 'mockProcedure',
                 description:
@@ -848,7 +848,7 @@ meaning that it expects at least 1 argument of type ANY
         dbSchema: {
           functions: {},
           procedures: {
-            'cypher 5': {
+            'CYPHER 5': {
               'apoc.meta.graphSample': {
                 name: 'apoc.meta.graphSample',
                 description:

@@ -32,7 +32,7 @@ describe('Procedures signature help', () => {
 
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
-  const procedure = dbSchema.procedures['cypher 5'][procedureName];
+  const procedure = dbSchema.procedures['CYPHER 5'][procedureName];
   const signature = toSignatureInformation(procedure);
 
   function expectedArgIndex(i: number): SignatureHelp {
@@ -241,10 +241,10 @@ describe('Procedures signature help', () => {
     const dbSchema = {
       functions: {},
       procedures: {
-        'cypher 5': {
+        'CYPHER 5': {
           [procedureName]: procedure,
         },
-        'cypher 25': {},
+        'CYPHER 25': {},
       },
     };
 
@@ -273,7 +273,7 @@ describe('Functions signature help', () => {
 
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
-  const fn = dbSchema.functions['cypher 5'][functionName];
+  const fn = dbSchema.functions['CYPHER 5'][functionName];
   const signature = toSignatureInformation(fn);
 
   function expectedArgIndex(i: number): SignatureHelp {
@@ -461,10 +461,10 @@ describe('Functions signature help', () => {
     const dbSchema = {
       procedures: {},
       functions: {
-        'cypher 5': {
+        'CYPHER 5': {
           [functionName]: fn,
         },
-        'cypher 25': {},
+        'CYPHER 25': {},
       },
     };
 

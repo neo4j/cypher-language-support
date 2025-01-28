@@ -1,5 +1,5 @@
+import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
-  CypherVersion,
   cypherVersions,
   DbSchema,
   Neo4jFunction,
@@ -121,8 +121,7 @@ export class MetadataPoller {
             (db) => db.name === this.connection.currentDb,
           );
           if (currentDb) {
-            this.dbSchema.defaultLanguage =
-              currentDb?.defaultLanguage?.toLowerCase();
+            this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
           }
         }
       },
@@ -166,7 +165,7 @@ export class MetadataPoller {
       : [undefined];
 
     versions.forEach((cypherVersion) => {
-      const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'cypher 5';
+      const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'CYPHER 5';
       this.procedures[effectiveCypherVersion] = new QueryPoller({
         connection,
         queryArgs: listProcedures({

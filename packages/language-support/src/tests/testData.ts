@@ -11,7 +11,7 @@ function asNeo4jProcedures<T extends Record<string, Neo4jProcedure>>(obj: T) {
 
 const mockSchema: DbSchema = {
   functions: {
-    'cypher 5': asNeo4jFunctions({
+    'CYPHER 5': asNeo4jFunctions({
       abs: {
         name: 'abs',
         category: 'Numeric',
@@ -11895,7 +11895,7 @@ const mockSchema: DbSchema = {
         deprecatedBy: null,
       },
     }),
-    'cypher 25': asNeo4jFunctions({
+    'CYPHER 25': asNeo4jFunctions({
       abs: {
         name: 'abs',
         category: 'Numeric',
@@ -23668,7 +23668,7 @@ const mockSchema: DbSchema = {
     }),
   },
   procedures: {
-    'cypher 5': asNeo4jProcedures({
+    'CYPHER 5': asNeo4jProcedures({
       'apoc.algo.aStar': {
         name: 'apoc.algo.aStar',
         description:
@@ -72132,7 +72132,7 @@ const mockSchema: DbSchema = {
         },
       },
     }),
-    'cypher 25': asNeo4jProcedures({
+    'CYPHER 25': asNeo4jProcedures({
       'apoc.algo.aStar': {
         name: 'apoc.algo.aStar',
         description:

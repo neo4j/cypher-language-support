@@ -93,7 +93,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.functions['cypher 5']['abs'],
+          testData.mockSchema.functions['CYPHER 5']['abs'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -113,7 +113,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -133,7 +133,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -153,7 +153,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -175,7 +175,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['cypher 5']['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -202,7 +202,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.functions['cypher 5']['apoc.create.uuid'],
+          testData.mockSchema.functions['CYPHER 5']['apoc.create.uuid'],
         ) as vscode.SignatureInformation,
       ],
     };

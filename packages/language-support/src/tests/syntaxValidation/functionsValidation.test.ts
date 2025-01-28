@@ -743,7 +743,7 @@ describe('Functions semantic validation spec', () => {
   test('Deprecations and removals for functions are based on the cypher version', () => {
     const dbSchema = {
       functions: {
-        'cypher 5': {
+        'CYPHER 5': {
           'apoc.create.uuid': {
             name: 'apoc.create.uuid',
             category: '',
@@ -764,7 +764,7 @@ describe('Functions semantic validation spec', () => {
             deprecatedBy: 'Neo4j randomUUID() function',
           },
         },
-        'cypher 25': {
+        'CYPHER 25': {
           'apoc.create.uuid': {
             name: 'apoc.create.uuid',
             category: '',

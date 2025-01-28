@@ -58,7 +58,7 @@ connection.onInitialize(() => {
       // Tell the client what features does the server support
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ['.', ':', '{', '$', ')'],
+        triggerCharacters: ['.', ':', '{', '$', ')', ' '],
       },
       semanticTokensProvider: {
         documentSelector: [{ language: 'cypher' }],

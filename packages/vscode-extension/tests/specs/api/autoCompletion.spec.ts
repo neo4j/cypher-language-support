@@ -128,9 +128,9 @@ suite('Auto completion spec', () => {
         kind: vscode.CompletionItemKind.Method,
         detail:
           '(procedure) ' +
-          procedures['cypher 5']['apoc.trigger.resume'].signature,
+          procedures['CYPHER 5']['apoc.trigger.resume'].signature,
         documentation:
-          procedures['cypher 5']['apoc.trigger.resume'].description,
+          procedures['CYPHER 5']['apoc.trigger.resume'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
@@ -138,8 +138,8 @@ suite('Auto completion spec', () => {
         kind: vscode.CompletionItemKind.Method,
         detail:
           '(procedure) ' +
-          procedures['cypher 5']['apoc.trigger.start'].signature,
-        documentation: procedures['cypher 5']['apoc.trigger.start'].description,
+          procedures['CYPHER 5']['apoc.trigger.start'].signature,
+        documentation: procedures['CYPHER 5']['apoc.trigger.start'].description,
       },
     ];
     await testCompletionContains({
@@ -156,8 +156,8 @@ suite('Auto completion spec', () => {
         label: 'uuid',
         kind: vscode.CompletionItemKind.Function,
         detail:
-          '(function) ' + functions['cypher 5']['apoc.create.uuid'].signature,
-        documentation: functions['cypher 5']['apoc.create.uuid'].description,
+          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
@@ -165,9 +165,9 @@ suite('Auto completion spec', () => {
         kind: vscode.CompletionItemKind.Function,
         detail:
           '(function) ' +
-          functions['cypher 5']['apoc.create.uuidBase64'].signature,
+          functions['CYPHER 5']['apoc.create.uuidBase64'].signature,
         documentation:
-          functions['cypher 5']['apoc.create.uuidBase64'].description,
+          functions['CYPHER 5']['apoc.create.uuidBase64'].description,
       },
     ];
     await testCompletionContains({
@@ -188,8 +188,8 @@ suite('Auto completion spec', () => {
         label: 'apoc.create.uuid',
         kind: vscode.CompletionItemKind.Function,
         detail:
-          '(function) ' + functions['cypher 5']['apoc.create.uuid'].signature,
-        documentation: functions['cypher 5']['apoc.create.uuid'].description,
+          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
     ];

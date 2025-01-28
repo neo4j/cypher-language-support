@@ -52,7 +52,7 @@ useCompletionRule: USE;
 serverCompletionRule: SERVER;
 
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
-unescapedLabelSymbolicNameString: 
+unescapedSymbolicNameString: 
     preparserKeyword 
     | HISTORY
     | CLEAR
