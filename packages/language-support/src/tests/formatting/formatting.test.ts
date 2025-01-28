@@ -257,4 +257,10 @@ describe('various edgecases', () => {
     const expectedMultiquery = 'RETURN 1;\nRETURN 2;\nRETURN 3;';
     expect(formatQuery(multiquery)).toEqual(expectedMultiquery);
   });
+
+  test('should not add space for parameter access', () => {
+    const query = 'RETURN $param';
+    const expected = 'RETURN $param';
+    expect(formatQuery(query)).toEqual(expected);
+  });
 });
