@@ -77,6 +77,14 @@ CALL {
 RETURN count('*')`;
     expect(formatQuery(query)).toEqual(expected);
   });
+
+  test('should format call subqueries with ()', () => {
+    const query = `CALL () { RETURN 'hello' AS innerReturn }`;
+    const expected = `CALL () {
+  RETURN 'hello' AS innerReturn
+}`;
+    expect(formatQuery(query)).toEqual(expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
