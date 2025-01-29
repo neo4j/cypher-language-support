@@ -7,8 +7,11 @@ import {
 import type { ParserRuleContext } from 'antlr4-c3';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
-import { isCommentOpener } from '../helpers';
+import CypherParser, {
+  CypherOptionsContext,
+  StatementOrCommandContext,
+} from '../generated-parser/CypherCmdParser';
+import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
@@ -76,7 +79,10 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
           this.errors.push(diagnostic);
         }
-      } else {
+      } else if (
+        ctx instanceof StatementOrCommandContext ||
+        findParent(ctx, (c) => c instanceof CypherOptionsContext)
+      ) {
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,

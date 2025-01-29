@@ -1090,4 +1090,46 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([]);
   });
+
+  test('Fails correctly for cypher preparser thingys', () => {
+    const query = `EXPLAN`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['A'],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Fails correctly for cypher preparser thingys with cypher opts', () => {
+    const query = `cypher runtime:compiled EXPLAIN MATCH (n) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: ['A'],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  // test('Fails correctly for cypher preparser thingys with cypher opts v2', () => {
+  //   const query = `cypher runtime = compiled EXPLAN MATCH (n) RETURN n`;
+
+  //   expect(
+  //     getDiagnosticsForQuery({
+  //       query,
+  //       dbSchema: {
+  //         labels: ['A'],
+  //         relationshipTypes: [],
+  //       },
+  //     }),
+  //   ).toEqual([]);
+  // });
 });

@@ -43,6 +43,8 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_parameter]: 'a parameter',
     [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
+    [CypherParser.RULE_preparserOption]:
+      'a valid preparser option (CYPHER, EXPLAIN, PROFILE)',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(_internalFeatureFlags.consoleCommands
