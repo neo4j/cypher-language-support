@@ -14,10 +14,12 @@ import {
   MergeClauseContext,
   NodePatternContext,
   NumberLiteralContext,
+  ParameterContext,
   PropertyContext,
   RelationshipPatternContext,
   RightArrowContext,
   StatementsOrCommandsContext,
+  SubqueryClauseContext,
   WhereClauseContext,
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
@@ -225,6 +227,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addCommentsAfter(node);
   };
 
+  // Handled separately because the dollar should not be treated
+  // as an operator
+  visitParameter = (ctx: ParameterContext) => {
+    this.visitTerminalRaw(ctx.DOLLAR());
+    this.visit(ctx.parameterName());
+  };
+
   // Literals have casing rules, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-casing
   visitBooleanLiteral = (ctx: BooleanLiteralContext) => {
@@ -305,6 +314,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.addSpace();
     }
     this.visit(ctx.RCURLY());
+  };
+
+  // Handled separately because it wants indentation and line breaks
+  visitSubqueryClause = (ctx: SubqueryClauseContext) => {
+    this.visitIfNotNull(ctx.OPTIONAL());
+    this.visit(ctx.CALL());
+    this.visitIfNotNull(ctx.subqueryScope());
+    this.addSpace();
+    this.visit(ctx.LCURLY());
+    this.addIndentation();
+    this.breakLine();
+    this.visit(ctx.regularQuery());
+    this.breakLine();
+    this.removeIndentation();
+    this.visit(ctx.RCURLY());
+    this.breakLine();
+    this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
   };
 
   // Handled separately because we want ON CREATE before ON MATCH

@@ -71,6 +71,33 @@ RETURN length(p)`;
 RETURN map`;
     verifyFormatting(query, expected);
   });
+
+  test('no padding space within function call parentheses', () => {
+    const query = `RETURN split( 'original', 'i' )`;
+    const expected = `RETURN split('original', 'i')`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should format call subqueries', () => {
+    const query = `UNWIND range(1,100) as _ CALL { MATCH (source:object)
+  MATCH (target:object) RETURN source, target } RETURN count('*')`;
+    const expected = `UNWIND range(1, 100) AS _
+CALL {
+  MATCH (source:object)
+  MATCH (target:object)
+  RETURN source, target
+}
+RETURN count('*')`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should format call subqueries with ()', () => {
+    const query = `CALL () { RETURN 'hello' AS innerReturn }`;
+    const expected = `CALL () {
+  RETURN 'hello' AS innerReturn
+}`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
@@ -226,6 +253,15 @@ RETURN emptyList`;
     const expected = 'RETURN -1, -2, -3';
     verifyFormatting(query, expected);
   });
+
+  test('parameter casing example', () => {
+    const query = `CREATE (N:Label {Prop: 0}) WITH N, RAND()
+AS Rand, $pArAm AS MAP RETURN Rand, MAP.property_key, count(N)`;
+    const expected = `CREATE (N:Label {Prop: 0})
+WITH N, RAND() AS Rand, $pArAm AS MAP
+RETURN Rand, MAP.property_key, count(N)`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
@@ -233,5 +269,11 @@ describe('various edgecases', () => {
     const multiquery = 'RETURN 1; RETURN 2; RETURN 3;';
     const expectedMultiquery = 'RETURN 1;\nRETURN 2;\nRETURN 3;';
     verifyFormatting(multiquery, expectedMultiquery);
+  });
+
+  test('should not add space for parameter access', () => {
+    const query = 'RETURN $param';
+    const expected = 'RETURN $param';
+    verifyFormatting(query, expected);
   });
 });
