@@ -254,7 +254,7 @@ RETURN emptyList`;
     verifyFormatting(query, expected);
   });
 
-  test('param example', () => {
+  test('parameter casing example', () => {
     const query = `CREATE (N:Label {Prop: 0}) WITH N, RAND()
 AS Rand, $pArAm AS MAP RETURN Rand, MAP.property_key, count(N)`;
     const expected = `CREATE (N:Label {Prop: 0})
