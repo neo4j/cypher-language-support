@@ -1,5 +1,8 @@
 import { CypherVersion, Neo4jFunction, Neo4jProcedure } from './types';
 
+export type Registry<T> = Record<string, T>;
+type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
+
 export interface DbSchema {
   labels?: string[];
   relationshipTypes?: string[];
@@ -9,7 +12,7 @@ export interface DbSchema {
   roleNames?: string[];
   parameters?: Record<string, unknown>;
   propertyKeys?: string[];
-  procedures?: Partial<Record<CypherVersion, Record<string, Neo4jProcedure>>>;
-  functions?: Partial<Record<CypherVersion, Record<string, Neo4jFunction>>>;
+  procedures?: ScopedRegistry<Neo4jProcedure>;
+  functions?: ScopedRegistry<Neo4jFunction>;
   defaultLanguage?: CypherVersion;
 }

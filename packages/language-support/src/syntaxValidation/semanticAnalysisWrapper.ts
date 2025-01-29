@@ -3,8 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
-import { CypherVersion, cypherVersions } from '../types';
+import { DbSchema, Registry } from '../dbSchema';
+import {
+  CypherVersion,
+  cypherVersions,
+  Neo4jFunction,
+  Neo4jProcedure,
+} from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
@@ -29,7 +34,12 @@ export interface SemanticAnalysisElement {
   };
 }
 
-let previousSchema: DbSchema | undefined = undefined;
+const previousResolvers: {
+  [cypherVersion: CypherVersion]: {
+    functions: Registry<Neo4jFunction>;
+    procedures: Registry<Neo4jProcedure>;
+  };
+} = {};
 
 function copySettingSeverity(
   elements: SemanticAnalysisElement[],
@@ -50,10 +60,14 @@ function copySettingSeverity(
 }
 
 function updateSignatureResolvers(dbSchema: DbSchema) {
-  if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
-    previousSchema = dbSchema;
-
-    cypherVersions.forEach((cypherVersion) => {
+  cypherVersions.forEach((cypherVersion) => {
+    const previousResolver = previousResolvers?.[cypherVersion];
+    const currentResolver = {
+      procedures: dbSchema?.procedures?.[cypherVersion],
+      functions: dbSchema?.functions?.[cypherVersion],
+    };
+    if (JSON.stringify(previousResolver) !== JSON.stringify(currentResolver)) {
+      previousResolvers[cypherVersion] = currentResolver;
       const procedures = Object.values(
         dbSchema.procedures?.[cypherVersion] ?? {},
       );
@@ -67,9 +81,10 @@ function updateSignatureResolvers(dbSchema: DbSchema) {
         },
         cypherVersion,
       );
-    });
-  }
+    }
+  });
 }
+
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
