@@ -8,12 +8,15 @@ import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('Procedures auto-completion', () => {
+  let isCypher25: boolean;
+
   beforeAll(() => {
+    isCypher25 = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = true;
   });
 
   afterAll(() => {
-    _internalFeatureFlags.cypher25 = false;
+    _internalFeatureFlags.cypher25 = isCypher25;
   });
 
   const procedures = testData.mockSchema.procedures;

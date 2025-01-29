@@ -49,40 +49,37 @@ function copySettingSeverity(
   }));
 }
 
+function updateSignatureResolvers(dbSchema: DbSchema) {
+  if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
+    previousSchema = dbSchema;
+
+    cypherVersions.forEach((cypherVersion) => {
+      const procedures = Object.values(
+        dbSchema.procedures?.[cypherVersion] ?? {},
+      );
+      const functions = Object.values(
+        dbSchema.functions?.[cypherVersion] ?? {},
+      );
+      updateSignatureResolver(
+        {
+          procedures: procedures,
+          functions: functions,
+        },
+        cypherVersion,
+      );
+    });
+  }
+}
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
   parsedVersion?: CypherVersion,
 ): SemanticAnalysisResult {
   try {
-    if (JSON.stringify(dbSchema) !== JSON.stringify(previousSchema)) {
-      previousSchema = dbSchema;
+    updateSignatureResolvers(dbSchema);
 
-      cypherVersions.forEach((cypherVersion) => {
-        const procedures = Object.values(
-          dbSchema?.procedures?.[cypherVersion] ?? {},
-        );
-        const functions = Object.values(
-          dbSchema?.functions?.[cypherVersion] ?? {},
-        );
-        updateSignatureResolver(
-          {
-            procedures: procedures,
-            functions: functions,
-          },
-          cypherVersion,
-        );
-      });
-    }
-
-    let cypherVersion = 'CYPHER 5';
-    const defaultVersion = dbSchema.defaultLanguage?.toUpperCase();
-
-    if (parsedVersion) {
-      cypherVersion = parsedVersion;
-    } else if (dbSchema.defaultLanguage) {
-      cypherVersion = defaultVersion;
-    }
+    const defaultVersion = dbSchema?.defaultLanguage;
+    const cypherVersion = parsedVersion ?? defaultVersion ?? 'CYPHER 5';
     const semanticErrorsResult = analyzeQuery(
       query,
       cypherVersion.toLowerCase(),

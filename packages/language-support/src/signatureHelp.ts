@@ -206,12 +206,12 @@ export function signatureHelp(
         );
         if (method.methodType === MethodType.function) {
           result = toSignatureHelp(
-            dbSchema?.functions?.[cypherVersion] ?? {},
+            dbSchema.functions?.[cypherVersion] ?? {},
             method,
           );
         } else {
           result = toSignatureHelp(
-            dbSchema?.procedures?.[cypherVersion] ?? {},
+            dbSchema.procedures?.[cypherVersion] ?? {},
             method,
           );
         }

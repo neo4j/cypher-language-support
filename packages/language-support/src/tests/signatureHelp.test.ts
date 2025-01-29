@@ -22,12 +22,15 @@ export function testSignatureHelp(
 }
 
 describe('Procedures signature help', () => {
+  let isCypher25: boolean;
+
   beforeAll(() => {
+    isCypher25 = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = true;
   });
 
   afterAll(() => {
-    _internalFeatureFlags.cypher25 = false;
+    _internalFeatureFlags.cypher25 = isCypher25;
   });
 
   const dbSchema = testData.mockSchema;

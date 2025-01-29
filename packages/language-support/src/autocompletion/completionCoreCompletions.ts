@@ -103,7 +103,7 @@ const procedureReturnCompletions = (
   cypherVersion: CypherVersion,
 ): CompletionItem[] => {
   return (
-    dbSchema?.procedures?.[cypherVersion]?.[
+    dbSchema.procedures?.[cypherVersion]?.[
       procedureName
     ]?.returnDescription?.map((x) => {
       return { label: x.name, kind: CompletionItemKind.Variable };
@@ -120,7 +120,7 @@ const functionNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    dbSchema?.functions?.[cypherVersion] ?? {},
+    dbSchema.functions?.[cypherVersion] ?? {},
     'function',
   );
 
@@ -133,7 +133,7 @@ const procedureNameCompletions = (
   namespacedCompletion(
     candidateRule,
     tokens,
-    dbSchema?.procedures?.[cypherVersion] ?? {},
+    dbSchema.procedures?.[cypherVersion] ?? {},
     'procedure',
   );
 
@@ -796,7 +796,7 @@ function completeAliasName({
   ) {
     return [
       ...parameterSuggestions,
-      ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
+      ...(dbSchema.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
         insertText: backtickDbNameIfNeeded(aliasName),
@@ -861,7 +861,7 @@ function completeSymbolicName({
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
     const result = [
       ...parameterSuggestions,
-      ...(dbSchema?.userNames ?? []).map((userName) => ({
+      ...(dbSchema.userNames ?? []).map((userName) => ({
         label: userName,
         kind: CompletionItemKind.Value,
       })),
@@ -879,7 +879,7 @@ function completeSymbolicName({
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {
     return [
       ...parameterSuggestions,
-      ...(dbSchema?.roleNames ?? []).map((roleName) => ({
+      ...(dbSchema.roleNames ?? []).map((roleName) => ({
         label: roleName,
         kind: CompletionItemKind.Value,
       })),

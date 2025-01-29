@@ -100,7 +100,7 @@ export class MetadataPoller {
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
-    const isNewerNeo4j =
+    const supportsCypherAnnotation =
       _internalFeatureFlags.cypher25 ||
       databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
 
@@ -160,7 +160,7 @@ export class MetadataPoller {
       },
     });
 
-    const versions: (CypherVersion | undefined)[] = isNewerNeo4j
+    const versions: (CypherVersion | undefined)[] = supportsCypherAnnotation
       ? cypherVersions
       : [undefined];
 

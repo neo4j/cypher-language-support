@@ -47,7 +47,7 @@ export function listDatabases(): ExecuteQueryArgs<{
     map(record) {
       const obj = record.toObject();
       if (obj.defaultLanguage) {
-        obj.defaultLanguage = (obj.defaultLanguage as string).toLowerCase();
+        obj.defaultLanguage = (obj.defaultLanguage as string).toUpperCase();
       }
       return obj as Database;
     },
