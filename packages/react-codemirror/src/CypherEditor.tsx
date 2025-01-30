@@ -100,7 +100,6 @@ export interface CypherEditorProps {
   featureFlags?: {
     consoleCommands?: boolean;
     signatureInfoOnAutoCompletions?: boolean;
-    format?: boolean;
   };
   /**
    * The schema to use for autocompletion and linting.
@@ -280,22 +279,20 @@ export class CypherEditor extends Component<
    * Format Cypher query
    */
   format() {
-    if (this.props.featureFlags.format) {
-      const currentView = this.editorView.current;
-      const doc = currentView.state.doc.toString();
-      const { formattedString, newCursorPos } = formatQuery(
-        doc,
-        currentView.state.selection.main.anchor,
-      );
-      currentView.dispatch({
-        changes: {
-          from: 0,
-          to: doc.length,
-          insert: formattedString,
-        },
-        selection: { anchor: newCursorPos },
-      });
-    }
+    const currentView = this.editorView.current;
+    const doc = currentView.state.doc.toString();
+    const { formattedString, newCursorPos } = formatQuery(
+      doc,
+      currentView.state.selection.main.anchor,
+    );
+    currentView.dispatch({
+      changes: {
+        from: 0,
+        to: doc.length,
+        insert: formattedString,
+      },
+      selection: { anchor: newCursorPos },
+    });
   }
 
   /**
@@ -404,17 +401,15 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
-    if (this.props.featureFlags && this.props.featureFlags.format) {
-      extraKeybindings.push({
-        key: 'Ctrl-Shift-f',
-        mac: 'Alt-Shift-f',
-        preventDefault: true,
-        run: () => {
-          this.format()
-          return true;
-        },
-      })
-    }
+    extraKeybindings.push({
+      key: 'Ctrl-Shift-f',
+      mac: 'Alt-Shift-f',
+      preventDefault: true,
+      run: () => {
+        this.format();
+        return true;
+      },
+    });
 
     this.editorState.current = EditorState.create({
       extensions: [

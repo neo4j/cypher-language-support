@@ -117,7 +117,6 @@ export function App() {
               schema={schema}
               featureFlags={{
                 signatureInfoOnAutoCompletions: true,
-                format: true,
               }}
               ariaLabel="Cypher Editor"
             />
