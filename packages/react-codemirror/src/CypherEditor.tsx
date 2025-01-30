@@ -374,7 +374,6 @@ export class CypherEditor extends Component<
       showSignatureTooltipBelow,
       featureFlags: {
         consoleCommands: true,
-        format: true,
         ...featureFlags,
       },
       useLightVersion: false,
