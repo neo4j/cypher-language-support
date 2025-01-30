@@ -277,7 +277,7 @@ export class CypherEditor extends Component<
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
   /**
-   * Format query code
+   * Format Cypher query
    */
   format() {
     if (this.props.featureFlags.format) {
