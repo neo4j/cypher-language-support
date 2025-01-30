@@ -21,3 +21,4 @@ export type { CompletionItem, Neo4jFunction, Neo4jProcedure } from './types';
 export { CypherLexer, CypherParser };
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';
+export { formatQuery } from './formatting/formatting'
