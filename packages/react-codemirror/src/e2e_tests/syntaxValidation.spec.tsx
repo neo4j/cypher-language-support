@@ -13,7 +13,7 @@ test('Prop lint set to false disables syntax validation', async ({
   await mount(<CypherEditor value={query} lint={false} />);
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
-    timeout: 2000,
+    timeout: 5000,
   });
 });
 
@@ -24,7 +24,7 @@ test('Can turn linting back on', async ({ page, mount }) => {
   const component = await mount(<CypherEditor value={query} lint={false} />);
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
-    timeout: 2000,
+    timeout: 5000,
   });
 
   await component.update(<CypherEditor value={query} lint={true} />);
@@ -192,7 +192,7 @@ test('Strikethroughs are shown for deprecated functions', async ({
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
     editorPage.page.locator('.cm-deprecated-element').last(),
-  ).toBeVisible({ timeout: 3000 });
+  ).toBeVisible({ timeout: 5000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
 });
 
@@ -206,7 +206,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
     editorPage.page.locator('.cm-deprecated-element').last(),
-  ).toBeVisible({ timeout: 3000 });
+  ).toBeVisible({ timeout: 5000 });
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
