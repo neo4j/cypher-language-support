@@ -364,7 +364,7 @@ interface FormattingResultWithCursor {
 
 export function formatQuery(query: string): string;
 export function formatQuery(
-  query: string,
+  quer: string,
   cursorPosition: number,
 ): FormattingResultWithCursor;
 export function formatQuery(
