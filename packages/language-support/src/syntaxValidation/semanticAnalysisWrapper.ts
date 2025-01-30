@@ -4,12 +4,7 @@
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
-import {
-  CypherVersion,
-  cypherVersions,
-  Neo4jFunction,
-  Neo4jProcedure,
-} from '../types';
+import { CypherVersion, Neo4jFunction, Neo4jProcedure } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
@@ -59,30 +54,29 @@ function copySettingSeverity(
   }));
 }
 
-function updateSignatureResolvers(dbSchema: DbSchema) {
-  cypherVersions.forEach((cypherVersion) => {
-    const previousResolver = previousResolvers?.[cypherVersion];
-    const currentResolver = {
-      procedures: dbSchema?.procedures?.[cypherVersion],
-      functions: dbSchema?.functions?.[cypherVersion],
-    };
-    if (JSON.stringify(previousResolver) !== JSON.stringify(currentResolver)) {
-      previousResolvers[cypherVersion] = currentResolver;
-      const procedures = Object.values(
-        dbSchema.procedures?.[cypherVersion] ?? {},
-      );
-      const functions = Object.values(
-        dbSchema.functions?.[cypherVersion] ?? {},
-      );
-      updateSignatureResolver(
-        {
-          procedures: procedures,
-          functions: functions,
-        },
-        cypherVersion,
-      );
-    }
-  });
+function updateResolverForVersion(
+  dbSchema: DbSchema,
+  cypherVersion: CypherVersion,
+) {
+  const previousResolver = previousResolvers?.[cypherVersion];
+  const currentResolver = {
+    procedures: dbSchema?.procedures?.[cypherVersion],
+    functions: dbSchema?.functions?.[cypherVersion],
+  };
+  if (JSON.stringify(previousResolver) !== JSON.stringify(currentResolver)) {
+    previousResolvers[cypherVersion] = currentResolver;
+    const procedures = Object.values(
+      dbSchema?.procedures?.[cypherVersion] ?? {},
+    );
+    const functions = Object.values(dbSchema?.functions?.[cypherVersion] ?? {});
+    updateSignatureResolver(
+      {
+        procedures: procedures,
+        functions: functions,
+      },
+      cypherVersion,
+    );
+  }
 }
 
 export function wrappedSemanticAnalysis(
@@ -91,14 +85,10 @@ export function wrappedSemanticAnalysis(
   parsedVersion?: CypherVersion,
 ): SemanticAnalysisResult {
   try {
-    updateSignatureResolvers(dbSchema);
-
     const defaultVersion = dbSchema?.defaultLanguage;
     const cypherVersion = parsedVersion ?? defaultVersion ?? 'CYPHER 5';
-    const semanticErrorsResult = analyzeQuery(
-      query,
-      cypherVersion.toLowerCase(),
-    );
+    updateResolverForVersion(dbSchema, cypherVersion);
+    const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;
