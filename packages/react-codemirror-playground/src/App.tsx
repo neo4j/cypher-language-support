@@ -124,6 +124,7 @@ export function App() {
             <p
               onClick={() => editorRef.current.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
+              title={window.navigator.userAgent.includes("Mac") ? "Shift-Option-F" : "Ctrl-Shift-I"}
             >
               Format Query
             </p>
