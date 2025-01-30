@@ -14,6 +14,7 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import {
+  formatQuery,
   _internalFeatureFlags,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
@@ -198,7 +199,6 @@ const executeKeybinding = (
       run: insertNewline,
     },
   };
-
   if (onExecute) {
     keybindings['Ctrl-Enter'] = {
       key: 'Ctrl-Enter',
@@ -278,6 +278,26 @@ export class CypherEditor extends Component<
    */
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+
+  /**
+   * Format Cypher query
+   */
+  format() {
+    const currentView = this.editorView.current;
+    const doc = currentView.state.doc.toString();
+    const { formattedString, newCursorPos } = formatQuery(
+      doc,
+      currentView.state.selection.main.anchor,
+    );
+    currentView.dispatch({
+      changes: {
+        from: 0,
+        to: doc.length,
+        insert: formattedString,
+      },
+      selection: { anchor: newCursorPos },
+    });
+  }
 
   /**
    * Focus the editor
@@ -389,6 +409,15 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
+    extraKeybindings.push({
+      key: 'Ctrl-Shift-f',
+      mac: 'Alt-Shift-f',
+      preventDefault: true,
+      run: () => {
+        this.format();
+        return true;
+      },
+    });
 
     this.editorState.current = EditorState.create({
       extensions: [

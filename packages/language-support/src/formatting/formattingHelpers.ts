@@ -79,3 +79,19 @@ export function getParseTreeAndTokens(query: string) {
   const tree = parser.statementsOrCommands();
   return { tree, tokens };
 }
+
+export function findTargetToken(
+  tokens: Token[],
+  cursorPosition: number,
+): Token | false {
+  let targetToken: Token;
+  for (const token of tokens) {
+    if (token.channel === 0) {
+      targetToken = token;
+    }
+    if (cursorPosition >= token.start && cursorPosition <= token.stop) {
+      return targetToken;
+    }
+  }
+  return false;
+}

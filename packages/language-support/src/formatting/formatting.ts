@@ -14,14 +14,17 @@ import {
   MergeClauseContext,
   NodePatternContext,
   NumberLiteralContext,
+  ParameterContext,
   PropertyContext,
   RelationshipPatternContext,
   RightArrowContext,
   StatementsOrCommandsContext,
+  SubqueryClauseContext,
   WhereClauseContext,
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  findTargetToken,
   getParseTreeAndTokens,
   handleMergeClause,
   isComment,
@@ -39,6 +42,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffer: string[] = [];
   indentation = 0;
   indentationSpaces = 2;
+  targetToken?: number;
+  cursorPos?: number;
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -189,14 +194,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.addSpace();
       }
     }
+
     if (node.symbol.type === CypherCmdLexer.EOF) {
       return;
+    }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
     }
     if (wantsToBeUpperCase(node)) {
       this.buffer.push(node.getText().toUpperCase());
     } else {
       this.buffer.push(node.getText());
     }
+
     if (wantsSpaceAfter(node)) {
       this.addSpace();
     }
@@ -221,8 +231,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (options?.upperCase) {
       result = result.toUpperCase();
     }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
+    }
     this.buffer.push(result);
     this.addCommentsAfter(node);
+  };
+
+  // Handled separately because the dollar should not be treated
+  // as an operator
+  visitParameter = (ctx: ParameterContext) => {
+    this.visitTerminalRaw(ctx.DOLLAR());
+    this.visit(ctx.parameterName());
   };
 
   // Literals have casing rules, see
@@ -307,6 +327,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
   };
 
+  // Handled separately because it wants indentation and line breaks
+  visitSubqueryClause = (ctx: SubqueryClauseContext) => {
+    this.visitIfNotNull(ctx.OPTIONAL());
+    this.visit(ctx.CALL());
+    this.visitIfNotNull(ctx.subqueryScope());
+    this.addSpace();
+    this.visit(ctx.LCURLY());
+    this.addIndentation();
+    this.breakLine();
+    this.visit(ctx.regularQuery());
+    this.breakLine();
+    this.removeIndentation();
+    this.visit(ctx.RCURLY());
+    this.breakLine();
+    this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
+  };
+
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
     handleMergeClause(ctx, (node) => this.visit(node));
@@ -346,8 +383,47 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-export function formatQuery(query: string) {
+interface FormattingResultWithCursor {
+  formattedString: string;
+  newCursorPos: number;
+}
+
+export function formatQuery(query: string): string;
+export function formatQuery(
+  query: string,
+  cursorPosition: number,
+): FormattingResultWithCursor;
+export function formatQuery(
+  query: string,
+  cursorPosition?: number,
+): string | FormattingResultWithCursor {
   const { tree, tokens } = getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens);
-  return visitor.format(tree);
+
+  tokens.fill();
+
+  if (cursorPosition === undefined) return visitor.format(tree);
+
+  if (cursorPosition >= query.length || cursorPosition <= 0) {
+    const result = visitor.format(tree);
+    return {
+      formattedString: result,
+      newCursorPos: cursorPosition === 0 ? 0 : result.length,
+    };
+  }
+
+  const targetToken = findTargetToken(tokens.tokens, cursorPosition);
+  if (!targetToken) {
+    return {
+      formattedString: visitor.format(tree),
+      newCursorPos: 0,
+    };
+  }
+  const relativePosition = cursorPosition - targetToken.start;
+  visitor.targetToken = targetToken.tokenIndex;
+
+  return {
+    formattedString: visitor.format(tree),
+    newCursorPos: visitor.cursorPos + relativePosition,
+  };
 }

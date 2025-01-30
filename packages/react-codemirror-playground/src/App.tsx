@@ -1,6 +1,6 @@
 import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './treeUtil';
@@ -45,6 +45,8 @@ export function App() {
     JSON.stringify(testData.mockSchema, undefined, 2),
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
+
+  const editorRef = useRef<CypherEditor>(null);
 
   const treeData = useMemo(() => {
     return getDebugTree(value);
@@ -103,6 +105,7 @@ export function App() {
             <CypherEditor
               className="border-2 border-gray-100 dark:border-gray-400 text-sm"
               value={value}
+              ref={editorRef}
               onChange={setValue}
               prompt="neo4j$"
               onExecute={() => {
@@ -114,7 +117,17 @@ export function App() {
               schema={schema}
               ariaLabel="Cypher Editor"
             />
-
+            <p
+              onClick={() => editorRef.current.format()}
+              className="text-blue-500 cursor-pointer hover:text-blue-700"
+              title={
+                window.navigator.userAgent.includes('Mac')
+                  ? 'Shift-Option-F'
+                  : 'Ctrl-Shift-I'
+              }
+            >
+              Format Query
+            </p>
             {commandRanCount > 0 && (
               <span className="text-gray-400">
                 "commands" ran so far: {commandRanCount}
