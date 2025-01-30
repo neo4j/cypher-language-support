@@ -30,6 +30,7 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  findTargetToken,
   isComment,
   wantsSpaceAfter,
   wantsSpaceBefore,
@@ -45,10 +46,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffer: string[] = [];
   indentation = 0;
   indentationSpaces = 2;
+  targetToken = -1;
+  cursorPos = -1;
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
   }
+
+  getTargetToken = (): number => {
+    return this.targetToken;
+  };
+
+  setTargetToken = (targetToken: number): void => {
+    this.targetToken = targetToken;
+  };
 
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
@@ -195,14 +206,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.addSpace();
       }
     }
+
     if (node.symbol.type === CypherCmdLexer.EOF) {
       return;
+    }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
     }
     if (wantsToBeUpperCase(node)) {
       this.buffer.push(node.getText().toUpperCase());
     } else {
       this.buffer.push(node.getText());
     }
+
     if (wantsSpaceAfter(node)) {
       this.addSpace();
     }
@@ -227,7 +243,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (options?.upperCase) {
       result = result.toUpperCase();
     }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
+    }
     this.buffer.push(result);
+
     this.addCommentsAfter(node);
   };
 
@@ -368,13 +388,49 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-export function formatQuery(query: string) {
+interface FormattingResultWithCursor {
+  formattedString: string;
+  newCursorPos: number;
+}
+
+export function formatQuery(query: string): string;
+export function formatQuery(
+  query: string,
+  cursorPosition: number,
+): FormattingResultWithCursor;
+export function formatQuery(
+  query: string,
+  cursorPosition?: number,
+): string | FormattingResultWithCursor {
+
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokens = new CommonTokenStream(lexer);
+  tokens.fill();
   const parser = new CypherCmdParser(tokens);
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   const visitor = new TreePrintVisitor(tokens);
-  return visitor.format(tree);
+
+  if (cursorPosition === undefined) {
+    const result = visitor.format(tree);
+    return result;
+  }
+  if (cursorPosition >= query.length || cursorPosition === 0) {
+    const result = visitor.format(tree);
+    return {
+      formattedString: result,
+      newCursorPos: cursorPosition === 0 ? 0 : result.length,
+    };
+  }
+
+  const targetToken = findTargetToken(tokens.tokens, cursorPosition)
+  
+  const relativePosition = cursorPosition - targetToken.start;
+  visitor.setTargetToken(targetToken.tokenIndex);
+  const result = visitor.format(tree);
+  return {
+    formattedString: result,
+    newCursorPos: visitor.cursorPos + relativePosition,
+  };
 }

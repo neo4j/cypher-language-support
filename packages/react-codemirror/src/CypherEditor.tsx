@@ -13,7 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { type DbSchema } from '@neo4j-cypher/language-support';
+import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -100,6 +100,7 @@ export interface CypherEditorProps {
   featureFlags?: {
     consoleCommands?: boolean;
     signatureInfoOnAutoCompletions?: boolean;
+    format?: boolean;
   };
   /**
    * The schema to use for autocompletion and linting.
@@ -195,7 +196,6 @@ const executeKeybinding = (
       run: insertNewline,
     },
   };
-
   if (onExecute) {
     keybindings['Ctrl-Enter'] = {
       key: 'Ctrl-Enter',
@@ -277,6 +277,28 @@ export class CypherEditor extends Component<
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
   /**
+   * Format query code
+   */
+  format() {
+    if (this.props.featureFlags.format) {
+      const currentView = this.editorView.current;
+      const doc = currentView.state.doc.toString();
+      const { formattedString, newCursorPos } = formatQuery(
+        doc,
+        currentView.state.selection.main.anchor,
+      );
+      currentView.dispatch({
+        changes: {
+          from: 0,
+          to: doc.length,
+          insert: formattedString,
+        },
+        selection: { anchor: newCursorPos },
+      });
+    }
+  }
+
+  /**
    * Focus the editor
    */
   focus() {
@@ -352,6 +374,7 @@ export class CypherEditor extends Component<
       showSignatureTooltipBelow,
       featureFlags: {
         consoleCommands: true,
+        format: true,
         ...featureFlags,
       },
       useLightVersion: false,
@@ -382,6 +405,17 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
+    if (this.props.featureFlags && this.props.featureFlags.format) {
+      extraKeybindings.push({
+        key: 'Ctrl-Shift-f',
+        mac: 'Alt-Shift-f',
+        preventDefault: true,
+        run: () => {
+          this.format()
+          return true;
+        },
+      })
+    }
 
     this.editorState.current = EditorState.create({
       extensions: [

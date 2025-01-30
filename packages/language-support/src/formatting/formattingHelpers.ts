@@ -41,3 +41,16 @@ function isSymbolicName(node: TerminalNode): boolean {
     node.parentCtx instanceof EscapedSymbolicNameStringContext
   );
 }
+
+export function findTargetToken(tokens: Token[], cursorPosition: number) {
+  let targetToken = tokens[0]
+  for (const token of tokens) {
+    if (token.channel === 0) {
+      targetToken = token;
+    }
+    if (cursorPosition >= token.start && cursorPosition <= token.stop) {
+      break;
+    }
+  }
+  return targetToken
+}
