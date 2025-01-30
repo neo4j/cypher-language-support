@@ -378,7 +378,7 @@ export function formatQuery(
 
   if (cursorPosition === undefined) return visitor.format(tree);
 
-  if (cursorPosition >= query.length || cursorPosition === 0) {
+  if (cursorPosition >= query.length || cursorPosition <= 0) {
     const result = visitor.format(tree);
     return {
       formattedString: result,
@@ -387,6 +387,12 @@ export function formatQuery(
   }
 
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
+  if (!targetToken) {
+    return {
+      formattedString: visitor.format(tree),
+      newCursorPos: 0,
+    };
+  }
   const relativePosition = cursorPosition - targetToken.start;
   visitor.targetToken = targetToken.tokenIndex;
 

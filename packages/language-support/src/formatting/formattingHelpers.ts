@@ -80,15 +80,18 @@ export function getParseTreeAndTokens(query: string) {
   return { tree, tokens };
 }
 
-export function findTargetToken(tokens: Token[], cursorPosition: number) {
+export function findTargetToken(
+  tokens: Token[],
+  cursorPosition: number,
+): Token | false {
   let targetToken: Token;
   for (const token of tokens) {
     if (token.channel === 0) {
       targetToken = token;
     }
     if (cursorPosition >= token.start && cursorPosition <= token.stop) {
-      break;
+      return targetToken;
     }
   }
-  return targetToken
+  return false;
 }
