@@ -32,7 +32,6 @@ RETURN count(*)`,
 type DemoName = keyof typeof demos;
 
 export function App() {
-  const formatFlag = false;
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
   const [showCodemirrorParse, setShowCodemirrorParse] = useState(false);
@@ -118,18 +117,16 @@ export function App() {
               schema={schema}
               featureFlags={{
                 signatureInfoOnAutoCompletions: true,
-                format: formatFlag,
+                format: true,
               }}
               ariaLabel="Cypher Editor"
             />
-            {formatFlag && 
             <p
               onClick={() => editorRef.current.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
             >
               Format Query
             </p>
-            }
             {commandRanCount > 0 && (
               <span className="text-gray-400">
                 "commands" ran so far: {commandRanCount}
