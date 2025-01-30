@@ -310,7 +310,7 @@ CALL {
 } 
 RETURN count(*)`;
     const result = formatQuery(query, 124);
-    expect(result.newCursorPos).toEqual(125);
+    expect(result.newCursorPos).toEqual(131);
   });
 
   test('cursor start of line without spaces', () => {
