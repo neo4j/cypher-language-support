@@ -309,6 +309,7 @@ export function lintCypherQuery(
             procedureErrors,
             functionWarnings,
             procedureWarnings,
+            current.preparserErrors,
           )
           .sort(sortByPositionAndMessage);
       }

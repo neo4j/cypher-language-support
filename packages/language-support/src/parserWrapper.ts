@@ -41,6 +41,7 @@ export interface ParsedStatement {
   // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
   syntaxErrors: SyntaxDiagnostic[];
+  preparserErrors: SyntaxDiagnostic[];
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -200,12 +201,17 @@ export function createParsingResult(query: string): ParsingResult {
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
+      const preparserErrors = cypherVersionCollector.invalidVersionError
+        ? [cypherVersionCollector.invalidVersionError]
+        : [];
+      cypherVersionCollector.resetError();
 
       return {
         command: collectedCommand,
         parser: parser,
         tokens: tokens,
         syntaxErrors: syntaxErrors,
+        preparserErrors: preparserErrors,
         ctx: ctx,
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
@@ -414,6 +420,7 @@ class MethodsCollector extends ParseTreeListener {
 
 class CypherVersionCollector extends ParseTreeListener {
   public cypherVersion: CypherVersion;
+  public invalidVersionError: SyntaxDiagnostic;
 
   constructor() {
     super();
@@ -431,13 +438,24 @@ class CypherVersionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
+      const parsedVersion = ctx.getText();
       this.cypherVersion =
         ctx.getText() === '5'
           ? 'CYPHER 5'
           : ctx.getText() === '25'
           ? 'CYPHER 25'
           : undefined;
+      if (parsedVersion !== '5' && parsedVersion !== '25') {
+        this.invalidVersionError = {
+          message: ctx.getText() + ' is not a valid cypher language version.',
+          ...translateTokensToRange(ctx.start, ctx.stop),
+        };
+      }
     }
+  }
+
+  resetError() {
+    this.invalidVersionError = undefined;
   }
 }
 
