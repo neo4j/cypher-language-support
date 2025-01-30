@@ -46,8 +46,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffer: string[] = [];
   indentation = 0;
   indentationSpaces = 2;
-  targetToken = -1;
-  cursorPos = -1;
+  targetToken?: number;
+  cursorPos?: number;
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -239,7 +239,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.cursorPos = this.buffer.join('').length;
     }
     this.buffer.push(result);
-
     this.addCommentsAfter(node);
   };
 
@@ -403,10 +402,8 @@ export function formatQuery(
   const tree = parser.statementsOrCommands();
   const visitor = new TreePrintVisitor(tokens);
 
-  if (cursorPosition === undefined) {
-    const result = visitor.format(tree);
-    return result;
-  }
+  if (cursorPosition === undefined) return visitor.format(tree);
+
   if (cursorPosition >= query.length || cursorPosition === 0) {
     const result = visitor.format(tree);
     return {
@@ -416,12 +413,11 @@ export function formatQuery(
   }
 
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
-
   const relativePosition = cursorPosition - targetToken.start;
   visitor.targetToken = targetToken.tokenIndex;
-  const result = visitor.format(tree);
+
   return {
-    formattedString: result,
+    formattedString: visitor.format(tree),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
