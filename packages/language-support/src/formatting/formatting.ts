@@ -374,6 +374,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
 export function formatQuery(query: string) {
   const { tree, tokens } = getParseTreeAndTokens(query);
-  const visitor = new TreePrintVisitor(tokens);
+  const visitor = new TreePrintVisitor(tokens); // Test comment for verified commits
   return visitor.format(tree);
 }
