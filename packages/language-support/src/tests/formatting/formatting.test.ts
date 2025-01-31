@@ -282,7 +282,7 @@ RETURN count() AS count`;
   MATCH (a:Actor)
   RETURN a.name AS name
 UNION
-  ALL 
+  ALL
   MATCH (m:Movie)
   RETURN m.title AS name
 }
@@ -291,6 +291,28 @@ RETURN name, count(*) AS count ORDER BY count`;
   MATCH (a:Actor)
   RETURN a.name AS name
     UNION ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('union with DISTINCT example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION DISTINCT
+  ALL 
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION DISTINCT
   MATCH (m:Movie)
   RETURN m.title AS name
 }
