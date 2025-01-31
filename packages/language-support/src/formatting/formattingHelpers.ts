@@ -11,7 +11,22 @@ import CypherCmdParser, {
   MergeClauseContext,
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
-import { lexerKeywords, lexerOperators } from '../lexerSymbols';
+import { lexerKeywords } from '../lexerSymbols';
+
+const openingCharacters = [
+  CypherCmdLexer.LPAREN,
+  CypherCmdLexer.LBRACKET,
+  CypherCmdLexer.LCURLY,
+];
+
+const traillingCharacters = [
+  CypherCmdLexer.SEMICOLON,
+  CypherCmdLexer.COMMA,
+  CypherCmdLexer.COLON,
+  CypherCmdLexer.RPAREN,
+  CypherCmdLexer.RBRACKET,
+  CypherCmdLexer.RCURLY,
+];
 
 export function handleMergeClause(
   ctx: MergeClauseContext,
@@ -39,16 +54,15 @@ export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);
 }
 
-export function wantsSpaceBefore(node: TerminalNode): boolean {
-  return isKeywordTerminal(node) || lexerOperators.includes(node.symbol.type);
+export function wantsToBeConcatenated(node: TerminalNode): boolean {
+  return traillingCharacters.includes(node.symbol.type);
 }
 
-export function wantsSpaceAfter(node: TerminalNode): boolean {
-  return (
-    isKeywordTerminal(node) ||
-    lexerOperators.includes(node.symbol.type) ||
-    node.symbol.type === CypherCmdLexer.COMMA
-  );
+export function doesNotWantSpace(node: TerminalNode): boolean {
+  if (!node) {
+    return false;
+  }
+  return openingCharacters.includes(node.symbol.type);
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
