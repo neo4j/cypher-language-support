@@ -311,6 +311,12 @@ describe('various edgecases', () => {
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
   });
+
+  test('apoc call, namespaced function', () => {
+    const query = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
+    const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for correct cursor position', () => {
@@ -356,6 +362,6 @@ WHERE variable.property = "String"
     OR $parameter > 2 
 RETURN variable;`;
     const result = formatQuery(query, 133);
-    expect(result.newCursorPos).toEqual(120);
+    expect(result.newCursorPos).toEqual(118);
   });
 });

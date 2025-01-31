@@ -12,6 +12,7 @@ import {
   MapContext,
   MergeActionContext,
   MergeClauseContext,
+  NamespaceContext,
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
@@ -302,6 +303,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitTerminalRaw(arrowLineList[1].MINUS());
     this.visitIfNotNull(ctx.rightArrow());
+  };
+
+  // Handled separately because the dots aren't operators
+  visitNamespace = (ctx: NamespaceContext) => {
+    const n = ctx.DOT_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.symbolicNameString(i));
+      this.visitTerminalRaw(ctx.DOT(i));
+    }
   };
 
   // Handled separately because the dot is not an operator
