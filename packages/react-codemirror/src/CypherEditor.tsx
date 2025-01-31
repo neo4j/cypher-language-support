@@ -369,11 +369,7 @@ export class CypherEditor extends Component<
       newLineOnEnter,
     } = this.props;
 
-    if (featureFlags?.cypher25) {
-      _internalFeatureFlags.cypher25 = true;
-    } else {
-      _internalFeatureFlags.cypher25 = false;
-    }
+    _internalFeatureFlags.cypher25 = featureFlags?.cypher25 ?? false;
 
     this.schemaRef.current = {
       schema,
