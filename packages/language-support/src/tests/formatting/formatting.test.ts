@@ -262,6 +262,19 @@ WITH N, RAND() AS Rand, $pArAm AS MAP
 RETURN Rand, MAP.property_key, count(N)`;
     verifyFormatting(query, expected);
   });
+
+  test('union example', () => {
+    const query = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    const expected = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count
+  UNION
+MATCH (j:Person)
+WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {

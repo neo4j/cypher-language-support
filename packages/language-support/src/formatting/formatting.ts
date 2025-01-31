@@ -16,6 +16,7 @@ import {
   NumberLiteralContext,
   ParameterContext,
   PropertyContext,
+  RegularQueryContext,
   RelationshipPatternContext,
   RightArrowContext,
   StatementsOrCommandsContext,
@@ -224,6 +225,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.buffer.length === 0) {
       this.addCommentsBefore(node);
     }
+    if (
+      this.buffer.length > 0 &&
+      this.buffer[this.buffer.length - 1] === '\n'
+    ) {
+      this.applyIndentation();
+    }
     let result = node.getText();
     if (options?.lowerCase) {
       result = result.toLowerCase();
@@ -344,6 +351,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
   };
 
+  // Handled separately because UNION wants to look a certain way
+  visitRegularQuery = (ctx: RegularQueryContext) => {
+    this.visit(ctx.singleQuery(0));
+    const n = ctx.singleQuery_list().length - 1;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.addIndentation();
+      // No space after
+      this.visitTerminalRaw(ctx.UNION(i), { upperCase: true });
+      this.removeIndentation();
+      this.breakLine();
+      if (ctx.ALL(i)) {
+        this.visit(ctx.ALL(i));
+      }
+      if (ctx.DISTINCT(i)) {
+        this.visit(ctx.DISTINCT(i));
+      }
+      this.visit(ctx.singleQuery(i + 1));
+    }
+  };
+
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
     handleMergeClause(ctx, (node) => this.visit(node));
@@ -399,7 +427,7 @@ export function formatQuery(
 ): string | FormattingResultWithCursor {
   const { tree, tokens } = getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens);
-  
+
   tokens.fill();
 
   if (cursorPosition === undefined) return visitor.format(tree);
