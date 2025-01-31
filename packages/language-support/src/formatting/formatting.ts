@@ -56,10 +56,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   breakLine = () => {
-    if (
-      this.buffer.length > 0 &&
-      this.buffer[this.buffer.length - 1] !== '\n'
-    ) {
+    // No trailing spaces.
+    while (this.buffer.length > 0 && this.buffer.at(-1) === ' ') {
+      this.buffer.pop();
+    }
+    if (this.buffer.length > 0 && this.buffer.at(-1) !== '\n') {
       this.buffer.push('\n');
     }
   };
@@ -358,16 +359,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this.breakLine();
       this.addIndentation();
-      // No space after
-      this.visitTerminalRaw(ctx.UNION(i), { upperCase: true });
+      this.visit(ctx.UNION(i));
       this.removeIndentation();
-      this.breakLine();
       if (ctx.ALL(i)) {
         this.visit(ctx.ALL(i));
       }
       if (ctx.DISTINCT(i)) {
         this.visit(ctx.DISTINCT(i));
       }
+      this.breakLine();
       this.visit(ctx.singleQuery(i + 1));
     }
   };

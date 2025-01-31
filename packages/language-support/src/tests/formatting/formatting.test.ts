@@ -275,6 +275,28 @@ WHERE j.name STARTS WITH "J"
 RETURN count() AS count`;
     verifyFormatting(query, expected);
   });
+
+  test('union with ALL example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION
+  ALL 
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
