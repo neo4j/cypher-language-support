@@ -371,6 +371,8 @@ export class CypherEditor extends Component<
 
     if (featureFlags?.cypher25) {
       _internalFeatureFlags.cypher25 = true;
+    } else {
+      _internalFeatureFlags.cypher25 = false;
     }
 
     this.schemaRef.current = {

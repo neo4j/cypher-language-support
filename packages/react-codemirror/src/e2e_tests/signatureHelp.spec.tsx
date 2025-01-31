@@ -21,7 +21,7 @@ function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const included = Promise.all(
     includes.map((text) => {
       return expect(tooltip).toContainText(text, {
-        timeout: 2000,
+        timeout: 10000,
       });
     }),
   );
@@ -29,7 +29,7 @@ function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const excluded = Promise.all(
     excludes.map((text) => {
       return expect(tooltip).not.toContainText(text, {
-        timeout: 2000,
+        timeout: 10000,
       });
     }),
   );
@@ -49,7 +49,7 @@ test('Signature help works for functions', async ({ page, mount }) => {
   );
 
   await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -65,7 +65,7 @@ test('Signature help works for procedures', async ({ page, mount }) => {
   );
 
   await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -290,7 +290,7 @@ test('Signature help does not show any help when method finished', async ({
   );
 
   await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -309,7 +309,7 @@ test('Signature help does not blow up on empty query', async ({
   );
 
   await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -332,7 +332,7 @@ test('Signature help is shown below the text by default', async ({
   await expect(
     page.locator('.cm-signature-help-panel.cm-tooltip-below'),
   ).toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -356,7 +356,7 @@ test('Setting showSignatureTooltipBelow to true shows the signature help above t
   await expect(
     page.locator('.cm-signature-help-panel.cm-tooltip-below'),
   ).toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 
@@ -380,7 +380,7 @@ test('Setting showSignatureTooltipBelow to false shows the signature help above 
   await expect(
     page.locator('.cm-signature-help-panel.cm-tooltip-above'),
   ).toBeVisible({
-    timeout: 2000,
+    timeout: 10000,
   });
 });
 

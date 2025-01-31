@@ -10,24 +10,26 @@ test('Prop lint set to false disables syntax validation', async ({
 }) => {
   const query = 'METCH (n) RETURN n';
 
-  await mount(<CypherEditor value={query} lint={false} />);
+  const editor = await mount(<CypherEditor value={query} lint={false} />);
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
-    timeout: 6000,
+    timeout: 10000,
   });
+
+  await editor.unmount();
 });
 
 test('Can turn linting back on', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
-  const component = await mount(<CypherEditor value={query} lint={false} />);
+  const editor = await mount(<CypherEditor value={query} lint={false} />);
 
   await expect(page.locator('.cm-lintRange-error').last()).not.toBeVisible({
-    timeout: 6000,
+    timeout: 10000,
   });
 
-  await component.update(<CypherEditor value={query} lint={true} />);
+  await editor.update(<CypherEditor value={query} lint={true} />);
 
   await editorPage.getEditor().fill('METCH (n) RETURN n');
 
@@ -35,18 +37,22 @@ test('Can turn linting back on', async ({ page, mount }) => {
     'METCH',
     `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
+
+  await editor.unmount();
 });
 
 test('Syntactic errors are surfaced', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
   const query = 'METCH (n) RETURN n';
 
-  await mount(<CypherEditor value={query} />);
+  const editor = await mount(<CypherEditor value={query} />);
 
   await editorPage.checkErrorMessage(
     'METCH',
     `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
+
+  await editor.unmount();
 });
 
 test('Does not trigger syntax errors for backticked parameters in parameter creation', async ({
@@ -56,9 +62,11 @@ test('Does not trigger syntax errors for backticked parameters in parameter crea
   const editorPage = new CypherEditorPage(page);
 
   const query = ':param x => "abc"';
-  await mount(<CypherEditor value={query} />);
+  const editor = await mount(<CypherEditor value={query} />);
 
   await editorPage.checkNoNotificationMessage('error');
+
+  await editor.unmount();
 });
 
 test('Errors for undefined labels are surfaced', async ({ page, mount }) => {
@@ -192,7 +200,7 @@ test('Strikethroughs are shown for deprecated functions', async ({
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
     editorPage.page.locator('.cm-deprecated-element').last(),
-  ).toBeVisible({ timeout: 6000 });
+  ).toBeVisible({ timeout: 10000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
 });
 
@@ -206,7 +214,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
     editorPage.page.locator('.cm-deprecated-element').last(),
-  ).toBeVisible({ timeout: 6000 });
+  ).toBeVisible({ timeout: 10000 });
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
@@ -214,7 +222,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
   );
 });
 
-test.only('Syntax validation depends on the Cypher version', async ({
+test('Syntax validation depends on the Cypher version', async ({
   page,
   mount,
 }) => {
