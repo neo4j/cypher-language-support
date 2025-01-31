@@ -1,5 +1,4 @@
 import { Token } from 'antlr4';
-import type { ParserRuleContext } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
 import { _internalFeatureFlags } from '../featureFlags';
@@ -29,7 +28,6 @@ function normalizedLevenshteinDistance(s1: string, s2: string): number {
 export function completionCoreErrormessage(
   parser: CypherParser,
   currentToken: Token,
-  ctx: ParserRuleContext,
 ): string | undefined {
   const codeCompletion = new CodeCompletionCore(parser);
   const caretIndex = currentToken.tokenIndex;
@@ -43,6 +41,7 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_parameter]: 'a parameter',
     [CypherParser.RULE_symbolicNameString]: 'an identifier',
     [CypherParser.RULE_symbolicAliasName]: 'a database name',
+    [CypherParser.RULE_statement]: 'a statement',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(_internalFeatureFlags.consoleCommands
@@ -60,10 +59,18 @@ export function completionCoreErrormessage(
 
   const errorText = currentToken.text;
 
-  const candidates = codeCompletion.collectCandidates(caretIndex, ctx);
+  const candidates = codeCompletion.collectCandidates(caretIndex);
 
   const ruleCandidates = Array.from(candidates.rules.keys());
 
+  // If we can complete only a statement, we don't want to suggest that
+  // We want to be using the database errors stack instead
+  if (
+    ruleCandidates.length === 1 &&
+    ruleCandidates[0] === CypherParser.RULE_statement
+  ) {
+    return undefined;
+  }
   const humanReadableRulename = ruleCandidates.flatMap((ruleNumber) => {
     const name = rulesOfInterest[ruleNumber];
     if (name) {

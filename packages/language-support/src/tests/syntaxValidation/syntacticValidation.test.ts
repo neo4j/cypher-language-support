@@ -6,12 +6,11 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message: 'Expected any of CYPHER, EXPLAIN, PROFILE or a statement',
         offsets: {
           end: 5,
           start: 0,
         },
-        message:
-          "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
         range: {
           end: {
             character: 5,
@@ -24,23 +23,16 @@ describe('Syntactic validation spec', () => {
         },
         severity: 1,
       },
-    ]);
-  });
-
-  test('Misspelt keyword too different from the ones we know about does not trigger an error rewording', () => {
-    const query = 'CAT (n:Person)';
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          "Invalid input 'CAT': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
+          "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
         offsets: {
-          end: 3,
+          end: 5,
           start: 0,
         },
         range: {
           end: {
-            character: 3,
+            character: 5,
             line: 0,
           },
           start: {
@@ -1089,5 +1081,19 @@ describe('Syntactic validation spec', () => {
         },
       }),
     ).toEqual([]);
+  });
+
+  test('Non expected string after preparser keyword should fail', () => {
+    const query = `CYPHER "adfsadf" MATCH (n) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).not.toEqual([]);
   });
 });

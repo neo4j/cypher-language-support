@@ -389,6 +389,10 @@ describe('parameters', () => {
     expectErrorMessage(':param {: 4} ', "Expected '}' or an identifier");
   });
 
+  test('unfinished string inside a parameter', () => {
+    expectErrorMessage(':param x=>"foo', 'Unfinished string');
+  });
+
   test('highlights :params properly', () => {
     expect(applySyntaxColouring(':param')).toEqual([
       {

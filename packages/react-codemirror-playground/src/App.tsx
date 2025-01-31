@@ -1,4 +1,8 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import {
+  DbSchema,
+  testData,
+  _internalFeatureFlags,
+} from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
@@ -51,6 +55,8 @@ export function App() {
   const treeData = useMemo(() => {
     return getDebugTree(value);
   }, [value]);
+
+  _internalFeatureFlags.consoleCommands = true;
 
   return (
     <div className={darkMode ? 'dark' : ''}>
@@ -116,6 +122,7 @@ export function App() {
               history={Object.values(demos)}
               schema={schema}
               featureFlags={{
+                consoleCommands: true,
                 signatureInfoOnAutoCompletions: true,
               }}
               ariaLabel="Cypher Editor"
@@ -123,7 +130,11 @@ export function App() {
             <p
               onClick={() => editorRef.current.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
-              title={window.navigator.userAgent.includes("Mac") ? "Shift-Option-F" : "Ctrl-Shift-I"}
+              title={
+                window.navigator.userAgent.includes('Mac')
+                  ? 'Shift-Option-F'
+                  : 'Ctrl-Shift-I'
+              }
             >
               Format Query
             </p>

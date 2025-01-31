@@ -4,7 +4,6 @@ import {
   Recognizer,
   Token,
 } from 'antlr4';
-import type { ParserRuleContext } from 'antlr4-c3';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
@@ -36,51 +35,18 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
       const parser = recognizer as CypherParser;
-      const ctx = parser._ctx as ParserRuleContext;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
       const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
 
-      if (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment) {
-        let errorMessage: string | undefined = undefined;
-
-        if (unfinishedComment) {
-          errorMessage = 'Unfinished comment';
-        } else if (
-          offendingSymbol.text === '"' ||
-          offendingSymbol.text === "'"
-        ) {
-          errorMessage = 'Unfinished string literal';
-        } else if (offendingSymbol.text === '`') {
-          errorMessage = 'Unfinished escaped identifier';
-        }
-
-        if (errorMessage) {
-          // This is the EOF token
-          const lastToken = this.tokens.at(-1);
-          this.unfinishedToken = true;
-
-          const diagnostic = {
-            severity: DiagnosticSeverity.Error,
-            range: {
-              start: Position.create(startLine, startColumn),
-              end: Position.create(lastToken.line - 1, lastToken.column),
-            },
-            offsets: {
-              start: offendingSymbol.start,
-              end: lastToken.start,
-            },
-            message: errorMessage,
-          };
-
-          this.errors.push(diagnostic);
-        }
-      } else {
+      if (
+        offendingSymbol.type !== CypherLexer.ErrorChar &&
+        !unfinishedComment
+      ) {
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,
-          ctx,
         );
 
         if (errorMessage) {
