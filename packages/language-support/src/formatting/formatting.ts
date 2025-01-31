@@ -95,43 +95,6 @@ interface State {
   indentations: Indentation[];
 }
 
-//const queryex = `MATCHX(n)XWHEREXn.age > 10XANDXn.born > 10XANDXn.prop > 15XANDXn.otherprop > 20XANDXn.thirdprop > 50XANDXn.fourthprop > 100XANDXn.fifthprop > 200XRETURNXn`;
-//const split = queryex.split('X');
-//const chunks: Chunk[] = split.map((text, index) => ({
-//  text,
-//  start: index,
-//  end: index + 1,
-//}));
-//
-//const choices: Choice[] = chunks.map((chunk, index) => {
-//  if (index === split.length - 1) {
-//    return null;
-//  }
-//  return {
-//    left: chunk,
-//    right: chunks[index + 1],
-//    possibleSplitChoices: [
-//      { splitType: ' ', cost: 0 },
-//      { splitType: '\n', cost: 1 },
-//    ],
-//  };
-//}).filter((choice) => choice !== null) as Choice[];
-//
-//choices[2].possibleSplitChoices.forEach((split) => {
-//  split.newIndentation = { spaces: 6, expire: choices.at(-1).left };
-//});
-//
-//const clausewords = ['MATCH', 'WHERE', 'RETURN'];
-//
-//for (const choice of choices) {
-//  if (clausewords.includes(choice.right.text)) {
-//    choice.possibleSplitChoices = [{
-//      splitType: '\n',
-//      cost: 0,
-//    }]
-//  }
-//}
-
 interface Result {
   cost: number;
   decisions: Decision[];
@@ -386,6 +349,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitRawIfNotNull(ctx.COLON());
     this.visitRawIfNotNull(ctx.IS());
     this.visit(ctx.labelExpression4());
+    this.concatenate();
   };
 
   visitTerminal = (node: TerminalNode) => {
