@@ -84,10 +84,11 @@ interface Chunk {
   text: string;
   start: number;
   end: number;
+  splitObligationAfter?: Split;
 }
 
 interface Split {
-  splitType: ' ' | '\n';
+  splitType: ' ' | '\n' | '';
   cost: number;
   newIndentation?: Indentation;
 }
@@ -131,42 +132,42 @@ interface State {
   indentations: Indentation[];
 }
 
-const queryex = `MATCHX(n)XWHEREXn.age > 10XANDXn.born > 10XANDXn.prop > 15XANDXn.otherprop > 20XANDXn.thirdprop > 50XANDXn.fourthprop > 100XANDXn.fifthprop > 200XRETURNXn`;
-const split = queryex.split('X');
-const chunks: Chunk[] = split.map((text, index) => ({
-  text,
-  start: index,
-  end: index + 1,
-}));
-
-const choices: Choice[] = chunks.map((chunk, index) => {
-  if (index === split.length - 1) {
-    return null;
-  }
-  return {
-    left: chunk,
-    right: chunks[index + 1],
-    possibleSplitChoices: [
-      { splitType: ' ', cost: 0 },
-      { splitType: '\n', cost: 1 },
-    ],
-  };
-}).filter((choice) => choice !== null) as Choice[];
-
-choices[2].possibleSplitChoices.forEach((split) => {
-  split.newIndentation = { spaces: 6, expire: choices.at(-1).left };
-});
-
-const clausewords = ['MATCH', 'WHERE', 'RETURN'];
-
-for (const choice of choices) {
-  if (clausewords.includes(choice.right.text)) {
-    choice.possibleSplitChoices = [{
-      splitType: '\n',
-      cost: 0,
-    }]
-  }
-}
+//const queryex = `MATCHX(n)XWHEREXn.age > 10XANDXn.born > 10XANDXn.prop > 15XANDXn.otherprop > 20XANDXn.thirdprop > 50XANDXn.fourthprop > 100XANDXn.fifthprop > 200XRETURNXn`;
+//const split = queryex.split('X');
+//const chunks: Chunk[] = split.map((text, index) => ({
+//  text,
+//  start: index,
+//  end: index + 1,
+//}));
+//
+//const choices: Choice[] = chunks.map((chunk, index) => {
+//  if (index === split.length - 1) {
+//    return null;
+//  }
+//  return {
+//    left: chunk,
+//    right: chunks[index + 1],
+//    possibleSplitChoices: [
+//      { splitType: ' ', cost: 0 },
+//      { splitType: '\n', cost: 1 },
+//    ],
+//  };
+//}).filter((choice) => choice !== null) as Choice[];
+//
+//choices[2].possibleSplitChoices.forEach((split) => {
+//  split.newIndentation = { spaces: 6, expire: choices.at(-1).left };
+//});
+//
+//const clausewords = ['MATCH', 'WHERE', 'RETURN'];
+//
+//for (const choice of choices) {
+//  if (clausewords.includes(choice.right.text)) {
+//    choice.possibleSplitChoices = [{
+//      splitType: '\n',
+//      cost: 0,
+//    }]
+//  }
+//}
 
 interface Result {
   cost: number;
@@ -175,7 +176,7 @@ interface Result {
 
 const MAX_COLUMN = 60;
 
-function dfs(state: State): Result {
+function dfs(state: State, choices: Choice[]): Result {
   if (state.choiceIndex === choices.length) {
     return { cost: 0, decisions: [] };
   }
@@ -201,7 +202,7 @@ function dfs(state: State): Result {
       indentation: state.indentation + (split.newIndentation ? split.newIndentation.spaces : 0),
       indentations: newIndentations,
     };
-    const result = dfs(newState);
+    const result = dfs(newState, choices);
     return {
       cost: split.cost + result.cost,
       decisions: [
@@ -227,27 +228,28 @@ function dfs(state: State): Result {
   };
 }
 
-const initialState: State = {
-  column: 0,
-  choiceIndex: 0,
-  indentation: 0,
-  indentations: [],
-};
-
-const result = dfs(initialState);
-console.log(result.cost);
-const buffer = [];
-result.decisions.forEach((decision) => {
-  buffer.push(' '.repeat(decision.indentation));
-  buffer.push(decision.left.text);
-  buffer.push(decision.split.splitType);
-});
-buffer.push(choices.at(-1).right.text);
-console.log(buffer.join(''));
+//const initialState: State = {
+//  column: 0,
+//  choiceIndex: 0,
+//  indentation: 0,
+//  indentations: [],
+//};
+//
+//const result = dfs(initialState, choices);
+//console.log(result.cost);
+//const buffer = [];
+//result.decisions.forEach((decision) => {
+//  buffer.push(' '.repeat(decision.indentation));
+//  buffer.push(decision.left.text);
+//  buffer.push(decision.split.splitType);
+//});
+//buffer.push(choices.at(-1).right.text);
+//console.log(buffer.join(''));
 
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
-  buffer: string[] = [];
+  buffers: Chunk[][] = [];
+  currentBuffer: Chunk[] = [];
   indentation = 0;
   indentationSpaces = 2;
   targetToken?: number;
@@ -259,23 +261,80 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
-    return this.buffer.join('').trim();
+    if (this.currentBuffer.length > 0) {
+      this.buffers.push(this.currentBuffer);
+    }
+    let formatted = "";
+    for (const chunkList of this.buffers) {
+      // TODO: popping this :D
+      while (chunkList.length > 21) {
+        chunkList.pop();
+      }
+      const basicSplits = [
+        { splitType: ' ', cost: 0 },
+        { splitType: '\n', cost: 1 },
+      ]
+      const choices: Choice[] = chunkList.map((chunk, index) => {
+        if (index === chunkList.length - 1) {
+          return null;
+        }
+        return {
+          left: chunk,
+          right: chunkList[index + 1],
+          possibleSplitChoices: chunk.splitObligationAfter ? [chunk.splitObligationAfter] : basicSplits,
+        };
+      }).filter((choice) => choice !== null) as Choice[];
+      const initialState: State = {
+        column: 0,
+        choiceIndex: 0,
+        indentation: 0,
+        indentations: [],
+      };
+
+      const result = dfs(initialState, choices);
+      const buffer = [];
+      result.decisions.forEach((decision) => {
+        buffer.push(' '.repeat(decision.indentation));
+        buffer.push(decision.left.text);
+        buffer.push(decision.split.splitType);
+      });
+      buffer.push(choices.at(-1).right.text);
+      formatted += buffer.join('') + '\n';
+    }
+    return formatted;
   };
 
   breakLine = () => {
-    // No trailing spaces.
-    while (this.buffer.length > 0 && this.buffer.at(-1) === ' ') {
-      this.buffer.pop();
-    }
-    if (this.buffer.length > 0 && this.buffer.at(-1) !== '\n') {
-      this.buffer.push('\n');
-    }
+    if (this.currentBuffer.length > 0) (
+      this.buffers.push(this.currentBuffer),
+      this.currentBuffer = []
+    )
+    // TODO: replace previous newlines 
+    //throw new Error('Not implemented');
+    //if (
+    //  this.buffer.length > 0 &&
+    //  this.buffer[this.buffer.length - 1] !== '\n'
+    //) {
+    //  this.buffer.push('\n');
+    //}
   };
 
-  addSpace = () => {
-    if (this.buffer.at(-1) !== ' ') {
-      this.buffer.push(' ');
+  // TODO this might be silly XD
+  removeSpace = () => {
+    if (this.currentBuffer.length > 0) {
+      this.currentBuffer.at(-1).splitObligationAfter = {
+        splitType: '',
+        cost: 0,
+      }
     }
+  }
+
+  addSpace = () => {
+    // TODO: handle this somehow
+    //throw new Error('Not implemented');
+    //if (this.buffer.at(-1) !== ' ') {
+    //  this.buffer.push(' ');
+    //}
   };
 
   addIndentation = () => this.indentation++;
@@ -283,9 +342,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   removeIndentation = () => this.indentation--;
 
   applyIndentation = () => {
-    for (let i = 0; i < this.indentation * this.indentationSpaces; i++) {
-      this.buffer.push(' ');
-    }
+    throw new Error('Not implemented');
+    //for (let i = 0; i < this.indentation * this.indentationSpaces; i++) {
+    //  this.buffer.push(' ');
+    //}
   };
 
   // Comments are in the hidden channel, so grab them manually
@@ -298,7 +358,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       isComment(token),
     );
     for (const commentToken of commentTokens) {
-      this.buffer.push(commentToken.text.trim());
+      const text = commentToken.text.trim();
+      const chunk: Chunk = {
+        text,
+        start: commentToken.start,
+        end: commentToken.stop + 1,
+      };
+      this.currentBuffer.push(chunk);
       this.breakLine();
     }
   };
@@ -312,15 +378,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       isComment(token),
     );
     for (const commentToken of commentTokens) {
-      if (
-        this.buffer.length > 0 &&
-        this.buffer[this.buffer.length - 1] !== ' ' &&
-        this.buffer[this.buffer.length - 1] !== '\n'
-      ) {
-        this.addSpace();
-      }
-      this.buffer.push(commentToken.text.trim());
-      this.breakLine();
+      const text = commentToken.text.trim();
+      const chunk: Chunk = {
+        text,
+        start: commentToken.start,
+        end: commentToken.stop + 1,
+        splitObligationAfter: {
+          splitType: '\n',
+          cost: 0,
+        }
+      };
+      this.currentBuffer.push(chunk);
     }
   };
 
@@ -384,41 +452,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
-    if (this.buffer.length === 0) {
+    if (this.buffers.length === 0) {
       this.addCommentsBefore(node);
     }
-    if (
-      this.buffer.length > 0 &&
-      this.buffer[this.buffer.length - 1] === '\n'
-    ) {
-      this.applyIndentation();
-    }
-
-    if (
-      this.buffer.length > 0 &&
-      this.buffer[this.buffer.length - 1] !== '\n' &&
-      this.buffer[this.buffer.length - 1] !== ' '
-    ) {
-      if (wantsSpaceBefore(node)) {
-        this.addSpace();
-      }
-    }
-
     if (node.symbol.type === CypherCmdLexer.EOF) {
       return;
     }
     if (node.symbol.tokenIndex === this.targetToken) {
-      this.cursorPos = this.buffer.join('').length;
+      this.cursorPos = this.buffers.join('').length;
     }
+    let text = node.getText();
     if (wantsToBeUpperCase(node)) {
-      this.buffer.push(node.getText().toUpperCase());
-    } else {
-      this.buffer.push(node.getText());
+      text = text.toUpperCase();
     }
-
-    if (wantsSpaceAfter(node)) {
-      this.addSpace();
-    }
+    const chunk: Chunk = {
+      text,
+      start: node.symbol.start,
+      end: node.symbol.stop + 1,
+    };
+    this.currentBuffer.push(chunk);
     this.addCommentsAfter(node);
   };
 
@@ -430,14 +482,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
-    if (this.buffer.length === 0) {
+    if (this.buffers.length === 0) {
       this.addCommentsBefore(node);
-    }
-    if (
-      this.buffer.length > 0 &&
-      this.buffer[this.buffer.length - 1] === '\n'
-    ) {
-      this.applyIndentation();
     }
     let result = node.getText();
     if (options?.lowerCase) {
@@ -447,9 +493,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       result = result.toUpperCase();
     }
     if (node.symbol.tokenIndex === this.targetToken) {
-      this.cursorPos = this.buffer.join('').length;
+      // TODO: broken
     }
-    this.buffer.push(result);
+    const chunk: Chunk = {
+      text: result,
+      start: node.symbol.start,
+      end: node.symbol.stop + 1,
+      splitObligationAfter: {
+        splitType: '',
+        cost: 0,
+      }
+    }
+    this.currentBuffer.push(chunk);
     this.addCommentsAfter(node);
   };
 
@@ -522,6 +577,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because the dot is not an operator
   visitProperty = (ctx: PropertyContext) => {
+    this.removeSpace();
     this.visitTerminalRaw(ctx.DOT());
     this.visit(ctx.propertyKeyName());
   };
@@ -640,7 +696,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
-    if (this.buffer.length > 0) {
+    if (this.buffers.length > 0) {
       this.breakLine();
       this.addIndentation();
       this.applyIndentation();
@@ -776,3 +832,5 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //  console.log('X'.repeat(MAX_COLUMN));
 //}
 
+console.log('X'.repeat(MAX_COLUMN));
+console.log(formatQuery(q1))
