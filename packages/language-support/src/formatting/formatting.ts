@@ -7,6 +7,7 @@ import {
   ClauseContext,
   CountStarContext,
   ExistsExpressionContext,
+  ExtendedCaseExpressionContext,
   KeywordLiteralContext,
   LabelExpressionContext,
   LeftArrowContext,
@@ -346,6 +347,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
   };
 
+  // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
     this.breakLine();
     this.visit(ctx.CASE());
@@ -359,6 +361,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.breakLine();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
+    }
+    this.removeIndentation();
+    this.breakLine();
+    this.visit(ctx.END());
+  };
+
+  visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
+    this.breakLine();
+    this.visit(ctx.CASE());
+    this.visit(ctx.expression(0));
+    this.addIndentation();
+    const n = ctx.extendedCaseAlternative_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.visit(ctx.extendedCaseAlternative(i));
+    }
+    if (ctx.ELSE()) {
+      this.breakLine();
+      this.visit(ctx.ELSE());
+      this.visit(ctx.expression(1));
     }
     this.removeIndentation();
     this.breakLine();

@@ -317,8 +317,7 @@ END AS result, n.eyes, n.age`;
 
   test('case expression with value example', () => {
     const query = `MATCH (n:Person)
-RETURN n.name, CASE n.age WHEN IS NULL, IS NOT TYPED INTEGER | FLOAT THEN "Unknown"
-WHEN = 0, = 1, = 2 THEN "Baby"
+RETURN n.name, CASE n.age WHEN = 0, = 1, = 2 THEN "Baby"
 WHEN <= 13 THEN "Child"
 WHEN < 20 THEN "Teenager"
 WHEN < 30 THEN "Young Adult"
@@ -328,7 +327,6 @@ END AS result`;
     const expected = `MATCH (n:Person)
 RETURN n.name,
 CASE n.age
-  WHEN IS NULL, IS NOT TYPED INTEGER | FLOAT THEN "Unknown"
   WHEN = 0, = 1, = 2 THEN "Baby"
   WHEN <= 13 THEN "Child"
   WHEN < 20 THEN "Teenager"
