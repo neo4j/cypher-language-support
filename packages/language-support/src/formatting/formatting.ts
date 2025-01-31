@@ -63,6 +63,17 @@ WHERE n.age > 10 AND
       n.fifthprop > 200
 return n`;
 
+const otherthreeands = `
+MATCH (n)
+WHERE n.age > 10
+      AND n.born > 10
+      AND n.prop > 15
+      AND n.otherprop > 20
+      AND n.thirdprop > 50
+      AND n.fourthprop > 100
+      AND n.fifthprop > 200
+return n`;
+
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
@@ -90,6 +101,7 @@ interface Choice {
 }
 
 interface Decision {
+  indentation: number;
   left: Chunk;
   right: Chunk;
   split: Split; // The split that was chosen
@@ -109,6 +121,7 @@ interface Indentation {
   expire: Chunk;
 }
 
+// O(n*MAX_COL)
 interface State {
   column: number;
   choiceIndex: number;
@@ -119,7 +132,6 @@ interface State {
 
 const queryex = `MATCHX(n)XWHEREXn.age > 10XANDXn.born > 10XANDXn.prop > 15XANDXn.otherprop > 20XANDXn.thirdprop > 50XANDXn.fourthprop > 100XANDXn.fifthprop > 200XRETURNXn`;
 const split = queryex.split('X');
-console.log(split)
 const chunks: Chunk[] = split.map((text, index) => ({
   text,
   start: index,
@@ -134,11 +146,15 @@ const choices: Choice[] = chunks.map((chunk, index) => {
     left: chunk,
     right: chunks[index + 1],
     possibleSplitChoices: [
-      { splitType: ' ', cost: 0, newIndentation: { spaces: 0, expire: chunk } },
-      { splitType: '\n', cost: 1, newIndentation: { spaces: 0, expire: chunk } },
+      { splitType: ' ', cost: 0 },
+      { splitType: '\n', cost: 1 },
     ],
   };
 }).filter((choice) => choice !== null) as Choice[];
+
+choices[2].possibleSplitChoices.forEach((split) => {
+  split.newIndentation = { spaces: 6, expire: choices.at(-1).left };
+});
 
 const clausewords = ['MATCH', 'WHERE', 'RETURN'];
 
@@ -156,28 +172,40 @@ interface Result {
   decisions: Decision[];
 }
 
-const MAX_COLUMN = 30;
+const MAX_COLUMN = 50;
 
 function dfs(state: State): Result {
   if (state.choiceIndex === choices.length) {
     return { cost: 0, decisions: [] };
   }
+  state.indentations = state.indentations.filter((indentation) => {
+    if (indentation.expire === choices[state.choiceIndex].left) {
+      state.indentation -= indentation.spaces;
+    }
+    return indentation.expire !== choices[state.choiceIndex].left;
+  });
   const choice = choices[state.choiceIndex];
+  const startOfLine = state.column === 0;
+  if (startOfLine) {
+    state.column = state.indentation;
+  }
   const endColumn = state.column + choice.left.text.length;
   const OOBCost = Math.max(0, endColumn - MAX_COLUMN) * 10;
   const currentCost = OOBCost;
   const possibleResults = choice.possibleSplitChoices.map((split) => {
+    const newIndentations = split.newIndentation ? [...state.indentations, split.newIndentation] : state.indentations;
     const newState = {
       column: split.splitType === '\n' ? 0 : endColumn + 1,
       choiceIndex: state.choiceIndex + 1,
-      indentation: state.indentation,
-      indentations: state.indentations
+      indentation: state.indentation + (split.newIndentation ? split.newIndentation.spaces : 0),
+      indentations: newIndentations,
     };
     const result = dfs(newState);
     return {
       cost: split.cost + result.cost,
       decisions: [
         {
+          indentation: startOfLine ? state.indentation : 0,
           left: choice.left,
           right: choice.right,
           split,
@@ -209,9 +237,11 @@ const result = dfs(initialState);
 console.log(result.cost);
 const buffer = [];
 result.decisions.forEach((decision) => {
+  buffer.push(' '.repeat(decision.indentation));
   buffer.push(decision.left.text);
   buffer.push(decision.split.splitType);
 });
+buffer.push(choices.at(-1).right.text);
 console.log(buffer.join(''));
 
 
