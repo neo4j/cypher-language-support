@@ -297,6 +297,47 @@ RETURN name, count(*) AS count ORDER BY count`;
 RETURN name, count(*) AS count ORDER BY count`;
     verifyFormatting(query, expected);
   });
+
+  test('generic case expression example', () => {
+    const query = `MATCH (n:Person)
+RETURN CASE
+WHEN n.eyes = 'blue' THEN 1
+WHEN n.age < 40      THEN 2
+ELSE 3
+END AS result, n.eyes, n.age`;
+    const expected = `MATCH (n:Person)
+RETURN
+CASE
+  WHEN n.eyes = 'blue' THEN 1
+  WHEN n.age < 40 THEN 2
+  ELSE 3
+END AS result, n.eyes, n.age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('case expression with value example', () => {
+    const query = `MATCH (n:Person)
+RETURN n.name, CASE n.age WHEN IS NULL, IS NOT TYPED INTEGER | FLOAT THEN "Unknown"
+WHEN = 0, = 1, = 2 THEN "Baby"
+WHEN <= 13 THEN "Child"
+WHEN < 20 THEN "Teenager"
+WHEN < 30 THEN "Young Adult"
+WHEN > 1000 THEN "Immortal"
+ELSE "Adult"
+END AS result`;
+    const expected = `MATCH (n:Person)
+RETURN n.name,
+CASE n.age
+  WHEN IS NULL, IS NOT TYPED INTEGER | FLOAT THEN "Unknown"
+  WHEN = 0, = 1, = 2 THEN "Baby"
+  WHEN <= 13 THEN "Child"
+  WHEN < 20 THEN "Teenager"
+  WHEN < 30 THEN "Young Adult"
+  WHEN > 1000 THEN "Immortal"
+  ELSE "Adult"
+END AS result`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {

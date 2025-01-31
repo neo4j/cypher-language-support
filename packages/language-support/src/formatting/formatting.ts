@@ -3,6 +3,7 @@ import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   ArrowLineContext,
   BooleanLiteralContext,
+  CaseExpressionContext,
   ClauseContext,
   CountStarContext,
   ExistsExpressionContext,
@@ -343,6 +344,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.addSpace();
     }
     this.visit(ctx.RCURLY());
+  };
+
+  visitCaseExpression = (ctx: CaseExpressionContext) => {
+    this.breakLine();
+    this.visit(ctx.CASE());
+    this.addIndentation();
+    const n = ctx.caseAlternative_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.visit(ctx.caseAlternative(i));
+    }
+    if (ctx.ELSE()) {
+      this.breakLine();
+      this.visit(ctx.ELSE());
+      this.visit(ctx.expression());
+    }
+    this.removeIndentation();
+    this.breakLine();
+    this.visit(ctx.END());
   };
 
   // Handled separately because it wants indentation and line breaks
