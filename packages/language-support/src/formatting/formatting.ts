@@ -38,10 +38,183 @@ import {
   wantsToBeUpperCase,
 } from './formattingHelpers';
 
+// 40 characters                        |
+const query = `
+match (n)
+where n.age > 10 and n.born > 10 and n.prop > 15 and n.otherprop > 20 and n.thirdprop > 50 and n.fourthprop > 100 and n.fifthprop > 200
+return n`;
+//
+// 40 characters                        |
+
+const twoands = `
+MATCH (n)
+WHERE n.age > 10 AND n.born > 10 AND 
+      n.prop > 15 AND n.otherprop > 20 AND
+      n.thirdprop > 50 AND n.fourthprop > 100 AND n.fifthprop > 200
+return n`;
+
+const threeands = `
+MATCH (n)
+WHERE n.age > 10 AND
+      n.born > 10 AND 
+      n.prop > 15 AND
+      n.otherprop > 20 AND
+      n.thirdprop > 50 AND
+      n.fourthprop > 100 AND
+      n.fifthprop > 200
+return n`;
+
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
 }
+
+interface Chunk {
+  text: string;
+  start: number;
+  end: number;
+}
+
+interface Split {
+  splitType: ' ' | '\n';
+  cost: number;
+  newIndentation?: Indentation;
+}
+
+interface Choice {
+  left: Chunk;
+  right: Chunk;
+  // The possible splits that the linewrapper can choose
+  possibleSplitChoices: Split[];
+  // Possible policies that we could add at this step
+  //policies: Policy[];
+}
+
+interface Decision {
+  left: Chunk;
+  right: Chunk;
+  split: Split; // The split that was chosen
+}
+
+// Should be applied to future decisions up until the expire token.
+// TODO: can be used for e.g. making sure that all function arguments stay on the same line
+// or that they all break
+//
+//interface Policy {
+//  f: (s: Split[]) => Split[];
+//  expire: Chunk;
+//}
+
+interface Indentation {
+  spaces: number;
+  expire: Chunk;
+}
+
+interface State {
+  column: number;
+  choiceIndex: number;
+  //policies: Policy[];
+  indentation: number;
+  indentations: Indentation[];
+}
+
+const queryex = `MATCHX(n)XWHEREXn.age > 10XANDXn.born > 10XANDXn.prop > 15XANDXn.otherprop > 20XANDXn.thirdprop > 50XANDXn.fourthprop > 100XANDXn.fifthprop > 200XRETURNXn`;
+const split = queryex.split('X');
+console.log(split)
+const chunks: Chunk[] = split.map((text, index) => ({
+  text,
+  start: index,
+  end: index + 1,
+}));
+
+const choices: Choice[] = chunks.map((chunk, index) => {
+  if (index === split.length - 1) {
+    return null;
+  }
+  return {
+    left: chunk,
+    right: chunks[index + 1],
+    possibleSplitChoices: [
+      { splitType: ' ', cost: 0, newIndentation: { spaces: 0, expire: chunk } },
+      { splitType: '\n', cost: 1, newIndentation: { spaces: 0, expire: chunk } },
+    ],
+  };
+}).filter((choice) => choice !== null) as Choice[];
+
+const clausewords = ['MATCH', 'WHERE', 'RETURN'];
+
+for (const choice of choices) {
+  if (clausewords.includes(choice.right.text)) {
+    choice.possibleSplitChoices = [{
+      splitType: '\n',
+      cost: 0,
+    }]
+  }
+}
+
+interface Result {
+  cost: number;
+  decisions: Decision[];
+}
+
+const MAX_COLUMN = 30;
+
+function dfs(state: State): Result {
+  if (state.choiceIndex === choices.length) {
+    return { cost: 0, decisions: [] };
+  }
+  const choice = choices[state.choiceIndex];
+  const endColumn = state.column + choice.left.text.length;
+  const OOBCost = Math.max(0, endColumn - MAX_COLUMN) * 10;
+  const currentCost = OOBCost;
+  const possibleResults = choice.possibleSplitChoices.map((split) => {
+    const newState = {
+      column: split.splitType === '\n' ? 0 : endColumn + 1,
+      choiceIndex: state.choiceIndex + 1,
+      indentation: state.indentation,
+      indentations: state.indentations
+    };
+    const result = dfs(newState);
+    return {
+      cost: split.cost + result.cost,
+      decisions: [
+        {
+          left: choice.left,
+          right: choice.right,
+          split,
+        },
+        ...result.decisions,
+      ],
+    };
+  });
+  const bestResult = possibleResults.reduce((best, current) => {
+    if (current.cost < best.cost) {
+      return current;
+    }
+    return best;
+  });
+  return {
+    cost: currentCost + bestResult.cost,
+    decisions: bestResult.decisions,
+  };
+}
+
+const initialState: State = {
+  column: 0,
+  choiceIndex: 0,
+  indentation: 0,
+  indentations: [],
+};
+
+const result = dfs(initialState);
+console.log(result.cost);
+const buffer = [];
+result.decisions.forEach((decision) => {
+  buffer.push(decision.left.text);
+  buffer.push(decision.split.splitType);
+});
+console.log(buffer.join(''));
+
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffer: string[] = [];
