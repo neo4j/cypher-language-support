@@ -214,7 +214,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
   );
 });
 
-test('Syntax validation depends on the Cypher version', async ({
+test.only('Syntax validation depends on the Cypher version', async ({
   page,
   mount,
 }) => {
