@@ -29,51 +29,14 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  doesNotWantSpace,
   findTargetToken,
   getParseTreeAndTokens,
   handleMergeClause,
   isComment,
-  wantsSpaceAfter,
-  wantsSpaceBefore,
+  wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-
-// 40 characters                        |
-const baselongquery = `
-match (n)
-where n.age > 10 and n.born > 10 and n.prop > 15 and n.otherprop > 20 and n.thirdprop > 50 and n.fourthprop > 100 and n.fifthprop > 200
-return n`;
-//
-// 40 characters                        |
-
-const twoands = `
-MATCH (n)
-WHERE n.age > 10 AND n.born > 10 AND 
-      n.prop > 15 AND n.otherprop > 20 AND
-      n.thirdprop > 50 AND n.fourthprop > 100 AND n.fifthprop > 200
-return n`;
-
-const threeands = `
-MATCH (n)
-WHERE n.age > 10 AND
-      n.born > 10 AND 
-      n.prop > 15 AND
-      n.otherprop > 20 AND
-      n.thirdprop > 50 AND
-      n.fourthprop > 100 AND
-      n.fifthprop > 200
-return n`;
-
-const otherthreeands = `
-MATCH (n)
-WHERE n.age > 10
-      AND n.born > 10
-      AND n.prop > 15
-      AND n.otherprop > 20
-      AND n.thirdprop > 50
-      AND n.fourthprop > 100
-      AND n.fifthprop > 200
-return n`;
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
@@ -82,6 +45,7 @@ interface RawTerminalOptions {
 
 interface Chunk {
   text: string;
+  node?: TerminalNode;
   start: number;
   end: number;
   splitObligationAfter?: Split;
@@ -174,7 +138,7 @@ interface Result {
   decisions: Decision[];
 }
 
-const MAX_COLUMN = 30;
+const MAX_COLUMN = 80;
 
 function dfs(state: State, choices: Choice[]): Result {
   if (state.choiceIndex === choices.length) {
@@ -228,25 +192,6 @@ function dfs(state: State, choices: Choice[]): Result {
   };
 }
 
-//const initialState: State = {
-//  column: 0,
-//  choiceIndex: 0,
-//  indentation: 0,
-//  indentations: [],
-//};
-//
-//const result = dfs(initialState, choices);
-//console.log(result.cost);
-//const buffer = [];
-//result.decisions.forEach((decision) => {
-//  buffer.push(' '.repeat(decision.indentation));
-//  buffer.push(decision.left.text);
-//  buffer.push(decision.split.splitType);
-//});
-//buffer.push(choices.at(-1).right.text);
-//console.log(buffer.join(''));
-
-
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffers: Chunk[][] = [];
   currentBuffer: Chunk[] = [];
@@ -274,6 +219,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         { splitType: ' ', cost: 0 },
         { splitType: '\n', cost: 1 },
       ]
+      const basicNoSpaceSplits = [
+        { splitType: '', cost: 0 },
+        { splitType: '\n', cost: 1 },
+      ]
       const choices: Choice[] = chunkList.map((chunk, index) => {
         if (index === chunkList.length - 1) {
           return null;
@@ -281,7 +230,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         return {
           left: chunk,
           right: chunkList[index + 1],
-          possibleSplitChoices: chunk.splitObligationAfter ? [chunk.splitObligationAfter] : basicSplits,
+          possibleSplitChoices: chunk.splitObligationAfter ? [chunk.splitObligationAfter] : (doesNotWantSpace(chunk.node) ? basicNoSpaceSplits : basicSplits),
         };
       }).filter((choice) => choice !== null) as Choice[];
       const initialState: State = {
@@ -301,7 +250,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       buffer.push(choices.at(-1).right.text);
       formatted += buffer.join('') + '\n';
     }
-    return formatted;
+    return formatted.trim();
   };
 
   breakLine = () => {
@@ -309,20 +258,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.buffers.push(this.currentBuffer),
       this.currentBuffer = []
     )
-    // TODO: replace previous newlines 
-    //throw new Error('Not implemented');
-    //if (
-    //  this.buffer.length > 0 &&
-    //  this.buffer[this.buffer.length - 1] !== '\n'
-    //) {
-    //  this.buffer.push('\n');
-    //}
   };
 
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
     if (this.currentBuffer.length < 2) {
-      throw new Error('Concatenate called with buffer too small');
+      return;
     }
     const last = this.currentBuffer.pop();
     const secondLast = this.currentBuffer.pop();
@@ -333,14 +274,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     };
     this.currentBuffer.push(chunk);
   }
-
-  addSpace = () => {
-    // TODO: handle this somehow
-    //throw new Error('Not implemented');
-    //if (this.buffer.at(-1) !== ' ') {
-    //  this.buffer.push(' ');
-    //}
-  };
 
   addIndentation = () => this.indentation++;
 
@@ -472,10 +405,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const chunk: Chunk = {
       text,
+      node,
       start: node.symbol.start,
       end: node.symbol.stop + 1,
     };
     this.currentBuffer.push(chunk);
+    if (wantsToBeConcatenated(node)) {
+      this.concatenate();
+    }
     this.addCommentsAfter(node);
   };
 
@@ -502,6 +439,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const chunk: Chunk = {
       text: result,
+      node,
       start: node.symbol.start,
       end: node.symbol.stop + 1,
       splitObligationAfter: {
@@ -510,6 +448,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.currentBuffer.push(chunk);
+    if (wantsToBeConcatenated(node)) {
+      this.concatenate();
+    }
     this.addCommentsAfter(node);
   };
 
@@ -542,9 +483,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     this.visitIfNotNull(ctx.variable());
     this.visitIfNotNull(ctx.labelExpression());
-    if (ctx.labelExpression() && ctx.properties()) {
-      this.addSpace();
-    }
     this.visitIfNotNull(ctx.properties());
     if (ctx.WHERE()) {
       this.visit(ctx.WHERE());
@@ -609,11 +547,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.breakLine();
       this.removeIndentation();
     } else {
-      this.addSpace();
       this.visitIfNotNull(ctx.matchMode());
       this.visit(ctx.patternList());
       this.visitIfNotNull(ctx.whereClause());
-      this.addSpace();
     }
     this.visit(ctx.RCURLY());
   };
@@ -663,7 +599,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.OPTIONAL());
     this.visit(ctx.CALL());
     this.visitIfNotNull(ctx.subqueryScope());
-    this.addSpace();
     this.visit(ctx.LCURLY());
     this.addIndentation();
     this.breakLine();
@@ -723,7 +658,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < expressions.length; i++) {
       this.visit(propertyKeyNames[i]);
       this.visitTerminalRaw(colonList[i]);
-      this.addSpace();
       this.visit(expressions[i]);
       if (i < expressions.length - 1) {
         this.visit(commaList[i]);
