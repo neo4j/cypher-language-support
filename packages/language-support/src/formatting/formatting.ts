@@ -319,14 +319,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     //}
   };
 
-  // TODO this might be silly XD
-  removeSpace = () => {
-    if (this.currentBuffer.length > 0) {
-      this.currentBuffer.at(-1).splitObligationAfter = {
-        splitType: '',
-        cost: 0,
-      }
+  // If two tokens should never be split, concatenate them into one chunk
+  concatenate = () => {
+    if (this.currentBuffer.length < 2) {
+      throw new Error('Concatenate called with buffer too small');
     }
+    const last = this.currentBuffer.pop();
+    const secondLast = this.currentBuffer.pop();
+    const chunk: Chunk = {
+      text: secondLast.text + last.text,
+      start: secondLast.start,
+      end: last.end,
+    };
+    this.currentBuffer.push(chunk);
   }
 
   addSpace = () => {
@@ -577,9 +582,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because the dot is not an operator
   visitProperty = (ctx: PropertyContext) => {
-    this.removeSpace();
     this.visitTerminalRaw(ctx.DOT());
+    this.concatenate();
     this.visit(ctx.propertyKeyName());
+    this.concatenate();
   };
 
   visitLimit = (ctx: LimitContext) => {
@@ -771,6 +777,11 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
+const q0 = `
+match (n)
+where n.age > 10 and n.born > 10 and n.prop > 15 and n.otherprop > 20 and n.thirdprop > 50
+return n`;
+
 
 const q1 = `MATCH (p:Person)
 WHERE p.name STARTS WITH 'A' OR p.name STARTS WITH 'B' OR p.name STARTS WITH 'C' OR p.age > 30 OR p.salary > 50000 OR p.experience > 10 OR p.position = 'Manager'
@@ -833,4 +844,5 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //}
 
 console.log('X'.repeat(MAX_COLUMN));
+console.log(formatQuery(q0))
 console.log(formatQuery(q1))
