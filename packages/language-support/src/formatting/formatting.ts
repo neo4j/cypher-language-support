@@ -174,7 +174,7 @@ interface Result {
   decisions: Decision[];
 }
 
-const MAX_COLUMN = 60;
+const MAX_COLUMN = 30;
 
 function dfs(state: State, choices: Choice[]): Result {
   if (state.choiceIndex === choices.length) {
