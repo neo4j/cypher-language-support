@@ -610,8 +610,8 @@ function parseToCommand(
 
       return { type: 'parse-error', start, stop };
     }
-    const statement = inputstream.getText(start.start, stop.stop);
-    return { type: 'cypher', statement, start: start, stop: stop };
+    const statement = inputstream.getText(start.start, tokens.at(-1).stop);
+    return { type: 'cypher', statement, start: start, stop: tokens.at(-1) };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }

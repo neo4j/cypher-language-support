@@ -232,4 +232,76 @@ describe('Unfinished tokens', () => {
       },
     ]);
   });
+
+  test('Correctly colours multiline comments', () => {
+    const query = `/* something
+    foo
+    
+    bar */`;
+
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 12,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: '/* something',
+        tokenType: 'comment',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 1,
+          startCharacter: 0,
+          startOffset: 13,
+        },
+        token: '    foo',
+        tokenType: 'comment',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 2,
+          startCharacter: 0,
+          startOffset: 21,
+        },
+        token: '    ',
+        tokenType: 'comment',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 3,
+          startCharacter: 0,
+          startOffset: 26,
+        },
+        token: '    bar */',
+        tokenType: 'comment',
+      },
+    ]);
+  });
+
+  test('Correctly colours single line comments', () => {
+    const query = `// single line comment`;
+
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 22,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: '// single line comment',
+        tokenType: 'comment',
+      },
+    ]);
+  });
 });
