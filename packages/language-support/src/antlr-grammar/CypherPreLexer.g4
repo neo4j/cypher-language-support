@@ -10,3 +10,6 @@ PROFILE:
 
 CYPHER:
    C Y P H E R;
+
+VERSION: 
+  ([0-9] | '.')+;

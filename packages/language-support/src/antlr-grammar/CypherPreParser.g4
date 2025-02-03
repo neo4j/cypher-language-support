@@ -29,4 +29,4 @@ cypherOptionName:
    IDENTIFIER;
 
 cypherVersion:
-   UNSIGNED_DECIMAL_INTEGER;
+   VERSION;
