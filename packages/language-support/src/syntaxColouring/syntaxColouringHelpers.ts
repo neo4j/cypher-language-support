@@ -13,8 +13,11 @@ export interface TokenPosition {
   startOffset: number;
 }
 
-export function tokenPositionToString(tokenPosition: TokenPosition): string {
-  return `${tokenPosition.line},${tokenPosition.startCharacter}`;
+export function tokenPositionToString(
+  tokenPosition: TokenPosition,
+  tokenLength: number,
+): string {
+  return `${tokenPosition.line},${tokenPosition.startCharacter},${tokenLength}`;
 }
 
 export interface ParsedCypherToken {
@@ -191,14 +194,20 @@ export function sortTokens(tokens: ParsedCypherToken[]) {
     const lineDiff = a.position.line - b.position.line;
     if (lineDiff !== 0) return lineDiff;
 
-    return a.position.startCharacter - b.position.startCharacter;
+    const colDiff = a.position.startCharacter - b.position.startCharacter;
+    if (colDiff !== 0) return colDiff;
+    else return b.length - a.length;
   });
 }
 
 // Assumes the tokens are already sorted
 export function removeOverlappingTokens(tokens: ParsedCypherToken[]) {
   const result: ParsedCypherToken[] = [];
-  let prev: TokenPosition = { line: -1, startCharacter: -1, startOffset: -1 };
+  let prev: TokenPosition = {
+    line: -1,
+    startCharacter: -1,
+    startOffset: -1,
+  };
   let prevEndCharacter = 0;
 
   tokens.forEach((token) => {

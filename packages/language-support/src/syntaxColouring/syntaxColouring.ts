@@ -46,7 +46,7 @@ import {
   removeOverlappingTokens,
   shouldAssignTokenType,
   sortTokens,
-  tokenPositionToString,
+  tokenPositionToString as computeTokenKey,
   toParsedTokens,
 } from './syntaxColouringHelpers';
 
@@ -107,7 +107,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
       toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
         (token) => {
-          const tokenPos = tokenPositionToString(token.position);
+          const tokenPos = computeTokenKey(token.position, token.token.length);
           this.colouredTokens.set(tokenPos, token);
         },
       );
@@ -330,9 +330,8 @@ function colourLexerTokens(tokens: Token[]) {
         token,
         bracketsLevel,
       ).forEach((t) => {
-        const tokenPos = tokenPositionToString(t.position);
-
-        result.set(tokenPos, t);
+        const tokenKey = computeTokenKey(t.position, t.length);
+        result.set(tokenKey, t);
       });
     }
     ++i;
