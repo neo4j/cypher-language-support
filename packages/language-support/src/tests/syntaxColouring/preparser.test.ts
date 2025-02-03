@@ -775,4 +775,10 @@ RETURN map.propertyKey`;
       },
     ]);
   });
+
+  test('Correctly colours preparser options including unfinished comments', () => {
+    const query = `CYPHER runtime = /*some unfinished comment
+    slotted`;
+    expect(applySyntaxColouring(query)).toEqual([]);
+  });
 });

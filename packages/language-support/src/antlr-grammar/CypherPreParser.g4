@@ -23,10 +23,10 @@ cypherOption:
    cypherOptionName EQ cypherOptionValue;
 
 cypherOptionValue:
-   (IDENTIFIER | numberLiteral);
+   (unescapedSymbolicNameString | numberLiteral);
 
 cypherOptionName:
-   IDENTIFIER;
+   unescapedSymbolicNameString;
 
 cypherVersion:
    UNSIGNED_DECIMAL_INTEGER;

@@ -1,13 +1,17 @@
 import {
   CommonToken,
   ErrorListener as ANTLRErrorListener,
+  ParserRuleContext,
   Recognizer,
   Token,
 } from 'antlr4';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
-import { isCommentOpener } from '../helpers';
+import CypherParser, {
+  ConsoleCommandContext,
+  PreparserOptionContext,
+} from '../generated-parser/CypherCmdParser';
+import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
@@ -35,12 +39,59 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
       const parser = recognizer as CypherParser;
+      const ctx: ParserRuleContext = parser._ctx;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
       const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
+      const preparserOrConsoleCommand = findParent(
+        ctx,
+        (n) =>
+          n instanceof PreparserOptionContext ||
+          n instanceof ConsoleCommandContext,
+      );
 
       if (
+        preparserOrConsoleCommand &&
+        (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment)
+      ) {
+        let errorMessage: string | undefined = undefined;
+
+        if (unfinishedComment) {
+          errorMessage =
+            'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.';
+        } else if (
+          offendingSymbol.text === '"' ||
+          offendingSymbol.text === "'"
+        ) {
+          errorMessage =
+            'Failed to parse string literal. The query must contain an even number of non-escaped quotes.';
+        } else if (offendingSymbol.text === '`') {
+          errorMessage =
+            'Failed to parse escaped literal. The query must contain an even number of non-escaped quotes.';
+        }
+
+        if (errorMessage) {
+          // This is the EOF token
+          const lastToken = this.tokens.at(-1);
+          this.unfinishedToken = true;
+
+          const diagnostic = {
+            severity: DiagnosticSeverity.Error,
+            range: {
+              start: Position.create(startLine, startColumn),
+              end: Position.create(lastToken.line - 1, lastToken.column),
+            },
+            offsets: {
+              start: offendingSymbol.start,
+              end: lastToken.start,
+            },
+            message: errorMessage,
+          };
+
+          this.errors.push(diagnostic);
+        }
+      } else if (
         offendingSymbol.type !== CypherLexer.ErrorChar &&
         !unfinishedComment
       ) {

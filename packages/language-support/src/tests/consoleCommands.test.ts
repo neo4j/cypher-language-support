@@ -390,7 +390,17 @@ describe('parameters', () => {
   });
 
   test('unfinished string inside a parameter', () => {
-    expectErrorMessage(':param x=>"foo', 'Unfinished string');
+    expectErrorMessage(
+      ':param x=>"foo',
+      'Failed to parse string literal. The query must contain an even number of non-escaped quotes.',
+    );
+  });
+
+  test('unfinished comment inside a parameter', () => {
+    expectErrorMessage(
+      `:param x => /* unfinished comment "foo"`,
+      'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
+    );
   });
 
   test('highlights :params properly', () => {

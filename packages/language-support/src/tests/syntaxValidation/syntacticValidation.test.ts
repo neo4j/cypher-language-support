@@ -1094,6 +1094,130 @@ describe('Syntactic validation spec', () => {
           relationshipTypes: [],
         },
       }),
-    ).not.toEqual([]);
+    ).toEqual([
+      {
+        message:
+          'Expected any of CYPHER, EXPLAIN, PROFILE, an identifier, a valid cypher version from (5 or 25) or a statement',
+        offsets: {
+          end: 16,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Non finished comment inside the preparser', () => {
+    const query = `CYPHER runtime = /*some unfinished comment
+    slotted
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
+        offsets: {
+          end: 59,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 4,
+            line: 2,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Non finished string inside the preparser', () => {
+    const query = 'CYPHER runtime = "asdfadsgf';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Failed to parse string literal. The query must contain an even number of non-escaped quotes.',
+        offsets: {
+          end: 27,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Non finished backticked element inside the preparser', () => {
+    const query = 'CYPHER runtime = `adfafasfd';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Failed to parse escaped literal. The query must contain an even number of non-escaped quotes.',
+        offsets: {
+          end: 27,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });
