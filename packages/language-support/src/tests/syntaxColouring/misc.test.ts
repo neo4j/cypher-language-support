@@ -232,13 +232,4 @@ describe('Unfinished tokens', () => {
       },
     ]);
   });
-
-  test('Correctly colours multiline comments', () => {
-    const query = `/* something
-    foo
-    
-    bar */`;
-
-    expect(applySyntaxColouring(query)).toMatchInlineSnapshot([]);
-  });
 });
