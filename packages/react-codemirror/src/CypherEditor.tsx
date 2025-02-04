@@ -180,6 +180,22 @@ export interface CypherEditorProps {
   moveFocusOnTab?: boolean;
 }
 
+const format = (view: EditorView): void => {
+  const doc = view.state.doc.toString();
+    const { formattedString, newCursorPos } = formatQuery(
+      doc,
+      view.state.selection.main.anchor,
+    );
+    view.dispatch({
+      changes: {
+        from: 0,
+        to: doc.length,
+        insert: formattedString,
+      },
+      selection: { anchor: newCursorPos },
+    });
+}
+
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
   newLineOnEnter?: boolean,
@@ -283,20 +299,7 @@ export class CypherEditor extends Component<
    * Format Cypher query
    */
   format() {
-    const currentView = this.editorView.current;
-    const doc = currentView.state.doc.toString();
-    const { formattedString, newCursorPos } = formatQuery(
-      doc,
-      currentView.state.selection.main.anchor,
-    );
-    currentView.dispatch({
-      changes: {
-        from: 0,
-        to: doc.length,
-        insert: formattedString,
-      },
-      selection: { anchor: newCursorPos },
-    });
+    format(this.editorView.current)
   }
 
   /**
@@ -407,16 +410,7 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
-    extraKeybindings.push({
-      key: 'Ctrl-Shift-f',
-      mac: 'Alt-Shift-f',
-      preventDefault: true,
-      run: () => {
-        this.format();
-        return true;
-      },
-    });
-
+    
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
