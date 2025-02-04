@@ -13,7 +13,7 @@ export interface TokenPosition {
   startOffset: number;
 }
 
-export function tokenPositionToString(
+export function computeTokenKey(
   tokenPosition: TokenPosition,
   tokenLength: number,
 ): string {

@@ -40,13 +40,13 @@ import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
   BracketType,
+  computeTokenKey,
   getCypherTokenType,
   getTokenPosition,
   ParsedCypherToken,
   removeOverlappingTokens,
   shouldAssignTokenType,
   sortTokens,
-  tokenPositionToString as computeTokenKey,
   toParsedTokens,
 } from './syntaxColouringHelpers';
 
