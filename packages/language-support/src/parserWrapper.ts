@@ -447,7 +447,9 @@ class CypherVersionCollector extends ParseTreeListener {
           : undefined;
       if (parsedVersion !== '5' && parsedVersion !== '25') {
         this.invalidVersionError = {
-          message: ctx.getText() + ' is not a valid cypher language version.',
+          message:
+            ctx.getText() +
+            ' is not a valid option for cypher version. Valid options are: 5, 25',
           ...translateTokensToRange(ctx.start, ctx.stop),
         };
       }

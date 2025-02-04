@@ -102,13 +102,89 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
-  //TODO: Maybe this should actually yield a warning - to be fixed in follow-up, ignoring for now
-  test('Semantic analysis defaults to cypher 5 when faulty version is given', () => {
-    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+  test('Faulty cypher version in the preparser yields an error', () => {
+    const query1 = 'CYPHER  50 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
-    const query2 = 'CYPHER 800 MATCH (n)-[r]->(m) SET r += m';
+    const query2 = 'CYPHER 007 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          '50 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 10,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+      },
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 40,
+          start: 39,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 39,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message:
+          '007 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 10,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+      },
+      {
+        message:
+          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
+        offsets: {
+          end: 40,
+          start: 39,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 39,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 
   test('Semantic analysis uses default language if no language is defined in query', () => {
