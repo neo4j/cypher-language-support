@@ -227,14 +227,14 @@ test('Syntax validation depends on the Cypher version', async ({
 
   const editorPage = new CypherEditorPage(page);
   const textField = page.getByRole('textbox');
-  await textField.fill('CYPHER 5 CALL apoc.create.uuids(5)', { force: true });
+  await textField.fill('CYPHER 5 CALL apoc.create.uuids(5)');
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
     'Procedure apoc.create.uuids is deprecated.',
   );
 
-  await textField.fill('CYPHER 25 CALL apoc.create.uuids(5)', { force: true });
+  await textField.fill('CYPHER 25 CALL apoc.create.uuids(5)');
 
   await editorPage.checkErrorMessage(
     'apoc.create.uuids',
