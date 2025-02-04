@@ -210,15 +210,6 @@ const executeKeybinding = (
       key: 'Enter',
       run: insertNewline,
     },
-    Format: { 
-      key: 'Ctrl-Shift-f',
-      mac: 'Alt-Shift-f',
-      preventDefault: true,
-      run: (view: EditorView) => {
-        format(view)
-        return true;
-      },
-    }
   };
   if (onExecute) {
     keybindings['Ctrl-Enter'] = {
