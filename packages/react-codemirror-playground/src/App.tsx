@@ -50,6 +50,16 @@ export function App() {
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
+  const extraKeybindings = [{
+      key: 'Ctrl-Shift-f',
+      mac: 'Alt-Shift-f',
+      preventDefault: true,
+      run: () => {
+        editorRef.current.format()
+        return true;
+      },
+  }]
+
   const editorRef = useRef<CypherEditor>(null);
 
   const treeData = useMemo(() => {
@@ -121,6 +131,7 @@ export function App() {
               theme={darkMode ? 'dark' : 'light'}
               history={Object.values(demos)}
               schema={schema}
+              extraKeybindings={extraKeybindings}
               featureFlags={{
                 consoleCommands: true,
                 signatureInfoOnAutoCompletions: true,
