@@ -122,11 +122,15 @@ function dfs(state: State, choices: Choice[]): Result {
   const OOBCost = Math.max(0, endColumn - MAX_COLUMN) * 10;
   const currentCost = OOBCost;
   const possibleResults = choice.possibleSplitChoices.map((split) => {
-    const newIndentations = split.newIndentation ? [...state.indentations, split.newIndentation] : state.indentations;
+    const newIndentations = split.newIndentation
+      ? [...state.indentations, split.newIndentation]
+      : state.indentations;
     const newState = {
       column: split.splitType === '\n' ? 0 : endColumn + 1,
       choiceIndex: state.choiceIndex + 1,
-      indentation: state.indentation + (split.newIndentation ? split.newIndentation.spaces : 0),
+      indentation:
+        state.indentation +
+        (split.newIndentation ? split.newIndentation.spaces : 0),
       indentations: newIndentations,
     };
     const result = dfs(newState, choices);
@@ -172,7 +176,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.currentBuffer.length > 0) {
       this.buffers.push(this.currentBuffer);
     }
-    let formatted = "";
+    let formatted = '';
     for (const chunkList of this.buffers) {
       // TODO: popping this :D
       while (chunkList.length > 21) {
@@ -181,21 +185,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const basicSplits = [
         { splitType: ' ', cost: 0 },
         { splitType: '\n', cost: 1 },
-      ]
+      ];
       const basicNoSpaceSplits = [
         { splitType: '', cost: 0 },
         { splitType: '\n', cost: 1 },
-      ]
-      const choices: Choice[] = chunkList.map((chunk, index) => {
-        if (index === chunkList.length - 1) {
-          return null;
-        }
-        return {
-          left: chunk,
-          right: chunkList[index + 1],
-          possibleSplitChoices: chunk.splitObligationAfter ? [chunk.splitObligationAfter] : (doesNotWantSpace(chunk.node) ? basicNoSpaceSplits : basicSplits),
-        };
-      }).filter((choice) => choice !== null) as Choice[];
+      ];
+      const choices: Choice[] = chunkList
+        .map((chunk, index) => {
+          if (index === chunkList.length - 1) {
+            return null;
+          }
+          return {
+            left: chunk,
+            right: chunkList[index + 1],
+            possibleSplitChoices: chunk.splitObligationAfter
+              ? [chunk.splitObligationAfter]
+              : doesNotWantSpace(chunk.node)
+                ? basicNoSpaceSplits
+                : basicSplits,
+          };
+        })
+        .filter((choice) => choice !== null) as Choice[];
       const initialState: State = {
         column: 0,
         choiceIndex: 0,
@@ -217,10 +227,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   breakLine = () => {
-    if (this.currentBuffer.length > 0) (
-      this.buffers.push(this.currentBuffer),
-      this.currentBuffer = []
-    )
+    if (this.currentBuffer.length > 0)
+      this.buffers.push(this.currentBuffer), (this.currentBuffer = []);
   };
 
   // If two tokens should never be split, concatenate them into one chunk
@@ -236,7 +244,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       end: last.end,
     };
     this.currentBuffer.push(chunk);
-  }
+  };
 
   addIndentation = () => this.indentation++;
 
@@ -287,7 +295,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         splitObligationAfter: {
           splitType: '\n',
           cost: 0,
-        }
+        },
       };
       this.currentBuffer.push(chunk);
     }
@@ -393,6 +401,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     let result = node.getText();
     if (options?.lowerCase) {
+      sdfklj;
       result = result.toLowerCase();
     }
     if (options?.upperCase) {
@@ -409,8 +418,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       splitObligationAfter: {
         splitType: '',
         cost: 0,
-      }
-    }
+      },
+    };
     this.currentBuffer.push(chunk);
     if (wantsToBeConcatenated(node)) {
       this.concatenate();
@@ -680,7 +689,6 @@ match (n)
 where n.age > 10 and n.born > 10 and n.prop > 15 and n.otherprop > 20 and n.thirdprop > 50
 return n`;
 
-
 const q1 = `MATCH (p:Person)
 WHERE p.name STARTS WITH 'A' OR p.name STARTS WITH 'B' OR p.name STARTS WITH 'C' OR p.age > 30 OR p.salary > 50000 OR p.experience > 10 OR p.position = 'Manager'
 RETURN p`;
@@ -742,5 +750,5 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //}
 
 console.log('X'.repeat(MAX_COLUMN));
-console.log(formatQuery(q0))
-console.log(formatQuery(q1))
+console.log(formatQuery(q0));
+console.log(formatQuery(q1));

@@ -20,6 +20,9 @@ const openingCharacters = [
   CypherCmdLexer.LPAREN,
   CypherCmdLexer.LBRACKET,
   CypherCmdLexer.LCURLY,
+  CypherCmdLexer.LT,
+  CypherCmdLexer.DOT,
+  CypherCmdLexer.GT,
 ];
 
 const traillingCharacters = [
