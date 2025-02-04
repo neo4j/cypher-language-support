@@ -4,10 +4,17 @@ import {
 } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { eventually, getDocumentUri, openDocument } from '../../helpers';
+import {
+  documentationToString,
+  eventually,
+  getDocumentUri,
+  newUntitledFileWithContent,
+  openDocument,
+  parameterLabelToString,
+} from '../../helpers';
 
 type InclusionTestArgs = {
-  textFile: string;
+  textFile: string | vscode.Uri;
   position: vscode.Position;
   expected: vscode.SignatureHelp;
 };
@@ -17,9 +24,13 @@ export async function testSignatureHelp({
   position,
   expected,
 }: InclusionTestArgs) {
-  const docUri = getDocumentUri(textFile);
-
-  await openDocument(docUri);
+  let docUri: vscode.Uri;
+  if (typeof textFile === 'string') {
+    docUri = getDocumentUri(textFile);
+    await openDocument(docUri);
+  } else {
+    docUri = textFile;
+  }
 
   await eventually(async () => {
     const signatureHelp: vscode.SignatureHelp =
@@ -29,7 +40,11 @@ export async function testSignatureHelp({
         position,
       );
 
-    assert.equal(signatureHelp.activeParameter, expected.activeParameter);
+    assert.equal(
+      signatureHelp.activeParameter,
+      expected.activeParameter,
+      `Active parameter does not match. Actual: ${signatureHelp.activeParameter}, expected: ${expected.activeParameter}`,
+    );
 
     expected.signatures.forEach((expectedSignature) => {
       const foundSignature = signatureHelp.signatures.find((signature) => {
@@ -39,6 +54,11 @@ export async function testSignatureHelp({
       assert.equal(
         foundSignature.documentation,
         expectedSignature.documentation,
+        `Documentation for the signature does not match. Actual: ${documentationToString(
+          foundSignature.documentation,
+        )}, expected: ${documentationToString(
+          expectedSignature.documentation,
+        )}`,
       );
 
       expectedSignature.parameters.forEach((expectedParameter) => {
@@ -47,8 +67,15 @@ export async function testSignatureHelp({
         );
 
         assert.equal(
-          foundParameter.documentation,
+          foundParameter?.documentation,
           expectedParameter.documentation,
+          `Documentation for the parameter ${parameterLabelToString(
+            expectedParameter.label,
+          )} does not match. Actual: ${documentationToString(
+            foundParameter?.documentation,
+          )}, expected: ${documentationToString(
+            expectedParameter.documentation,
+          )}`,
         );
       });
     });
@@ -66,7 +93,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.functions.abs,
+          testData.mockSchema.functions['CYPHER 5']['abs'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -86,7 +113,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -106,7 +133,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -126,7 +153,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -148,7 +175,7 @@ suite('Signature help spec', () => {
       activeSignature: undefined,
       signatures: [
         toSignatureInformation(
-          testData.mockSchema.procedures['apoc.import.csv'],
+          testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'],
         ) as vscode.SignatureInformation,
       ],
     };
@@ -158,5 +185,45 @@ suite('Signature help spec', () => {
       position: position,
       expected: expected,
     });
+  });
+
+  test('Signature help depends on the Cypher version', async () => {
+    const textDocument = await newUntitledFileWithContent(`
+          CYPHER 5 RETURN apoc.create.uuid( ;
+          CYPHER 25 RETURN apoc.create.uuid(
+        `);
+    const cypher5Position = new vscode.Position(1, 43);
+    const cypher25Position = new vscode.Position(2, 44);
+
+    const cypher5Expected: vscode.SignatureHelp = {
+      // This is what would make it show only the function description
+      // since there are only 3 arguments in the signature and the last index is 2
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [
+        toSignatureInformation(
+          testData.mockSchema.functions['CYPHER 5']['apoc.create.uuid'],
+        ) as vscode.SignatureInformation,
+      ],
+    };
+
+    await testSignatureHelp({
+      textFile: textDocument.uri,
+      position: cypher5Position,
+      expected: cypher5Expected,
+    });
+
+    // TODO Using assert.rejects is not ideal but I couldn't find
+    // a procedure that was specifically added in Cypher 25
+    // In next apoc releases, apoc.cypher.runTimeboxed
+    // will add an extra config argument in Cypher 25,
+    // so we could improve this test
+    await assert.rejects(
+      testSignatureHelp({
+        textFile: textDocument.uri,
+        position: cypher25Position,
+        expected: cypher5Expected,
+      }),
+    );
   });
 });

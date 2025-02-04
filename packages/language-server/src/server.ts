@@ -12,13 +12,20 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
+import {
+  syntaxColouringLegend,
+  _internalFeatureFlags,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
 import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import { Neo4jSettings } from './types';
+
+if (process.env.CYPHER_25 === 'true') {
+  _internalFeatureFlags.cypher25 = true;
+}
 
 const connection = createConnection(ProposedFeatures.all);
 

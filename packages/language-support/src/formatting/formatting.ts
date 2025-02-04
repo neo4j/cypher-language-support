@@ -399,7 +399,7 @@ export function formatQuery(
 ): string | FormattingResultWithCursor {
   const { tree, tokens } = getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens);
-  
+
   tokens.fill();
 
   if (cursorPosition === undefined) return visitor.format(tree);

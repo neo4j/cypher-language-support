@@ -1,10 +1,13 @@
-import { Neo4jProcedure } from '@neo4j-cypher/language-support';
+import { CypherVersion, Neo4jProcedure } from '@neo4j-cypher/language-support';
 import Ajv, { JSONSchemaType } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
 import { cleanTypeDescription } from '../data-transforms/clean-type';
 import type { ExecuteQueryArgs } from '../types/sdkTypes';
 
-type ListProcedureArgs = { executableByMe: boolean };
+type ListProcedureArgs = {
+  executableByMe: boolean;
+  cypherVersion?: CypherVersion;
+};
 
 export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
   type: 'object',
@@ -76,14 +79,17 @@ function cleanTypes(result: Neo4jProcedure): Neo4jProcedure {
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-procedures/
  */
 export function listProcedures(
-  { executableByMe }: ListProcedureArgs = { executableByMe: false },
+  { executableByMe, cypherVersion }: ListProcedureArgs = {
+    executableByMe: false,
+    cypherVersion: undefined,
+  },
 ): ExecuteQueryArgs<{
   procedures: Neo4jProcedure[];
 }> {
-  const query = `SHOW PROCEDURES ${
-    executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
-  }
-YIELD *`;
+  const query = `${cypherVersion ? cypherVersion + ' ' : ''}
+    SHOW PROCEDURES 
+    ${executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''}
+    YIELD *`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {

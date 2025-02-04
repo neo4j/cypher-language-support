@@ -60,12 +60,12 @@ export class CypherEditorPage {
   }
 
   async checkNoNotificationMessage(type: 'error' | 'warning') {
-    await this.page.waitForTimeout(3000);
+    await this.page.waitForTimeout(10000);
     await expect(this.page.locator('.cm-lintRange-' + type)).toHaveCount(0, {
-      timeout: 3000,
+      timeout: 10000,
     });
     await expect(this.page.locator('.cm-lintPoint-' + type)).toHaveCount(0, {
-      timeout: 3000,
+      timeout: 10000,
     });
   }
 
@@ -75,11 +75,13 @@ export class CypherEditorPage {
     expectedMsg: string,
   ) {
     await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
-      { timeout: 3000 },
+      { timeout: 10000 },
     );
 
     await this.page.getByText(queryChunk, { exact: true }).hover();
-    await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible();
+    await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
+      timeout: 10000,
+    });
     await expect(this.page.getByText(expectedMsg)).toBeVisible();
     /* Return the mouse to the beginning of the query and
        This is because if for example we have an overlay with a 

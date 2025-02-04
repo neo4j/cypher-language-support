@@ -3,10 +3,22 @@ import {
   CompletionItemTag,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
+import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('function invocations', () => {
+  let isCypher25: boolean;
+
+  beforeAll(() => {
+    isCypher25 = _internalFeatureFlags.cypher25;
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = isCypher25;
+  });
+
   const dbSchema: DbSchema = testData.mockSchema;
   const functions = dbSchema.functions;
 
@@ -20,8 +32,8 @@ describe('function invocations', () => {
           label: 'acos',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['acos'].signature,
-          documentation: functions['acos'].description,
+          signature: functions['CYPHER 5']['acos'].signature,
+          documentation: functions['CYPHER 5']['acos'].description,
         },
         {
           label: 'apoc',
@@ -32,22 +44,22 @@ describe('function invocations', () => {
           label: 'apoc.agg.graph',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.graph'].signature,
-          documentation: functions['apoc.agg.graph'].description,
+          signature: functions['CYPHER 5']['apoc.agg.graph'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.graph'].description,
         },
         {
           label: 'apoc.coll.pairs',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.coll.pairs'].signature,
-          documentation: functions['apoc.coll.pairs'].description,
+          signature: functions['CYPHER 5']['apoc.coll.pairs'].signature,
+          documentation: functions['CYPHER 5']['apoc.coll.pairs'].description,
         },
         {
           label: 'apoc.create.uuid',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.create.uuid'].signature,
-          documentation: functions['apoc.create.uuid'].description,
+          signature: functions['CYPHER 5']['apoc.create.uuid'].signature,
+          documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],
@@ -64,29 +76,29 @@ describe('function invocations', () => {
           label: 'acos',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['acos'].signature,
-          documentation: functions['acos'].description,
+          signature: functions['CYPHER 5']['acos'].signature,
+          documentation: functions['CYPHER 5']['acos'].description,
         },
         {
           label: 'apoc.agg.graph',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.graph'].signature,
-          documentation: functions['apoc.agg.graph'].description,
+          signature: functions['CYPHER 5']['apoc.agg.graph'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.graph'].description,
         },
         {
           label: 'apoc.coll.pairs',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.coll.pairs'].signature,
-          documentation: functions['apoc.coll.pairs'].description,
+          signature: functions['CYPHER 5']['apoc.coll.pairs'].signature,
+          documentation: functions['CYPHER 5']['apoc.coll.pairs'].description,
         },
         {
           label: 'apoc.create.uuid',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.create.uuid'].signature,
-          documentation: functions['apoc.create.uuid'].description,
+          signature: functions['CYPHER 5']['apoc.create.uuid'].signature,
+          documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],
@@ -130,22 +142,22 @@ describe('function invocations', () => {
           label: 'first',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.first'].signature,
-          documentation: functions['apoc.agg.first'].description,
+          signature: functions['CYPHER 5']['apoc.agg.first'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.first'].description,
         },
         {
           label: 'last',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.last'].signature,
-          documentation: functions['apoc.agg.last'].description,
+          signature: functions['CYPHER 5']['apoc.agg.last'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.last'].description,
         },
         {
           label: 'slice',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.slice'].signature,
-          documentation: functions['apoc.agg.slice'].description,
+          signature: functions['CYPHER 5']['apoc.agg.slice'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.slice'].description,
         },
       ],
       excluded: [
@@ -178,22 +190,22 @@ describe('function invocations', () => {
           label: 'first',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.first'].signature,
-          documentation: functions['apoc.agg.first'].description,
+          signature: functions['CYPHER 5']['apoc.agg.first'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.first'].description,
         },
         {
           label: 'last',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.last'].signature,
-          documentation: functions['apoc.agg.last'].description,
+          signature: functions['CYPHER 5']['apoc.agg.last'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.last'].description,
         },
         {
           label: 'slice',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.slice'].signature,
-          documentation: functions['apoc.agg.slice'].description,
+          signature: functions['CYPHER 5']['apoc.agg.slice'].signature,
+          documentation: functions['CYPHER 5']['apoc.agg.slice'].description,
         },
       ],
       excluded: [
@@ -306,15 +318,16 @@ describe('function invocations', () => {
           label: 'apoc.agg.percentiles',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.percentiles'].signature,
-          documentation: functions['apoc.agg.percentiles'].description,
+          signature: functions['CYPHER 5']['apoc.agg.percentiles'].signature,
+          documentation:
+            functions['CYPHER 5']['apoc.agg.percentiles'].description,
         },
         {
           label: 'acos',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['acos'].signature,
-          documentation: functions['acos'].description,
+          signature: functions['CYPHER 5']['acos'].signature,
+          documentation: functions['CYPHER 5']['acos'].description,
         },
       ],
     });
@@ -330,8 +343,9 @@ describe('function invocations', () => {
           label: 'apoc.agg.percentiles',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.agg.percentiles'].signature,
-          documentation: functions['apoc.agg.percentiles'].description,
+          signature: functions['CYPHER 5']['apoc.agg.percentiles'].signature,
+          documentation:
+            functions['CYPHER 5']['apoc.agg.percentiles'].description,
         },
         {
           label: 'apoc',
@@ -342,8 +356,8 @@ describe('function invocations', () => {
           label: 'acos',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['acos'].signature,
-          documentation: functions['acos'].description,
+          signature: functions['CYPHER 5']['acos'].signature,
+          documentation: functions['CYPHER 5']['acos'].description,
         },
       ],
     });
@@ -355,8 +369,10 @@ describe('function invocations', () => {
       query,
       dbSchema: {
         functions: {
-          math: { ...testData.emptyFunction, name: 'math' },
-          'math.max': { ...testData.emptyFunction, name: 'math.max' },
+          'CYPHER 5': {
+            math: { ...testData.emptyFunction, name: 'math' },
+            'math.max': { ...testData.emptyFunction, name: 'math.max' },
+          },
         },
       },
       expected: [
@@ -386,8 +402,41 @@ describe('function invocations', () => {
           label: 'uuid',
           kind: CompletionItemKind.Function,
           detail: '(function)',
-          signature: functions['apoc.create.uuid'].signature,
-          documentation: functions['apoc.create.uuid'].description,
+          signature: functions['CYPHER 5']['apoc.create.uuid'].signature,
+          documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
+    });
+  });
+
+  test('Functions are completed based on cypher version', () => {
+    // apoc.create.uuid was deprecated in Cypher 5 and removed in Cypher 25
+    testCompletions({
+      query: 'CYPHER 5 RETURN apoc.create.',
+      dbSchema,
+      expected: [
+        {
+          label: 'uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+          signature: functions['CYPHER 5']['apoc.create.uuid'].signature,
+          documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
+          tags: [CompletionItemTag.Deprecated],
+        },
+      ],
+    });
+
+    testCompletions({
+      query: 'CYPHER 25 RETURN apoc.create.',
+      dbSchema,
+      excluded: [
+        {
+          label: 'uuid',
+          kind: CompletionItemKind.Function,
+          detail: '(function)',
+          signature: functions['CYPHER 5']['apoc.create.uuid'].signature,
+          documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],

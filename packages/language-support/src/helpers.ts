@@ -6,6 +6,8 @@ import antlrDefaultExport, {
   ParseTree,
   Token,
 } from 'antlr4';
+import { DbSchema } from './dbSchema';
+import { _internalFeatureFlags } from './featureFlags';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
@@ -13,6 +15,7 @@ import CypherParser, {
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
+import { CypherVersion } from './types';
 
 /* In antlr we have 
 
@@ -201,6 +204,20 @@ export function isCommentOpener(
   nextToken: Token | undefined,
 ): boolean {
   return thisToken.text === '/' && nextToken?.text === '*';
+}
+
+export function resolveCypherVersion(
+  parsedVersion: CypherVersion | undefined,
+  dbSchema: DbSchema,
+) {
+  if (_internalFeatureFlags.cypher25) {
+    const cypherVersion: CypherVersion =
+      parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
+
+    return cypherVersion;
+  } else {
+    return 'CYPHER 5';
+  }
 }
 
 export const rulesDefiningVariables = [
