@@ -125,6 +125,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
         },
+        severity: 1,
       },
       {
         message:
@@ -164,6 +165,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
         },
+        severity: 1,
       },
       {
         message:
@@ -183,6 +185,78 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 2,
+      },
+    ]);
+  });
+
+  test('Faulty cypher versions with periods yields expected errors', () => {
+    const query1 = 'CYPHER  1.0.2.0 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 00.1 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    const query3 = 'CYPHER 030.1..1 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics3 = getDiagnosticsForQuery({ query: query3 });
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          '1.0.2.0 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 15,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 15,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message:
+          '00.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 11,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 11,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics3).toEqual([
+      {
+        message:
+          '030.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 12,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 12,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
       },
     ]);
   });

@@ -450,6 +450,7 @@ class CypherVersionCollector extends ParseTreeListener {
           message:
             ctx.getText() +
             ' is not a valid option for cypher version. Valid options are: 5, 25',
+          severity: DiagnosticSeverity.Error,
           ...translateTokensToRange(ctx.start, ctx.stop),
         };
       }
