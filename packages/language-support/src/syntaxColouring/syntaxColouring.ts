@@ -107,8 +107,8 @@ class SyntaxHighlighter extends CypherParserListener {
 
       toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
         (token) => {
-          const tokenPos = computeTokenKey(token.position, token.token.length);
-          this.colouredTokens.set(tokenPos, token);
+          const tokenKey = computeTokenKey(token.position, token.token.length);
+          this.colouredTokens.set(tokenKey, token);
         },
       );
     }
