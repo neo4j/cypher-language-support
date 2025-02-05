@@ -415,8 +415,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.removeIndentation();
       if (ctx.ALL(i)) {
         this.visit(ctx.ALL(i));
-      }
-      if (ctx.DISTINCT(i)) {
+      } else if (ctx.DISTINCT(i)) {
         this.visit(ctx.DISTINCT(i));
       }
       this.breakLine();

@@ -303,8 +303,8 @@ RETURN name, count(*) AS count ORDER BY count`;
     const query = `CALL () {
   MATCH (a:Actor)
   RETURN a.name AS name
-UNION DISTINCT
-  ALL 
+UNION 
+  DISTINCT
   MATCH (m:Movie)
   RETURN m.title AS name
 }
