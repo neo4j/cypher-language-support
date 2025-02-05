@@ -26,6 +26,7 @@ async function main() {
       launchArgs: [path.join(__dirname, '../../tests/fixtures/')],
       extensionDevelopmentPath,
       extensionTestsPath,
+      extensionTestsEnv: { CYPHER_25: 'true' },
     });
   } catch (err) {
     console.error('Failed to run integration tests');

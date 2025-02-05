@@ -6,6 +6,7 @@ import {
 } from 'vscode-languageserver-types';
 
 import { DbSchema } from '../dbSchema';
+import { resolveCypherVersion } from '../helpers';
 import {
   LabelOrRelType,
   LabelType,
@@ -328,10 +329,14 @@ function warningOnDeprecatedProcedure(
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
   if (dbSchema.procedures) {
+    const cypherVersion = resolveCypherVersion(
+      parsingResult.cypherVersion,
+      dbSchema,
+    );
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
-      const proc = dbSchema.procedures?.[parsedProcedure.name];
+      const proc = dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name];
       const procedureDeprecated = proc?.option?.deprecated;
       const deprecatedBy = proc?.deprecatedBy;
       if (deprecatedBy)
@@ -351,9 +356,13 @@ function warningOnDeprecatedFunction(
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
   if (dbSchema.functions) {
+    const cypherVersion = resolveCypherVersion(
+      parsingResult.cypherVersion,
+      dbSchema,
+    );
     const functionsInQuery = parsingResult.collectedFunctions;
     functionsInQuery.forEach((parsedFunction) => {
-      const fn = dbSchema.functions?.[parsedFunction.name];
+      const fn = dbSchema.functions?.[cypherVersion]?.[parsedFunction.name];
       const functionDeprecated = fn?.isDeprecated;
       const deprecatedBy = fn?.deprecatedBy;
       if (functionDeprecated) {
@@ -373,13 +382,17 @@ function errorOnUndeclaredFunctions(
   const warnings: SyntaxDiagnostic[] = [];
 
   if (dbSchema.functions) {
+    const cypherVersion = resolveCypherVersion(
+      parsingResult.cypherVersion,
+      dbSchema,
+    );
     const functionsInQuery = parsingResult.collectedFunctions;
 
     functionsInQuery.forEach((parsedFunction) => {
       const warning = detectNonDeclaredFunction(
         parsedFunction,
-        dbSchema.functions,
-        dbSchema.procedures,
+        dbSchema.functions?.[cypherVersion] ?? {},
+        dbSchema.procedures?.[cypherVersion] ?? {},
       );
 
       if (warning) warnings.push(warning);
@@ -396,16 +409,20 @@ function errorOnUndeclaredProcedures(
   const errors: SyntaxDiagnostic[] = [];
 
   if (dbSchema.procedures) {
+    const cypherVersion = resolveCypherVersion(
+      parsingResult.cypherVersion,
+      dbSchema,
+    );
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
       const procedureExists = Boolean(
-        dbSchema.procedures[parsedProcedure.name],
+        dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name],
       );
       if (!procedureExists) {
         const existsAsFunction = functionExists(
           parsedProcedure,
-          dbSchema.functions,
+          dbSchema.functions?.[cypherVersion] ?? {},
         );
         if (existsAsFunction) {
           errors.push(generateFunctionUsedAsProcedureError(parsedProcedure));

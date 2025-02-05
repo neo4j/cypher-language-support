@@ -46,6 +46,18 @@ export function App() {
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
+  const extraKeybindings = [
+    {
+      key: 'Ctrl-Shift-f',
+      mac: 'Alt-Shift-f',
+      preventDefault: true,
+      run: () => {
+        editorRef.current.format();
+        return true;
+      },
+    },
+  ];
+
   const editorRef = useRef<CypherEditor>(null);
 
   const treeData = useMemo(() => {
@@ -115,15 +127,17 @@ export function App() {
               theme={darkMode ? 'dark' : 'light'}
               history={Object.values(demos)}
               schema={schema}
-              featureFlags={{
-                signatureInfoOnAutoCompletions: true,
-              }}
+              extraKeybindings={extraKeybindings}
               ariaLabel="Cypher Editor"
             />
             <p
               onClick={() => editorRef.current.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
-              title={window.navigator.userAgent.includes("Mac") ? "Shift-Option-F" : "Ctrl-Shift-I"}
+              title={
+                window.navigator.userAgent.includes('Mac')
+                  ? 'Shift-Option-F'
+                  : 'Ctrl-Shift-I'
+              }
             >
               Format Query
             </p>

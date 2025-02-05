@@ -1,3 +1,4 @@
+import { _internalFeatureFlags } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
@@ -31,7 +32,11 @@ async function rawLintDocument(
     }
 
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-    lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+    lastSemanticJob = proxyWorker.lintCypherQuery(
+      query,
+      dbSchema,
+      _internalFeatureFlags,
+    );
     const result = await lastSemanticJob;
 
     sendDiagnostics(result);

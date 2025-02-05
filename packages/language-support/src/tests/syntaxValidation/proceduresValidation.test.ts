@@ -1,7 +1,19 @@
+import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Procedures semantic validation spec', () => {
+  let isCypher25: boolean;
+
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    isCypher25 = _internalFeatureFlags.cypher25;
+    _internalFeatureFlags.cypher25 = isCypher25;
+  });
+
   test('Syntax validation warns on deprecated procedure when database can be contacted', () => {
     const query = `CALL db.create.setVectorProperty()`;
     expect(
@@ -176,25 +188,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'CYPHER 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -502,25 +516,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'CYPHER 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -541,25 +557,27 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
           procedures: {
-            mockProcedure: {
-              name: 'mockProcedure',
-              description:
-                'Returns the current change identifier that can be used to stream changes from.',
-              mode: 'READ',
-              worksOnSystem: false,
-              argumentDescription: [],
-              signature: 'mockProcedure() :: (id :: STRING)',
-              returnDescription: [
-                {
-                  isDeprecated: false,
-                  description: 'id :: STRING',
-                  name: 'id',
-                  type: 'STRING',
+            'CYPHER 5': {
+              mockProcedure: {
+                name: 'mockProcedure',
+                description:
+                  'Returns the current change identifier that can be used to stream changes from.',
+                mode: 'READ',
+                worksOnSystem: false,
+                argumentDescription: [],
+                signature: 'mockProcedure() :: (id :: STRING)',
+                returnDescription: [
+                  {
+                    isDeprecated: false,
+                    description: 'id :: STRING',
+                    name: 'id',
+                    type: 'STRING',
+                  },
+                ],
+                admin: false,
+                option: {
+                  deprecated: false,
                 },
-              ],
-              admin: false,
-              option: {
-                deprecated: false,
               },
             },
           },
@@ -833,42 +851,44 @@ meaning that it expects at least 1 argument of type ANY
         dbSchema: {
           functions: {},
           procedures: {
-            'apoc.meta.graphSample': {
-              name: 'apoc.meta.graphSample',
-              description:
-                'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
-              mode: 'DEFAULT',
-              worksOnSystem: false,
-              argumentDescription: [
-                {
-                  isDeprecated: false,
-                  default: 'DefaultParameterValue{value={}, type=MAP}',
-                  description: 'config = {} :: MAP',
-                  name: 'config',
-                  type: 'MAP',
-                },
-              ],
+            'CYPHER 5': {
+              'apoc.meta.graphSample': {
+                name: 'apoc.meta.graphSample',
+                description:
+                  'Examines the full graph and returns a meta-graph.\nUnlike `apoc.meta.graph`, this procedure does not filter away non-existing paths.',
+                mode: 'DEFAULT',
+                worksOnSystem: false,
+                argumentDescription: [
+                  {
+                    isDeprecated: false,
+                    default: 'DefaultParameterValue{value={}, type=MAP}',
+                    description: 'config = {} :: MAP',
+                    name: 'config',
+                    type: 'MAP',
+                  },
+                ],
 
-              signature:
-                'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
-              returnDescription: [
-                {
-                  isDeprecated: true,
-                  description: 'nodes :: LIST<NODE>',
-                  name: 'nodes',
-                  type: 'LIST<NODE>',
-                },
-                {
-                  isDeprecated: false,
-                  description: 'relationships :: LIST<RELATIONSHIP>',
-                  name: 'relationships',
-                  type: 'LIST<RELATIONSHIP>',
-                },
-              ],
+                signature:
+                  'apoc.meta.graphSample(config = {} :: MAP) :: (nodes :: LIST<NODE>, relationships :: LIST<RELATIONSHIP>)',
+                returnDescription: [
+                  {
+                    isDeprecated: true,
+                    description: 'nodes :: LIST<NODE>',
+                    name: 'nodes',
+                    type: 'LIST<NODE>',
+                  },
+                  {
+                    isDeprecated: false,
+                    description: 'relationships :: LIST<RELATIONSHIP>',
+                    name: 'relationships',
+                    type: 'LIST<RELATIONSHIP>',
+                  },
+                ],
 
-              admin: false,
-              option: {
-                deprecated: false,
+                admin: false,
+                option: {
+                  deprecated: false,
+                },
               },
             },
           },
@@ -893,6 +913,171 @@ meaning that it expects at least 1 argument of type ANY
           },
         },
         severity: 2,
+      },
+    ]);
+  });
+
+  test('Deprecations and removals for procedures are based on the cypher version', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 CALL apoc.export.arrow.stream.all()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'Procedure apoc.export.arrow.stream.all is deprecated. Alternative: This procedure is being moved to APOC Extended.',
+        offsets: {
+          end: 42,
+          start: 14,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 2,
+        tags: [2],
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 CALL apoc.export.arrow.stream.all()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Procedure apoc.export.arrow.stream.all is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 43,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 43,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Errors and notifications for procedures are different based on the cypher version', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 5 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message: `Procedure call provides too many arguments: got 4 expected no more than 3.
+
+Procedure apoc.cypher.runTimeboxed has signature: apoc.cypher.runTimeboxed(statement :: STRING, params :: MAP, timeout :: INTEGER) :: value :: MAP
+meaning that it expects at least 3 arguments of types STRING, MAP, INTEGER
+`,
+        offsets: {
+          end: 297,
+          start: 20,
+        },
+        range: {
+          end: {
+            character: 74,
+            line: 6,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: `
+          CYPHER 25 call apoc.cypher.runTimeboxed("match (n:Node), (m:Node)
+          WHERE n <> m
+          match path = shortestpath((n)-[:CONNECTED_TO*]-(m))
+          RETURN n, m, length(path) AS path", {}, 100, {})
+          YIELD value
+          RETURN value.n.uuid, value.m.uuid, value.path;`,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([]);
+  });
+
+  test('Warnings for functions misused as procedures are different depending on cypher the version', () => {
+    // Function misused as procedure, but deprecated in Cypher5, so removed in Cypher25
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 5 CALL apoc.create.uuid()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          'apoc.create.uuid is a function, not a procedure. Did you mean to use the function apoc.create.uuid with a RETURN instead of a CALL clause?',
+        offsets: {
+          end: 30,
+          start: 14,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 14,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+
+    expect(
+      getDiagnosticsForQuery({
+        query: 'CYPHER 25 CALL apoc.create.uuid()',
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
+      {
+        message:
+          "Procedure apoc.create.uuid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 31,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
       },
     ]);
   });

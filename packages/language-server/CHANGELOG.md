@@ -1,5 +1,20 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.15
+
+### Patch Changes
+
+- 245fb6a: Automatically opens autocompletions after "YIELD "
+- Updated dependencies [8ec797d]
+- Updated dependencies [7aa9c3a]
+- Updated dependencies [2be5469]
+- Updated dependencies [245fb6a]
+- Updated dependencies [c587b81]
+- Updated dependencies [3f8b64f]
+- Updated dependencies [043d766]
+- Updated dependencies [704d1c5]
+  - @neo4j-cypher/language-support@2.0.0-next.14
+
 ## 2.0.0-next.14
 
 ### Patch Changes
