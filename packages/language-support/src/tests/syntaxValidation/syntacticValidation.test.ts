@@ -1201,7 +1201,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([
       {
         message:
-          'Failed to parse escaped literal. The query must contain an even number of non-escaped quotes.',
+          'Failed to parse escaped literal. The query must contain an even number of ` backticks.',
         offsets: {
           end: 27,
           start: 17,

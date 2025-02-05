@@ -68,7 +68,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
             'Failed to parse string literal. The query must contain an even number of non-escaped quotes.';
         } else if (offendingSymbol.text === '`') {
           errorMessage =
-            'Failed to parse escaped literal. The query must contain an even number of non-escaped quotes.';
+            'Failed to parse escaped literal. The query must contain an even number of ` backticks.';
         }
 
         if (errorMessage) {
