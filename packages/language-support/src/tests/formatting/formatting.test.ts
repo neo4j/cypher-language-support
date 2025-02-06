@@ -262,6 +262,102 @@ WITH N, RAND() AS Rand, $pArAm AS MAP
 RETURN Rand, MAP.property_key, count(N)`;
     verifyFormatting(query, expected);
   });
+
+  test('union example', () => {
+    const query = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    const expected = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count
+  UNION
+MATCH (j:Person)
+WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('union with ALL example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION
+  ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('union with DISTINCT example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION 
+  DISTINCT
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION DISTINCT
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('generic case expression example', () => {
+    const query = `MATCH (n:Person)
+RETURN CASE
+WHEN n.eyes = 'blue' THEN 1
+WHEN n.age < 40      THEN 2
+ELSE 3
+END AS result, n.eyes, n.age`;
+    const expected = `MATCH (n:Person)
+RETURN
+CASE
+  WHEN n.eyes = 'blue' THEN 1
+  WHEN n.age < 40 THEN 2
+  ELSE 3
+END AS result, n.eyes, n.age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('case expression with value example', () => {
+    const query = `MATCH (n:Person)
+RETURN n.name, CASE n.age WHEN = 0, = 1, = 2 THEN "Baby"
+WHEN <= 13 THEN "Child"
+WHEN < 20 THEN "Teenager"
+WHEN < 30 THEN "Young Adult"
+WHEN > 1000 THEN "Immortal"
+ELSE "Adult"
+END AS result`;
+    const expected = `MATCH (n:Person)
+RETURN n.name,
+CASE n.age
+  WHEN = 0, = 1, = 2 THEN "Baby"
+  WHEN <= 13 THEN "Child"
+  WHEN < 20 THEN "Teenager"
+  WHEN < 30 THEN "Young Adult"
+  WHEN > 1000 THEN "Immortal"
+  ELSE "Adult"
+END AS result`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
@@ -274,6 +370,12 @@ describe('various edgecases', () => {
   test('should not add space for parameter access', () => {
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
+    verifyFormatting(query, expected);
+  });
+
+  test('apoc call, namespaced function', () => {
+    const query = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
+    const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
     verifyFormatting(query, expected);
   });
 });
@@ -321,6 +423,6 @@ WHERE variable.property = "String"
     OR $parameter > 2 
 RETURN variable;`;
     const result = formatQuery(query, 133);
-    expect(result.newCursorPos).toEqual(120);
+    expect(result.newCursorPos).toEqual(118);
   });
 });

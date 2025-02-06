@@ -36,12 +36,15 @@ function expectErrorMessage(query: string, msg: string) {
 }
 
 describe('sanity checks', () => {
+  let consoleCommands: boolean;
+
   beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
     _internalFeatureFlags.consoleCommands = true;
   });
 
   afterAll(() => {
-    _internalFeatureFlags.consoleCommands = false;
+    _internalFeatureFlags.consoleCommands = consoleCommands;
   });
 
   test('parses simple commands without args ', () => {
@@ -219,11 +222,14 @@ describe('sanity checks', () => {
 });
 
 describe(':use', () => {
+  let consoleCommands: boolean;
+
   beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
     _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    _internalFeatureFlags.consoleCommands = false;
+    _internalFeatureFlags.consoleCommands = consoleCommands;
   });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
@@ -285,11 +291,14 @@ describe(':use', () => {
 });
 
 describe('parameters', () => {
+  let consoleCommands: boolean;
+
   beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
     _internalFeatureFlags.consoleCommands = true;
   });
   afterAll(() => {
-    _internalFeatureFlags.consoleCommands = false;
+    _internalFeatureFlags.consoleCommands = consoleCommands;
   });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
@@ -339,17 +348,21 @@ describe('parameters', () => {
   test('autocompletes expressions', () => {
     const arrowCompletions = autocomplete(':param foo => ', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });
     const mapCompletions = autocomplete(':param {a:  ', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });
@@ -560,12 +573,15 @@ describe('parameters', () => {
 });
 
 describe('server', () => {
+  let consoleCommands: boolean;
+
   beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
     _internalFeatureFlags.consoleCommands = true;
   });
 
   afterAll(() => {
-    _internalFeatureFlags.consoleCommands = false;
+    _internalFeatureFlags.consoleCommands = consoleCommands;
   });
 
   test('basic server usage', () => {
@@ -580,9 +596,11 @@ describe('server', () => {
   test('autocompletes operation', () => {
     const mapCompletions = autocomplete(':server conn', {
       functions: {
-        'duration.inSeconds': {
-          ...testData.emptyFunction,
-          name: 'duration.inSeconds',
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
         },
       },
     });
@@ -663,12 +681,17 @@ describe('server', () => {
 });
 
 describe('command parser also handles cypher', () => {
+  let consoleCommands: boolean;
+
   beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
     _internalFeatureFlags.consoleCommands = true;
   });
+
   afterAll(() => {
-    _internalFeatureFlags.consoleCommands = false;
+    _internalFeatureFlags.consoleCommands = consoleCommands;
   });
+
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [
       { statement: 'MATCH (n) RETURN n', type: 'cypher' },

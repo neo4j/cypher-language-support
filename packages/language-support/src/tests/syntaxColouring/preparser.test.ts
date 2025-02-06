@@ -775,4 +775,303 @@ RETURN map.propertyKey`;
       },
     ]);
   });
+
+  test('Correctly colours preparser options including unfinished comments', () => {
+    const query = `CYPHER runtime = /*some unfinished comment
+    slotted`;
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'CYPHER',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'runtime',
+        tokenType: 'setting',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 15,
+          startOffset: 15,
+        },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 25,
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        token: '/*some unfinished comment',
+        tokenType: 'comment',
+      },
+      {
+        bracketInfo: undefined,
+        length: 11,
+        position: {
+          line: 1,
+          startCharacter: 0,
+          startOffset: 43,
+        },
+        token: '    slotted',
+        tokenType: 'comment',
+      },
+    ]);
+  });
+
+  test('Correctly colours preparser options including unfinished backticked elements', () => {
+    const query = `CYPHER runtime = \`some unfinished 
+    backticked element
+    `;
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'CYPHER',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'runtime',
+        tokenType: 'setting',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 15,
+          startOffset: 15,
+        },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 17,
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        token: '`some unfinished ',
+        tokenType: 'symbolicName',
+      },
+      {
+        bracketInfo: undefined,
+        length: 22,
+        position: {
+          line: 1,
+          startCharacter: 0,
+          startOffset: 35,
+        },
+        token: '    backticked element',
+        tokenType: 'symbolicName',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 2,
+          startCharacter: 0,
+          startOffset: 58,
+        },
+        token: '    ',
+        tokenType: 'symbolicName',
+      },
+    ]);
+  });
+
+  test('Correctly colours preparser options including unfinished strings', () => {
+    const query = `CYPHER runtime = "some unfinished 
+    string
+    `;
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'CYPHER',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'runtime',
+        tokenType: 'setting',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 15,
+          startOffset: 15,
+        },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 17,
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        token: `"some unfinished `,
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 10,
+        position: {
+          line: 1,
+          startCharacter: 0,
+          startOffset: 35,
+        },
+        token: '    string',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 2,
+          startCharacter: 0,
+          startOffset: 46,
+        },
+        token: '    ',
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
+
+  test('Correctly colours strings in wrong places', () => {
+    const query = `MATCH (n: "foo bar 
+
+      adfsa
+      asfds`;
+    expect(applySyntaxColouring(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 5,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'MATCH',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'n',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 8,
+          startOffset: 8,
+        },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 9,
+        position: {
+          line: 0,
+          startCharacter: 10,
+          startOffset: 10,
+        },
+        token: `"foo bar `,
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 11,
+        position: {
+          line: 2,
+          startCharacter: 0,
+          startOffset: 21,
+        },
+        token: '      adfsa',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 11,
+        position: {
+          line: 3,
+          startCharacter: 0,
+          startOffset: 33,
+        },
+        token: '      asfds',
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
 });

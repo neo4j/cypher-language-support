@@ -15,6 +15,7 @@ import CypherParser, {
 import {
   findParent,
   findPreviousNonSpace,
+  resolveCypherVersion,
   rulesDefiningVariables,
 } from '../helpers';
 import {
@@ -27,7 +28,12 @@ import {
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
 import { _internalFeatureFlags } from '../featureFlags';
-import { CompletionItem, Neo4jFunction, Neo4jProcedure } from '../types';
+import {
+  CompletionItem,
+  CypherVersion,
+  Neo4jFunction,
+  Neo4jProcedure,
+} from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
@@ -94,9 +100,12 @@ const reltypeCompletions = (dbSchema: DbSchema) =>
 const procedureReturnCompletions = (
   procedureName: string,
   dbSchema: DbSchema,
+  cypherVersion: CypherVersion,
 ): CompletionItem[] => {
   return (
-    dbSchema?.procedures?.[procedureName]?.returnDescription?.map((x) => {
+    dbSchema.procedures?.[cypherVersion]?.[
+      procedureName
+    ]?.returnDescription?.map((x) => {
       return { label: x.name, kind: CompletionItemKind.Variable };
     }) ?? []
   );
@@ -106,11 +115,12 @@ const functionNameCompletions = (
   candidateRule: CandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
+  cypherVersion: CypherVersion,
 ): CompletionItem[] =>
   namespacedCompletion(
     candidateRule,
     tokens,
-    dbSchema?.functions ?? {},
+    dbSchema.functions?.[cypherVersion] ?? {},
     'function',
   );
 
@@ -118,11 +128,12 @@ const procedureNameCompletions = (
   candidateRule: CandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
+  cypherVersion: CypherVersion,
 ): CompletionItem[] =>
   namespacedCompletion(
     candidateRule,
     tokens,
-    dbSchema?.procedures ?? {},
+    dbSchema.procedures?.[cypherVersion] ?? {},
     'procedure',
   );
 
@@ -430,6 +441,10 @@ export function completionCoreCompletion(
   caretToken: Token,
   manualTrigger = false,
 ): CompletionItem[] {
+  const cypherVersion = resolveCypherVersion(
+    parsingResult.cypherVersion,
+    dbSchema,
+  );
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
@@ -536,18 +551,30 @@ export function completionCoreCompletion(
             callContext.procedureResultItem_list().map((a) => a.getText()),
           );
           const name = getMethodName(procedureNameCtx);
-          return procedureReturnCompletions(name, dbSchema).filter(
-            (a) => !existingYieldItems.has(a?.label),
-          );
+          return procedureReturnCompletions(
+            name,
+            dbSchema,
+            cypherVersion,
+          ).filter((a) => !existingYieldItems.has(a?.label));
         }
       }
 
       if (ruleNumber === CypherParser.RULE_functionName) {
-        return functionNameCompletions(candidateRule, tokens, dbSchema);
+        return functionNameCompletions(
+          candidateRule,
+          tokens,
+          dbSchema,
+          cypherVersion,
+        );
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return procedureNameCompletions(candidateRule, tokens, dbSchema);
+        return procedureNameCompletions(
+          candidateRule,
+          tokens,
+          dbSchema,
+          cypherVersion,
+        );
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
@@ -769,7 +796,7 @@ function completeAliasName({
   ) {
     return [
       ...parameterSuggestions,
-      ...(dbSchema?.aliasNames ?? []).map((aliasName) => ({
+      ...(dbSchema.aliasNames ?? []).map((aliasName) => ({
         label: aliasName,
         kind: CompletionItemKind.Value,
         insertText: backtickDbNameIfNeeded(aliasName),
@@ -834,7 +861,7 @@ function completeSymbolicName({
   if (rulesThatAcceptExistingUsers.some((rule) => ruleList.includes(rule))) {
     const result = [
       ...parameterSuggestions,
-      ...(dbSchema?.userNames ?? []).map((userName) => ({
+      ...(dbSchema.userNames ?? []).map((userName) => ({
         label: userName,
         kind: CompletionItemKind.Value,
       })),
@@ -852,7 +879,7 @@ function completeSymbolicName({
   if (rulesThatAcceptExistingRoles.some((rule) => ruleList.includes(rule))) {
     return [
       ...parameterSuggestions,
-      ...(dbSchema?.roleNames ?? []).map((roleName) => ({
+      ...(dbSchema.roleNames ?? []).map((roleName) => ({
         label: roleName,
         kind: CompletionItemKind.Value,
       })),

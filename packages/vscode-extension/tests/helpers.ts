@@ -1,5 +1,6 @@
 import * as path from 'path';
-import { Uri, window, workspace } from 'vscode';
+import * as vscode from 'vscode';
+import { TextDocument, Uri, window, workspace } from 'vscode';
 import { Connection } from '../src/connectionService';
 import { getNonce } from '../src/getNonce';
 
@@ -14,11 +15,16 @@ export async function openDocument(docUri: Uri) {
   }
 }
 
-export async function newUntitledFileWithContent(content: string) {
+export async function newUntitledFileWithContent(
+  content: string,
+): Promise<TextDocument> {
   try {
     // The language server will not be activated automatically
     const document = await workspace.openTextDocument({ content: content });
     await window.showTextDocument(document);
+    const editor = vscode.window.activeTextEditor;
+    await vscode.languages.setTextDocumentLanguage(editor.document, 'cypher');
+    return document;
   } catch (e) {
     console.error(e);
   }
@@ -81,4 +87,38 @@ export function getNeo4jConfiguration() {
     database: process.env.NEO4J_DATABASE || 'neo4j',
     password: process.env.NEO4J_PASSWORD || 'password',
   };
+}
+
+export function rangeToString(range: vscode.Range) {
+  return `${range.start.line}:${range.start.character} to ${range.end.line}:${range.end.character}`;
+}
+
+export function documentationToString(
+  doc: string | vscode.MarkdownString | undefined,
+) {
+  if (typeof doc === 'string') {
+    return doc;
+  } else if (typeof doc === 'undefined') {
+    return 'undefined';
+  } else {
+    return doc.value;
+  }
+}
+
+export function tagsToString(
+  doc: readonly vscode.CompletionItemTag[] | undefined,
+) {
+  if (!doc) {
+    return 'undefined';
+  } else {
+    return doc.map((tag) => tag.toString()).join(', ');
+  }
+}
+
+export function parameterLabelToString(label: string | [number, number]) {
+  if (Array.isArray(label)) {
+    return `${label[0]}:${label[1]}`;
+  } else {
+    return label;
+  }
 }

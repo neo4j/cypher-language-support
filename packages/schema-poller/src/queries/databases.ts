@@ -1,4 +1,4 @@
-import { CypherVersion } from '@neo4j-cypher/language-support/dist/types/types';
+import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
@@ -45,7 +45,11 @@ export function listDatabases(): ExecuteQueryArgs<{
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
-      return record.toObject() as Database;
+      const obj = record.toObject();
+      if (obj.defaultLanguage) {
+        obj.defaultLanguage = (obj.defaultLanguage as string).toUpperCase();
+      }
+      return obj as Database;
     },
     collect(databases, summary) {
       return { databases, summary };

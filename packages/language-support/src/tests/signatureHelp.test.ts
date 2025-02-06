@@ -1,5 +1,6 @@
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
+import { _internalFeatureFlags } from '../featureFlags';
 import {
   emptyResult,
   signatureHelp,
@@ -21,9 +22,21 @@ export function testSignatureHelp(
 }
 
 describe('Procedures signature help', () => {
+  let isCypher25: boolean;
+
+  beforeAll(() => {
+    isCypher25 = _internalFeatureFlags.cypher25;
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = isCypher25;
+  });
+
   const dbSchema = testData.mockSchema;
   const procedureName = 'apoc.do.when';
-  const signature = toSignatureInformation(dbSchema.procedures[procedureName]);
+  const procedure = dbSchema.procedures['CYPHER 5'][procedureName];
+  const signature = toSignatureInformation(procedure);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -226,12 +239,45 @@ describe('Procedures signature help', () => {
       expectedArgIndex(1),
     );
   });
+
+  test('Procedures signature help depends on cypher version', () => {
+    const dbSchema = {
+      functions: {},
+      procedures: {
+        'CYPHER 5': {
+          [procedureName]: procedure,
+        },
+        'CYPHER 25': {},
+      },
+    };
+
+    testSignatureHelp(
+      'CYPHER 5 CALL apoc.do.when(',
+      dbSchema,
+      expectedArgIndex(0),
+    );
+
+    testSignatureHelp('CYPHER 25 CALL apoc.do.when(', dbSchema, {
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [],
+    });
+  });
 });
 
 describe('Functions signature help', () => {
+  beforeAll(() => {
+    _internalFeatureFlags.cypher25 = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.cypher25 = false;
+  });
+
   const dbSchema = testData.mockSchema;
   const functionName = 'apoc.coll.combinations';
-  const signature = toSignatureInformation(dbSchema.functions[functionName]);
+  const fn = dbSchema.functions['CYPHER 5'][functionName];
+  const signature = toSignatureInformation(fn);
 
   function expectedArgIndex(i: number): SignatureHelp {
     return {
@@ -412,5 +458,29 @@ describe('Functions signature help', () => {
       dbSchema,
       expectedArgIndex(1),
     );
+  });
+
+  test('Functions signature help depends on cypher version', () => {
+    const dbSchema = {
+      procedures: {},
+      functions: {
+        'CYPHER 5': {
+          [functionName]: fn,
+        },
+        'CYPHER 25': {},
+      },
+    };
+
+    testSignatureHelp(
+      'CYPHER 5 RETURN apoc.coll.combinations(',
+      dbSchema,
+      expectedArgIndex(0),
+    );
+
+    testSignatureHelp('CYPHER 25 RETURN apoc.coll.combinations(', dbSchema, {
+      activeParameter: 0,
+      activeSignature: undefined,
+      signatures: [],
+    });
   });
 });

@@ -2,10 +2,17 @@ import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CompletionItemTag } from 'vscode-languageclient';
-import { eventually, getDocumentUri, openDocument } from '../../helpers';
+import {
+  documentationToString,
+  eventually,
+  getDocumentUri,
+  newUntitledFileWithContent,
+  openDocument,
+  tagsToString,
+} from '../../helpers';
 
 type InclusionTestArgs = {
-  textFile: string;
+  textFile: string | vscode.Uri;
   position: vscode.Position;
   expected: vscode.CompletionItem[];
 };
@@ -16,10 +23,14 @@ export async function testCompletionContains({
   textFile,
   position,
   expected,
-}: InclusionTestArgs) {
-  const docUri = getDocumentUri(textFile);
-
-  await openDocument(docUri);
+}: InclusionTestArgs): Promise<void> {
+  let docUri: vscode.Uri;
+  if (typeof textFile === 'string') {
+    docUri = getDocumentUri(textFile);
+    await openDocument(docUri);
+  } else {
+    docUri = textFile;
+  }
 
   await eventually(async () => {
     const actualCompletionList: vscode.CompletionList =
@@ -36,10 +47,30 @@ export async function testCompletionContains({
           value.label === expectedItem.label,
       );
 
-      assert.equal(found !== undefined, true);
-      assert.equal(found.detail, expectedItem.detail);
-      assert.equal(found.documentation, expectedItem.documentation);
-      assert.deepStrictEqual(found.tags, expectedItem.tags);
+      assert.equal(
+        found !== undefined,
+        true,
+        `Expected item not found by kind and label`,
+      );
+      assert.equal(
+        found.detail,
+        expectedItem.detail,
+        `Detail does not match. Actual: ${found.detail}, expected: ${expectedItem.detail}`,
+      );
+      assert.equal(
+        found.documentation,
+        expectedItem.documentation,
+        `Documentation does not match. Actual: ${documentationToString(
+          found.documentation,
+        )}, expected: ${documentationToString(expectedItem.documentation)}`,
+      );
+      assert.deepStrictEqual(
+        found.tags,
+        expectedItem.tags,
+        `Tags do not match. Actual: ${tagsToString(
+          found.tags,
+        )}, expected: ${tagsToString(expectedItem.tags)}`,
+      );
     });
   });
 }
@@ -95,15 +126,20 @@ suite('Auto completion spec', () => {
       {
         label: 'resume',
         kind: vscode.CompletionItemKind.Method,
-        detail: '(procedure) ' + procedures['apoc.trigger.resume'].signature,
-        documentation: procedures['apoc.trigger.resume'].description,
+        detail:
+          '(procedure) ' +
+          procedures['CYPHER 5']['apoc.trigger.resume'].signature,
+        documentation:
+          procedures['CYPHER 5']['apoc.trigger.resume'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'start',
         kind: vscode.CompletionItemKind.Method,
-        detail: '(procedure) ' + procedures['apoc.trigger.start'].signature,
-        documentation: procedures['apoc.trigger.start'].description,
+        detail:
+          '(procedure) ' +
+          procedures['CYPHER 5']['apoc.trigger.start'].signature,
+        documentation: procedures['CYPHER 5']['apoc.trigger.start'].description,
       },
     ];
     await testCompletionContains({
@@ -119,15 +155,19 @@ suite('Auto completion spec', () => {
       {
         label: 'uuid',
         kind: vscode.CompletionItemKind.Function,
-        detail: '(function) ' + functions['apoc.create.uuid'].signature,
-        documentation: functions['apoc.create.uuid'].description,
+        detail:
+          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'uuidBase64',
         kind: vscode.CompletionItemKind.Function,
-        detail: '(function) ' + functions['apoc.create.uuidBase64'].signature,
-        documentation: functions['apoc.create.uuidBase64'].description,
+        detail:
+          '(function) ' +
+          functions['CYPHER 5']['apoc.create.uuidBase64'].signature,
+        documentation:
+          functions['CYPHER 5']['apoc.create.uuidBase64'].description,
       },
     ];
     await testCompletionContains({
@@ -135,5 +175,42 @@ suite('Auto completion spec', () => {
       position: position,
       expected: expected,
     });
+  });
+
+  test('Completions depends on the Cypher version', async () => {
+    const textDocument = await newUntitledFileWithContent(`
+      CYPHER 5 RETURN ;
+      CYPHER 25 RETURN 
+    `);
+    const cypher5Position = new vscode.Position(1, 22);
+    const cypher5Expected: vscode.CompletionItem[] = [
+      {
+        label: 'apoc.create.uuid',
+        kind: vscode.CompletionItemKind.Function,
+        detail:
+          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
+        tags: [CompletionItemTag.Deprecated],
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: cypher5Position,
+      expected: cypher5Expected,
+    });
+
+    const cypher25Position = new vscode.Position(2, 23);
+
+    // TODO Using assert.rejects is not ideal but I couldn't find
+    // a procedure that was specifically added in Cypher 25
+    // In next apoc releases, apoc.refactor.deleteAndReconnect
+    // will be deprecated in Cypher 25, so we could improve this test
+    await assert.rejects(
+      testCompletionContains({
+        textFile: textDocument.uri,
+        position: cypher25Position,
+        expected: cypher5Expected,
+      }),
+    );
   });
 });

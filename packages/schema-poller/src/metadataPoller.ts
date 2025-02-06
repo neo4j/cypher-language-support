@@ -1,7 +1,10 @@
+import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
+  cypherVersions,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
+  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';
@@ -80,8 +83,12 @@ class QueryPoller<T> {
 export class MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
-  private functions: QueryPoller<{ functions: Neo4jFunction[] }>;
-  private procedures: QueryPoller<{ procedures: Neo4jProcedure[] }>;
+  private functions: Partial<
+    Record<CypherVersion, QueryPoller<{ functions: Neo4jFunction[] }>>
+  > = {};
+  private procedures: Partial<
+    Record<CypherVersion, QueryPoller<{ procedures: Neo4jProcedure[] }>>
+  > = {};
   private users: QueryPoller<{ users: Neo4jUser[] }>;
   private roles: QueryPoller<{ roles: Neo4jRole[] }>;
   private dbPollingInterval: NodeJS.Timeout | undefined;
@@ -93,6 +100,10 @@ export class MetadataPoller {
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
+    const supportsCypherAnnotation =
+      _internalFeatureFlags.cypher25 ||
+      databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
+
     this.databases = new QueryPoller({
       connection,
       queryArgs: listDatabases(),
@@ -149,38 +160,56 @@ export class MetadataPoller {
       },
     });
 
-    this.functions = new QueryPoller({
-      connection,
-      queryArgs: listFunctions({ executableByMe: true }),
-      onRefetchDone: (result) => {
-        if (result.success) {
-          const functions = result.data.functions.reduce<
-            Record<string, Neo4jFunction>
-          >((acc, curr) => {
-            const { name } = curr;
-            acc[name] = curr;
-            return acc;
-          }, {});
-          this.dbSchema.functions = functions;
-        }
-      },
-    });
+    const versions: (CypherVersion | undefined)[] = supportsCypherAnnotation
+      ? cypherVersions
+      : [undefined];
 
-    this.procedures = new QueryPoller({
-      connection,
-      queryArgs: listProcedures({ executableByMe: true }),
-      onRefetchDone: (result) => {
-        if (result.success) {
-          const procedures = result.data.procedures.reduce<
-            Record<string, Neo4jProcedure>
-          >((acc, curr) => {
-            const { name } = curr;
-            acc[name] = curr;
-            return acc;
-          }, {});
-          this.dbSchema.procedures = procedures;
-        }
-      },
+    versions.forEach((cypherVersion) => {
+      const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'CYPHER 5';
+      this.procedures[effectiveCypherVersion] = new QueryPoller({
+        connection,
+        queryArgs: listProcedures({
+          executableByMe: true,
+          cypherVersion: cypherVersion,
+        }),
+        onRefetchDone: (result) => {
+          if (result.success) {
+            const procedures = result.data.procedures.reduce<
+              Record<string, Neo4jProcedure>
+            >((acc, curr) => {
+              const { name } = curr;
+              acc[name] = curr;
+              return acc;
+            }, {});
+            if (!this.dbSchema.procedures) {
+              this.dbSchema.procedures = {};
+            }
+            this.dbSchema.procedures[effectiveCypherVersion] = procedures;
+          }
+        },
+      });
+      this.functions[effectiveCypherVersion] = new QueryPoller({
+        connection,
+        queryArgs: listFunctions({
+          executableByMe: true,
+          cypherVersion: cypherVersion,
+        }),
+        onRefetchDone: (result) => {
+          if (result.success) {
+            const functions = result.data.functions.reduce<
+              Record<string, Neo4jFunction>
+            >((acc, curr) => {
+              const { name } = curr;
+              acc[name] = curr;
+              return acc;
+            }, {});
+            if (!this.dbSchema.functions) {
+              this.dbSchema.functions = {};
+            }
+            this.dbSchema.functions[effectiveCypherVersion] = functions;
+          }
+        },
+      });
     });
   }
 
@@ -188,8 +217,8 @@ export class MetadataPoller {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
-      this.procedures.refetch(),
-      this.functions.refetch(),
+      ...Object.values(this.procedures).map((version) => version?.refetch()),
+      ...Object.values(this.functions).map((version) => version?.refetch()),
     ]);
     this.events.emit('schemaFetched');
   }

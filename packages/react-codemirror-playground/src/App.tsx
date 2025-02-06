@@ -50,15 +50,17 @@ export function App() {
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
-  const extraKeybindings = [{
+  const extraKeybindings = [
+    {
       key: 'Ctrl-Shift-f',
       mac: 'Alt-Shift-f',
       preventDefault: true,
       run: () => {
-        editorRef.current.format()
+        editorRef.current.format();
         return true;
       },
-  }]
+    },
+  ];
 
   const editorRef = useRef<CypherEditor>(null);
 
@@ -134,7 +136,6 @@ export function App() {
               extraKeybindings={extraKeybindings}
               featureFlags={{
                 consoleCommands: true,
-                signatureInfoOnAutoCompletions: true,
               }}
               ariaLabel="Cypher Editor"
             />

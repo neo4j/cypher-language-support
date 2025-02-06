@@ -1,10 +1,13 @@
-import { Neo4jFunction } from '@neo4j-cypher/language-support';
+import { CypherVersion, Neo4jFunction } from '@neo4j-cypher/language-support';
 import Ajv, { JSONSchemaType } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
 import { cleanType, cleanTypeDescription } from '../data-transforms/clean-type';
 import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
-type ListFunctionArgs = { executableByMe: boolean };
+type ListFunctionArgs = {
+  executableByMe: boolean;
+  cypherVersion?: CypherVersion;
+};
 
 function cleanTypes(result: Neo4jFunction): Neo4jFunction {
   return {
@@ -62,14 +65,17 @@ const validateFunction = new Ajv({ useDefaults: true }).compile(functionSchema);
  * https://neo4j.com/docs/cypher-manual/current/clauses/listing-functions/
  */
 export function listFunctions(
-  { executableByMe }: ListFunctionArgs = { executableByMe: false },
+  { executableByMe, cypherVersion }: ListFunctionArgs = {
+    executableByMe: false,
+    cypherVersion: undefined,
+  },
 ): ExecuteQueryArgs<{
   functions: Neo4jFunction[];
 }> {
-  const query = `SHOW FUNCTIONS ${
-    executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''
-  }
-YIELD *`;
+  const query = `${cypherVersion ? cypherVersion + ' ' : ''}
+    SHOW FUNCTIONS 
+    ${executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''}
+    YIELD *`;
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {

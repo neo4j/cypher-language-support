@@ -1,5 +1,18 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.14
+
+### Patch Changes
+
+- 8ec797d: Updates semantic error worker to use given cypher version
+- 7aa9c3a: Adds hints to the error when using a procedure/function where the other would be appropriate
+- 2be5469: Updates grammar and semantic analysis to version 2025.01.0
+- 245fb6a: Automatically opens autocompletions after "YIELD "
+- c587b81: Fixes bug using console commands as variables or labels
+- 3f8b64f: Fixes bug reporting missing label / rel type when inside opposite pattern
+- 043d766: Moves the syntax errors to the semantic analysis web worker
+- 704d1c5: Adds autocompletions for CYPHER <version>
+
 ## 2.0.0-next.13
 
 ### Patch Changes

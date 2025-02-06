@@ -13,7 +13,7 @@ import CypherParser, {
 import { Token } from 'antlr4-c3';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
-import { findCaret, isDefined } from './helpers';
+import { findCaret, isDefined, resolveCypherVersion } from './helpers';
 import { parserWrapper } from './parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
 
@@ -200,10 +200,20 @@ export function signatureHelp(
       const method = signatureHelper.result;
 
       if (method !== undefined) {
+        const cypherVersion = resolveCypherVersion(
+          statement.cypherVersion,
+          dbSchema,
+        );
         if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(dbSchema.functions, method);
+          result = toSignatureHelp(
+            dbSchema.functions?.[cypherVersion] ?? {},
+            method,
+          );
         } else {
-          result = toSignatureHelp(dbSchema.procedures, method);
+          result = toSignatureHelp(
+            dbSchema.procedures?.[cypherVersion] ?? {},
+            method,
+          );
         }
       }
     }
