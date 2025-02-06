@@ -31,7 +31,11 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
-import { CypherVersion } from './types';
+import {
+  CypherVersion,
+  validCypherVersionNumbers,
+  validCypherVersions,
+} from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -438,18 +442,18 @@ class CypherVersionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
-      const parsedVersion = ctx.getText();
-      this.cypherVersion =
-        ctx.getText() === '5'
-          ? 'CYPHER 5'
-          : ctx.getText() === '25'
-          ? 'CYPHER 25'
-          : undefined;
-      if (parsedVersion !== '5' && parsedVersion !== '25') {
+      const parsedVersion = 'CYPHER ' + ctx.getText();
+      validCypherVersions.forEach((validVersion) => {
+        if (parsedVersion === validVersion) {
+          this.cypherVersion = parsedVersion;
+        }
+      });
+      if (!this.cypherVersion) {
         this.invalidVersionError = {
           message:
             ctx.getText() +
-            ' is not a valid option for cypher version. Valid options are: 5, 25',
+            ' is not a valid option for cypher version. Valid options are: ' +
+            validCypherVersionNumbers.join(', '),
           severity: DiagnosticSeverity.Error,
           ...translateTokensToRange(ctx.start, ctx.stop),
         };

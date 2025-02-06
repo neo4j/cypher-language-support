@@ -9,6 +9,11 @@ export type ReturnDescription = {
 
 export type CypherVersion = 'CYPHER 25' | 'CYPHER 5';
 
+export const validCypherVersions: CypherVersion[] = ['CYPHER 5', 'CYPHER 25'];
+export const validCypherVersionNumbers: string[] = validCypherVersions.map(
+  (item) => item.replace(/\D+/g, ''),
+);
+
 // we could parse this string for better types in the future
 export type Neo4jStringType = string;
 export type ArgumentDescription = ReturnDescription & { default?: string };
