@@ -31,11 +31,7 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
-import {
-  CypherVersion,
-  validCypherVersionNumbers,
-  validCypherVersions,
-} from './types';
+import { CypherVersion, cypherVersionNumbers, cypherVersions } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -439,7 +435,7 @@ class CypherVersionCollector extends ParseTreeListener {
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
       const parsedVersion = 'CYPHER ' + ctx.getText();
-      validCypherVersions.forEach((validVersion) => {
+      cypherVersions.forEach((validVersion) => {
         if (parsedVersion === validVersion) {
           this.cypherVersion = parsedVersion;
         }
@@ -449,7 +445,7 @@ class CypherVersionCollector extends ParseTreeListener {
           message:
             ctx.getText() +
             ' is not a valid option for cypher version. Valid options are: ' +
-            validCypherVersionNumbers.join(', '),
+            cypherVersionNumbers.join(', '),
           severity: DiagnosticSeverity.Error,
           ...translateTokensToRange(ctx.start, ctx.stop),
         };

@@ -7,13 +7,9 @@ export type ReturnDescription = {
   isDeprecated: boolean;
 };
 
-export const cypherVersions = ['CYPHER 25', 'CYPHER 5'];
+export const cypherVersions = ['CYPHER 5', 'CYPHER 25'];
+export const cypherVersionNumbers: string[] = ['5', '25'];
 export type CypherVersion = (typeof cypherVersions)[number];
-
-export const validCypherVersions: CypherVersion[] = ['CYPHER 5', 'CYPHER 25'];
-export const validCypherVersionNumbers: string[] = validCypherVersions.map(
-  (item) => item.replace(/\D+/g, ''),
-);
 
 // we could parse this string for better types in the future
 export type Neo4jStringType = string;
