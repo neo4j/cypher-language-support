@@ -45,7 +45,7 @@ export interface ParsedStatement {
   // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
   syntaxErrors: SyntaxDiagnostic[];
-  preparserErrors: SyntaxDiagnostic[];
+  cypherVersionError: SyntaxDiagnostic | undefined;
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -205,17 +205,13 @@ export function createParsingResult(query: string): ParsingResult {
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
-      const preparserErrors = cypherVersionCollector.invalidVersionError
-        ? [cypherVersionCollector.invalidVersionError]
-        : [];
-      cypherVersionCollector.resetError();
 
       return {
         command: collectedCommand,
         parser: parser,
         tokens: tokens,
         syntaxErrors: syntaxErrors,
-        preparserErrors: preparserErrors,
+        cypherVersionError: cypherVersionCollector.invalidVersionError,
         ctx: ctx,
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
@@ -459,10 +455,6 @@ class CypherVersionCollector extends ParseTreeListener {
         };
       }
     }
-  }
-
-  resetError() {
-    this.invalidVersionError = undefined;
   }
 }
 

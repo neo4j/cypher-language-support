@@ -127,25 +127,6 @@ describe('Semantic validation spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
-        offsets: {
-          end: 40,
-          start: 39,
-        },
-        range: {
-          end: {
-            character: 40,
-            line: 0,
-          },
-          start: {
-            character: 39,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
     ]);
     expect(diagnostics2).toEqual([
       {
@@ -166,25 +147,6 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 1,
-      },
-      {
-        message:
-          'The use of nodes or relationships for setting properties is deprecated and will be removed in a future version. Please use properties() instead.',
-        offsets: {
-          end: 40,
-          start: 39,
-        },
-        range: {
-          end: {
-            character: 40,
-            line: 0,
-          },
-          start: {
-            character: 39,
-            line: 0,
-          },
-        },
-        severity: 2,
       },
     ]);
   });
