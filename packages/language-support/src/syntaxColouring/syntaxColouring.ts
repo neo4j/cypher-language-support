@@ -40,13 +40,13 @@ import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
   BracketType,
+  computeTokenKey,
   getCypherTokenType,
   getTokenPosition,
   ParsedCypherToken,
   removeOverlappingTokens,
   shouldAssignTokenType,
   sortTokens,
-  tokenPositionToString,
   toParsedTokens,
 } from './syntaxColouringHelpers';
 
@@ -107,8 +107,8 @@ class SyntaxHighlighter extends CypherParserListener {
 
       toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
         (token) => {
-          const tokenPos = tokenPositionToString(token.position);
-          this.colouredTokens.set(tokenPos, token);
+          const tokenKey = computeTokenKey(token.position, token.token.length);
+          this.colouredTokens.set(tokenKey, token);
         },
       );
     }
@@ -330,9 +330,8 @@ function colourLexerTokens(tokens: Token[]) {
         token,
         bracketsLevel,
       ).forEach((t) => {
-        const tokenPos = tokenPositionToString(t.position);
-
-        result.set(tokenPos, t);
+        const tokenKey = computeTokenKey(t.position, t.length);
+        result.set(tokenKey, t);
       });
     }
     ++i;
