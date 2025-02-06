@@ -262,6 +262,102 @@ WITH N, RAND() AS Rand, $pArAm AS MAP
 RETURN Rand, MAP.property_key, count(N)`;
     verifyFormatting(query, expected);
   });
+
+  test('union example', () => {
+    const query = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    const expected = `CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count
+  UNION
+MATCH (j:Person)
+WHERE j.name STARTS WITH "J"
+RETURN count() AS count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('union with ALL example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION
+  ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION ALL
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('union with DISTINCT example', () => {
+    // The docs write this a bit weirdly but I don't agree with it.
+    const query = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+UNION 
+  DISTINCT
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    const expected = `CALL () {
+  MATCH (a:Actor)
+  RETURN a.name AS name
+    UNION DISTINCT
+  MATCH (m:Movie)
+  RETURN m.title AS name
+}
+RETURN name, count(*) AS count ORDER BY count`;
+    verifyFormatting(query, expected);
+  });
+
+  test('generic case expression example', () => {
+    const query = `MATCH (n:Person)
+RETURN CASE
+WHEN n.eyes = 'blue' THEN 1
+WHEN n.age < 40      THEN 2
+ELSE 3
+END AS result, n.eyes, n.age`;
+    const expected = `MATCH (n:Person)
+RETURN
+CASE
+  WHEN n.eyes = 'blue' THEN 1
+  WHEN n.age < 40 THEN 2
+  ELSE 3
+END AS result, n.eyes, n.age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('case expression with value example', () => {
+    const query = `MATCH (n:Person)
+RETURN n.name, CASE n.age WHEN = 0, = 1, = 2 THEN "Baby"
+WHEN <= 13 THEN "Child"
+WHEN < 20 THEN "Teenager"
+WHEN < 30 THEN "Young Adult"
+WHEN > 1000 THEN "Immortal"
+ELSE "Adult"
+END AS result`;
+    const expected = `MATCH (n:Person)
+RETURN n.name,
+CASE n.age
+  WHEN = 0, = 1, = 2 THEN "Baby"
+  WHEN <= 13 THEN "Child"
+  WHEN < 20 THEN "Teenager"
+  WHEN < 30 THEN "Young Adult"
+  WHEN > 1000 THEN "Immortal"
+  ELSE "Adult"
+END AS result`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
@@ -275,5 +371,58 @@ describe('various edgecases', () => {
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
+  });
+
+  test('apoc call, namespaced function', () => {
+    const query = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
+    const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for correct cursor position', () => {
+  test('cursor at beginning', () => {
+    const query = 'RETURN -1, -2, -3';
+    const result = formatQuery(query, 0);
+    expect(result.newCursorPos).toEqual(0);
+  });
+  test('cursor at end', () => {
+    const query = 'RETURN -1, -2, -3';
+    const result = formatQuery(query, query.length - 1);
+    expect(result.newCursorPos).toEqual(result.formattedString.length - 1);
+  });
+  test('cursor at newline', () => {
+    const query = `MATCH (n:Person)
+WHERE n.name = "Steve" 
+RETURN n 
+LIMIT 12;`;
+    const result = formatQuery(query, 56);
+    expect(result.newCursorPos).toEqual(54);
+  });
+
+  test('cursor start of line with spaces newline', () => {
+    const query = `UNWIND range(1,100) as _
+CALL {
+  MATCH (source:object) WHERE source.id= $id1
+  MATCH (target:object) WHERE target.id= $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
+  ORDER BY Weight LIMIT 3
+  RETURN length(path) as l, Weight 
+} 
+RETURN count(*)`;
+    const result = formatQuery(query, 124);
+    expect(result.newCursorPos).toEqual(131);
+  });
+
+  test('cursor start of line without spaces', () => {
+    const query = `MATCH (variable :Label)-[:REL_TYPE]->() 
+WHERE variable.property = "String" 
+    OR namespaced.function() = false
+    // comment
+    OR $parameter > 2 
+RETURN variable;`;
+    const result = formatQuery(query, 133);
+    expect(result.newCursorPos).toEqual(118);
   });
 });

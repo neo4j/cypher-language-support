@@ -13,7 +13,11 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  formatQuery,
+  _internalFeatureFlags,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -99,7 +103,7 @@ export interface CypherEditorProps {
    */
   featureFlags?: {
     consoleCommands?: boolean;
-    signatureInfoOnAutoCompletions?: boolean;
+    cypher25?: boolean;
   };
   /**
    * The schema to use for autocompletion and linting.
@@ -176,6 +180,22 @@ export interface CypherEditorProps {
   moveFocusOnTab?: boolean;
 }
 
+const format = (view: EditorView): void => {
+  const doc = view.state.doc.toString();
+    const { formattedString, newCursorPos } = formatQuery(
+      doc,
+      view.state.selection.main.anchor,
+    );
+    view.dispatch({
+      changes: {
+        from: 0,
+        to: doc.length,
+        insert: formattedString,
+      },
+      selection: { anchor: newCursorPos },
+    });
+}
+
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
   newLineOnEnter?: boolean,
@@ -195,7 +215,6 @@ const executeKeybinding = (
       run: insertNewline,
     },
   };
-
   if (onExecute) {
     keybindings['Ctrl-Enter'] = {
       key: 'Ctrl-Enter',
@@ -277,6 +296,13 @@ export class CypherEditor extends Component<
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
 
   /**
+   * Format Cypher query
+   */
+  format() {
+    format(this.editorView.current)
+  }
+
+  /**
    * Focus the editor
    */
   focus() {
@@ -346,6 +372,8 @@ export class CypherEditor extends Component<
       newLineOnEnter,
     } = this.props;
 
+    _internalFeatureFlags.cypher25 = featureFlags?.cypher25 ?? false;
+
     this.schemaRef.current = {
       schema,
       lint,
@@ -382,7 +410,7 @@ export class CypherEditor extends Component<
           }),
         ]
       : [];
-
+    
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(

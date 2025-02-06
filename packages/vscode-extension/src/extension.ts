@@ -30,6 +30,7 @@ export async function activate(context: ExtensionContext) {
     debug: {
       module: debugServer,
       transport: TransportKind.ipc,
+      options: { env: { CYPHER_25: 'true' } },
     },
   };
   // Options to control the language client

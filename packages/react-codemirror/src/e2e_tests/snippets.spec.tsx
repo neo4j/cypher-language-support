@@ -65,11 +65,11 @@ test('can accept completion inside pattern snippet', async ({
     page.locator('.cm-tooltip-autocomplete').getByText('City'),
   ).toBeVisible();
 
-  await textField.press('Tab');
+  await textField.press('Tab', { delay: 300 });
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   // tab out of the snippet
-  await textField.press('Tab');
+  await textField.press('Tab', { delay: 300 });
 
   await expect(textField).toHaveText('MATCH ()-[]->()-[ ]->(:City)');
 });

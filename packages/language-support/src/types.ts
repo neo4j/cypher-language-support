@@ -7,7 +7,8 @@ export type ReturnDescription = {
   isDeprecated: boolean;
 };
 
-export type CypherVersion = 'CYPHER 25' | 'CYPHER 5';
+export const cypherVersions = ['CYPHER 25', 'CYPHER 5'];
+export type CypherVersion = (typeof cypherVersions)[number];
 
 export const validCypherVersions: CypherVersion[] = ['CYPHER 5', 'CYPHER 25'];
 export const validCypherVersionNumbers: string[] = validCypherVersions.map(

@@ -3,19 +3,23 @@ import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   ArrowLineContext,
   BooleanLiteralContext,
+  CaseExpressionContext,
   ClauseContext,
   CountStarContext,
   ExistsExpressionContext,
+  ExtendedCaseExpressionContext,
   KeywordLiteralContext,
   LabelExpressionContext,
   LeftArrowContext,
   MapContext,
   MergeActionContext,
   MergeClauseContext,
+  NamespaceContext,
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
   PropertyContext,
+  RegularQueryContext,
   RelationshipPatternContext,
   RightArrowContext,
   StatementsOrCommandsContext,
@@ -24,6 +28,7 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  findTargetToken,
   getParseTreeAndTokens,
   handleMergeClause,
   isComment,
@@ -41,6 +46,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffer: string[] = [];
   indentation = 0;
   indentationSpaces = 2;
+  targetToken?: number;
+  cursorPos?: number;
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -52,10 +59,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   breakLine = () => {
-    if (
-      this.buffer.length > 0 &&
-      this.buffer[this.buffer.length - 1] !== '\n'
-    ) {
+    // No trailing spaces.
+    while (this.buffer.length > 0 && this.buffer.at(-1) === ' ') {
+      this.buffer.pop();
+    }
+    if (this.buffer.length > 0 && this.buffer.at(-1) !== '\n') {
       this.buffer.push('\n');
     }
   };
@@ -191,14 +199,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.addSpace();
       }
     }
+
     if (node.symbol.type === CypherCmdLexer.EOF) {
       return;
+    }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
     }
     if (wantsToBeUpperCase(node)) {
       this.buffer.push(node.getText().toUpperCase());
     } else {
       this.buffer.push(node.getText());
     }
+
     if (wantsSpaceAfter(node)) {
       this.addSpace();
     }
@@ -216,12 +229,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.buffer.length === 0) {
       this.addCommentsBefore(node);
     }
+    if (
+      this.buffer.length > 0 &&
+      this.buffer[this.buffer.length - 1] === '\n'
+    ) {
+      this.applyIndentation();
+    }
     let result = node.getText();
     if (options?.lowerCase) {
       result = result.toLowerCase();
     }
     if (options?.upperCase) {
       result = result.toUpperCase();
+    }
+    if (node.symbol.tokenIndex === this.targetToken) {
+      this.cursorPos = this.buffer.join('').length;
     }
     this.buffer.push(result);
     this.addCommentsAfter(node);
@@ -285,6 +307,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.rightArrow());
   };
 
+  // Handled separately because the dots aren't operators
+  visitNamespace = (ctx: NamespaceContext) => {
+    const n = ctx.DOT_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.symbolicNameString(i));
+      this.visitTerminalRaw(ctx.DOT(i));
+    }
+  };
+
   // Handled separately because the dot is not an operator
   visitProperty = (ctx: PropertyContext) => {
     this.visitTerminalRaw(ctx.DOT());
@@ -316,6 +347,46 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
   };
 
+  // Handled separately since cases want newlines
+  visitCaseExpression = (ctx: CaseExpressionContext) => {
+    this.breakLine();
+    this.visit(ctx.CASE());
+    this.addIndentation();
+    const n = ctx.caseAlternative_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.visit(ctx.caseAlternative(i));
+    }
+    if (ctx.ELSE()) {
+      this.breakLine();
+      this.visit(ctx.ELSE());
+      this.visit(ctx.expression());
+    }
+    this.removeIndentation();
+    this.breakLine();
+    this.visit(ctx.END());
+  };
+
+  visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
+    this.breakLine();
+    this.visit(ctx.CASE());
+    this.visit(ctx.expression(0));
+    this.addIndentation();
+    const n = ctx.extendedCaseAlternative_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.visit(ctx.extendedCaseAlternative(i));
+    }
+    if (ctx.ELSE()) {
+      this.breakLine();
+      this.visit(ctx.ELSE());
+      this.visit(ctx.expression(1));
+    }
+    this.removeIndentation();
+    this.breakLine();
+    this.visit(ctx.END());
+  };
+
   // Handled separately because it wants indentation and line breaks
   visitSubqueryClause = (ctx: SubqueryClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
@@ -331,6 +402,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
     this.breakLine();
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
+  };
+
+  // Handled separately because UNION wants to look a certain way
+  visitRegularQuery = (ctx: RegularQueryContext) => {
+    this.visit(ctx.singleQuery(0));
+    const n = ctx.singleQuery_list().length - 1;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.addIndentation();
+      this.visit(ctx.UNION(i));
+      this.removeIndentation();
+      if (ctx.ALL(i)) {
+        this.visit(ctx.ALL(i));
+      } else if (ctx.DISTINCT(i)) {
+        this.visit(ctx.DISTINCT(i));
+      }
+      this.breakLine();
+      this.visit(ctx.singleQuery(i + 1));
+    }
   };
 
   // Handled separately because we want ON CREATE before ON MATCH
@@ -372,8 +462,47 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-export function formatQuery(query: string) {
+interface FormattingResultWithCursor {
+  formattedString: string;
+  newCursorPos: number;
+}
+
+export function formatQuery(query: string): string;
+export function formatQuery(
+  query: string,
+  cursorPosition: number,
+): FormattingResultWithCursor;
+export function formatQuery(
+  query: string,
+  cursorPosition?: number,
+): string | FormattingResultWithCursor {
   const { tree, tokens } = getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens);
-  return visitor.format(tree);
+
+  tokens.fill();
+
+  if (cursorPosition === undefined) return visitor.format(tree);
+
+  if (cursorPosition >= query.length || cursorPosition <= 0) {
+    const result = visitor.format(tree);
+    return {
+      formattedString: result,
+      newCursorPos: cursorPosition === 0 ? 0 : result.length,
+    };
+  }
+
+  const targetToken = findTargetToken(tokens.tokens, cursorPosition);
+  if (!targetToken) {
+    return {
+      formattedString: visitor.format(tree),
+      newCursorPos: 0,
+    };
+  }
+  const relativePosition = cursorPosition - targetToken.start;
+  visitor.targetToken = targetToken.tokenIndex;
+
+  return {
+    formattedString: visitor.format(tree),
+    newCursorPos: visitor.cursorPos + relativePosition,
+  };
 }
