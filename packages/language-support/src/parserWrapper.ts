@@ -31,7 +31,7 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
-import { CypherVersion } from './types';
+import { CypherVersion, cypherVersionNumbers, cypherVersions } from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -41,6 +41,7 @@ export interface ParsedStatement {
   // it's the one that tries to parse until the EOF
   ctx: StatementsOrCommandsContext;
   syntaxErrors: SyntaxDiagnostic[];
+  cypherVersionError: SyntaxDiagnostic | undefined;
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
@@ -206,6 +207,7 @@ export function createParsingResult(query: string): ParsingResult {
         parser: parser,
         tokens: tokens,
         syntaxErrors: syntaxErrors,
+        cypherVersionError: cypherVersionCollector.invalidVersionError,
         ctx: ctx,
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
@@ -414,6 +416,7 @@ class MethodsCollector extends ParseTreeListener {
 
 class CypherVersionCollector extends ParseTreeListener {
   public cypherVersion: CypherVersion;
+  public invalidVersionError: SyntaxDiagnostic;
 
   constructor() {
     super();
@@ -431,12 +434,22 @@ class CypherVersionCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
-      this.cypherVersion =
-        ctx.getText() === '5'
-          ? 'CYPHER 5'
-          : ctx.getText() === '25'
-          ? 'CYPHER 25'
-          : undefined;
+      const parsedVersion = 'CYPHER ' + ctx.getText();
+      cypherVersions.forEach((validVersion) => {
+        if (parsedVersion === validVersion) {
+          this.cypherVersion = parsedVersion;
+        }
+      });
+      if (!this.cypherVersion) {
+        this.invalidVersionError = {
+          message:
+            ctx.getText() +
+            ' is not a valid option for cypher version. Valid options are: ' +
+            cypherVersionNumbers.join(', '),
+          severity: DiagnosticSeverity.Error,
+          ...translateTokensToRange(ctx.start, ctx.stop),
+        };
+      }
     }
   }
 }

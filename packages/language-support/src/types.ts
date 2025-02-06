@@ -7,7 +7,8 @@ export type ReturnDescription = {
   isDeprecated: boolean;
 };
 
-export const cypherVersions = ['CYPHER 25', 'CYPHER 5'];
+export const cypherVersions = ['CYPHER 5', 'CYPHER 25'];
+export const cypherVersionNumbers: string[] = ['5', '25'];
 export type CypherVersion = (typeof cypherVersions)[number];
 
 // we could parse this string for better types in the future

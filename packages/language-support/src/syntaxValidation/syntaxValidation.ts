@@ -281,6 +281,8 @@ export function lintCypherQuery(
     const errors = statements.flatMap((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+        if (current.cypherVersionError) return current.cypherVersionError;
+
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
         const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
         const procedureWarnings = warningOnDeprecatedProcedure(
