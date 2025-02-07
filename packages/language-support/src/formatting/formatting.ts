@@ -638,11 +638,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
-    if (this.buffers.length > 0) {
-      this.breakLine();
-      this.addIndentation();
-      this.applyIndentation();
-    }
+    this.breakLine();
+    this.addIndentation();
     this.visitChildren(ctx);
     this.removeIndentation();
   };
