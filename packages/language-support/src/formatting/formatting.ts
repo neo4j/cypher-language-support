@@ -200,7 +200,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             right: chunkList[index + 1],
             possibleSplitChoices: chunk.splitObligationAfter
               ? [chunk.splitObligationAfter]
-              : doesNotWantSpace(chunk.node) || chunk.noSpace
+              : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
                 ? basicNoSpaceSplits
                 : basicSplits,
           };
