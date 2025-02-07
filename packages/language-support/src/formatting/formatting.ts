@@ -401,7 +401,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     let result = node.getText();
     if (options?.lowerCase) {
-      sdfklj;
       result = result.toLowerCase();
     }
     if (options?.upperCase) {
