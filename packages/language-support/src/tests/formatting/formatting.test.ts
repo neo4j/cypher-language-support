@@ -378,6 +378,18 @@ describe('various edgecases', () => {
     const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
     verifyFormatting(query, expected);
   });
+
+  test('function calls with one or more args', () => {
+    const query1 = `RETURN split('original')`;
+    const expected1 = `RETURN split('original')`;
+    verifyFormatting(query1, expected1);
+    const query2 = `RETURN split('original', 'i')`;
+    const expected2 = `RETURN split('original', 'i')`;
+    verifyFormatting(query2, expected2);
+    const query3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
+    const expected3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
+    verifyFormatting(query3, expected3);
+  })
 });
 
 describe('tests for correct cursor position', () => {

@@ -8,6 +8,7 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   ExtendedCaseExpressionContext,
+  FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
   LeftArrowContext,
@@ -48,6 +49,7 @@ interface Chunk {
   start: number;
   end: number;
   splitObligationAfter?: Split;
+  noSpace?: boolean;
 }
 
 interface Split {
@@ -199,7 +201,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             right: chunkList[index + 1],
             possibleSplitChoices: chunk.splitObligationAfter
               ? [chunk.splitObligationAfter]
-              : doesNotWantSpace(chunk.node)
+              : doesNotWantSpace(chunk.node) || chunk.noSpace
                 ? basicNoSpaceSplits
                 : basicSplits,
           };
@@ -244,6 +246,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     };
     this.currentBuffer.push(chunk);
   };
+
+  // If the previous token should choose between a newline or no space, rather than
+  // a newline and a space
+  avoidSpaceBetween = () => {
+    if (this.currentBuffer.length === 0) {
+      return;
+    }
+    const last = this.currentBuffer.at(-1);
+    last.noSpace = true;
+  }
 
   addIndentation = () => this.indentation++;
 
@@ -581,8 +593,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
-      this.breakLine();
       this.addIndentation();
+      this.breakLine();
       this.visit(ctx.UNION(i));
       this.removeIndentation();
       if (ctx.ALL(i)) {
@@ -594,6 +606,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.singleQuery(i + 1));
     }
   };
+  visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    this.visit(ctx.functionName());
+    this.visit(ctx.LPAREN());
+    this.concatenate(); // Don't separate the function name and the (
+    this.visitIfNotNull(ctx.DISTINCT());
+    this.visitIfNotNull(ctx.ALL());
+    const n = ctx.functionArgument_list().length;
+    for (let i = 0; i < n; i++) {
+      // Don't put a space between the ( and the first argument
+      if (i == 0) {
+        this.avoidSpaceBetween();
+      }
+      this.visit(ctx.functionArgument(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+    }
+    this.visit(ctx.RPAREN());
+  }
 
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
