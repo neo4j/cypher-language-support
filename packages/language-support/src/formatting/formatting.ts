@@ -48,6 +48,7 @@ interface Chunk {
   end: number;
   splitObligationAfter?: Split;
   noSpace?: boolean;
+  isComment?: boolean;
 }
 
 interface Split {
@@ -237,6 +238,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const last = this.currentBuffer.pop();
     const secondLast = this.currentBuffer.pop();
+    // Don't concatenate comments with anything else
+    if (last?.isComment || secondLast?.isComment) {
+      this.currentBuffer.push(secondLast);
+      this.currentBuffer.push(last);
+      return;
+    }
     const chunk: Chunk = {
       text: secondLast.text + last.text,
       start: secondLast.start,
@@ -281,6 +288,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         start: commentToken.start,
         end: commentToken.stop + 1,
+        isComment: true,
       };
       this.currentBuffer.push(chunk);
       this.breakLine();
@@ -305,6 +313,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           splitType: '\n',
           cost: 0,
         },
+        isComment: true,
       };
       this.currentBuffer.push(chunk);
     }
