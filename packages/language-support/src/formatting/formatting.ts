@@ -255,11 +255,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // If the previous token should choose between a newline or no space, rather than
   // a newline and a space
   avoidSpaceBetween = () => {
-    if (this.currentBuffer.length === 0) {
+    let idx = this.currentBuffer.length - 1;
+    while (idx >= 0 && this.currentBuffer[idx].isComment) {
+      idx--;
+    }
+    if (idx < 0) {
       return;
     }
-    const last = this.currentBuffer.at(-1);
-    last.noSpace = true;
+    this.currentBuffer[idx].noSpace = true;
   }
 
   addIndentation = () => this.indentation++;
@@ -774,5 +777,10 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //console.log('X'.repeat(MAX_COLUMN));
 //console.log(formatQuery(q0));
 //console.log(formatQuery(q1));
-const query = 'MATCH (:Person) --> (:Vehicle) RETURN count(*)';
+const query = `MERGE (n) /* Ensuring the node exists */ 
+  ON CREATE SET n.prop = 0 /* Set default property */
+MERGE (a:A) /* Create or match 'a:A' */ 
+  -[:T]-> (b:B) /* Link 'a' to 'b' */
+RETURN a.prop /* Return the property of 'a' */
+// This is another comment!`;
 console.log(formatQuery(query));
