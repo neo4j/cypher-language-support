@@ -1,7 +1,6 @@
 import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
-  ArrowLineContext,
   BooleanLiteralContext,
   CaseExpressionContext,
   ClauseContext,
@@ -11,7 +10,6 @@ import {
   FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
-  LeftArrowContext,
   MapContext,
   MergeActionContext,
   MergeClauseContext,
@@ -22,7 +20,6 @@ import {
   PropertyContext,
   RegularQueryContext,
   RelationshipPatternContext,
-  RightArrowContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   WhereClauseContext,
@@ -331,20 +328,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitChildren(ctx);
   };
 
-  // Visit these separately because operators want spaces around them,
-  // and these are not operators (despite being minuses).
-  visitArrowLine = (ctx: ArrowLineContext) => {
-    this.visitTerminalRaw(ctx.ARROW_LINE());
-  };
-
-  visitRightArrow = (ctx: RightArrowContext) => {
-    this.visitTerminalRaw(ctx.GT());
-  };
-
-  visitLeftArrow = (ctx: LeftArrowContext) => {
-    this.visitTerminalRaw(ctx.LT());
-  };
-
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
     this.visitTerminalRaw(ctx.COUNT());
@@ -480,14 +463,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
-    this.visitIfNotNull(ctx.leftArrow());
+    if (ctx.leftArrow()) {
+      this.avoidSpaceBetween();
+      this.visitIfNotNull(ctx.leftArrow());
+    }
     const arrowLineList = ctx.arrowLine_list();
+    this.avoidSpaceBetween();
     this.visitTerminalRaw(arrowLineList[0].MINUS());
     if (ctx.LBRACKET()) {
       this.visit(ctx.LBRACKET());
       this.handleInnerPatternContext(ctx);
       this.visit(ctx.RBRACKET());
     }
+    this.avoidSpaceBetween();
     this.visitTerminalRaw(arrowLineList[1].MINUS());
     this.visitIfNotNull(ctx.rightArrow());
   };
@@ -773,6 +761,8 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //  console.log('X'.repeat(MAX_COLUMN));
 //}
 
-console.log('X'.repeat(MAX_COLUMN));
-console.log(formatQuery(q0));
-console.log(formatQuery(q1));
+//console.log('X'.repeat(MAX_COLUMN));
+//console.log(formatQuery(q0));
+//console.log(formatQuery(q1));
+const query = 'MATCH (:Person) --> (:Vehicle) RETURN count(*)';
+console.log(formatQuery(query));
