@@ -478,12 +478,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  visitNodePattern = (ctx: NodePatternContext) => {
-    this.visit(ctx.LPAREN());
-    this.handleInnerPatternContext(ctx);
-    this.visit(ctx.RPAREN());
-  };
-
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
     if (ctx.leftArrow()) {
       this.avoidSpaceBetween();
