@@ -297,13 +297,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   }
 
-  applyIndentation = () => {
-    throw new Error('Not implemented');
-    //for (let i = 0; i < this.indentation * this.indentationSpaces; i++) {
-    //  this.buffer.push(' ');
-    //}
-  };
-
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
