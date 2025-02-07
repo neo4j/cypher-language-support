@@ -38,6 +38,7 @@ import {
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
+  space?: boolean;
 }
 
 interface Chunk {
@@ -409,7 +410,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       start: node.symbol.start,
       end: node.symbol.stop + 1,
       splitObligationAfter: {
-        splitType: '',
+        splitType: options?.space ? ' ' : '',
         cost: 0,
       },
     };
@@ -430,13 +431,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Literals have casing rules, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-casing
   visitBooleanLiteral = (ctx: BooleanLiteralContext) => {
-    this.visitRawIfNotNull(ctx.TRUE(), { lowerCase: true });
-    this.visitRawIfNotNull(ctx.FALSE(), { lowerCase: true });
+    this.visitRawIfNotNull(ctx.TRUE(), { lowerCase: true, space: true });
+    this.visitRawIfNotNull(ctx.FALSE(), { lowerCase: true, space: true });
   };
 
   visitKeywordLiteral = (ctx: KeywordLiteralContext) => {
     if (ctx.NULL()) {
-      this.visitTerminalRaw(ctx.NULL(), { lowerCase: true });
+      this.visitTerminalRaw(ctx.NULL(), { lowerCase: true, space: true });
     } else {
       this.visitChildren(ctx);
     }
