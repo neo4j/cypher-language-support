@@ -162,6 +162,38 @@ RETURN a.prop /* Return the property of 'a' */`;
     verifyFormatting(inlinemultiline, expected);
   });
 
+  test('multiple comments after one token', () => {
+    const query = `MATCH (n) // comment1
+// comment2
+/* comment3 */
+// comment4
+// comment5
+RETURN n`;
+    const expected = `MATCH (n) // comment1
+// comment2
+/* comment3 */
+// comment4
+// comment5
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple comments before one token', () => {
+    const query = `// Comment 1
+/* Comment 2 */
+// Comment 3
+/* Comment 4*/
+MATCH (n)
+RETURN n`;
+    const expected = `// Comment 1
+/* Comment 2 */
+// Comment 3
+/* Comment 4*/
+MATCH (n)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
   test('weird inline and multiline comments', () => {
     const inlineandmultiline = `MERGE (n) // Ensure node exists
 ON CREATE SET n.prop = 0 /* Default value */
