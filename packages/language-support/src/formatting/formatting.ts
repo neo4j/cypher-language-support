@@ -178,6 +178,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     let formatted = '';
     for (const chunkList of this.buffers) {
+      if (chunkList.length === 1) {
+        formatted += chunkList[0].text + '\n';
+        continue;
+      }
       // TODO: popping this :D
       while (chunkList.length > 21) {
         chunkList.pop();
@@ -220,9 +224,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         buffer.push(decision.left.text);
         buffer.push(decision.split.splitType);
       });
-      if (choices.length > 0) {
-        buffer.push(choices.at(-1).right.text);
-      }
+      buffer.push(choices.at(-1).right.text);
       formatted += buffer.join('') + '\n';
     }
     return formatted.trim();
