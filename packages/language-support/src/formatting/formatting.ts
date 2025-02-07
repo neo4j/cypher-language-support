@@ -220,7 +220,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         buffer.push(decision.left.text);
         buffer.push(decision.split.splitType);
       });
-      buffer.push(choices.at(-1).right.text);
+      if (choices.length > 0) {
+        buffer.push(choices.at(-1).right.text);
+      }
       formatted += buffer.join('') + '\n';
     }
     return formatted.trim();
@@ -233,23 +235,28 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
-    if (this.currentBuffer.length < 2) {
+    // Loop since we might have (multiple) comments anywhere, e.g. [b, C, C, a, C]
+    // but we should still be able to concatenate a, b to ba
+    const indices = [];
+    for (let i = this.currentBuffer.length - 1; i >= 0; i--) {
+      if (!this.currentBuffer[i].isComment) {
+        indices.push(i);
+        if (indices.length === 2) {
+          break;
+        }
+      }
+    }
+    if (indices.length < 2) {
       return;
     }
-    const last = this.currentBuffer.pop();
-    const secondLast = this.currentBuffer.pop();
-    // Don't concatenate comments with anything else
-    if (last?.isComment || secondLast?.isComment) {
-      this.currentBuffer.push(secondLast);
-      this.currentBuffer.push(last);
-      return;
-    }
+    const suffix = this.currentBuffer.splice(indices[0], 1)[0];
+    const prefix = this.currentBuffer[indices[1]];
     const chunk: Chunk = {
-      text: secondLast.text + last.text,
-      start: secondLast.start,
-      end: last.end,
+      text: prefix.text + suffix.text,
+      start: prefix.start,
+      end: prefix.end + suffix.text.length,
     };
-    this.currentBuffer.push(chunk);
+    this.currentBuffer[indices[1]] = chunk;
   };
 
   // If the previous token should choose between a newline or no space, rather than
@@ -777,10 +784,6 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //console.log('X'.repeat(MAX_COLUMN));
 //console.log(formatQuery(q0));
 //console.log(formatQuery(q1));
-const query = `MERGE (n) /* Ensuring the node exists */ 
-  ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A) /* Create or match 'a:A' */ 
-  -[:T]-> (b:B) /* Link 'a' to 'b' */
-RETURN a.prop /* Return the property of 'a' */
-// This is another comment!`;
+const query = `UNWIND range(1,100) as _ CALL { MATCH (source:object)
+MATCH (target:object) RETURN source, target } RETURN count('*')`;
 console.log(formatQuery(query));

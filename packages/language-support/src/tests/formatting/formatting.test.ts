@@ -105,9 +105,9 @@ describe('should not forget to include all comments', () => {
     const propertycomments = `match (n)
 return n. // comment
 prop`;
+    // Explicitly keep property access in the same chunk as its owner
     const expected = `MATCH (n)
-RETURN n. // comment
-prop`;
+RETURN n.prop // comment`;
     verifyFormatting(propertycomments, expected);
   });
 
