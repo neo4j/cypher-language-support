@@ -49,6 +49,7 @@ interface Chunk {
   splitObligationAfter?: Split;
   noSpace?: boolean;
   isComment?: boolean;
+  indentation?: Indentation;
 }
 
 interface Split {
@@ -60,6 +61,8 @@ interface Split {
 interface Choice {
   left: Chunk;
   right: Chunk;
+  // Indentation forced by the styleguide, e.g. ON MERGE
+  forcedIndentation?: Indentation;
   // The possible splits that the linewrapper can choose
   possibleSplitChoices: Split[];
   // Possible policies that we could add at this step
@@ -107,13 +110,17 @@ function dfs(state: State, choices: Choice[]): Result {
   if (state.choiceIndex === choices.length) {
     return { cost: 0, decisions: [] };
   }
+  const choice = choices[state.choiceIndex];
+  if (choice.forcedIndentation) {
+    state.indentations.push(choice.forcedIndentation);
+    state.indentation += choice.forcedIndentation.spaces;
+  }
   state.indentations = state.indentations.filter((indentation) => {
     if (indentation.expire === choices[state.choiceIndex].left) {
       state.indentation -= indentation.spaces;
     }
     return indentation.expire !== choices[state.choiceIndex].left;
   });
-  const choice = choices[state.choiceIndex];
   const startOfLine = state.column === 0;
   if (startOfLine) {
     state.column = state.indentation;
@@ -162,6 +169,9 @@ function dfs(state: State, choices: Choice[]): Result {
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffers: Chunk[][] = [];
   currentBuffer: Chunk[] = [];
+  // Keep track of which chunks start indentation, so we can fill out the correct
+  // expiration token for that indentation.
+  indentationStarters: number[] = [];
   indentation = 0;
   indentationSpaces = 2;
   targetToken?: number;
@@ -207,6 +217,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
               : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
                 ? basicNoSpaceSplits
                 : basicSplits,
+            forcedIndentation: chunk.indentation,
           };
         })
         .filter((choice) => choice !== null) as Choice[];
@@ -274,9 +285,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer[idx].noSpace = true;
   }
 
-  addIndentation = () => this.indentation++;
+  addIndentation = () => {
+    this.indentationStarters.push(this.currentBuffer.length);
+  }
 
-  removeIndentation = () => this.indentation--;
+  removeIndentation = () => {
+    const idx = this.indentationStarters.pop();
+    this.currentBuffer[idx].indentation = {
+      spaces: this.indentationSpaces,
+      expire: this.currentBuffer[this.currentBuffer.length - 1],
+    }
+  }
 
   applyIndentation = () => {
     throw new Error('Not implemented');
@@ -777,6 +796,9 @@ const queries = [q1, q2, q3, q4, q5, q6, q7, q8, q9];
 //console.log('X'.repeat(MAX_COLUMN));
 //console.log(formatQuery(q0));
 //console.log(formatQuery(q1));
-const query = `UNWIND range(1,100) as _ CALL { MATCH (source:object)
-MATCH (target:object) RETURN source, target } RETURN count('*')`;
+const query = `MERGE (n) ON CREATE SET n.prop = 0
+MERGE (a:A)-[:T]->(b:B)
+ON MATCH SET b.name = 'you'
+ON CREATE SET a.name = 'me'
+RETURN a.prop`;
 console.log(formatQuery(query));
