@@ -61,8 +61,6 @@ interface Split {
 interface Choice {
   left: Chunk;
   right: Chunk;
-  // Indentation forced by the styleguide, e.g. ON MERGE
-  forcedIndentation?: Indentation;
   // The possible splits that the linewrapper can choose
   possibleSplitChoices: Split[];
   // Possible policies that we could add at this step
@@ -102,24 +100,31 @@ interface State {
 interface Result {
   cost: number;
   decisions: Decision[];
+  indentations: Indentation[];
 }
 
 const MAX_COLUMN = 80;
 
 function dfs(state: State, choices: Choice[]): Result {
   if (state.choiceIndex === choices.length) {
-    return { cost: 0, decisions: [] };
+    return { cost: 0, decisions: [], indentations: state.indentations };
   }
   const choice = choices[state.choiceIndex];
-  if (choice.forcedIndentation) {
-    state.indentations.push(choice.forcedIndentation);
-    state.indentation += choice.forcedIndentation.spaces;
+  if (choice.left.indentation) {
+    state.indentations.push(choice.left.indentation);
+    state.indentation += choice.left.indentation.spaces;
+  }
+  if (state.choiceIndex === choices.length - 1 && choice.right.indentation) {
+    state.indentations.push(choice.right.indentation);
+    state.indentation += choice.right.indentation.spaces;
   }
   state.indentations = state.indentations.filter((indentation) => {
-    if (indentation.expire === choices[state.choiceIndex].left) {
+    if (indentation.expire === choices[state.choiceIndex].left
+      || (state.choiceIndex === choices.length - 1 && indentation.expire === choices[state.choiceIndex].right)) {
       state.indentation -= indentation.spaces;
     }
-    return indentation.expire !== choices[state.choiceIndex].left;
+    return indentation.expire !== choices[state.choiceIndex].left
+      && !(state.choiceIndex === choices.length - 1 && indentation.expire === choices[state.choiceIndex].right);
   });
   const startOfLine = state.column === 0;
   if (startOfLine) {
@@ -128,7 +133,7 @@ function dfs(state: State, choices: Choice[]): Result {
   const endColumn = state.column + choice.left.text.length;
   const OOBCost = Math.max(0, endColumn - MAX_COLUMN) * 10;
   const currentCost = OOBCost;
-  const possibleResults = choice.possibleSplitChoices.map((split) => {
+  const possibleResults: Result[] = choice.possibleSplitChoices.map((split) => {
     const newIndentations = split.newIndentation
       ? [...state.indentations, split.newIndentation]
       : state.indentations;
@@ -152,6 +157,7 @@ function dfs(state: State, choices: Choice[]): Result {
         },
         ...result.decisions,
       ],
+      indentations: result.indentations,
     };
   });
   const bestResult = possibleResults.reduce((best, current) => {
@@ -163,6 +169,7 @@ function dfs(state: State, choices: Choice[]): Result {
   return {
     cost: currentCost + bestResult.cost,
     decisions: bestResult.decisions,
+    indentations: bestResult.indentations,
   };
 }
 
@@ -171,7 +178,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   currentBuffer: Chunk[] = [];
   // Keep track of which chunks start indentation, so we can fill out the correct
   // expiration token for that indentation.
-  indentationStarters: number[] = [];
+  indentationStarters: number[][] = [];
   indentation = 0;
   indentationSpaces = 2;
   targetToken?: number;
@@ -187,6 +194,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.buffers.push(this.currentBuffer);
     }
     let formatted = '';
+    let indentations: Indentation[] = [];
     for (const chunkList of this.buffers) {
       if (chunkList.length === 1) {
         formatted += chunkList[0].text + '\n';
@@ -217,18 +225,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
               : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
                 ? basicNoSpaceSplits
                 : basicSplits,
-            forcedIndentation: chunk.indentation,
           };
         })
         .filter((choice) => choice !== null) as Choice[];
+      // Indentation should carry over
+      const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
       const initialState: State = {
-        column: 0,
+        column: indentation,
         choiceIndex: 0,
-        indentation: 0,
-        indentations: [],
+        indentation,
+        indentations,
       };
 
       const result = dfs(initialState, choices);
+      indentations = result.indentations;
       const buffer = [];
       result.decisions.forEach((decision) => {
         buffer.push(' '.repeat(decision.indentation));
@@ -237,6 +247,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       });
       buffer.push(choices.at(-1).right.text);
       formatted += buffer.join('') + '\n';
+    }
+    if (indentations.length > 0) {
+      throw new Error('indentations left');
     }
     return formatted.trim();
   };
@@ -286,12 +299,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   addIndentation = () => {
-    this.indentationStarters.push(this.currentBuffer.length);
+    this.indentationStarters.push([this.buffers.length, this.currentBuffer.length]);
   }
 
   removeIndentation = () => {
-    const idx = this.indentationStarters.pop();
-    this.currentBuffer[idx].indentation = {
+    const [bufferIdx, idxInBuffer] = this.indentationStarters.pop();
+    const buffer = bufferIdx === this.buffers.length ? this.currentBuffer : this.buffers[bufferIdx];
+    const chunk = buffer[idxInBuffer];
+    chunk.indentation = {
       spaces: this.indentationSpaces,
       expire: this.currentBuffer[this.currentBuffer.length - 1],
     }
