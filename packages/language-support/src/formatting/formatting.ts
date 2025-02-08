@@ -162,7 +162,6 @@ function dfs(state: State, choices: Choice[]): Result {
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffers: Chunk[][] = [];
-  currentBuffer: Chunk[] = [];
   // Keep track of which chunks start indentation, so we can fill out the correct
   // expiration token for that indentation.
   indentationStarters: number[][] = [];
@@ -173,6 +172,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
+    this.buffers.push([]);
   }
 
   // TODO: avoid the lastchoice thing
@@ -189,12 +189,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
-    if (this.currentBuffer.length > 0) {
-      this.buffers.push(this.currentBuffer);
-    }
     let formatted = '';
     let indentations: Indentation[] = [];
     for (const chunkList of this.buffers) {
+      if (chunkList.length === 0) {
+        continue;
+      }
       if (chunkList.length === 1) {
         formatted += chunkList[0].text + '\n';
         continue;
@@ -245,9 +245,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return formatted.trim();
   };
 
+  currentBuffer = () => this.buffers.at(-1);
+
   breakLine = () => {
-    if (this.currentBuffer.length > 0)
-      this.buffers.push(this.currentBuffer), (this.currentBuffer = []);
+    if (this.currentBuffer().length > 0) {
+      this.buffers.push([]);
+    }
   };
 
   // If two tokens should never be split, concatenate them into one chunk
@@ -255,8 +258,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // Loop since we might have (multiple) comments anywhere, e.g. [b, C, C, a, C]
     // but we should still be able to concatenate a, b to ba
     const indices = [];
-    for (let i = this.currentBuffer.length - 1; i >= 0; i--) {
-      if (!this.currentBuffer[i].isComment) {
+    for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
+      if (!this.currentBuffer()[i].isComment) {
         indices.push(i);
         if (indices.length === 2) {
           break;
@@ -266,48 +269,49 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (indices.length < 2) {
       return;
     }
-    const suffix = this.currentBuffer.splice(indices[0], 1)[0];
-    const prefix = this.currentBuffer[indices[1]];
+    const suffix = this.currentBuffer().splice(indices[0], 1)[0];
+    const prefix = this.currentBuffer()[indices[1]];
     const chunk: Chunk = {
       text: prefix.text + suffix.text,
       start: prefix.start,
       end: prefix.end + suffix.text.length,
     };
-    this.currentBuffer[indices[1]] = chunk;
+    this.currentBuffer()[indices[1]] = chunk;
   };
 
   // If the previous token should choose between a newline or no space, rather than
   // a newline and a space
   avoidSpaceBetween = () => {
-    let idx = this.currentBuffer.length - 1;
-    while (idx >= 0 && this.currentBuffer[idx].isComment) {
+    let idx = this.currentBuffer().length - 1;
+    while (idx >= 0 && this.currentBuffer()[idx].isComment) {
       idx--;
     }
     if (idx < 0) {
       return;
     }
-    this.currentBuffer[idx].noSpace = true;
+    this.currentBuffer()[idx].noSpace = true;
   }
 
   addIndentation = () => {
-    if (this.currentBuffer.length === 0) {
+    if (this.currentBuffer().length === 0) {
       throw new Error('Trying to add indentation to empty buffer');
     }
-    this.indentationStarters.push([this.buffers.length, this.currentBuffer.length - 1]);
+    this.indentationStarters.push([this.buffers.length - 1, this.currentBuffer().length - 1]);
   }
 
   removeIndentation = () => {
     const [bufferIdx, idxInBuffer] = this.indentationStarters.pop();
-    const buffer = bufferIdx === this.buffers.length ? this.currentBuffer : this.buffers[bufferIdx];
+    const buffer = this.buffers[bufferIdx];
     const chunk = buffer[idxInBuffer];
     chunk.indentation = {
       spaces: this.indentationSpaces,
-      expire: this.currentBuffer[this.currentBuffer.length - 1],
+      expire: this.currentBuffer()[this.currentBuffer().length - 1],
     }
   }
 
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
+    console.log("adding comments before");
     const token = node.symbol;
     const hiddenTokens = this.tokenStream.getHiddenTokensToLeft(
       token.tokenIndex,
@@ -323,7 +327,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         end: commentToken.stop + 1,
         isComment: true,
       };
-      this.currentBuffer.push(chunk);
+      this.currentBuffer().push(chunk);
       this.breakLine();
     }
   };
@@ -348,7 +352,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         },
         isComment: true,
       };
-      this.currentBuffer.push(chunk);
+      this.currentBuffer().push(chunk);
     }
   };
 
@@ -399,7 +403,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
-    if (this.buffers.length === 0) {
+    if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
       this.addCommentsBefore(node);
     }
     if (node.symbol.type === CypherCmdLexer.EOF) {
@@ -418,7 +422,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       start: node.symbol.start,
       end: node.symbol.stop + 1,
     };
-    this.currentBuffer.push(chunk);
+    this.currentBuffer().push(chunk);
     if (wantsToBeConcatenated(node)) {
       this.concatenate();
     }
@@ -433,7 +437,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
-    if (this.buffers.length === 0) {
+    if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
       this.addCommentsBefore(node);
     }
     let result = node.getText();
@@ -456,7 +460,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         cost: 0,
       },
     };
-    this.currentBuffer.push(chunk);
+    this.currentBuffer().push(chunk);
     if (wantsToBeConcatenated(node)) {
       this.concatenate();
     }
