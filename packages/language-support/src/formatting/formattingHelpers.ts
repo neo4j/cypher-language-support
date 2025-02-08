@@ -252,6 +252,8 @@ function bestFirstSolnSearch(startingState: State, choiceList: Choice[]): Result
   heap.push(startingState);
   while (heap.size() > 0) {
     const state = heap.pop();
+    // We found a solution. Since we do best first, it has to be the best
+    // solution, so reconstruct that path of decisions
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
