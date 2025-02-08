@@ -14,6 +14,7 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 import { Heap } from 'heap-js';
 
+const INDENTATION = 2;
 const MAX_COL = 80;
 
 export interface Chunk {
@@ -178,10 +179,10 @@ function getIndentation(curr: State, choice: Choice, split: Split): [number, Ind
   let indentRules = [];
   let dedentSkipped = false;
   for (const indentRule of curr.indentationRules) {
-    if (indentRule.expire === choice.left) {
+    if (!indentRule.expire.specialBehavior && indentRule.expire === choice.left) {
       continue;
     }
-    if (indentRule.expire.specialBehavior && choice.left.specialBehavior?.type === 'DEDENT' && !dedentSkipped) {
+    if (indentRule.expire.specialBehavior?.type === 'DEDENT' && choice.left.specialBehavior?.type === 'DEDENT' && !dedentSkipped) {
       dedentSkipped = true;
       continue;
     }
@@ -193,16 +194,7 @@ function getIndentation(curr: State, choice: Choice, split: Split): [number, Ind
       currIndent += choice.left.specialBehavior.indentation;
       indentRules.push({
         spaces: choice.left.specialBehavior.indentation,
-        // TODO: standardized expire
-        expire: {
-          text: '',
-          start: -1,
-          end: -1,
-          specialBehavior: {
-            type: 'DEDENT',
-            indentation: choice.left.specialBehavior.indentation,
-          }
-        }
+        expire: dedentChunk,
       });
     }
   }
@@ -342,3 +334,23 @@ const emptyChunk: Chunk = {
   start: 0,
   end: 0,
 };
+
+export const indentChunk: Chunk = {
+  text: '',
+  start: -1,
+  end: -1,
+  specialBehavior: {
+    type: 'INDENT',
+    indentation: INDENTATION,
+  },
+}
+
+export const dedentChunk: Chunk = {
+  text: '',
+  start: -1,
+  end: -1,
+  specialBehavior: {
+    type: 'DEDENT',
+    indentation: INDENTATION,
+  },
+}
