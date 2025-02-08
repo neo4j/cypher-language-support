@@ -23,7 +23,12 @@ export interface Chunk {
   end: number;
   noSpace?: boolean;
   isComment?: boolean;
-  ruleBasedIndentation?: Indentation;
+  specialBehavior?: SpecialChunkBehavior;
+}
+
+interface SpecialChunkBehavior {
+  type: 'INDENT' | 'DEDENT';
+  indentation: number;
 }
 
 export interface Split {
@@ -171,12 +176,35 @@ export function findTargetToken(
 function getIndentation(curr: State, choice: Choice, split: Split): [number, Indentation[]] {
   let currIndent = 0;
   let indentRules = [];
+  let dedentSkipped = false;
   for (const indentRule of curr.indentationRules) {
     if (indentRule.expire === choice.left) {
       continue;
     }
+    if (indentRule.expire.specialBehavior && choice.left.specialBehavior?.type === 'DEDENT' && !dedentSkipped) {
+      dedentSkipped = true;
+      continue;
+    }
     currIndent += indentRule.spaces;
     indentRules.push(indentRule);
+  }
+  if (choice.left.specialBehavior) {
+    if (choice.left.specialBehavior.type === 'INDENT') {
+      currIndent += choice.left.specialBehavior.indentation;
+      indentRules.push({
+        spaces: choice.left.specialBehavior.indentation,
+        // TODO: standardized expire
+        expire: {
+          text: '',
+          start: -1,
+          end: -1,
+          specialBehavior: {
+            type: 'DEDENT',
+            indentation: choice.left.specialBehavior.indentation,
+          }
+        }
+      });
+    }
   }
   if (split.newIndentation && split.newIndentation.expire !== choice.left) {
     currIndent += split.newIndentation.spaces;
@@ -266,13 +294,8 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       if (currIsComment) {
         splits = [{ splitType: '\n', cost: 0 }];
       }
-      if (chunk.ruleBasedIndentation) {
-        splits = splits.map((split) => {
-          return {
-            ...split,
-            newIndentation: chunk.ruleBasedIndentation,
-          };
-        });
+      if (chunk.specialBehavior) {
+        splits = [{ splitType: '', cost: 0 }];
       }
       return {
         left: chunk,
