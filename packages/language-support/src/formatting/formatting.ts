@@ -63,8 +63,6 @@ interface Choice {
   right: Chunk;
   // The possible splits that the linewrapper can choose
   possibleSplitChoices: Split[];
-  // Possible policies that we could add at this step
-  //policies: Policy[];
 }
 
 interface Decision {
@@ -74,25 +72,14 @@ interface Decision {
   split: Split; // The split that was chosen
 }
 
-// Should be applied to future decisions up until the expire token.
-// TODO: can be used for e.g. making sure that all function arguments stay on the same line
-// or that they all break
-//
-//interface Policy {
-//  f: (s: Split[]) => Split[];
-//  expire: Chunk;
-//}
-
 interface Indentation {
   spaces: number;
   expire: Chunk;
 }
 
-// O(n*MAX_COL)
 interface State {
   column: number;
   choiceIndex: number;
-  //policies: Policy[];
   indentation: number;
   indentations: Indentation[];
 }
