@@ -338,6 +338,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.visitTerminalRaw(arrowLineList[1].MINUS());
     this.visitIfNotNull(ctx.rightArrow());
+    this.avoidSpaceBetween();
   };
 
   // Handled separately because the dots aren't operators
