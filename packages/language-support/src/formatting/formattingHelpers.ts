@@ -23,7 +23,7 @@ export interface Chunk {
   end: number;
   noSpace?: boolean;
   isComment?: boolean;
-  indentation?: Indentation;
+  ruleBasedIndentation?: Indentation;
 }
 
 export interface Split {
@@ -267,11 +267,11 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       if (currIsComment) {
         splits = [{ splitType: '\n', cost: 0 }];
       }
-      if (chunk.indentation) {
+      if (chunk.ruleBasedIndentation) {
         splits = splits.map((split) => {
           return {
             ...split,
-            newIndentation: chunk.indentation,
+            newIndentation: chunk.ruleBasedIndentation,
           };
         });
       }

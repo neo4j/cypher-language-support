@@ -120,7 +120,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const [bufferIdx, idxInBuffer] = this.indentationStarters.pop();
     const buffer = this.buffers[bufferIdx];
     const chunk = buffer[idxInBuffer];
-    chunk.indentation = {
+    chunk.ruleBasedIndentation = {
       spaces: this.indentationSpaces,
       expire: this.currentBuffer()[this.currentBuffer().length - 1],
     }
