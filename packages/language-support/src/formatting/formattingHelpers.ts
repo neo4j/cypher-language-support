@@ -214,7 +214,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   }
 }
 
-function constructResult(state: State): Result {
+function reconstructBestPath(state: State): Result {
   const decisions: Decision[] = [];
   let currentState: State = state;
   while (currentState.edge != null) {
@@ -229,13 +229,13 @@ function constructResult(state: State): Result {
   };
 }
 
-function bfs(startingState: State, choiceList: Choice[]): Result {
+function bestFirstSolnSearch(startingState: State, choiceList: Choice[]): Result {
   const heap = new Heap<State>((a, b) => a.cost - b.cost);
   heap.push(startingState);
   while (heap.size() > 0) {
     const state = heap.pop();
     if (state.choiceIndex === choiceList.length) {
-      return constructResult(state);
+      return reconstructBestPath(state);
     }
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
@@ -296,7 +296,7 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
       cost: 0,
       edge: null,
     };
-    const result = bfs(initialState, choices);
+    const result = bestFirstSolnSearch(initialState, choices);
     indentationRules = result.indentationRules;
     formatted += decisionsToFormatted(result.decisions) + '\n';
   }
