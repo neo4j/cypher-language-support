@@ -43,82 +43,13 @@ import {
   State,
   Result,
   emptyChunk,
+  bfs,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
   space?: boolean;
-}
-
-const MAX_COLUMN = 80;
-
-function dfs(state: State, choices: Choice[]): Result {
-  if (state.choiceIndex === choices.length) {
-    return { cost: 0, decisions: [], indentations: state.indentations };
-  }
-  const choice = choices[state.choiceIndex];
-  if (choice.left.indentation) {
-    state.indentations.push(choice.left.indentation);
-    state.indentation += choice.left.indentation.spaces;
-  }
-  if (state.choiceIndex === choices.length - 1 && choice.right.indentation) {
-    state.indentations.push(choice.right.indentation);
-    state.indentation += choice.right.indentation.spaces;
-  }
-  state.indentations = state.indentations.filter((indentation) => {
-    if (indentation.expire === choices[state.choiceIndex].left
-      || (state.choiceIndex === choices.length - 1 && indentation.expire === choices[state.choiceIndex].right)) {
-      state.indentation -= indentation.spaces;
-    }
-    return indentation.expire !== choices[state.choiceIndex].left
-      && !(state.choiceIndex === choices.length - 1 && indentation.expire === choices[state.choiceIndex].right);
-  });
-  const startOfLine = state.column === 0;
-  if (startOfLine) {
-    state.column = state.indentation;
-  }
-  const endColumn = state.column + choice.left.text.length;
-  const OOBCost = Math.max(0, endColumn - MAX_COLUMN) * 10;
-  const currentCost = OOBCost;
-  const possibleResults: Result[] = choice.possibleSplitChoices.map((split) => {
-    const newIndentations = split.newIndentation
-      ? [...state.indentations, split.newIndentation]
-      : state.indentations;
-    const newState = {
-      column: split.splitType === '\n' ? 0 : endColumn + 1,
-      choiceIndex: state.choiceIndex + 1,
-      indentation:
-        state.indentation +
-        (split.newIndentation ? split.newIndentation.spaces : 0),
-      indentations: newIndentations,
-    };
-    const result = dfs(newState, choices);
-    return {
-      cost: split.cost + result.cost,
-      decisions: [
-        {
-          indentation: startOfLine ? state.indentation : 0,
-          left: choice.left,
-          right: choice.right,
-          split,
-        },
-        ...result.decisions,
-      ],
-      indentations: result.indentations,
-    };
-  });
-  const bestResult = possibleResults.reduce((best, current) => {
-    if (current.cost < best.cost) {
-      return current;
-    }
-    return best;
-  });
-  return {
-    cost: currentCost + bestResult.cost,
-    decisions: bestResult.decisions,
-    indentations: bestResult.indentations,
-  };
 }
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
@@ -186,8 +117,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         choiceIndex: 0,
         indentation,
         indentations,
+        cost: 0,
+        edge: null,
       };
-      const result = dfs(initialState, choices);
+      const result = bfs(initialState, choices);
       indentations = result.indentations;
       formatted += this.decisionsToFormatted(result.decisions) + '\n';
     }
@@ -263,7 +196,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
-    console.log("adding comments before");
     const token = node.symbol;
     const hiddenTokens = this.tokenStream.getHiddenTokensToLeft(
       token.tokenIndex,

@@ -12,6 +12,9 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+import { Heap } from 'heap-js';
+
+const MAX_COL = 80;
 
 export interface Chunk {
   text: string;
@@ -54,6 +57,13 @@ export interface State {
   choiceIndex: number;
   indentation: number;
   indentations: Indentation[];
+  cost: number;
+  edge: StateEdge;
+}
+
+interface StateEdge {
+  prevState: State;
+  decision: Decision;
 }
 
 export interface Result {
@@ -161,6 +171,63 @@ export function findTargetToken(
     }
   }
   return false;
+}
+
+function constructResult(state: State): Result {
+  const decisions: Decision[] = [];
+  let currentState: State = state;
+  while (currentState.edge != null) {
+    decisions.push(currentState.edge.decision);
+    currentState = currentState.edge.prevState;
+  }
+  decisions.reverse();
+  return {
+    cost: state.cost,
+    decisions,
+    indentations: state.indentations,
+  };
+}
+
+function getNeighbourState(curr: State, choice: Choice, split: Split): State {
+  const isBreak = split.splitType === '\n';
+  const endColumn = isBreak ?
+    choice.right.text.length :
+    curr.column + choice.right.text.length;
+  const OOBCost = Math.max(0, endColumn - MAX_COL) * 10;
+  return {
+    column: split.splitType === '\n' ? 0 : endColumn + 1,
+    choiceIndex: curr.choiceIndex + 1,
+    // TODO: indentation doesn't work atm
+    indentation: curr.indentation,
+    indentations: curr.indentations,
+    cost: curr.cost + split.cost + OOBCost,
+    edge: {
+      prevState: curr,
+      decision: {
+        indentation: curr.indentation,
+        left: choice.left,
+        right: choice.right,
+        split,
+      },
+    },
+  }
+}
+
+export function bfs(startingState: State, choiceList: Choice[]): Result {
+  const heap = new Heap<State>((a, b) => a.cost - b.cost);
+  heap.push(startingState);
+  while (heap.size() > 0) {
+    const state = heap.pop();
+    if (state.choiceIndex === choiceList.length) {
+      return constructResult(state);
+    }
+    const choice = choiceList[state.choiceIndex];
+    for (const split of choice.possibleSplitChoices) {
+      const neighbourState = getNeighbourState(state, choice, split);
+      heap.push(neighbourState);
+    }
+  }
+  throw new Error('No solution found');
 }
 
 export const basicSplits = [
