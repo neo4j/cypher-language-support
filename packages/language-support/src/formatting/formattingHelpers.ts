@@ -253,7 +253,7 @@ function decisionsToFormatted(decisions: Decision[]): string {
     buffer.push(decision.left.text);
     buffer.push(decision.split.splitType);
   });
-  return buffer.join('').trim();
+  return buffer.join('').trimEnd();
 }
 
 
@@ -303,7 +303,7 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
   if (indentationRules.length > 0) {
     throw new Error('indentations left');
   }
-  return formatted.trim();
+  return formatted.trimEnd();
 }
 
 const basicSplits = [
