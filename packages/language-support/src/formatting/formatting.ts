@@ -480,6 +480,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
     this.visit(ctx.LCURLY());
+    this.avoidSpaceBetween();
 
     const propertyKeyNames = ctx.propertyKeyName_list();
     const expressions = ctx.expression_list();
@@ -493,6 +494,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(commaList[i]);
       }
     }
+    this.avoidSpaceBetween();
     this.visit(ctx.RCURLY());
   };
 }

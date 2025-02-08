@@ -83,7 +83,6 @@ export interface Result {
 const openingCharacters = [
   CypherCmdLexer.LPAREN,
   CypherCmdLexer.LBRACKET,
-  CypherCmdLexer.LCURLY,
 ];
 
 const traillingCharacters = [
@@ -92,7 +91,6 @@ const traillingCharacters = [
   CypherCmdLexer.COLON,
   CypherCmdLexer.RPAREN,
   CypherCmdLexer.RBRACKET,
-  CypherCmdLexer.RCURLY,
 ];
 
 class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> {
