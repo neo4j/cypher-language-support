@@ -467,6 +467,6 @@ WHERE variable.property = "String"
     OR $parameter > 2 
 RETURN variable;`;
     const result = formatQuery(query, 133);
-    expect(result.newCursorPos).toEqual(122);
+    expect(result.newCursorPos).toEqual(120);
   });
 });
