@@ -162,10 +162,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         start: commentToken.start,
         end: commentToken.stop + 1,
-        splitObligationAfter: {
-          splitType: '\n',
-          cost: 0,
-        },
         isComment: true,
       };
       this.currentBuffer().push(chunk);
@@ -271,12 +267,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       start: node.symbol.start,
       end: node.symbol.stop + 1,
-      splitObligationAfter: {
-        splitType: options?.space ? ' ' : '',
-        cost: 0,
-      },
     };
     this.currentBuffer().push(chunk);
+    if (!options?.space) {
+      this.avoidSpaceBetween();
+    }
     if (wantsToBeConcatenated(node)) {
       this.concatenate();
     }

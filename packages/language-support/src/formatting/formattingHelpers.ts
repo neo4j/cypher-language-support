@@ -24,7 +24,6 @@ export interface Chunk {
   node?: TerminalNode;
   start: number;
   end: number;
-  splitObligationAfter?: Split;
   noSpace?: boolean;
   isComment?: boolean;
   indentation?: Indentation;
@@ -264,14 +263,17 @@ function decisionsToFormatted(decisions: Decision[]): string {
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   return chunkList
     .map((chunk, index) => {
+      const currIsComment = chunk.isComment;
+      const nextIsComment = chunkList[index + 1]?.isComment;
+      const noSpace = doesNotWantSpace(chunk.node) || chunk.noSpace;
+      let splits = noSpace && !nextIsComment ? basicNoSpaceSplits : basicSplits;
+      if (currIsComment) {
+        splits = [{ splitType: '\n', cost: 0 }];
+      }
       return {
         left: chunk,
         right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
-        possibleSplitChoices: chunk.splitObligationAfter
-          ? [chunk.splitObligationAfter]
-          : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
-            ? basicNoSpaceSplits
-            : basicSplits,
+        possibleSplitChoices: splits,
       };
     }) as Choice[];
 }
