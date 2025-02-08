@@ -456,36 +456,36 @@ describe('tests for correct cursor position', () => {
   });
   test('cursor at newline', () => {
     const query = `MATCH (n:Person)
-  WHERE n.name = "Steve" 
-  RETURN n 
-  LIMIT 12;`;
+WHERE n.name = "Steve" 
+RETURN n 
+LIMIT 12;`;
     const result = formatQuery(query, 56);
-    expect(result.newCursorPos).toEqual(54);
+    expect(result.newCursorPos).toEqual(55);
   });
 
   test('cursor start of line with spaces newline', () => {
     const query = `UNWIND range(1,100) as _
-  CALL {
-    MATCH (source:object) WHERE source.id= $id1
-    MATCH (target:object) WHERE target.id= $id2
-    MATCH path = (source)-[*1..10]->(target)
-    WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
-    ORDER BY Weight LIMIT 3
-    RETURN length(path) as l, Weight 
-  } 
-  RETURN count(*)`;
+CALL {
+  MATCH (source:object) WHERE source.id= $id1
+  MATCH (target:object) WHERE target.id= $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
+  ORDER BY Weight LIMIT 3
+  RETURN length(path) as l, Weight 
+} 
+RETURN count(*)`;
     const result = formatQuery(query, 124);
-    expect(result.newCursorPos).toEqual(131);
+    expect(result.newCursorPos).toEqual(125);
   });
 
   test('cursor start of line without spaces', () => {
     const query = `MATCH (variable :Label)-[:REL_TYPE]->() 
-  WHERE variable.property = "String" 
-      OR namespaced.function() = false
-      // comment
-      OR $parameter > 2 
-  RETURN variable;`;
+WHERE variable.property = "String" 
+    OR namespaced.function() = false
+    // comment
+    OR $parameter > 2 
+RETURN variable;`;
     const result = formatQuery(query, 133);
-    expect(result.newCursorPos).toEqual(120);
+    expect(result.newCursorPos).toEqual(122);
   });
 });
