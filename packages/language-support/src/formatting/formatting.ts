@@ -443,15 +443,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
-      this.addIndentation();
       this.breakLine();
       this.visit(ctx.UNION(i));
-      this.removeIndentation();
+      this.addIndentation();
       if (ctx.ALL(i)) {
         this.visit(ctx.ALL(i));
       } else if (ctx.DISTINCT(i)) {
         this.visit(ctx.DISTINCT(i));
       }
+      this.removeIndentation();
       this.breakLine();
       this.visit(ctx.singleQuery(i + 1));
     }
