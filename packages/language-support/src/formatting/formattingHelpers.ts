@@ -112,3 +112,12 @@ export function findTargetToken(
   }
   return false;
 }
+
+export const basicSplits = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];
+export const basicNoSpaceSplits = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];

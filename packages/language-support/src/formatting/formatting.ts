@@ -33,6 +33,8 @@ import {
   isComment,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
+  basicSplits,
+  basicNoSpaceSplits,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
@@ -203,14 +205,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       while (chunkList.length > 21) {
         chunkList.pop();
       }
-      const basicSplits = [
-        { splitType: ' ', cost: 0 },
-        { splitType: '\n', cost: 1 },
-      ];
-      const basicNoSpaceSplits = [
-        { splitType: '', cost: 0 },
-        { splitType: '\n', cost: 1 },
-      ];
       const choices: Choice[] = chunkList
         .map((chunk, index) => {
           if (index === chunkList.length - 1) {
