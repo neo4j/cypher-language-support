@@ -282,13 +282,6 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
   let formatted = '';
   let indentations: Indentation[] = [];
   for (const chunkList of buffers) {
-    if (chunkList.length === 0) {
-      continue;
-    }
-    if (chunkList.length === 1) {
-      formatted += chunkList[0].text + '\n';
-      continue;
-    }
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
     const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
