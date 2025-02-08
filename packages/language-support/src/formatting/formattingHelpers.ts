@@ -193,20 +193,6 @@ export function findTargetToken(
   return false;
 }
 
-function constructResult(state: State): Result {
-  const decisions: Decision[] = [];
-  let currentState: State = state;
-  while (currentState.edge != null) {
-    decisions.push(currentState.edge.decision);
-    currentState = currentState.edge.prevState;
-  }
-  decisions.reverse();
-  return {
-    cost: state.cost,
-    decisions,
-    indentations: state.indentations,
-  };
-}
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
@@ -214,6 +200,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choice.right.text.length :
     curr.column + choice.right.text.length;
   const OOBCost = Math.max(0, endColumn - MAX_COL) * 10;
+  if (split.newIndentation) {
+    console.log('newIndentation', split.newIndentation);
+  }
   return {
     column: split.splitType === '\n' ? 0 : endColumn + 1,
     choiceIndex: curr.choiceIndex + 1,
@@ -233,7 +222,22 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   }
 }
 
-export function bfs(startingState: State, choiceList: Choice[]): Result {
+function constructResult(state: State): Result {
+  const decisions: Decision[] = [];
+  let currentState: State = state;
+  while (currentState.edge != null) {
+    decisions.push(currentState.edge.decision);
+    currentState = currentState.edge.prevState;
+  }
+  decisions.reverse();
+  return {
+    cost: state.cost,
+    decisions,
+    indentations: state.indentations,
+  };
+}
+
+function bfs(startingState: State, choiceList: Choice[]): Result {
   const heap = new Heap<State>((a, b) => a.cost - b.cost);
   heap.push(startingState);
   while (heap.size() > 0) {
@@ -259,6 +263,7 @@ function decisionsToFormatted(decisions: Decision[]): string {
   });
   return buffer.join('').trim();
 }
+
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   return chunkList
@@ -303,16 +308,16 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
   return formatted.trim();
 }
 
-export const basicSplits = [
+const basicSplits = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-export const basicNoSpaceSplits = [
+const basicNoSpaceSplits = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
 
-export const emptyChunk: Chunk = {
+const emptyChunk: Chunk = {
   text: '',
   start: 0,
   end: 0,
