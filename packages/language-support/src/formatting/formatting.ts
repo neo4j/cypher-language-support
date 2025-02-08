@@ -109,27 +109,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   addIndentation = () => {
-    this.currentBuffer().push({
-      text: '',
-      start: -1,
-      end: -1,
-      specialBehavior: {
-        type: 'INDENT',
-        indentation: this.indentationSpaces,
-      },
-    })
+    this.currentBuffer().push(indentChunk);
   }
 
   removeIndentation = () => {
-    this.currentBuffer().push({
-      text: '',
-      start: -1,
-      end: -1,
-      specialBehavior: {
-        type: 'DEDENT',
-        indentation: this.indentationSpaces,
-      },
-    })
+    this.currentBuffer().push(dedentChunk);
   }
 
   // Comments are in the hidden channel, so grab them manually
