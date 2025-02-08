@@ -34,6 +34,7 @@ import {
   wantsToBeUpperCase,
   Chunk,
   buffersToFormattedString,
+  spaceChunk,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
@@ -225,7 +226,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     if (node.symbol.tokenIndex === this.targetToken) {
-      this.cursorPos = this.buffers.join('').length;
+      this.cursorPos = this.buffers.reduce((acc, buffer) => acc + buffer.reduce((acc, chunk) => {
+        return acc + chunk.text.length + (chunk.noSpace ? 0 : 1);
+      }, 0), 0);
     }
     let text = node.getText();
     if (wantsToBeUpperCase(node)) {
@@ -263,7 +266,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       result = result.toUpperCase();
     }
     if (node.symbol.tokenIndex === this.targetToken) {
-      // TODO: broken
+      this.cursorPos = this.buffers.reduce((acc, buffer) => acc + buffer.reduce((acc, chunk) => {
+        return acc + chunk.text.length + (chunk.noSpace ? 0 : 1);
+      }, 0), 0);
     }
     const chunk: Chunk = {
       text: result,
