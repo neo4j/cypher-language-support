@@ -175,6 +175,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     super();
   }
 
+  // TODO: avoid the lastchoice thing
+  decisionsToFormatted = (decisions: Decision[], lastChoice: Choice): string => {
+    const buffer = [];
+    decisions.forEach((decision) => {
+      buffer.push(' '.repeat(decision.indentation));
+      buffer.push(decision.left.text);
+      buffer.push(decision.split.splitType);
+    });
+    buffer.push(lastChoice.right.text);
+    return buffer.join('');
+  }
+
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
     if (this.currentBuffer.length > 0) {
@@ -223,17 +235,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         indentation,
         indentations,
       };
-
       const result = dfs(initialState, choices);
       indentations = result.indentations;
-      const buffer = [];
-      result.decisions.forEach((decision) => {
-        buffer.push(' '.repeat(decision.indentation));
-        buffer.push(decision.left.text);
-        buffer.push(decision.split.splitType);
-      });
-      buffer.push(choices.at(-1).right.text);
-      formatted += buffer.join('') + '\n';
+      formatted += this.decisionsToFormatted(result.decisions, choices.at(-1)) + '\n';
     }
     if (indentations.length > 0) {
       throw new Error('indentations left');
