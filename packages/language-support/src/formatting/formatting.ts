@@ -117,6 +117,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   removeIndentation = () => {
+    if (this.currentBuffer().length === 0) {
+      throw new Error('Trying to remove indentation without an end token');
+    }
     const [bufferIdx, idxInBuffer] = this.indentationStarters.pop();
     const buffer = this.buffers[bufferIdx];
     const chunk = buffer[idxInBuffer];
@@ -362,8 +365,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.regularQuery()) {
       this.addIndentation();
       this.visit(ctx.regularQuery());
-      this.breakLine();
       this.removeIndentation();
+      this.breakLine();
     } else {
       this.visitIfNotNull(ctx.matchMode());
       this.visit(ctx.patternList());
@@ -421,8 +424,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addIndentation();
     this.breakLine();
     this.visit(ctx.regularQuery());
-    this.breakLine();
     this.removeIndentation();
+    this.breakLine();
     this.visit(ctx.RCURLY());
     this.breakLine();
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
