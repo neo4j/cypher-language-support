@@ -35,61 +35,20 @@ import {
   wantsToBeUpperCase,
   basicSplits,
   basicNoSpaceSplits,
+  Chunk,
+  Split,
+  Choice,
+  Decision,
+  Indentation,
+  State,
+  Result,
+  emptyChunk,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
   space?: boolean;
-}
-
-interface Chunk {
-  text: string;
-  node?: TerminalNode;
-  start: number;
-  end: number;
-  splitObligationAfter?: Split;
-  noSpace?: boolean;
-  isComment?: boolean;
-  indentation?: Indentation;
-}
-
-interface Split {
-  splitType: ' ' | '\n' | '';
-  cost: number;
-  newIndentation?: Indentation;
-}
-
-interface Choice {
-  left: Chunk;
-  right: Chunk;
-  // The possible splits that the linewrapper can choose
-  possibleSplitChoices: Split[];
-}
-
-interface Decision {
-  indentation: number;
-  left: Chunk;
-  right: Chunk;
-  split: Split; // The split that was chosen
-}
-
-interface Indentation {
-  spaces: number;
-  expire: Chunk;
-}
-
-interface State {
-  column: number;
-  choiceIndex: number;
-  indentation: number;
-  indentations: Indentation[];
-}
-
-interface Result {
-  cost: number;
-  decisions: Decision[];
-  indentations: Indentation[];
 }
 
 const MAX_COLUMN = 80;
@@ -178,34 +137,29 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   // TODO: avoid the lastchoice thing
-  decisionsToFormatted = (decisions: Decision[], lastChoice: Choice): string => {
+  decisionsToFormatted = (decisions: Decision[]): string => {
     const buffer = [];
     decisions.forEach((decision) => {
       buffer.push(' '.repeat(decision.indentation));
       buffer.push(decision.left.text);
       buffer.push(decision.split.splitType);
     });
-    buffer.push(lastChoice.right.text);
-    return buffer.join('');
+    return buffer.join('').trim();
   }
 
   chunkListToChoices = (chunkList: Chunk[]): Choice[] => {
     return chunkList
       .map((chunk, index) => {
-        if (index === chunkList.length - 1) {
-          return null;
-        }
         return {
           left: chunk,
-          right: chunkList[index + 1],
+          right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
           possibleSplitChoices: chunk.splitObligationAfter
             ? [chunk.splitObligationAfter]
             : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
               ? basicNoSpaceSplits
               : basicSplits,
         };
-      })
-      .filter((choice) => choice !== null) as Choice[];
+      }) as Choice[];
   }
 
   format = (root: StatementsOrCommandsContext) => {
@@ -235,7 +189,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       };
       const result = dfs(initialState, choices);
       indentations = result.indentations;
-      formatted += this.decisionsToFormatted(result.decisions, choices.at(-1)) + '\n';
+      formatted += this.decisionsToFormatted(result.decisions) + '\n';
     }
     if (indentations.length > 0) {
       throw new Error('indentations left');

@@ -13,6 +13,56 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
+export interface Chunk {
+  text: string;
+  node?: TerminalNode;
+  start: number;
+  end: number;
+  splitObligationAfter?: Split;
+  noSpace?: boolean;
+  isComment?: boolean;
+  indentation?: Indentation;
+}
+
+export interface Split {
+  splitType: ' ' | '\n' | '';
+  cost: number;
+  newIndentation?: Indentation;
+}
+
+export interface Choice {
+  left: Chunk;
+  right: Chunk;
+  // The possible splits that the linewrapper can choose
+  possibleSplitChoices: Split[];
+}
+
+export interface Decision {
+  indentation: number;
+  left: Chunk;
+  right: Chunk;
+  split: Split; // The split that was chosen
+}
+
+export interface Indentation {
+  spaces: number;
+  expire: Chunk;
+}
+
+export interface State {
+  column: number;
+  choiceIndex: number;
+  indentation: number;
+  indentations: Indentation[];
+}
+
+export interface Result {
+  cost: number;
+  decisions: Decision[];
+  indentations: Indentation[];
+}
+
+
 const openingCharacters = [
   CypherCmdLexer.LPAREN,
   CypherCmdLexer.LBRACKET,
@@ -121,3 +171,9 @@ export const basicNoSpaceSplits = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
+
+export const emptyChunk: Chunk = {
+  text: '',
+  start: 0,
+  end: 0,
+};
