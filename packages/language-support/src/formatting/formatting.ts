@@ -189,6 +189,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return buffer.join('');
   }
 
+  chunkListToChoices = (chunkList: Chunk[]): Choice[] => {
+    return chunkList
+      .map((chunk, index) => {
+        if (index === chunkList.length - 1) {
+          return null;
+        }
+        return {
+          left: chunk,
+          right: chunkList[index + 1],
+          possibleSplitChoices: chunk.splitObligationAfter
+            ? [chunk.splitObligationAfter]
+            : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
+              ? basicNoSpaceSplits
+              : basicSplits,
+        };
+      })
+      .filter((choice) => choice !== null) as Choice[];
+  }
+
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
     let formatted = '';
@@ -205,22 +224,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       while (chunkList.length > 21) {
         chunkList.pop();
       }
-      const choices: Choice[] = chunkList
-        .map((chunk, index) => {
-          if (index === chunkList.length - 1) {
-            return null;
-          }
-          return {
-            left: chunk,
-            right: chunkList[index + 1],
-            possibleSplitChoices: chunk.splitObligationAfter
-              ? [chunk.splitObligationAfter]
-              : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
-                ? basicNoSpaceSplits
-                : basicSplits,
-          };
-        })
-        .filter((choice) => choice !== null) as Choice[];
+      const choices: Choice[] = this.chunkListToChoices(chunkList);
       // Indentation should carry over
       const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
       const initialState: State = {
