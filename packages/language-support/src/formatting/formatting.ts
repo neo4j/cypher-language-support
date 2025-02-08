@@ -345,6 +345,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.DOT_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.symbolicNameString(i));
+      this.avoidSpaceBetween();
       this.visitTerminalRaw(ctx.DOT(i));
     }
   };
