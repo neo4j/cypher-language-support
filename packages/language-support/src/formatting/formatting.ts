@@ -26,24 +26,14 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
-  doesNotWantSpace,
   findTargetToken,
   getParseTreeAndTokens,
   handleMergeClause,
   isComment,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
-  basicSplits,
-  basicNoSpaceSplits,
   Chunk,
-  Split,
-  Choice,
-  Decision,
-  Indentation,
-  State,
-  Result,
-  emptyChunk,
-  bfs,
+  buffersToFormattedString,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
@@ -67,67 +57,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.buffers.push([]);
   }
 
-  // TODO: avoid the lastchoice thing
-  decisionsToFormatted = (decisions: Decision[]): string => {
-    const buffer = [];
-    decisions.forEach((decision) => {
-      buffer.push(' '.repeat(decision.indentation));
-      buffer.push(decision.left.text);
-      buffer.push(decision.split.splitType);
-    });
-    return buffer.join('').trim();
-  }
-
-  chunkListToChoices = (chunkList: Chunk[]): Choice[] => {
-    return chunkList
-      .map((chunk, index) => {
-        return {
-          left: chunk,
-          right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
-          possibleSplitChoices: chunk.splitObligationAfter
-            ? [chunk.splitObligationAfter]
-            : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
-              ? basicNoSpaceSplits
-              : basicSplits,
-        };
-      }) as Choice[];
-  }
-
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
-    let formatted = '';
-    let indentations: Indentation[] = [];
-    for (const chunkList of this.buffers) {
-      if (chunkList.length === 0) {
-        continue;
-      }
-      if (chunkList.length === 1) {
-        formatted += chunkList[0].text + '\n';
-        continue;
-      }
-      // TODO: popping this :D
-      while (chunkList.length > 21) {
-        chunkList.pop();
-      }
-      const choices: Choice[] = this.chunkListToChoices(chunkList);
-      // Indentation should carry over
-      const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
-      const initialState: State = {
-        column: indentation,
-        choiceIndex: 0,
-        indentation,
-        indentations,
-        cost: 0,
-        edge: null,
-      };
-      const result = bfs(initialState, choices);
-      indentations = result.indentations;
-      formatted += this.decisionsToFormatted(result.decisions) + '\n';
-    }
-    if (indentations.length > 0) {
-      throw new Error('indentations left');
-    }
-    return formatted.trim();
+    return buffersToFormattedString(this.buffers);
   };
 
   currentBuffer = () => this.buffers.at(-1);

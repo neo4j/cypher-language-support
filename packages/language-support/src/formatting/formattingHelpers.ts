@@ -251,6 +251,63 @@ export function bfs(startingState: State, choiceList: Choice[]): Result {
   throw new Error('No solution found');
 }
 
+function decisionsToFormatted(decisions: Decision[]): string {
+  const buffer = [];
+  decisions.forEach((decision) => {
+    buffer.push(' '.repeat(decision.indentation));
+    buffer.push(decision.left.text);
+    buffer.push(decision.split.splitType);
+  });
+  return buffer.join('').trim();
+}
+
+function chunkListToChoices(chunkList: Chunk[]): Choice[] {
+  return chunkList
+    .map((chunk, index) => {
+      return {
+        left: chunk,
+        right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
+        possibleSplitChoices: chunk.splitObligationAfter
+          ? [chunk.splitObligationAfter]
+          : (doesNotWantSpace(chunk.node) || chunk.noSpace) && !chunkList[index + 1].isComment
+            ? basicNoSpaceSplits
+            : basicSplits,
+      };
+    }) as Choice[];
+}
+
+export function buffersToFormattedString(buffers: Chunk[][]) {
+  let formatted = '';
+  let indentations: Indentation[] = [];
+  for (const chunkList of buffers) {
+    if (chunkList.length === 0) {
+      continue;
+    }
+    if (chunkList.length === 1) {
+      formatted += chunkList[0].text + '\n';
+      continue;
+    }
+    const choices: Choice[] = chunkListToChoices(chunkList);
+    // Indentation should carry over
+    const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
+    const initialState: State = {
+      column: indentation,
+      choiceIndex: 0,
+      indentation,
+      indentations,
+      cost: 0,
+      edge: null,
+    };
+    const result = bfs(initialState, choices);
+    indentations = result.indentations;
+    formatted += decisionsToFormatted(result.decisions) + '\n';
+  }
+  if (indentations.length > 0) {
+    throw new Error('indentations left');
+  }
+  return formatted.trim();
+}
+
 export const basicSplits = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
