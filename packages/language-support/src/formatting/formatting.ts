@@ -34,7 +34,8 @@ import {
   wantsToBeUpperCase,
   Chunk,
   buffersToFormattedString,
-  spaceChunk,
+  indentChunk,
+  dedentChunk,
 } from './formattingHelpers';
 
 interface RawTerminalOptions {
@@ -45,9 +46,6 @@ interface RawTerminalOptions {
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffers: Chunk[][] = [];
-  // Keep track of which chunks start indentation, so we can fill out the correct
-  // expiration token for that indentation.
-  indentationStarters: number[][] = [];
   indentation = 0;
   indentationSpaces = 2;
   targetToken?: number;
@@ -111,23 +109,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   addIndentation = () => {
-    if (this.currentBuffer().length === 0) {
-      throw new Error('Trying to add indentation to empty buffer');
-    }
-    this.indentationStarters.push([this.buffers.length - 1, this.currentBuffer().length - 1]);
+    this.currentBuffer().push({
+      text: '',
+      start: -1,
+      end: -1,
+      specialBehavior: {
+        type: 'INDENT',
+        indentation: this.indentationSpaces,
+      },
+    })
   }
 
   removeIndentation = () => {
-    if (this.currentBuffer().length === 0) {
-      throw new Error('Trying to remove indentation without an end token');
-    }
-    const [bufferIdx, idxInBuffer] = this.indentationStarters.pop();
-    const buffer = this.buffers[bufferIdx];
-    const chunk = buffer[idxInBuffer];
-    chunk.ruleBasedIndentation = {
-      spaces: this.indentationSpaces,
-      expire: this.currentBuffer()[this.currentBuffer().length - 1],
-    }
+    this.currentBuffer().push({
+      text: '',
+      start: -1,
+      end: -1,
+      specialBehavior: {
+        type: 'DEDENT',
+        indentation: this.indentationSpaces,
+      },
+    })
   }
 
   // Comments are in the hidden channel, so grab them manually
@@ -444,14 +446,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
       this.breakLine();
-      this.visit(ctx.UNION(i));
       this.addIndentation();
+      this.visit(ctx.UNION(i));
+      this.removeIndentation();
       if (ctx.ALL(i)) {
         this.visit(ctx.ALL(i));
       } else if (ctx.DISTINCT(i)) {
         this.visit(ctx.DISTINCT(i));
       }
-      this.removeIndentation();
       this.breakLine();
       this.visit(ctx.singleQuery(i + 1));
     }
