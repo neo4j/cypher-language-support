@@ -57,8 +57,7 @@ export interface Indentation {
 export interface State {
   column: number;
   choiceIndex: number;
-  indentation: number;
-  indentations: Indentation[];
+  indentationRules: Indentation[];
   cost: number;
   edge: StateEdge;
 }
@@ -71,7 +70,7 @@ interface StateEdge {
 export interface Result {
   cost: number;
   decisions: Decision[];
-  indentations: Indentation[];
+  indentationRules: Indentation[];
 }
 
 
@@ -193,6 +192,23 @@ export function findTargetToken(
   return false;
 }
 
+function getIndentation(curr: State, choice: Choice, split: Split): [number, Indentation[]] {
+  let currIndent = 0;
+  let indentRules = [];
+  for (const indentRule of curr.indentationRules) {
+    if (indentRule.expire === choice.left) {
+      continue;
+    }
+    currIndent += indentRule.spaces;
+    indentRules.push(indentRule);
+  }
+  if (split.newIndentation && split.newIndentation.expire !== choice.left) {
+    currIndent += split.newIndentation.spaces;
+    indentRules.push(split.newIndentation);
+  }
+  return [currIndent, indentRules];
+}
+
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
@@ -200,20 +216,17 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choice.right.text.length :
     curr.column + choice.right.text.length;
   const OOBCost = Math.max(0, endColumn - MAX_COL) * 10;
-  if (split.newIndentation) {
-    console.log('newIndentation', split.newIndentation);
-  }
+  const [currIndent, indentRules] = getIndentation(curr, choice, split);
+  const finalIndent = curr.column === 0 ? currIndent : 0;
   return {
-    column: split.splitType === '\n' ? 0 : endColumn + 1,
+    column: isBreak ? 0 : endColumn + 1,
     choiceIndex: curr.choiceIndex + 1,
-    // TODO: indentation doesn't work atm
-    indentation: curr.indentation,
-    indentations: curr.indentations,
+    indentationRules: indentRules,
     cost: curr.cost + split.cost + OOBCost,
     edge: {
       prevState: curr,
       decision: {
-        indentation: curr.indentation,
+        indentation: finalIndent,
         left: choice.left,
         right: choice.right,
         split,
@@ -233,7 +246,7 @@ function constructResult(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentations: state.indentations,
+    indentationRules: state.indentationRules,
   };
 }
 
@@ -275,6 +288,14 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       if (currIsComment) {
         splits = [{ splitType: '\n', cost: 0 }];
       }
+      if (chunk.indentation) {
+        splits = splits.map((split) => {
+          return {
+            ...split,
+            newIndentation: chunk.indentation,
+          };
+        });
+      }
       return {
         left: chunk,
         right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
@@ -285,24 +306,22 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
 
 export function buffersToFormattedString(buffers: Chunk[][]) {
   let formatted = '';
-  let indentations: Indentation[] = [];
+  let indentationRules: Indentation[] = [];
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
-    const indentation = indentations.reduce((acc, indentation) => acc + indentation.spaces, 0);
     const initialState: State = {
-      column: indentation,
+      column: 0,
       choiceIndex: 0,
-      indentation,
-      indentations,
+      indentationRules,
       cost: 0,
       edge: null,
     };
     const result = bfs(initialState, choices);
-    indentations = result.indentations;
+    indentationRules = result.indentationRules;
     formatted += decisionsToFormatted(result.decisions) + '\n';
   }
-  if (indentations.length > 0) {
+  if (indentationRules.length > 0) {
     throw new Error('indentations left');
   }
   return formatted.trim();
