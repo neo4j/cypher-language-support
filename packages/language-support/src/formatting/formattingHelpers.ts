@@ -5,6 +5,7 @@ import {
   TerminalNode,
   Token,
 } from 'antlr4';
+import { Heap } from 'heap-js';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
@@ -12,7 +13,6 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
-import { Heap } from 'heap-js';
 
 const INDENTATION = 2;
 const MAX_COL = 80;
@@ -76,11 +76,7 @@ export interface Result {
   indentationRules: Indentation[];
 }
 
-
-const openingCharacters = [
-  CypherCmdLexer.LPAREN,
-  CypherCmdLexer.LBRACKET,
-];
+const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -172,15 +168,26 @@ export function findTargetToken(
   return false;
 }
 
-function getIndentation(curr: State, choice: Choice, split: Split): [number, Indentation[]] {
+function getIndentation(
+  curr: State,
+  choice: Choice,
+  split: Split,
+): [number, Indentation[]] {
   let currIndent = 0;
-  let indentRules = [];
+  const indentRules: Indentation[] = [];
   let dedentSkipped = false;
   for (const indentRule of curr.indentationRules) {
-    if (!indentRule.expire.specialBehavior && indentRule.expire === choice.left) {
+    if (
+      !indentRule.expire.specialBehavior &&
+      indentRule.expire === choice.left
+    ) {
       continue;
     }
-    if (indentRule.expire.specialBehavior?.type === 'DEDENT' && choice.left.specialBehavior?.type === 'DEDENT' && !dedentSkipped) {
+    if (
+      indentRule.expire.specialBehavior?.type === 'DEDENT' &&
+      choice.left.specialBehavior?.type === 'DEDENT' &&
+      !dedentSkipped
+    ) {
       dedentSkipped = true;
       continue;
     }
@@ -203,13 +210,13 @@ function getIndentation(curr: State, choice: Choice, split: Split): [number, Ind
   return [currIndent, indentRules];
 }
 
-
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
   const [currIndent, indentRules] = getIndentation(curr, choice, split);
   const finalIndent = curr.column === 0 ? currIndent : 0;
-  curr.column = curr.column === 0 ? currIndent : curr.column;
-  const thisWordEnd = curr.column + choice.left.text.length + split.splitType.length;
+  const actualColumn = curr.column === 0 ? currIndent : curr.column;
+  const thisWordEnd =
+    actualColumn + choice.left.text.length + split.splitType.length;
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
 
   return {
@@ -226,7 +233,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
         split,
       },
     },
-  }
+  };
 }
 
 function reconstructBestPath(state: State): Result {
@@ -244,7 +251,10 @@ function reconstructBestPath(state: State): Result {
   };
 }
 
-function bestFirstSolnSearch(startingState: State, choiceList: Choice[]): Result {
+function bestFirstSolnSearch(
+  startingState: State,
+  choiceList: Choice[],
+): Result {
   const heap = new Heap<State>((a, b) => a.cost - b.cost);
   heap.push(startingState);
   while (heap.size() > 0) {
@@ -273,26 +283,24 @@ function decisionsToFormatted(decisions: Decision[]): string {
   return buffer.join('').trimEnd();
 }
 
-
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
-  return chunkList
-    .map((chunk, index) => {
-      const currIsComment = chunk.isComment;
-      const nextIsComment = chunkList[index + 1]?.isComment;
-      const noSpace = doesNotWantSpace(chunk.node) || chunk.noSpace;
-      let splits = noSpace && !nextIsComment ? basicNoSpaceSplits : basicSplits;
-      if (currIsComment) {
-        splits = [{ splitType: '\n', cost: 0 }];
-      }
-      if (chunk.specialBehavior) {
-        splits = [{ splitType: '', cost: 0 }];
-      }
-      return {
-        left: chunk,
-        right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
-        possibleSplitChoices: splits,
-      };
-    }) as Choice[];
+  return chunkList.map((chunk, index) => {
+    const currIsComment = chunk.isComment;
+    const nextIsComment = chunkList[index + 1]?.isComment;
+    const noSpace = doesNotWantSpace(chunk.node) || chunk.noSpace;
+    let splits = noSpace && !nextIsComment ? basicNoSpaceSplits : basicSplits;
+    if (currIsComment) {
+      splits = [{ splitType: '\n', cost: 0 }];
+    }
+    if (chunk.specialBehavior) {
+      splits = [{ splitType: '', cost: 0 }];
+    }
+    return {
+      left: chunk,
+      right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
+      possibleSplitChoices: splits,
+    };
+  }) as Choice[];
 }
 
 export function buffersToFormattedString(buffers: Chunk[][]) {
@@ -341,7 +349,7 @@ export const indentChunk: Chunk = {
     type: 'INDENT',
     indentation: INDENTATION,
   },
-}
+};
 
 export const dedentChunk: Chunk = {
   text: '',
@@ -351,4 +359,4 @@ export const dedentChunk: Chunk = {
     type: 'DEDENT',
     indentation: INDENTATION,
   },
-}
+};
