@@ -1,4 +1,5 @@
 import { formatQuery } from '../../formatting/formatting';
+import { MAX_COL } from '../../formatting/formattingHelpers';
 import { standardizeQuery } from '../../formatting/standardizer';
 
 function verifyFormatting(query: string, expected: string): void {
@@ -440,7 +441,7 @@ describe('various edgecases', () => {
     const query3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
     const expected3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
     verifyFormatting(query3, expected3);
-  })
+  });
 });
 
 describe('tests for correct cursor position', () => {
@@ -487,5 +488,68 @@ WHERE variable.property = "String"
 RETURN variable;`;
     const result = formatQuery(query, 133);
     expect(result.newCursorPos).toEqual(119);
+  });
+});
+
+describe('tests for line breaks', () => {
+  const q0 = `
+match (n)
+where n.age > 10 and n.born > 10 and n.prop > 15 and n.otherprop > 20 and n.thirdprop > 50
+return n`;
+  const q1 = `MATCH (p:Person)
+WHERE p.name STARTS WITH 'A' OR p.name STARTS WITH 'B' OR p.name STARTS WITH 'C' OR p.age > 30 OR p.salary > 50000 OR p.experience > 10 OR p.position = 'Manager'
+RETURN p`;
+  const q2 = `MATCH (e:Employee)
+RETURN 
+  CASE 
+    WHEN e.salary > 100000 THEN 'High'
+    WHEN e.salary > 50000 THEN 'Medium'
+    WHEN e.salary > 30000 THEN 
+      CASE 
+        WHEN e.experience > 5 THEN 'Mid-Level'
+        ELSE 'Low'
+      END
+    ELSE 'Entry-Level'
+  END AS SalaryCategory`;
+  const q3 = `MATCH (o:Order)-[:CONTAINS]->(p:Product)
+WITH o, p, COUNT(p) AS productCount, SUM(p.price) AS totalValue, AVG(p.discount) AS avgDiscount, MIN(p.price) AS minPrice, MAX(p.price) AS maxPrice
+WHERE totalValue > 1000 AND productCount > 5
+RETURN o, totalValue, avgDiscount`;
+  const q4 = `MATCH (c:Customer)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product)
+RETURN c.name, COLLECT({orderId: o.id, items: COLLECT({product: p.name, price: p.price, discount: p.discount})}) AS orderSummary`;
+  const q5 = `MATCH (a:Author)-[:WROTE]->(b:Book)-[:TRANSLATED_TO]->(t:Translation)-[:PUBLISHED_BY]->(p:Publisher)-[:LOCATED_IN]->(c:Country)
+WHERE b.genre = 'Sci-Fi' AND p.name STARTS WITH 'P' AND c.region = 'Europe'
+RETURN a.name, b.title, t.language, p.name, c.name`;
+  const q6 = `MATCH (c:Customer)
+CALL {
+  WITH c
+  MATCH (c)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product)
+  RETURN COUNT(o) AS totalOrders, SUM(p.price) AS totalSpent, AVG(p.price) AS avgPrice, MAX(p.price) AS mostExpensiveItem
+}
+RETURN c.name, totalOrders, totalSpent, avgPrice, mostExpensiveItem`;
+  const q7 = `MATCH (c:Company)-[:EMPLOYS]->(e:Employee)
+UNWIND e.projects AS project
+UNWIND project.tasks AS task
+RETURN c.name, e.name, task.name, COUNT(task.subtasks) AS totalSubtasks, SUM(task.hoursSpent) AS totalHours, AVG(task.complexity) AS avgComplexity`;
+  const q8 = `MATCH (p:Product)
+WHERE p.category IN ['Electronics', 'Furniture', 'Clothing', 'Toys', 'Books', 'Appliances', 'Jewelry', 'Automotive', 'Beauty', 'Garden']
+RETURN p`;
+  const q9 = `MERGE (a:Author {name: 'J.K. Rowling'})
+ON CREATE SET a.birthYear = 1965, a.nationality = 'British', a.booksWritten = 7, a.netWorth = 1000000000, a.genre = 'Fantasy'
+MERGE (b:Book {title: 'Harry Potter and the Sorcerers Stone'})
+ON CREATE SET b.publishedYear = 1997, b.sales = 120000000, b.rating = 4.8, b.genre = 'Fantasy'
+MERGE (a)-[:WROTE]->(b)
+RETURN a, b`;
+
+  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
+
+  test('keeps all queries within the max column width', () => {
+    queries.forEach((query) => {
+      const formatted = formatQuery(query);
+      const lines = formatted.split('\n');
+      lines.forEach((line) => {
+        expect(line.length).toBeLessThanOrEqual(MAX_COL);
+      });
+    });
   });
 });
