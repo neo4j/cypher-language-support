@@ -206,14 +206,14 @@ function getIndentation(curr: State, choice: Choice, split: Split): [number, Ind
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
-  const endColumn = isBreak ?
-    choice.right.text.length :
-    curr.column + choice.right.text.length;
-  const OOBCost = Math.max(0, endColumn - MAX_COL) * 10;
   const [currIndent, indentRules] = getIndentation(curr, choice, split);
   const finalIndent = curr.column === 0 ? currIndent : 0;
+  curr.column = curr.column === 0 ? currIndent : curr.column;
+  const thisWordEnd = curr.column + choice.left.text.length + split.splitType.length;
+  const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
+
   return {
-    column: isBreak ? 0 : endColumn + 1,
+    column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     indentationRules: indentRules,
     cost: curr.cost + split.cost + OOBCost,
