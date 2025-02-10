@@ -6,11 +6,15 @@ function verifyFormatting(query: string, expected: string): void {
   expect(formatted).toEqual(expected);
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
+  // AST integrity check
   if (formattedStandardized !== queryStandardized) {
     throw new Error(
       `Standardized query does not match standardized formatted query`,
     );
   }
+  // Idempotency check
+  const formattedTwice = formatQuery(formatted);
+  expect(formattedTwice).toEqual(formatted);
 }
 
 describe('styleguide examples', () => {
@@ -371,6 +375,13 @@ describe('various edgecases', () => {
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
+  });
+
+  test('syntax error', () => {
+    const query = 'MATCH (n) RETRUN n.prop,';
+    expect(() => formatQuery(query)).toThrowError(
+      `Could not format due to syntax error at line 1:10 near "RETRUN"`,
+    );
   });
 
   test('apoc call, namespaced function', () => {
