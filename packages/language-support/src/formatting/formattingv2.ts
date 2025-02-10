@@ -1,3 +1,9 @@
+/*
+ * This file is a WIP of the second iteration of the Cypher formatter.
+ * It's being kept as a separate file to enable having two separate version at once
+ * since it would be difficult to consolidate the new and the old version
+ */
+
 import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
