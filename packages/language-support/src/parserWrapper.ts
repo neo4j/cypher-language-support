@@ -193,10 +193,7 @@ export function createParsingResult(query: string): ParsingResult {
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
       const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
-      const syntaxErrors =
-        collectedCommand.type !== 'cypher' && !isEmptyStatement
-          ? errorListener.errors
-          : [];
+      const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
       if (!_internalFeatureFlags.consoleCommands) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));

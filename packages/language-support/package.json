@@ -18,7 +18,7 @@
     "linting",
     "highlighting"
   ],
-  "version": "2.0.0-next.14",
+  "version": "2.0.0-next.15",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
   "types": "./dist/types/index.d.js",
