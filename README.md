@@ -26,6 +26,7 @@ The project comprises several packages:
 - Syntax highlighting
 - Autocompletion
 - Linting
+- Formatting
 
 ## Building the project and contributing
 
