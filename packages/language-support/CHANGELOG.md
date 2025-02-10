@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.15
+
+### Patch Changes
+
+- 50cc73e: Adds errors when passing an invalid cypher version in query
+- 5ef538d: Solves highlighting bug with multiline constructs embedded in the preparser
+- b988d3b: Solves bug splitting commands which was breaking for queries just containing comments
+
 ## 2.0.0-next.14
 
 ### Patch Changes
