@@ -11,6 +11,7 @@ import {
   KeywordLiteralContext,
   LabelExpressionContext,
   LeftArrowContext,
+  LimitContext,
   MapContext,
   MergeActionContext,
   MergeClauseContext,
@@ -343,6 +344,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitProperty = (ctx: PropertyContext) => {
     this.visitTerminalRaw(ctx.DOT());
     this.visit(ctx.propertyKeyName());
+  };
+
+  visitLimit = (ctx: LimitContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
   };
 
   // Handled separately because where is not a clause (it is a subclause)
