@@ -113,13 +113,125 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
-  //TODO: Maybe this should actually yield a warning - to be fixed in follow-up, ignoring for now
-  test('Semantic analysis defaults to cypher 5 when faulty version is given', () => {
-    const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
+  test('Faulty cypher version in the preparser yields an error', () => {
+    const query1 = 'CYPHER  50 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
-    const query2 = 'CYPHER 800 MATCH (n)-[r]->(m) SET r += m';
+    const query2 = 'CYPHER 007 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          '50 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 10,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message:
+          '007 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 10,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Faulty cypher versions with periods yields expected errors', () => {
+    const query1 = 'CYPHER  1.0.2.0 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    const query2 = 'CYPHER 00.1 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
+    const query3 = 'CYPHER 030.1..1 MATCH (n)-[r]->(m) RETURN n';
+    const diagnostics3 = getDiagnosticsForQuery({ query: query3 });
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          '1.0.2.0 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 15,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 15,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics2).toEqual([
+      {
+        message:
+          '00.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 11,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 11,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+    expect(diagnostics3).toEqual([
+      {
+        message:
+          '030.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        offsets: {
+          end: 12,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 12,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('Semantic analysis uses default language if no language is defined in query', () => {
@@ -229,6 +341,24 @@ describe('Semantic validation spec', () => {
     const query = 'METCH (n) RETURN m';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Expected any of CYPHER, EXPLAIN, PROFILE or a statement',
+        offsets: {
+          end: 5,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 5,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           "Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",

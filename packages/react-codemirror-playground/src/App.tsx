@@ -1,4 +1,8 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import {
+  DbSchema,
+  testData,
+  _internalFeatureFlags,
+} from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
@@ -64,6 +68,8 @@ export function App() {
     return getDebugTree(value);
   }, [value]);
 
+  _internalFeatureFlags.consoleCommands = true;
+
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="bg-blue-300 dark:bg-gray-700 min-h-screen dark:text-white">
@@ -128,6 +134,9 @@ export function App() {
               history={Object.values(demos)}
               schema={schema}
               extraKeybindings={extraKeybindings}
+              featureFlags={{
+                consoleCommands: true,
+              }}
               ariaLabel="Cypher Editor"
             />
             <p

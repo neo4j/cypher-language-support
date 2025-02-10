@@ -1,14 +1,17 @@
 import {
   CommonToken,
   ErrorListener as ANTLRErrorListener,
+  ParserRuleContext,
   Recognizer,
   Token,
 } from 'antlr4';
-import type { ParserRuleContext } from 'antlr4-c3';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
-import { isCommentOpener } from '../helpers';
+import CypherParser, {
+  ConsoleCommandContext,
+  PreparserOptionContext,
+} from '../generated-parser/CypherCmdParser';
+import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
@@ -36,24 +39,36 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
       const parser = recognizer as CypherParser;
-      const ctx = parser._ctx as ParserRuleContext;
+      const ctx: ParserRuleContext = parser._ctx;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
       const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
+      const preparserOrConsoleCommand = findParent(
+        ctx,
+        (n) =>
+          n instanceof PreparserOptionContext ||
+          n instanceof ConsoleCommandContext,
+      );
 
-      if (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment) {
+      if (
+        preparserOrConsoleCommand &&
+        (offendingSymbol.type === CypherLexer.ErrorChar || unfinishedComment)
+      ) {
         let errorMessage: string | undefined = undefined;
 
         if (unfinishedComment) {
-          errorMessage = 'Unfinished comment';
+          errorMessage =
+            'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.';
         } else if (
           offendingSymbol.text === '"' ||
           offendingSymbol.text === "'"
         ) {
-          errorMessage = 'Unfinished string literal';
+          errorMessage =
+            'Failed to parse string literal. The query must contain an even number of non-escaped quotes.';
         } else if (offendingSymbol.text === '`') {
-          errorMessage = 'Unfinished escaped identifier';
+          errorMessage =
+            'Failed to parse escaped literal. The query must contain an even number of ` backticks.';
         }
 
         if (errorMessage) {
@@ -76,11 +91,13 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
           this.errors.push(diagnostic);
         }
-      } else {
+      } else if (
+        offendingSymbol.type !== CypherLexer.ErrorChar &&
+        !unfinishedComment
+      ) {
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,
-          ctx,
         );
 
         if (errorMessage) {
