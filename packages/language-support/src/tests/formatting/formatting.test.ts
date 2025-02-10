@@ -358,6 +358,14 @@ CASE n.age
 END AS result`;
     verifyFormatting(query, expected);
   });
+  test('formats LIMIT on new line', () => {
+    const query = `CREATE (n)
+RETURN n LIMIT 0`;
+    const expected = `CREATE (n)
+RETURN n
+LIMIT 0`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
