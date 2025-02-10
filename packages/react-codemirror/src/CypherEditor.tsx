@@ -181,7 +181,8 @@ export interface CypherEditorProps {
 }
 
 const format = (view: EditorView): void => {
-  const doc = view.state.doc.toString();
+  try {
+    const doc = view.state.doc.toString();
     const { formattedString, newCursorPos } = formatQuery(
       doc,
       view.state.selection.main.anchor,
@@ -194,7 +195,10 @@ const format = (view: EditorView): void => {
       },
       selection: { anchor: newCursorPos },
     });
-}
+  } catch (error) {
+    // Formatting failed, likely because of a syntax error
+  }
+};
 
 const executeKeybinding = (
   onExecute?: (cmd: string) => void,
