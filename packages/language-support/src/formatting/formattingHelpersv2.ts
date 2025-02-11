@@ -195,18 +195,30 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     nextIndent -= 2;
   }
   let finalIndent = curr.column === 0 ? currIndent : 0;
-  curr.activeGroups.forEach((group) => {
-    if (curr.column === 0 && group.align) {
-      finalIndent = group.align;
-    }
-  });
+  if(curr.activeGroups.length > 0 && curr.column === 0) {
+    finalIndent = curr.activeGroups.at(-1).align;
+  }
+
   const actualColumn = curr.column === 0 ? currIndent : curr.column; // Broken
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
 
+  const nextGroups = [...curr.activeGroups];
+  if (choice.left.specialBehavior?.type === 'GROUP_START') {
+    nextGroups.push({
+      align: actualColumn,
+      policy: { split: ' ' },
+      breakCost: OOBCost,
+    });
+  }
+
+  if (choice.left.specialBehavior?.type === 'GROUP_END') {
+    nextGroups.pop();
+  }
+
   return {
-    activeGroups: curr.activeGroups,
+    activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     indentation: nextIndent,
