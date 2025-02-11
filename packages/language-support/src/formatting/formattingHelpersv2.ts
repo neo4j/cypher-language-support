@@ -51,6 +51,18 @@ export interface Choice {
   possibleSplitChoices: Split[];
 }
 
+interface Group {
+  id: number;
+  align: number;
+  policies: Policy[];
+  breakCost: number;
+}
+
+interface Policy {
+  group: Group;
+  split: Split;
+}
+
 export interface Decision {
   indentation: number;
   left: Chunk;
@@ -62,6 +74,10 @@ export interface Indentation {
   spaces: number;
   expire: Chunk;
 }
+
+// [Choice1, Choice2, Choice3]
+//     ^
+        //     ^
 
 export interface State {
   column: number;
@@ -366,3 +382,61 @@ export const dedentChunk: Chunk = {
     indentation: INDENTATION,
   },
 };
+
+const chunkList: Chunk[] = [
+  {
+    text: '',
+    start: -1,
+    end: -1,
+    specialBehavior: { type: 'INDENT', indentation: 2 }
+  },
+  {
+    text: 'ON',
+    start: 10,
+    end: 12
+  },
+  {
+    text: 'CREATE',
+    start: 13,
+    end: 19
+  },
+  {
+    text: 'SET',
+    start: 20,
+    end: 23
+  },
+  { text: 'n.prop', start: 24, end: 30 },
+  {
+    text: '=',
+    start: 31,
+    end: 32
+  },
+  { text: '0,', start: 33, end: 35 },
+  { text: 'b.prop', start: 36, end: 42 },
+  {
+    text: '=',
+    start: 44,
+    end: 45
+  },
+  { text: '7,', start: 46, end: 48 },
+  { text: 'c.prop', start: 49, end: 55 },
+  {
+    text: '=',
+    start: 56,
+    end: 57
+  },
+  {
+    text: '10',
+    start: 58,
+    end: 60
+  },
+  {
+    text: '',
+    start: -1,
+    end: -1,
+    specialBehavior: { type: 'DEDENT', indentation: 2 }
+  }
+]
+
+const result = buffersToFormattedString([chunkList]);
+console.log(result);

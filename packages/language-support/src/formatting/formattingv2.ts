@@ -559,3 +559,7 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
+
+const query = `MERGE (n) ON CREATE SET n.prop = 0, b. prop = 7, c.prop = 10
+RETURN n`
+formatQuery(query);
