@@ -20,8 +20,23 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
+const groupStart: Group[][] = [
+  null,
+  null,
+  [{ id: 0, align: 16, policies: [{groupid: 0, split: ' '}, {groupid: 0, split: '\n'}], breakCost: 0 }],
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+]
 const INDENTATION = 2;
-export const MAX_COL = 80;
+export const MAX_COL = 40;
 
 export interface Chunk {
   text: string;
@@ -53,14 +68,14 @@ export interface Choice {
 
 interface Group {
   id: number;
-  align: number;
+  align?: number;
   policies: Policy[];
   breakCost: number;
 }
 
 interface Policy {
-  group: Group;
-  split: Split;
+  groupid: number;
+  split: ' ' | '\n';
 }
 
 export interface Decision {
@@ -80,6 +95,7 @@ export interface Indentation {
         //     ^
 
 export interface State {
+  activeGroups: Group[];
   column: number;
   choiceIndex: number;
   indentationRules: Indentation[];
@@ -235,13 +251,24 @@ function getIndentation(
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
   const [currIndent, indentRules] = getIndentation(curr, choice, split);
-  const finalIndent = curr.column === 0 ? currIndent : 0;
-  const actualColumn = curr.column === 0 ? currIndent : curr.column;
+  let finalIndent = curr.column === 0 ? currIndent : 0;
+  curr.activeGroups.forEach((group) => {
+    if (curr.column === 0 && group.align) {
+      finalIndent = group.align;
+    }
+  });
+  const actualColumn = curr.column === 0 ? currIndent : curr.column; // Broken
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
 
+  let newGroups = [...curr.activeGroups];
+  if (groupStart[curr.choiceIndex + 1] !== null) {
+    newGroups = newGroups.concat(groupStart[curr.choiceIndex + 1]);
+  }
+
   return {
+    activeGroups: newGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     indentationRules: indentRules,
@@ -332,6 +359,7 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
     const initialState: State = {
+      activeGroups: [],
       column: 0,
       choiceIndex: 0,
       indentationRules,
@@ -391,19 +419,9 @@ const chunkList: Chunk[] = [
     specialBehavior: { type: 'INDENT', indentation: 2 }
   },
   {
-    text: 'ON',
+    text: 'ON CREATE SET',
     start: 10,
     end: 12
-  },
-  {
-    text: 'CREATE',
-    start: 13,
-    end: 19
-  },
-  {
-    text: 'SET',
-    start: 20,
-    end: 23
   },
   { text: 'n.prop', start: 24, end: 30 },
   {
@@ -439,4 +457,5 @@ const chunkList: Chunk[] = [
 ]
 
 const result = buffersToFormattedString([chunkList]);
+console.log('#'.repeat(MAX_COL));
 console.log(result);
