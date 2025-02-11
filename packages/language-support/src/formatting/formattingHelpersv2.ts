@@ -20,18 +20,41 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-const groupStart: Group[][] = [
+const groups = {
+  0: { id: 0, align: 16, policies: [{groupid: 0, split: ' '}, {groupid: 0, split: '\n'}], breakCost: 0, parentId: -1},
+  1: { id: 1, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
+  2: { id: 2, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
+  3: { id: 3, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
+}
+
+const groupStart: number[][] = [
   null,
   null,
-  [{ id: 0, align: 16, policies: [{groupid: 0, split: ' '}, {groupid: 0, split: '\n'}], breakCost: 0 }],
+  [0, 1],
+  null,
+  null,
+  [2],
+  null,
+  null,
+  [3],
   null,
   null,
   null,
   null,
+]
+
+const groupEnd: number[][] = [
   null,
   null,
   null,
   null,
+  [1],
+  null,
+  null,
+  [2],
+  null,
+  null,
+  [3],
   null,
   null,
 ]
@@ -69,6 +92,7 @@ export interface Choice {
 interface Group {
   id: number;
   align?: number;
+  parentId: number;
   policies: Policy[];
   breakCost: number;
 }
@@ -264,7 +288,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   let newGroups = [...curr.activeGroups];
   if (groupStart[curr.choiceIndex + 1] !== null) {
-    newGroups = newGroups.concat(groupStart[curr.choiceIndex + 1]);
+    for (const idx of groupStart[curr.choiceIndex + 1]) {
+      newGroups.push(groups[idx]);
+    }
   }
 
   return {
@@ -315,6 +341,19 @@ function bestFirstSolnSearch(
     }
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
+      let bad = false;
+      if (groupEnd[state.choiceIndex] !== null) {
+        const endGroups = groupEnd[state.choiceIndex];
+        for (const idx of endGroups) {
+          const grp = groups[idx];
+          if (grp.parentId === 0 && split.splitType === ' ') {
+            bad = true;
+          }
+        }
+      }
+      if (bad) {
+        continue;
+      }
       const neighbourState = getNeighbourState(state, choice, split);
       heap.push(neighbourState);
     }
@@ -417,43 +456,43 @@ const chunkList: Chunk[] = [
     start: -1,
     end: -1,
     specialBehavior: { type: 'INDENT', indentation: 2 }
-  },
+  }, // 0
   {
     text: 'ON CREATE SET',
     start: 10,
     end: 12
-  },
-  { text: 'n.prop', start: 24, end: 30 },
+  }, // 1
+  { text: 'n.prop', start: 24, end: 30 }, // 2
   {
     text: '=',
     start: 31,
     end: 32
-  },
-  { text: '0,', start: 33, end: 35 },
-  { text: 'b.prop', start: 36, end: 42 },
+  }, // 3
+  { text: '0,', start: 33, end: 35 }, // 4
+  { text: 'b.prop', start: 36, end: 42 }, // 5
   {
     text: '=',
     start: 44,
     end: 45
-  },
-  { text: '7,', start: 46, end: 48 },
-  { text: 'c.prop', start: 49, end: 55 },
+  }, // 6
+  { text: '7,', start: 46, end: 48 }, // 7
+  { text: 'c.prop', start: 49, end: 55 }, // 8
   {
     text: '=',
     start: 56,
     end: 57
-  },
+  }, // 9
   {
     text: '10',
     start: 58,
     end: 60
-  },
+  }, // 10
   {
     text: '',
     start: -1,
     end: -1,
     specialBehavior: { type: 'DEDENT', indentation: 2 }
-  }
+  } // 11
 ]
 
 const result = buffersToFormattedString([chunkList]);
