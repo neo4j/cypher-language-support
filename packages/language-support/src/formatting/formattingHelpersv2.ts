@@ -20,44 +20,6 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-const groups = {
-  0: { id: 0, align: 16, policies: [{groupid: 0, split: ' '}, {groupid: 0, split: '\n'}], breakCost: 0, parentId: -1},
-  1: { id: 1, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
-  2: { id: 2, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
-  3: { id: 3, align: 16, policies: [{groupid: 1, split: ' '}, {groupid: 1, split: '\n'}], breakCost: 0, parentId: 0},
-}
-
-const groupStart: number[][] = [
-  null,
-  null,
-  [0, 1],
-  null,
-  null,
-  [2],
-  null,
-  null,
-  [3],
-  null,
-  null,
-  null,
-  null,
-]
-
-const groupEnd: number[][] = [
-  null,
-  null,
-  null,
-  null,
-  [1],
-  null,
-  null,
-  [2],
-  null,
-  null,
-  [3],
-  null,
-  null,
-]
 const INDENTATION = 2;
 export const MAX_COL = 40;
 
@@ -72,8 +34,7 @@ export interface Chunk {
 }
 
 interface SpecialChunkBehavior {
-  type: 'INDENT' | 'DEDENT';
-  indentation: number;
+  type: 'INDENT' | 'DEDENT' | 'GROUP_START' | 'GROUP_END';
 }
 
 export interface Split {
@@ -90,15 +51,12 @@ export interface Choice {
 }
 
 interface Group {
-  id: number;
-  align?: number;
-  parentId: number;
-  policies: Policy[];
+  align: number;
+  policy: Policy;
   breakCost: number;
 }
 
 interface Policy {
-  groupid: number;
   split: ' ' | '\n';
 }
 
@@ -114,15 +72,11 @@ export interface Indentation {
   expire: Chunk;
 }
 
-// [Choice1, Choice2, Choice3]
-//     ^
-        //     ^
-
 export interface State {
   activeGroups: Group[];
   column: number;
   choiceIndex: number;
-  indentationRules: Indentation[];
+  indentation: number;
   cost: number;
   edge: StateEdge;
 }
@@ -135,7 +89,7 @@ interface StateEdge {
 export interface Result {
   cost: number;
   decisions: Decision[];
-  indentationRules: Indentation[];
+  indentation: number;
 }
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
@@ -230,51 +184,16 @@ export function findTargetToken(
   return false;
 }
 
-function getIndentation(
-  curr: State,
-  choice: Choice,
-  split: Split,
-): [number, Indentation[]] {
-  let currIndent = 0;
-  const indentRules: Indentation[] = [];
-  let dedentSkipped = false;
-  for (const indentRule of curr.indentationRules) {
-    if (
-      !indentRule.expire.specialBehavior &&
-      indentRule.expire === choice.left
-    ) {
-      continue;
-    }
-    if (
-      indentRule.expire.specialBehavior?.type === 'DEDENT' &&
-      choice.left.specialBehavior?.type === 'DEDENT' &&
-      !dedentSkipped
-    ) {
-      dedentSkipped = true;
-      continue;
-    }
-    currIndent += indentRule.spaces;
-    indentRules.push(indentRule);
-  }
-  if (choice.left.specialBehavior) {
-    if (choice.left.specialBehavior.type === 'INDENT') {
-      currIndent += choice.left.specialBehavior.indentation;
-      indentRules.push({
-        spaces: choice.left.specialBehavior.indentation,
-        expire: dedentChunk,
-      });
-    }
-  }
-  if (split.newIndentation && split.newIndentation.expire !== choice.left) {
-    currIndent += split.newIndentation.spaces;
-    indentRules.push(split.newIndentation);
-  }
-  return [currIndent, indentRules];
-}
-
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
-  const [currIndent, indentRules] = getIndentation(curr, choice, split);
+  const currIndent = curr.indentation;
+  let nextIndent = currIndent;
+  if(choice.left.specialBehavior?.type === 'INDENT') {
+    nextIndent += 2;
+  }
+  if(choice.left.specialBehavior?.type === 'DEDENT') {
+    nextIndent -= 2;
+  }
   let finalIndent = curr.column === 0 ? currIndent : 0;
   curr.activeGroups.forEach((group) => {
     if (curr.column === 0 && group.align) {
@@ -286,18 +205,11 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     actualColumn + choice.left.text.length + split.splitType.length;
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
 
-  let newGroups = [...curr.activeGroups];
-  if (groupStart[curr.choiceIndex + 1] !== null) {
-    for (const idx of groupStart[curr.choiceIndex + 1]) {
-      newGroups.push(groups[idx]);
-    }
-  }
-
   return {
-    activeGroups: newGroups,
+    activeGroups: curr.activeGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
-    indentationRules: indentRules,
+    indentation: nextIndent,
     cost: curr.cost + split.cost + OOBCost,
     edge: {
       prevState: curr,
@@ -322,7 +234,7 @@ function reconstructBestPath(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentationRules: state.indentationRules,
+    indentation: state.indentation,
   };
 }
 
@@ -341,19 +253,6 @@ function bestFirstSolnSearch(
     }
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
-      let bad = false;
-      if (groupEnd[state.choiceIndex] !== null) {
-        const endGroups = groupEnd[state.choiceIndex];
-        for (const idx of endGroups) {
-          const grp = groups[idx];
-          if (grp.parentId === 0 && split.splitType === ' ') {
-            bad = true;
-          }
-        }
-      }
-      if (bad) {
-        continue;
-      }
       const neighbourState = getNeighbourState(state, choice, split);
       heap.push(neighbourState);
     }
@@ -393,7 +292,7 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
 
 export function buffersToFormattedString(buffers: Chunk[][]) {
   let formatted = '';
-  let indentationRules: Indentation[] = [];
+  let indentation: number = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
@@ -401,15 +300,15 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
       activeGroups: [],
       column: 0,
       choiceIndex: 0,
-      indentationRules,
+      indentation,
       cost: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
-    indentationRules = result.indentationRules;
+    indentation = result.indentation;
     formatted += decisionsToFormatted(result.decisions) + '\n';
   }
-  if (indentationRules.length > 0) {
+  if (indentation > 0) {
     throw new Error('indentations left');
   }
   return formatted.trimEnd();
@@ -436,7 +335,6 @@ export const indentChunk: Chunk = {
   end: -1,
   specialBehavior: {
     type: 'INDENT',
-    indentation: INDENTATION,
   },
 };
 
@@ -446,53 +344,87 @@ export const dedentChunk: Chunk = {
   end: -1,
   specialBehavior: {
     type: 'DEDENT',
-    indentation: INDENTATION,
   },
 };
 
-const chunkList: Chunk[] = [
+const groupStartChunk: Chunk = {
+  text: '',
+  start: -1,
+  end: -1,
+  specialBehavior: {
+    type: 'GROUP_START',
+  },
+}
+
+const groupEndChunk: Chunk = {
+  text: '',
+  start: -1,
+  end: -1,
+  specialBehavior: {
+    type: 'GROUP_END',
+  },
+}
+
+const chunkList: Chunk[] = [
   {
     text: '',
     start: -1,
     end: -1,
-    specialBehavior: { type: 'INDENT', indentation: 2 }
-  }, // 0
+    specialBehavior: { type: 'INDENT'}
+  },
   {
     text: 'ON CREATE SET',
     start: 10,
     end: 12
-  }, // 1
-  { text: 'n.prop', start: 24, end: 30 }, // 2
+  },
+  groupStartChunk,
+  groupStartChunk,
+  groupStartChunk,
+  { text: 'a.', start: 24, end: 30 },
+  { text: 'prop', start: 24, end: 30 },
+  groupEndChunk,
   {
     text: '=',
     start: 31,
     end: 32
-  }, // 3
-  { text: '0,', start: 33, end: 35 }, // 4
-  { text: 'b.prop', start: 36, end: 42 }, // 5
+  },
+  { text: '0,', start: 33, end: 35 },
+  groupEndChunk,
+  groupStartChunk,
+  groupStartChunk,
+  { text: 'b.', start: 36, end: 42 },
+  { text: 'prop', start: 36, end: 42 },
+  groupEndChunk,
   {
     text: '=',
     start: 44,
     end: 45
   }, // 6
-  { text: '7,', start: 46, end: 48 }, // 7
-  { text: 'c.prop', start: 49, end: 55 }, // 8
+  { text: '7,', start: 46, end: 48 },
+  groupEndChunk,
+  groupStartChunk,
+  groupStartChunk,
+  { text: 'c.', start: 49, end: 55 },
+  { text: 'prop', start: 49, end: 55 },
+  groupEndChunk,
   {
     text: '=',
     start: 56,
     end: 57
-  }, // 9
+  },
   {
     text: '10',
     start: 58,
     end: 60
-  }, // 10
+  },
+  groupEndChunk,
   {
     text: '',
     start: -1,
     end: -1,
-    specialBehavior: { type: 'DEDENT', indentation: 2 }
-  } // 11
+    specialBehavior: { type: 'DEDENT'}
+  },
+  groupEndChunk
 ]
 
 const result = buffersToFormattedString([chunkList]);
