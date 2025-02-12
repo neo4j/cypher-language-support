@@ -555,9 +555,25 @@ WITH s, tableName, [x in columns | x.name + x.fk + x.pk] as columns
 WITH s, "Table " + tableName + " has columns:" + apoc.text.join(columns,'') as tableDescriptions
 WITH s, apoc.text.join(collect(tableDescriptions),'------------------------') as schemaDescription
 SET s.schemaDescription=schemaDescription`
+  // subqueries example
+  const q12 = `UNWIND range(1,100) as _
+CALL {
+  MATCH (source:object) WHERE source.id= $id1
+  MATCH (target:object) WHERE target.id= $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
+  ORDER BY Weight LIMIT 3
+  RETURN length(path) as l, Weight
+}
+RETURN count(*)`
+  //allTokenTypes example
+  const q13 = `MATCH (variable:Label)-[:REL_TYPE]->()
+WHERE variable.property = "String" OR namespaced.function() = false // comment
+OR $parameter > 2
+RETURN variable;`
 
 
-  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11];
+  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
