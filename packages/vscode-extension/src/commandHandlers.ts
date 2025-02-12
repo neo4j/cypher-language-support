@@ -94,13 +94,9 @@ export async function saveConnectionAndDisplayConnectionResult(
 }
 
 /**
- * Handler for CREATE_CONNECTION_COMMAND (neo4j.manageConnection)
- * This can be triggered by the command palette or the Connection tree view.
- * In the latter case, the Connection can be modified.
- * In the former case, a new Connection can be created.
- * We are currently limiting the number of connections to one, so the ConnectionPanel will always show the current connection.
- * @param connectionItem The ConnectionItem to manage.
- * @returns A promise that resolves when the handler has completed.
+ * Handler for CREATE_CONNECTION_COMMAND (neo4j.createConnection)
+ * It shows the connection panel for creating a brand new connection.
+ * This can be triggered by the command palette or the Connections item menu.
  */
 export function createConnectionPanel(): void {
   const context = getExtensionContext();
@@ -109,20 +105,18 @@ export function createConnectionPanel(): void {
 
 /**
  * Handler for MANAGE_CONNECTION_COMMAND (neo4j.manageConnection)
- * This can be triggered by the command palette or the Connection tree view.
- * In the latter case, the Connection can be modified.
- * In the former case, a new Connection can be created.
- * We are currently limiting the number of connections to one, so the ConnectionPanel will always show the current connection.
+ * This can be triggered only on the connection tree view.
+ * This shows the connection panel for the given connection item.
  * @param connectionItem The ConnectionItem to manage.
  * @returns A promise that resolves when the handler has completed.
  */
 export async function showConnectionPanelForConnectionItem(
-  connectionItem?: ConnectionItem | null,
+  connectionItem?: ConnectionItem | undefined,
 ): Promise<void> {
   const context = getExtensionContext();
   const connection: Connection = connectionItem
     ? getConnectionByKey(connectionItem.key)
-    : null;
+    : undefined;
   const password: string = connection
     ? await getPasswordForConnection(connection.key)
     : '';

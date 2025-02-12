@@ -5,10 +5,14 @@ import * as path from 'path';
 
 type ContainerOpts = {
   writeEnvFile: boolean;
+  containerName?: string;
 };
 
 export async function createAndStartTestContainer(
-  opts: ContainerOpts = { writeEnvFile: true },
+  opts: ContainerOpts = {
+    writeEnvFile: true,
+    containerName: 'vscode-integration-tests',
+  },
 ): Promise<StartedNeo4jContainer> {
   const password = 'password';
   const container = await new Neo4jContainer('neo4j:5-enterprise')
@@ -19,7 +23,7 @@ export async function createAndStartTestContainer(
     // Giving it a name prevents us from spinning up a different
     // container every time we run the tests and allows us
     // closing a lingering one when the tests finish
-    .withName('vscode-integration-tests')
+    .withName(opts.containerName)
     .start();
 
   const port = container.getMappedPort(7687);

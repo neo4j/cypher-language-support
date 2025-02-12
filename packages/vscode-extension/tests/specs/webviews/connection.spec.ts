@@ -27,10 +27,10 @@ suite('Connection testing', () => {
     }
   });
 
-  async function clickOnContextMenuItem(item: string) {
+  async function clickOnContextMenuItem(item: string, connectionIndex: number) {
     const items = await connectionSection.getVisibleItems();
-    await expect(items.length).toBeGreaterThan(0);
-    const connectionItem = items.at(0) as TreeItem;
+    await expect(items.length).toBeGreaterThan(connectionIndex);
+    const connectionItem = items.at(connectionIndex) as TreeItem;
 
     const contextMenu = await connectionItem.openContextMenu();
     const menuItems = await contextMenu.getItems();
@@ -49,7 +49,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem('Disconnect');
+    await clickOnContextMenuItem('Disconnect', 0);
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
@@ -57,7 +57,15 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem('Connect');
+    await clickOnContextMenuItem('Connect', 0);
+    await waitUntilNotification(browser, 'Connected to Neo4j.');
+  });
+
+  test('should be able to connect to another connection', async function () {
+    if (os.platform() === 'darwin') {
+      this.skip();
+    }
+    await clickOnContextMenuItem('Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 });

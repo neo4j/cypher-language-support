@@ -1,3 +1,5 @@
+import { createAndStartTestContainer } from './setupTestContainer';
+
 export async function waitUntilNotification(
   browser: WebdriverIO.Browser,
   notification: string,
@@ -6,13 +8,25 @@ export async function waitUntilNotification(
     async function () {
       const wb = await browser.getWorkbench();
       const notifications = await wb.getNotifications();
-      const messages = await Promise.all(
-        notifications.map(async (n) => await n.getMessage()),
+
+      const notificationsAndMsgs = await Promise.all(
+        notifications.map(async (n) => {
+          const msg = await n.getMessage();
+          return { msg, notification: n };
+        }),
       );
 
-      return messages.includes(notification);
+      const found = notificationsAndMsgs.find(
+        (value) => value.msg === notification,
+      );
+      if (found) {
+        await found.notification.dismiss();
+        return true;
+      } else {
+        return false;
+      }
     },
-    { timeout: 10000 },
+    { timeout: 20000 },
   );
 }
 
@@ -48,4 +62,50 @@ export async function openFixtureFile(
     fileName,
     options,
   );
+}
+
+export async function createNewConnection(containerName: string) {
+  const container = await createAndStartTestContainer({
+    writeEnvFile: false,
+    containerName: containerName,
+  });
+  const port = container.getMappedPort(7687);
+  const workbench = await browser.getWorkbench();
+  const activityBar = workbench.getActivityBar();
+  const neo4jTile = await activityBar.getViewControl('Neo4j');
+  const connectionPannel = await neo4jTile.openView();
+  const content = connectionPannel.getContent();
+  const sections = await content.getSections();
+
+  try {
+    const section = sections.at(0);
+    const newConnectionButton = await section.button$;
+    await newConnectionButton.click();
+  } catch {
+    await workbench.executeCommand('neo4j.createConnection');
+  }
+
+  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+
+  if (connectionWebview) {
+    await connectionWebview.open();
+
+    const schemeInput = await $('#scheme');
+    const hostInput = await $('#host');
+    const portInput = await $('#port');
+    const userInput = await $('#user');
+    const passwordInput = await $('#password');
+    await schemeInput.selectByVisibleText('neo4j://');
+    await hostInput.setValue('localhost');
+    await portInput.setValue(port);
+    await userInput.setValue('neo4j');
+    await passwordInput.setValue('password');
+
+    const saveConnectionButton = await $('#save-connection');
+    await saveConnectionButton.click();
+
+    await connectionWebview.close();
+  }
+
+  await waitUntilNotification(browser, 'Connected to Neo4j.');
 }
