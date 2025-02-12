@@ -266,14 +266,25 @@ function reconstructBestPath(state: State): Result {
   };
 }
 
+function getStateKey(state: State): string {
+  return `${state.column}-${state.choiceIndex}`;
+}
+
 function bestFirstSolnSearch(
   startingState: State,
   choiceList: Choice[],
 ): Result {
   const heap = new Heap<State>((a, b) => a.cost - b.cost);
   heap.push(startingState);
+  const seenStates = new Set<string>();
   while (heap.size() > 0) {
     const state = heap.pop();
+    const stateKey = getStateKey(state);
+    if (seenStates.has(stateKey)) {
+      continue;
+    }
+    seenStates.add(stateKey);
+
     if (debug) {
       console.log('#'.repeat(MAX_COL));
       console.log(stateToString(state));
