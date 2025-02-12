@@ -74,6 +74,7 @@ export interface State {
   choiceIndex: number;
   indentation: number;
   cost: number;
+  oobCount: number;
   edge: StateEdge;
 }
 
@@ -212,8 +213,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
-  // TODO Make this a separate cost that is always more expensive
-  const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 1e9;
+  const OOBChars = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
   if (choice.left.specialBehavior?.type === 'GROUP_END') {
@@ -247,7 +247,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     indentation: nextIndent,
-    cost: curr.cost + OOBCost + extraCost,
+    cost: curr.cost + extraCost,
+    oobCount: curr.oobCount + OOBChars,
     edge: {
       prevState: curr,
       decision: {
@@ -283,7 +284,12 @@ function bestFirstSolnSearch(
   startingState: State,
   choiceList: Choice[],
 ): Result {
-  const heap = new Heap<State>((a, b) => a.cost - b.cost);
+  const heap = new Heap<State>((a, b) => {
+    if (a.oobCount !== b.oobCount) {
+      return a.oobCount - b.oobCount;
+    }
+    return a.cost - b.cost;
+  });
   heap.push(startingState);
   const seenStates = new Set<string>();
   while (heap.size() > 0) {
@@ -359,6 +365,7 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
       choiceIndex: 0,
       indentation,
       cost: 0,
+      oobCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
