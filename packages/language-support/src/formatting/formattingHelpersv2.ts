@@ -21,7 +21,7 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
-export const MAX_COL = 30;
+export const MAX_COL = 45;
 const debug = true;
 
 export interface Chunk {
@@ -53,12 +53,7 @@ export interface Choice {
 
 interface Group {
   align: number;
-  policy: Policy;
   breakCost: number;
-}
-
-interface Policy {
-  split: ' ' | '\n';
 }
 
 export interface Decision {
@@ -216,24 +211,32 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
 
   const nextGroups = [...curr.activeGroups];
-  if (choice.left.specialBehavior?.type === 'GROUP_START') {
-    nextGroups.push({
-      align: actualColumn,
-      policy: { split: ' ' },
-      breakCost: OOBCost,
-    });
-  }
-
   if (choice.left.specialBehavior?.type === 'GROUP_END') {
     nextGroups.pop();
   }
+
+  let extraCost = 0;
+  if (isBreak && nextGroups.length > 0) {
+    extraCost = nextGroups.at(-1).breakCost;
+  } else if (isBreak) {
+    extraCost = 1e9;
+  }
+
+  if (choice.left.specialBehavior?.type === 'GROUP_START') {
+    nextGroups.push({
+      align: actualColumn,
+      breakCost: Math.pow(10, nextGroups.length + 1),
+    });
+  }
+
+
 
   return {
     activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     indentation: nextIndent,
-    cost: curr.cost + split.cost + OOBCost,
+    cost: curr.cost + OOBCost + extraCost,
     edge: {
       prevState: curr,
       decision: {
@@ -273,6 +276,9 @@ function bestFirstSolnSearch(
       console.log('#'.repeat(MAX_COL));
       console.log(stateToString(state));
       console.log("Cost: ", state.cost);
+      const specialText = choiceList[state.choiceIndex]?.left.specialBehavior?.type;
+      const regularText = choiceList[state.choiceIndex]?.left.text;
+      console.log("Next:", specialText || regularText);
       console.log(state.activeGroups);
     }
     // We found a solution. Since we do best first, it has to be the best
@@ -309,7 +315,7 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       splits = [{ splitType: '\n', cost: 0 }];
     }
     if (chunk.specialBehavior) {
-      splits = [{ splitType: '', cost: 0 }];
+      splits = basicNoSpaceSplits;
     }
     return {
       left: chunk,
@@ -393,6 +399,9 @@ export const groupEndChunk: Chunk = {
     type: 'GROUP_END',
   },
 }
+
+
+//   ON CREATE SET [[[a. prop] = 0,] [[b. prop] = 7,] [[c. prop] = 10]]
 
 const chunkList: Chunk[] = [
   {
