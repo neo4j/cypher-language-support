@@ -16,6 +16,7 @@ import {
   FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
+  ListLiteralContext,
   MapContext,
   MatchClauseContext,
   MergeActionContext,
@@ -572,6 +573,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.visit(ctx.RCURLY());
   };
+
+  visitListLiteral = (ctx: ListLiteralContext) => {
+    this.visit(ctx.LBRACKET());
+    this.startGroup();
+    const n = ctx.expression_list().length;
+    for (let i = 0; i < n; i++) {
+      this.startGroup();
+      this.visit(ctx.expression(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+      if ( i === n - 1) {
+        this.avoidSpaceBetween();
+      }
+      this.endGroup();
+    }
+    this.visit(ctx.RBRACKET());
+    this.endGroup();
+  }
 }
 
 interface FormattingResultWithCursor {
