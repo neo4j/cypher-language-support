@@ -17,6 +17,7 @@ import {
   KeywordLiteralContext,
   LabelExpressionContext,
   MapContext,
+  MatchClauseContext,
   MergeActionContext,
   MergeClauseContext,
   NamespaceContext,
@@ -26,9 +27,13 @@ import {
   PropertyContext,
   RegularQueryContext,
   RelationshipPatternContext,
+  ReturnClauseContext,
+  SetClauseContext,
+  SetItemContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   WhereClauseContext,
+  WithClauseContext,
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
@@ -192,6 +197,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.breakLine();
     this.visitChildren(ctx);
   };
+
+  visitWithClause = (ctx: WithClauseContext) => {
+    this.visit(ctx.WITH());
+    this.startGroup();
+    this.visit(ctx.returnBody());
+    this.visitIfNotNull(ctx.whereClause());
+    this.endGroup();
+  }
+
+  visitMatchClause = (ctx: MatchClauseContext) => {
+    this.visitIfNotNull(ctx.OPTIONAL());
+    this.visit(ctx.MATCH());
+    this.startGroup();
+    this.visitIfNotNull(ctx.matchMode());
+    this.visit(ctx.patternList());
+    const n = ctx.hint_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.hint(i));
+    }
+    this.visitIfNotNull(ctx.whereClause());
+  }
+
+  visitReturnClause = (ctx: ReturnClauseContext) => {
+    this.visit(ctx.RETURN());
+    this.startGroup();
+    this.visit(ctx.returnBody());
+    this.endGroup();
+  }
 
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
@@ -504,6 +537,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitChildren(ctx);
     this.removeIndentation();
   };
+
+  visitSetClause = (ctx: SetClauseContext) => {
+    this.visit(ctx.SET());
+    this.startGroup();
+    const n = ctx.setItem_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.setItem(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+    }
+    this.endGroup();
+  }
 
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
