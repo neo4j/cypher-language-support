@@ -203,7 +203,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
-  const actualColumn = curr.column === 0 ? finalIndent : curr.column; // Broken
+  const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
   const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
