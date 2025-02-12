@@ -21,7 +21,7 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
-export const MAX_COL = 40;
+export const MAX_COL = 60;
 const debug = false;
 
 export interface Chunk {

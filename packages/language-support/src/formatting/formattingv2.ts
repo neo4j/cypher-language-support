@@ -29,6 +29,8 @@ import {
   RegularQueryContext,
   RelationshipPatternContext,
   ReturnClauseContext,
+  ReturnItemContext,
+  ReturnItemsContext,
   SetClauseContext,
   SetItemContext,
   StatementsOrCommandsContext,
@@ -225,6 +227,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.startGroup();
     this.visit(ctx.returnBody());
     this.endGroup();
+  }
+
+  visitReturnItems = (ctx: ReturnItemsContext) => {
+    if (ctx.TIMES()) {
+      this.visit(ctx.TIMES());
+    }
+    const n = ctx.returnItem_list().length;
+    for (let i = 0; i < n; i++) {
+      this.startGroup();
+      this.visit(ctx.returnItem(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+      this.endGroup();
+    }
   }
 
   // Handled separately because count star is its own thing
