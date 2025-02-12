@@ -184,16 +184,20 @@ export function findTargetToken(
   return false;
 }
 
+function getNextIndent(currIndent: number, choice: Choice): number {
+  if (choice.left.specialBehavior?.type === 'INDENT') {
+    return currIndent + INDENTATION;
+  }
+  if (choice.left.specialBehavior?.type === 'DEDENT') {
+    return currIndent - INDENTATION;
+  }
+  return currIndent;
+}
+
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
   const currIndent = curr.indentation;
-  let nextIndent = currIndent;
-  if(choice.left.specialBehavior?.type === 'INDENT') {
-    nextIndent += 2;
-  }
-  if(choice.left.specialBehavior?.type === 'DEDENT') {
-    nextIndent -= 2;
-  }
+  let nextIndent = getNextIndent(currIndent, choice);
   let finalIndent = curr.column === 0 ? currIndent : 0;
   if(curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
