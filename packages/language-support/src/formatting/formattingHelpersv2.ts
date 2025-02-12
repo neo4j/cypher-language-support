@@ -205,6 +205,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
+  if(choice.left.isComment) {
+    finalIndent = curr.column === 0 ? nextIndent: 0;
+  }
+
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
