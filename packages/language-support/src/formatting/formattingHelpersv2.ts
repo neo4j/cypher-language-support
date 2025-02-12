@@ -21,7 +21,7 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
-export const MAX_COL = 60;
+export const MAX_COL = 80;
 const debug = false;
 
 export interface Chunk {
@@ -219,9 +219,13 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   if (isBreak && nextGroups.length > 0) {
     extraCost = nextGroups.at(-1).breakCost;
   } else if (isBreak && choice.right.specialBehavior?.type === 'GROUP_START') {
-    extraCost = 1e9;
+    extraCost = 20;
   } else if (isBreak) {
     extraCost = 1;
+  } else {
+    // Incentivize not breaking to avoid cases where we have longer lines after short
+    // ones.
+    extraCost = -1;
   }
 
   if (choice.left.specialBehavior?.type === 'GROUP_START') {
