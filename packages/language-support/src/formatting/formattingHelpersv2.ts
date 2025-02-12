@@ -21,7 +21,8 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
-export const MAX_COL = 80;
+export const MAX_COL = 30;
+const debug = true;
 
 export interface Chunk {
   text: string;
@@ -194,6 +195,12 @@ function getNextIndent(currIndent: number, choice: Choice): number {
   return currIndent;
 }
 
+function stateToString(state: State) {
+  const result = reconstructBestPath(state);
+  const resultString = decisionsToFormatted(result.decisions);
+  return resultString;
+}
+
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
   const currIndent = curr.indentation;
@@ -262,6 +269,12 @@ function bestFirstSolnSearch(
   heap.push(startingState);
   while (heap.size() > 0) {
     const state = heap.pop();
+    if (debug) {
+      console.log('#'.repeat(MAX_COL));
+      console.log(stateToString(state));
+      console.log("Cost: ", state.cost);
+      console.log(state.activeGroups);
+    }
     // We found a solution. Since we do best first, it has to be the best
     // solution, so reconstruct that path of decisions
     if (state.choiceIndex === choiceList.length) {
