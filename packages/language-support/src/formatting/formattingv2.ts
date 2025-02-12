@@ -12,6 +12,8 @@ import {
   ClauseContext,
   CountStarContext,
   ExistsExpressionContext,
+  Expression10Context,
+  ExpressionContext,
   ExtendedCaseExpressionContext,
   FunctionInvocationContext,
   KeywordLiteralContext,
@@ -428,6 +430,30 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.expression());
     this.endGroup();
   };
+
+  visitExpression = (ctx: ExpressionContext) => {
+    const n = ctx.expression11_list().length;
+    for (let i = 0; i < n; i++) {
+      this.startGroup();
+      this.visit(ctx.expression11(i));
+      if (i < n - 1) {
+        this.visit(ctx.OR(i));
+      }
+      this.endGroup();
+    }
+  }
+
+  visitExpression10 = (ctx: Expression10Context) => {
+    const n = ctx.expression9_list().length;
+    for (let i = 0; i < n; i++) {
+      this.startGroup();
+      this.visit(ctx.expression9(i));
+      if (i < n - 1) {
+        this.visit(ctx.AND(i));
+      }
+      this.endGroup();
+    }
+  }
 
   // Handled separately because it contains subclauses (and thus indentation rules)
   visitExistsExpression = (ctx: ExistsExpressionContext) => {

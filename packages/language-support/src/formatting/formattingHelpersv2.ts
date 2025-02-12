@@ -212,7 +212,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const thisWordEnd =
     actualColumn + choice.left.text.length + split.splitType.length;
-  const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 10000;
+  // TODO Make this a separate cost that is always more expensive
+  const OOBCost = Math.max(0, thisWordEnd - MAX_COL) * 1e9;
 
   const nextGroups = [...curr.activeGroups];
   if (choice.left.specialBehavior?.type === 'GROUP_END') {
