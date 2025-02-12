@@ -528,8 +528,36 @@ MERGE (b:Book {title: 'Harry Potter and the Sorcerers Stone'})
 ON CREATE SET b.publishedYear = 1997, b.sales = 120000000, b.rating = 4.8, b.genre = 'Fantasy'
 MERGE (a)-[:WROTE]->(b)
 RETURN a, b`;
+const q10 = `MATCH (p:Person)
+WHERE p.name = 'Alberta' OR p.name = 'Berta' OR p.name = 'C' OR p.age > 30 OR p.salary > 50000 OR p.experience > 10 OR p.position = 'Manager'
+RETURN p`;
+// Greg query
+const q11 = `MATCH (s:Schema)
+// Find a schema which has at least 2 tables and at least PK and one FK
+WHERE (s)-->(:Table)-->(:Column)-[:FK_COLUMN]-()
+    AND
+    (s)-->(:Table)-->(:Column)-[:PK_COLUMN]-()
+    AND
+    count { (s)-->() } > 1
+// WITH collect(s) as schemas
+// MATCH (s)|
+WITH s
+MATCH (s)-[:CONTAINS_TABLE]->(t:Table)-[:HAS_COLUMN]->(c:Column)
+OPTIONAL MATCH (c)<-[:PK_COLUMN]-(pk:PrimaryKey)
+OPTIONAL MATCH (c)<-[:FK_COLUMN]-(fk:ForeignKey)
+WITH s,
+    t.name as tableName,
+    collect({name: c.name,
+            pk: CASE (not pk is null and $printKeyInfo) WHEN True THEN "(PK)" ELSE "" END,
+            fk: CASE (not fk is null and $printKeyInfo) WHEN True THEN "(FK)" ELSE "" END
+    }) as columns
+WITH s, tableName, [x in columns | x.name + x.fk + x.pk] as columns
+WITH s, "Table " + tableName + " has columns:" + apoc.text.join(columns,'') as tableDescriptions
+WITH s, apoc.text.join(collect(tableDescriptions),'------------------------') as schemaDescription
+SET s.schemaDescription=schemaDescription`
 
-  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
+
+  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
