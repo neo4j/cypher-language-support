@@ -89,7 +89,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // but we should still be able to concatenate a, b to ba
     const indices: number[] = [];
     for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
-      if (!this.currentBuffer()[i].isComment) {
+      if (!this.currentBuffer()[i].isComment && !this.currentBuffer()[i].specialBehavior) {
         indices.push(i);
         if (indices.length === 2) {
           break;
@@ -113,7 +113,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // a newline and a space
   avoidSpaceBetween = () => {
     let idx = this.currentBuffer().length - 1;
-    while (idx >= 0 && this.currentBuffer()[idx].isComment) {
+    while (idx >= 0 && (this.currentBuffer()[idx].isComment || this.currentBuffer()[idx].specialBehavior)) {
       idx--;
     }
     if (idx < 0) {
@@ -241,7 +241,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
   }
-
+  //
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
     this.visitTerminalRaw(ctx.COUNT());
@@ -656,6 +656,3 @@ export function formatQuery(
   };
 }
 
-const query = `MERGE (n) ON CREATE SET n.prop = 0, b. prop = 7, c.prop = 10
-RETURN n`
-formatQuery(query);
