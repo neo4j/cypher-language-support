@@ -21,7 +21,7 @@ import CypherCmdParser, {
 import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
-export const MAX_COL = 30;
+export const MAX_COL = 80;
 
 export interface Chunk {
   text: string;
@@ -363,7 +363,7 @@ export const dedentChunk: Chunk = {
   },
 };
 
-const groupStartChunk: Chunk = {
+export const groupStartChunk: Chunk = {
   text: '',
   start: -1,
   end: -1,
@@ -372,7 +372,7 @@ const groupStartChunk: Chunk = {
   },
 }
 
-const groupEndChunk: Chunk = {
+export const groupEndChunk: Chunk = {
   text: '',
   start: -1,
   end: -1,

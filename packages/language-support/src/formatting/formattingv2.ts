@@ -37,6 +37,8 @@ import {
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
+  groupEndChunk,
+  groupStartChunk,
   handleMergeClause,
   indentChunk,
   isComment,
@@ -113,6 +115,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.currentBuffer()[idx].noSpace = true;
   };
+
+  startGroup = () => {
+    this.currentBuffer().push(groupStartChunk);
+  }
+
+  endGroup = () => {
+    this.currentBuffer().push(groupEndChunk);
+  }
 
   addIndentation = () => {
     this.currentBuffer().push(indentChunk);
@@ -364,7 +374,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because where is not a clause (it is a subclause)
   visitWhereClause = (ctx: WhereClauseContext) => {
     this.breakLine();
-    this.visitChildren(ctx);
+    this.visit(ctx.WHERE());
+    this.startGroup();
+    this.visit(ctx.expression());
+    this.endGroup();
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)

@@ -534,6 +534,8 @@ RETURN a, b`;
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
       const formatted = formatQuery(query);
+      console.log('X'.repeat(MAX_COL));
+      console.log(formatted)
       const lines = formatted.split('\n');
       lines.forEach((line) => {
         expect(line.length).toBeLessThanOrEqual(MAX_COL);
