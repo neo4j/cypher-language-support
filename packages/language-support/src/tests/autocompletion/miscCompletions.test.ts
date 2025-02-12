@@ -8,7 +8,7 @@ import {
 describe('Misc auto-completion', () => {
   test('Correctly completes cypher version number, when cypher25 is enabled', () => {
     const query = 'CYPHER ';
-    const cyphe25Enabled = _internalFeatureFlags.cypher25;
+    const cypher25Enabled = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = true;
 
     testCompletions({
@@ -19,12 +19,12 @@ describe('Misc auto-completion', () => {
       ],
     });
 
-    _internalFeatureFlags.cypher25 = cyphe25Enabled;
+    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes cypher version number, when cypher25 is disabled', () => {
     const query = 'CYPHER ';
-    const cyphe25Enabled = _internalFeatureFlags.cypher25;
+    const cypher25Enabled = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = false;
 
     testCompletions({
@@ -32,12 +32,12 @@ describe('Misc auto-completion', () => {
       expected: [{ label: '5', kind: CompletionItemKind.EnumMember }],
     });
 
-    _internalFeatureFlags.cypher25 = cyphe25Enabled;
+    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes CYPHER when keyword is not finished, optionally with version, when cypher25 is enabled', () => {
     const query = 'CYP';
-    const cyphe25Enabled = _internalFeatureFlags.cypher25;
+    const cypher25Enabled = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = true;
     testCompletions({
       query,
@@ -47,12 +47,12 @@ describe('Misc auto-completion', () => {
         { label: 'CYPHER', kind: CompletionItemKind.Keyword },
       ],
     });
-    _internalFeatureFlags.cypher25 = cyphe25Enabled;
+    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
-  test('Correctly completes CYPHER when keyword is not finished, optionally with version, when cypher25 is enabled', () => {
+  test('Correctly completes CYPHER when keyword is not finished, optionally with version, when cypher25 is disabled', () => {
     const query = 'CYP';
-    const cyphe25Enabled = _internalFeatureFlags.cypher25;
+    const cypher25Enabled = _internalFeatureFlags.cypher25;
     _internalFeatureFlags.cypher25 = false;
     testCompletions({
       query,
@@ -61,7 +61,7 @@ describe('Misc auto-completion', () => {
         { label: 'CYPHER', kind: CompletionItemKind.Keyword },
       ],
     });
-    _internalFeatureFlags.cypher25 = cyphe25Enabled;
+    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes empty statement', () => {
