@@ -295,6 +295,10 @@ CURRENT
    : C U R R E N T
    ;
 
+CYPHER
+   : C Y P H E R
+   ;
+
 DATA
    : D A T A
    ;
@@ -621,6 +625,10 @@ AMPERSAND
 
 EXCLAMATION_MARK
    : '!'
+   ;
+
+LANGUAGE
+   : L A N G U A G E
    ;
 
 LBRACKET
