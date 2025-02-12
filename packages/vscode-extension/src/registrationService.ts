@@ -1,11 +1,12 @@
 import { commands, Disposable, window, workspace } from 'vscode';
 import {
-  createOrShowConnectionPanelForConnectionItem,
+  createConnectionPanel,
   cypherFileFromSelection,
   handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
+  showConnectionPanelForConnectionItem,
   switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
@@ -41,7 +42,11 @@ export function registerDisposables(): Disposable[] {
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.MANAGE_CONNECTION_COMMAND,
-      createOrShowConnectionPanelForConnectionItem,
+      showConnectionPanelForConnectionItem,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.CREATE_CONNECTION_COMMAND,
+      createConnectionPanel,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,

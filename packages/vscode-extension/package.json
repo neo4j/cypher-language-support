@@ -42,6 +42,12 @@
         "icon": "$(add)"
       },
       {
+        "command": "neo4j.createConnection",
+        "category": "Neo4j",
+        "title": "Create new connection",
+        "icon": "$(add)"
+      },
+      {
         "command": "neo4j.connect",
         "title": "Connect"
       },
@@ -124,6 +130,17 @@
         {
           "command": "neo4j.saveConnection",
           "when": "false"
+        },
+        {
+          "command": "neo4j.manageConnection",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "neo4j.createConnection",
+          "when": "view == neo4jConnections",
+          "group": "navigation"
         }
       ],
       "view/item/context": [

@@ -11,7 +11,6 @@ import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
-  getAllConnections,
   getConnectionByKey,
   getDatabaseConnectionSettings,
   getPasswordForConnection,
@@ -95,6 +94,20 @@ export async function saveConnectionAndDisplayConnectionResult(
 }
 
 /**
+ * Handler for CREATE_CONNECTION_COMMAND (neo4j.manageConnection)
+ * This can be triggered by the command palette or the Connection tree view.
+ * In the latter case, the Connection can be modified.
+ * In the former case, a new Connection can be created.
+ * We are currently limiting the number of connections to one, so the ConnectionPanel will always show the current connection.
+ * @param connectionItem The ConnectionItem to manage.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export function createConnectionPanel(): void {
+  const context = getExtensionContext();
+  ConnectionPanel.createOrShow(context.extensionPath, undefined, '');
+}
+
+/**
  * Handler for MANAGE_CONNECTION_COMMAND (neo4j.manageConnection)
  * This can be triggered by the command palette or the Connection tree view.
  * In the latter case, the Connection can be modified.
@@ -103,23 +116,16 @@ export async function saveConnectionAndDisplayConnectionResult(
  * @param connectionItem The ConnectionItem to manage.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function createOrShowConnectionPanelForConnectionItem(
+export async function showConnectionPanelForConnectionItem(
   connectionItem?: ConnectionItem | null,
 ): Promise<void> {
   const context = getExtensionContext();
-  let connection: Connection;
-  let password: string;
-
-  // Artificially limit the number of connections to 1
-  // If we are triggering this command from the command palette,
-  // we will always try to show the first connection, if it exists
-  if (!connectionItem) {
-    connection = getAllConnections()[0];
-    password = connection ? await getPasswordForConnection(connection.key) : '';
-  } else {
-    connection = connectionItem ? getConnectionByKey(connectionItem.key) : null;
-    password = connection ? await getPasswordForConnection(connection.key) : '';
-  }
+  const connection: Connection = connectionItem
+    ? getConnectionByKey(connectionItem.key)
+    : null;
+  const password: string = connection
+    ? await getPasswordForConnection(connection.key)
+    : '';
 
   ConnectionPanel.createOrShow(context.extensionPath, connection, password);
 }

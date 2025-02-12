@@ -181,7 +181,7 @@ export function getActiveConnection(): Connection | null {
  */
 export function getAllConnections(): Connection[] {
   const connections = Object.values(getConnections());
-  return connections.length ? [connections[0]] : [];
+  return connections.length ? connections : [];
 }
 
 /**
