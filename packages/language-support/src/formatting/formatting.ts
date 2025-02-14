@@ -143,7 +143,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Visit these separately because operators want spaces around them,
   // and these are not operators (despite being minuses).
   visitArrowLine = (ctx: ArrowLineContext) => {
-    this.visitTerminalRaw(ctx.ARROW_LINE());
+    this.visitRawIfNotNull(ctx.MINUS());
+    this.visitRawIfNotNull(ctx.ARROW_LINE());
   };
 
   visitRightArrow = (ctx: RightArrowContext) => {
@@ -298,13 +299,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
     this.visitIfNotNull(ctx.leftArrow());
     const arrowLineList = ctx.arrowLine_list();
-    this.visitTerminalRaw(arrowLineList[0].MINUS());
+    this.visit(arrowLineList[0]);
     if (ctx.LBRACKET()) {
       this.visit(ctx.LBRACKET());
       this.handleInnerPatternContext(ctx);
       this.visit(ctx.RBRACKET());
     }
-    this.visitTerminalRaw(arrowLineList[1].MINUS());
+    this.visit(arrowLineList[1]);
     this.visitIfNotNull(ctx.rightArrow());
   };
 
