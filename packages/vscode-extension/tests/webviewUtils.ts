@@ -67,7 +67,6 @@ export async function openFixtureFile(
 
 export async function createNewConnection(containerName: string) {
   const container = await createAndStartTestContainer({
-    writeEnvFile: false,
     containerName: containerName,
   });
   const port = container.getMappedPort(7687);
