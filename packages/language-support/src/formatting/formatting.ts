@@ -178,7 +178,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // (labelExpression3 etc)
   visitLabelExpression = (ctx: LabelExpressionContext) => {
     this.visitRawIfNotNull(ctx.COLON());
-    this.visitRawIfNotNull(ctx.IS());
+    this.visitIfNotNull(ctx.IS());
     this.visit(ctx.labelExpression4());
   };
 
