@@ -39,5 +39,9 @@ suite('Connection testing', () => {
     }
     await clickOnContextMenuItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
+
+    // Reconnect to the original instance
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 });
