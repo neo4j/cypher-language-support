@@ -1,16 +1,11 @@
 import { Neo4jContainer, StartedNeo4jContainer } from '@testcontainers/neo4j';
-import dotenv from 'dotenv';
-import * as fs from 'fs';
-import * as path from 'path';
 
 type ContainerOpts = {
-  writeEnvFile: boolean;
   containerName?: string;
 };
 
 export async function createAndStartTestContainer(
   opts: ContainerOpts = {
-    writeEnvFile: true,
     containerName: 'vscode-integration-tests',
   },
 ): Promise<StartedNeo4jContainer> {
@@ -26,28 +21,5 @@ export async function createAndStartTestContainer(
     .withName(opts.containerName)
     .start();
 
-  const port = container.getMappedPort(7687);
-
-  if (opts.writeEnvFile) {
-    // This sets up a settings.json file based on the settings-template.json
-    // replacing the random port and password we have given the container
-    updateDotenvFile(port, password);
-  }
   return container;
-}
-
-function setSetting(file: string, variable: RegExp, value: string) {
-  const data = fs.readFileSync(file).toString();
-  const result = data.replace(variable, value);
-  fs.writeFileSync(file, result);
-}
-
-function updateDotenvFile(port: number, password: string) {
-  const dotenvPath = path.join(__dirname, '../../tests/fixtures/');
-  const dotenvTemplate = path.join(dotenvPath, '.env');
-  const dotenvFile = path.join(dotenvPath, '.env.test');
-  fs.copyFileSync(dotenvTemplate, dotenvFile);
-  setSetting(dotenvFile, /\{PORT\}/g, port.toString());
-  setSetting(dotenvFile, /\{PASSWORD\}/g, password);
-  dotenv.config({ path: dotenvFile });
 }

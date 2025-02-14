@@ -1,3 +1,1 @@
-tests/fixtures/.env.test
-webview_tests/fixtures/.env.test
 .wdio-vscode-service
