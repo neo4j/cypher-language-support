@@ -49,7 +49,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem('Disconnect', 0);
+    await clickOnContextMenuItem('Disconnect', 1);
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
@@ -57,15 +57,15 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem('Connect', 0);
+    await clickOnContextMenuItem('Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
-  test('should be able to connect to another connection', async function () {
+  test('should be able to connect to another instance', async function () {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem('Connect', 1);
+    await clickOnContextMenuItem('Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 });
