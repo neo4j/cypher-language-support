@@ -32,6 +32,11 @@ suite('Connection testing', () => {
     await expect(items.length).toBeGreaterThan(connectionIndex);
     const connectionItem = items.at(connectionIndex) as TreeItem;
 
+    // This context menu does not work in OSX because it's a native element rather
+    // than a browser, so we get errors of the sort of
+    //    element (".monaco-menu-container") still not displayed after 5000ms
+    //
+    // https://github.com/webdriverio-community/wdio-vscode-service/issues/57
     const contextMenu = await connectionItem.openContextMenu();
     const menuItems = await contextMenu.getItems();
     const connect = menuItems.find(async (menuItem) => {
