@@ -397,6 +397,30 @@ describe('various edgecases', () => {
     const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
     verifyFormatting(query, expected);
   });
+
+  test('path length in relationship pattern', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length with specific length', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length with length range', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for correct cursor position', () => {

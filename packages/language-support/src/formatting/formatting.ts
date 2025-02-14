@@ -19,6 +19,7 @@ import {
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
+  PathLengthContext,
   PropertyContext,
   RegularQueryContext,
   RelationshipPatternContext,
@@ -283,10 +284,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.labelExpression() && ctx.properties()) {
       this.addSpace();
     }
+    if (ctx instanceof RelationshipPatternContext) {
+      this.visitIfNotNull(ctx.pathLength());
+    }
     this.visitIfNotNull(ctx.properties());
     if (ctx.WHERE()) {
       this.visit(ctx.WHERE());
       this.visit(ctx.expression());
+    }
+  };
+
+  // Need to handle this separately to avoid spaces around the operators
+  visitPathLength = (ctx: PathLengthContext) => {
+    this.visitTerminalRaw(ctx.TIMES());
+    const n = ctx.UNSIGNED_DECIMAL_INTEGER_list().length;
+    if (n === 1) {
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+    } else if (n === 2) {
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+      this.visitTerminalRaw(ctx.DOTDOT());
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(1));
     }
   };
 
