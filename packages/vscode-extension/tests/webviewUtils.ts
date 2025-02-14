@@ -1,3 +1,4 @@
+import { TreeItem, ViewSection, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 export async function waitUntilNotification(
@@ -108,4 +109,43 @@ export async function createNewConnection(containerName: string) {
   }
 
   await waitUntilNotification(browser, 'Connected to Neo4j.');
+}
+
+export async function getConnectionSection(
+  workbench: Workbench,
+): Promise<ViewSection | undefined> {
+  const activityBar = workbench.getActivityBar();
+  const neo4jTile = await activityBar.getViewControl('Neo4j');
+  const connectionPannel = await neo4jTile.openView();
+  const content = connectionPannel.getContent();
+  const sections = await content.getSections();
+  const connectionSection = sections.at(0);
+  return connectionSection;
+}
+
+export async function clickOnContextMenuItem(
+  connectionSection: ViewSection,
+  item: string,
+  connectionIndex: number,
+): Promise<void> {
+  const items = await connectionSection.getVisibleItems();
+  await expect(items.length).toBeGreaterThan(connectionIndex);
+  const connectionItem = items.at(connectionIndex) as TreeItem;
+
+  // This context menu does not work in OSX because it's a native element rather
+  // than a browser, so we get errors of the sort of
+  //    element (".monaco-menu-container") still not displayed after 5000ms
+  //
+  // https://github.com/webdriverio-community/wdio-vscode-service/issues/57
+  const contextMenu = await connectionItem.openContextMenu();
+  const menuItems = await contextMenu.getItems();
+  const connect = menuItems.find(async (menuItem) => {
+    const menuText = await menuItem.elem.getText();
+    return menuText === item;
+  });
+
+  if (connect) {
+    const connectOption = await connect.elem;
+    await connectOption.click();
+  }
 }
