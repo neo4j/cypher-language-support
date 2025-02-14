@@ -297,13 +297,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Need to handle this separately to avoid spaces around the operators
   visitPathLength = (ctx: PathLengthContext) => {
     this.visitTerminalRaw(ctx.TIMES());
-    const n = ctx.UNSIGNED_DECIMAL_INTEGER_list().length;
-    if (n === 1) {
+    if (ctx._single) {
       this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
-    } else if (n === 2) {
-      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+    } else if (ctx.DOTDOT()) {
+      let idx = 0;
+      if (ctx._from_) {
+        this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+        idx++;
+      }
       this.visitTerminalRaw(ctx.DOTDOT());
-      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(1));
+      if (ctx._to) {
+        this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      }
     }
   };
 

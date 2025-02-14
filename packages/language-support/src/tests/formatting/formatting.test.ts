@@ -414,12 +414,22 @@ RETURN e`;
     verifyFormatting(query, expected);
   });
 
-  test('path length with length range', () => {
-    const query = `MATCH (p:Person)-[r:LOVES*1..10]-()
+  test('path length with different length ranges', () => {
+    const fromquery = `MATCH (p:Person)-[r:LOVES*1..]-()
 RETURN e`;
-    const expected = `MATCH (p:Person)-[r:LOVES*1..10]-()
+    const fromexpected = `MATCH (p:Person)-[r:LOVES*1..]-()
 RETURN e`;
-    verifyFormatting(query, expected);
+    const toquery = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const toexpected = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const bothquery = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    const bothexpected = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    verifyFormatting(fromquery, fromexpected);
+    verifyFormatting(toquery, toexpected);
+    verifyFormatting(bothquery, bothexpected);
   });
 });
 
