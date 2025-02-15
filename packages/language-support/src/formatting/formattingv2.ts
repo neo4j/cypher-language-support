@@ -408,6 +408,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
   };
 
+  visitNodePattern = (ctx: NodePatternContext) => {
+    this.startGroup();
+    this.visitChildren(ctx);
+    this.endGroup();
+  };
+
   // Handled separately because the dots aren't operators
   visitNamespace = (ctx: NamespaceContext) => {
     const n = ctx.DOT_list().length;
@@ -602,8 +608,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    this.visit(ctx.LCURLY());
     this.startGroup();
+    this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
 
     const propertyKeyNames = ctx.propertyKeyName_list();

@@ -622,4 +622,14 @@ RETURN path`.trimStart();
     console.log(formatQuery(query));
     verifyFormatting(query, expected);
   })
+
+  test('aligns split node pattern', () => {
+    const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
+    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`
+    const expected = `
+MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
+      {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+    verifyFormatting(query, expected);
+
+  })
 });
