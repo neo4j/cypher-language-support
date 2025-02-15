@@ -590,7 +590,11 @@ RETURN variable;`
 
   const q22 = `MATCH (s:Session) CALL { WITH s MATCH (s)-[:HAS_EVENT]->(e:Event) WHERE (e.timestamp >= datetime('2025-01-01T00:00:00Z') AND e.timestamp <= datetime('2025-12-31T23:59:59Z')) AND e.type IN ['Click','View','Purchase','Signup','Logout','Login','Share','Comment','Like','Dislike','Subscribe','Unsubscribe'] WITH e, CASE WHEN e.value > 1000 THEN 'High' WHEN e.value > 500 THEN 'Medium' ELSE 'Low' END AS eventValue RETURN COLLECT({eventId: e.id, type: e.type, value: e.value, category: eventValue, extra: e.extraData}) AS events } WITH s, SIZE(events) AS eventCount WHERE eventCount > 5 RETURN s, eventCount, events`;
 
-  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21, q22];
+  const q23 = `MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-[
+r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+RETURN path`;
+
+  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21, q22, q23];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
@@ -603,4 +607,12 @@ RETURN variable;`
       });
     });
   });
+
+  test('does not split in the middle of a relation', () => {
+    const expected = `
+MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+      [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+RETURN path`.trimStart();
+    verifyFormatting(q23, expected);
+  })
 });
