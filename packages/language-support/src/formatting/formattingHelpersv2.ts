@@ -23,6 +23,7 @@ import { lexerKeywords } from '../lexerSymbols';
 const INDENTATION = 2;
 export const MAX_COL = 80;
 const debug = false;
+const showGroups = false;
 
 export interface Chunk {
   text: string;
@@ -323,10 +324,19 @@ function bestFirstSolnSearch(
   throw new Error('No solution found');
 }
 
+function addGroupsIfSet(buffer: String[], decision: Decision) {
+  const specialType = decision.left.specialBehavior?.type;
+  if (showGroups && (specialType === 'GROUP_START' || specialType === 'GROUP_END')) {
+    const groupType = decision.left.specialBehavior?.type;
+    buffer.push(groupType === 'GROUP_START' ? '[' : ']');
+  }
+}
+
 function decisionsToFormatted(decisions: Decision[]): string {
   const buffer = [];
   decisions.forEach((decision) => {
     buffer.push(' '.repeat(decision.indentation));
+    addGroupsIfSet(buffer, decision);
     buffer.push(decision.left.text);
     buffer.push(decision.split.splitType);
   });
