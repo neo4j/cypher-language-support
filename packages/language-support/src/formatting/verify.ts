@@ -78,7 +78,7 @@ function testQueries(queries: string[]) {
   console.log(`Successfully formatted ${successful} queries out of ${goodQueries}`);
 }
 
-const filePath = path.join(__dirname, 'queries_1000.json');
+const filePath = path.join(__dirname, 'queries_10000.json');
 const fileContent = fs.readFileSync(filePath, 'utf-8');
 const queries: string[] = JSON.parse(fileContent);
 
