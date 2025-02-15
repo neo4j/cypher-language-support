@@ -98,7 +98,7 @@ function interactiveQueryReview(queryList: string[]): void {
     }
     const formattedQuery = formatQuery(originalQuery);
 
-    console.log('\n--- Original Query ---');
+    console.log('\n\n\n\n\n\n\n--- Original Query ---');
     console.log(originalQuery);
     console.log('\n--- Formatted Query ---');
     console.log('X'.repeat(80));
