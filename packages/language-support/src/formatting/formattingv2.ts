@@ -443,6 +443,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitExpression = (ctx: ExpressionContext) => {
     const n = ctx.expression11_list().length;
+    if (n === 1) {
+      this.visit(ctx.expression11(0));
+      return;
+    }
     for (let i = 0; i < n; i++) {
       this.startGroup();
       this.visit(ctx.expression11(i));
@@ -455,6 +459,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitExpression10 = (ctx: Expression10Context) => {
     const n = ctx.expression9_list().length;
+    if (n === 1) {
+      this.visit(ctx.expression9(0));
+      return;
+    }
     for (let i = 0; i < n; i++) {
       this.startGroup();
       this.visit(ctx.expression9(i));
