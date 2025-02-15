@@ -355,6 +355,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitParameter = (ctx: ParameterContext) => {
     this.visitTerminalRaw(ctx.DOLLAR());
     this.visit(ctx.parameterName());
+    this.concatenate();
   };
 
   // Literals have casing rules, see

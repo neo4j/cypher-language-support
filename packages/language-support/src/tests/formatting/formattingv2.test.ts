@@ -615,4 +615,11 @@ MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
 RETURN path`.trimStart();
     verifyFormatting(q23, expected);
   })
+
+  test('does not split the $ and the parameter name', () => {
+    const query = 'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
+    const expected = 'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
+    console.log(formatQuery(query));
+    verifyFormatting(query, expected);
+  })
 });
