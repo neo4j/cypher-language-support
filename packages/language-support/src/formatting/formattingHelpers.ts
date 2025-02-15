@@ -16,7 +16,7 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords, lexerOperators } from '../lexerSymbols';
 
-class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> {
+export class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> {
   syntaxError<T extends Token>(
     _r: Recognizer<CommonToken>,
     offendingSymbol: T,
