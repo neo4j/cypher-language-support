@@ -215,6 +215,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.startGroup();
     this.visitIfNotNull(ctx.matchMode());
     this.visit(ctx.patternList());
+    this.endGroup();
     const n = ctx.hint_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.hint(i));
