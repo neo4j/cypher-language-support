@@ -94,7 +94,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // but we should still be able to concatenate a, b to ba
     const indices: number[] = [];
     for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
-      if (!this.currentBuffer()[i].isComment && !this.currentBuffer()[i].specialBehavior) {
+      if (
+        !this.currentBuffer()[i].isComment &&
+        !this.currentBuffer()[i].specialBehavior
+      ) {
         indices.push(i);
         if (indices.length === 2) {
           break;
@@ -118,7 +121,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // a newline and a space
   avoidSpaceBetween = () => {
     let idx = this.currentBuffer().length - 1;
-    while (idx >= 0 && (this.currentBuffer()[idx].isComment || this.currentBuffer()[idx].specialBehavior)) {
+    while (
+      idx >= 0 &&
+      (this.currentBuffer()[idx].isComment ||
+        this.currentBuffer()[idx].specialBehavior)
+    ) {
       idx--;
     }
     if (idx < 0) {
@@ -129,11 +136,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   startGroup = () => {
     this.currentBuffer().push(groupStartChunk);
-  }
+  };
 
   endGroup = () => {
     this.currentBuffer().push(groupEndChunk);
-  }
+  };
 
   addIndentation = () => {
     this.currentBuffer().push(indentChunk);
@@ -210,7 +217,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.returnBody());
     this.visitIfNotNull(ctx.whereClause());
     this.endGroup();
-  }
+  };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
@@ -224,14 +231,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.hint(i));
     }
     this.visitIfNotNull(ctx.whereClause());
-  }
+  };
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this.visit(ctx.RETURN());
     this.startGroup();
     this.visit(ctx.returnBody());
     this.endGroup();
-  }
+  };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {
     if (ctx.TIMES()) {
@@ -246,7 +253,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
-  }
+  };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
     this.visitIfNotNull(ctx.DISTINCT());
@@ -258,7 +265,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitIfNotNull(ctx.limit());
       this.endGroup();
     }
-  }
+  };
 
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
@@ -431,14 +438,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitPattern = (ctx: PatternContext) => {
     // Don't create an unnecessary group if we don't also have a path
-    if(!ctx.variable() && !ctx.selector()) {
+    if (!ctx.variable() && !ctx.selector()) {
       this.visitChildren(ctx);
       return;
     }
     // Avoid wrapping the whole pattern in a group if there is a path so that
     // indentation happens around it
     this.endGroup();
-    if(ctx.variable())  {
+    if (ctx.variable()) {
       this.visit(ctx.variable());
       this.visit(ctx.EQ());
     }
@@ -448,7 +455,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup();
     // Provide an opening for the surrounding group we closed before
     this.startGroup();
-  }
+  };
 
   visitPatternList = (ctx: PatternListContext) => {
     const n = ctx.pattern_list().length;
@@ -464,7 +471,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
-  }
+  };
 
   // Handled separately because the dots aren't operators
   visitNamespace = (ctx: NamespaceContext) => {
@@ -507,7 +514,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
-  }
+  };
 
   visitExpression10 = (ctx: Expression10Context) => {
     const n = ctx.expression9_list().length;
@@ -523,7 +530,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
-  }
+  };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
   visitExistsExpression = (ctx: ExistsExpressionContext) => {
@@ -620,12 +627,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.functionName());
     this.visit(ctx.LPAREN());
     this.concatenate(); // Don't separate the function name and the (
-    this.visitIfNotNull(ctx.DISTINCT());
+    if (ctx.DISTINCT() || ctx.ALL()) {
+      this.avoidSpaceBetween();
+    }
     this.visitIfNotNull(ctx.ALL());
+    this.visitIfNotNull(ctx.DISTINCT());
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
-      if (i == 0) {
+      if (i == 0 && !ctx.DISTINCT() && !ctx.ALL()) {
         this.avoidSpaceBetween();
       }
       this.visit(ctx.functionArgument(i));
@@ -663,7 +673,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
     this.endGroup();
-  }
+  };
 
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
@@ -701,14 +711,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
       }
-      if ( i === n - 1) {
+      if (i === n - 1) {
         this.avoidSpaceBetween();
       }
       this.endGroup();
     }
     this.visit(ctx.RBRACKET());
     this.endGroup();
-  }
+  };
 }
 
 interface FormattingResultWithCursor {
@@ -755,4 +765,3 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
-

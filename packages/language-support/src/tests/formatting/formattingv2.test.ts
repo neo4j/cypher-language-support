@@ -430,6 +430,13 @@ describe('various edgecases', () => {
     const expected3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
     verifyFormatting(query3, expected3);
   });
+  test('test for function invocation', () => {
+    const query = `MATCH (n)
+RETURN COUNT(DISTINCT n, a)`;
+    const expected = `MATCH (n)
+RETURN COUNT(DISTINCT n, a)`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for correct cursor position', () => {
