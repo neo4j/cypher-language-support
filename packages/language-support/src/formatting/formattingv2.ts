@@ -702,8 +702,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
-    this.visit(ctx.LBRACKET());
     this.startGroup();
+    this.visit(ctx.LBRACKET());
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       this.startGroup();
