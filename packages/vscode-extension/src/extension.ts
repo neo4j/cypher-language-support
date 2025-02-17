@@ -33,6 +33,7 @@ export async function activate(context: ExtensionContext) {
       options: { env: { CYPHER_25: 'true' } },
     },
   };
+
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for Cypher text documents

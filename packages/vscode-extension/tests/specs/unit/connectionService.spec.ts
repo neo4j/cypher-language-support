@@ -1,4 +1,4 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import * as assert from 'assert';
 import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';
@@ -329,7 +329,6 @@ suite('Connection service spec', () => {
         sendNotificationSpy,
         'connectionUpdated',
         {
-          trace: { server: 'off' },
           connect: true,
           connectURL: 'neo4j://localhost:7687',
           database: 'neo4j',
@@ -366,8 +365,7 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -393,8 +391,7 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: false,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -420,8 +417,7 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -484,8 +480,7 @@ suite('Connection service spec', () => {
         true,
       );
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -623,7 +618,6 @@ suite('Connection service spec', () => {
       );
 
       sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
-        trace: { server: 'off' },
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -669,8 +663,7 @@ suite('Connection service spec', () => {
         mockConnection,
       );
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -828,9 +821,7 @@ suite('Connection service spec', () => {
       });
 
       test('Unsuccessful connection attempts to the schema poller should cause a connectionConnected listener to be attached', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         assert.equal(
           mockSchemaPoller.events.listenerCount('connectionConnected'),
@@ -843,9 +834,7 @@ suite('Connection service spec', () => {
       });
 
       test('An unsuccessful connection should not handle connectionErrored events', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionErrored');
 
@@ -861,9 +850,7 @@ suite('Connection service spec', () => {
       });
 
       test('Connection connected events should be handled and cause a connectionErrored listener to be attached', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionConnected');
 
@@ -879,9 +866,7 @@ suite('Connection service spec', () => {
       });
 
       test('Connection connected events should only be handled once', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionConnected');
         mockSchemaPoller.events.emit('connectionConnected');
@@ -913,9 +898,7 @@ suite('Connection service spec', () => {
       });
 
       test('Successful connection attempts to the schema poller should cause a connectionErrored listener to be attached', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         assert.equal(
           mockSchemaPoller.events.listenerCount('connectionErrored'),
@@ -928,9 +911,7 @@ suite('Connection service spec', () => {
       });
 
       test('A successful connection should not handle connectionConnected events', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionConnected');
 
@@ -940,9 +921,7 @@ suite('Connection service spec', () => {
       });
 
       test('Connection error events should be handled and cause a connectionConnected listener to be attached', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionErrored', 'error message');
 
@@ -962,9 +941,7 @@ suite('Connection service spec', () => {
       });
 
       test('Connection error events should only be handled once', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionErrored', 'error message');
         mockSchemaPoller.events.emit('connectionErrored', 'error message');
@@ -977,9 +954,7 @@ suite('Connection service spec', () => {
       });
 
       test('A failed connection event should only be handled once and removes all listeners', async () => {
-        await connection.establishPersistentConnectionToSchemaPoller({
-          trace: { server: 'off' },
-        });
+        await connection.establishPersistentConnectionToSchemaPoller({});
 
         mockSchemaPoller.events.emit('connectionErrored', 'error message');
         mockSchemaPoller.events.emit('connectionFailed');
@@ -1044,8 +1019,7 @@ suite('Connection service spec', () => {
 
       await connection.reconnectDatabaseConnectionOnExtensionActivation();
 
-      const settings: Neo4jSettings = {
-        trace: { server: 'off' },
+      const settings: Neo4jConnectionSettings = {
         connect: true,
         connectURL: 'neo4j://localhost:7687',
         database: 'neo4j',
@@ -1074,7 +1048,6 @@ suite('Connection service spec', () => {
         sendNotificationSpy,
         'connectionUpdated',
         {
-          trace: { server: 'off' },
           connect: true,
           connectURL: 'neo4j://localhost:7687',
           database: 'neo4j',
