@@ -1,5 +1,15 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.19
+
+### Patch Changes
+
+- a3e3e50: updating themes to use needle colors
+- Updated dependencies [68f55d4]
+- Updated dependencies [6d00433]
+- Updated dependencies [c01b32a]
+  - @neo4j-cypher/language-support@2.0.0-next.16
+
 ## 2.0.0-next.18
 
 ### Patch Changes
