@@ -703,4 +703,12 @@ MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
   })
+
+  test('should fit this whole node on one line', () => {
+    const query = `MATCH (i:tyyyyyyyype {createdAt: datetime("V3bzb8bX"), description: "UM706WRV"})
+RETURN i`;
+    const expected = `MATCH (i:tyyyyyyyype {createdAt: datetime("V3bzb8bX"), description: "UM706WRV"})
+RETURN i`;
+    verifyFormatting(query, expected);
+  })
 });
