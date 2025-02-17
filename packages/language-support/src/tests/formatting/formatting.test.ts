@@ -397,6 +397,56 @@ describe('various edgecases', () => {
     const expected = `RETURN apoc.text.levenshteinSimilarity("Neo4j", "Neo4j") AS output;`;
     verifyFormatting(query, expected);
   });
+
+  test('path length in relationship pattern', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length with specific length', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length with different length ranges', () => {
+    const fromquery = `MATCH (p:Person)-[r:LOVES*1..]-()
+RETURN e`;
+    const fromexpected = `MATCH (p:Person)-[r:LOVES*1..]-()
+RETURN e`;
+    const toquery = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const toexpected = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const bothquery = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    const bothexpected = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    verifyFormatting(fromquery, fromexpected);
+    verifyFormatting(toquery, toexpected);
+    verifyFormatting(bothquery, bothexpected);
+  });
+
+  test('IS FLOAT and IS INTEGER should not be broken', () => {
+    const query = `MATCH (n)
+WITH n, [k IN keys(n)] as list
+UNWIND list as listItem
+WITH n, listItem
+WHERE (n[listItem] IS FLOAT OR n[listItem] IS INTEGER)
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n, [k IN keys(n)] AS list
+UNWIND list AS listItem
+WITH n, listItem
+WHERE (n[listItem] IS FLOAT OR n[listItem] IS INTEGER)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for correct cursor position', () => {
