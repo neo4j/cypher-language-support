@@ -31,13 +31,15 @@ import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
   CypherVersion,
+  cypherVersionNumbers,
   Neo4jFunction,
   Neo4jProcedure,
 } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
-const versions = ['5'];
+const versions = () =>
+  _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
 
 function backtickIfNeeded(e: string): string | undefined {
   if (e == null || e == '') {
@@ -60,7 +62,7 @@ function backtickDbNameIfNeeded(e: string): string | undefined {
 }
 
 const versionCompletions = () =>
-  versions.map((v) => {
+  versions().map((v) => {
     const result: CompletionItem = {
       label: v,
       kind: CompletionItemKind.EnumMember,
@@ -69,7 +71,7 @@ const versionCompletions = () =>
   });
 
 const cypherVersionCompletions = () =>
-  versions.map((v) => {
+  versions().map((v) => {
     const result: CompletionItem = {
       label: 'CYPHER ' + v,
       kind: CompletionItemKind.Keyword,
