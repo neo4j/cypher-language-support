@@ -27,6 +27,7 @@ import {
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
+  PatternListContext,
   PropertyContext,
   RegularQueryContext,
   RelationshipPatternContext,
@@ -413,6 +414,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitChildren(ctx);
     this.endGroup();
   };
+
+  visitPatternList = (ctx: PatternListContext) => {
+    const n = ctx.pattern_list().length;
+    if (n === 1) {
+      this.visitChildren(ctx);
+      return;
+    }
+    for (let i = 0; i < n; i++) {
+      this.startGroup();
+      this.visit(ctx.pattern(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+      this.endGroup();
+    }
+  }
 
   // Handled separately because the dots aren't operators
   visitNamespace = (ctx: NamespaceContext) => {
