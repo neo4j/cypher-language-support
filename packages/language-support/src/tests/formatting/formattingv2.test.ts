@@ -692,4 +692,15 @@ RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
        ORDER BY Name ASC LIMIT "ZTWWLgIq"`;
     verifyFormatting(query, expected);
   })
+
+  test('paths should be aligned after the =', () => {
+    const query = `MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
+      (il:nodetyyyype {type: "58vomdG0"})
+RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`
+    const expected = `
+MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
+           (il:nodetyyyype {type: "58vomdG0"})
+RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
+    verifyFormatting(query, expected);
+  })
 });
