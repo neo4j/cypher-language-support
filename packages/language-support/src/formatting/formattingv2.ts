@@ -625,12 +625,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const commaList = ctx.COMMA_list();
     const colonList = ctx.COLON_list();
     for (let i = 0; i < expressions.length; i++) {
+      this.startGroup();
       this.visit(propertyKeyNames[i]);
       this.visitTerminalRaw(colonList[i]);
       this.visit(expressions[i]);
       if (i < expressions.length - 1) {
         this.visit(commaList[i]);
       }
+      this.endGroup();
     }
     this.avoidSpaceBetween();
     this.endGroup();
