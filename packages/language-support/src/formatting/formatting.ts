@@ -8,6 +8,7 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   ExtendedCaseExpressionContext,
+  FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
   LeftArrowContext,
@@ -455,6 +456,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
     handleMergeClause(ctx, (node) => this.visit(node));
+  };
+
+  visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    this.visit(ctx.functionName());
+    this.visit(ctx.LPAREN());
+    this.visitRawIfNotNull(ctx.DISTINCT());
+    this.visitRawIfNotNull(ctx.ALL());
+    const n = ctx.functionArgument_list().length;
+    for (let i = 0; i < n; i++) {
+      this.addSpace();
+      this.visit(ctx.functionArgument(i));
+      this.visitIfNotNull(ctx.COMMA(i));
+    }
+    this.visit(ctx.RPAREN());
   };
 
   // Handled separately because it wants indentation
