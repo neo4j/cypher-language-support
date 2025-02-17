@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.16
+
+### Patch Changes
+
+- 68f55d4: Updates parser and semantic analysis to version 2025.02
+- 6d00433: Bugfix for case-insensitivity of built-in functions
+- c01b32a: Re-surfaces preparser errors
+
 ## 2.0.0-next.15
 
 ### Patch Changes
