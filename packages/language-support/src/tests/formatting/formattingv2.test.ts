@@ -648,10 +648,10 @@ WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND
   })
 
   test('aligns large maps one further than the opening brace', () => {
-    const query = `RETURN {looooooooooooooooooooooongkey:value, looooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3'}`
+    const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`
     const expected = `
 RETURN {looooooooooooooooooooooongkey: value,
-        looooooooooooooooongkeeeyyyyyyyy: value2,
+        loooooooooooooooooooongkeeeyyyyyyyy: value2,
         looooooooooooooongkeeey: value3}`.trimStart();
     verifyFormatting(query, expected);
   })
