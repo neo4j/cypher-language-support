@@ -640,12 +640,42 @@ WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND
     verifyFormatting(query, expected);
   })
 
-  test('aligns large maps nicely', () => {
+  test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, looooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3'}`
     const expected = `
 RETURN {looooooooooooooooooooooongkey: value,
         looooooooooooooooongkeeeyyyyyyyy: value2,
         looooooooooooooongkeeey: value3}`.trimStart();
+    verifyFormatting(query, expected);
+  })
+
+  test('long list should not break after the opening brace leaving it alone', () => {
+    const query = `MATCH (p:Product)
+WHERE p.article_number IN [
+      "OCj0AswA", "dFRbj1s3", "oMbdvgm7", "L4Vey8xn", "GNgeDIkA", "pU4RE0lM",
+      "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
+      "g7LjxbGD"]
+RETURN p`;
+    const expected = `MATCH (p:Product)
+WHERE p.article_number IN 
+      ["OCj0AswA", "dFRbj1s3", "oMbdvgm7", "L4Vey8xn", "GNgeDIkA", "pU4RE0lM",
+      "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
+      "g7LjxbGD"]
+RETURN p`;
+    verifyFormatting(query, expected);
+  })
+
+  test('should prefer breaking pattern list on commas', () => {
+    const query = `EXPLAIN
+MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype), (m)-[l1]-
+      (eqa:EquipoEmpresa)
+WHERE eqa.prop <> "Aq0kC1bX"
+RETURN eq`;
+    const expected = `EXPLAIN
+MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
+      (m)-[l1]-(eqa:EquipoEmpresa)
+WHERE eqa.prop <> "Aq0kC1bX"
+RETURN eq`;
     verifyFormatting(query, expected);
   })
 });
