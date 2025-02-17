@@ -27,6 +27,7 @@ import {
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
+  PatternContext,
   PatternListContext,
   PropertyContext,
   RegularQueryContext,
@@ -414,6 +415,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitChildren(ctx);
     this.endGroup();
   };
+
+  visitPattern = (ctx: PatternContext) => {
+    // Don't create an unnecessary group if we don't also have a path
+    if(!ctx.variable() && !ctx.selector()) {
+      this.visitChildren(ctx);
+      return;
+    }
+    // Avoid wrapping the whole pattern in a group if there is a path so that
+    // indentation happens around it
+    this.endGroup();
+    if(ctx.variable())  {
+      this.visit(ctx.variable());
+      this.visit(ctx.EQ());
+    }
+    this.visitIfNotNull(ctx.selector());
+    this.startGroup();
+    this.visit(ctx.anonymousPattern());
+    this.endGroup();
+    // Provide an opening for the surrounding group we closed before
+    this.startGroup();
+  }
 
   visitPatternList = (ctx: PatternListContext) => {
     const n = ctx.pattern_list().length;
