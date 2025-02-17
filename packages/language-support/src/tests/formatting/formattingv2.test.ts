@@ -678,4 +678,18 @@ WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     verifyFormatting(query, expected);
   })
+
+  test('should prefer to put ORDER BY etc together', () => {
+    const query = `MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(Kevin:Person {name: "HEZDAAhT"})
+WHERE p.name <> "nnwAPHJg"
+RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
+ORDER BY Name ASC
+LIMIT "ZTWWLgIq"`;
+    const expected = `MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-
+      (Kevin:Person {name: "HEZDAAhT"})
+WHERE p.name <> "nnwAPHJg"
+RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
+       ORDER BY Name ASC LIMIT "ZTWWLgIq"`;
+    verifyFormatting(query, expected);
+  })
 });
