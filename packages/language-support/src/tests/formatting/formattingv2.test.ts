@@ -718,4 +718,19 @@ RETURN i`;
 RETURN i`;
     verifyFormatting(query, expected);
   })
+
+  test('should not have weird alignment for this query', () => {
+    const query = `
+CREATE (:actor {name: "jEmtGrSI"}),
+       (:actor {name: "HqFUar0i"}),
+       (:actor {name: "ZAvjBFt6"}),
+       (:actor {name: "7hbDfMOa"}),
+       (:actor {name: "AXhPvCyh"})`;
+    const expected = `
+CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
+       (:actor {name: "ZAvjBFt6"}), (:actor {name: "7hbDfMOa"}),
+       (:actor {name: "AXhPvCyh"})`.trimStart();
+    console.log(formatQuery(query));
+    verifyFormatting(query, expected);
+  })
 });
