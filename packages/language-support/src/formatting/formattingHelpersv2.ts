@@ -335,11 +335,21 @@ function addGroupsIfSet(buffer: String[], decision: Decision) {
 
 function decisionsToFormatted(decisions: Decision[]): string {
   const buffer = [];
+  const pushIfNotEmpty = (s: string) => {
+    if (s !== '') {
+      buffer.push(s);
+    }
+  }
   decisions.forEach((decision) => {
-    buffer.push(' '.repeat(decision.indentation));
+    pushIfNotEmpty(' '.repeat(decision.indentation))
+    pushIfNotEmpty(decision.left.text);
     addGroupsIfSet(buffer, decision);
-    buffer.push(decision.left.text);
-    buffer.push(decision.split.splitType);
+    if (decision.split.splitType === '\n') {
+      if (buffer.at(-1) === ' ') {
+        buffer.pop();
+      }
+    }
+    pushIfNotEmpty(decision.split.splitType);
   });
   return buffer.join('').trimEnd();
 }
