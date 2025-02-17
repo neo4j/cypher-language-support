@@ -629,6 +629,23 @@ RETURN path`.trimStart();
 MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
+  })
 
+  test('aligns nested parentheses well', () => {
+    const query = `MATCH (n)
+  WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND (this1:WaFQynNy OR this1:hyztnnwg OR this1:QpLckJcy))`;
+    const expected = `MATCH (n)
+WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND
+       (this1:WaFQynNy OR this1:hyztnnwg OR this1:QpLckJcy))`;
+    verifyFormatting(query, expected);
+  })
+
+  test('aligns large maps nicely', () => {
+    const query = `RETURN {looooooooooooooooooooooongkey:value, looooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3'}`
+    const expected = `
+RETURN {looooooooooooooooooooooongkey: value,
+        looooooooooooooooongkeeeyyyyyyyy: value2,
+        looooooooooooooongkeeey: value3}`.trimStart();
+    verifyFormatting(query, expected);
   })
 });
