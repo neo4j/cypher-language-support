@@ -27,6 +27,7 @@ import {
   NodePatternContext,
   NumberLiteralContext,
   ParameterContext,
+  ParenthesizedExpressionContext,
   PatternContext,
   PatternListContext,
   PropertyContext,
@@ -499,6 +500,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.expression());
     this.endGroup();
   };
+
+  visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
+    this.visit(ctx.LPAREN());
+    this.startGroup();
+    this.visit(ctx.expression());
+    this.endGroup();
+    this.visit(ctx.RPAREN());
+  }
 
   visitExpression = (ctx: ExpressionContext) => {
     const n = ctx.expression11_list().length;
