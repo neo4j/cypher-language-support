@@ -32,6 +32,7 @@ import {
   PropertyContext,
   RegularQueryContext,
   RelationshipPatternContext,
+  ReturnBodyContext,
   ReturnClauseContext,
   ReturnItemsContext,
   SetClauseContext,
@@ -246,7 +247,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
   }
-  //
+
+  visitReturnBody = (ctx: ReturnBodyContext) => {
+    this.visitIfNotNull(ctx.DISTINCT());
+    this.visit(ctx.returnItems());
+    if (ctx.orderBy() || ctx.skip() || ctx.limit()) {
+      this.startGroup();
+      this.visitIfNotNull(ctx.orderBy());
+      this.visitIfNotNull(ctx.skip());
+      this.visitIfNotNull(ctx.limit());
+      this.endGroup();
+    }
+  }
+
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
     this.visitTerminalRaw(ctx.COUNT());
