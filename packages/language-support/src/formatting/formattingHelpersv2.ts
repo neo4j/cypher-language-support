@@ -212,8 +212,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   }
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
+  const splitLength = !isBreak ? split.splitType.length:0;
   const thisWordEnd =
-    actualColumn + choice.left.text.length + split.splitType.length;
+    actualColumn + choice.left.text.length + splitLength;
   const OOBChars = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
