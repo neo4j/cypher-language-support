@@ -719,7 +719,7 @@ RETURN i`;
     verifyFormatting(query, expected);
   })
 
-  test('should not have weird alignment for this query', () => {
+  test('should not have weird alignment for multiple node creation', () => {
     const query = `
 CREATE (:actor {name: "jEmtGrSI"}),
        (:actor {name: "HqFUar0i"}),
@@ -730,7 +730,6 @@ CREATE (:actor {name: "jEmtGrSI"}),
 CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
        (:actor {name: "ZAvjBFt6"}), (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`.trimStart();
-    console.log(formatQuery(query));
     verifyFormatting(query, expected);
   })
 

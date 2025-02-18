@@ -11,6 +11,7 @@ import {
   CaseExpressionContext,
   ClauseContext,
   CountStarContext,
+  CreateClauseContext,
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
@@ -235,6 +236,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitIfNotNull(ctx.whereClause());
   };
+
+  visitCreateClause = (ctx: CreateClauseContext) => {
+    this.visit(ctx.CREATE());
+    this.startGroup();
+    this.visit(ctx.patternList());
+    this.endGroup();
+  }
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this.visit(ctx.RETURN());
