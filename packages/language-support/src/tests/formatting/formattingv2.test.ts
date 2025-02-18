@@ -472,6 +472,7 @@ verifyFormatting(query, expected);
   });
 });
 
+// The @ represents the position of the cursor
 describe('tests for correct cursor position', () => {
   test('cursor at beginning', () => {
     const query = 'RETURN -1, -2, -3';
@@ -485,12 +486,15 @@ describe('tests for correct cursor position', () => {
   });
   test('cursor at newline', () => {
       const query = `MATCH (n:Person)
-  WHERE n.name = "Steve" 
-  RETURN n 
-  LIMIT 12;`;
-console.log(query.at(56), query.at(55))
-    const result = formatQuery(query, 56);
-    expect(result.newCursorPos).toEqual(55);
+WHERE n.name = "Steve" 
+RETURN n 
+@LIMIT 12;`;
+    const cursorPos = query.search("@")
+    const result = formatQuery(query.replace("@",""), cursorPos);
+    const formated = `MATCH (n:Person)
+WHERE n.name = "Steve" 
+RETURN n@LIMIT 12;`;
+    expect(result.newCursorPos).toEqual(formated.search("@"));
   });
 
   test('cursor start of line with spaces newline', () => {
@@ -498,25 +502,42 @@ console.log(query.at(56), query.at(55))
 CALL {
   MATCH (source:object) WHERE source.id= $id1
   MATCH (target:object) WHERE target.id= $id2
-  MATCH path = (source)-[*1..10]->(target)
+  @MATCH path = (source)-[*1..10]->(target)
   WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
   ORDER BY Weight LIMIT 3
   RETURN length(path) as l, Weight 
 } 
 RETURN count(*)`;
-    const result = formatQuery(query, 124);
-    expect(result.newCursorPos).toEqual(126);
+    const cursorPos = query.search("@")
+    const result = formatQuery(query.replace("@",""), cursorPos);
+    const formated = `UNWIND range(1, 100) AS _
+CALL {
+  MATCH (source:object)
+  WHERE source.id = $id1
+  MATCH (target:object)
+  WHERE target.id = $id2
+  @MATCH path = (source)-[*1..10]->(target)
+  WITH path, REDUCE (weight = 0, r IN relationships(path) | weight + r.weight)
+             AS Weight ORDER BY Weight LIMIT 3
+  RETURN length(path) AS l, Weight
+}
+RETURN count(*)`;
+    expect(result.newCursorPos).toEqual(formated.search("@"));
   });
 
   test('cursor start of line without spaces', () => {
     const query = `MATCH (variable :Label)-[:REL_TYPE]->() 
 WHERE variable.property = "String" 
     OR namespaced.function() = false
-    // comment
-    OR $parameter > 2 
+    OR $para@meter > 2 
 RETURN variable;`;
-    const result = formatQuery(query, 133);
-    expect(result.newCursorPos).toEqual(119);
+    const cursorPos = query.search("@")
+    const result = formatQuery(query.replace("@",""), cursorPos);
+    const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
+WHERE variable.property = "String" OR namespaced.function() = false OR
+      $para@meter > 2
+RETURN variable;`;
+    expect(result.newCursorPos).toEqual(formated.search("@"));
   });
 });
 
