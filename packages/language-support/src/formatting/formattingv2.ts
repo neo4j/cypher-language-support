@@ -13,7 +13,6 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   Expression10Context,
-  Expression1Context,
   Expression2Context,
   ExpressionContext,
   ExtendedCaseExpressionContext,
