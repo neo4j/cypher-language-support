@@ -23,6 +23,8 @@ import {
   LabelExpressionContext,
   ListLiteralContext,
   MapContext,
+  MapProjectionContext,
+  MapProjectionElementContext,
   MatchClauseContext,
   MergeActionContext,
   MergeClauseContext,
@@ -484,7 +486,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because the dot is not an operator
   visitProperty = (ctx: PropertyContext) => {
     this.visitTerminalRaw(ctx.DOT());
-    this.concatenate();
+    if (!(ctx.parentCtx instanceof MapProjectionElementContext)) {
+      this.concatenate();
+    }
     this.visit(ctx.propertyKeyName());
     this.concatenate();
   };
@@ -706,6 +710,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup();
     this.visit(ctx.RCURLY());
   };
+
+  visitMapProjection = (ctx: MapProjectionContext) => {
+    this.visit(ctx.variable());
+    this.visit(ctx.LCURLY());
+    this.avoidSpaceBetween();
+    const n = ctx.mapProjectionElement_list().length;
+    // Not sure if these should have groups around them?
+    // Haven't been able to find a case where it matters so far.
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.mapProjectionElement(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+    }
+    this.avoidSpaceBetween();
+    this.visit(ctx.RCURLY());
+  }
 
   visitListLiteral = (ctx: ListLiteralContext) => {
     this.startGroup();
