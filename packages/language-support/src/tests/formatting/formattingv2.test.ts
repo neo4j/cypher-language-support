@@ -443,6 +443,33 @@ RETURN COUNT(DISTINCT n, a)`;
     const expected = `RETURN this {.id, .title} AS this`;
     verifyFormatting(query, expected);
   })
+  test('test that what is [*1..10] inside the brackets does not disapear', () => {
+    const query = `UNWIND range(1,100) as _
+CALL {
+  MATCH (source:object) WHERE source.id= $id1
+  MATCH (target:object) WHERE target.id= $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
+  ORDER BY Weight LIMIT 3
+  RETURN length(path) as l, Weight 
+} 
+RETURN count(*)`;
+    const expected = `UNWIND range(1, 100) AS _
+CALL {
+  MATCH (source:object)
+  WHERE source.id = $id1
+  MATCH (target:object)
+  WHERE target.id = $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH path, REDUCE (weight = 0, r IN relationships(path) | weight + r.weight)
+             AS Weight ORDER BY Weight LIMIT 3
+  RETURN length(path) AS l, Weight
+}
+RETURN count(*)`
+
+verifyFormatting(query, expected);
+
+  });
 });
 
 describe('tests for correct cursor position', () => {
@@ -457,10 +484,11 @@ describe('tests for correct cursor position', () => {
     expect(result.newCursorPos).toEqual(result.formattedString.length - 1);
   });
   test('cursor at newline', () => {
-    const query = `MATCH (n:Person)
-WHERE n.name = "Steve" 
-RETURN n 
-LIMIT 12;`;
+      const query = `MATCH (n:Person)
+  WHERE n.name = "Steve" 
+  RETURN n 
+  LIMIT 12;`;
+console.log(query.at(56), query.at(55))
     const result = formatQuery(query, 56);
     expect(result.newCursorPos).toEqual(55);
   });

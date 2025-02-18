@@ -33,6 +33,7 @@ import {
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
+  PathLengthContext,
   PatternContext,
   PatternListContext,
   PropertyContext,
@@ -410,11 +411,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.variable());
     this.visitIfNotNull(ctx.labelExpression());
     this.visitIfNotNull(ctx.properties());
+    if (ctx instanceof RelationshipPatternContext) {
+      this.visitIfNotNull(ctx.pathLength())
+      
+    }
     if (ctx.WHERE()) {
       this.visit(ctx.WHERE());
       this.visit(ctx.expression());
     }
   };
+
+   visitPathLength = (ctx: PathLengthContext) => {
+    this.visitTerminalRaw(ctx.TIMES())
+    this.visitTerminalRaw({symbol: ctx._from_, parentCtx: ctx, getText: () => ctx._from_.text})
+    this.visitTerminalRaw(ctx.DOTDOT())
+    this.visitTerminalRaw({symbol: ctx._to, parentCtx: ctx, getText: () => ctx._to.text})
+  }; 
 
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
     if (ctx.leftArrow()) {
