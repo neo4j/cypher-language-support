@@ -15,6 +15,7 @@ import {
   Expression10Context,
   ExpressionContext,
   ExtendedCaseExpressionContext,
+  ForeachClauseContext,
   FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
@@ -728,6 +729,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RBRACKET());
     this.endGroup();
   };
+  visitForeachClause = (ctx: ForeachClauseContext) => {
+    this.visit(ctx.FOREACH())
+    this.visit(ctx.LPAREN())
+    this.visit(ctx.variable())
+    this.visit(ctx.IN())
+    this.visit(ctx.expression())
+    if (ctx.BAR()) {
+      this.visit(ctx.BAR())
+      this.addIndentation()
+      this.visit(ctx.clause(0))
+      this.removeIndentation()
+      this.breakLine()
+      this.visit(ctx.RPAREN())
+    } else {
+      this.visit(ctx.RPAREN())
+    }
+  };
 }
 
 interface FormattingResultWithCursor {
@@ -774,3 +792,14 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
+
+const q = `MATCH (u:User)
+MATCH (u)-[:USER_EVENT]->(e:Event)
+WITH u, e ORDER BY e ASC
+WITH u, collect(e) AS eventChain
+FOREACH (i IN range(0, size(eventChain) - 2) |
+FOREACH (node1 IN [eventChain [i]] |
+FOREACH (node2 IN [eventChain [i + 1]] |
+MERGE (node1)-[:NEXT_EVENT]->(node2))))`
+
+console.log(formatQuery(q))
