@@ -225,8 +225,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   let extraCost = 0;
   if (isBreak && nextGroups.length > 0) {
     extraCost = nextGroups.at(-1).breakCost;
-  } else if (isBreak && choice.right.specialBehavior?.type === 'GROUP_START') {
-    extraCost = 20;
   } else if (isBreak) {
     extraCost = 1;
   } else {
