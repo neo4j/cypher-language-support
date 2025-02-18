@@ -437,6 +437,12 @@ RETURN COUNT(DISTINCT n, a)`;
 RETURN COUNT(DISTINCT n, a)`;
     verifyFormatting(query, expected);
   });
+
+  test('map projections', () => {
+    const query = `RETURN this {.id,.title} AS this`;
+    const expected = `RETURN this {.id, .title} AS this`;
+    verifyFormatting(query, expected);
+  })
 });
 
 describe('tests for correct cursor position', () => {
