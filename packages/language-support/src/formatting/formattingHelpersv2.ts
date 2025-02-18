@@ -33,6 +33,7 @@ export interface Chunk {
   noSpace?: boolean;
   isComment?: boolean;
   specialBehavior?: SpecialChunkBehavior;
+  isCursor?: true;
 }
 
 interface SpecialChunkBehavior {
@@ -89,6 +90,13 @@ export interface Result {
   decisions: Decision[];
   indentation: number;
 }
+
+interface FinalResultWithPos {
+  formated: string;
+  cursorPos?: number;
+}
+
+type FinalResult = string | FinalResultWithPos
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
@@ -201,20 +209,19 @@ function stateToString(state: State) {
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
   const currIndent = curr.indentation;
-  let nextIndent = getNextIndent(currIndent, choice);
+  const nextIndent = getNextIndent(currIndent, choice);
   let finalIndent = curr.column === 0 ? currIndent : 0;
-  if(curr.activeGroups.length > 0 && curr.column === 0) {
+  if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
-  if(choice.left.isComment) {
-    finalIndent = curr.column === 0 ? nextIndent: 0;
+  if (choice.left.isComment) {
+    finalIndent = curr.column === 0 ? nextIndent : 0;
   }
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
-  const splitLength = !isBreak ? split.splitType.length:0;
-  const thisWordEnd =
-    actualColumn + choice.left.text.length + splitLength;
+  const splitLength = !isBreak ? split.splitType.length : 0;
+  const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
   const OOBChars = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
@@ -239,8 +246,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       breakCost: Math.pow(10, nextGroups.length + 1),
     });
   }
-
-
 
   return {
     activeGroups: nextGroups,
@@ -303,10 +308,11 @@ function bestFirstSolnSearch(
     if (debug) {
       console.log('#'.repeat(MAX_COL));
       console.log(stateToString(state));
-      console.log("Cost: ", state.cost);
-      const specialText = choiceList[state.choiceIndex]?.left.specialBehavior?.type;
+      console.log('Cost: ', state.cost);
+      const specialText =
+        choiceList[state.choiceIndex]?.left.specialBehavior?.type;
       const regularText = choiceList[state.choiceIndex]?.left.text;
-      console.log("Next:", specialText || regularText);
+      console.log('Next:', specialText || regularText);
       console.log(state.activeGroups);
     }
     // We found a solution. Since we do best first, it has to be the best
@@ -323,23 +329,30 @@ function bestFirstSolnSearch(
   throw new Error('No solution found');
 }
 
-function addGroupsIfSet(buffer: String[], decision: Decision) {
+function addGroupsIfSet(buffer: string[], decision: Decision) {
   const specialType = decision.left.specialBehavior?.type;
-  if (showGroups && (specialType === 'GROUP_START' || specialType === 'GROUP_END')) {
+  if (
+    showGroups &&
+    (specialType === 'GROUP_START' || specialType === 'GROUP_END')
+  ) {
     const groupType = decision.left.specialBehavior?.type;
     buffer.push(groupType === 'GROUP_START' ? '[' : ']');
   }
 }
 
-function decisionsToFormatted(decisions: Decision[]): string {
-  const buffer = [];
+function decisionsToFormatted(decisions: Decision[]): FinalResult {
+  const buffer: string[] = [];
+  let cursorPos = -1;
   const pushIfNotEmpty = (s: string) => {
     if (s !== '') {
       buffer.push(s);
     }
-  }
+  };
   decisions.forEach((decision) => {
-    pushIfNotEmpty(' '.repeat(decision.indentation))
+    pushIfNotEmpty(' '.repeat(decision.indentation));
+    if (decision.left.isCursor) {
+      cursorPos = buffer.join('').length;
+    }
     pushIfNotEmpty(decision.left.text);
     addGroupsIfSet(buffer, decision);
     if (decision.split.splitType === '\n') {
@@ -349,7 +362,11 @@ function decisionsToFormatted(decisions: Decision[]): string {
     }
     pushIfNotEmpty(decision.split.splitType);
   });
-  return buffer.join('').trimEnd();
+  const result = buffer.join('').trimEnd()
+  if (cursorPos == -1) {
+    return result
+  }
+  return { formated: result, cursorPos: cursorPos };
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -372,9 +389,10 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   }) as Choice[];
 }
 
-export function buffersToFormattedString(buffers: Chunk[][]) {
+export function buffersToFormattedString(buffers: Chunk[][]): FinalResultWithPos {
   let formatted = '';
   let indentation: number = 0;
+  let cursorPos = 0
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
@@ -389,12 +407,18 @@ export function buffersToFormattedString(buffers: Chunk[][]) {
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
-    formatted += decisionsToFormatted(result.decisions) + '\n';
+    const partlyFormatted = decisionsToFormatted(result.decisions)
+    if (typeof partlyFormatted === "string") {
+      formatted += partlyFormatted + '\n';
+    } else {
+      cursorPos = formatted.length + partlyFormatted.cursorPos
+      formatted += partlyFormatted.formated + '\n';
+    }
   }
   if (indentation > 0) {
     throw new Error('indentations left');
   }
-  return formatted.trimEnd();
+  return {formated: formatted.trimEnd(), cursorPos: cursorPos};
 }
 
 const basicSplits = [
@@ -437,7 +461,7 @@ export const groupStartChunk: Chunk = {
   specialBehavior: {
     type: 'GROUP_START',
   },
-}
+};
 
 export const groupEndChunk: Chunk = {
   text: '',
@@ -446,4 +470,4 @@ export const groupEndChunk: Chunk = {
   specialBehavior: {
     type: 'GROUP_END',
   },
-}
+};
