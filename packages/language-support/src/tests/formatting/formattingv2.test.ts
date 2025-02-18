@@ -733,4 +733,27 @@ CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
     console.log(formatQuery(query));
     verifyFormatting(query, expected);
   })
+
+  test('should put nested FOREACH on newline', () => {
+    const query = `MATCH (u:User)
+MATCH (u)-[:USER_EVENT]->(e:Event)
+WITH u, e ORDER BY e ASC
+WITH u, collect(e) AS eventChain
+FOREACH (i IN range(0, size(eventChain) - 2) |
+FOREACH (node1 IN [eventChain [i]] |
+FOREACH (node2 IN [eventChain [i + 1]] |
+MERGE (node1)-[:NEXT_EVENT]->(node2))))`;
+    const expected = `MATCH (u:User)
+MATCH (u)-[:USER_EVENT]->(e:Event)
+WITH u, e ORDER BY e ASC
+WITH u, collect(e) AS eventChain
+FOREACH (i IN range(0, size(eventChain) - 2) |
+  FOREACH (node1 IN [eventChain [i]] |
+    FOREACH (node2 IN [eventChain [i + 1]] |
+      MERGE (node1)-[:NEXT_EVENT]->(node2)
+    )
+  )
+)`
+    verifyFormatting(query, expected);
+  })
 });
