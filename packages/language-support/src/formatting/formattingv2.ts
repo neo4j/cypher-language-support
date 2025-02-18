@@ -13,6 +13,8 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   Expression10Context,
+  Expression1Context,
+  Expression2Context,
   ExpressionContext,
   ExtendedCaseExpressionContext,
   ForeachClauseContext,
@@ -744,6 +746,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.RPAREN())
     } else {
       this.visit(ctx.RPAREN())
+    }
+  };
+
+  visitExpression2 = (ctx: Expression2Context) => {
+    this.visit(ctx.expression1())
+    const n = ctx.postFix_list().length
+    for (let i = 0; i < n; i++) {
+      this.avoidSpaceBetween()
+      this.visit(ctx.postFix(i))
     }
   };
 }
