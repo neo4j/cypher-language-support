@@ -871,6 +871,26 @@ UNWIND [{_id: "MiltPFxk",
 RETURN row`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should not want to split in the middle of AS here', () => {
+    const query = `EXPLAIN
+MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
+WHERE s.deactivated = "k1fU0uk0" AND
+      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
+WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated}) AS
+        platfs, COUNT(s) AS numplatf
+WHERE numplatf >= "gkLi0qvW"
+RETURN DISTINCT p.networkDbId, p.name, platfs`;
+    const expected = `EXPLAIN
+MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
+WHERE s.deactivated = "k1fU0uk0" AND
+      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
+WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
+        AS platfs, COUNT(s) AS numplatf
+WHERE numplatf >= "gkLi0qvW"
+RETURN DISTINCT p.networkDbId, p.name, platfs`;
+    verifyFormatting(query, expected);
+  })
 });
 
 describe('tests for line breaks with comments', () => {
