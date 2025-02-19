@@ -320,6 +320,7 @@ function bestFirstSolnSearch(
   throw new Error('No solution found');
 }
 
+// Used for debugging only; it's very convenient to know where groups start and end
 function addGroupsIfSet(buffer: string[], decision: Decision) {
   const specialType = decision.left.specialBehavior?.type;
   if (
