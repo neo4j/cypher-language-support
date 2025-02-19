@@ -37,6 +37,7 @@ import {
   PatternContext,
   PatternListContext,
   PropertyContext,
+  ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
   ReturnBodyContext,
@@ -311,6 +312,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.LPAREN());
     this.visitTerminalRaw(ctx.TIMES());
     this.visit(ctx.RPAREN());
+  };
+
+  visitReduceExpression = (ctx: ReduceExpressionContext) => {
+    this.startGroup()
+    this.visitTerminalRaw(ctx.REDUCE())
+    this.visitTerminalRaw(ctx.LPAREN())
+    this.visit(ctx.variable(0))
+    this.visit(ctx.EQ())
+    this.visit(ctx.expression(0))
+    this.visitTerminalRaw(ctx.COMMA())
+    this.visit(ctx.variable(1))
+    this.visit(ctx.IN())
+    this.visit(ctx.expression(1))
+    this.visit(ctx.BAR())
+    this.visit(ctx.expression(2))
+    this.visit(ctx.RPAREN())
+    this.endGroup()
   };
 
   // Handled separately to avoid spaces between a minus and a number
@@ -683,6 +701,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.singleQuery(i + 1));
     }
   };
+  
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
     this.startCollectionGroup();
     this.visit(ctx.functionName());
