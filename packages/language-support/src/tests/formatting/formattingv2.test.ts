@@ -845,4 +845,18 @@ RETURN p`;
        (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
     verifyFormatting(query, expected);
   });
+
+  test('should not leave dangling closing brace/parenthesis for this query', () => {
+    const query = `EXPLAIN MATCH (rye { title: "HJrZJBJC" })
+CREATE (n:Tyyyyyyyyype { title: "Q8Ha5pVR", rank: "DIVe5wjf", rankID: "9ukDjNtj" })
+CREATE ()
+RETURN rye`
+    const expected = `EXPLAIN
+MATCH (rye {title: "HJrZJBJC"})
+CREATE (n:Tyyyyyyyyype {title: "Q8Ha5pVR", rank: "DIVe5wjf",
+                       rankID: "9ukDjNtj"})
+CREATE ()
+RETURN rye`
+    verifyFormatting(query, expected);
+  })
 });
