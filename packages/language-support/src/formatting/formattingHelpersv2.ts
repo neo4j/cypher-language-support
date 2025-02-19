@@ -199,6 +199,7 @@ function getNextIndent(currIndent: number, choice: Choice): number {
   return currIndent;
 }
 
+// Very useful for debugging but not actually used in the code
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function stateToString(state: State) {
   const result = reconstructBestPath(state);
