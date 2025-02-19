@@ -891,6 +891,14 @@ WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     verifyFormatting(query, expected);
   })
+
+  test('no splits within an arrow', () => {
+    const query = `MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->(naaaaame);`;
+    const expected = `
+MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
+      (naaaaame);`.trimStart();
+    verifyFormatting(query, expected);
+  })
 });
 
 describe('tests for line breaks with comments', () => {
