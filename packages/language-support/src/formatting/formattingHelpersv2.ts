@@ -22,7 +22,6 @@ import { lexerKeywords } from '../lexerSymbols';
 
 const INDENTATION = 2;
 export const MAX_COL = 80;
-const debug = false;
 const showGroups = false;
 
 export interface Chunk {
@@ -49,7 +48,7 @@ export interface Split {
 export interface Choice {
   left: Chunk;
   right: Chunk;
-  // The possible splits that the linewrapper can choose
+  // The possible splits that the best first search can choose
   possibleSplitChoices: Split[];
 }
 
@@ -305,16 +304,6 @@ function bestFirstSolnSearch(
     }
     seenStates.add(stateKey);
 
-    if (debug) {
-      console.log('#'.repeat(MAX_COL));
-      console.log(stateToString(state));
-      console.log('Cost: ', state.cost);
-      const specialText =
-        choiceList[state.choiceIndex]?.left.specialBehavior?.type;
-      const regularText = choiceList[state.choiceIndex]?.left.text;
-      console.log('Next:', specialText || regularText);
-      console.log(state.activeGroups);
-    }
     // We found a solution. Since we do best first, it has to be the best
     // solution, so reconstruct that path of decisions
     if (state.choiceIndex === choiceList.length) {
