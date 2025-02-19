@@ -95,7 +95,7 @@ interface FinalResultWithPos {
   cursorPos?: number;
 }
 
-type FinalResult = string | FinalResultWithPos
+type FinalResult = string | FinalResultWithPos;
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
@@ -155,8 +155,8 @@ export function isComment(token: Token) {
   );
 }
 
-// Variables or property names that have the same name as a keyword should not be
-// treated as keywords
+// Variables or property names that have the same name as a keyword should not
+// be treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
   return (
     node.parentCtx instanceof UnescapedSymbolicNameString_Context ||
@@ -199,6 +199,7 @@ function getNextIndent(currIndent: number, choice: Choice): number {
   return currIndent;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function stateToString(state: State) {
   const result = reconstructBestPath(state);
   const resultString = decisionsToFormatted(result.decisions);
@@ -351,9 +352,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     }
     pushIfNotEmpty(decision.split.splitType);
   });
-  const result = buffer.join('').trimEnd()
+  const result = buffer.join('').trimEnd();
   if (cursorPos == -1) {
-    return result
+    return result;
   }
   return { formated: result, cursorPos: cursorPos };
 }
@@ -378,10 +379,12 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   }) as Choice[];
 }
 
-export function buffersToFormattedString(buffers: Chunk[][]): FinalResultWithPos {
+export function buffersToFormattedString(
+  buffers: Chunk[][],
+): FinalResultWithPos {
   let formatted = '';
   let indentation: number = 0;
-  let cursorPos = 0
+  let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
@@ -396,18 +399,18 @@ export function buffersToFormattedString(buffers: Chunk[][]): FinalResultWithPos
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
-    const partlyFormatted = decisionsToFormatted(result.decisions)
-    if (typeof partlyFormatted === "string") {
+    const partlyFormatted = decisionsToFormatted(result.decisions);
+    if (typeof partlyFormatted === 'string') {
       formatted += partlyFormatted + '\n';
     } else {
-      cursorPos = formatted.length + partlyFormatted.cursorPos
+      cursorPos = formatted.length + partlyFormatted.cursorPos;
       formatted += partlyFormatted.formated + '\n';
     }
   }
   if (indentation > 0) {
     throw new Error('indentations left');
   }
-  return {formated: formatted.trimEnd(), cursorPos: cursorPos};
+  return { formated: formatted.trimEnd(), cursorPos: cursorPos };
 }
 
 const basicSplits = [
