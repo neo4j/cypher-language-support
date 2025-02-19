@@ -45,6 +45,7 @@ import {
   SetClauseContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
+  UnwindClauseContext,
   WhereClauseContext,
   WithClauseContext,
 } from '../generated-parser/CypherCmdParser';
@@ -266,6 +267,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup();
   };
 
+  visitUnwindClause = (ctx: UnwindClauseContext) => {
+    this.visit(ctx.UNWIND());
+    this.startGroup();
+    this.visit(ctx.expression());
+    this.startGroup();
+    this.visit(ctx.AS());
+    this.visit(ctx.variable());
+    this.endGroup();
+    this.endGroup();
+  };
+
   visitReturnItems = (ctx: ReturnItemsContext) => {
     if (ctx.TIMES()) {
       this.visit(ctx.TIMES());
@@ -457,7 +469,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this.visitTerminalRaw(arrowLineList[1].MINUS());
-    this.visitIfNotNull(ctx.rightArrow());
+    if (ctx.rightArrow()) {
+      this.visit(ctx.rightArrow());
+      this.concatenate();
+    }
+    // Put the relationship [] and the arrow in the same chunk
+    if (ctx.LBRACKET()) {
+      this.concatenate();
+    }
     this.avoidSpaceBetween();
   };
 

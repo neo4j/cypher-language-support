@@ -867,7 +867,7 @@ UNWIND [{_id: "MiltPFxk",
          properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}},
         {_id: "2uMA2cW8",
          properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}}]
-        AS row
+       AS row
 RETURN row`.trimStart();
     verifyFormatting(query, expected);
   });
