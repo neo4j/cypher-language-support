@@ -42,6 +42,7 @@ import {
   RelationshipPatternContext,
   ReturnBodyContext,
   ReturnClauseContext,
+  ReturnItemContext,
   ReturnItemsContext,
   SetClauseContext,
   StatementsOrCommandsContext,
@@ -279,6 +280,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup();
   };
 
+  visitReturnItem = (ctx: ReturnItemContext) => {
+    this.visit(ctx.expression())
+    this.startCollectionGroup()
+    this.visitIfNotNull(ctx.AS())
+    this.visitIfNotNull(ctx.variable())
+    this.endGroup()
+  };
+
   visitReturnItems = (ctx: ReturnItemsContext) => {
     if (ctx.TIMES()) {
       this.visit(ctx.TIMES());
@@ -315,20 +324,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReduceExpression = (ctx: ReduceExpressionContext) => {
-    this.startGroup()
-    this.visitTerminalRaw(ctx.REDUCE())
-    this.visitTerminalRaw(ctx.LPAREN())
-    this.visit(ctx.variable(0))
-    this.visit(ctx.EQ())
-    this.visit(ctx.expression(0))
-    this.visitTerminalRaw(ctx.COMMA())
-    this.visit(ctx.variable(1))
-    this.visit(ctx.IN())
-    this.visit(ctx.expression(1))
-    this.visit(ctx.BAR())
-    this.visit(ctx.expression(2))
-    this.visit(ctx.RPAREN())
-    this.endGroup()
+    this.startGroup();
+    this.visitTerminalRaw(ctx.REDUCE());
+    this.visitTerminalRaw(ctx.LPAREN());
+    this.visit(ctx.variable(0));
+    this.visit(ctx.EQ());
+    this.visit(ctx.expression(0));
+    this.visitTerminalRaw(ctx.COMMA());
+    this.visit(ctx.variable(1));
+    this.visit(ctx.IN());
+    this.visit(ctx.expression(1));
+    this.visit(ctx.BAR());
+    this.visit(ctx.expression(2));
+    this.visit(ctx.RPAREN());
+    this.endGroup();
   };
 
   // Handled separately to avoid spaces between a minus and a number
@@ -701,9 +710,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.singleQuery(i + 1));
     }
   };
-  
+
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
-    this.startCollectionGroup();
     this.visit(ctx.functionName());
     this.visit(ctx.LPAREN());
     this.concatenate(); // Don't separate the function name and the (
@@ -712,6 +720,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitIfNotNull(ctx.ALL());
     this.visitIfNotNull(ctx.DISTINCT());
+   // this.startCollectionGroup();
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
