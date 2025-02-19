@@ -860,3 +860,17 @@ RETURN rye`
     verifyFormatting(query, expected);
   })
 });
+
+describe('tests for line breaks with comments', () => {
+  test('should not put the arrow on a newline for no reason', () => {
+    const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+return z`
+    const expected = `MATCH (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i: Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+RETURN z`;
+    verifyFormatting(query, expected);
+  })
+})
