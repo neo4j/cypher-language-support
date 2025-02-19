@@ -467,7 +467,7 @@ CALL {
 }
 RETURN count(*)`
 
-verifyFormatting(query, expected);
+    verifyFormatting(query, expected);
 
   });
 });
@@ -485,12 +485,12 @@ describe('tests for correct cursor position', () => {
     expect(result.newCursorPos).toEqual(result.formattedString.length - 1);
   });
   test('cursor at newline', () => {
-      const query = `MATCH (n:Person)
+    const query = `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n 
 @LIMIT 12;`;
     const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@",""), cursorPos);
+    const result = formatQuery(query.replace("@", ""), cursorPos);
     const formated = `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n@LIMIT 12;`;
@@ -509,7 +509,7 @@ CALL {
 } 
 RETURN count(*)`;
     const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@",""), cursorPos);
+    const result = formatQuery(query.replace("@", ""), cursorPos);
     const formated = `UNWIND range(1, 100) AS _
 CALL {
   MATCH (source:object)
@@ -532,7 +532,7 @@ WHERE variable.property = "String"
     OR $para@meter > 2 
 RETURN variable;`;
     const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@",""), cursorPos);
+    const result = formatQuery(query.replace("@", ""), cursorPos);
     const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false OR
       $para@meter > 2
@@ -828,4 +828,21 @@ WHERE p.price > 1000 AND p.stock > 50 AND
 RETURN p`;
     verifyFormatting(query, expected);
   })
+
+  test('should not aligned long create statements weirdly', () => {
+    const query = `CREATE
+    (a:Location {name: "DXe5KhL3"}),
+    (b:Location {name: "v2BpdkOj"}),
+    (c:Location {name: "Fi5CMJ9Y"}),
+    (d:Location {name: "S31K3X1o"}),
+    (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
+    (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
+    (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
+    const expected = `CREATE (a:Location {name: "DXe5KhL3"}), (b:Location {name: "v2BpdkOj"}),
+       (c:Location {name: "Fi5CMJ9Y"}), (d:Location {name: "S31K3X1o"}),
+       (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
+       (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
+       (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
+    verifyFormatting(query, expected);
+  });
 });
