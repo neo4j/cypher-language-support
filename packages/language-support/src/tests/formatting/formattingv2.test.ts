@@ -721,8 +721,8 @@ RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE p.article_number IN
       ["OCj0AswA", "dFRbj1s3", "oMbdvgm7", "L4Vey8xn", "GNgeDIkA", "pU4RE0lM",
-      "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
-      "g7LjxbGD"]
+       "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
+       "g7LjxbGD"]
 RETURN p`;
     verifyFormatting(query, expected);
   })
@@ -808,6 +808,24 @@ FOREACH (i IN range(0, size(eventChain) - 2) |
     )
   )
 )`
+    verifyFormatting(query, expected);
+  })
+
+  test('should align lists by the first element, not the bracket', () => {
+    const query = `MATCH (p:Product)
+WHERE p.price > 1000 AND p.stock > 50 AND
+      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
+                    'Sports Equipment', 'Automotive Parts',
+                    'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
+                    'Musical Instruments', 'Art Supplies', 'Office Supplies']
+RETURN p`;
+    const expected = `MATCH (p:Product)
+WHERE p.price > 1000 AND p.stock > 50 AND
+      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
+                     'Sports Equipment', 'Automotive Parts',
+                     'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
+                     'Musical Instruments', 'Art Supplies', 'Office Supplies']
+RETURN p`;
     verifyFormatting(query, expected);
   })
 });

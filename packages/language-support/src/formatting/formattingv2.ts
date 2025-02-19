@@ -52,6 +52,7 @@ import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   buffersToFormattedString,
   Chunk,
+  collectionGroupStartChunk,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
@@ -151,6 +152,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroup = () => {
     this.currentBuffer().push(groupStartChunk);
   };
+
+  startCollectionGroup = () => {
+    this.currentBuffer().push(collectionGroupStartChunk);
+  }
 
   endGroup = () => {
     this.currentBuffer().push(groupEndChunk);
@@ -714,7 +719,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    this.startGroup();
+    this.startCollectionGroup();
     this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
 
@@ -755,7 +760,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
-    this.startGroup();
+    this.startCollectionGroup();
     this.visit(ctx.LBRACKET());
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {

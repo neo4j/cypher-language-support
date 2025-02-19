@@ -35,9 +35,16 @@ export interface Chunk {
   isCursor?: true;
 }
 
-interface SpecialChunkBehavior {
-  type: 'INDENT' | 'DEDENT' | 'GROUP_START' | 'GROUP_END';
+interface GroupChunk {
+  type: 'GROUP_START' | 'GROUP_END';
+  extraIndent?: number;
 }
+
+interface IndentChunk {
+  type: 'INDENT' | 'DEDENT';
+}
+
+type SpecialChunkBehavior = GroupChunk | IndentChunk;
 
 export interface Split {
   splitType: ' ' | '\n' | '';
@@ -242,8 +249,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   }
 
   if (choice.left.specialBehavior?.type === 'GROUP_START') {
+    const extraIndent = choice.left.specialBehavior.extraIndent || 0;
     nextGroups.push({
-      align: actualColumn,
+      align: actualColumn + extraIndent,
       breakCost: Math.pow(10, nextGroups.length + 1),
     });
   }
@@ -456,6 +464,14 @@ export const groupStartChunk: Chunk = {
     type: 'GROUP_START',
   },
 };
+
+export const collectionGroupStartChunk: Chunk = {
+  ...groupStartChunk,
+  specialBehavior: {
+    type: 'GROUP_START',
+    extraIndent: 1,
+  },
+}
 
 export const groupEndChunk: Chunk = {
   text: '',
