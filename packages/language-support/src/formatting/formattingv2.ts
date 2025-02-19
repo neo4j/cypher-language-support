@@ -156,7 +156,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   startCollectionGroup = () => {
     this.currentBuffer().push(collectionGroupStartChunk);
-  }
+  };
 
   endGroup = () => {
     this.currentBuffer().push(groupEndChunk);
@@ -684,6 +684,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    this.startCollectionGroup();
     this.visit(ctx.functionName());
     this.visit(ctx.LPAREN());
     this.concatenate(); // Don't separate the function name and the (
@@ -698,10 +699,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (i == 0 && !ctx.DISTINCT() && !ctx.ALL()) {
         this.avoidSpaceBetween();
       }
+      this.startGroup();
       this.visit(ctx.functionArgument(i));
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
       }
+      this.endGroup();
     }
     this.visit(ctx.RPAREN());
   };

@@ -845,6 +845,13 @@ RETURN p`;
        (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
     verifyFormatting(query, expected);
   });
+  test('should align arguments of function invocation after opening bracket', () => {
+    const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
+    const expected = `RETURN collect(create_this1 {datetime:
+               apoc.date.convertFormat(toString(create_this1.datetime),
+                                       "OZQvXyoU", "EhpkDy8g")}) AS data`;
+    verifyFormatting(query, expected);
+  })
 
   test('should not leave dangling closing brace/parenthesis for this query', () => {
     const query = `EXPLAIN MATCH (rye { title: "HJrZJBJC" })
