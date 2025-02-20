@@ -847,6 +847,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RBRACKET());
     this.endGroup();
   };
+
   visitForeachClause = (ctx: ForeachClauseContext) => {
     this.visit(ctx.FOREACH());
     this.visit(ctx.LPAREN());
