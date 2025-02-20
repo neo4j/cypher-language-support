@@ -56,6 +56,7 @@ import {
   buffersToFormattedString,
   Chunk,
   collectionGroupStartChunk,
+  collectionGroupStartChunk2,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
@@ -158,6 +159,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   startCollectionGroup = () => {
     this.currentBuffer().push(collectionGroupStartChunk);
+  };
+
+  startCollectionGroup2 = () => {
+    this.currentBuffer().push(collectionGroupStartChunk2);
   };
 
   endGroup = () => {
@@ -281,11 +286,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {
-    this.visit(ctx.expression())
-    this.startCollectionGroup()
-    this.visitIfNotNull(ctx.AS())
-    this.visitIfNotNull(ctx.variable())
-    this.endGroup()
+    this.visit(ctx.expression());
+    this.startCollectionGroup();
+    this.visitIfNotNull(ctx.AS());
+    this.visitIfNotNull(ctx.variable());
+    this.endGroup();
   };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {
@@ -638,22 +643,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.breakLine();
+    //this.breakLine();
+    //this.currentBuffer().push({text: "\n", start: -1, end: -1})
+    //this.startGroup()
+    //this.addIndentation();
+    this.startCollectionGroup2();
     this.visit(ctx.CASE());
-    this.addIndentation();
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
-      this.breakLine();
+      this.addIndentation();
+      //this.breakLine();
+      //this.smartBreakLine()
       this.visit(ctx.caseAlternative(i));
+      this.removeIndentation();
     }
     if (ctx.ELSE()) {
-      this.breakLine();
+      this.addIndentation();
+      //this.breakLine();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
+      this.removeIndentation();
     }
-    this.removeIndentation();
-    this.breakLine();
+    this.endGroup();
+    this.addIndentation();
     this.visit(ctx.END());
+    this.removeIndentation();
+    //this.removeIndentation();
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
@@ -720,7 +735,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitIfNotNull(ctx.ALL());
     this.visitIfNotNull(ctx.DISTINCT());
-   // this.startCollectionGroup();
+    // this.startCollectionGroup();
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument

@@ -379,7 +379,11 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       splits = [{ splitType: '\n', cost: 0 }];
     }
     if (chunk.specialBehavior) {
-      splits = basicNoSpaceSplits;
+      if (chunk.specialBehavior.type === 'INDENT') {
+        splits = [{ splitType: '\n', cost: 0 }];
+      } else {
+        splits = basicNoSpaceSplits;
+      }
     }
     return {
       left: chunk,
@@ -407,6 +411,7 @@ export function buffersToFormattedString(
       oobCount: 0,
       edge: null,
     };
+    //console.log(choices);
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
     const partlyFormatted = decisionsToFormatted(result.decisions);
@@ -471,7 +476,15 @@ export const collectionGroupStartChunk: Chunk = {
     type: 'GROUP_START',
     extraIndent: 1,
   },
-}
+};
+
+export const collectionGroupStartChunk2: Chunk = {
+  ...groupStartChunk,
+  specialBehavior: {
+    type: 'GROUP_START',
+    extraIndent: 2,
+  },
+};
 
 export const groupEndChunk: Chunk = {
   text: '',
