@@ -903,6 +903,17 @@ MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
       (naaaaame);`.trimStart();
     verifyFormatting(query, expected);
   })
+
+  test('does not split weird parenthesized expressions weirdly', () => {
+    const query = `MATCH (p:Product)--(o:Order)
+WHERE (p.priiiiiiiiiiiiiiiiiiice + o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
+RETURN p;`;
+    const expected = `MATCH (p:Product)--(o:Order)
+WHERE (p.priiiiiiiiiiiiiiiiiiice +
+       o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
+RETURN p;`
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for line breaks with comments', () => {
