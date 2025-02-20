@@ -758,7 +758,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
-    handleMergeClause(ctx, (node) => this.visit(node));
+    handleMergeClause(ctx, (node) => this.visit(node), this.startGroup, this.endGroup);
   };
 
   // Handled separately because it wants indentation

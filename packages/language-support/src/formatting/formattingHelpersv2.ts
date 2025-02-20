@@ -117,9 +117,17 @@ const traillingCharacters = [
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
+  startGroup?: () => void,
+  endGroup?: () => void,
 ) {
   visit(ctx.MERGE());
+  if (startGroup) {
+    startGroup();
+  }
   visit(ctx.pattern());
+  if (endGroup) {
+    endGroup();
+  }
   const mergeActions = ctx
     .mergeAction_list()
     .map((action, index) => ({ action, index }));
