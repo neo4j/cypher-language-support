@@ -472,17 +472,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitPathLength = (ctx: PathLengthContext) => {
     this.visitTerminalRaw(ctx.TIMES());
-    this.visitTerminalRaw({
-      symbol: ctx._from_,
-      parentCtx: ctx,
-      getText: () => ctx._from_.text,
-    });
-    this.visitTerminalRaw(ctx.DOTDOT());
-    this.visitTerminalRaw({
-      symbol: ctx._to,
-      parentCtx: ctx,
-      getText: () => ctx._to.text,
-    });
+    if (ctx._single) {
+      this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+    } else if (ctx.DOTDOT()) {
+      let idx = 0;
+      if (ctx._from_) {
+        this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+        idx++;
+      }
+      this.visitTerminalRaw(ctx.DOTDOT());
+      if (ctx._to) {
+        this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      }
+    }
   };
 
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
