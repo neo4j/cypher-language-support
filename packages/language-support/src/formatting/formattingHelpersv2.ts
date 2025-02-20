@@ -486,7 +486,7 @@ export const collectionGroupStartChunk: Chunk = {
   },
 };
 
-export const collectionGroupStartChunk2: Chunk = {
+export const caseGroupStartChunk: Chunk = {
   ...groupStartChunk,
   specialBehavior: {
     type: 'GROUP_START',

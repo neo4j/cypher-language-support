@@ -57,7 +57,7 @@ import {
   buffersToFormattedString,
   Chunk,
   collectionGroupStartChunk,
-  collectionGroupStartChunk2,
+  caseGroupStartChunk,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
@@ -105,7 +105,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
-    // Loop since we might have (multiple) comments anywhere, e.g. [b, C, C, a, C]
+    // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
     // but we should still be able to concatenate a, b to ba
     const indices: number[] = [];
     for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
@@ -162,8 +162,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().push(collectionGroupStartChunk);
   };
 
-  startCollectionGroup2 = () => {
-    this.currentBuffer().push(collectionGroupStartChunk2);
+  startCaseGroup = () => {
+    this.currentBuffer().push(caseGroupStartChunk);
   };
 
   endGroup = () => {
@@ -653,7 +653,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.startCollectionGroup2();
+    this.startCaseGroup();
     this.visit(ctx.CASE());
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
@@ -674,7 +674,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.startCollectionGroup2();
+    this.startCaseGroup();
     this.visit(ctx.CASE());
     this.visit(ctx.expression(0));
     const n = ctx.extendedCaseAlternative_list().length;
@@ -739,7 +739,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitIfNotNull(ctx.ALL());
     this.visitIfNotNull(ctx.DISTINCT());
-    // this.startCollectionGroup();
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
