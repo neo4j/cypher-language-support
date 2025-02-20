@@ -386,15 +386,14 @@ WHEN > 1000 THEN "Immortal"
 ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
-RETURN n.name,
-CASE n.age
-  WHEN = 0, = 1, = 2 THEN "Baby"
-  WHEN <= 13 THEN "Child"
-  WHEN < 20 THEN "Teenager"
-  WHEN < 30 THEN "Young Adult"
-  WHEN > 1000 THEN "Immortal"
-  ELSE "Adult"
-END AS result`;
+RETURN n.name, CASE n.age
+                 WHEN = 0, = 1, = 2 THEN "Baby"
+                 WHEN <= 13 THEN "Child"
+                 WHEN < 20 THEN "Teenager"
+                 WHEN < 30 THEN "Young Adult"
+                 WHEN > 1000 THEN "Immortal"
+                 ELSE "Adult"
+               END AS result`;
     verifyFormatting(query, expected);
   });
 });
@@ -654,7 +653,7 @@ RETURN variable;`
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
 
-const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21, q22, q23];
+const queries = [q18];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {

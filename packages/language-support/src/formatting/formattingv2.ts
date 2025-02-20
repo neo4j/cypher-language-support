@@ -674,23 +674,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.breakLine();
+    this.startCollectionGroup2();
     this.visit(ctx.CASE());
     this.visit(ctx.expression(0));
-    this.addIndentation();
     const n = ctx.extendedCaseAlternative_list().length;
     for (let i = 0; i < n; i++) {
-      this.breakLine();
+      this.addIndentation();
       this.visit(ctx.extendedCaseAlternative(i));
+      this.removeIndentation()
     }
     if (ctx.ELSE()) {
-      this.breakLine();
+      this.addIndentation();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression(1));
+      this.removeIndentation()
     }
-    this.removeIndentation();
-    this.breakLine();
+    this.endGroup();
+    this.addIndentation();
     this.visit(ctx.END());
+    this.removeIndentation();
   };
 
   // Handled separately because it wants indentation and line breaks
