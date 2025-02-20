@@ -368,12 +368,11 @@ WHEN n.age < 40      THEN 2
 ELSE 3
 END AS result, n.eyes, n.age`;
     const expected = `MATCH (n:Person)
-RETURN
-CASE
-  WHEN n.eyes = 'blue' THEN 1
-  WHEN n.age < 40 THEN 2
-  ELSE 3
-END AS result, n.eyes, n.age`;
+RETURN CASE
+         WHEN n.eyes = 'blue' THEN 1
+         WHEN n.age < 40 THEN 2
+         ELSE 3
+       END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -655,7 +654,7 @@ RETURN variable;`
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
 
-  const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21, q22, q23];
+const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21, q22, q23];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
