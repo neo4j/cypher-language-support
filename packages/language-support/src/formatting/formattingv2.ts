@@ -8,6 +8,7 @@ import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   BooleanLiteralContext,
+  CaseAlternativeContext,
   CaseExpressionContext,
   ClauseContext,
   CountStarContext,
@@ -641,25 +642,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
   };
 
+  visitCaseAlternative = (ctx: CaseAlternativeContext) => {
+    this.visit(ctx.WHEN());
+    this.startGroup();
+    this.visit(ctx.expression(0));
+    this.visit(ctx.THEN());
+    this.visit(ctx.expression(1));
+    this.endGroup();
+  };
+
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    //this.breakLine();
-    //this.currentBuffer().push({text: "\n", start: -1, end: -1})
-    //this.startGroup()
-    //this.addIndentation();
     this.startCollectionGroup2();
     this.visit(ctx.CASE());
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
-      //this.breakLine();
-      //this.smartBreakLine()
       this.visit(ctx.caseAlternative(i));
       this.removeIndentation();
     }
     if (ctx.ELSE()) {
       this.addIndentation();
-      //this.breakLine();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
       this.removeIndentation();
@@ -668,7 +671,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addIndentation();
     this.visit(ctx.END());
     this.removeIndentation();
-    //this.removeIndentation();
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
