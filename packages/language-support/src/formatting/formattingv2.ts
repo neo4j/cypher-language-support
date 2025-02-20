@@ -899,9 +899,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     if (n > 0) {
+      this.avoidSpaceBetween()
       this.visit(ctx.RPAREN())
-      this.concatenate()
       this.endGroup()
+    }
+    if (ctx.YIELD()){
+      this.visit(ctx.YIELD())
+      this.visitIfNotNull(ctx.TIMES())
+      this.startGroup()
+      const length = ctx.procedureResultItem_list().length;
+      for (let i = 0; i < length; i++) {
+        this.visit(ctx.procedureResultItem(i))
+        if (i < length - 1) {
+          this.visit(ctx.COMMA(i));
+        }
+      }
+      this.endGroup()
+      this.visitIfNotNull(ctx.whereClause())
     }
   };
 }
