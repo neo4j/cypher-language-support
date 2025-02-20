@@ -130,8 +130,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const chunk: Chunk = {
       text: prefix.text + suffix.text,
-      start: prefix.start,
-      end: prefix.end + suffix.text.length,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -191,8 +189,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const text = commentToken.text.trim();
       const chunk: Chunk = {
         text,
-        start: commentToken.start,
-        end: commentToken.stop + 1,
         isComment: true,
       };
       this.currentBuffer().push(chunk);
@@ -212,8 +208,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const text = commentToken.text.trim();
       const chunk: Chunk = {
         text,
-        start: commentToken.start,
-        end: commentToken.stop + 1,
         isComment: true,
       };
       this.currentBuffer().push(chunk);
@@ -379,8 +373,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: Chunk = {
       text,
       node,
-      start: node.symbol.start,
-      end: node.symbol.stop + 1,
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -413,8 +405,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: Chunk = {
       text: result,
       node,
-      start: node.symbol.start,
-      end: node.symbol.stop + 1,
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;

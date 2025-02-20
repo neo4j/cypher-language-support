@@ -27,8 +27,6 @@ const showGroups = false;
 export interface Chunk {
   text: string;
   node?: TerminalNode;
-  start: number;
-  end: number;
   noSpace?: boolean;
   isComment?: boolean;
   specialBehavior?: SpecialChunkBehavior;
