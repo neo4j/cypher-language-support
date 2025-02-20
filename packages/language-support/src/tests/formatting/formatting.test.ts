@@ -450,9 +450,9 @@ RETURN n`;
 
   test('test for function invocation', () => {
     const query = `MATCH (n)
-RETURN COUNT(DISTINCT n, a)`;
+RETURN count(DISTINCT n, a)`;
     const expected = `MATCH (n)
-RETURN COUNT(DISTINCT n, a)`;
+RETURN count(DISTINCT n, a)`;
     verifyFormatting(query, expected);
   });
 });
