@@ -8,6 +8,7 @@ import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   BooleanLiteralContext,
+  CallClauseContext,
   CaseAlternativeContext,
   CaseExpressionContext,
   ClauseContext,
@@ -37,6 +38,7 @@ import {
   PathLengthContext,
   PatternContext,
   PatternListContext,
+  ProcedureNameContext,
   PropertyContext,
   ReduceExpressionContext,
   RegularQueryContext,
@@ -867,6 +869,39 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this.avoidSpaceBetween();
       this.visit(ctx.postFix(i));
+    }
+  };
+
+  visitProcedureName = (ctx: ProcedureNameContext) => {
+    this.startGroup()
+    this.visit(ctx.namespace())
+    this.visit(ctx.symbolicNameString())
+    this.endGroup()
+  };
+
+  visitCallClause = (ctx: CallClauseContext) => {
+    this.visitIfNotNull(ctx.OPTIONAL())
+    this.visit(ctx.CALL())
+    this.visit(ctx.procedureName())
+    const n = ctx.procedureArgument_list().length;
+    if (n > 0) {
+      this.startGroup()
+      this.visitTerminalRaw(ctx.LPAREN())
+      this.concatenate()
+    }
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+       this.avoidSpaceBetween()
+      }
+      this.visit(ctx.procedureArgument(i))
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+    }
+    if (n > 0) {
+      this.visit(ctx.RPAREN())
+      this.concatenate()
+      this.endGroup()
     }
   };
 }
