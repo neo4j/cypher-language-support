@@ -402,7 +402,7 @@ RETURN n.name, CASE n.age
 });
 
 describe('various edgecases', () => {
-  test('multiple queries', () => {
+  test('Should be space in between', () => {
     const query = 'Call call';
     const expected = 'CALL call';
     verifyFormatting(query, expected);
