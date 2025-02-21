@@ -46,7 +46,7 @@ export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
 
 export interface RegularChunk {
   type: 'REGULAR';
-  node: TerminalNode;
+  node?: TerminalNode;
   noSpace?: true;
   isCursor?: true;
   text: string;
