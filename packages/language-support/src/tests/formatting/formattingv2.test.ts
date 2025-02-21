@@ -550,6 +550,18 @@ RETURN n`;
     const expected = `CALL dbms.procedures YIELD name, signature, description`;
     verifyFormatting(query, expected);
   });
+
+  test('handles CALL YIELD with no args gracefully', () => {
+    const query = `call dbms.components() yield *`;
+    const expected = `CALL dbms.components() YIELD *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('handles CALL YIELD case with one arg gracefully', () => {
+    const query = `call dbms.components(1) yield *`;
+    const expected = `CALL dbms.components(1) YIELD *`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
