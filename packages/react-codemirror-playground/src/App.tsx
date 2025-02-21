@@ -42,8 +42,9 @@ export function App() {
   const [showAntlrParse, setShowAntlrParse] = useState(false);
   const [showConfigPanel, setShowConfigPanel] = useState(false);
   const [commandRanCount, setCommandRanCount] = useState(0);
-  const [darkMode, setDarkMode] = useState(false);
-
+  const [darkMode, setDarkMode] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches,
+  );  
   const [schema, setSchema] = useState<DbSchema>(testData.mockSchema);
   const [schemaText, setSchemaText] = useState<string>(
     JSON.stringify(testData.mockSchema, undefined, 2),

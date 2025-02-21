@@ -8,6 +8,7 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   ExtendedCaseExpressionContext,
+  ForeachClauseContext,
   FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
@@ -508,6 +509,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.visit(ctx.RCURLY());
+  };
+  visitForeachClause = (ctx: ForeachClauseContext) => {
+    this.visit(ctx.FOREACH());
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.visit(ctx.IN());
+    this.visit(ctx.expression());
+    if (ctx.BAR()) {
+      this.visit(ctx.BAR());
+      this.addIndentation();
+      this.visit(ctx.clause(0));
+      this.removeIndentation();
+      this.breakLine();
+      this.visit(ctx.RPAREN());
+    } else {
+      this.visit(ctx.RPAREN());
+    }
   };
 }
 
