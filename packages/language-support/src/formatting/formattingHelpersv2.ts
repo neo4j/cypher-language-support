@@ -189,8 +189,8 @@ export function isComment(token: Token) {
   );
 }
 
-// Variables or property names that have the same name as a keyword should not
-// be treated as keywords
+// Variables or property names that have the same name as a keyword should not be
+// treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
   return (
     node.parentCtx instanceof UnescapedSymbolicNameString_Context ||
