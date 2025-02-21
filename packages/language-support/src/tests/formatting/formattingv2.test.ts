@@ -440,7 +440,7 @@ RETURN COUNT(DISTINCT n, a)`;
     const query = `RETURN this {.id,.title} AS this`;
     const expected = `RETURN this {.id, .title} AS this`;
     verifyFormatting(query, expected);
-  })
+  });
   test('test that what is [*1..10] inside the brackets does not disapear', () => {
     const query = `UNWIND range(1,100) as _
 CALL {
@@ -462,10 +462,9 @@ CALL {
              AS Weight ORDER BY Weight LIMIT 3
   RETURN length(path) AS l, Weight
 }
-RETURN count(*)`
+RETURN count(*)`;
 
     verifyFormatting(query, expected);
-
   });
 });
 
@@ -486,12 +485,12 @@ describe('tests for correct cursor position', () => {
 WHERE n.name = "Steve" 
 RETURN n 
 @LIMIT 12;`;
-    const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@", ""), cursorPos);
+    const cursorPos = query.search('@');
+    const result = formatQuery(query.replace('@', ''), cursorPos);
     const formated = `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n@LIMIT 12;`;
-    expect(result.newCursorPos).toEqual(formated.search("@"));
+    expect(result.newCursorPos).toEqual(formated.search('@'));
   });
 
   test('cursor start of line with spaces newline', () => {
@@ -505,8 +504,8 @@ CALL {
   RETURN length(path) as l, Weight 
 } 
 RETURN count(*)`;
-    const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@", ""), cursorPos);
+    const cursorPos = query.search('@');
+    const result = formatQuery(query.replace('@', ''), cursorPos);
     const formated = `UNWIND range(1, 100) AS _
 CALL {
   MATCH (source:object)
@@ -519,7 +518,7 @@ CALL {
   RETURN length(path) AS l, Weight
 }
 RETURN count(*)`;
-    expect(result.newCursorPos).toEqual(formated.search("@"));
+    expect(result.newCursorPos).toEqual(formated.search('@'));
   });
 
   test('cursor start of line without spaces', () => {
@@ -528,13 +527,13 @@ WHERE variable.property = "String"
     OR namespaced.function() = false
     OR $para@meter > 2 
 RETURN variable;`;
-    const cursorPos = query.search("@")
-    const result = formatQuery(query.replace("@", ""), cursorPos);
+    const cursorPos = query.search('@');
+    const result = formatQuery(query.replace('@', ''), cursorPos);
     const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false OR
       $para@meter > 2
 RETURN variable;`;
-    expect(result.newCursorPos).toEqual(formated.search("@"));
+    expect(result.newCursorPos).toEqual(formated.search('@'));
   });
 });
 
@@ -613,7 +612,7 @@ WITH s,
 WITH s, tableName, [x in columns | x.name + x.fk + x.pk] as columns
 WITH s, "Table " + tableName + " has columns:" + apoc.text.join(columns,'') as tableDescriptions
 WITH s, apoc.text.join(collect(tableDescriptions),'------------------------') as schemaDescription
-SET s.schemaDescription=schemaDescription`
+SET s.schemaDescription=schemaDescription`;
   // subqueries example
   const q12 = `UNWIND range(1,100) as _
 CALL {
@@ -624,12 +623,12 @@ CALL {
   ORDER BY Weight LIMIT 3
   RETURN length(path) as l, Weight
 }
-RETURN count(*)`
+RETURN count(*)`;
   //allTokenTypes example
   const q13 = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false // comment
 OR $parameter > 2
-RETURN variable;`
+RETURN variable;`;
 
   const q14 = `MATCH (p:Product) WHERE p.price > 1000 AND p.stock > 50 AND p.category IN ['Electronics','Home Appliances','Garden Tools','Sports Equipment','Automotive Parts','Fashion Accessories','Books','Toys','Jewelry','Musical Instruments','Art Supplies','Office Supplies'] AND (CASE WHEN p.discount IS NULL THEN 0 ELSE p.discount END) > 0.15 AND (p.sold - (CASE WHEN p.reserved IS NULL THEN 0 ELSE p.reserved END)) > 20 AND (p.rating * (CASE WHEN p.reviews IS NULL THEN 1 ELSE p.reviews END)) > 3000 RETURN p`;
 
@@ -649,13 +648,34 @@ RETURN variable;`
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
 
-const queries = [q0, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21];
+  const queries = [
+    q0,
+    q1,
+    q2,
+    q3,
+    q4,
+    q5,
+    q6,
+    q7,
+    q8,
+    q9,
+    q10,
+    q11,
+    q12,
+    q13,
+    q14,
+    q15,
+    q16,
+    q17,
+    q18,
+    q19,
+    q20,
+    q21,
+  ];
 
   test('keeps all queries within the max column width', () => {
     queries.forEach((query) => {
       const formatted = formatQuery(query);
-      console.log('X'.repeat(MAX_COL));
-      console.log(formatted)
       const lines = formatted.split('\n');
       lines.forEach((line) => {
         expect(line.length).toBeLessThanOrEqual(MAX_COL);
@@ -669,22 +689,24 @@ MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
              [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(q21, expected);
-  })
+  });
 
   test('does not split the $ and the parameter name', () => {
-    const query = 'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
-    const expected = 'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
+    const query =
+      'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
+    const expected =
+      'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
     verifyFormatting(query, expected);
-  })
+  });
 
   test('aligns split node pattern', () => {
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`
+    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
 MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
-  })
+  });
 
   test('aligns nested parentheses well', () => {
     const query = `MATCH (n)
@@ -693,16 +715,16 @@ MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
 WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND
        (this1:WaFQynNy OR this1:hyztnnwg OR this1:QpLckJcy))`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('aligns large maps one further than the opening brace', () => {
-    const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`
+    const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
 RETURN {looooooooooooooooooooooongkey: value,
         loooooooooooooooooooongkeeeyyyyyyyy: value2,
         looooooooooooooongkeeey: value3}`.trimStart();
     verifyFormatting(query, expected);
-  })
+  });
 
   test('long list should not break after the opening brace leaving it alone', () => {
     const query = `MATCH (p:Product)
@@ -718,7 +740,7 @@ WHERE p.article_number IN
        "g7LjxbGD"]
 RETURN p`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should prefer breaking pattern list on commas', () => {
     const query = `EXPLAIN
@@ -732,7 +754,7 @@ MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
 WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should prefer to put ORDER BY etc together', () => {
     const query = `MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(Kevin:Person {name: "HEZDAAhT"})
@@ -746,18 +768,18 @@ WHERE p.name <> "nnwAPHJg"
 RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
        ORDER BY Name ASC LIMIT "ZTWWLgIq"`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('paths should be aligned after the =', () => {
     const query = `MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
       (il:nodetyyyype {type: "58vomdG0"})
-RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`
+RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`;
     const expected = `
 MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
            (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should fit this whole node on one line', () => {
     const query = `MATCH (i:tyyyyyyyype {createdAt: datetime("V3bzb8bX"), description: "UM706WRV"})
@@ -765,7 +787,7 @@ RETURN i`;
     const expected = `MATCH (i:tyyyyyyyype {createdAt: datetime("V3bzb8bX"), description: "UM706WRV"})
 RETURN i`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should not have weird alignment for multiple node creation', () => {
     const query = `
@@ -779,7 +801,7 @@ CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
        (:actor {name: "ZAvjBFt6"}), (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`.trimStart();
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should put nested FOREACH on newline', () => {
     const query = `MATCH (u:User)
@@ -800,9 +822,9 @@ FOREACH (i IN range(0, size(eventChain) - 2) |
       MERGE (node1)-[:NEXT_EVENT]->(node2)
     )
   )
-)`
+)`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should align lists by the first element, not the bracket', () => {
     const query = `MATCH (p:Product)
@@ -820,7 +842,7 @@ WHERE p.price > 1000 AND p.stock > 50 AND
                      'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should not aligned long create statements weirdly', () => {
     const query = `CREATE
@@ -830,12 +852,12 @@ RETURN p`;
     (d:Location {name: "S31K3X1o"}),
     (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
     (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
-    (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
+    (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
     const expected = `CREATE (a:Location {name: "DXe5KhL3"}), (b:Location {name: "v2BpdkOj"}),
        (c:Location {name: "Fi5CMJ9Y"}), (d:Location {name: "S31K3X1o"}),
        (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
        (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
-       (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`
+       (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
     verifyFormatting(query, expected);
   });
   test('should align arguments of function invocation after opening bracket', () => {
@@ -844,7 +866,7 @@ RETURN p`;
                toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g")})
        AS data`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('should not forget about alignment for unwind clause', () => {
     const query = `UNWIND [{_id:"MiltPFxk", properties:{name:"5nIou0gC", id:"ha44MrBy", value:"6o5lzHd6"}}, {_id:"2uMA2cW8", properties:{name:"WOsBC4Ks", id:"bP526OzE", value:"WhYP4dxd"}}] AS row RETURN row`;
@@ -876,7 +898,7 @@ WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('no splits within an arrow', () => {
     const query = `MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->(naaaaame);`;
@@ -884,7 +906,7 @@ RETURN DISTINCT p.networkDbId, p.name, platfs`;
 MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
       (naaaaame);`.trimStart();
     verifyFormatting(query, expected);
-  })
+  });
 
   test('does not split weird parenthesized expressions weirdly', () => {
     const query = `MATCH (p:Product)--(o:Order)
@@ -893,7 +915,7 @@ RETURN p;`;
     const expected = `MATCH (p:Product)--(o:Order)
 WHERE (p.priiiiiiiiiiiiiiiiiiice +
        o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
-RETURN p;`
+RETURN p;`;
     verifyFormatting(query, expected);
   });
 });
