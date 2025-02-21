@@ -514,6 +514,17 @@ RETURN n`;
     const halfFilledPathExpected = `MATCH path = ()-[:type*..10]->()`;
     verifyFormatting(halfFilledPath, halfFilledPathExpected);
   });
+
+  test('can handle weird minuses', () => {
+    const query = `EXPLAIN MATCH (u:User)-[:WROTE]-> (r:Review)–[]–> (b:Business)-[:IN]-> (c:Category)
+WHERE b.name = "XGyhUMQO"
+RETURN u, r, b, c`;
+    const expected = `EXPLAIN
+MATCH (u:User)-[:WROTE]->(r:Review)–[]–>(b:Business)-[:IN]->(c:Category)
+WHERE b.name = "XGyhUMQO"
+RETURN u, r, b, c`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor

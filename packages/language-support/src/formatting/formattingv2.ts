@@ -7,6 +7,7 @@
 import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
+  ArrowLineContext,
   BooleanLiteralContext,
   CallClauseContext,
   CaseAlternativeContext,
@@ -497,6 +498,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitArrowLine = (ctx: ArrowLineContext) => {
+    this.visitRawIfNotNull(ctx.MINUS());
+    this.visitRawIfNotNull(ctx.ARROW_LINE());
+  };
+
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
     if (ctx.leftArrow()) {
       this.avoidSpaceBetween();
@@ -504,7 +510,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const arrowLineList = ctx.arrowLine_list();
     this.avoidSpaceBetween();
-    this.visitTerminalRaw(arrowLineList[0].MINUS());
+    this.visit(arrowLineList[0]);
     if (ctx.LBRACKET()) {
       this.startGroup();
       this.visit(ctx.LBRACKET());
@@ -513,7 +519,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
     this.avoidSpaceBetween();
-    this.visitTerminalRaw(arrowLineList[1].MINUS());
+    this.visit(arrowLineList[1]);
     if (ctx.rightArrow()) {
       this.visit(ctx.rightArrow());
       this.concatenate();
