@@ -968,6 +968,7 @@ export function formatQuery(
   }
   const relativePosition = cursorPosition - targetToken.start;
   visitor.targetToken = targetToken.tokenIndex;
+
   return {
     formattedString: visitor.format(tree),
     newCursorPos: visitor.cursorPos + relativePosition,
