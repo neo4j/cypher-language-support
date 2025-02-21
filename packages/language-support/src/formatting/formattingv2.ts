@@ -145,7 +145,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   // If the previous token should choose between a newline or no space, rather than
-  // a newline and a space
+  // a newline and a space. Skip any preceding comments or special chunks we did not
+  // expect.
   avoidSpaceBetween = () => {
     let idx = this.currentBuffer().length - 1;
     while (
