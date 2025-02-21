@@ -75,7 +75,6 @@ type SpecialChunk = GroupChunk | IndentationChunk;
 export interface Split {
   splitType: ' ' | '\n' | '';
   cost: number;
-  newIndentation?: Indentation;
 }
 
 export interface Choice {
@@ -95,11 +94,6 @@ export interface Decision {
   left: Chunk;
   right: Chunk;
   split: Split; // The split that was chosen
-}
-
-export interface Indentation {
-  spaces: number;
-  expire: Chunk;
 }
 
 export interface State {
