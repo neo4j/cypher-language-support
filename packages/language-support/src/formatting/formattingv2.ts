@@ -60,6 +60,7 @@ import {
   caseGroupStartChunk,
   Chunk,
   collectionGroupStartChunk,
+  CommentChunk,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
@@ -68,6 +69,8 @@ import {
   handleMergeClause,
   indentChunk,
   isComment,
+  isSpecialChunk,
+  RegularChunk,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpersv2';
@@ -112,8 +115,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const indices: number[] = [];
     for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
       if (
-        !this.currentBuffer()[i].isComment &&
-        !this.currentBuffer()[i].specialBehavior
+        !(this.currentBuffer()[i].type === 'COMMENT') &&
+        !isSpecialChunk(this.currentBuffer()[i])
       ) {
         indices.push(i);
         if (indices.length === 2) {
@@ -124,13 +127,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (indices.length < 2) {
       return;
     }
-    const suffix = this.currentBuffer().splice(indices[0], 1)[0];
-    const prefix = this.currentBuffer()[indices[1]];
+    const suffix = this.currentBuffer().splice(
+      indices[0],
+      1,
+    )[0] as RegularChunk;
+    const prefix = this.currentBuffer()[indices[1]] as RegularChunk;
     const hasCursor = prefix.isCursor || suffix.isCursor;
     if (suffix.isCursor) {
       this.cursorPos += prefix.text.length;
     }
-    const chunk: Chunk = {
+    const chunk: RegularChunk = {
+      type: 'REGULAR',
       text: prefix.text + suffix.text,
       ...(hasCursor && { isCursor: true }),
     };
@@ -142,16 +149,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   avoidSpaceBetween = () => {
     let idx = this.currentBuffer().length - 1;
     while (
-      idx >= 0 &&
-      (this.currentBuffer()[idx].isComment ||
-        this.currentBuffer()[idx].specialBehavior)
+      (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') ||
+      isSpecialChunk(this.currentBuffer()[idx])
     ) {
       idx--;
     }
     if (idx < 0) {
       return;
     }
-    this.currentBuffer()[idx].noSpace = true;
+    const chunk: RegularChunk = this.currentBuffer()[idx] as RegularChunk;
+    chunk.noSpace = true;
   };
 
   startGroup = () => {
@@ -189,9 +196,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     );
     for (const commentToken of commentTokens) {
       const text = commentToken.text.trim();
-      const chunk: Chunk = {
+      const chunk: CommentChunk = {
+        type: 'COMMENT',
         text,
-        isComment: true,
       };
       this.currentBuffer().push(chunk);
       this.breakLine();
@@ -208,9 +215,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     );
     for (const commentToken of commentTokens) {
       const text = commentToken.text.trim();
-      const chunk: Chunk = {
+      const chunk: CommentChunk = {
+        type: 'COMMENT',
         text,
-        isComment: true,
       };
       this.currentBuffer().push(chunk);
     }
@@ -372,7 +379,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (wantsToBeUpperCase(node)) {
       text = text.toUpperCase();
     }
-    const chunk: Chunk = {
+    const chunk: RegularChunk = {
+      type: 'REGULAR',
       text,
       node,
     };
@@ -397,15 +405,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
       this.addCommentsBefore(node);
     }
-    let result = node.getText();
+    let text = node.getText();
     if (options?.lowerCase) {
-      result = result.toLowerCase();
+      text = text.toLowerCase();
     }
     if (options?.upperCase) {
-      result = result.toUpperCase();
+      text = text.toUpperCase();
     }
-    const chunk: Chunk = {
-      text: result,
+    const chunk: RegularChunk = {
+      type: 'REGULAR',
+      text,
       node,
     };
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -873,49 +882,49 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
-    this.startGroup()
-    this.visit(ctx.namespace())
-    this.visit(ctx.symbolicNameString())
-    this.endGroup()
+    this.startGroup();
+    this.visit(ctx.namespace());
+    this.visit(ctx.symbolicNameString());
+    this.endGroup();
   };
 
   visitCallClause = (ctx: CallClauseContext) => {
-    this.visitIfNotNull(ctx.OPTIONAL())
-    this.visit(ctx.CALL())
-    this.visit(ctx.procedureName())
+    this.visitIfNotNull(ctx.OPTIONAL());
+    this.visit(ctx.CALL());
+    this.visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
     if (n > 0) {
-      this.startGroup()
-      this.visitTerminalRaw(ctx.LPAREN())
-      this.concatenate()
+      this.startGroup();
+      this.visitTerminalRaw(ctx.LPAREN());
+      this.concatenate();
     }
     for (let i = 0; i < n; i++) {
       if (i === 0) {
-       this.avoidSpaceBetween()
+        this.avoidSpaceBetween();
       }
-      this.visit(ctx.procedureArgument(i))
+      this.visit(ctx.procedureArgument(i));
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
       }
     }
     if (n > 0) {
-      this.avoidSpaceBetween()
-      this.visit(ctx.RPAREN())
-      this.endGroup()
+      this.avoidSpaceBetween();
+      this.visit(ctx.RPAREN());
+      this.endGroup();
     }
-    if (ctx.YIELD()){
-      this.visit(ctx.YIELD())
-      this.visitIfNotNull(ctx.TIMES())
-      this.startGroup()
+    if (ctx.YIELD()) {
+      this.visit(ctx.YIELD());
+      this.visitIfNotNull(ctx.TIMES());
+      this.startGroup();
       const length = ctx.procedureResultItem_list().length;
       for (let i = 0; i < length; i++) {
-        this.visit(ctx.procedureResultItem(i))
+        this.visit(ctx.procedureResultItem(i));
         if (i < length - 1) {
           this.visit(ctx.COMMA(i));
         }
       }
-      this.endGroup()
-      this.visitIfNotNull(ctx.whereClause())
+      this.endGroup();
+      this.visitIfNotNull(ctx.whereClause());
     }
   };
 }

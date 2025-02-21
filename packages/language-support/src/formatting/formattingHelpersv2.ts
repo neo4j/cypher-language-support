@@ -45,13 +45,20 @@ const INDENTATION = 2;
 export const MAX_COL = 80;
 const showGroups = false;
 
-export interface Chunk {
-  text: string;
+export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
+
+export interface RegularChunk {
+  type: 'REGULAR';
   node?: TerminalNode;
   noSpace?: boolean;
-  isComment?: boolean;
-  specialBehavior?: SpecialChunkBehavior;
-  isCursor?: true;
+  isCursor?: boolean;
+  text: string;
+}
+
+export interface CommentChunk {
+  type: 'COMMENT';
+  isCursor?: boolean;
+  text: string;
 }
 
 interface GroupChunk {
@@ -59,11 +66,11 @@ interface GroupChunk {
   extraIndent?: number;
 }
 
-interface IndentChunk {
+interface IndentationChunk {
   type: 'INDENT' | 'DEDENT';
 }
 
-type SpecialChunkBehavior = GroupChunk | IndentChunk;
+type SpecialChunk = GroupChunk | IndentationChunk;
 
 export interface Split {
   splitType: ' ' | '\n' | '';
@@ -133,6 +140,15 @@ const traillingCharacters = [
   CypherCmdLexer.RBRACKET,
 ];
 
+export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
+  return (
+    chunk.type === 'GROUP_START' ||
+    chunk.type === 'GROUP_END' ||
+    chunk.type === 'INDENT' ||
+    chunk.type === 'DEDENT'
+  );
+}
+
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
@@ -171,11 +187,17 @@ export function wantsToBeConcatenated(node: TerminalNode): boolean {
   return traillingCharacters.includes(node.symbol.type);
 }
 
-export function doesNotWantSpace(node: TerminalNode): boolean {
-  if (!node) {
+export function doesNotWantSpace(chunk: Chunk): boolean {
+  if (chunk.type !== 'REGULAR') {
     return false;
   }
-  return openingCharacters.includes(node.symbol.type);
+  if (chunk.noSpace) {
+    return true;
+  }
+  if (!chunk.node) {
+    return false;
+  }
+  return openingCharacters.includes(chunk.node.symbol.type);
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
@@ -227,10 +249,10 @@ export function findTargetToken(
 }
 
 function getNextIndent(currIndent: number, choice: Choice): number {
-  if (choice.left.specialBehavior?.type === 'INDENT') {
+  if (choice.left.type === 'INDENT') {
     return currIndent + INDENTATION;
   }
-  if (choice.left.specialBehavior?.type === 'DEDENT') {
+  if (choice.left.type === 'DEDENT') {
     return currIndent - INDENTATION;
   }
   return currIndent;
@@ -244,7 +266,7 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
-  if (choice.left.isComment) {
+  if (choice.left.type === 'COMMENT') {
     finalIndent = curr.column === 0 ? nextBaseIndent : 0;
   }
   return [nextBaseIndent, finalIndent];
@@ -267,11 +289,15 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
-  const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
+  const leftLength =
+    choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
+      ? choice.left.text.length
+      : 0;
+  const thisWordEnd = actualColumn + leftLength + splitLength;
   const OOBChars = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
-  if (choice.left.specialBehavior?.type === 'GROUP_END') {
+  if (choice.left.type === 'GROUP_END') {
     nextGroups.pop();
   }
 
@@ -286,8 +312,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     extraCost = -1;
   }
 
-  if (choice.left.specialBehavior?.type === 'GROUP_START') {
-    const extraIndent = choice.left.specialBehavior.extraIndent || 0;
+  if (choice.left.type === 'GROUP_START') {
+    const extraIndent = choice.left.extraIndent || 0;
     nextGroups.push({
       align: actualColumn + extraIndent,
       breakCost: Math.pow(10, nextGroups.length + 1),
@@ -370,12 +396,9 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupsIfSet(buffer: string[], decision: Decision) {
-  const specialType = decision.left.specialBehavior?.type;
-  if (
-    showGroups &&
-    (specialType === 'GROUP_START' || specialType === 'GROUP_END')
-  ) {
-    const groupType = decision.left.specialBehavior?.type;
+  const leftType = decision.left.type;
+  if (showGroups && (leftType === 'GROUP_START' || leftType === 'GROUP_END')) {
+    const groupType = decision.left.type;
     buffer.push(groupType === 'GROUP_START' ? '[' : ']');
   }
 }
@@ -393,10 +416,18 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   };
   decisions.forEach((decision) => {
     pushIfNotEmpty(' '.repeat(decision.indentation));
-    if (decision.left.isCursor) {
+    const leftType = decision.left.type;
+    if (
+      (leftType === 'REGULAR' || leftType === 'COMMENT') &&
+      decision.left.isCursor
+    ) {
       cursorPos = buffer.join('').length;
     }
-    pushIfNotEmpty(decision.left.text);
+    pushIfNotEmpty(
+      leftType === 'REGULAR' || leftType === 'COMMENT'
+        ? decision.left.text
+        : '',
+    );
     addGroupsIfSet(buffer, decision);
     if (decision.split.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
@@ -414,15 +445,15 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   return chunkList.map((chunk, index) => {
-    const currIsComment = chunk.isComment;
-    const nextIsComment = chunkList[index + 1]?.isComment;
-    const noSpace = doesNotWantSpace(chunk.node) || chunk.noSpace;
+    const currIsComment = chunk.type === 'COMMENT';
+    const nextIsComment = chunkList[index + 1]?.type === 'COMMENT';
+    const noSpace = doesNotWantSpace(chunk);
     let splits = noSpace && !nextIsComment ? basicNoSpaceSplits : basicSplits;
     if (currIsComment) {
       splits = [{ splitType: '\n', cost: 0 }];
     }
-    if (chunk.specialBehavior) {
-      if (chunk.specialBehavior.type === 'INDENT') {
+    if (chunk.type !== 'REGULAR' && chunk.type !== 'COMMENT') {
+      if (chunk.type === 'INDENT') {
         splits = [{ splitType: '\n', cost: 0 }];
       } else {
         splits = basicNoSpaceSplits;
@@ -480,50 +511,33 @@ const basicNoSpaceSplits = [
   { splitType: '\n', cost: 1 },
 ];
 
-const emptyChunk: Chunk = {
+const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
   text: '',
 };
 
-export const indentChunk: Chunk = {
-  text: '',
-  specialBehavior: {
-    type: 'INDENT',
-  },
+export const indentChunk: IndentationChunk = {
+  type: 'INDENT',
 };
 
-export const dedentChunk: Chunk = {
-  text: '',
-  specialBehavior: {
-    type: 'DEDENT',
-  },
+export const dedentChunk: IndentationChunk = {
+  type: 'DEDENT',
 };
 
-export const groupStartChunk: Chunk = {
-  text: '',
-  specialBehavior: {
-    type: 'GROUP_START',
-  },
+export const groupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
 };
 
-export const collectionGroupStartChunk: Chunk = {
-  ...groupStartChunk,
-  specialBehavior: {
-    type: 'GROUP_START',
-    extraIndent: 1,
-  },
+export const collectionGroupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
+  extraIndent: 1,
 };
 
-export const caseGroupStartChunk: Chunk = {
-  ...groupStartChunk,
-  specialBehavior: {
-    type: 'GROUP_START',
-    extraIndent: 2,
-  },
+export const caseGroupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
+  extraIndent: 2,
 };
 
 export const groupEndChunk: Chunk = {
-  text: '',
-  specialBehavior: {
-    type: 'GROUP_END',
-  },
+  type: 'GROUP_END',
 };
