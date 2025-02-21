@@ -437,6 +437,7 @@ describe('various edgecases', () => {
     const expected3 = `RETURN coalesce('original', 'i', 'j', 'k')`;
     verifyFormatting(query3, expected3);
   });
+
   test('test for function invocation', () => {
     const query = `MATCH (n)
 RETURN count( DISTINCT   n,a )`;
@@ -450,30 +451,31 @@ RETURN count(DISTINCT n, a)`;
     const expected = `RETURN this {.id, .title} AS this`;
     verifyFormatting(query, expected);
   });
-  test('test that what is [*1..10] inside the brackets does not disapear', () => {
-    const query = `UNWIND range(1,100) as _
-CALL {
-  MATCH (source:object) WHERE source.id= $id1
-  MATCH (target:object) WHERE target.id= $id2
-  MATCH path = (source)-[*1..10]->(target)
-  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) AS Weight ORDER BY Weight LIMIT 3
-  RETURN length(path) as l, Weight 
-} 
-RETURN count(*)`;
-    const expected = `UNWIND range(1, 100) AS _
-CALL {
-  MATCH (source:object)
-  WHERE source.id = $id1
-  MATCH (target:object)
-  WHERE target.id = $id2
-  MATCH path = (source)-[*1..10]->(target)
-  WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight)
-             AS Weight ORDER BY Weight LIMIT 3
-  RETURN length(path) AS l, Weight
-}
-RETURN count(*)`;
 
+  test('path length with specific length', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*5]-()
+RETURN e`;
     verifyFormatting(query, expected);
+  });
+
+  test('path length with different length ranges', () => {
+    const fromquery = `MATCH (p:Person)-[r:LOVES*1..]-()
+RETURN e`;
+    const fromexpected = `MATCH (p:Person)-[r:LOVES*1..]-()
+RETURN e`;
+    const toquery = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const toexpected = `MATCH (p:Person)-[r:LOVES*..10]-()
+RETURN e`;
+    const bothquery = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    const bothexpected = `MATCH (p:Person)-[r:LOVES*1..10]-()
+RETURN e`;
+    verifyFormatting(fromquery, fromexpected);
+    verifyFormatting(toquery, toexpected);
+    verifyFormatting(bothquery, bothexpected);
   });
 
   test('does not remove empty funciton call parentheses', () => {
