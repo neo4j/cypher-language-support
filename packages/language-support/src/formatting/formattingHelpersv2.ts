@@ -381,6 +381,9 @@ function addGroupsIfSet(buffer: string[], decision: Decision) {
 }
 
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
+  // TODO: This method strips out dangling whitespace at the end of lines.
+  // It should not have to do this as that should not be possible
+  // (related to the fact that special chunks should not be in the decision tree).
   const buffer: string[] = [];
   let cursorPos = -1;
   const pushIfNotEmpty = (s: string) => {
