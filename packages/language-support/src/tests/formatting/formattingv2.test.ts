@@ -1024,7 +1024,7 @@ MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
     verifyFormatting(query, expected);
   });
 
-  test('tests call case', () => {
+  test('function arguments should align', () => {
     const query = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}) YIELD batches, total, timeTaken, committedOperations, failedOperations`;
     const expected = `
 CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE",
@@ -1033,7 +1033,7 @@ YIELD batches, total, timeTaken, committedOperations, failedOperations`.trimStar
     verifyFormatting(query, expected);
   });
 
-  test('does not split weird parenthesized expressions weirdly', () => {
+  test('does not split weird parenthesized expressions in an odd way', () => {
     const query = `MATCH (p:Product)--(o:Order)
 WHERE (p.priiiiiiiiiiiiiiiiiiice + o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
 RETURN p;`;
