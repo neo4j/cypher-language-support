@@ -403,6 +403,12 @@ RETURN n.name, CASE n.age
 
 describe('various edgecases', () => {
   test('multiple queries', () => {
+    const query = 'Call call';
+    const expected = 'CALL call';
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple queries', () => {
     const multiquery = 'RETURN 1; RETURN 2; RETURN 3;';
     const expectedMultiquery = 'RETURN 1;\nRETURN 2;\nRETURN 3;';
     verifyFormatting(multiquery, expectedMultiquery);
