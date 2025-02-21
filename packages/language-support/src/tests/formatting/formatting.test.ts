@@ -469,6 +469,25 @@ FOREACH (i IN range(0, size(eventChain) - 2) |
 )`;
     verifyFormatting(query, expected);
   });
+
+  test('should remember all clauses in foreach', () => {
+    const query = `
+MATCH (n)
+UNWIND n.list as items
+FOREACH (item in items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
+    const expected = `MATCH (n)
+UNWIND n.list AS items
+FOREACH (item IN items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for correct cursor position', () => {
