@@ -466,7 +466,7 @@ export function buffersToFormattedString(
     }
   }
   if (indentation > 0) {
-    throw new Error('indentations left');
+    throw new Error('Indentation remaining after formatting. This is a bug.');
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
