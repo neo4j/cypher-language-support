@@ -23,7 +23,9 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-export class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> {
+export class FormatterErrorsListener
+  implements ANTLRErrorListener<CommonToken>
+{
   syntaxError<T extends Token>(
     _r: Recognizer<CommonToken>,
     offendingSymbol: T,
@@ -38,7 +40,6 @@ export class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> 
   public reportAttemptingFullContext() {}
   public reportContextSensitivity() {}
 }
-
 
 const INDENTATION = 2;
 export const MAX_COL = 80;

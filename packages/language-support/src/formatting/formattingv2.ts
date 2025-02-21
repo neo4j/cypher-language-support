@@ -55,9 +55,9 @@ import {
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   buffersToFormattedString,
+  caseGroupStartChunk,
   Chunk,
   collectionGroupStartChunk,
-  caseGroupStartChunk,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
@@ -673,13 +673,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this.addIndentation();
       this.visit(ctx.extendedCaseAlternative(i));
-      this.removeIndentation()
+      this.removeIndentation();
     }
     if (ctx.ELSE()) {
       this.addIndentation();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression(1));
-      this.removeIndentation()
+      this.removeIndentation();
     }
     this.endGroup();
     this.addIndentation();
@@ -749,7 +749,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
-    handleMergeClause(ctx, (node) => this.visit(node), this.startGroup, this.endGroup);
+    handleMergeClause(
+      ctx,
+      (node) => this.visit(node),
+      this.startGroup,
+      this.endGroup,
+    );
   };
 
   // Handled separately because it wants indentation
