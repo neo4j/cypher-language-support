@@ -283,7 +283,7 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
       right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
       possibleSplitChoices: splits,
     };
-  }) as Choice[];
+  });
 }
 
 export function buffersToFormattedString(
@@ -321,11 +321,11 @@ export function buffersToFormattedString(
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
 
-const basicSplits = [
+const basicSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const basicNoSpaceSplits = [
+const basicNoSpaceSplits: Split[] = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
