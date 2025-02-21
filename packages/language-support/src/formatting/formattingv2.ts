@@ -303,6 +303,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
+    if (ctx.TIMES() && n > 0) {
+      this.visit(ctx.COMMA(0));
+    }
     for (let i = 0; i < n; i++) {
       this.startGroup();
       this.visit(ctx.returnItem(i));
@@ -915,7 +918,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.YIELD()) {
       this.visit(ctx.YIELD());
-      this.visitIfNotNull(ctx.TIMES());
+      if (ctx.TIMES()) {
+        this.visit(ctx.TIMES());
+        this.visit(ctx.COMMA(n - 1));
+      }
       this.startGroup();
       const length = ctx.procedureResultItem_list().length;
       for (let i = 0; i < length; i++) {

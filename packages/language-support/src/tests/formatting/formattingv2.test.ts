@@ -87,11 +87,14 @@ RETURN map`;
 
   test('should format call subqueries', () => {
     const query = `UNWIND range(1,100) as _ CALL { MATCH (source:object)
-  MATCH (target:object) RETURN source, target } RETURN count('*')`;
+  MATCH (target:object) WITH *, count(target) AS workspaceCount
+  WITH * RETURN source, target } RETURN count('*')`;
     const expected = `UNWIND range(1, 100) AS _
 CALL {
   MATCH (source:object)
   MATCH (target:object)
+  WITH *, count(target) AS workspaceCount
+  WITH *
   RETURN source, target
 }
 RETURN count('*')`;
