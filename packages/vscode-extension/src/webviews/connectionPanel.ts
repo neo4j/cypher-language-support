@@ -33,6 +33,7 @@ export class ConnectionPanel {
   private _password: string | undefined;
   private _lastResult: ConnnectionResult | undefined;
   private _disposables: Disposable[] = [];
+  private _editConnection: boolean = true;
 
   private constructor(
     panel: WebviewPanel,
@@ -45,6 +46,7 @@ export class ConnectionPanel {
     this._extensionPath = extensionPath;
     this._connection = connection;
     this._password = password;
+    this._editConnection = connection ? true : false;
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -208,8 +210,10 @@ export class ConnectionPanel {
           <body>
             <div class="container">
               <div>
-                <h1>${
-                  this._connection ? 'Edit Connection' : 'Add New Connection'
+                <h1 id="connection-header">${
+                  this._editConnection
+                    ? 'Edit Connection'
+                    : 'Add New Connection'
                 }</h1>
                 <form class="form" action="" novalidate method="post">
                   <input type="hidden" id="key" value="${
