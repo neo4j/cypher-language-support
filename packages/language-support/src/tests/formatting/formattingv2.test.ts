@@ -960,7 +960,7 @@ RETURN p`;
     verifyFormatting(query, expected);
   });
 
-  test('should not aligned long create statements weirdly', () => {
+  test('should not align long create statements weirdly', () => {
     const query = `CREATE
     (a:Location {name: "DXe5KhL3"}),
     (b:Location {name: "v2BpdkOj"}),
