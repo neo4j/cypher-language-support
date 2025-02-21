@@ -450,7 +450,7 @@ RETURN n`;
 
   test('test for function invocation', () => {
     const query = `MATCH (n)
-RETURN count ( DISTINCT  n,a)`;
+RETURN count ( DISTINCT   n,a )`;
     const expected = `MATCH (n)
 RETURN count(DISTINCT n, a)`;
     verifyFormatting(query, expected);
