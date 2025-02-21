@@ -476,6 +476,12 @@ RETURN count(*)`;
     verifyFormatting(query, expected);
   });
 
+  test('does not crash if empty call function', () => {
+    const query = `CALL apoc.periodic`;
+    const expected = `CALL apoc.periodic`;
+    verifyFormatting(query, expected);
+  });
+
   test('should not forget about multiple clauses in foreach', () => {
     const query = `
 MATCH (n)

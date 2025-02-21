@@ -900,7 +900,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (n > 0) {
       this.startGroup();
     }
-    this.visitTerminalRaw(ctx.LPAREN());
+    this.visitRawIfNotNull(ctx.LPAREN());
     this.concatenate();
     for (let i = 0; i < n; i++) {
       if (i === 0) {
@@ -912,7 +912,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.avoidSpaceBetween();
-    this.visit(ctx.RPAREN());
+    this.visitRawIfNotNull(ctx.RPAREN());
     if (n > 0) {
       this.endGroup();
     }
