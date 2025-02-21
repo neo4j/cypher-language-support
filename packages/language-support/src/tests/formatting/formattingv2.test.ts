@@ -478,7 +478,23 @@ RETURN e`;
     verifyFormatting(bothquery, bothexpected);
   });
 
-  test('does not remove empty funciton call parentheses', () => {
+  test('IS FLOAT and IS INTEGER should not be broken', () => {
+    const query = `MATCH (n)
+WITH n, [k IN keys(n)] as list
+UNWIND list as listItem
+WITH n, listItem
+WHERE (n[listItem] IS FLOAT OR n[listItem] IS INTEGER)
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n, [k IN keys(n)] AS list
+UNWIND list AS listItem
+WITH n, listItem
+WHERE (n[listItem] IS FLOAT OR n[listItem] IS INTEGER)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('does not remove empty function call parentheses', () => {
     const query = `CALL apoc.meta.stats() YIELD labels`;
     const expected = `CALL apoc.meta.stats() YIELD labels`;
     verifyFormatting(query, expected);
