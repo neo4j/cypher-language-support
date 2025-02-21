@@ -365,7 +365,7 @@ function bestFirstSolnSearch(
       heap.push(neighbourState);
     }
   }
-  throw new Error('No solution found');
+  throw new Error('Formatter could not find any solution. This is a bug.');
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
