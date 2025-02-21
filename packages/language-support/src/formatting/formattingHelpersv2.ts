@@ -99,7 +99,7 @@ export interface State {
   activeGroups: Group[];
   column: number;
   choiceIndex: number;
-  indentation: number;
+  baseIndentation: number;
   cost: number;
   oobCount: number;
   edge: StateEdge;
@@ -236,6 +236,20 @@ function getNextIndent(currIndent: number, choice: Choice): number {
   return currIndent;
 }
 
+function getIndentations(curr: State, choice: Choice): [number, number] {
+  const currBaseIndent = curr.baseIndentation;
+  const nextBaseIndent = getNextIndent(currBaseIndent, choice);
+  let finalIndent = curr.column === 0 ? currBaseIndent : 0;
+  if (curr.activeGroups.length > 0 && curr.column === 0) {
+    finalIndent = curr.activeGroups.at(-1).align;
+  }
+
+  if (choice.left.isComment) {
+    finalIndent = curr.column === 0 ? nextBaseIndent : 0;
+  }
+  return [nextBaseIndent, finalIndent];
+}
+
 // Very useful for debugging but not actually used in the code
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function stateToString(state: State) {
@@ -246,16 +260,10 @@ function stateToString(state: State) {
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n';
-  const currIndent = curr.indentation;
-  const nextIndent = getNextIndent(currIndent, choice);
-  let finalIndent = curr.column === 0 ? currIndent : 0;
-  if (curr.activeGroups.length > 0 && curr.column === 0) {
-    finalIndent = curr.activeGroups.at(-1).align;
-  }
-
-  if (choice.left.isComment) {
-    finalIndent = curr.column === 0 ? nextIndent : 0;
-  }
+  // A state has indentation, which is applied after a hard line break. However, if it has an
+  // active group and we decided to split within a line, the alignment of that group takes precedence
+  // over the base indentation.
+  const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -290,7 +298,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
-    indentation: nextIndent,
+    baseIndentation: nextBaseIndent,
     cost: curr.cost + extraCost,
     oobCount: curr.oobCount + OOBChars,
     edge: {
@@ -316,7 +324,7 @@ function reconstructBestPath(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentation: state.indentation,
+    indentation: state.baseIndentation,
   };
 }
 
@@ -436,7 +444,7 @@ export function buffersToFormattedString(
       activeGroups: [],
       column: 0,
       choiceIndex: 0,
-      indentation,
+      baseIndentation: indentation,
       cost: 0,
       oobCount: 0,
       edge: null,
