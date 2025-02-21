@@ -475,6 +475,25 @@ RETURN count(*)`;
     const expected = `CALL apoc.meta.stats() YIELD labels`;
     verifyFormatting(query, expected);
   });
+
+  test('should not forget about multiple clauses in foreach', () => {
+    const query = `
+MATCH (n)
+UNWIND n.list as items
+FOREACH (item in items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
+    const expected = `MATCH (n)
+UNWIND n.list AS items
+FOREACH (item IN items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
