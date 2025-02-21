@@ -117,7 +117,7 @@ export interface Result {
 }
 
 interface FinalResultWithPos {
-  formated: string;
+  formattedString: string;
   cursorPos?: number;
 }
 
@@ -393,10 +393,10 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     pushIfNotEmpty(decision.split.splitType);
   });
   const result = buffer.join('').trimEnd();
-  if (cursorPos == -1) {
+  if (cursorPos === -1) {
     return result;
   }
-  return { formated: result, cursorPos: cursorPos };
+  return { formattedString: result, cursorPos: cursorPos };
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -441,21 +441,21 @@ export function buffersToFormattedString(
       oobCount: 0,
       edge: null,
     };
-    //console.log(choices);
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
-    const partlyFormatted = decisionsToFormatted(result.decisions);
-    if (typeof partlyFormatted === 'string') {
-      formatted += partlyFormatted + '\n';
+    const formattingResult = decisionsToFormatted(result.decisions);
+    // Cursor is not in this chunkList
+    if (typeof formattingResult === 'string') {
+      formatted += formattingResult + '\n';
     } else {
-      cursorPos = formatted.length + partlyFormatted.cursorPos;
-      formatted += partlyFormatted.formated + '\n';
+      cursorPos = formatted.length + formattingResult.cursorPos;
+      formatted += formattingResult.formattedString + '\n';
     }
   }
   if (indentation > 0) {
     throw new Error('indentations left');
   }
-  return { formated: formatted.trimEnd(), cursorPos: cursorPos };
+  return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
 
 const basicSplits = [
