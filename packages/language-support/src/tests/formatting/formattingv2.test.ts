@@ -531,6 +531,19 @@ WHERE b.name = "XGyhUMQO"
 RETURN u, r, b, c`;
     verifyFormatting(query, expected);
   });
+
+  test('does not concatenate IS X', () => {
+    const query = `MATCH (n)
+WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
+return n`;
+    const expected = `MATCH (n)
+WHERE CASE
+        WHEN n["asdf"] IS STRING THEN n.prop
+        ELSE 'default'
+      END
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
