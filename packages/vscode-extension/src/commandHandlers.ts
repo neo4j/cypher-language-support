@@ -73,9 +73,12 @@ export async function saveConnectionAndDisplayConnectionResult(
     connection,
     password,
   );
+  const errorDetail = result?.error?.friendlyMessage;
 
-  if (!result.success && result.retriable) {
-    const result = await displaySaveConnectionAnywayPrompt();
+  if (!result.success) {
+    const result = await displaySaveConnectionAnywayPrompt(
+      errorDetail ? `${errorDetail}.` : errorDetail,
+    );
 
     if (result === 'Yes') {
       void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_SAVED);
@@ -104,7 +107,7 @@ export function createConnectionPanel(): void {
 }
 
 /**
- * Handler for MANAGE_CONNECTION_COMMAND (neo4j.manageConnection)
+ * Handler for MANAGE_CONNECTION_COMMAND (neo4j.editConnection)
  * This can be triggered only on the connection tree view.
  * This shows the connection panel for the given connection item.
  * @param connectionItem The ConnectionItem to manage.

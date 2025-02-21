@@ -4,7 +4,11 @@ import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
 import { getNeo4jConfiguration } from '../../helpers';
-import { saveDefaultConnection } from '../../suiteSetup';
+import {
+  connectDefault,
+  defaultConnectionKey,
+  saveDefaultConnection,
+} from '../../suiteSetup';
 
 suite('Execute commands spec', () => {
   let sandbox: sinon.SinonSandbox;
@@ -22,12 +26,12 @@ suite('Execute commands spec', () => {
   });
 
   after(async () => {
-    // Ensure we reconnect back to the default Connection when this suite is complete
+    // Ensure we reconnect back to the default connection when this suite is complete
     await saveDefaultConnection();
   });
 
   suite('saveConnectionCommand', () => {
-    test('Creating and activating a valid Connection should show a success message', async () => {
+    test('Creating and activating a valid connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
         getNeo4jConfiguration();
       await commands.executeCommand(
@@ -51,8 +55,15 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Saving a Connection with invalid credentials should show an error message', async () => {
+    test('Saving a connection with invalid credentials should show a warning message', async () => {
       const { scheme, host, port, user, database } = getNeo4jConfiguration();
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -69,13 +80,25 @@ suite('Execute commands spec', () => {
       );
 
       sandbox.assert.calledWith(
-        showErrorMessageStub,
-        `The client is unauthorized due to authentication failure. ${FRIENDLY_ERROR_MESSAGES['Neo.ClientError.Security.Unauthorized']}.`,
+        stub,
+        'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+        {
+          modal: true,
+          detail: `${FRIENDLY_ERROR_MESSAGES['Neo.ClientError.Security.Unauthorized']}.`,
+        },
+        'Yes',
       );
     });
 
-    test('Saving a Connection with an invalid database should show an error message', async () => {
+    test('Saving a connection with an invalid database should show a warning message', async () => {
       const { scheme, host, port, user, password } = getNeo4jConfiguration();
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -92,12 +115,17 @@ suite('Execute commands spec', () => {
       );
 
       sandbox.assert.calledWith(
-        showErrorMessageStub,
-        `Unable to get a routing table for database 'bad' because this database does not exist. ${FRIENDLY_ERROR_MESSAGES['Neo.ClientError.Database.DatabaseNotFound']}.`,
+        stub,
+        'Unable to connect to Neo4j. Would you like to save the connection anyway?',
+        {
+          modal: true,
+          detail: `${FRIENDLY_ERROR_MESSAGES['Neo.ClientError.Database.DatabaseNotFound']}.`,
+        },
+        'Yes',
       );
     });
 
-    test('Saving a Connection with a bad URL should show a warning message', async () => {
+    test('Saving a connection with a bad URL should show a warning message', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -122,7 +150,7 @@ suite('Execute commands spec', () => {
 
       sandbox.assert.calledWith(
         stub,
-        'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
+        'Unable to connect to Neo4j. Would you like to save the connection anyway?',
         {
           modal: true,
           detail: `${FRIENDLY_ERROR_MESSAGES['ServiceUnavailable']}.`,
@@ -133,7 +161,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('deleteConnectionCommand', () => {
-    test('Deleting a Connection should show a success message', async () => {
+    test('Deleting a connection should show a success message', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -160,7 +188,92 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Dismissing delete Connection prompt should not show any messages', async () => {
+    test('Deleting another connection should not disconnect the current one', async () => {
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('Yes');
+
+      const { scheme, host, port, user, database, password } =
+        getNeo4jConfiguration();
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        {
+          name: 'about-to-be-deleted',
+          key: 'about-to-be-deleted',
+          scheme: scheme,
+          host: host,
+          port: port,
+          user: user,
+          database: database,
+          state: 'activating',
+        },
+        password,
+      );
+
+      await connectDefault();
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.CONNECTED_MESSAGE,
+      );
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,
+        {
+          key: 'about-to-be-deleted',
+          label: 'about-to-be-deleted',
+        },
+      );
+
+      sandbox.assert.neverCalledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE,
+      );
+    });
+
+    test('Deleting the in-use connection should disconnect that connection', async () => {
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('Yes');
+
+      await connectDefault();
+      showErrorMessageStub.resetHistory();
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,
+        {
+          key: defaultConnectionKey,
+          label: defaultConnectionKey,
+        },
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE,
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.CONNECTION_DELETED,
+      );
+    });
+
+    test('Dismissing delete connection prompt should not show any messages', async () => {
       sandbox.stub(window, 'showWarningMessage').resolves(undefined);
 
       await commands.executeCommand(
@@ -174,7 +287,7 @@ suite('Execute commands spec', () => {
       sandbox.assert.notCalled(showInformationMessageStub);
     });
 
-    test('Any other response from delete Connection prompt should not show any messages', async () => {
+    test('Any other response from delete connection prompt should not show any messages', async () => {
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -200,7 +313,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('connectCommand', () => {
-    test('Activating an inactive Connection should show a success message', async () => {
+    test('Activating an inactive connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
         getNeo4jConfiguration();
       await commands.executeCommand(
@@ -228,7 +341,7 @@ suite('Execute commands spec', () => {
       );
     });
 
-    test('Activating a previously saved bad Connection should show a warning message', async () => {
+    test('Activating a previously saved bad connection should show a warning message', async () => {
       const warningMessagePromptStub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -275,7 +388,7 @@ suite('Execute commands spec', () => {
   });
 
   suite('disconnectCommand', () => {
-    test('Decativating a Connection should show a success message', async () => {
+    test('Decativating a connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
         getNeo4jConfiguration();
       await commands.executeCommand(
