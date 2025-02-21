@@ -56,7 +56,6 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
-  buffersToFormattedString,
   caseGroupStartChunk,
   Chunk,
   collectionGroupStartChunk,
@@ -74,6 +73,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpersv2';
+import { buffersToFormattedString } from './formattingSolutionSearchv2';
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
