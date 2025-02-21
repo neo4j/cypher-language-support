@@ -480,15 +480,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitTerminalRaw(ctx.TIMES());
     if (ctx._single) {
       this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+      this.concatenate();
     } else if (ctx.DOTDOT()) {
       let idx = 0;
       if (ctx._from_) {
         this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+        this.concatenate();
         idx++;
       }
       this.visitTerminalRaw(ctx.DOTDOT());
+      this.concatenate();
       if (ctx._to) {
         this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+        this.concatenate();
       }
     }
   };

@@ -500,6 +500,20 @@ FOREACH (item IN items |
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('keeps path length and relationship type together', () => {
+    const simplePath = `MATCH path = ()-[:type  *]->()`;
+    const simplePathExpected = `MATCH path = ()-[:type*]->()`;
+    verifyFormatting(simplePath, simplePathExpected);
+
+    const complicatedPath = `MATCH path = ()-[:type  *1..10]->()`;
+    const complicatedPathExpected = `MATCH path = ()-[:type*1..10]->()`;
+    verifyFormatting(complicatedPath, complicatedPathExpected);
+
+    const halfFilledPath = `MATCH path = ()-[:type  * .. 10]->()`;
+    const halfFilledPathExpected = `MATCH path = ()-[:type*..10]->()`;
+    verifyFormatting(halfFilledPath, halfFilledPathExpected);
+  });
 });
 
 // The @ represents the position of the cursor
@@ -732,14 +746,6 @@ RETURN path`.trimStart();
       'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
     const expected =
       'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
-    verifyFormatting(query, expected);
-  });
-
-  test('does not split the $ and the parameter name', () => {
-    const query = `MATCH path = (m1:loooooo)-[:veryloename  * {born: "test"}]->(m2:ame)
-RETURN path`;
-    const expected = `MATCH path = (m1:loooooo)-[:veryloename* {born: "test"}]->(m2:ame)
-RETURN path`;
     verifyFormatting(query, expected);
   });
 
