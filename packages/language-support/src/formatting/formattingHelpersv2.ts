@@ -346,6 +346,8 @@ function bestFirstSolnSearch(
   const seenStates = new Set<string>();
   while (heap.size() > 0) {
     const state = heap.pop();
+    // NOTE: This memoization is not perfect and can lead to suboptimal solutions.
+    // It's crucial for performance however.
     const stateKey = getStateKey(state);
     if (seenStates.has(stateKey)) {
       continue;
