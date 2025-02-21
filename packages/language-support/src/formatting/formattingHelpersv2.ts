@@ -182,16 +182,11 @@ export function wantsToBeConcatenated(node: TerminalNode): boolean {
 }
 
 export function doesNotWantSpace(chunk: Chunk): boolean {
-  if (chunk.type !== 'REGULAR') {
-    return false;
-  }
-  if (chunk.noSpace) {
-    return true;
-  }
-  if (!chunk.node) {
-    return false;
-  }
-  return openingCharacters.includes(chunk.node.symbol.type);
+  return (
+    chunk.type === 'REGULAR' &&
+    (chunk.noSpace ||
+      (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
+  );
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
