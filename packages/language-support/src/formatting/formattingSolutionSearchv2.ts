@@ -56,7 +56,7 @@ export interface Result {
 
 interface FinalResultWithPos {
   formattedString: string;
-  cursorPos?: number;
+  cursorPos: number;
 }
 
 type FinalResult = string | FinalResultWithPos;
