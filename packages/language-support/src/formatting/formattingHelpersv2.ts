@@ -482,14 +482,10 @@ const basicNoSpaceSplits = [
 
 const emptyChunk: Chunk = {
   text: '',
-  start: 0,
-  end: 0,
 };
 
 export const indentChunk: Chunk = {
   text: '',
-  start: -1,
-  end: -1,
   specialBehavior: {
     type: 'INDENT',
   },
@@ -497,8 +493,6 @@ export const indentChunk: Chunk = {
 
 export const dedentChunk: Chunk = {
   text: '',
-  start: -1,
-  end: -1,
   specialBehavior: {
     type: 'DEDENT',
   },
@@ -506,8 +500,6 @@ export const dedentChunk: Chunk = {
 
 export const groupStartChunk: Chunk = {
   text: '',
-  start: -1,
-  end: -1,
   specialBehavior: {
     type: 'GROUP_START',
   },
@@ -531,8 +523,6 @@ export const caseGroupStartChunk: Chunk = {
 
 export const groupEndChunk: Chunk = {
   text: '',
-  start: -1,
-  end: -1,
   specialBehavior: {
     type: 'GROUP_END',
   },
