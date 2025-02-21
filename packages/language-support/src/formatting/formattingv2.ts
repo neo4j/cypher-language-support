@@ -899,9 +899,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.procedureArgument_list().length;
     if (n > 0) {
       this.startGroup();
-      this.visitTerminalRaw(ctx.LPAREN());
-      this.concatenate();
     }
+    this.visitTerminalRaw(ctx.LPAREN());
+    this.concatenate();
     for (let i = 0; i < n; i++) {
       if (i === 0) {
         this.avoidSpaceBetween();
@@ -911,9 +911,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
+    this.avoidSpaceBetween();
+    this.visit(ctx.RPAREN());
     if (n > 0) {
-      this.avoidSpaceBetween();
-      this.visit(ctx.RPAREN());
       this.endGroup();
     }
     if (ctx.YIELD()) {

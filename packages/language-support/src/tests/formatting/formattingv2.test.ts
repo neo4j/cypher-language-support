@@ -469,6 +469,12 @@ RETURN count(*)`;
 
     verifyFormatting(query, expected);
   });
+
+  test('does not remove empty funciton call parentheses', () => {
+    const query = `CALL apoc.meta.stats() YIELD labels`;
+    const expected = `CALL apoc.meta.stats() YIELD labels`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
@@ -915,7 +921,8 @@ MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
 
   test('tests call case', () => {
     const query = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}) YIELD batches, total, timeTaken, committedOperations, failedOperations`;
-    const expected = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE",
+    const expected = `
+CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE",
                            {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"})
 YIELD batches, total, timeTaken, committedOperations, failedOperations`.trimStart();
     verifyFormatting(query, expected);
