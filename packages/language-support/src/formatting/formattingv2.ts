@@ -131,7 +131,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const suffix = this.currentBuffer().splice(indices[0], 1)[0];
     const prefix = this.currentBuffer()[indices[1]];
     if (prefix.type !== 'REGULAR' || suffix.type !== 'REGULAR') {
-      return;
+      throw new Error('Internal formatter bug in concatenate');
     }
     const hasCursor = prefix.isCursor || suffix.isCursor;
     if (suffix.isCursor) {
@@ -160,9 +160,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     const chunk = this.currentBuffer()[idx];
-    if (chunk.type === 'REGULAR') {
-      chunk.noSpace = true;
+    if (!(chunk.type === 'REGULAR')) {
+      throw new Error('Internal formatter bug in avoidSpaceBetween');
     }
+    chunk.noSpace = true;
   };
 
   startGroup = () => {
