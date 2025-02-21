@@ -544,6 +544,12 @@ WHERE CASE
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('does not break CALL YIELD', () => {
+    const query = `CALL dbms.procedures YIELD name, signature, description`;
+    const expected = `CALL dbms.procedures YIELD name, signature, description`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor

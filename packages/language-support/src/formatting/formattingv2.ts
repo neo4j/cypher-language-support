@@ -927,7 +927,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
-    this.avoidSpaceBetween();
     this.visitRawIfNotNull(ctx.RPAREN());
     if (n > 0) {
       this.endGroup();
