@@ -6,8 +6,11 @@
 
 import {
   CharStreams,
+  CommonToken,
   CommonTokenStream,
+  ErrorListener as ANTLRErrorListener,
   ParseTree,
+  Recognizer,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -19,6 +22,23 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+
+export class FormatterErrorsListener implements ANTLRErrorListener<CommonToken> {
+  syntaxError<T extends Token>(
+    _r: Recognizer<CommonToken>,
+    offendingSymbol: T,
+    line: number,
+    column: number,
+  ) {
+    throw new Error(
+      `Could not format due to syntax error at line ${line}:${column} near "${offendingSymbol?.text}"`,
+    );
+  }
+  public reportAmbiguity() {}
+  public reportAttemptingFullContext() {}
+  public reportContextSensitivity() {}
+}
+
 
 const INDENTATION = 2;
 export const MAX_COL = 80;
@@ -176,11 +196,14 @@ function isSymbolicName(node: TerminalNode): boolean {
     node.parentCtx instanceof EscapedSymbolicNameStringContext
   );
 }
+
 export function getParseTreeAndTokens(query: string) {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
+  parser.removeErrorListeners();
+  parser.addErrorListener(new FormatterErrorsListener());
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   return { tree, tokens };
