@@ -735,6 +735,14 @@ RETURN path`.trimStart();
     verifyFormatting(query, expected);
   });
 
+  test('does not split the $ and the parameter name', () => {
+    const query = `MATCH path = (m1:loooooo)-[:veryloename  * {born: "test"}]->(m2:ame)
+RETURN path`;
+    const expected = `MATCH path = (m1:loooooo)-[:veryloename* {born: "test"}]->(m2:ame)
+RETURN path`;
+    verifyFormatting(query, expected);
+  });
+
   test('aligns split node pattern', () => {
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
