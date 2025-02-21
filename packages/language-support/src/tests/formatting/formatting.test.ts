@@ -447,6 +447,14 @@ WHERE (n[listItem] IS FLOAT OR n[listItem] IS INTEGER)
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('test for function invocation', () => {
+    const query = `MATCH (n)
+RETURN count ( DISTINCT   n,a )`;
+    const expected = `MATCH (n)
+RETURN count(DISTINCT n, a)`;
+    verifyFormatting(query, expected);
+  });
   test('should put nested FOREACH on newline', () => {
     const query = `MATCH (u:User)
 MATCH (u)-[:USER_EVENT]->(e:Event)
