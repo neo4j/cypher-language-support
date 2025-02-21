@@ -109,16 +109,14 @@ function functionExists(
   const functionExistsWithExactName = Boolean(
     functionsSchema[functionCandidate.name],
   );
-  const lowercaseFunctionName = functionCandidate.name.toLowerCase();
-  const caseInsensitiveFunctionInDatabase =
-    functionsSchema[lowercaseFunctionName];
-
-  // Built-in functions are case-insensitive in the database
-  return (
-    functionExistsWithExactName ||
-    (caseInsensitiveFunctionInDatabase &&
-      caseInsensitiveFunctionInDatabase.isBuiltIn)
+  const lowerCaseFunctionName = functionCandidate.name.toLowerCase();
+  const caseInsensitiveBuiltInFunctionExists = Boolean(
+    Object.values(functionsSchema).find(
+      (fn) => fn.isBuiltIn && fn.name.toLowerCase() === lowerCaseFunctionName,
+    ),
   );
+  // Built-in functions are case-insensitive in the database
+  return caseInsensitiveBuiltInFunctionExists || functionExistsWithExactName;
 }
 
 function generateFunctionUsedAsProcedureError(
