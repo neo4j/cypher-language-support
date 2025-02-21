@@ -92,7 +92,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
-    return result.formated;
+    return result.formattedString;
   };
 
   currentBuffer = () => this.buffers.at(-1);
