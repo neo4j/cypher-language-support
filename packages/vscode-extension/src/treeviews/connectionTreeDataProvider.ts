@@ -123,9 +123,12 @@ export class ConnectionTreeDataProvider
   }
 
   private getConnectionName(connection: Connection): string {
-    return connection.port
-      ? `${connection.user}@${connection.scheme}://${connection.host}:${connection.port}`
-      : `${connection.user}@${connection.scheme}://${connection.host}`;
+    return (
+      connection.name ??
+      (connection.port
+        ? `${connection.user}@${connection.scheme}://${connection.host}:${connection.port}`
+        : `${connection.user}@${connection.scheme}://${connection.host}`)
+    );
   }
 }
 

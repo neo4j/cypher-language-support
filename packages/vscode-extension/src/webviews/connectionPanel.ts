@@ -121,6 +121,7 @@ export class ConnectionPanel {
               this._lastResult = result;
               this._connection = {
                 ...this._connection,
+                name: message.connection?.name,
                 scheme: message.connection?.scheme,
                 host: message.connection?.host,
                 port: message.connection?.port,
@@ -219,6 +220,12 @@ export class ConnectionPanel {
                   <input type="hidden" id="key" value="${
                     this._connection?.key ?? getNonce(16)
                   }" />
+                  <div class="form--input-wrapper">
+                    <label for="name">Display name</label>
+                    <input type="text" id="name" value="${
+                      this._connection?.name ?? ''
+                    }" />
+                  </div>
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
                     <select id="scheme" data-invalid="${this.urlIsInvalid()}">

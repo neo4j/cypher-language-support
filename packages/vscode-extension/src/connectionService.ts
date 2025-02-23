@@ -23,10 +23,11 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
 export type Connection = {
   key: string;
   scheme: Scheme;
+  name?: string;
   host: string;
-  port?: string | undefined;
+  port?: string;
   user: string;
-  database?: string | undefined;
+  database?: string;
   state: State;
 };
 
