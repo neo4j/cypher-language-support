@@ -76,7 +76,7 @@ export function getConnection(): Connection | null {
   }
 
   return {
-    name: name.value,
+    name: name.value == '' ? undefined : name.value,
     key: key.value,
     scheme: scheme.value,
     host: host.value,

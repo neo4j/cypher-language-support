@@ -36,9 +36,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "neo4j.manageConnection",
+        "command": "neo4j.editConnection",
         "category": "Neo4j",
-        "title": "Manage Connection",
+        "title": "Edit connection",
         "icon": "$(add)"
       },
       {
@@ -57,15 +57,15 @@
       },
       {
         "command": "neo4j.deleteConnection",
-        "title": "Delete Connection..."
+        "title": "Delete connection..."
       },
       {
         "command": "neo4j.refreshConnections",
-        "title": "Refresh Connections"
+        "title": "Refresh connections"
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create Connection"
+        "title": "Create connection"
       },
       {
         "command": "neo4j.switchDatabase",
@@ -73,7 +73,7 @@
       },
       {
         "command": "neo4j.runCypher",
-        "title": "Neo4j: Run Cypher Statements"
+        "title": "Neo4j: Run Cypher statements"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
@@ -90,11 +90,11 @@
     "viewsWelcome": [
       {
         "view": "neo4jConnections",
-        "contents": "No Connections.\n[Add New Connection](command:neo4j.manageConnection)"
+        "contents": "No connections.\n[Add new connection](command:neo4j.editConnection)"
       },
       {
         "view": "neo4jDatabaseInformation",
-        "contents": "No active Connection."
+        "contents": "No active connection."
       }
     ],
     "menus": {
@@ -132,7 +132,7 @@
           "when": "false"
         },
         {
-          "command": "neo4j.manageConnection",
+          "command": "neo4j.editConnection",
           "when": "false"
         }
       ],
@@ -155,7 +155,7 @@
           "group": "00_connection@1"
         },
         {
-          "command": "neo4j.manageConnection",
+          "command": "neo4j.editConnection",
           "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
           "group": "01_management@1"
         },

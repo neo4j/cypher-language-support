@@ -275,7 +275,7 @@ export class ConnectionPanel {
                     }" data-invalid="${this.authIsInvalid()}" />
                   </div>
                   <div class="form--actions">
-                    <input id="save-connection" type="submit" value="Save Connection" />
+                    <input id="save-connection" type="submit" value="Save & Connect" />
                   </div>
                 </form>
               </div>
