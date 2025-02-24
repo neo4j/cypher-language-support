@@ -33,6 +33,7 @@ export class ConnectionPanel {
   private _password: string | undefined;
   private _lastResult: ConnnectionResult | undefined;
   private _disposables: Disposable[] = [];
+  private _editConnection: boolean = true;
 
   private constructor(
     panel: WebviewPanel,
@@ -45,6 +46,7 @@ export class ConnectionPanel {
     this._extensionPath = extensionPath;
     this._connection = connection;
     this._password = password;
+    this._editConnection = connection ? true : false;
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -119,6 +121,7 @@ export class ConnectionPanel {
               this._lastResult = result;
               this._connection = {
                 ...this._connection,
+                name: message.connection?.name,
                 scheme: message.connection?.scheme,
                 host: message.connection?.host,
                 port: message.connection?.port,
@@ -208,13 +211,21 @@ export class ConnectionPanel {
           <body>
             <div class="container">
               <div>
-                <h1>${
-                  this._connection ? 'Edit Connection' : 'Add New Connection'
+                <h1 id="connection-header">${
+                  this._editConnection
+                    ? 'Edit Connection'
+                    : 'Add New Connection'
                 }</h1>
                 <form class="form" action="" novalidate method="post">
                   <input type="hidden" id="key" value="${
                     this._connection?.key ?? getNonce(16)
                   }" />
+                  <div class="form--input-wrapper">
+                    <label for="name">Display name</label>
+                    <input type="text" id="name" value="${
+                      this._connection?.name ?? ''
+                    }" />
+                  </div>
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
                     <select id="scheme" data-invalid="${this.urlIsInvalid()}">
@@ -264,7 +275,7 @@ export class ConnectionPanel {
                     }" data-invalid="${this.authIsInvalid()}" />
                   </div>
                   <div class="form--actions">
-                    <input id="save-connection" type="submit" value="Save Connection" />
+                    <input id="save-connection" type="submit" value="Save & Connect" />
                   </div>
                 </form>
               </div>

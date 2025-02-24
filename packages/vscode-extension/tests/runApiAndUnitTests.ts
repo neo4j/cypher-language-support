@@ -3,7 +3,7 @@ import * as path from 'path';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 async function main() {
-  const container = await createAndStartTestContainer();
+  const neo4jInstance = await createAndStartTestContainer();
 
   try {
     /* This is equivalent to running from a command line: 
@@ -26,13 +26,16 @@ async function main() {
       launchArgs: [path.join(__dirname, '../../tests/fixtures/')],
       extensionDevelopmentPath,
       extensionTestsPath,
-      extensionTestsEnv: { CYPHER_25: 'true' },
+      extensionTestsEnv: {
+        CYPHER_25: 'true',
+        NEO4J_PORT: neo4jInstance.getMappedPort(7687).toString(),
+      },
     });
   } catch (err) {
     console.error('Failed to run integration tests');
     process.exit(1);
   } finally {
-    await container.stop();
+    await neo4jInstance.stop();
   }
 }
 

@@ -64,6 +64,7 @@ export function highlightServerInvalidatedFields(): void {
  * @returns A Connection object from the webview form.
  */
 export function getConnection(): Connection | null {
+  const name = document.getElementById('name') as HTMLInputElement;
   const key = document.getElementById('key') as HTMLInputElement;
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
@@ -75,6 +76,7 @@ export function getConnection(): Connection | null {
   }
 
   return {
+    name: name.value == '' ? undefined : name.value,
     key: key.value,
     scheme: scheme.value,
     host: host.value,

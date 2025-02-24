@@ -123,9 +123,15 @@ export class ConnectionTreeDataProvider
   }
 
   private getConnectionName(connection: Connection): string {
-    return connection.port
+    const connectionString = connection.port
       ? `${connection.user}@${connection.scheme}://${connection.host}:${connection.port}`
       : `${connection.user}@${connection.scheme}://${connection.host}`;
+
+    const nameString = connection.name ?? '';
+
+    return nameString
+      ? `${nameString} [${connectionString}]`
+      : connectionString;
   }
 }
 

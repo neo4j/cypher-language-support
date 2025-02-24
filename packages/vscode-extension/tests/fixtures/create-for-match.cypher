@@ -1,0 +1,1 @@
+CREATE (n:NewLabel) RETURN n

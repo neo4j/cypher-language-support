@@ -23,10 +23,11 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
 export type Connection = {
   key: string;
   scheme: Scheme;
+  name?: string;
   host: string;
-  port?: string | undefined;
+  port?: string;
   user: string;
-  database?: string | undefined;
+  database?: string;
   state: State;
 };
 
@@ -181,7 +182,7 @@ export function getActiveConnection(): Connection | null {
  */
 export function getAllConnections(): Connection[] {
   const connections = Object.values(getConnections());
-  return connections.length ? [connections[0]] : [];
+  return connections.length ? connections : [];
 }
 
 /**

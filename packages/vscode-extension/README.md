@@ -64,7 +64,7 @@ const d = '/*cypher*/ MATCH (n) RETURN n';
 
 ## Managing connections
 
-You can launch the connection pane from the Neo4j icon in the Activity Bar, or by using the `Neo4j: Manage Connection` command from the Command Palette.
+You can launch the connection pane from the Neo4j icon in the Activity Bar, or by using the `Neo4j: Edit Connection` command from the Command Palette.
 
 ![demo-manage-connection](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-manage-connection.png?raw=true)
 
