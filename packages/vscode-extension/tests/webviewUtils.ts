@@ -1,3 +1,5 @@
+import { WebView } from 'wdio-vscode-service';
+
 export async function waitUntilNotification(
   browser: WebdriverIO.Browser,
   notification: string,
@@ -48,4 +50,34 @@ export async function openFixtureFile(
     fileName,
     options,
   );
+}
+
+export async function selectValue(
+  webview: WebView,
+  elem: string,
+  value: string,
+) {
+  await webview.open();
+  const element = await $(elem);
+  await element.selectByVisibleText(value);
+  await webview.close();
+}
+
+export async function setText(webview: WebView, elem: string, value: string) {
+  await webview.open();
+  await (await $(elem)).clearValue();
+  await webview.close();
+  await webview.open();
+  await (await $(elem)).addValue(value);
+  await webview.close();
+}
+
+export async function closeActiveTab(browser: WebdriverIO.Browser) {
+  await browser.executeWorkbench(async (vscode) => {
+    // eslint-disable-next-line
+    await vscode.window.tabGroups.close(
+      // eslint-disable-next-line
+      vscode.window.tabGroups.activeTabGroup.activeTab,
+    );
+  });
 }
