@@ -45,6 +45,7 @@
     "antlr4": "4.13.2",
     "antlr4-c3": "*",
     "fastest-levenshtein": "^1.0.16",
+    "heap-js": "^2.6.0",
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {
