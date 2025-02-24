@@ -603,6 +603,18 @@ RETURN n`;
     const expected = `CALL dbms.components(1) YIELD *`;
     verifyFormatting(query, expected);
   });
+
+  test('does not move explicitly newlined comments to the line before', () => {
+    const query = `MATCH (n)
+// filter out to only the right name
+WHERE n.name = 'Tomas'
+RETURN n`;
+    const expected = `MATCH (n)
+// filter out to only the right name
+WHERE n.name = 'Tomas'
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
