@@ -266,26 +266,27 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   return { formattedString: result, cursorPos: cursorPos };
 }
 
+function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  switch (chunk.type) {
+    case 'COMMENT':
+    case 'INDENT':
+      return [{ splitType: '\n', cost: 0 }];
+    case 'REGULAR':
+      if (doesNotWantSpace(chunk) && nextChunk?.type !== 'COMMENT') {
+        return basicNoSpaceSplits;
+      }
+      return basicSplits;
+    default:
+      return basicNoSpaceSplits;
+  }
+}
+
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
   return chunkList.map((chunk, index) => {
-    const currIsComment = chunk.type === 'COMMENT';
-    const nextIsComment = chunkList[index + 1]?.type === 'COMMENT';
-    const noSpace = doesNotWantSpace(chunk);
-    let splits = noSpace && !nextIsComment ? basicNoSpaceSplits : basicSplits;
-    if (currIsComment) {
-      splits = [{ splitType: '\n', cost: 0 }];
-    }
-    if (chunk.type !== 'REGULAR' && chunk.type !== 'COMMENT') {
-      if (chunk.type === 'INDENT') {
-        splits = [{ splitType: '\n', cost: 0 }];
-      } else {
-        splits = basicNoSpaceSplits;
-      }
-    }
     return {
       left: chunk,
       right: index === chunkList.length - 1 ? emptyChunk : chunkList[index + 1],
-      possibleSplitChoices: splits,
+      possibleSplitChoices: determineSplits(chunk, chunkList[index + 1]),
     };
   });
 }
