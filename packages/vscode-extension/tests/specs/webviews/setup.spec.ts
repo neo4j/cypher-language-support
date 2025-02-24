@@ -1,7 +1,11 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { createAndStartTestContainer } from '../../setupTestContainer';
-import { waitUntilNotification } from '../../webviewUtils';
+import {
+  selectValue,
+  setText,
+  waitUntilNotification,
+} from '../../webviewUtils';
 
 before(async () => {
   const container = await createAndStartTestContainer({
@@ -23,19 +27,13 @@ before(async () => {
   const connectionWebview = (await workbench.getAllWebviews()).at(0);
 
   if (connectionWebview) {
+    await selectValue(connectionWebview, '#scheme', 'neo4j://');
+    await setText(connectionWebview, '#host', 'localhost');
+    await setText(connectionWebview, '#port', port.toString());
+    await setText(connectionWebview, '#user', 'neo4j');
+    await setText(connectionWebview, '#password', 'password');
+
     await connectionWebview.open();
-
-    const schemeInput = await $('#scheme');
-    const hostInput = await $('#host');
-    const portInput = await $('#port');
-    const userInput = await $('#user');
-    const passwordInput = await $('#password');
-    await schemeInput.selectByVisibleText('neo4j://');
-    await hostInput.setValue('localhost');
-    await portInput.setValue(port);
-    await userInput.setValue('neo4j');
-    await passwordInput.setValue('password');
-
     const saveConnectionButton = await $('#save-connection');
     await saveConnectionButton.click();
 

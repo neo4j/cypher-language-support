@@ -7,7 +7,13 @@ import {
   ViewSection,
   Workbench,
 } from 'wdio-vscode-service';
-import { waitUntilNotification } from '../../webviewUtils';
+import { CONSTANTS } from '../../../src/constants';
+import {
+  closeActiveTab,
+  openFixtureFile,
+  setText,
+  waitUntilNotification,
+} from '../../webviewUtils';
 
 suite('Connection testing', () => {
   let workbench: Workbench;
@@ -59,5 +65,25 @@ suite('Connection testing', () => {
     }
     await clickOnContextMenuItem('Connect');
     await waitUntilNotification(browser, 'Connected to Neo4j.');
+  });
+
+  test('should not lose connection form details when going into another tab', async function () {
+    await workbench.executeCommand(
+      CONSTANTS.COMMANDS.MANAGE_CONNECTION_COMMAND,
+    );
+    const connectionWebview = (await workbench.getAllWebviews()).at(0);
+    await setText(connectionWebview, '#host', 'Badabadum');
+
+    // Opens a new tab, then closes it
+    await openFixtureFile(browser, 'valid.cypher');
+    await closeActiveTab(browser);
+
+    await connectionWebview.open();
+    const hostInputAfter = await $('#host');
+    const hostText = await hostInputAfter.getValue();
+
+    await expect(hostText).toBe('Badabadum');
+    await connectionWebview.close();
+    await closeActiveTab(browser);
   });
 });
