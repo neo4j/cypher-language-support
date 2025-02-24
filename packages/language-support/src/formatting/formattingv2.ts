@@ -203,6 +203,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const text = commentToken.text.trim();
       const chunk: CommentChunk = {
         type: 'COMMENT',
+        breakBefore: false,
         text,
       };
       this.currentBuffer().push(chunk);
@@ -218,10 +219,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const commentTokens = (hiddenTokens || []).filter((token) =>
       isComment(token),
     );
+    const nodeLine = node.symbol.line;
     for (const commentToken of commentTokens) {
       const text = commentToken.text.trim();
+      const commentLine = commentToken.line;
       const chunk: CommentChunk = {
         type: 'COMMENT',
+        breakBefore: nodeLine !== commentLine,
         text,
       };
       this.currentBuffer().push(chunk);

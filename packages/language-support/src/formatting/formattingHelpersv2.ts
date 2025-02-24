@@ -55,6 +55,7 @@ export interface RegularChunk {
 export interface CommentChunk {
   type: 'COMMENT';
   isCursor?: true;
+  breakBefore: boolean;
   text: string;
 }
 

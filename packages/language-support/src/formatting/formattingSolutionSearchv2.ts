@@ -63,8 +63,9 @@ type FinalResult = string | FinalResultWithPos;
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
-export function doesNotWantSpace(chunk: Chunk): boolean {
+export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
+    nextChunk?.type !== 'COMMENT' &&
     chunk.type === 'REGULAR' &&
     (chunk.noSpace ||
       (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
@@ -272,7 +273,10 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
     case 'INDENT':
       return [{ splitType: '\n', cost: 0 }];
     case 'REGULAR':
-      if (doesNotWantSpace(chunk) && nextChunk?.type !== 'COMMENT') {
+      if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
+        return [{ splitType: '\n', cost: 0 }];
+      }
+      if (doesNotWantSpace(chunk, nextChunk)) {
         return basicNoSpaceSplits;
       }
       return basicSplits;
