@@ -6,6 +6,12 @@ import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import { Chunk, MAX_COL, RegularChunk } from './formattingHelpersv2';
 
+const errorMessage = `
+Internal formatting error: An unexpected issue occurred while formatting.
+This is likely a bug in the formatter itself. If possible, please report the issue
+along with your input on GitHub:
+https://github.com/neo4j/cypher-language-support.`.trim();
+
 const INDENTATION = 2;
 const showGroups = false;
 
@@ -215,7 +221,7 @@ function bestFirstSolnSearch(
       heap.push(neighbourState);
     }
   }
-  throw new Error('Formatter could not find any solution. This is a bug.');
+  throw new Error(errorMessage);
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -325,7 +331,7 @@ export function buffersToFormattedString(
     }
   }
   if (indentation > 0) {
-    throw new Error('Indentation remaining after formatting. This is a bug.');
+    throw new Error(errorMessage);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
