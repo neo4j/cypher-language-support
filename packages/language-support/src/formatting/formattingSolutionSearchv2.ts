@@ -30,7 +30,7 @@ export interface Decision {
   indentation: number;
   left: Chunk;
   right: Chunk;
-  split: Split; // The split that was chosen
+  chosenSplit: Split;
 }
 
 export interface State {
@@ -157,7 +157,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
         indentation: finalIndent,
         left: choice.left,
         right: choice.right,
-        split,
+        chosenSplit: split,
       },
     },
   };
@@ -253,12 +253,12 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
         : '',
     );
     addGroupsIfSet(buffer, decision);
-    if (decision.split.splitType === '\n') {
+    if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();
       }
     }
-    pushIfNotEmpty(decision.split.splitType);
+    pushIfNotEmpty(decision.chosenSplit.splitType);
   });
   const result = buffer.join('').trimEnd();
   if (cursorPos === -1) {
