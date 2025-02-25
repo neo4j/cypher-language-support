@@ -78,6 +78,7 @@ export class ConnectionPanel {
           Uri.file(path.join(extensionPath, 'resources')),
         ],
         enableScripts: true,
+        retainContextWhenHidden: true,
       },
     );
 
