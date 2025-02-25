@@ -193,6 +193,25 @@ function bestFirstSolnSearch(
   choiceList: Choice[],
 ): Result {
   const heap = new Heap<State>((a, b) => {
+    /**
+     * Best-first sorting logic:
+     *
+     * We want to find the solution with the lowest cost that overflows
+     * as little as possible.
+     *
+     * - We always prefer a solution that doesn't overflow to one that does,
+     *   regardless of its cost. Given these two states:
+     *
+     *   - A: cost 1000000000000, overflowingCount 0
+     *   - B: cost 0, overflowingCount 1
+     *
+     *   we would always pick A over B, despite B being significantly cheaper.
+     *
+     *  - Breaking lines increases the cost of a state, while not breaking
+     *    decreases it by one (see variable extraCost in getNeighbourState).
+     *     - If we choose to not break too many times, we might go out of
+     *       bounds however, which is always worse.
+     */
     if (a.overflowingCount !== b.overflowingCount) {
       return a.overflowingCount - b.overflowingCount;
     }
