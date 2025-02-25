@@ -23,8 +23,12 @@ import {
   ForeachClauseContext,
   FunctionInvocationContext,
   KeywordLiteralContext,
+  LabelExpression2Context,
+  LabelExpression3Context,
+  LabelExpression4Context,
   LabelExpressionContext,
   LimitContext,
+  ListItemsPredicateContext,
   ListLiteralContext,
   MapContext,
   MapProjectionContext,
@@ -377,8 +381,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   // Handled separately since otherwise they will get weird spacing
-  // TODO: doesn't handle the special label expressions yet
-  // (labelExpression3 etc)
   visitLabelExpression = (ctx: LabelExpressionContext) => {
     this.visitRawIfNotNull(ctx.COLON());
     if (ctx.IS()) {
@@ -387,6 +389,52 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
     }
     this.visit(ctx.labelExpression4());
+  };
+
+  visitLabelExpression4 = (ctx: LabelExpression4Context) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression3Context) {
+        this.visit(child);
+        if (i > 0) {
+          this.concatenate();
+        }
+        //console.log("Avoiding space between", this.currentBuffer().at(-1));
+      } else if (child instanceof TerminalNode) {
+        this.avoidSpaceBetween();
+        this.visitTerminal(child);
+      }
+    }
+  };
+
+  visitLabelExpression3 = (ctx: LabelExpression3Context) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression2Context) {
+        this.visit(child);
+        if (i > 0) {
+          this.concatenate();
+        }
+        //console.log("Avoiding space between", this.currentBuffer().at(-1));
+      } else if (child instanceof TerminalNode) {
+        this.avoidSpaceBetween();
+        this.visitTerminal(child);
+      }
+    }
+  };
+
+  visitLabelExpression2 = (ctx: LabelExpression2Context) => {
+    const n = ctx.EXCLAMATION_MARK_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visitTerminalRaw(ctx.EXCLAMATION_MARK(i));
+      this.concatenate();
+      if (i == n - 1) {
+        this.avoidSpaceBetween();
+      }
+    }
+    this.visit(ctx.labelExpression1());
   };
 
   visitTerminal = (node: TerminalNode) => {
@@ -863,6 +911,24 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this.visit(ctx.RCURLY());
+  };
+
+  visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
+    this.visitRawIfNotNull(ctx.ALL());
+    this.visitRawIfNotNull(ctx.ANY());
+    this.visitRawIfNotNull(ctx.NONE());
+    this.visitRawIfNotNull(ctx.SINGLE());
+    this.visit(ctx.LPAREN());
+    this.concatenate();
+    this.avoidSpaceBetween();
+    this.visit(ctx.variable());
+    this.visit(ctx.IN());
+    this.visit(ctx._inExp);
+    if (ctx.WHERE()) {
+      this.visit(ctx.WHERE());
+      this.visit(ctx._whereExp);
+    }
+    this.visit(ctx.RPAREN());
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {

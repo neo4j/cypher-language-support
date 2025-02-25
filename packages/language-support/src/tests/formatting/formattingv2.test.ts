@@ -108,6 +108,14 @@ RETURN count('*')`;
 }`;
     verifyFormatting(query, expected);
   });
+
+  test('no space in label predicates', () => {
+    const query = `MATCH (person    : Person  :  Owner  )
+RETURN person.name`;
+    const expected = `MATCH (person:Person:Owner)
+RETURN person.name`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
@@ -660,6 +668,38 @@ RETURN n`;
     const expected = `MATCH (n)
 // filter out to only the right name
 WHERE n.name = 'Tomas'
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('graph pattern matching spacing', () => {
+    const query = `MATCH (m:(Adventure&Children)&!(War&Crime))
+RETURN m`;
+    const expected = `MATCH (m:(Adventure&Children)&!(War&Crime))
+RETURN m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('quantified path pattern spacing', () => {
+    const query = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
+    const expected = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('all should not get capitalized here', () => {
+    const query = `MATCH path=(:Station&Western)(()-[:NEXT]->()){1,}(:Station&Western)
+WHERE all(x IN nodes(path) WHERE x:Station&Western)
+RETURN path`;
+    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1,}(:Station&Western)
+WHERE all(x IN nodes(path) WHERE x:Station&Western)
+RETURN path`;
+    verifyFormatting(query, expected);
+  });
+
+  test('weird label expression', () => {
+    const query = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
+RETURN n`;
+    const expected = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
 RETURN n`;
     verifyFormatting(query, expected);
   });
