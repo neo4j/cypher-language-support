@@ -643,6 +643,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.PLUS() || ctx.TIMES()) {
       this.visitChildren(ctx);
       this.concatenate();
+      return;
     }
     this.visit(ctx.LCURLY());
     this.concatenate();
