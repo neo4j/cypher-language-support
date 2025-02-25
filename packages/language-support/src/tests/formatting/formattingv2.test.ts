@@ -427,6 +427,15 @@ FOREACH (i IN range(0, size(eventChain) - 2) |
 )`;
     verifyFormatting(query, expected);
   });
+
+  test('puts LIMIT on a new line', () => {
+    const query = `CREATE (n)
+RETURN n LIMIT 0`;
+    const expected = `CREATE (n)
+RETURN n
+LIMIT 0`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
@@ -924,7 +933,8 @@ LIMIT "ZTWWLgIq"`;
       (Kevin:Person {name: "HEZDAAhT"})
 WHERE p.name <> "nnwAPHJg"
 RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
-       ORDER BY Name ASC LIMIT "ZTWWLgIq"`;
+       ORDER BY Name ASC
+LIMIT "ZTWWLgIq"`;
     verifyFormatting(query, expected);
   });
 

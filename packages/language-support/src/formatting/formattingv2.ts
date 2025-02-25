@@ -24,6 +24,7 @@ import {
   FunctionInvocationContext,
   KeywordLiteralContext,
   LabelExpressionContext,
+  LimitContext,
   ListLiteralContext,
   MapContext,
   MapProjectionContext,
@@ -296,6 +297,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.variable());
     this.endGroup();
     this.endGroup();
+  };
+
+  visitLimit = (ctx: LimitContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {
