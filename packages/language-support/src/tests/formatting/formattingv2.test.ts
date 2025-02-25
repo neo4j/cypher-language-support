@@ -690,7 +690,7 @@ RETURN m`;
     const query = `MATCH path=(:Station&Western)(()-[:NEXT]->()){1,}(:Station&Western)
 WHERE all(x IN nodes(path) WHERE x:Station&Western)
 RETURN path`;
-    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1,}(:Station&Western)
+    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1,} (:Station&Western)
 WHERE all(x IN nodes(path) WHERE x:Station&Western)
 RETURN path`;
     verifyFormatting(query, expected);

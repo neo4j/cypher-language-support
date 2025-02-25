@@ -46,6 +46,7 @@ import {
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
+  QuantifierContext,
   ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
@@ -636,6 +637,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
+  };
+
+  visitQuantifier = (ctx: QuantifierContext) => {
+    if (ctx.PLUS() || ctx.TIMES()) {
+      this.visitChildren(ctx);
+      this.concatenate();
+    }
+    this.visit(ctx.LCURLY());
+    this.concatenate();
+    const n = ctx.UNSIGNED_DECIMAL_INTEGER_list().length;
+    this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+    this.concatenate();
+    this.visit(ctx.COMMA());
+    this.concatenate();
+    if (n > 1) {
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(1));
+      this.concatenate();
+    }
+    this.visit(ctx.RCURLY());
+    this.concatenate();
   };
 
   // Handled separately because the dots aren't operators
