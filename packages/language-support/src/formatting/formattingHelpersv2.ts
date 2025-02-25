@@ -40,6 +40,10 @@ export class FormatterErrorsListener
   public reportContextSensitivity() {}
 }
 
+/**
+ * The maximum column width for the formatter. Not a hard limit as overflow
+ * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
+ */
 export const MAX_COL = 80;
 
 export type Chunk = RegularChunk | CommentChunk | SpecialChunk;

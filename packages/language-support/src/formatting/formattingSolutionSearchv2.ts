@@ -39,7 +39,7 @@ export interface State {
   choiceIndex: number;
   baseIndentation: number;
   cost: number;
-  oobCount: number;
+  overflowingCount: number;
   edge: StateEdge;
 }
 
@@ -118,7 +118,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ? choice.left.text.length
       : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
-  const OOBChars = Math.max(0, thisWordEnd - MAX_COL);
+  const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
   if (choice.left.type === 'GROUP_END') {
@@ -150,7 +150,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choiceIndex: curr.choiceIndex + 1,
     baseIndentation: nextBaseIndent,
     cost: curr.cost + extraCost,
-    oobCount: curr.oobCount + OOBChars,
+    overflowingCount: curr.overflowingCount + overflowingCount,
     edge: {
       prevState: curr,
       decision: {
@@ -187,8 +187,8 @@ function bestFirstSolnSearch(
   choiceList: Choice[],
 ): Result {
   const heap = new Heap<State>((a, b) => {
-    if (a.oobCount !== b.oobCount) {
-      return a.oobCount - b.oobCount;
+    if (a.overflowingCount !== b.overflowingCount) {
+      return a.overflowingCount - b.overflowingCount;
     }
     return a.cost - b.cost;
   });
@@ -310,7 +310,7 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       baseIndentation: indentation,
       cost: 0,
-      oobCount: 0,
+      overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
