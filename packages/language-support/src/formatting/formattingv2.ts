@@ -741,7 +741,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation();
     this.breakLine();
     this.visit(ctx.RCURLY());
-    this.breakLine();
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
   };
 

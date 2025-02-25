@@ -436,6 +436,38 @@ RETURN n
 LIMIT 0`;
     verifyFormatting(query, expected);
   });
+
+  test('call with IN CONCURRENT... at the end', () => {
+    const query = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
+
+WHERE NOT EXISTS {MATCH (c)-[:TRANSFIERE]->(c2)}
+
+WITH c, c2, count(m) as trxs, avg(m.monto) as avgTrx, sum(m.monto) as totalSum LIMIT 1000
+
+CALL (c, c2, trxs, avgTrx, totalSum) {
+
+    MERGE (c)-[r:TRANSFIERE]->(c2)
+
+    ON CREATE SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+
+    ON MATCH SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+
+} IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS
+
+;`;
+    const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
+WHERE NOT EXISTS {
+  MATCH (c)-[:TRANSFIERE]->(c2)
+}
+WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
+LIMIT 1000
+CALL (c, c2, trxs, avgTrx, totalSum) {
+  MERGE (c)-[r:TRANSFIERE]->(c2)
+    ON CREATE SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+    ON MATCH SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+} IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS;`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
