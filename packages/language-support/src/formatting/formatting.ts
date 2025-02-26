@@ -11,6 +11,9 @@ import {
   ForeachClauseContext,
   FunctionInvocationContext,
   KeywordLiteralContext,
+  LabelExpression2Context,
+  LabelExpression3Context,
+  LabelExpression4Context,
   LabelExpressionContext,
   LeftArrowContext,
   LimitContext,
@@ -189,6 +192,40 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitRawIfNotNull(ctx.COLON());
     this.visitIfNotNull(ctx.IS());
     this.visit(ctx.labelExpression4());
+  };
+
+  visitLabelExpression4 = (ctx: LabelExpression4Context) => {
+    // There is no great way to know which labels have colons before them,
+    // so we have to resort to manually checking the types of the children.
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression3Context) {
+        this.visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminalRaw(child);
+      }
+    }
+  };
+
+  visitLabelExpression3 = (ctx: LabelExpression3Context) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression2Context) {
+        this.visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminalRaw(child);
+      }
+    }
+  };
+
+  visitLabelExpression2 = (ctx: LabelExpression2Context) => {
+    const n = ctx.EXCLAMATION_MARK_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visitTerminalRaw(ctx.EXCLAMATION_MARK(i));
+    }
+    this.visit(ctx.labelExpression1());
   };
 
   visitTerminal = (node: TerminalNode) => {
