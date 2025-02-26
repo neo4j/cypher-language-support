@@ -645,6 +645,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.PLUS() || ctx.TIMES()) {
       this.visitChildren(ctx);
       this.concatenate();
+      this.avoidSpaceBetween();
       return;
     }
     this.visit(ctx.LCURLY());
@@ -660,6 +661,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visit(ctx.RCURLY());
     this.concatenate();
+    this.avoidSpaceBetween();
   };
 
   // Handled separately because the dots aren't operators
