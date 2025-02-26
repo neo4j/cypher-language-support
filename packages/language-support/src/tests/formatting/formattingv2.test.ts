@@ -108,6 +108,14 @@ RETURN count('*')`;
 }`;
     verifyFormatting(query, expected);
   });
+
+  test('no space in label predicates', () => {
+    const query = `MATCH (person    : Person  :  Owner  )
+RETURN person.name`;
+    const expected = `MATCH (person:Person:Owner)
+RETURN person.name`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
@@ -427,6 +435,47 @@ FOREACH (i IN range(0, size(eventChain) - 2) |
 )`;
     verifyFormatting(query, expected);
   });
+
+  test('puts LIMIT on a new line', () => {
+    const query = `CREATE (n)
+RETURN n LIMIT 0`;
+    const expected = `CREATE (n)
+RETURN n
+LIMIT 0`;
+    verifyFormatting(query, expected);
+  });
+
+  test('call with IN CONCURRENT... at the end', () => {
+    const query = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
+
+WHERE NOT EXISTS {MATCH (c)-[:TRANSFIERE]->(c2)}
+
+WITH c, c2, count(m) as trxs, avg(m.monto) as avgTrx, sum(m.monto) as totalSum LIMIT 1000
+
+CALL (c, c2, trxs, avgTrx, totalSum) {
+
+    MERGE (c)-[r:TRANSFIERE]->(c2)
+
+    ON CREATE SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+
+    ON MATCH SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+
+} IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS
+
+;`;
+    const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
+WHERE NOT EXISTS {
+  MATCH (c)-[:TRANSFIERE]->(c2)
+}
+WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
+LIMIT 1000
+CALL (c, c2, trxs, avgTrx, totalSum) {
+  MERGE (c)-[r:TRANSFIERE]->(c2)
+    ON CREATE SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+    ON MATCH SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
+} IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS;`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('various edgecases', () => {
@@ -619,6 +668,38 @@ RETURN n`;
     const expected = `MATCH (n)
 // filter out to only the right name
 WHERE n.name = 'Tomas'
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('graph pattern matching spacing', () => {
+    const query = `MATCH (m:(Adventure&Children) & ! (War&Crime))
+RETURN m`;
+    const expected = `MATCH (m:(Adventure&Children)&!(War&Crime))
+RETURN m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('quantified path pattern spacing', () => {
+    const query = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){ 1 , 4 }`;
+    const expected = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('all should not get capitalized here', () => {
+    const query = `MATCH path=(:Station&Western)(()-[:NEXT]->()){1,}(:Station&Western)
+WHERE all(x IN nodes(path) WHERE x:Station&Western)
+RETURN path`;
+    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1,} (:Station&Western)
+WHERE all(x IN nodes(path) WHERE x:Station&Western)
+RETURN path`;
+    verifyFormatting(query, expected);
+  });
+
+  test('weird label expression', () => {
+    const query = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
+RETURN n`;
+    const expected = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -924,7 +1005,8 @@ LIMIT "ZTWWLgIq"`;
       (Kevin:Person {name: "HEZDAAhT"})
 WHERE p.name <> "nnwAPHJg"
 RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
-       ORDER BY Name ASC LIMIT "ZTWWLgIq"`;
+       ORDER BY Name ASC
+LIMIT "ZTWWLgIq"`;
     verifyFormatting(query, expected);
   });
 
@@ -1060,6 +1142,20 @@ RETURN p;`;
 WHERE (p.priiiiiiiiiiiiiiiiiiice +
        o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
 RETURN p;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('complicated QPP', () => {
+    const query = `
+MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-[:NEXT]->+
+        (l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-[:NEXT]->*
+        (l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
+RETURN dmk`;
+    const expected = `
+MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
+      [:NEXT]->+ (l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
+      [:NEXT]->* (l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
+RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
 });
