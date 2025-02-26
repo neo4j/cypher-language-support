@@ -4,6 +4,7 @@ export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers'
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
+export { formatQuery as formatQueryExperimental } from './formatting/formattingv2';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
