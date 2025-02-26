@@ -236,8 +236,8 @@ describe('other styleguide recommendations', () => {
   test('escaped names', () => {
     const query =
       'CREATE (`complex name with special@chars`) RETURN `complex name with special@chars`';
-    const expected =
-      'CREATE (`complex name with special@chars`)\nRETURN `complex name with special@chars`';
+    const expected = `CREATE (\`complex name with special@chars\`)
+RETURN \`complex name with special@chars\``;
     verifyFormatting(query, expected);
   });
 
@@ -250,27 +250,32 @@ RETURN null, true, false`;
 
   test('can handle using keyword literal names in weird ways', () => {
     const query1 = 'MATCH (NULL) RETURN NULL';
-    const expected1 = 'MATCH (NULL)\nRETURN null';
+    const expected1 = `MATCH (NULL)
+RETURN null`;
     verifyFormatting(query1, expected1);
 
     const query2 = 'MATCH (NAN) RETURN NAN';
-    const expected2 = 'MATCH (NAN)\nRETURN NAN';
+    const expected2 = `MATCH (NAN)
+RETURN NAN`;
     verifyFormatting(query2, expected2);
 
     const query3 = 'MATCH (INF) RETURN INF';
-    const expected3 = 'MATCH (INF)\nRETURN INF';
+    const expected3 = `MATCH (INF)
+RETURN INF`;
     verifyFormatting(query3, expected3);
   });
 
   test('puts one space between label/type predicates and property predicates in patterns', () => {
     const query = `MATCH (p:Person{property:-1})-[:KNOWS{since: 2016}]->() RETURN p.name`;
-    const expected = `MATCH (p:Person {property: -1})-[:KNOWS {since: 2016}]->()\nRETURN p.name`;
+    const expected = `MATCH (p:Person {property: -1})-[:KNOWS {since: 2016}]->()
+RETURN p.name`;
     verifyFormatting(query, expected);
   });
 
   test('no space in patterns', () => {
     const query = 'MATCH (:Person) --> (:Vehicle) RETURN count(*)';
-    const expected = 'MATCH (:Person)-->(:Vehicle)\nRETURN count(*)';
+    const expected = `MATCH (:Person)-->(:Vehicle)
+RETURN count(*)`;
     verifyFormatting(query, expected);
   });
 
@@ -433,7 +438,9 @@ describe('various edgecases', () => {
 
   test('multiple queries', () => {
     const multiquery = 'RETURN 1; RETURN 2; RETURN 3;';
-    const expectedMultiquery = 'RETURN 1;\nRETURN 2;\nRETURN 3;';
+    const expectedMultiquery = `RETURN 1;
+RETURN 2;
+RETURN 3;`;
     verifyFormatting(multiquery, expectedMultiquery);
   });
 
