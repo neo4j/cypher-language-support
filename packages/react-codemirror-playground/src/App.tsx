@@ -40,10 +40,12 @@ export function App() {
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
   const [showCodemirrorParse, setShowCodemirrorParse] = useState(false);
   const [showAntlrParse, setShowAntlrParse] = useState(false);
+  const [useExperimentalFormatter, setUseExperimentalFormatter] = useState(false);
   const [showConfigPanel, setShowConfigPanel] = useState(false);
   const [commandRanCount, setCommandRanCount] = useState(0);
-  const [darkMode, setDarkMode] = useState(false);
-
+  const [darkMode, setDarkMode] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches,
+  );  
   const [schema, setSchema] = useState<DbSchema>(testData.mockSchema);
   const [schemaText, setSchemaText] = useState<string>(
     JSON.stringify(testData.mockSchema, undefined, 2),
@@ -56,7 +58,7 @@ export function App() {
       mac: 'Alt-Shift-f',
       preventDefault: true,
       run: () => {
-        editorRef.current.format();
+        editorRef.current.format(useExperimentalFormatter);
         return true;
       },
     },
@@ -140,7 +142,7 @@ export function App() {
               ariaLabel="Cypher Editor"
             />
             <p
-              onClick={() => editorRef.current.format()}
+              onClick={() => editorRef.current.format(useExperimentalFormatter)}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
               title={
                 window.navigator.userAgent.includes('Mac')
@@ -183,6 +185,14 @@ export function App() {
                   onChange={() => setShowAntlrParse((s) => !s)}
                 />
                 Show antlr parse tree
+              </label>
+              <label className="flex gap-1">
+                <input
+                  type="checkbox"
+                  checked={useExperimentalFormatter}
+                  onChange={() => setUseExperimentalFormatter((s) => !s)}
+                />
+                Use experimental formatter
               </label>
               {schemaError && <div className="text-red-500">{schemaError}</div>}
               <textarea

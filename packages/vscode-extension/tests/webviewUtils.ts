@@ -1,4 +1,4 @@
-import { TreeItem, ViewSection, Workbench } from 'wdio-vscode-service';
+import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 export async function waitUntilNotification(
@@ -147,4 +147,34 @@ export async function clickOnContextMenuItem(
     const connectOption = await connect.elem;
     await connectOption.click();
   }
+}
+
+export async function selectValue(
+  webview: WebView,
+  elem: string,
+  value: string,
+) {
+  await webview.open();
+  const element = await $(elem);
+  await element.selectByVisibleText(value);
+  await webview.close();
+}
+
+export async function setText(webview: WebView, elem: string, value: string) {
+  await webview.open();
+  await (await $(elem)).clearValue();
+  await webview.close();
+  await webview.open();
+  await (await $(elem)).addValue(value);
+  await webview.close();
+}
+
+export async function closeActiveTab(browser: WebdriverIO.Browser) {
+  await browser.executeWorkbench(async (vscode) => {
+    // eslint-disable-next-line
+    await vscode.window.tabGroups.close(
+      // eslint-disable-next-line
+      vscode.window.tabGroups.activeTabGroup.activeTab,
+    );
+  });
 }
