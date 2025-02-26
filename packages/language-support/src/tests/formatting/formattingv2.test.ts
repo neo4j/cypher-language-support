@@ -1208,47 +1208,6 @@ RETURN dmk`.trim();
 });
 
 describe('tests for line breaks with comments', () => {
-  test('should not put the arrow on a newline for no reason', () => {
-    const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
-MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
-//MATCH (t:Target)-[:BELONGS_TO]->(s)
-return z`;
-    const expected = `MATCH (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
-MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
-//MATCH (t:Target)-[:BELONGS_TO]->(s)
-RETURN z`;
-    verifyFormatting(query, expected);
-  });
-
-  test('this query should be idempotent', () => {
-    const bad = `
-with "Nc3yUa7F" as vessel_type_code /*trunk land vessel type.  add for FDR */
-   // detail
-   , ["AbQk1wMr","PmA6udnt"] as detail_seq
-UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
-return *;`;
-    const once = formatQuery(bad);
-    const twice = formatQuery(once);
-    expect(once).toEqual(twice);
-    const expected = `
-WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
-// detail
-     ["AbQk1wMr", "PmA6udnt"] AS detail_seq
-UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
-RETURN *;`;
-    verifyFormatting(bad, expected);
-  });
-
-  test('aligns the next line even if the comment breaks the expression', () => {
-    const query = `MATCH (n)
-RETURN n.salary + // Add bonus value
-       1000 AS totalCompensation;`;
-    const expected = `MATCH (n)
-RETURN n.salary + // Add bonus value
-       1000 AS totalCompensation;`;
-    verifyFormatting(query, expected);
-  });
-
   test('handles comments before long patterns gracefully', () => {
     const query = `CREATE
 // this is a loooooooooooooooooooong comment
@@ -1299,6 +1258,46 @@ CREATE // this is a loooooooooooooooooooong comment
        (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
        (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
        (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
+    verifyFormatting(query, expected);
+  });
+  test('should not put the arrow on a newline for no reason', () => {
+    const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+return z`;
+    const expected = `MATCH (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+RETURN z`;
+    verifyFormatting(query, expected);
+  });
+
+  test('this query should be idempotent', () => {
+    const bad = `
+with "Nc3yUa7F" as vessel_type_code /*trunk land vessel type.  add for FDR */
+   // detail
+   , ["AbQk1wMr","PmA6udnt"] as detail_seq
+UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
+return *;`;
+    const once = formatQuery(bad);
+    const twice = formatQuery(once);
+    expect(once).toEqual(twice);
+    const expected = `
+WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
+// detail
+     ["AbQk1wMr", "PmA6udnt"] AS detail_seq
+UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
+RETURN *;`;
+    verifyFormatting(bad, expected);
+  });
+
+  test('aligns the next line even if the comment breaks the expression', () => {
+    const query = `MATCH (n)
+RETURN n.salary + // Add bonus value
+       1000 AS totalCompensation;`;
+    const expected = `MATCH (n)
+RETURN n.salary + // Add bonus value
+       1000 AS totalCompensation;`;
     verifyFormatting(query, expected);
   });
 });
