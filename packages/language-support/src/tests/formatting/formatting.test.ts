@@ -102,6 +102,14 @@ RETURN count('*')`;
 }`;
     verifyFormatting(query, expected);
   });
+
+  test('no space in label predicates', () => {
+    const query = `MATCH (person    : Person  :  Owner  )
+RETURN person.name`;
+    const expected = `MATCH (person:Person:Owner)
+RETURN person.name`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('should not forget to include all comments', () => {
@@ -184,6 +192,32 @@ MERGE (a:A)-[:T]->(b:B)
   ON MATCH SET b.name = 'you' /* Update name if matched */
 RETURN a.prop // Output the result`;
     verifyFormatting(inlineandmultiline, expected);
+  });
+
+  test('does not move explicitly newlined comments to the line before', () => {
+    const query = `MATCH (n)
+// filter out to only the right name
+WHERE n.name = 'Tomas'
+RETURN n`;
+    const expected = `MATCH (n)
+// filter out to only the right name
+WHERE n.name = 'Tomas'
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple comments should not be moved to the previous line', () => {
+    const query = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+return n;`;
+    const expected = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+RETURN n;`.trim();
+    verifyFormatting(query, expected);
   });
 });
 
@@ -494,6 +528,41 @@ FOREACH (item IN items |
   CREATE (n)-[:CONTAINS]->(p)
 )
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('weird label expression', () => {
+    const query = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
+RETURN n`;
+    const expected = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('quantified path pattern spacing', () => {
+    const query = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){ 1 , 4 }`;
+    const expected = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('quantified path pattern spacing with +/*', () => {
+    const starquery = `MATCH (p:Person)-[:ACTED_IN | DIRECTED]->   * (q)
+RETURN q;`;
+    const plusquery = `MATCH (p:Person)-[:ACTED_IN | DIRECTED]->   + (q)
+RETURN q;`;
+    const starexpected = `MATCH (p:Person)-[:ACTED_IN|DIRECTED]->*(q)
+RETURN q;`;
+    const plusexpected = `MATCH (p:Person)-[:ACTED_IN|DIRECTED]->+(q)
+RETURN q;`;
+    verifyFormatting(starquery, starexpected);
+    verifyFormatting(plusquery, plusexpected);
+  });
+
+  test('graph pattern matching spacing', () => {
+    const query = `MATCH (m:(Adventure&Children) & ! (War&Crime))
+RETURN m`;
+    const expected = `MATCH (m:(Adventure&Children)&!(War&Crime))
+RETURN m`;
     verifyFormatting(query, expected);
   });
 });
