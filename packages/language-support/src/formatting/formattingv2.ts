@@ -194,11 +194,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       group: [],
       type: 'GROUP_START',
     };
-    if (this.currentBuffer().at(-1).type === "GROUP_START") {
-      this.currentBuffer().at(-1).group.push(groupStartChunk);
-    } else {
       this.currentBuffer().push(groupStartChunk)
-    }
+  
   };
   
   startCollectionGroup = () => {
@@ -208,11 +205,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'GROUP_START',
       extraIndent: 1,
     };
-    if (this.currentBuffer().at(-1).type === "GROUP_START") {
-      this.currentBuffer().at(-1).group.push(collectionGroupStartChunk);
-    } else {
       this.currentBuffer().push(collectionGroupStartChunk)
-    }
   };
 
   startCaseGroup = () => {
@@ -228,15 +221,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.currentBuffer().length === 0) {
       return []
     } 
-    const chunk = this.currentBuffer().pop()
-    if (typeof chunk === "undefined") {
-      return []
+    const groupChunk: GroupChunk[] = []
+    while (this.currentBuffer().at(-1).type === "GROUP_START") {
+      const latestGroup = this.currentBuffer().pop()
+      if (latestGroup.type === "GROUP_START") groupChunk.push(latestGroup)
     }
-    if (chunk.type !== "GROUP_START") {
-      this.currentBuffer().push(chunk)
-      return []
-    }
-    return [...chunk.group, chunk] 
+    return groupChunk
   }
 
   addIndentation = () => {
@@ -1199,18 +1189,9 @@ export function formatQuery(
 RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
 RETURN count() AS count`)) */
 
-/* console.log(formatQuery(`MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-             [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
-RETURN path`))
-
-console.log(
-  formatQuery(`MATCH (p:Product)
-WHERE p.price > 1000 AND p.stock > 50 AND
-      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment', 'Automotive Parts',
-                     'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
-                     'Musical Instruments', 'Art Supplies', 'Office Supplies']`),
-); */
+console.log(formatQuery(`RETURN {looooooooooooooooooooooongkey: value,
+        loooooooooooooooooooongkeeeyyyyyyyy: value2,
+        looooooooooooooongkeeey: value3}`))
 
 /* console.log(
   formatQuery(
@@ -1218,8 +1199,8 @@ WHERE p.price > 1000 AND p.stock > 50 AND
   ),
 ); */
 
-console.log(formatQuery(`MATCH (p:Product)
+/* console.log(formatQuery(`MATCH (p:Product)
 WHERE p.price > 1000 AND p.stock > 50 AND
       p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment']
-RETURN p`))
+                     'Sports Equipment', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools']
+RETURN p`)) */
