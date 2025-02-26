@@ -302,7 +302,7 @@ export class CypherEditor extends Component<
   /**
    * Format Cypher query
    */
-  format(experimentalVersion = true) {
+  format(experimentalVersion = false) {
     format(this.editorView.current, experimentalVersion);
   }
 
