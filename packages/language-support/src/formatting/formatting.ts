@@ -26,6 +26,7 @@ import {
   ParameterContext,
   PathLengthContext,
   PropertyContext,
+  QuantifierContext,
   RegularQueryContext,
   RelationshipPatternContext,
   RightArrowContext,
@@ -375,6 +376,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visit(arrowLineList[1]);
     this.visitIfNotNull(ctx.rightArrow());
+  };
+
+  visitQuantifier = (ctx: QuantifierContext) => {
+    if (ctx.PLUS() || ctx.TIMES()) {
+      this.visitRawIfNotNull(ctx.PLUS());
+      this.visitRawIfNotNull(ctx.TIMES());
+      return;
+    }
+    this.visit(ctx.LCURLY());
+    const n = ctx.UNSIGNED_DECIMAL_INTEGER_list().length;
+    this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(0));
+    this.visitTerminalRaw(ctx.COMMA());
+    if (n > 1) {
+      this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(1));
+    }
+    this.visit(ctx.RCURLY());
   };
 
   // Handled separately because the dots aren't operators
