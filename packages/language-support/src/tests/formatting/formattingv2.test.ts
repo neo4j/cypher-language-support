@@ -1203,3 +1203,70 @@ RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
 });
+
+describe('tests for line breaks with comments', () => {
+  test('should not put the arrow on a newline for no reason', () => {
+    const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+return z`;
+    const expected = `MATCH (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
+MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
+//MATCH (t:Target)-[:BELONGS_TO]->(s)
+RETURN z`;
+    verifyFormatting(query, expected);
+  });
+
+  test('handles comments before long patterns gracefully', () => {
+    const query = `CREATE
+// this is a loooooooooooooooooooong comment
+(qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+(qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
+(asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
+(mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
+(mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
+(zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
+(qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+
+// this is a loooooooooooooooooooong comment
+(hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
+(zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
+(poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
+(asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
+(zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
+(zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+
+// this is a loooooooooooooooooooong comment
+(mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
+(mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+
+// this is a loooooooooooooooooooong comment
+(mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
+(mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
+(mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
+    const expected = `
+CREATE // this is a loooooooooooooooooooong comment
+      (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+      (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
+      (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
+      (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
+      (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
+      (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
+      (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+      // this is a loooooooooooooooooooong comment
+      (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
+      (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
+      (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
+      (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
+      (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
+      (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+      // this is a loooooooooooooooooooong comment
+      (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
+      (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+      // this is a loooooooooooooooooooong comment
+      (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
+      (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
+      (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
+    verifyFormatting(query, expected);
+  });
+});
