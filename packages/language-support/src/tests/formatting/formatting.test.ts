@@ -545,6 +545,19 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
+  test('quantified path pattern spacing with +/*', () => {
+    const starquery = `MATCH (p:Person)-[:ACTED_IN | DIRECTED]->   * (q)
+RETURN q;`;
+    const plusquery = `MATCH (p:Person)-[:ACTED_IN | DIRECTED]->   + (q)
+RETURN q;`;
+    const starexpected = `MATCH (p:Person)-[:ACTED_IN|DIRECTED]->*(q)
+RETURN q;`;
+    const plusexpected = `MATCH (p:Person)-[:ACTED_IN|DIRECTED]->+(q)
+RETURN q;`;
+    verifyFormatting(starquery, starexpected);
+    verifyFormatting(plusquery, plusexpected);
+  });
+
   test('graph pattern matching spacing', () => {
     const query = `MATCH (m:(Adventure&Children) & ! (War&Crime))
 RETURN m`;
