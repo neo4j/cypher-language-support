@@ -393,6 +393,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitLabelExpression4 = (ctx: LabelExpression4Context) => {
+    // There is no great way to know which labels have colons before them,
+    // so we have to resort to manually checking the types of the children.
     const n = ctx.getChildCount();
     for (let i = 0; i < n; i++) {
       const child = ctx.getChild(i);
@@ -401,7 +403,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         if (i > 0) {
           this.concatenate();
         }
-        //console.log("Avoiding space between", this.currentBuffer().at(-1));
       } else if (child instanceof TerminalNode) {
         this.avoidSpaceBetween();
         this.visitTerminal(child);
@@ -418,7 +419,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         if (i > 0) {
           this.concatenate();
         }
-        //console.log("Avoiding space between", this.currentBuffer().at(-1));
       } else if (child instanceof TerminalNode) {
         this.avoidSpaceBetween();
         this.visitTerminal(child);
