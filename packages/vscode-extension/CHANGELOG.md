@@ -6,6 +6,7 @@
 - Adds support for parameters to have escaped names
 - Adds autocompletions for Cypher version
 - Adds support for CYPHER preparser options (runtime, planner, etc)
+- Adds support for multiple Neo4j connections
 
 ## 1.6.1
 
