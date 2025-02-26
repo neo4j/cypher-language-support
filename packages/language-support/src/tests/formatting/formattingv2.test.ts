@@ -232,6 +232,22 @@ MERGE (a:A)-[:T]->(b:B)
 RETURN a.prop // Output the result`;
     verifyFormatting(inlineandmultiline, expected);
   });
+
+  test('should not put the second comment on the previous line', () => {
+    const query = `
+RETURN 1,
+// Comment
+       2,
+// Second comment
+       3`;
+    const expected = `
+RETURN 1,
+// Comment
+       2,
+// Second comment
+       3`.trim();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('other styleguide recommendations', () => {
