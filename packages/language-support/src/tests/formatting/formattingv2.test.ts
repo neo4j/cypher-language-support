@@ -708,7 +708,7 @@ RETURN q;`;
   // Example 3 by Finbar
   test('QPP spacing with unspecified end', () => {
     const query = `MATCH (p:(!  Movie | !(Director & ! Actor)))-->{1, }(q)
-RETURN *`;
+RETURN *;`;
     const expected = `MATCH (p:(!Movie|!(Director&!Actor)))-->{1, }(q)
 RETURN *;`;
     verifyFormatting(query, expected);
