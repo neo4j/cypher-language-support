@@ -111,13 +111,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const commentTokens = (hiddenTokens || []).filter((token) =>
       isComment(token),
     );
+    const nodeLine = node.symbol.line;
     for (const commentToken of commentTokens) {
+      const commentLine = commentToken.line;
+      const shouldBreak = nodeLine !== commentLine;
       if (
+        !shouldBreak &&
         this.buffer.length > 0 &&
         this.buffer[this.buffer.length - 1] !== ' ' &&
         this.buffer[this.buffer.length - 1] !== '\n'
       ) {
         this.addSpace();
+      }
+      if (shouldBreak) {
+        this.breakLine();
       }
       this.buffer.push(commentToken.text.trim());
       this.breakLine();

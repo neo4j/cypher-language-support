@@ -185,6 +185,18 @@ MERGE (a:A)-[:T]->(b:B)
 RETURN a.prop // Output the result`;
     verifyFormatting(inlineandmultiline, expected);
   });
+
+  test('comments should not be moved to the previous line', () => {
+    const query = `
+MATCH (n)
+// Comment about the return
+RETURN n;`;
+    const expected = `
+MATCH (n)
+// Comment about the return
+RETURN n;`.trim();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('other styleguide recommendations', () => {
