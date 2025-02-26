@@ -148,6 +148,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: RegularChunk = {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
+      group: prefix.group.concat(suffix.group),
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -189,19 +190,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = () => {
-    this.currentBuffer().push(groupStartChunk);
+    this.currentBuffer().at(-1).group.push(groupStartChunk);
   };
 
   startCollectionGroup = () => {
-    this.currentBuffer().push(collectionGroupStartChunk);
+    this.currentBuffer().at(-1).group.push(collectionGroupStartChunk);
   };
 
   startCaseGroup = () => {
-    this.currentBuffer().push(caseGroupStartChunk);
+    this.currentBuffer().at(-1).group.push(caseGroupStartChunk);
   };
 
   endGroup = () => {
-    this.currentBuffer().push(groupEndChunk);
+    this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
 
   addIndentation = () => {
@@ -227,6 +228,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: false,
         text,
+        group: [],
       };
       this.currentBuffer().push(chunk);
       this.breakLine();
@@ -249,6 +251,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: nodeLine !== commentLine,
         text,
+        group: [],
       };
       this.currentBuffer().push(chunk);
     }
@@ -474,6 +477,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
+      group: [],
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -511,6 +515,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
+      group: [],
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1153,3 +1158,26 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
+
+/* console.log(formatQuery(`CREATE (jj:Person {name: "Jay-jay"})
+RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
+RETURN count() AS count`)) */
+
+console.log(formatQuery(`MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+             [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+RETURN path`))
+
+console.log(
+  formatQuery(`MATCH (p:Product)
+WHERE p.price > 1000 AND p.stock > 50 AND
+      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
+                     'Sports Equipment', 'Automotive Parts',
+                     'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
+                     'Musical Instruments', 'Art Supplies', 'Office Supplies']`),
+);
+
+console.log(
+  formatQuery(
+    `CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"})`,
+  ),
+);

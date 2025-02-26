@@ -93,7 +93,7 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
   const nextBaseIndent = getNextIndent(currBaseIndent, choice);
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
-    finalIndent = curr.activeGroups.at(-1).align;
+    finalIndent = curr.activeGroups.at(0).align;
   }
 
   if (choice.left.type === 'COMMENT') {
@@ -127,8 +127,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
-  if (choice.left.type === 'GROUP_END') {
-    nextGroups.pop();
+  const groupList = choice.left.group
+  for (let i = 0; i < groupList.length; i++) {
+    if (groupList[i].type === "GROUP_END") {
+      //console.log("end group")
+      nextGroups.pop();
+    }
   }
 
   let extraCost = 0;
@@ -142,12 +146,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     extraCost = -1;
   }
 
-  if (choice.left.type === 'GROUP_START') {
-    const extraIndent = choice.left.extraIndent || 0;
-    nextGroups.push({
-      align: actualColumn + extraIndent,
-      breakCost: Math.pow(10, nextGroups.length + 1),
-    });
+  for (let i = 0; i < groupList.length; i++) {
+    if (groupList[i].type === "GROUP_START") {
+      // console.log("pushed group", thisWordEnd)
+      nextGroups.push({
+        align: thisWordEnd,
+        breakCost: (nextGroups.length+1)*100,
+      });
+    }
   }
 
   return {
@@ -245,11 +251,9 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupsIfSet(buffer: string[], decision: Decision) {
-  const leftType = decision.left.type;
-  if (showGroups && (leftType === 'GROUP_START' || leftType === 'GROUP_END')) {
-    const groupType = decision.left.type;
-    buffer.push(groupType === 'GROUP_START' ? '[' : ']');
-  }
+  decision.left.group.forEach(chunk => {
+    buffer.push(chunk.type === 'GROUP_START' ? '[' : ']');
+  })
 }
 
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
@@ -277,7 +281,7 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
         ? decision.left.text
         : '',
     );
-    addGroupsIfSet(buffer, decision);
+    if (showGroups) addGroupsIfSet(buffer, decision);
     if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();
@@ -375,4 +379,5 @@ const basicNoSpaceNoBreakSplits: Split[] = [{ splitType: '', cost: 0 }];
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
+  group: []
 };

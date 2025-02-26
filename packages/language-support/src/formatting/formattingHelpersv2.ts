@@ -55,6 +55,7 @@ export interface RegularChunk {
   noBreak?: true;
   isCursor?: true;
   text: string;
+  group: GroupChunk[]
 }
 
 export interface CommentChunk {
@@ -62,6 +63,7 @@ export interface CommentChunk {
   isCursor?: true;
   breakBefore: boolean;
   text: string;
+  group: GroupChunk[]
 }
 
 interface GroupChunk {
@@ -71,9 +73,10 @@ interface GroupChunk {
 
 interface IndentationChunk {
   type: 'INDENT' | 'DEDENT';
+  group: GroupChunk[]
 }
 
-type SpecialChunk = GroupChunk | IndentationChunk;
+type SpecialChunk = IndentationChunk;
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -85,8 +88,6 @@ const traillingCharacters = [
 
 export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
   return (
-    chunk.type === 'GROUP_START' ||
-    chunk.type === 'GROUP_END' ||
     chunk.type === 'INDENT' ||
     chunk.type === 'DEDENT'
   );
@@ -179,10 +180,12 @@ export function findTargetToken(
 }
 
 export const indentChunk: IndentationChunk = {
+  group: [],
   type: 'INDENT',
 };
 
 export const dedentChunk: IndentationChunk = {
+  group: [],
   type: 'DEDENT',
 };
 
@@ -200,6 +203,6 @@ export const caseGroupStartChunk: GroupChunk = {
   extraIndent: 2,
 };
 
-export const groupEndChunk: Chunk = {
+export const groupEndChunk: GroupChunk = {
   type: 'GROUP_END',
 };
