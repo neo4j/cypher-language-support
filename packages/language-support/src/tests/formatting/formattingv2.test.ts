@@ -132,7 +132,6 @@ RETURN n.prop // comment`;
     verifyFormatting(propertycomments, expected);
   });
 
-  // TODO: Does not work yet since the long comment goes on a new line
   test('basic inline comments', () => {
     // Whitespace after the comment lines is intentional. It should be removed
     const inlinecomments = `
@@ -1279,27 +1278,27 @@ RETURN n.salary + // Add bonus value
 (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
     const expected = `
 CREATE // this is a loooooooooooooooooooong comment
-      (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
-      (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
-      (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
-      (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
-      (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
-      (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
-      (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
-      // this is a loooooooooooooooooooong comment
-      (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
-      (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
-      (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
-      (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
-      (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
-      (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
-      // this is a loooooooooooooooooooong comment
-      (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
-      (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
-      // this is a loooooooooooooooooooong comment
-      (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
-      (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
-      (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
+       (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+       (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
+       (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
+       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
+       (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
+       (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
+       (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+       // this is a loooooooooooooooooooong comment
+       (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
+       (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
+       (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
+       (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
+       (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
+       (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+       // this is a loooooooooooooooooooong comment
+       (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
+       (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+       // this is a loooooooooooooooooooong comment
+       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
+       (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
+       (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
     verifyFormatting(query, expected);
   });
 });
