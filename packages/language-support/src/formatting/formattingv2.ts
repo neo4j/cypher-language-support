@@ -639,6 +639,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  // Handled separately because we never want to split within the quantifier.
+  // So we fully concatenate it to ensure it's part of the same chunk.
   visitQuantifier = (ctx: QuantifierContext) => {
     if (ctx.PLUS() || ctx.TIMES()) {
       this.visitChildren(ctx);
