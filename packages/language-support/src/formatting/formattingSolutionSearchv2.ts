@@ -13,7 +13,7 @@ along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
 
 const INDENTATION = 2;
-const showGroups = false;
+const showGroups = true;
 
 export interface Split {
   splitType: ' ' | '\n' | '';
@@ -47,6 +47,7 @@ export interface State {
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
+  line: number;
 }
 
 interface StateEdge {
@@ -93,7 +94,7 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
   const nextBaseIndent = getNextIndent(currBaseIndent, choice);
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
-    finalIndent = curr.activeGroups.at(0).align;
+    finalIndent = curr.activeGroups.at(-1).align;
   }
 
   if (choice.left.type === 'COMMENT') {
@@ -115,7 +116,17 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
-  const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
+  const groupList = choice.left.group
+  const nextGroups = [...curr.activeGroups];
+
+  console.log(groupList.filter(group => group.type === "GROUP_START").length, groupList.filter(group => group.type === "GROUP_END").length)
+  for (let i = 0; i < groupList.length; i++) {
+    if (groupList[i].type === "GROUP_END") {
+      //console.log("end group")
+      nextGroups.pop();
+    }
+  }
+  const [nextBaseIndent, finalIndent] = getIndentations({...curr, activeGroups: nextGroups}, choice);
   
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -126,20 +137,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
   
-  const nextGroups = [...curr.activeGroups];
-  const groupList = choice.left.group
-  // console.log(groupList.filter(group => group.type === "GROUP_START").length, groupList.filter(group => group.type === "GROUP_END").length)
-  for (let i = 0; i < groupList.length; i++) {
-    if (groupList[i].type === "GROUP_END") {
-      //console.log("end group")
-      nextGroups.pop();
-    }
-  }
+  
 
   for (let i = 0; i < groupList.length; i++) {
     if (groupList[i].type === "GROUP_START") {
-       //console.log("pushed group", actualColumn)
-       const extraIndent = groupList[i].extraIndent || 0;
+      const extraIndent = groupList[i].extraIndent || 0;
+      console.log("pushed group", actualColumn, extraIndent, nextGroups.length)
       nextGroups.push({
         align: actualColumn + extraIndent,
         breakCost: (nextGroups.length+1)*100,
@@ -165,6 +168,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     baseIndentation: nextBaseIndent,
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
+    line: isBreak ? curr.line + 1 : curr.line,
     edge: {
       prevState: curr,
       decision: {
@@ -242,14 +246,17 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
- /*    console.log("---------------")
-    console.log(stateToString(state), getStateKey(state), state.cost, state.activeGroups.length, state.choiceIndex , choiceList.length)
-    */
+    console.log("---------------")
+    console.log(stateToString(state), getStateKey(state), state.cost, state.activeGroups.length)
+   
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
+      if (state.activeGroups.length === 0 && split.splitType === "\n") {
+        continue
+      }
       const neighbourState = getNeighbourState(state, choice, split);
       if (choice.left.type === "REGULAR") {
-        // console.log("adds", getStateKey(neighbourState), neighbourState.cost, choice.left.text)
+        console.log("adds", getStateKey(neighbourState), neighbourState.cost, choice.left.text, neighbourState.overflowingCount)
        }
       heap.push(neighbourState);
     }
@@ -258,9 +265,14 @@ function bestFirstSolnSearch(
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
-function addGroupsIfSet(buffer: string[], decision: Decision) {
+function addGroupStartIfSet(buffer: string[], decision: Decision) {
   decision.left.group.forEach(chunk => {
-    buffer.push(chunk.type === 'GROUP_START' ? '[' : ']');
+    buffer.push(chunk.type === 'GROUP_START' ? '[' : '');
+  })
+}
+function addGroupEndIfSet(buffer: string[], decision: Decision) {
+  decision.left.group.forEach(chunk => {
+    buffer.push(chunk.type === 'GROUP_END' ? ']' : '');
   })
 }
 
@@ -284,12 +296,13 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     ) {
       cursorPos = buffer.join('').length;
     }
-    if (showGroups) addGroupsIfSet(buffer, decision);
+    if (showGroups) addGroupStartIfSet(buffer, decision);
     pushIfNotEmpty(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
+    if (showGroups) addGroupEndIfSet(buffer, decision);
     if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();
@@ -354,6 +367,7 @@ export function buffersToFormattedString(
       baseIndentation: indentation,
       cost: 0,
       overflowingCount: 0,
+      line: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);

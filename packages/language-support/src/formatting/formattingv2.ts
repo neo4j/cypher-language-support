@@ -65,7 +65,6 @@ import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   caseGroupStartChunk,
   Chunk,
-  collectionGroupStartChunk,
   CommentChunk,
   dedentChunk,
   findTargetToken,
@@ -190,6 +189,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = () => {
+    console.log("start")
     const groupStartChunk: GroupChunk = {
       group: [],
       type: 'GROUP_START',
@@ -200,8 +200,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.currentBuffer().push(groupStartChunk)
     }
   };
-
+  
   startCollectionGroup = () => {
+    console.log("start collection")
     const collectionGroupStartChunk: GroupChunk = {
       group: [],
       type: 'GROUP_START',
@@ -219,6 +220,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = () => {
+    console.log("end")
     this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
 
@@ -367,10 +369,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnItem = (ctx: ReturnItemContext) => {
     this.visit(ctx.expression());
-    this.startCollectionGroup();
-    this.visitIfNotNull(ctx.AS());
-    this.visitIfNotNull(ctx.variable());
-    this.endGroup();
+    if (ctx.AS() || ctx.variable()) {
+      this.startCollectionGroup();
+      this.visitIfNotNull(ctx.AS());
+      this.visitIfNotNull(ctx.variable());
+      this.endGroup();
+    }
   };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {
@@ -1195,7 +1199,7 @@ export function formatQuery(
 RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
 RETURN count() AS count`)) */
 
-console.log(formatQuery(`MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+/* console.log(formatQuery(`MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
              [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`))
 
@@ -1206,10 +1210,16 @@ WHERE p.price > 1000 AND p.stock > 50 AND
                      'Sports Equipment', 'Automotive Parts',
                      'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
                      'Musical Instruments', 'Art Supplies', 'Office Supplies']`),
-);
+); */
 
 /* console.log(
   formatQuery(
     `CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"})`,
   ),
 ); */
+
+console.log(formatQuery(`MATCH (p:Product)
+WHERE p.price > 1000 AND p.stock > 50 AND
+      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
+                     'Sports Equipment']
+RETURN p`))
