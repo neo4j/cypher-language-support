@@ -18,7 +18,7 @@
     "linting",
     "highlighting"
   ],
-  "version": "2.0.0-next.15",
+  "version": "2.0.0-next.16",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
   "types": "./dist/types/index.d.js",
@@ -45,6 +45,7 @@
     "antlr4": "4.13.2",
     "antlr4-c3": "*",
     "fastest-levenshtein": "^1.0.16",
+    "heap-js": "^2.6.0",
     "vscode-languageserver-types": "^3.17.3"
   },
   "scripts": {

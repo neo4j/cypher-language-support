@@ -218,6 +218,7 @@ export const lexerKeywords = [
   CypherLexer.KEY,
   CypherLexer.LABEL,
   CypherLexer.LABELS,
+  CypherLexer.LANGUAGE,
   CypherLexer.LEADING,
   CypherLexer.LIMITROWS,
   CypherLexer.LIST,

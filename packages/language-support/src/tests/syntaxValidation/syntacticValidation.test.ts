@@ -1,3 +1,4 @@
+import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Syntactic validation spec', () => {
@@ -736,6 +737,68 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Syntax validation does not error on case-insensitive use of built-in functions', () => {
+    const query = `RETURN randomUuId()`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          functions: {
+            'CYPHER 5': {
+              randomUUID: {
+                ...testData.emptyFunction,
+                name: 'randomUUID',
+                isBuiltIn: true,
+              },
+            },
+          },
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Syntax validation returns error on case-insensitive use of non-built-in functions', () => {
+    const query = `RETURN apoc.madeup()`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          functions: {
+            'CYPHER 5': {
+              'apoc.madeUp': {
+                ...testData.emptyFunction,
+                name: 'apoc.madeUp',
+                isBuiltIn: false,
+              },
+            },
+          },
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Function apoc.madeup is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 18,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 7,
             line: 0,
           },
         },
