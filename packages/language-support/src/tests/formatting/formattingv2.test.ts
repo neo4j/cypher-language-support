@@ -232,6 +232,22 @@ MERGE (a:A)-[:T]->(b:B)
 RETURN a.prop // Output the result`;
     verifyFormatting(inlineandmultiline, expected);
   });
+
+  test('should not put the second comment on the previous line', () => {
+    const query = `
+RETURN 1,
+// Comment
+       2,
+// Second comment
+       3`;
+    const expected = `
+RETURN 1,
+// Comment
+       2,
+// Second comment
+       3`.trim();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('other styleguide recommendations', () => {
@@ -686,11 +702,39 @@ RETURN m`;
     verifyFormatting(query, expected);
   });
 
+  // Example 1 by Finbar
+  test('QPP spacing with star', () => {
+    const query = `
+MATCH (p:Person)-[:ACTED_IN | DIRECTED]->   * (q)
+RETURN q`;
+    const expected = `MATCH (p:Person)-[:ACTED_IN|DIRECTED]->*(q)
+RETURN q`;
+    verifyFormatting(query, expected);
+  });
+
+  // Example 2 by Finbar
+  test('QPP spacing with unspecified start', () => {
+    const query = `MATCH SHORTEST 1(p:Person)-->{, 3}(q)
+RETURN q;`;
+    const expected = `MATCH SHORTEST 1 (p:Person)-->{ ,3}(q)
+RETURN q;`;
+    verifyFormatting(query, expected);
+  });
+
+  // Example 3 by Finbar
+  test('QPP spacing with unspecified end', () => {
+    const query = `MATCH (p:(!  Movie | !(Director & ! Actor)))-->{1, }(q)
+RETURN *;`;
+    const expected = `MATCH (p:(!Movie|!(Director&!Actor)))-->{1, }(q)
+RETURN *;`;
+    verifyFormatting(query, expected);
+  });
+
   test('all should not get capitalized here', () => {
     const query = `MATCH path=(:Station&Western)(()-[:NEXT]->()){1,}(:Station&Western)
 WHERE all(x IN nodes(path) WHERE x:Station&Western)
 RETURN path`;
-    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1,} (:Station&Western)
+    const expected = `MATCH path = (:Station&Western) (()-[:NEXT]->()){1, }(:Station&Western)
 WHERE all(x IN nodes(path) WHERE x:Station&Western)
 RETURN path`;
     verifyFormatting(query, expected);
@@ -1153,8 +1197,8 @@ MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-[:NEX
 RETURN dmk`;
     const expected = `
 MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
-      [:NEXT]->+ (l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
-      [:NEXT]->* (l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
+      [:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
+      [:NEXT]->*(l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });

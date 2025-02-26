@@ -85,8 +85,10 @@ import { buffersToFormattedString } from './formattingSolutionSearchv2';
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
-  space?: boolean;
+  spacingChoice?: SpacingChoice;
 }
+
+type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   buffers: Chunk[][] = [];
@@ -482,6 +484,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (options?.upperCase) {
       text = text.toUpperCase();
     }
+    if (options?.spacingChoice === 'EXTRA_SPACE') {
+      text += ' ';
+    }
+
     const chunk: RegularChunk = {
       type: 'REGULAR',
       text,
@@ -492,7 +498,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
 
     this.currentBuffer().push(chunk);
-    if (!options?.space) {
+    if (!options?.spacingChoice) {
       this.avoidSpaceBetween();
     }
     if (wantsToBeConcatenated(node)) {
@@ -512,13 +518,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Literals have casing rules, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-casing
   visitBooleanLiteral = (ctx: BooleanLiteralContext) => {
-    this.visitRawIfNotNull(ctx.TRUE(), { lowerCase: true, space: true });
-    this.visitRawIfNotNull(ctx.FALSE(), { lowerCase: true, space: true });
+    this.visitRawIfNotNull(ctx.TRUE(), {
+      lowerCase: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.visitRawIfNotNull(ctx.FALSE(), {
+      lowerCase: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
   };
 
   visitKeywordLiteral = (ctx: KeywordLiteralContext) => {
     if (ctx.NULL()) {
-      this.visitTerminalRaw(ctx.NULL(), { lowerCase: true, space: true });
+      this.visitTerminalRaw(ctx.NULL(), {
+        lowerCase: true,
+        spacingChoice: 'SPACE_AFTER',
+      });
     } else {
       this.visitChildren(ctx);
     }
@@ -645,21 +660,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.PLUS() || ctx.TIMES()) {
       this.visitChildren(ctx);
       this.concatenate();
+      this.avoidSpaceBetween();
       return;
     }
-    this.visit(ctx.LCURLY());
+    if (!ctx._from_) {
+      this.visitTerminalRaw(ctx.LCURLY(), { spacingChoice: 'EXTRA_SPACE' });
+    } else {
+      this.visit(ctx.LCURLY());
+    }
     this.concatenate();
-    const n = ctx.UNSIGNED_DECIMAL_INTEGER_list().length;
-    this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(0));
-    this.concatenate();
-    this.visit(ctx.COMMA());
-    this.concatenate();
-    if (n > 1) {
-      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(1));
+    let idx = 0;
+    if (ctx._from_) {
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      this.concatenate();
+      idx++;
+    }
+    if (ctx._to) {
+      this.visit(ctx.COMMA());
+      this.concatenate();
+      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      this.concatenate();
+    } else {
+      this.visitTerminalRaw(ctx.COMMA(), { spacingChoice: 'EXTRA_SPACE' });
       this.concatenate();
     }
     this.visit(ctx.RCURLY());
     this.concatenate();
+    this.avoidSpaceBetween();
   };
 
   // Handled separately because the dots aren't operators

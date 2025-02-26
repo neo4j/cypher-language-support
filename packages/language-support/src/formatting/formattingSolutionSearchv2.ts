@@ -293,14 +293,14 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
+    return [{ splitType: '\n', cost: 0 }];
+  }
   switch (chunk.type) {
     case 'COMMENT':
     case 'INDENT':
       return [{ splitType: '\n', cost: 0 }];
     case 'REGULAR':
-      if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
-        return [{ splitType: '\n', cost: 0 }];
-      }
       if (doesNotWantSpace(chunk, nextChunk)) {
         return basicNoSpaceSplits;
       }
