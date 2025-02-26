@@ -663,7 +663,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
       return;
     }
-    this.visit(ctx.LCURLY());
+    if (!ctx._from_) {
+      this.visitTerminalRaw(ctx.LCURLY(), { spacingChoice: 'EXTRA_SPACE' });
+    } else {
+      this.visit(ctx.LCURLY());
+    }
     this.concatenate();
     let idx = 0;
     if (ctx._from_) {

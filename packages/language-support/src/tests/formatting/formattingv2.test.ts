@@ -700,7 +700,7 @@ RETURN q`;
   test('QPP spacing with unspecified start', () => {
     const query = `MATCH SHORTEST 1(p:Person)-->{, 3}(q)
 RETURN q;`;
-    const expected = `MATCH SHORTEST 1 (p:Person)-->{,3}(q)
+    const expected = `MATCH SHORTEST 1 (p:Person)-->{ ,3}(q)
 RETURN q;`;
     verifyFormatting(query, expected);
   });
