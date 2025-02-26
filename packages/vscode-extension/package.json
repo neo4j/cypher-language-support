@@ -294,7 +294,7 @@
             false
           ],
           "default": true,
-          "description": "Whether to get linting errors for the Cypher queries"
+          "description": "Enable linting errors for Cypher queries"
         }
       }
     },
