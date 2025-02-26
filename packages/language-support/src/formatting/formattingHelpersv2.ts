@@ -1,3 +1,9 @@
+/*
+ * This file is a WIP of the second iteration of the Cypher formatter.
+ * It's being kept as a separate file to enable having two separate version at once
+ * since it would be difficult to consolidate the new and the old version
+ */
+
 import {
   CharStreams,
   CommonToken,
@@ -14,7 +20,7 @@ import CypherCmdParser, {
   MergeClauseContext,
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
-import { lexerKeywords, lexerOperators } from '../lexerSymbols';
+import { lexerKeywords } from '../lexerSymbols';
 
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
@@ -34,12 +40,71 @@ export class FormatterErrorsListener
   public reportContextSensitivity() {}
 }
 
+/**
+ * The maximum column width for the formatter. Not a hard limit as overflow
+ * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
+ */
+export const MAX_COL = 80;
+
+export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
+
+export interface RegularChunk {
+  type: 'REGULAR';
+  node?: TerminalNode;
+  noSpace?: true;
+  isCursor?: true;
+  text: string;
+}
+
+export interface CommentChunk {
+  type: 'COMMENT';
+  isCursor?: true;
+  breakBefore: boolean;
+  text: string;
+}
+
+interface GroupChunk {
+  type: 'GROUP_START' | 'GROUP_END';
+  extraIndent?: number;
+}
+
+interface IndentationChunk {
+  type: 'INDENT' | 'DEDENT';
+}
+
+type SpecialChunk = GroupChunk | IndentationChunk;
+
+const traillingCharacters = [
+  CypherCmdLexer.SEMICOLON,
+  CypherCmdLexer.COMMA,
+  CypherCmdLexer.COLON,
+  CypherCmdLexer.RPAREN,
+  CypherCmdLexer.RBRACKET,
+];
+
+export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
+  return (
+    chunk.type === 'GROUP_START' ||
+    chunk.type === 'GROUP_END' ||
+    chunk.type === 'INDENT' ||
+    chunk.type === 'DEDENT'
+  );
+}
+
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
+  startGroup?: () => void,
+  endGroup?: () => void,
 ) {
   visit(ctx.MERGE());
+  if (startGroup) {
+    startGroup();
+  }
   visit(ctx.pattern());
+  if (endGroup) {
+    endGroup();
+  }
   const mergeActions = ctx
     .mergeAction_list()
     .map((action, index) => ({ action, index }));
@@ -60,16 +125,8 @@ export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);
 }
 
-export function wantsSpaceBefore(node: TerminalNode): boolean {
-  return isKeywordTerminal(node) || lexerOperators.includes(node.symbol.type);
-}
-
-export function wantsSpaceAfter(node: TerminalNode): boolean {
-  return (
-    isKeywordTerminal(node) ||
-    lexerOperators.includes(node.symbol.type) ||
-    node.symbol.type === CypherCmdLexer.COMMA
-  );
+export function wantsToBeConcatenated(node: TerminalNode): boolean {
+  return traillingCharacters.includes(node.symbol.type);
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
@@ -91,6 +148,7 @@ function isSymbolicName(node: TerminalNode): boolean {
     node.parentCtx instanceof EscapedSymbolicNameStringContext
   );
 }
+
 export function getParseTreeAndTokens(query: string) {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
@@ -118,3 +176,29 @@ export function findTargetToken(
   }
   return false;
 }
+
+export const indentChunk: IndentationChunk = {
+  type: 'INDENT',
+};
+
+export const dedentChunk: IndentationChunk = {
+  type: 'DEDENT',
+};
+
+export const groupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
+};
+
+export const collectionGroupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
+  extraIndent: 1,
+};
+
+export const caseGroupStartChunk: GroupChunk = {
+  type: 'GROUP_START',
+  extraIndent: 2,
+};
+
+export const groupEndChunk: Chunk = {
+  type: 'GROUP_END',
+};
