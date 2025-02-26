@@ -673,7 +673,7 @@ RETURN n`;
   });
 
   test('graph pattern matching spacing', () => {
-    const query = `MATCH (m:(Adventure&Children)&!(War&Crime))
+    const query = `MATCH (m:(Adventure&Children) & ! (War&Crime))
 RETURN m`;
     const expected = `MATCH (m:(Adventure&Children)&!(War&Crime))
 RETURN m`;
@@ -681,7 +681,7 @@ RETURN m`;
   });
 
   test('quantified path pattern spacing', () => {
-    const query = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
+    const query = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){ 1 , 4 }`;
     const expected = `MATCH ((:Station {name: 'Denmark Hill'})-[l:LINK]-(s:Station)){1,4}`;
     verifyFormatting(query, expected);
   });
