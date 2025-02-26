@@ -116,22 +116,34 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
-
+  
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const leftLength =
-    choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
-      ? choice.left.text.length
-      : 0;
+  choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
+  ? choice.left.text.length
+  : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
-
+  
   const nextGroups = [...curr.activeGroups];
   const groupList = choice.left.group
+  // console.log(groupList.filter(group => group.type === "GROUP_START").length, groupList.filter(group => group.type === "GROUP_END").length)
   for (let i = 0; i < groupList.length; i++) {
     if (groupList[i].type === "GROUP_END") {
       //console.log("end group")
       nextGroups.pop();
+    }
+  }
+
+  for (let i = 0; i < groupList.length; i++) {
+    if (groupList[i].type === "GROUP_START") {
+       //console.log("pushed group", actualColumn)
+       const extraIndent = groupList[i].extraIndent || 0;
+      nextGroups.push({
+        align: actualColumn + extraIndent,
+        breakCost: (nextGroups.length+1)*100,
+      });
     }
   }
 
@@ -144,16 +156,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     // Incentivize not breaking to avoid cases where we have longer lines after short
     // ones.
     extraCost = -1;
-  }
-
-  for (let i = 0; i < groupList.length; i++) {
-    if (groupList[i].type === "GROUP_START") {
-      // console.log("pushed group", thisWordEnd)
-      nextGroups.push({
-        align: thisWordEnd,
-        breakCost: (nextGroups.length+1)*100,
-      });
-    }
   }
 
   return {
@@ -240,9 +242,15 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
+ /*    console.log("---------------")
+    console.log(stateToString(state), getStateKey(state), state.cost, state.activeGroups.length, state.choiceIndex , choiceList.length)
+    */
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
       const neighbourState = getNeighbourState(state, choice, split);
+      if (choice.left.type === "REGULAR") {
+        // console.log("adds", getStateKey(neighbourState), neighbourState.cost, choice.left.text)
+       }
       heap.push(neighbourState);
     }
   }
@@ -276,12 +284,12 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     ) {
       cursorPos = buffer.join('').length;
     }
+    if (showGroups) addGroupsIfSet(buffer, decision);
     pushIfNotEmpty(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
-    if (showGroups) addGroupsIfSet(buffer, decision);
     if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();

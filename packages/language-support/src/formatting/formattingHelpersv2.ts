@@ -46,7 +46,7 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
-export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
+export type Chunk = RegularChunk | CommentChunk | SpecialChunk | GroupChunk;
 
 export interface RegularChunk {
   type: 'REGULAR';
@@ -66,9 +66,10 @@ export interface CommentChunk {
   group: GroupChunk[]
 }
 
-interface GroupChunk {
+export interface GroupChunk {
   type: 'GROUP_START' | 'GROUP_END';
   extraIndent?: number;
+  group: GroupChunk[]
 }
 
 interface IndentationChunk {
@@ -189,20 +190,24 @@ export const dedentChunk: IndentationChunk = {
   type: 'DEDENT',
 };
 
-export const groupStartChunk: GroupChunk = {
+const groupStartChunk: GroupChunk = {
+  group: [],
   type: 'GROUP_START',
 };
 
 export const collectionGroupStartChunk: GroupChunk = {
+  group: [],
   type: 'GROUP_START',
   extraIndent: 1,
 };
 
 export const caseGroupStartChunk: GroupChunk = {
+  group: [],
   type: 'GROUP_START',
   extraIndent: 2,
 };
 
 export const groupEndChunk: GroupChunk = {
+  group: [],
   type: 'GROUP_END',
 };

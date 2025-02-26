@@ -70,8 +70,8 @@ import {
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
+  GroupChunk,
   groupEndChunk,
-  groupStartChunk,
   handleMergeClause,
   indentChunk,
   isComment,
@@ -190,11 +190,28 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = () => {
-    this.currentBuffer().at(-1).group.push(groupStartChunk);
+    const groupStartChunk: GroupChunk = {
+      group: [],
+      type: 'GROUP_START',
+    };
+    if (this.currentBuffer().at(-1).type === "GROUP_START") {
+      this.currentBuffer().at(-1).group.push(groupStartChunk);
+    } else {
+      this.currentBuffer().push(groupStartChunk)
+    }
   };
 
   startCollectionGroup = () => {
-    this.currentBuffer().at(-1).group.push(collectionGroupStartChunk);
+    const collectionGroupStartChunk: GroupChunk = {
+      group: [],
+      type: 'GROUP_START',
+      extraIndent: 1,
+    };
+    if (this.currentBuffer().at(-1).type === "GROUP_START") {
+      this.currentBuffer().at(-1).group.push(collectionGroupStartChunk);
+    } else {
+      this.currentBuffer().push(collectionGroupStartChunk)
+    }
   };
 
   startCaseGroup = () => {
@@ -204,6 +221,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   endGroup = () => {
     this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
+
+  addGroups = (): GroupChunk[] => {
+    if (this.currentBuffer().length === 0) {
+      return []
+    } 
+    const chunk = this.currentBuffer().pop()
+    if (typeof chunk === "undefined") {
+      return []
+    }
+    if (chunk.type !== "GROUP_START") {
+      this.currentBuffer().push(chunk)
+      return []
+    }
+    return [...chunk.group, chunk] 
+  }
 
   addIndentation = () => {
     this.currentBuffer().push(indentChunk);
@@ -477,7 +509,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      group: [],
+      group: this.addGroups(),
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -515,7 +547,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      group: [],
+      group: this.addGroups(),
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1176,8 +1208,8 @@ WHERE p.price > 1000 AND p.stock > 50 AND
                      'Musical Instruments', 'Art Supplies', 'Office Supplies']`),
 );
 
-console.log(
+/* console.log(
   formatQuery(
-    `CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"})`,
+    `CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"})`,
   ),
-);
+); */
