@@ -133,23 +133,24 @@ RETURN n.prop // comment`;
   });
 
   // TODO: Does not work yet since the long comment goes on a new line
-  //  test('basic inline comments', () => {
-  //    // Whitespace after the comment lines is intentional. It should be removed
-  //    const inlinecomments = `
-  //MERGE (n) ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
-  //MERGE (a:A)-[:T]->(b:B)           // Create or match a relationship from 'a:A' to 'b:B'
-  //ON MATCH SET b.name = 'you'       // If 'b' already exists, set its 'name' to 'you'
-  //ON CREATE SET a.name = 'me'       // If 'a' is created, set its 'name' to 'me'
-  //RETURN a.prop                     // Return the 'prop' of 'a'
-  //`;
-  //    const expected = `MERGE (n)
-  //  ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
-  //MERGE (a:A)-[:T]->(b:B) // Create or match a relationship from 'a:A' to 'b:B'
-  //  ON CREATE SET a.name = 'me' // If 'a' is created, set its 'name' to 'me'
-  //  ON MATCH SET b.name = 'you' // If 'b' already exists, set its 'name' to 'you'
-  //RETURN a.prop // Return the 'prop' of 'a'`;
-  //    verifyFormatting(inlinecomments, expected);
-  //  });
+  test('basic inline comments', () => {
+    // Whitespace after the comment lines is intentional. It should be removed
+    const inlinecomments = `
+MERGE (n) ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
+MERGE (a:A)-[:T]->(b:B)           // Create or match a relationship from 'a:A' to 'b:B'
+ON MATCH SET b.name = 'you'       // If 'b' already exists, set its 'name' to 'you'
+ON CREATE SET a.name = 'me'       // If 'a' is created, set its 'name' to 'me'
+RETURN a.prop                     // Return the 'prop' of 'a'
+`;
+    const expected = `
+MERGE (n)
+  ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
+MERGE (a:A)-[:T]->(b:B) // Create or match a relationship from 'a:A' to 'b:B'
+  ON CREATE SET a.name = 'me' // If 'a' is created, set its 'name' to 'me'
+  ON MATCH SET b.name = 'you' // If 'b' already exists, set its 'name' to 'you'
+RETURN a.prop // Return the 'prop' of 'a'`.trim();
+    verifyFormatting(inlinecomments, expected);
+  });
 
   test('comments before the query', () => {
     const inlinecommentbefore = `// This is a comment before everything
@@ -1237,6 +1238,16 @@ WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
 UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
 RETURN *;`;
     verifyFormatting(bad, expected);
+  });
+
+  test('aligns the next line even if the comment breaks the expression', () => {
+    const query = `MATCH (n)
+RETURN n.salary + // Add bonus value
+       1000 AS totalCompensation;`;
+    const expected = `MATCH (n)
+RETURN n.salary + // Add bonus value
+       1000 AS totalCompensation;`;
+    verifyFormatting(query, expected);
   });
 
   test('handles comments before long patterns gracefully', () => {
