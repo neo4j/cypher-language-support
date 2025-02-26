@@ -124,7 +124,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ? choice.left.text.length
       : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
-  const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
+  const endWithoutComment =
+    choice.left.type === 'COMMENT' ? actualColumn - 1 : thisWordEnd;
+  const overflowingCount = Math.max(0, endWithoutComment - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
   if (choice.left.type === 'GROUP_END') {
@@ -293,8 +295,8 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
-    return [{ splitType: '\n', cost: 0 }];
+  if (nextChunk?.type === 'COMMENT') {
+    return [{ splitType: nextChunk.breakBefore ? '\n' : ' ', cost: 0 }];
   }
   switch (chunk.type) {
     case 'COMMENT':
