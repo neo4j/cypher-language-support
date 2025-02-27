@@ -611,8 +611,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitIfNotNull(ctx.leftArrow());
     }
     const arrowLineList = ctx.arrowLine_list();
-    this.avoidSpaceBetween();
+    // Concatenations are to ensure the (left) arrow remains
+    // on the previous line (styleguide rule) if we need to break within the pattern
     this.visit(arrowLineList[0]);
+    this.concatenate();
+    this.avoidSpaceBetween();
+    if (ctx.leftArrow()) {
+      this.concatenate();
+      this.avoidSpaceBetween();
+    }
     if (ctx.LBRACKET()) {
       const id1 = this.startBasicGroup();
       this.visit(ctx.LBRACKET());
@@ -620,8 +627,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.RBRACKET());
       this.endGroup(id1);
     }
-    // The concatenations below are to ensure the arrow stays either with itself,
-    // or the relationship.
+    // Same idea with concatenation as above
     this.avoidSpaceBetween();
     this.visit(arrowLineList[1]);
     this.concatenate();
