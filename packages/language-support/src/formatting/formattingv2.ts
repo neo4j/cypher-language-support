@@ -763,19 +763,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitWhereClause = (ctx: WhereClauseContext) => {
     this.breakLine();
     this.visit(ctx.WHERE());
-    this.avoidBreakBetween();
+    this.avoidBreakBetween()
     this.startGroup();
     this.visit(ctx.expression());
     this.endGroup();
   };
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
+    this.startCollectionGroup();
     this.visit(ctx.LPAREN());
     this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.expression());
-    this.endGroup();
     this.visit(ctx.RPAREN());
+    this.endGroup();
   };
 
   visitExpression = (ctx: ExpressionContext) => {
@@ -1119,6 +1120,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
     if (ctx.YIELD()) {
+      this.startGroup()
       this.visit(ctx.YIELD());
       if (ctx.TIMES()) {
         this.visit(ctx.TIMES());
@@ -1136,6 +1138,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
       this.visitIfNotNull(ctx.whereClause());
+      this.endGroup()
     }
   };
 }
