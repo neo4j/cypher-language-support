@@ -675,17 +675,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     // Avoid wrapping the whole pattern in a group if there is a path so that
     // indentation happens around it
-    this.endGroup();
+    // this.endGroup();
     if (ctx.variable()) {
       this.visit(ctx.variable());
       this.visit(ctx.EQ());
+      this.avoidBreakBetween()
     }
-    this.visitIfNotNull(ctx.selector());
     this.startGroup();
+    this.visitIfNotNull(ctx.selector());
     this.visit(ctx.anonymousPattern());
     this.endGroup();
     // Provide an opening for the surrounding group we closed before
-    this.startGroup();
+    // this.startGroup();
   };
 
   visitPatternList = (ctx: PatternListContext) => {
@@ -925,6 +926,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitIfNotNull(ctx.ALL());
     this.visitIfNotNull(ctx.DISTINCT());
+    this.startGroup()
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
@@ -1192,9 +1194,14 @@ export function formatQuery(
 RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
 RETURN count() AS count`)) */
 
-console.log(formatQuery(`RETURN {looooooooooooooooooooooongkey: value,
-        loooooooooooooooooooongkeeeyyyyyyyy: value2,
-        looooooooooooooongkeeey: value3}`))
+/* console.log(formatQuery(`MATCH (n)
+WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
+"asdfklsjdf", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk")
+RETURN n`)) */
+
+console.log(formatQuery(`RETURN collect(create_this1 {datetime: apoc.date.convertFormat(
+               toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g")})
+       AS data`))
 
 /* console.log(
   formatQuery(
