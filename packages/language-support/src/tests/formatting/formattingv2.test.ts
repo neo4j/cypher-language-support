@@ -1419,4 +1419,23 @@ CREATE (a:Person {name: 'AlexanderTheGreat'})-->
        (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should put the QPP in the right place despite comments', () => {
+    const query = `MATCH pth = (u:User)-[:USER_EVENT]->(e:GeneratedQuery)
+    (()--(:GeneratedQuery) // Optionally successive
+    ) * (()-->(:RanCommand)-->(:RanCypher) // One or more chains of RanCommand + RanCypher
+    ) + (()-->(:GeneratedQuery) // Optionally successive repeated calls of GeneratedQuery
+    ) + (()-->(:RanCommand)-->(:RanCypher) // One or more chains of RanCommand + RanCypher
+    ) *
+RETURN pth ORDER BY length(pth) DESC
+LIMIT 10000;`;
+    const expected = `
+MATCH pth = (u:User)-[:USER_EVENT]->(e:GeneratedQuery) (()--(:GeneratedQuery))* // Optionally successive
+            (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
+            (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
+            (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
+RETURN pth ORDER BY length(pth) DESC
+LIMIT 10000;`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
