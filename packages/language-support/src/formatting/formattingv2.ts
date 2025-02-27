@@ -335,10 +335,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnItem = (ctx: ReturnItemContext) => {
     this.visit(ctx.expression());
-    const id1 = this.startCollectionGroup();
-    this.visitIfNotNull(ctx.AS());
-    this.visitIfNotNull(ctx.variable());
-    this.endGroup(id1);
+    if (ctx.AS() || ctx.variable()) {
+      const id1 = this.startCollectionGroup();
+      this.visitIfNotNull(ctx.AS());
+      this.visitIfNotNull(ctx.variable());
+      this.endGroup(id1);
+    }
   };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {

@@ -1496,7 +1496,7 @@ AND t.format = "h5dIgvA4"
 RETURN
 s.format
 //, s.formatMetadata
-, t.format
+, t.format;
 //, t.formatMetadata;`;
     const expected = `MATCH (s:Item)-[r:\`REFERENCED_BY\`]->(t:Item)
 WHERE s.format = "LVDcQiqo" AND t.format = "h5dIgvA4"
@@ -1504,21 +1504,19 @@ WHERE s.format = "LVDcQiqo" AND t.format = "h5dIgvA4"
 RETURN s.format,
        //, s.formatMetadata
        t.format;
-//, t.formatMetadata`;
+//, t.formatMetadata;`;
     verifyFormatting(query, expected);
   });
 
   test('should not associate a comment at the end of a clause with the next', () => {
     const query = `
-MATCH (p)
 WITH p
      // This comment should not get indented with the WITH clause
 MATCH (a)`;
     const expected = `
-MATCH (p)
 WITH p
 // This comment should not get indented with the WITH clause
-MATCH (a)`;
+MATCH (a)`.trimStart();
     verifyFormatting(query, expected);
   });
 });
