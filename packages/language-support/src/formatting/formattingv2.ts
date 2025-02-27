@@ -174,6 +174,24 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     chunk.noSpace = true;
   };
 
+  avoidBreakBetween = () => {
+    let idx = this.currentBuffer().length - 1;
+    while (
+      (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') ||
+      isSpecialChunk(this.currentBuffer()[idx])
+    ) {
+      idx--;
+    }
+    if (idx < 0) {
+      return;
+    }
+    const chunk = this.currentBuffer()[idx];
+    if (!(chunk.type === 'REGULAR')) {
+      throw new Error('Internal formatter bug in avoidSpaceBetween');
+    }
+    chunk.noBreak = true;
+  };
+
   startGroup = () => {
     this.currentBuffer().push(groupStartChunk);
   };
@@ -290,6 +308,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this.visit(ctx.RETURN());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.returnBody());
     this.endGroup();
