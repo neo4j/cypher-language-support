@@ -78,16 +78,6 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-/* function getNextIndent(currIndent: number, choice: Choice): number {
-  if (choice.left.type === 'INDENT') {
-    return currIndent + INDENTATION;
-  }
-  if (choice.left.type === 'DEDENT') {
-    return currIndent - INDENTATION;
-  }
-  return currIndent;
-} */
-
 function getIndentations(curr: State, choice: Choice): [number, number] {
   const currBaseIndent = curr.baseIndentation;
   const nextBaseIndent =
@@ -129,20 +119,13 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
-  const numPops = choice.left.groupsEnding;
-  const numPushes = choice.left.groupsStarting;
-
-  for (let i = 0; i < numPushes; i++) {
-    // Perform a pop
-
-    // Perform a push if we
+  for (let i = 0; i < choice.left.groupsStarting; i++) {
     nextGroups.push({
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
     });
   }
-  for (let i = 0; i < numPops; i++) {
-    // Perform a pop if we still have pops to do
+  for (let i = 0; i < choice.left.groupsEnding; i++) {
     nextGroups.pop();
   }
 
