@@ -620,14 +620,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.RBRACKET());
       this.endGroup(id1);
     }
+    // The concatenations below are to ensure the arrow stays either with itself,
+    // or the relationship.
     this.avoidSpaceBetween();
     this.visit(arrowLineList[1]);
+    this.concatenate();
     if (ctx.rightArrow()) {
       this.visit(ctx.rightArrow());
       this.concatenate();
     }
-    // Put the relationship [] and the arrow in the same chunk
-    if (ctx.LBRACKET()) {
+    if (!ctx.LBRACKET()) {
       this.concatenate();
     }
     this.avoidSpaceBetween();
