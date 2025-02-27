@@ -1532,11 +1532,11 @@ RETURN abcde_fghi`;
     const query = `MERGE (t)
   ON MATCH SET
   t.trend = 5
-//            ,t.trend               = case when unwind_response.day.h >  unwind_response.day.c then 'DOWN' else 'UP' end
+// This comment is in an awkward place
 ;`;
     const expected = `MERGE (t)
   ON MATCH SET t.trend = 5;
-//            ,t.trend               = case when unwind_response.day.h >  unwind_response.day.c then 'DOWN' else 'UP' end`;
+// This comment is in an awkward place`;
     verifyFormatting(query, expected);
   });
 });
