@@ -1186,12 +1186,9 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 "asdfklsjdf", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk")
 RETURN n`)) */
 
-console.log(formatQuery(`UNWIND [{_id: "MiltPFxk",
-         properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}},
-        {_id: "2uMA2cW8",
-         properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}}]
-       AS row
-RETURN row`))
+console.log(formatQuery(`
+WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
+        AS platfs, COUNT(s) AS numplatf`))
 
 /* console.log(
   formatQuery(
