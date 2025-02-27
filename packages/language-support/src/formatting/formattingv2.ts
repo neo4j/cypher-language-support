@@ -187,7 +187,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = () => {
-    this.currentBuffer().push(groupEndChunk);
+    let idx = this.currentBuffer().length - 1;
+    while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
+      idx--;
+    }
+    this.currentBuffer().splice(idx + 1, 0, groupEndChunk);
   };
 
   addIndentation = () => {
