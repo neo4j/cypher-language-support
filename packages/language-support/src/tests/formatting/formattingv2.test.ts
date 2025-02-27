@@ -1100,8 +1100,8 @@ WHERE p.price > 1000 AND p.stock > 50 AND
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE p.price > 1000 AND p.stock > 50 AND
-      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment', 'Automotive Parts',
+      p.category IN ['Electronics', 'Home Appliances',
+                     'Garden Tools', 'Sports Equipment', 'Automotive Parts',
                      'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
                      'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
@@ -1517,6 +1517,14 @@ MATCH (a)`;
 WITH p
 // This comment should not get indented with the WITH clause
 MATCH (a)`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('should not put this comment on a new line', () => {
+    const query = `WITH store_code, metric_name, metric_value, single_impact.value AS impact_value // Hodnota dopadu
+RETURN store_code`;
+    const expected = `WITH store_code, metric_name, metric_value, single_impact.value AS impact_value // Hodnota dopadu
+RETURN store_code`;
     verifyFormatting(query, expected);
   });
 });

@@ -127,9 +127,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ? choice.left.text.length
       : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
-  const endWithoutComment =
-    choice.left.type === 'COMMENT' ? actualColumn - 1 : thisWordEnd;
-  const overflowingCount = Math.max(0, endWithoutComment - MAX_COL);
+  // We don't consider comments nor an empty space as overflowing
+  const endWithoutCommentAndSplit =
+    choice.left.type === 'COMMENT'
+      ? actualColumn - 1
+      : thisWordEnd - splitLength;
+  const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   const nextGroups = [...curr.activeGroups];
   if (choice.left.type === 'GROUP_END') {
