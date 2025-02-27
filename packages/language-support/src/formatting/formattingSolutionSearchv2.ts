@@ -134,9 +134,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       nextGroups.pop();
     }
     if (groupList[i].type === 'GROUP_START') {
-      const extraIndent = groupList[i].extraIndent || 0;
       nextGroups.push({
-        align: actualColumn + extraIndent,
+        align: actualColumn,
         breakCost: Math.pow(10, nextGroups.length + 1),
       });
     }
