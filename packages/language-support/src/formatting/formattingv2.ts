@@ -153,43 +153,39 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer()[indices[1]] = chunk;
   };
 
-  // If the previous token should choose between a newline or no space, rather than
-  // a newline and a space. Skip any preceding comments or special chunks we did not
-  // expect.
-  avoidSpaceBetween = () => {
+  /**
+   * Sets that if the previous token should not choose between the argument ('noSpace' or 'noBreak')
+   * Skips any preceding comments or special chunks we did not expect.
+   */
+  setAvoidProperty = (propertyName: 'noSpace' | 'noBreak'): void => {
     let idx = this.currentBuffer().length - 1;
+
     while (
-      (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') ||
-      isSpecialChunk(this.currentBuffer()[idx])
+      idx >= 0 &&
+      (this.currentBuffer()[idx].type === 'COMMENT' ||
+        isSpecialChunk(this.currentBuffer()[idx]))
     ) {
       idx--;
     }
+
     if (idx < 0) {
       return;
     }
+
     const chunk = this.currentBuffer()[idx];
-    if (!(chunk.type === 'REGULAR')) {
-      throw new Error('Internal formatter bug in avoidSpaceBetween');
+    if (chunk.type !== 'REGULAR') {
+      throw new Error(`Internal formatter bug in setting ${propertyName}`);
     }
-    chunk.noSpace = true;
+
+    chunk[propertyName] = true;
   };
 
-  avoidBreakBetween = () => {
-    let idx = this.currentBuffer().length - 1;
-    while (
-      (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') ||
-      isSpecialChunk(this.currentBuffer()[idx])
-    ) {
-      idx--;
-    }
-    if (idx < 0) {
-      return;
-    }
-    const chunk = this.currentBuffer()[idx];
-    if (!(chunk.type === 'REGULAR')) {
-      throw new Error('Internal formatter bug in avoidBreakBetween');
-    }
-    chunk.noBreak = true;
+  avoidSpaceBetween = (): void => {
+    this.setAvoidProperty('noSpace');
+  };
+
+  avoidBreakBetween = (): void => {
+    this.setAvoidProperty('noBreak');
   };
 
   startGroup = () => {
