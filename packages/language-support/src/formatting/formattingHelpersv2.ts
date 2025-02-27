@@ -94,16 +94,17 @@ export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
-  startGroup?: () => void,
-  endGroup?: () => void,
+  startGroup?: () => number,
+  endGroup?: (id: number) => void,
 ) {
   visit(ctx.MERGE());
+  let id: number;
   if (startGroup) {
-    startGroup();
+    id = startGroup();
   }
   visit(ctx.pattern());
   if (endGroup) {
-    endGroup();
+    endGroup(id);
   }
   const mergeActions = ctx
     .mergeAction_list()
