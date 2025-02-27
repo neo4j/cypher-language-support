@@ -96,6 +96,8 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
+  // Align hard-break comments with the outermost group (usually the one that
+  // aligns things with a clause)
   if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
     const lastGroup = curr.activeGroups.at(0);
     finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
