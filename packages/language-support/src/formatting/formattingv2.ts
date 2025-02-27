@@ -344,12 +344,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnItem = (ctx: ReturnItemContext) => {
     this.visit(ctx.expression());
-    if (ctx.AS() || ctx.variable()) {
-      this.startGroup();
-      this.visitIfNotNull(ctx.AS());
-      this.visitIfNotNull(ctx.variable());
-      this.endGroup();
-    }
+    this.startGroup();
+    this.visitIfNotNull(ctx.AS());
+    this.visitIfNotNull(ctx.variable());
+    this.endGroup();
   };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {
@@ -658,9 +656,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    // Avoid wrapping the whole pattern in a group if there is a path so that
-    // indentation happens around it
-    // this.endGroup();
     if (ctx.variable()) {
       this.visit(ctx.variable());
       this.visit(ctx.EQ());
@@ -670,8 +665,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.selector());
     this.visit(ctx.anonymousPattern());
     this.endGroup();
-    // Provide an opening for the surrounding group we closed before
-    // this.startGroup();
   };
 
   visitPatternList = (ctx: PatternListContext) => {
@@ -970,7 +963,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     this.startGroup();
-
     const propertyKeyNames = ctx.propertyKeyName_list();
     const expressions = ctx.expression_list();
     const commaList = ctx.COMMA_list();
