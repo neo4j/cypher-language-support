@@ -46,7 +46,7 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
-export type Chunk = RegularChunk | CommentChunk | SpecialChunk | GroupChunk;
+export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
 
 export interface RegularChunk {
   type: 'REGULAR';
@@ -77,7 +77,7 @@ interface IndentationChunk {
   group: GroupChunk[]
 }
 
-type SpecialChunk = IndentationChunk;
+type SpecialChunk = IndentationChunk | GroupChunk;
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -89,6 +89,8 @@ const traillingCharacters = [
 
 export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
   return (
+    chunk.type === 'GROUP_START' ||
+    chunk.type === 'GROUP_END' ||
     chunk.type === 'INDENT' ||
     chunk.type === 'DEDENT'
   );
