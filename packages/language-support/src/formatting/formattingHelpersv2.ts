@@ -55,7 +55,7 @@ export interface RegularChunk {
   noBreak?: true;
   isCursor?: true;
   text: string;
-  group: GroupChunk[]
+  group: GroupChunk[];
 }
 
 export interface CommentChunk {
@@ -63,21 +63,21 @@ export interface CommentChunk {
   isCursor?: true;
   breakBefore: boolean;
   text: string;
-  group: GroupChunk[]
+  group: GroupChunk[];
 }
 
 export interface GroupChunk {
   type: 'GROUP_START' | 'GROUP_END';
   extraIndent?: number;
-  group: GroupChunk[]
+  group: GroupChunk[];
 }
 
 interface IndentationChunk {
   type: 'INDENT' | 'DEDENT';
-  group: GroupChunk[]
+  group: GroupChunk[];
 }
 
-type SpecialChunk = IndentationChunk | GroupChunk;
+type SpecialChunk = GroupChunk | IndentationChunk;
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,

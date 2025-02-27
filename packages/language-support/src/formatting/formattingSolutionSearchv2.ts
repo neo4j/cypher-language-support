@@ -30,7 +30,6 @@ export interface Choice {
 interface Group {
   align: number;
   breakCost: number;
-  extraIndent: number;
 }
 
 export interface Decision {
@@ -48,7 +47,6 @@ export interface State {
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
-  line: number;
 }
 
 interface StateEdge {
@@ -117,7 +115,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
-  const groupList = choice.left.group;
   const nextGroups = [...curr.activeGroups];
 
   const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
@@ -131,6 +128,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
+  const groupList = choice.left.group;
   for (let i = 0; i < groupList.length; i++) {
     if (groupList[i].type === 'GROUP_END') {
       nextGroups.pop();
@@ -139,7 +137,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       const extraIndent = groupList[i].extraIndent || 0;
       nextGroups.push({
         align: actualColumn + extraIndent,
-        extraIndent: extraIndent,
         breakCost: Math.pow(10, nextGroups.length + 1),
       });
     }
@@ -163,7 +160,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     baseIndentation: nextBaseIndent,
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
-    line: isBreak ? curr.line + 1 : curr.line,
     edge: {
       prevState: curr,
       decision: {
@@ -251,12 +247,12 @@ function bestFirstSolnSearch(
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
-function addGroupStartIfSet(buffer: string[], decision: Decision) {
+function addGroupStart(buffer: string[], decision: Decision) {
   decision.left.group.forEach((chunk) => {
     buffer.push(chunk.type === 'GROUP_START' ? '[' : '');
   });
 }
-function addGroupEndIfSet(buffer: string[], decision: Decision) {
+function addGroupEnd(buffer: string[], decision: Decision) {
   decision.left.group.forEach((chunk) => {
     buffer.push(chunk.type === 'GROUP_END' ? ']' : '');
   });
@@ -282,13 +278,13 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     ) {
       cursorPos = buffer.join('').length;
     }
-    if (showGroups) addGroupStartIfSet(buffer, decision);
+    if (showGroups) addGroupStart(buffer, decision);
     pushIfNotEmpty(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
-    if (showGroups) addGroupEndIfSet(buffer, decision);
+    if (showGroups) addGroupEnd(buffer, decision);
     if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();
@@ -353,7 +349,6 @@ export function buffersToFormattedString(
       baseIndentation: indentation,
       cost: 0,
       overflowingCount: 0,
-      line: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
