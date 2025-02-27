@@ -1,10 +1,11 @@
 import { commands, Disposable, window } from 'vscode';
 import {
-  createOrShowConnectionPanelForConnectionItem,
+  createConnectionPanel,
   cypherFileFromSelection,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
+  showConnectionPanelForConnectionItem,
   switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
@@ -38,8 +39,12 @@ export function registerDisposables(): Disposable[] {
       saveConnectionAndDisplayConnectionResult,
     ),
     commands.registerCommand(
-      CONSTANTS.COMMANDS.MANAGE_CONNECTION_COMMAND,
-      createOrShowConnectionPanelForConnectionItem,
+      CONSTANTS.COMMANDS.EDIT_CONNECTION_COMMAND,
+      showConnectionPanelForConnectionItem,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.CREATE_CONNECTION_COMMAND,
+      createConnectionPanel,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,

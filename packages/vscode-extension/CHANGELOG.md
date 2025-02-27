@@ -7,6 +7,7 @@
 - Adds autocompletions for Cypher version
 - Adds support for CYPHER preparser options (runtime, planner, etc)
 - Adds setting neo4j.features.linting to disable linting of Cypher files
+- Adds support for multiple Neo4j connections
 
 ## 1.6.1
 

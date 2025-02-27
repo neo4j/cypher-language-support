@@ -464,7 +464,7 @@ suite('Connection service spec', () => {
       sandbox.assert.notCalled(persistentConnectSpy);
     });
 
-    test('Should call schemaPoller.persistentConnect when forceSave is true for a non successful Connection', async () => {
+    test('Should call schemaPoller.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is true', async () => {
       sandbox
         .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: true });
@@ -497,7 +497,7 @@ suite('Connection service spec', () => {
       );
     });
 
-    test('Should not call schemaPoller.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is false', async () => {
+    test('Should call schemaPoller.persistentConnect when forceSave is true for a non successful Connection when the retriable flag is false', async () => {
       sandbox
         .stub(mockSchemaPoller, 'connect')
         .resolves({ success: false, retriable: false });
@@ -513,7 +513,21 @@ suite('Connection service spec', () => {
         true,
       );
 
-      sandbox.assert.notCalled(persistentConnectSpy);
+      const settings: Neo4jConnectionSettings = {
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      };
+
+      sandbox.assert.calledWithExactly(
+        persistentConnectSpy,
+        settings.connectURL,
+        { username: settings.user, password: settings.password },
+        { appName: 'vscode-extension' },
+        settings.database,
+      );
     });
 
     test('Should reset all connections when saving a Connection with state flag set to activating', async () => {

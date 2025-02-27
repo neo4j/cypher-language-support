@@ -4,7 +4,6 @@ import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
-  getAllConnections,
   getConnectionByKey,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
@@ -43,9 +42,12 @@ export async function saveConnectionAndDisplayConnectionResult(
     connection,
     password,
   );
+  const errorDetail = result?.error?.friendlyMessage;
 
-  if (!result.success && result.retriable) {
-    const result = await displaySaveConnectionAnywayPrompt();
+  if (!result.success) {
+    const result = await displaySaveConnectionAnywayPrompt(
+      errorDetail ? `${errorDetail}.` : errorDetail,
+    );
 
     if (result === 'Yes') {
       void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_SAVED);
@@ -64,31 +66,32 @@ export async function saveConnectionAndDisplayConnectionResult(
 }
 
 /**
- * Handler for MANAGE_CONNECTION_COMMAND (neo4j.manageConnection)
- * This can be triggered by the command palette or the Connection tree view.
- * In the latter case, the Connection can be modified.
- * In the former case, a new Connection can be created.
- * We are currently limiting the number of connections to one, so the ConnectionPanel will always show the current connection.
+ * Handler for CREATE_CONNECTION_COMMAND (neo4j.createConnection)
+ * It shows the connection panel for creating a brand new connection.
+ * This can be triggered by the command palette or the Connections item menu.
+ */
+export function createConnectionPanel(): void {
+  const context = getExtensionContext();
+  ConnectionPanel.createOrShow(context.extensionPath, undefined, '');
+}
+
+/**
+ * Handler for EDIT_CONNECTION_COMMAND (neo4j.editConnection)
+ * This can be triggered only on the connection tree view.
+ * This shows the connection panel for the given connection item.
  * @param connectionItem The ConnectionItem to manage.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function createOrShowConnectionPanelForConnectionItem(
-  connectionItem?: ConnectionItem | null,
+export async function showConnectionPanelForConnectionItem(
+  connectionItem?: ConnectionItem | undefined,
 ): Promise<void> {
   const context = getExtensionContext();
-  let connection: Connection;
-  let password: string;
-
-  // Artificially limit the number of connections to 1
-  // If we are triggering this command from the command palette,
-  // we will always try to show the first connection, if it exists
-  if (!connectionItem) {
-    connection = getAllConnections()[0];
-    password = connection ? await getPasswordForConnection(connection.key) : '';
-  } else {
-    connection = connectionItem ? getConnectionByKey(connectionItem.key) : null;
-    password = connection ? await getPasswordForConnection(connection.key) : '';
-  }
+  const connection: Connection = connectionItem
+    ? getConnectionByKey(connectionItem.key)
+    : undefined;
+  const password: string = connection
+    ? await getPasswordForConnection(connection.key)
+    : '';
 
   ConnectionPanel.createOrShow(context.extensionPath, connection, password);
 }

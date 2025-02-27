@@ -31,8 +31,8 @@ export class ConnectionPanel {
 
   private _connection: Connection | undefined;
   private _password: string | undefined;
-  private _lastResult: ConnnectionResult | undefined;
   private _disposables: Disposable[] = [];
+  private _editConnection: boolean = true;
 
   private constructor(
     panel: WebviewPanel,
@@ -45,6 +45,7 @@ export class ConnectionPanel {
     this._extensionPath = extensionPath;
     this._connection = connection;
     this._password = password;
+    this._editConnection = connection ? true : false;
 
     this.update();
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -60,7 +61,6 @@ export class ConnectionPanel {
       : undefined;
 
     if (ConnectionPanel._currentPanel) {
-      ConnectionPanel._currentPanel._lastResult = undefined;
       ConnectionPanel._currentPanel._connection = connection;
       ConnectionPanel._currentPanel._password = password;
       ConnectionPanel._currentPanel._panel.reveal(column);
@@ -116,17 +116,6 @@ export class ConnectionPanel {
 
             if (result.success) {
               this.dispose();
-            } else if (result.error) {
-              this._lastResult = result;
-              this._connection = {
-                ...this._connection,
-                scheme: message.connection?.scheme,
-                host: message.connection?.host,
-                port: message.connection?.port,
-                user: message.connection?.user,
-              };
-              this._password = message.password;
-              this.update();
             }
             break;
           }
@@ -209,16 +198,24 @@ export class ConnectionPanel {
           <body>
             <div class="container">
               <div>
-                <h1>${
-                  this._connection ? 'Edit Connection' : 'Add New Connection'
+                <h1 id="connection-header">${
+                  this._editConnection
+                    ? 'Edit Connection'
+                    : 'Add New Connection'
                 }</h1>
                 <form class="form" action="" novalidate method="post">
                   <input type="hidden" id="key" value="${
                     this._connection?.key ?? getNonce(16)
                   }" />
                   <div class="form--input-wrapper">
+                    <label for="name">Display name</label>
+                    <input type="text" id="name" value="${
+                      this._connection?.name ?? ''
+                    }" />
+                  </div>
+                  <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
-                    <select id="scheme" data-invalid="${this.urlIsInvalid()}">
+                    <select id="scheme">
                         <option value="bolt" ${
                           this._connection?.scheme === 'bolt' ? 'selected' : ''
                         }>bolt://</option>
@@ -244,28 +241,28 @@ export class ConnectionPanel {
                     <label for="host">Host *</label>
                     <input type="text" id="host" required placeholder="localhost" value="${
                       this._connection?.host ?? 'localhost'
-                    }" data-invalid="${this.urlIsInvalid()}" />
+                    }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="port">Port</label>
                     <input type="number" id="port" placeholder="7687" value="${
                       this._connection?.port ?? '7687'
-                    }" data-invalid="${this.urlIsInvalid()}" />
+                    }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="user">User *</label>
                     <input type="text" id="user" required placeholder="neo4j" value="${
                       this._connection?.user ?? 'neo4j'
-                    }" data-invalid="${this.authIsInvalid()}" />
+                    }"/>
                   </div>
                   <div class="form--input-wrapper">
                     <label for="password">Password *</label>
                     <input type="password" id="password" required value="${
                       this._password ?? ''
-                    }" data-invalid="${this.authIsInvalid()}" />
+                    }"/>
                   </div>
                   <div class="form--actions">
-                    <input id="save-connection" type="submit" value="Save Connection" />
+                    <input id="save-connection" type="submit" value="Save & Connect" />
                   </div>
                 </form>
               </div>
@@ -273,18 +270,5 @@ export class ConnectionPanel {
             </div>
           </body>
         </html>`;
-  }
-
-  private authIsInvalid(): boolean {
-    return [
-      'Neo.ClientError.Security.AuthenticationRateLimit',
-      'Neo.ClientError.Security.CredentialsExpired',
-      'Neo.ClientError.Security.Unauthorized',
-      'Neo.ClientError.Security.TokenExpired',
-    ].includes(this._lastResult?.error?.code);
-  }
-
-  private urlIsInvalid(): boolean {
-    return this._lastResult?.error?.code === 'ServiceUnavailable';
   }
 }
