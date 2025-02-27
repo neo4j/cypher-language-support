@@ -818,18 +818,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
+    // this.startGroup();
     this.visit(ctx.WHEN());
-    this.startGroup();
     this.visit(ctx.expression(0));
     this.visit(ctx.THEN());
     this.visit(ctx.expression(1));
-    this.endGroup();
+    // this.endGroup();
   };
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.startCaseGroup();
+    this.breakLine()
     this.visit(ctx.CASE());
+    this.startGroup();
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
@@ -843,15 +844,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.removeIndentation();
     }
     this.endGroup();
-    this.addIndentation();
+    this.breakLine()
     this.visit(ctx.END());
-    this.removeIndentation();
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.startCaseGroup();
+    this.breakLine()
     this.visit(ctx.CASE());
     this.visit(ctx.expression(0));
+    this.startGroup();
     const n = ctx.extendedCaseAlternative_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
@@ -865,9 +866,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.removeIndentation();
     }
     this.endGroup();
-    this.addIndentation();
+    this.breakLine()
     this.visit(ctx.END());
-    this.removeIndentation();
   };
 
   // Handled separately because it wants indentation and line breaks
@@ -1176,28 +1176,3 @@ export function formatQuery(
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
-
-/* console.log(formatQuery(`CREATE (jj:Person {name: "Jay-jay"})
-RETURN count() AS count UNION MATCH (j:Person) WHERE j.name STARTS WITH "J"
-RETURN count() AS count`)) */
-
-/* console.log(formatQuery(`MATCH (n)
-WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-"asdfklsjdf", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk", "adslkfjasldkfjsdflk")
-RETURN n`)) */
-
-console.log(formatQuery(`
-WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
-        AS platfs, COUNT(s) AS numplatf`))
-
-/* console.log(
-  formatQuery(
-    `CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"}), (:actor {name: "jEmtGrSI"})`,
-  ),
-); */
-
-/* console.log(formatQuery(`MATCH (p:Product)
-WHERE p.price > 1000 AND p.stock > 50 AND
-      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools', 'Garden Tools']
-RETURN p`)) */
