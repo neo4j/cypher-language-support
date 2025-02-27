@@ -1354,4 +1354,34 @@ WITH a, /* intermediate comment */
 RETURN prop; // final return`;
     verifyFormatting(query, expected);
   });
+
+  test('should remember the outermost alignment for the AND', () => {
+    const query = `// This query demonstrates inline and block comments during data retrieval.
+MATCH (user:User)-[:LIKES]->(post:Post)
+WHERE user.active = true
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+AND post.likes >= 50
+/* The following block comment elaborates:
+   - Posts with less than 50 likes are considered low impact.
+   - Adjust the threshold based on campaign feedback.
+*/
+RETURN user.username, post.title, post.likes;`;
+    const expected = `// This query demonstrates inline and block comments during data retrieval.
+MATCH (user:User)-[:LIKES]->(post:Post)
+WHERE user.active = true
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+// Inline comment: Only consider posts with significant engagement
+      AND post.likes >= 50
+/* The following block comment elaborates:
+   - Posts with less than 50 likes are considered low impact.
+   - Adjust the threshold based on campaign feedback.
+*/
+RETURN user.username, post.title, post.likes;`;
+    verifyFormatting(query, expected);
+  });
 });
