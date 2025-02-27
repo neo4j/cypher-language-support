@@ -41,7 +41,7 @@ export function registerDisposables(): Disposable[] {
       saveConnectionAndDisplayConnectionResult,
     ),
     commands.registerCommand(
-      CONSTANTS.COMMANDS.MANAGE_CONNECTION_COMMAND,
+      CONSTANTS.COMMANDS.EDIT_CONNECTION_COMMAND,
       showConnectionPanelForConnectionItem,
     ),
     commands.registerCommand(

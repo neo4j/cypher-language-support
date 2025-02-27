@@ -50,9 +50,7 @@ suite('Connection testing', () => {
   });
 
   test('should not lose connection form details when going into another tab', async function () {
-    await workbench.executeCommand(
-      CONSTANTS.COMMANDS.MANAGE_CONNECTION_COMMAND,
-    );
+    await workbench.executeCommand(CONSTANTS.COMMANDS.EDIT_CONNECTION_COMMAND);
     const connectionWebview = (await workbench.getAllWebviews()).at(0);
     await setText(connectionWebview, '#host', 'Badabadum');
 

@@ -107,7 +107,7 @@ export function createConnectionPanel(): void {
 }
 
 /**
- * Handler for MANAGE_CONNECTION_COMMAND (neo4j.editConnection)
+ * Handler for EDIT_CONNECTION_COMMAND (neo4j.editConnection)
  * This can be triggered only on the connection tree view.
  * This shows the connection panel for the given connection item.
  * @param connectionItem The ConnectionItem to manage.
