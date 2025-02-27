@@ -46,8 +46,6 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
-export type Group = 'groupStart' | 'groupEnd';
-
 export interface BaseChunk {
   isCursor?: boolean;
   text: string;
@@ -80,15 +78,6 @@ const traillingCharacters = [
   CypherCmdLexer.RPAREN,
   CypherCmdLexer.RBRACKET,
 ];
-
-/* export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
-  return (
-    chunk.type === 'GROUP_START' ||
-    chunk.type === 'GROUP_END' ||
-    chunk.type === 'INDENT' ||
-    chunk.type === 'DEDENT'
-  );
-} */
 
 export function handleMergeClause(
   ctx: MergeClauseContext,

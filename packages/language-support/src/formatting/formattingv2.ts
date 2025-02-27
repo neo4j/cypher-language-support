@@ -209,10 +209,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: false,
         text,
-        groupsStarting: 0,
+        groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
         modifyIndentation: 0,
       };
+      this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
       this.breakLine();
     }
@@ -234,10 +235,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: nodeLine !== commentLine,
         text,
-        groupsStarting: 0,
+        groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
         modifyIndentation: 0,
       };
+      this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
     }
   };
