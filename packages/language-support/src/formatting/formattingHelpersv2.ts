@@ -52,6 +52,7 @@ export interface RegularChunk {
   type: 'REGULAR';
   node?: TerminalNode;
   noSpace?: true;
+  noBreak?: true;
   isCursor?: true;
   text: string;
 }
