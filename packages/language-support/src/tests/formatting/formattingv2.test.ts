@@ -1539,4 +1539,18 @@ RETURN abcde_fghi`;
 // This comment is in an awkward place`;
     verifyFormatting(query, expected);
   });
+
+  test('the comments here should not stay indented as they have no reason to do so', () => {
+    const query = `MATCH (n)
+RETURN *
+       // return count(p.sourceID)
+       // return p.flowState,  count(p.sourceID)
+LIMIT "6pkMe6Kx"`;
+    const expected = `MATCH (n)
+RETURN *
+// return count(p.sourceID)
+// return p.flowState,  count(p.sourceID)
+LIMIT "6pkMe6Kx"`;
+    verifyFormatting(query, expected);
+  });
 });
