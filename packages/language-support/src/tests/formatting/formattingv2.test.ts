@@ -1527,4 +1527,16 @@ RETURN store_code`;
 RETURN store_code`;
     verifyFormatting(query, expected);
   });
+
+  test('this query shold not lose idempotency because of the trailling ;', () => {
+    const query = `MERGE (t)
+  ON MATCH SET
+  t.trend = 5
+//            ,t.trend               = case when unwind_response.day.h >  unwind_response.day.c then 'DOWN' else 'UP' end
+;`;
+    const expected = `MERGE (t)
+  ON MATCH SET t.trend = 5;
+//            ,t.trend               = case when unwind_response.day.h >  unwind_response.day.c then 'DOWN' else 'UP' end`;
+    verifyFormatting(query, expected);
+  });
 });
