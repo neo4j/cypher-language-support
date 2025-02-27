@@ -1300,4 +1300,31 @@ RETURN n.salary + // Add bonus value
        1000 AS totalCompensation;`;
     verifyFormatting(query, expected);
   });
+
+  test('allTokenTypes example from codemirror demo', () => {
+    const query = `MATCH (variable :Label)-[:REL_TYPE]->()
+WHERE variable.property = "String"
+    OR namespaced.function() = false
+    // comment
+    OR $parameter > 2
+RETURN variable;`;
+    const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
+WHERE variable.property = "String" OR namespaced.function() = false
+      // comment
+      OR $parameter > 2
+RETURN variable;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('function call interrupted by comment', () => {
+    const query = `MATCH (n)
+WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
+"asdfklsjdf")
+RETURN n`;
+    const expected = `MATCH (n)
+WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
+                                   "asdfklsjdf")
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
