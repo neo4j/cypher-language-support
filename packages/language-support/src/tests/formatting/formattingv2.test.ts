@@ -1466,4 +1466,25 @@ RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
        c.name AS category;`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('handles longer indentation like with OPTIONAL MATCH', () => {
+    const query = `MATCH (p:Project)
+// A project might have multiple owners
+      -[:OWNED_BY]->(user:User)
+// The same user might be linked to tasks
+OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)
+// A single user can have multiple tasks in the same project
+                                      -[:BELONGS_TO]->(p)
+RETURN p.name AS projectName, user.username, task.name AS taskName;`;
+    const expected = `
+MATCH (p:Project)-
+      // A project might have multiple owners
+      [:OWNED_BY]->(user:User)
+// The same user might be linked to tasks
+OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)-
+               // A single user can have multiple tasks in the same project
+               [:BELONGS_TO]->(p)
+RETURN p.name AS projectName, user.username, task.name AS taskName;`.trim();
+    verifyFormatting(query, expected);
+  });
 });
