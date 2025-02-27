@@ -1521,10 +1521,10 @@ MATCH (a)`.trimStart();
   });
 
   test('should not put this comment on a new line', () => {
-    const query = `WITH store_code, metric_name, metric_value, single_impact.value AS impact_value // Hodnota dopadu
-RETURN store_code`;
-    const expected = `WITH store_code, metric_name, metric_value, single_impact.value AS impact_value // Hodnota dopadu
-RETURN store_code`;
+    const query = `WITH abcde_fghi, abcdef_ghij, klmnop_qrstu, abcde_fghijkl.value AS nopqrs_tuvwx // Comment starting at 81
+RETURN abcde_fghi`;
+    const expected = `WITH abcde_fghi, abcdef_ghij, klmnop_qrstu, abcde_fghijkl.value AS nopqrs_tuvwx // Comment starting at 81
+RETURN abcde_fghi`;
     verifyFormatting(query, expected);
   });
 
