@@ -187,7 +187,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const chunk = this.currentBuffer()[idx];
     if (!(chunk.type === 'REGULAR')) {
-      throw new Error('Internal formatter bug in avoidSpaceBetween');
+      throw new Error('Internal formatter bug in avoidBreakBetween');
     }
     chunk.noBreak = true;
   };
