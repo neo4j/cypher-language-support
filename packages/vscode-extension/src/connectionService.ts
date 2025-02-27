@@ -89,7 +89,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 
   const result = await initializeDatabaseConnection(connection, password);
 
-  if (result.success || (forceSave && result.retriable)) {
+  if (result.success || forceSave) {
     await saveConnection(connection);
     await savePasswordByKey(connection.key, password);
     return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
