@@ -96,7 +96,6 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
-    console.log('final', curr.activeGroups.length, finalIndent);
   }
 
   if (choice.left.type === 'COMMENT') {
@@ -121,10 +120,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const groupList = choice.left.group;
   const nextGroups = [...curr.activeGroups];
 
-  console.log(
-    groupList.filter((group) => group.type === 'GROUP_START').length,
-    groupList.filter((group) => group.type === 'GROUP_END').length,
-  );
   const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
@@ -138,7 +133,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   for (let i = 0; i < groupList.length; i++) {
     if (groupList[i].type === 'GROUP_END') {
-      //console.log("end group")
       nextGroups.pop();
     }
     if (groupList[i].type === 'GROUP_START') {
@@ -247,30 +241,9 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
-    console.log('---------------');
-    console.log(
-      stateToString(state),
-      getStateKey(state),
-      state.cost,
-      state.activeGroups.length,
-    );
-
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
-      if (state.activeGroups.length === 0 && split.splitType === "\n") {
-        continue
-      }
       const neighbourState = getNeighbourState(state, choice, split);
-      if (choice.left.type === 'REGULAR') {
-        console.log(
-          'adds',
-          getStateKey(neighbourState),
-          neighbourState.cost,
-          choice.left.text,
-          neighbourState.overflowingCount,
-          neighbourState.activeGroups.length,
-        );
-      }
       heap.push(neighbourState);
     }
   }
