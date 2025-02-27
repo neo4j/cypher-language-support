@@ -209,14 +209,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.startGroup(caseGroupStartChunk);
   };
 
-  endGroup = (id: number) => {
-    if (this.groupStack.length === 0 || this.groupStack.at(-1) !== id) {
-      return;
-    }
+  getFirstNonCommentIdx = (): number => {
     let idx = this.currentBuffer().length - 1;
     while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
       idx--;
     }
+    return idx;
+  };
+
+  endGroup = (id: number) => {
+    if (this.groupStack.length === 0 || this.groupStack.at(-1) !== id) {
+      return;
+    }
+    const idx = this.getFirstNonCommentIdx();
     this.currentBuffer().splice(idx + 1, 0, groupEndChunk);
     this.groupStack.pop();
   };
@@ -226,7 +231,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   removeIndentation = () => {
-    this.currentBuffer().push(dedentChunk);
+    const idx = this.getFirstNonCommentIdx();
+    this.currentBuffer().splice(idx + 1, 0, dedentChunk);
   };
 
   // Comments are in the hidden channel, so grab them manually

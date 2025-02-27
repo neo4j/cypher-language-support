@@ -227,7 +227,7 @@ ON MATCH SET b.name='you' /* Update name if matched */
 RETURN a.prop// Output the result`;
     const expected = `MERGE (n) // Ensure node exists
   ON CREATE SET n.prop = 0 /* Default value */
-  /* Match or create a relationship
+/* Match or create a relationship
    and update properties as needed */
 MERGE (a:A)-[:T]->(b:B)
   ON CREATE SET a.name = 'me' // Name set during creation
