@@ -1438,4 +1438,32 @@ RETURN pth ORDER BY length(pth) DESC
 LIMIT 10000;`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should keep the arrows before the split even if there are comments', () => {
+    const query = `
+MATCH (a:Account)
+      // Starting at an account node
+      -[:OWNED_BY]->(p:Person)
+      // The person who owns the account
+      <-[:SHARED_WITH]-(anotherAccount:Account)
+      // Another account that is shared with the same person
+      -[:HAS_TRANSACTIONS]->(t:Transaction)
+      // Transactions belong to the second account
+      -[:CATEGORY]->(c:Category)
+RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
+       c.name AS category;`;
+    const expected = `
+MATCH (a:Account)-
+      // Starting at an account node
+      [:OWNED_BY]->(p:Person)<-
+      // The person who owns the account
+      [:SHARED_WITH]-(anotherAccount:Account)-
+      // Another account that is shared with the same person
+      [:HAS_TRANSACTIONS]->(t:Transaction)-
+      // Transactions belong to the second account
+      [:CATEGORY]->(c:Category)
+RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
+       c.name AS category;`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
