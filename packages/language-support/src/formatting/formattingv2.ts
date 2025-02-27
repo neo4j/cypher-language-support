@@ -275,6 +275,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitWithClause = (ctx: WithClauseContext) => {
     this.visit(ctx.WITH());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.returnBody());
     this.visitIfNotNull(ctx.whereClause());
@@ -284,6 +285,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMatchClause = (ctx: MatchClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
     this.visit(ctx.MATCH());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visitIfNotNull(ctx.matchMode());
     this.visit(ctx.patternList());
@@ -297,6 +299,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCreateClause = (ctx: CreateClauseContext) => {
     this.visit(ctx.CREATE());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.patternList());
     this.endGroup();
@@ -312,6 +315,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     this.visit(ctx.UNWIND());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.expression());
     this.startGroup();
@@ -778,6 +782,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because it contains subclauses (and thus indentation rules)
   visitExistsExpression = (ctx: ExistsExpressionContext) => {
     this.visit(ctx.EXISTS());
+    this.avoidBreakBetween();
     this.visit(ctx.LCURLY());
     if (ctx.regularQuery()) {
       this.addIndentation();
@@ -1004,6 +1009,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     this.startCollectionGroup();
     this.visit(ctx.LBRACKET());
+    this.avoidBreakBetween();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       this.startGroup();
@@ -1056,7 +1062,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCallClause = (ctx: CallClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
+    this.avoidBreakBetween();
     this.visit(ctx.CALL());
+    this.avoidBreakBetween();
     this.visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
     if (n > 0) {
