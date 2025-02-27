@@ -732,6 +732,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitWhereClause = (ctx: WhereClauseContext) => {
     this.breakLine();
     this.visit(ctx.WHERE());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.expression());
     this.endGroup();
@@ -739,6 +740,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
     this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.expression());
     this.endGroup();
@@ -927,6 +929,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitSetClause = (ctx: SetClauseContext) => {
     this.visit(ctx.SET());
+    this.avoidBreakBetween();
     this.startGroup();
     const n = ctx.setItem_list().length;
     for (let i = 0; i < n; i++) {
@@ -946,6 +949,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.startCollectionGroup();
     this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
+    this.avoidBreakBetween();
 
     const propertyKeyNames = ctx.propertyKeyName_list();
     const expressions = ctx.expression_list();
