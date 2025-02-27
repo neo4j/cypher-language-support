@@ -285,6 +285,10 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
         buffer.pop();
       }
     }
+    // TODO:  hack because of same thing as above
+    if (decision.chosenSplit.splitType === ' ' && buffer.at(-1) === ' ') {
+      return;
+    }
     pushIfNotEmpty(decision.chosenSplit.splitType);
   });
   const result = buffer.join('').trimEnd();
