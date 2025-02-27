@@ -189,7 +189,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = () => {
-    console.log("start")
     const groupStartChunk: GroupChunk = {
       group: [],
       type: 'GROUP_START',
@@ -198,22 +197,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   
   };
   
-  startCollectionGroup = () => {
-    console.log("start collection")
-    const collectionGroupStartChunk: GroupChunk = {
-      group: [],
-      type: 'GROUP_START',
-      extraIndent: 1,
-    };
-      this.currentBuffer().push(collectionGroupStartChunk)
-  };
-
   startCaseGroup = () => {
     this.currentBuffer().at(-1).group.push(caseGroupStartChunk);
   };
 
   endGroup = () => {
-    console.log("end")
     this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
 
@@ -360,7 +348,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitReturnItem = (ctx: ReturnItemContext) => {
     this.visit(ctx.expression());
     if (ctx.AS() || ctx.variable()) {
-      this.startCollectionGroup();
+      this.startGroup();
       this.visitIfNotNull(ctx.AS());
       this.visitIfNotNull(ctx.variable());
       this.endGroup();
@@ -771,13 +759,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
-    this.startCollectionGroup();
     this.visit(ctx.LPAREN());
     this.avoidBreakBetween();
     this.startGroup();
     this.visit(ctx.expression());
-    this.visit(ctx.RPAREN());
     this.endGroup();
+    this.visit(ctx.RPAREN());
   };
 
   visitExpression = (ctx: ExpressionContext) => {
@@ -981,10 +968,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    this.startCollectionGroup();
     this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    this.avoidBreakBetween();
+    this.avoidBreakBetween()
+    this.startGroup();
 
     const propertyKeyNames = ctx.propertyKeyName_list();
     const expressions = ctx.expression_list();
@@ -1041,9 +1028,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
-    this.startCollectionGroup();
     this.visit(ctx.LBRACKET());
-    this.avoidBreakBetween();
+    this.avoidBreakBetween()
+    this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       this.startGroup();

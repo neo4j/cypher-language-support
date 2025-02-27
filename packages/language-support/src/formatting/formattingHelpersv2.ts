@@ -197,12 +197,6 @@ const groupStartChunk: GroupChunk = {
   type: 'GROUP_START',
 };
 
-export const collectionGroupStartChunk: GroupChunk = {
-  group: [],
-  type: 'GROUP_START',
-  extraIndent: 1,
-};
-
 export const caseGroupStartChunk: GroupChunk = {
   group: [],
   type: 'GROUP_START',

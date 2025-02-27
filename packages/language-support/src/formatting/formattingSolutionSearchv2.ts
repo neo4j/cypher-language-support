@@ -141,16 +141,11 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       nextGroups.pop();
     }
     if (groupList[i].type === "GROUP_START") {
-      let extraIndent = groupList[i].extraIndent || 0;
-      if (nextGroups.length > 0) {
-        extraIndent += nextGroups.at(-1).extraIndent
-      }
-      // does previous group has extra indent?
-      console.log("pushed group", actualColumn, extraIndent, nextGroups.length)
+      const extraIndent = groupList[i].extraIndent || 0;
       nextGroups.push({
         align: actualColumn + extraIndent,
         extraIndent: extraIndent,
-        breakCost: (nextGroups.length+1)*100,
+        breakCost: Math.pow(10, nextGroups.length + 1),
       });
     }
   }
