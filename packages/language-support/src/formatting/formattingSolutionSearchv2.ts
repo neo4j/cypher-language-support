@@ -238,9 +238,8 @@ function addGroupStart(buffer: string[], decision: Decision) {
   for (let i = 0; i < decision.left.groupsStarting; i++) {
     buffer.push('[');
   }
-  /* decision.left.group.forEach((chunk) => {
-    }); */
 }
+
 function addGroupEnd(buffer: string[], decision: Decision) {
   for (let i = 0; i < decision.left.groupsEnding; i++) {
     buffer.push(']');
