@@ -13,7 +13,7 @@ along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
 
 const INDENTATION = 2;
-const showGroups = true;
+const showGroups = false;
 
 export interface Split {
   splitType: ' ' | '\n' | '';
@@ -30,6 +30,7 @@ export interface Choice {
 interface Group {
   align: number;
   breakCost: number;
+  extraIndent: number;
 }
 
 export interface Decision {
@@ -95,7 +96,7 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
-    console.log("final", finalIndent)
+    console.log("final", curr.activeGroups.length, finalIndent)
   }
 
   if (choice.left.type === 'COMMENT') {
@@ -131,7 +132,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
-  
+
   
 
   for (let i = 0; i < groupList.length; i++) {
@@ -140,10 +141,15 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       nextGroups.pop();
     }
     if (groupList[i].type === "GROUP_START") {
-      const extraIndent = groupList[i].extraIndent || 0;
+      let extraIndent = groupList[i].extraIndent || 0;
+      if (nextGroups.length > 0) {
+        extraIndent += nextGroups.at(-1).extraIndent
+      }
+      // does previous group has extra indent?
       console.log("pushed group", actualColumn, extraIndent, nextGroups.length)
       nextGroups.push({
         align: actualColumn + extraIndent,
+        extraIndent: extraIndent,
         breakCost: (nextGroups.length+1)*100,
       });
     }
