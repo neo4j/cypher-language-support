@@ -239,15 +239,15 @@ RETURN a.prop // Output the result`;
   test('should not put the second comment on the previous line', () => {
     const query = `
 RETURN 1,
-// Comment
+       // Comment
        2,
-// Second comment
+       // Second comment
        3`;
     const expected = `
 RETURN 1,
-// Comment
+       // Comment
        2,
-// Second comment
+       // Second comment
        3`.trim();
     verifyFormatting(query, expected);
   });
@@ -1284,7 +1284,7 @@ return *;`;
     expect(once).toEqual(twice);
     const expected = `
 WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
-// detail
+     // detail
      ["AbQk1wMr", "PmA6udnt"] AS detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
 RETURN *;`.trim();
@@ -1310,7 +1310,7 @@ WHERE variable.property = "String"
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false
-// comment
+      // comment
       OR $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
@@ -1337,7 +1337,7 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 RETURN n`;
     const expected = `MATCH (n)
 WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-// This is a hard break comment
+      // This is a hard break comment
       "asdfklsjdf")
 RETURN n`;
     verifyFormatting(query, expected);
@@ -1372,10 +1372,10 @@ RETURN user.username, post.title, post.likes;`;
     const expected = `// This query demonstrates inline and block comments during data retrieval.
 MATCH (user:User)-[:LIKES]->(post:Post)
 WHERE user.active = true
-// Inline comment: Only consider posts with significant engagement
-// Inline comment: Only consider posts with significant engagement
-// Inline comment: Only consider posts with significant engagement
-// Inline comment: Only consider posts with significant engagement
+      // Inline comment: Only consider posts with significant engagement
+      // Inline comment: Only consider posts with significant engagement
+      // Inline comment: Only consider posts with significant engagement
+      // Inline comment: Only consider posts with significant engagement
       AND post.likes >= 50
 /* The following block comment elaborates:
    - Posts with less than 50 likes are considered low impact.

@@ -96,8 +96,9 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
-  if (choice.left.type === 'COMMENT') {
-    finalIndent = curr.column === 0 ? nextBaseIndent : 0;
+  if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
+    const lastGroup = curr.activeGroups.at(0);
+    finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
   }
   return [nextBaseIndent, finalIndent];
 }
