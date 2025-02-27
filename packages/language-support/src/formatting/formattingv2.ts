@@ -202,7 +202,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
 
-  addGroups = (): GroupChunk[] => {
+  collectGroups = (): GroupChunk[] => {
     if (this.currentBuffer().length === 0) {
       return [];
     }
@@ -486,7 +486,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      group: this.addGroups(),
+      group: this.collectGroups(),
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -524,7 +524,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      group: this.addGroups(),
+      group: this.collectGroups(),
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
