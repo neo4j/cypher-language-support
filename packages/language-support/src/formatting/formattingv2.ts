@@ -818,12 +818,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
-    // this.startGroup();
+    this.startGroup();
     this.visit(ctx.WHEN());
     this.visit(ctx.expression(0));
     this.visit(ctx.THEN());
     this.visit(ctx.expression(1));
-    // this.endGroup();
+    this.endGroup();
   };
 
   // Handled separately since cases want newlines
