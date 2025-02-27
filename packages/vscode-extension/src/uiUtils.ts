@@ -1,7 +1,4 @@
-import {
-  ConnnectionResult,
-  FRIENDLY_ERROR_MESSAGES,
-} from '@neo4j-cypher/schema-poller';
+import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import { Connection } from './connectionService';
 import { CONSTANTS } from './constants';
@@ -39,14 +36,14 @@ export function displayMessageForConnectionResult(
  * Utility function to prompt the user to save a connection that failed with a retriable error.
  * @returns A promise that resolves with the result of the prompt ("Yes" or null).
  */
-export async function displaySaveConnectionAnywayPrompt(): Promise<
-  string | null
-> {
+export async function displaySaveConnectionAnywayPrompt(
+  detail?: string,
+): Promise<string | null> {
   return await window.showWarningMessage<string>(
-    'Unable to connect to Neo4j. Would you like to save the Connection anyway?',
+    'Unable to connect to Neo4j. Would you like to save the connection anyway?',
     {
       modal: true,
-      detail: `${FRIENDLY_ERROR_MESSAGES.ServiceUnavailable}.`,
+      detail: detail,
     },
     'Yes',
   );

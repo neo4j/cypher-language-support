@@ -1,4 +1,5 @@
-import { WebView } from 'wdio-vscode-service';
+import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
+import { createAndStartTestContainer } from './setupTestContainer';
 
 export async function waitUntilNotification(
   browser: WebdriverIO.Browser,
@@ -8,13 +9,25 @@ export async function waitUntilNotification(
     async function () {
       const wb = await browser.getWorkbench();
       const notifications = await wb.getNotifications();
-      const messages = await Promise.all(
-        notifications.map(async (n) => await n.getMessage()),
+
+      const notificationsAndMsgs = await Promise.all(
+        notifications.map(async (n) => {
+          const msg = await n.getMessage();
+          return { msg, notification: n };
+        }),
       );
 
-      return messages.includes(notification);
+      const found = notificationsAndMsgs.find(
+        (value) => value.msg === notification,
+      );
+      if (found) {
+        await found.notification.dismiss();
+        return true;
+      } else {
+        return false;
+      }
     },
-    { timeout: 10000 },
+    { timeout: 20000 },
   );
 }
 
@@ -50,6 +63,90 @@ export async function openFixtureFile(
     fileName,
     options,
   );
+}
+
+export async function createNewConnection(containerName: string) {
+  const container = await createAndStartTestContainer({
+    containerName: containerName,
+  });
+  const port = container.getMappedPort(7687);
+  const workbench = await browser.getWorkbench();
+  const activityBar = workbench.getActivityBar();
+  const neo4jTile = await activityBar.getViewControl('Neo4j');
+  const connectionPannel = await neo4jTile.openView();
+  const content = connectionPannel.getContent();
+  const sections = await content.getSections();
+
+  try {
+    const section = sections.at(0);
+    const newConnectionButton = await section.button$;
+    await newConnectionButton.click();
+  } catch {
+    await workbench.executeCommand('neo4j.createConnection');
+  }
+
+  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+
+  if (connectionWebview) {
+    await connectionWebview.open();
+
+    const schemeInput = await $('#scheme');
+    const hostInput = await $('#host');
+    const portInput = await $('#port');
+    const userInput = await $('#user');
+    const passwordInput = await $('#password');
+    await schemeInput.selectByVisibleText('neo4j://');
+    await hostInput.setValue('localhost');
+    await portInput.setValue(port);
+    await userInput.setValue('neo4j');
+    await passwordInput.setValue('password');
+
+    const saveConnectionButton = await $('#save-connection');
+    await saveConnectionButton.click();
+
+    await connectionWebview.close();
+  }
+
+  await waitUntilNotification(browser, 'Connected to Neo4j.');
+}
+
+export async function getConnectionSection(
+  workbench: Workbench,
+): Promise<ViewSection | undefined> {
+  const activityBar = workbench.getActivityBar();
+  const neo4jTile = await activityBar.getViewControl('Neo4j');
+  const connectionPannel = await neo4jTile.openView();
+  const content = connectionPannel.getContent();
+  const sections = await content.getSections();
+  const connectionSection = sections.at(0);
+  return connectionSection;
+}
+
+export async function clickOnContextMenuItem(
+  connectionSection: ViewSection,
+  item: string,
+  connectionIndex: number,
+): Promise<void> {
+  const items = await connectionSection.getVisibleItems();
+  await expect(items.length).toBeGreaterThan(connectionIndex);
+  const connectionItem = items.at(connectionIndex) as TreeItem;
+
+  // This context menu does not work in OSX because it's a native element rather
+  // than a browser, so we get errors of the sort of
+  //    element (".monaco-menu-container") still not displayed after 5000ms
+  //
+  // https://github.com/webdriverio-community/wdio-vscode-service/issues/57
+  const contextMenu = await connectionItem.openContextMenu();
+  const menuItems = await contextMenu.getItems();
+  const connect = menuItems.find(async (menuItem) => {
+    const menuText = await menuItem.elem.getText();
+    return menuText === item;
+  });
+
+  if (connect) {
+    const connectOption = await connect.elem;
+    await connectOption.click();
+  }
 }
 
 export async function selectValue(
