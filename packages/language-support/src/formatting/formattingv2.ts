@@ -925,6 +925,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup();
     }
     this.visit(ctx.RPAREN());
+    this.endGroup();
   };
 
   // Handled separately because we want ON CREATE before ON MATCH
@@ -1080,17 +1081,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCallClause = (ctx: CallClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
-    this.avoidBreakBetween();
     this.visit(ctx.CALL());
     this.avoidBreakBetween();
     this.visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
-    if (n > 0) {
-      this.startGroup();
-    }
     if (ctx.LPAREN()) {
       this.visitTerminalRaw(ctx.LPAREN());
       this.concatenate();
+      this.avoidBreakBetween();
+    }
+    if (n > 0) {
+      this.startGroup();
     }
     for (let i = 0; i < n; i++) {
       if (i === 0) {
