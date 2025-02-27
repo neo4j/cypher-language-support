@@ -302,7 +302,13 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
       return [{ splitType: '\n', cost: 0 }];
     case 'REGULAR':
       if (doesNotWantSpace(chunk, nextChunk)) {
+        if (chunk.noBreak) {
+          return basicNoSpaceNoBreakSplits;
+        }
         return basicNoSpaceSplits;
+      }
+      if (chunk.noBreak) {
+        return basicNoBreakSplits;
       }
       return basicSplits;
     default:
@@ -363,6 +369,8 @@ const basicNoSpaceSplits: Split[] = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
+const basicNoBreakSplits: Split[] = [{ splitType: ' ', cost: 0 }];
+const basicNoSpaceNoBreakSplits: Split[] = [{ splitType: '', cost: 0 }];
 
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',
