@@ -1342,4 +1342,16 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('should keep the second return item aligned', () => {
+    const query = `
+MATCH (a:Node) // first match
+WITH a, /* intermediate comment */ a.property AS prop
+RETURN prop; // final return`;
+    const expected = `MATCH (a:Node) // first match
+WITH a, /* intermediate comment */
+     a.property AS prop
+RETURN prop; // final return`;
+    verifyFormatting(query, expected);
+  });
 });
