@@ -46,38 +46,32 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
-export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
+export type Group = 'groupStart' | 'groupEnd';
 
-export interface RegularChunk {
+export interface BaseChunk {
+  isCursor?: boolean;
+  text: string;
+  groupsStarting: number;
+  groupsEnding: number;
+  modifyIndentation: number;
+}
+
+// Regular chunk specific properties
+export interface RegularChunk extends BaseChunk {
   type: 'REGULAR';
   node?: TerminalNode;
-  noSpace?: true;
-  noBreak?: true;
-  isCursor?: true;
-  text: string;
-  group: GroupChunk[];
+  noSpace?: boolean;
+  noBreak?: boolean;
 }
 
-export interface CommentChunk {
+// Comment chunk specific properties
+export interface CommentChunk extends BaseChunk {
   type: 'COMMENT';
-  isCursor?: true;
   breakBefore: boolean;
-  text: string;
-  group: GroupChunk[];
 }
 
-export interface GroupChunk {
-  type: 'GROUP_START' | 'GROUP_END';
-  extraIndent?: number;
-  group: GroupChunk[];
-}
-
-interface IndentationChunk {
-  type: 'INDENT' | 'DEDENT';
-  group: GroupChunk[];
-}
-
-type SpecialChunk = GroupChunk | IndentationChunk;
+// Union type for all chunk types
+export type Chunk = RegularChunk | CommentChunk;
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -87,14 +81,14 @@ const traillingCharacters = [
   CypherCmdLexer.RBRACKET,
 ];
 
-export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
+/* export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
   return (
     chunk.type === 'GROUP_START' ||
     chunk.type === 'GROUP_END' ||
     chunk.type === 'INDENT' ||
     chunk.type === 'DEDENT'
   );
-}
+} */
 
 export function handleMergeClause(
   ctx: MergeClauseContext,
@@ -181,13 +175,3 @@ export function findTargetToken(
   }
   return false;
 }
-
-export const indentChunk: IndentationChunk = {
-  group: [],
-  type: 'INDENT',
-};
-
-export const dedentChunk: IndentationChunk = {
-  group: [],
-  type: 'DEDENT',
-};

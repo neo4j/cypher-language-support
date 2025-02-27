@@ -78,7 +78,7 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getNextIndent(currIndent: number, choice: Choice): number {
+/* function getNextIndent(currIndent: number, choice: Choice): number {
   if (choice.left.type === 'INDENT') {
     return currIndent + INDENTATION;
   }
@@ -86,11 +86,12 @@ function getNextIndent(currIndent: number, choice: Choice): number {
     return currIndent - INDENTATION;
   }
   return currIndent;
-}
+} */
 
 function getIndentations(curr: State, choice: Choice): [number, number] {
   const currBaseIndent = curr.baseIndentation;
-  const nextBaseIndent = getNextIndent(currBaseIndent, choice);
+  const nextBaseIndent =
+    currBaseIndent + choice.left.modifyIndentation * INDENTATION;
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
@@ -128,17 +129,21 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
-  const groupList = choice.left.group;
-  for (let i = 0; i < groupList.length; i++) {
-    if (groupList[i].type === 'GROUP_END') {
-      nextGroups.pop();
-    }
-    if (groupList[i].type === 'GROUP_START') {
-      nextGroups.push({
-        align: actualColumn,
-        breakCost: Math.pow(10, nextGroups.length + 1),
-      });
-    }
+  const numPops = choice.left.groupsEnding;
+  const numPushes = choice.left.groupsStarting;
+
+  for (let i = 0; i < numPushes; i++) {
+    // Perform a pop
+
+    // Perform a push if we
+    nextGroups.push({
+      align: actualColumn,
+      breakCost: Math.pow(10, nextGroups.length + 1),
+    });
+  }
+  for (let i = 0; i < numPops; i++) {
+    // Perform a pop if we still have pops to do
+    nextGroups.pop();
   }
 
   let extraCost = 0;
@@ -247,14 +252,16 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupStart(buffer: string[], decision: Decision) {
-  decision.left.group.forEach((chunk) => {
-    buffer.push(chunk.type === 'GROUP_START' ? '[' : '');
-  });
+  for (let i = 0; i < decision.left.groupsStarting; i++) {
+    buffer.push('[');
+  }
+  /* decision.left.group.forEach((chunk) => {
+    }); */
 }
 function addGroupEnd(buffer: string[], decision: Decision) {
-  decision.left.group.forEach((chunk) => {
-    buffer.push(chunk.type === 'GROUP_END' ? ']' : '');
-  });
+  for (let i = 0; i < decision.left.groupsEnding; i++) {
+    buffer.push(']');
+  }
 }
 
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
@@ -303,9 +310,6 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
     return [{ splitType: '\n', cost: 0 }];
   }
   switch (chunk.type) {
-    case 'COMMENT':
-    case 'INDENT':
-      return [{ splitType: '\n', cost: 0 }];
     case 'REGULAR':
       if (doesNotWantSpace(chunk, nextChunk)) {
         if (chunk.noBreak) {
@@ -381,5 +385,7 @@ const basicNoSpaceNoBreakSplits: Split[] = [{ splitType: '', cost: 0 }];
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
-  group: [],
+  groupsStarting: 0,
+  groupsEnding: 0,
+  modifyIndentation: 0,
 };
