@@ -191,19 +191,3 @@ export const dedentChunk: IndentationChunk = {
   group: [],
   type: 'DEDENT',
 };
-
-const groupStartChunk: GroupChunk = {
-  group: [],
-  type: 'GROUP_START',
-};
-
-export const caseGroupStartChunk: GroupChunk = {
-  group: [],
-  type: 'GROUP_START',
-  extraIndent: 2,
-};
-
-export const groupEndChunk: GroupChunk = {
-  group: [],
-  type: 'GROUP_END',
-};

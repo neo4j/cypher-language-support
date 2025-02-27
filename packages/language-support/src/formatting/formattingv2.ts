@@ -63,14 +63,12 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
-  caseGroupStartChunk,
   Chunk,
   CommentChunk,
   dedentChunk,
   findTargetToken,
   getParseTreeAndTokens,
   GroupChunk,
-  groupEndChunk,
   handleMergeClause,
   indentChunk,
   isComment,
@@ -197,11 +195,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   
   };
   
-  startCaseGroup = () => {
-    this.currentBuffer().at(-1).group.push(caseGroupStartChunk);
-  };
-
   endGroup = () => {
+    const groupEndChunk: GroupChunk = {
+      group: [],
+      type: 'GROUP_END',
+    }
     this.currentBuffer().at(-1).group.push(groupEndChunk);
   };
 
