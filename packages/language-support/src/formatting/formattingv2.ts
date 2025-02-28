@@ -1098,24 +1098,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCallClause = (ctx: CallClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
-    // TODO avoidbreakbetween here?
     this.visit(ctx.CALL());
     this.avoidBreakBetween();
     this.visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
-    let id1: number;
-    if (n > 0) {
-      id1 = this.startGroup();
-    }
     if (ctx.LPAREN()) {
       this.visitTerminalRaw(ctx.LPAREN());
       this.concatenate();
       this.avoidBreakBetween();
     }
-    // TODO this one probably breaks something
-    //if (n > 0) {
-    //  this.startGroup();
-    //}
+    let id1: number;
+    if (n > 0) {
+      id1 = this.startGroup();
+    }
     for (let i = 0; i < n; i++) {
       if (i === 0) {
         this.avoidSpaceBetween();
