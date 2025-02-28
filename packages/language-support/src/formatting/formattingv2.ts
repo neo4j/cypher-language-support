@@ -189,7 +189,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = (id: number) => {
-    if (this.groupStack.length === 0 || this.groupStack.at(-1) !== id) {
+    if (this.groupStack.at(-1) !== id) {
       return;
     }
     const idx = this.getFirstNonCommentIdx();
