@@ -930,6 +930,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       (node) => this.visit(node),
       this.startGroup,
       this.endGroup,
+      this.avoidBreakBetween,
     );
   };
 
@@ -979,10 +980,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup();
     }
-    this.avoidSpaceBetween();
     this.endGroup();
-    this.avoidBreakBetween();
     this.visit(ctx.RCURLY());
+    this.concatenate();
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {

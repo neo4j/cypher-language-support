@@ -82,10 +82,12 @@ const traillingCharacters = [
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
-  startGroup?: () => void,
-  endGroup?: () => void,
+  startGroup: () => void,
+  endGroup: () => void,
+  avoidBreakBetween: () => void,
 ) {
   visit(ctx.MERGE());
+  avoidBreakBetween();
   if (startGroup) {
     startGroup();
   }
