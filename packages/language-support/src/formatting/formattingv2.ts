@@ -290,20 +290,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitWithClause = (ctx: WithClauseContext) => {
     this.visit(ctx.WITH());
     this.avoidBreakBetween();
-    const id1 = this.startGroup();
+    const withClauseGrp = this.startGroup();
     this.visit(ctx.returnBody());
     this.visitIfNotNull(ctx.whereClause());
-    this.endGroup(id1);
+    this.endGroup(withClauseGrp);
   };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
     this.visitIfNotNull(ctx.OPTIONAL());
     this.visit(ctx.MATCH());
     this.avoidBreakBetween();
-    const id1 = this.startGroup();
+    const matchClauseGrp = this.startGroup();
     this.visitIfNotNull(ctx.matchMode());
     this.visit(ctx.patternList());
-    this.endGroup(id1);
+    this.endGroup(matchClauseGrp);
     const n = ctx.hint_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.hint(i));
@@ -314,9 +314,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCreateClause = (ctx: CreateClauseContext) => {
     this.visit(ctx.CREATE());
     this.avoidBreakBetween();
-    const id1 = this.startGroup();
+    const createClauseGrp = this.startGroup();
     this.visit(ctx.patternList());
-    this.endGroup(id1);
+    this.endGroup(createClauseGrp);
   };
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
@@ -1045,10 +1045,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     this.visit(ctx.LBRACKET());
     this.avoidBreakBetween();
-    const id1 = this.startGroup();
+    const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
-      const id2 = this.startGroup();
+      const listElemGrp = this.startGroup();
       this.visit(ctx.expression(i));
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
@@ -1056,10 +1056,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (i === n - 1) {
         this.avoidSpaceBetween();
       }
-      this.endGroup(id2);
+      this.endGroup(listElemGrp);
     }
     this.visit(ctx.RBRACKET());
-    this.endGroup(id1);
+    this.endGroup(listGrp);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
@@ -1090,10 +1090,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
-    const id1 = this.startGroup();
+    const procedureNameGrp = this.startGroup();
     this.visit(ctx.namespace());
     this.visit(ctx.symbolicNameString());
-    this.endGroup(id1);
+    this.endGroup(procedureNameGrp);
   };
 
   visitCallClause = (ctx: CallClauseContext) => {
@@ -1107,9 +1107,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.concatenate();
       this.avoidBreakBetween();
     }
-    let id1: number;
+    let argGrp: number;
     if (n > 0) {
-      id1 = this.startGroup();
+      argGrp = this.startGroup();
     }
     for (let i = 0; i < n; i++) {
       if (i === 0) {
@@ -1122,10 +1122,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visitRawIfNotNull(ctx.RPAREN());
     if (n > 0) {
-      this.endGroup(id1);
+      this.endGroup(argGrp);
     }
     if (ctx.YIELD()) {
-      const id3 = this.startGroup();
+      const yieldGrp = this.startGroup();
       this.visit(ctx.YIELD());
       if (ctx.TIMES()) {
         this.visit(ctx.TIMES());
@@ -1133,7 +1133,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           this.visit(ctx.COMMA(n - 1));
         }
       }
-      const id2 = this.startGroup();
+      const procedureListGrp = this.startGroup();
       const m = ctx.procedureResultItem_list().length;
       for (let i = 0; i < m; i++) {
         this.visit(ctx.procedureResultItem(i));
@@ -1141,9 +1141,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           this.visit(ctx.COMMA(i));
         }
       }
-      this.endGroup(id2);
+      this.endGroup(procedureListGrp);
       this.visitIfNotNull(ctx.whereClause());
-      this.endGroup(id3);
+      this.endGroup(yieldGrp);
     }
   };
 }
