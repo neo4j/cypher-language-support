@@ -956,6 +956,11 @@ RETURN variable;`;
   const q21 = `MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-[
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
+
+  const q22 = `MATCH (e:Employee) RETURN e.name, CASE WHEN e.salary > 150000 AND e.experience > 10 THEN 'Senior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' WHEN e.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END) WHEN e.salary > 100000 AND e.experience > 7 THEN 'Experienced ' + (CASE WHEN e.department = 'Engineering' THEN 'Developer' WHEN e.department = 'HR' THEN 'HR Specialist' ELSE 'Associate' END) WHEN e.salary > 75000 AND e.experience > 5 THEN 'Mid-Level ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Professional' END) ELSE 'Junior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Staff' END) END AS jobTitle`;
+
+  const q23 = `MATCH (u:User) CALL { WITH u MATCH (u)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product) WHERE p.price > 100 AND p.category IN ['Electronics','Computers','Smartphones','Accessories','Gaming','Wearables','Home Automation','Networking','Audio','Video','Software','Peripherals'] WITH u, o, p, p.price * (1 - COALESCE(p.discount,0)) AS netPrice, CASE WHEN p.rating > 4.5 THEN 'Excellent' WHEN p.rating > 3.5 THEN 'Good' WHEN p.rating > 2.5 THEN 'Average' ELSE 'Poor' END AS qualityRating RETURN o, COLLECT({product: p.name, netPrice: netPrice, qualityRating: qualityRating, features: p.features, warranty: p.warranty, stock: p.stock, supplier: p.supplier}) AS orderProducts } WITH u, COUNT(o) AS totalOrders, SUM([x IN COLLECT(o) | x.total]) AS totalSpent WHERE totalOrders > 3 RETURN u, totalOrders, totalSpent`;
+
   const q24 = `CALL apoc.periodic.iterate ("eZ0sadadawdawdsdsdsdq", "1p7sdsdsasdwasddsdEsdsd", {baisdsdadadze: "v0Asdsdsdadadadsdsdp", paladadadel: "UsdssdsdsddUg"})`;
 
   const queries = [
@@ -981,6 +986,8 @@ RETURN path`;
     q19,
     q20,
     q21,
+    q22,
+    q23,
     q24,
   ];
 
