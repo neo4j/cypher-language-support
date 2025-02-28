@@ -1,8 +1,7 @@
-import { commands, Disposable, window, workspace } from 'vscode';
+import { commands, Disposable, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
-  handleNeo4jConfigurationChangedEvent,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -35,7 +34,6 @@ export function registerDisposables(): Disposable[] {
       databaseInformationTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
-    workspace.onDidChangeConfiguration(handleNeo4jConfigurationChangedEvent),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       saveConnectionAndDisplayConnectionResult,

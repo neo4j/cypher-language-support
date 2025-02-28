@@ -1,10 +1,10 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnectionError,
   ConnnectionResult,
   Database,
 } from '@neo4j-cypher/schema-poller';
-import { commands, workspace } from 'vscode';
+import { commands } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
@@ -226,15 +226,8 @@ export function getDatabaseConnectionString(
 export function getDatabaseConnectionSettings(
   connection: Connection,
   password: string,
-): Neo4jSettings {
-  const trace = workspace
-    .getConfiguration('neo4j')
-    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-    server: 'off',
-  };
-
+): Neo4jConnectionSettings {
   return {
-    trace: trace,
     connect: connection.state !== 'inactive',
     connectURL: getDatabaseConnectionString(connection),
     database: connection.database,
@@ -280,7 +273,7 @@ export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Pro
  * @returns A promise that resolves with the result of the connection attempt.
  */
 export async function establishPersistentConnectionToSchemaPoller(
-  connectionSettings: Neo4jSettings,
+  connectionSettings: Neo4jConnectionSettings,
 ): Promise<ConnnectionResult> {
   const schemaPoller = getSchemaPoller();
   const result = await schemaPoller.persistentConnect(

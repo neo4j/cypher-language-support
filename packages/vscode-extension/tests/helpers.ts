@@ -122,3 +122,8 @@ export function parameterLabelToString(label: string | [number, number]) {
     return label;
   }
 }
+
+export async function toggleLinting(value: boolean) {
+  const config = vscode.workspace.getConfiguration('neo4j.features');
+  await config.update('linting', value, vscode.ConfigurationTarget.Global);
+}
