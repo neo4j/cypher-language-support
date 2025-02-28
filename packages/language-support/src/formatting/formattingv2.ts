@@ -259,6 +259,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         modifyIndentation: 0,
       };
       this.startGroupCounter = 0;
+      // If we have a "hard-break" comment, i.e. one that has a newline before it,
+      // we end all currently active groups. Otherwise, that comment becomes part of the group,
+      // which makes it very hard for the search to find a good solution.
       if (nodeLine !== commentLine) {
         while (this.groupStack.length > 1) {
           this.endGroup(this.groupStack.at(-1));
