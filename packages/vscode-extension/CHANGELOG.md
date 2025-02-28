@@ -7,6 +7,7 @@
 - Adds autocompletions for Cypher version
 - Adds support for CYPHER preparser options (runtime, planner, etc)
 - Adds support for multiple Neo4j connections
+- Makes .cy, .cyp and .cql file extensions work with the plugin
 
 ## 1.6.1
 
