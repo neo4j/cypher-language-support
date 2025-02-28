@@ -1,12 +1,23 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import {
+  Neo4jConnectionSettings,
+  Neo4jSettings,
+} from '@neo4j-cypher/language-server/src/types';
 
 export class MockLanguageClient {
   async sendNotification(
     methodName: string,
-    settings?: Neo4jSettings,
+    settings?: Neo4jConnectionSettings | Neo4jSettings,
   ): Promise<void> {
-    await Promise.resolve(
-      `sending notification using ${methodName} with ${settings?.connectURL}, ${settings?.connect}, ${settings?.database}, ${settings?.password}, ${settings?.trace.server}, ${settings?.user}`,
-    );
+    if (settings) {
+      if ('trace' in settings) {
+        await Promise.resolve(
+          `sending settings notification using ${methodName} with ${settings?.trace.server}, ${settings?.features.linting}`,
+        );
+      } else {
+        await Promise.resolve(
+          `sending connection notification using ${methodName} with ${settings?.connectURL}, ${settings?.connect}, ${settings?.database}, ${settings?.password}, ${settings?.user}`,
+        );
+      }
+    }
   }
 }

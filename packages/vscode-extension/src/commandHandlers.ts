@@ -1,18 +1,10 @@
 import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
-import {
-  commands,
-  ConfigurationChangeEvent,
-  Selection,
-  TextEditor,
-  window,
-  workspace,
-} from 'vscode';
+import { commands, Selection, TextEditor, window, workspace } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
-  getDatabaseConnectionSettings,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
@@ -20,7 +12,6 @@ import {
 } from './connectionService';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getQueryRunner } from './contextService';
-import { sendNotificationToLanguageClient } from './languageClientService';
 import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
 import {
   displayConfirmConnectionDeletionPrompt,
@@ -29,28 +20,6 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from './uiUtils';
 import { ConnectionPanel } from './webviews/connectionPanel';
-
-/**
- * Handler for configuration change events.
- * Updates the language client with new connection settings if the neo4j configuration changes.
- * @param event The configuration change event.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function handleNeo4jConfigurationChangedEvent(
-  event: ConfigurationChangeEvent,
-): Promise<void> {
-  if (event.affectsConfiguration('neo4j.trace.server')) {
-    const currentConnection = getActiveConnection();
-    if (currentConnection) {
-      const password = await getPasswordForConnection(currentConnection.key);
-      const settings = getDatabaseConnectionSettings(
-        currentConnection,
-        password,
-      );
-      await sendNotificationToLanguageClient('connectionUpdated', settings);
-    }
-  }
-}
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)

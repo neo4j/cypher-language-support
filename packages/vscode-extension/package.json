@@ -305,6 +305,16 @@
           ],
           "default": "off",
           "description": "Traces the communication between VS Code and the language server."
+        },
+        "neo4j.features.linting": {
+          "scope": "window",
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ],
+          "default": true,
+          "description": "Enable linting errors for Cypher queries"
         }
       }
     },

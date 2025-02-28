@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import { afterEach } from 'mocha';
 import * as vscode from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
 import {
@@ -8,6 +9,7 @@ import {
   newUntitledFileWithContent,
   openDocument,
   rangeToString,
+  toggleLinting,
 } from '../../helpers';
 import {
   connectDefault,
@@ -67,7 +69,11 @@ export async function testSyntaxValidation({
   );
 }
 
-suite('Syntax validation spec', () => {
+suite.only('Syntax validation spec', () => {
+  afterEach(async () => {
+    await toggleLinting(true);
+  });
+
   test('Suggests replacements for deprecated functions/procedures', async () => {
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
@@ -317,6 +323,41 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Error,
         ),
       ],
+    });
+  });
+
+  test('Linting can be disabled with the config option', async () => {
+    const textFile = 'deprecated-by.cypher';
+    const docUri = getDocumentUri(textFile);
+
+    await openDocument(docUri);
+
+    await testSyntaxValidation({
+      docUri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
+          ),
+          "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
+          'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+
+    await toggleLinting(false);
+    await testSyntaxValidation({
+      docUri,
+      expected: [],
     });
   });
 });
