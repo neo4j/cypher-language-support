@@ -260,18 +260,10 @@ function addGroupEnd(buffer: string[], decision: Decision) {
 }
 
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
-  // TODO: This method strips out dangling whitespace at the end of lines.
-  // It should not have to do this as that should not be possible
-  // (related to the fact that special chunks should not be in the decision tree).
   const buffer: string[] = [];
   let cursorPos = -1;
-  const pushIfNotEmpty = (s: string) => {
-    if (s !== '') {
-      buffer.push(s);
-    }
-  };
   decisions.forEach((decision) => {
-    pushIfNotEmpty(' '.repeat(decision.indentation));
+    buffer.push(' '.repeat(decision.indentation));
     const leftType = decision.left.type;
     if (
       (leftType === 'REGULAR' || leftType === 'COMMENT') &&
@@ -280,22 +272,13 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
       cursorPos = buffer.join('').length;
     }
     if (showGroups) addGroupStart(buffer, decision);
-    pushIfNotEmpty(
+    buffer.push(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
     if (showGroups) addGroupEnd(buffer, decision);
-    if (decision.chosenSplit.splitType === '\n') {
-      if (buffer.at(-1) === ' ') {
-        buffer.pop();
-      }
-    }
-    // TODO:  hack because of same thing as above
-    if (decision.chosenSplit.splitType === ' ' && buffer.at(-1) === ' ') {
-      return;
-    }
-    pushIfNotEmpty(decision.chosenSplit.splitType);
+    buffer.push(decision.chosenSplit.splitType);
   });
   const result = buffer.join('').trimEnd();
   if (cursorPos === -1) {
