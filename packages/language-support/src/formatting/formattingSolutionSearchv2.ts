@@ -291,6 +291,9 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
     return [{ splitType: '\n', cost: 0 }];
   }
+  if (chunk.type === 'COMMENT') {
+    return [{ splitType: '\n', cost: 0 }];
+  }
   switch (chunk.type) {
     case 'REGULAR':
       if (doesNotWantSpace(chunk, nextChunk)) {
