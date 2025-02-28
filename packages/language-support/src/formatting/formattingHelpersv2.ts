@@ -46,34 +46,30 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
-export type Chunk = RegularChunk | CommentChunk | SpecialChunk;
+export interface BaseChunk {
+  isCursor?: boolean;
+  text: string;
+  groupsStarting: number;
+  groupsEnding: number;
+  modifyIndentation: number;
+}
 
-export interface RegularChunk {
+// Regular chunk specific properties
+export interface RegularChunk extends BaseChunk {
   type: 'REGULAR';
   node?: TerminalNode;
-  noSpace?: true;
-  noBreak?: true;
-  isCursor?: true;
-  text: string;
+  noSpace?: boolean;
+  noBreak?: boolean;
 }
 
-export interface CommentChunk {
+// Comment chunk specific properties
+export interface CommentChunk extends BaseChunk {
   type: 'COMMENT';
-  isCursor?: true;
   breakBefore: boolean;
-  text: string;
 }
 
-interface GroupChunk {
-  type: 'GROUP_START' | 'GROUP_END';
-  extraIndent?: number;
-}
-
-interface IndentationChunk {
-  type: 'INDENT' | 'DEDENT';
-}
-
-type SpecialChunk = GroupChunk | IndentationChunk;
+// Union type for all chunk types
+export type Chunk = RegularChunk | CommentChunk;
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -83,22 +79,15 @@ const traillingCharacters = [
   CypherCmdLexer.RBRACKET,
 ];
 
-export function isSpecialChunk(chunk: Chunk): chunk is SpecialChunk {
-  return (
-    chunk.type === 'GROUP_START' ||
-    chunk.type === 'GROUP_END' ||
-    chunk.type === 'INDENT' ||
-    chunk.type === 'DEDENT'
-  );
-}
-
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
   startGroup?: () => number,
   endGroup?: (id: number) => void,
+  avoidBreakBetween?: () => void,
 ) {
   visit(ctx.MERGE());
+  avoidBreakBetween?.();
   let id: number;
   if (startGroup) {
     id = startGroup();
@@ -179,28 +168,9 @@ export function findTargetToken(
   return false;
 }
 
-export const indentChunk: IndentationChunk = {
-  type: 'INDENT',
-};
-
-export const dedentChunk: IndentationChunk = {
-  type: 'DEDENT',
-};
-
-export const groupStartChunk: GroupChunk = {
-  type: 'GROUP_START',
-};
-
-export const collectionGroupStartChunk: GroupChunk = {
-  type: 'GROUP_START',
-  extraIndent: 1,
-};
-
-export const caseGroupStartChunk: GroupChunk = {
-  type: 'GROUP_START',
-  extraIndent: 2,
-};
-
-export const groupEndChunk: Chunk = {
-  type: 'GROUP_END',
-};
+export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
+  return (
+    chunk.type === 'COMMENT' ||
+    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
+  );
+}
