@@ -1262,13 +1262,13 @@ CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
   });
 
   test('should not put the arrow on a newline for no reason', () => {
-    const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
-MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
-//MATCH (t:Target)-[:BELONGS_TO]->(s)
-return z`;
-    const expected = `MATCH (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
-MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
-//MATCH (t:Target)-[:BELONGS_TO]->(s)
+    const query = `MATCH (z:Cccccccc {aaa_id: "T1M3wiuA"})-[:aaaaaaaaaaaaaaa]-(i)
+MATCH (i:IIIIIIIIIII:JJJJJJJJ)-[:HHHHHHHHHH]->(t)
+//MATCH (t:TTTTTT)-[:BBBBBBBBBB]->(s)
+RETURN z`;
+    const expected = `MATCH (z:Cccccccc {aaa_id: "T1M3wiuA"})-[:aaaaaaaaaaaaaaa]-(i)
+MATCH (i:IIIIIIIIIII:JJJJJJJJ)-[:HHHHHHHHHH]->(t)
+//MATCH (t:TTTTTT)-[:BBBBBBBBBB]->(s)
 RETURN z`;
     verifyFormatting(query, expected);
   });
