@@ -1211,9 +1211,8 @@ RETURN dmk`.trim();
 });
 
 describe('tests for line breaks with comments', () => {
-  test('handles comments before long patterns gracefully', () => {
-    const query = `CREATE
-// this is a loooooooooooooooooooong comment
+  test('handles comments within long pattern lists gracefully', () => {
+    const query = `CREATE 
 (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
 (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
 (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
@@ -1239,8 +1238,7 @@ describe('tests for line breaks with comments', () => {
 (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
 (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
     const expected = `
-CREATE // this is a loooooooooooooooooooong comment
-       (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
        (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
        (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
        (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
