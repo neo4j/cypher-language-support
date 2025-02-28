@@ -100,8 +100,116 @@
     "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
+    "character": ";",
+    "type": "source.cs punctuation.terminator.statement.cs"
+  },
+  {
+    "character": "string",
+    "type": "source.cs keyword.type.string.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "texto",
+    "type": "source.cs entity.name.variable.local.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "=",
+    "type": "source.cs keyword.operator.assignment.cs"
+  },
+  {
+    "character": " ",
+    "type": "source.cs"
+  },
+  {
+    "character": "@\"",
+    "type": "source.cs multilineAtString string.quoted.double.cs punctuation.definition.string.begin.cs"
+  },
+  {
+    "character": "//cypher",
+    "type": "source.cs multilineAtString comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "// This is a comment",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher comment.line"
+  },
+  {
+    "character": "    ",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "MATCH",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " (",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ":",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "Label",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher entity.name.class"
+  },
+  {
+    "character": ") ",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "RETURN",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher keyword"
+  },
+  {
+    "character": " ",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "function(",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher entity.name.function"
+  },
+  {
+    "character": "n",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher variable"
+  },
+  {
+    "character": ".",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher keyword.operator"
+  },
+  {
+    "character": "property",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher variable.property"
+  },
+  {
+    "character": ")",
+    "type": "source.cs multilineAtString meta.embedded.block.cypher"
+  },
+  {
+    "character": "\"",
+    "type": "source.cs multilineAtString string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": ";",
+    "type": "source.cs punctuation.terminator.statement.cs"
+  },
+  {
     "character": "var",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs storage.type.var.cs"
   },
   {
     "character": " ",
@@ -109,7 +217,7 @@
   },
   {
     "character": "b",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs entity.name.variable.local.cs"
   },
   {
     "character": " ",
@@ -200,8 +308,12 @@
     "type": "source.cs multiLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
+    "character": ";",
+    "type": "source.cs punctuation.terminator.statement.cs"
+  },
+  {
     "character": "var",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs storage.type.var.cs"
   },
   {
     "character": " ",
@@ -209,7 +321,7 @@
   },
   {
     "character": "c",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs entity.name.variable.local.cs"
   },
   {
     "character": " ",
@@ -292,6 +404,10 @@
     "type": "source.cs singleLineString string.quoted.double.cs punctuation.definition.string.end.cs"
   },
   {
+    "character": ";",
+    "type": "source.cs punctuation.terminator.statement.cs"
+  },
+  {
     "character": "//",
     "type": "source.cs comment.line.double-slash.cs punctuation.definition.comment.cs"
   },
@@ -301,7 +417,7 @@
   },
   {
     "character": "var",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs storage.type.var.cs"
   },
   {
     "character": " ",
@@ -309,7 +425,7 @@
   },
   {
     "character": "d",
-    "type": "source.cs variable.other.readwrite.cs"
+    "type": "source.cs entity.name.variable.local.cs"
   },
   {
     "character": " ",
@@ -334,5 +450,9 @@
   {
     "character": "\"",
     "type": "source.cs string.quoted.double.cs punctuation.definition.string.end.cs"
+  },
+  {
+    "character": ";",
+    "type": "source.cs punctuation.terminator.statement.cs"
   }
 ]

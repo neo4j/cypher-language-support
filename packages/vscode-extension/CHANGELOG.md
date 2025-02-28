@@ -7,8 +7,9 @@
 - Adds autocompletions for Cypher version
 - Adds support for CYPHER preparser options (runtime, planner, etc)
 - Adds support for multiple Neo4j connections
+- Adds support for highlighting in @ strings for C#
 
-## 1.6.1
+  ## 1.6.1
 
 - Makes the editor relint all documents when connecting / disconnecting from a database
 - Adds warnings for deprecated procedures / functions
