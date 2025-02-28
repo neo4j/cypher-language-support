@@ -4,7 +4,12 @@
 
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
-import { Chunk, MAX_COL, RegularChunk } from './formattingHelpersv2';
+import {
+  Chunk,
+  isCommentBreak,
+  MAX_COL,
+  RegularChunk,
+} from './formattingHelpersv2';
 
 const errorMessage = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -288,27 +293,17 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
-    return [{ splitType: '\n', cost: 0 }];
+  if (isCommentBreak(chunk, nextChunk)) {
+    return onlyBreakSplit;
   }
-  if (chunk.type === 'COMMENT') {
-    return [{ splitType: '\n', cost: 0 }];
+
+  if (chunk.type === 'REGULAR') {
+    if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
+      return noSpaceNoBreakSplit;
+    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceSplits;
+    if (chunk.noBreak) return noBreakSplit;
   }
-  switch (chunk.type) {
-    case 'REGULAR':
-      if (doesNotWantSpace(chunk, nextChunk)) {
-        if (chunk.noBreak) {
-          return basicNoSpaceNoBreakSplits;
-        }
-        return basicNoSpaceSplits;
-      }
-      if (chunk.noBreak) {
-        return basicNoBreakSplits;
-      }
-      return basicSplits;
-    default:
-      return basicNoSpaceSplits;
-  }
+  return standardSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -356,16 +351,17 @@ export function buffersToFormattedString(
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
 
-const basicSplits: Split[] = [
+const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const basicNoSpaceSplits: Split[] = [
+const noSpaceSplits: Split[] = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const basicNoBreakSplits: Split[] = [{ splitType: ' ', cost: 0 }];
-const basicNoSpaceNoBreakSplits: Split[] = [{ splitType: '', cost: 0 }];
+const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
+const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
+const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',

@@ -164,3 +164,10 @@ export function findTargetToken(
   }
   return false;
 }
+
+export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
+  return (
+    chunk.type === 'COMMENT' ||
+    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
+  );
+}
