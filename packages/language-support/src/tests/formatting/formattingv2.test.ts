@@ -408,7 +408,7 @@ CASE
 END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
-
+// TODO
   test('case expression with value example', () => {
     const query = `MATCH (n:Person)
 RETURN n.name, CASE n.age WHEN = 0, = 1, = 2 THEN "Baby"
