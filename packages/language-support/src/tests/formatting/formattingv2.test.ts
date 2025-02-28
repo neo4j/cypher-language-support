@@ -391,7 +391,7 @@ RETURN name, count(*) AS count ORDER BY count`;
 RETURN name, count(*) AS count ORDER BY count`;
     verifyFormatting(query, expected);
   });
-
+  // TODO
   /* test('generic case expression example', () => {
     const query = `MATCH (n:Person)
 RETURN CASE
@@ -646,7 +646,7 @@ WHERE b.name = "XGyhUMQO"
 RETURN u, r, b, c`;
     verifyFormatting(query, expected);
   });
-
+  // TODO
   /* test('does not concatenate IS X', () => {
     const query = `MATCH (n)
 WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
