@@ -79,7 +79,7 @@ const traillingCharacters = [
   CypherCmdLexer.RBRACKET,
 ];
 
-// TODO: This function should probably not exist; We're not really fans of
+// TODO: This function should probably not exist; we're not really fans of
 // shuffling around the AST like we're doing right now...
 export function handleMergeClause(
   ctx: MergeClauseContext,
