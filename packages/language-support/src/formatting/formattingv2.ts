@@ -808,11 +808,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
+      this.breakLine();
       this.visit(ctx.caseAlternative(i));
       this.removeIndentation();
     }
     if (ctx.ELSE()) {
       this.addIndentation();
+      this.breakLine();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
       this.removeIndentation();
@@ -830,11 +832,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.extendedCaseAlternative_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
+      this.breakLine();
       this.visit(ctx.extendedCaseAlternative(i));
       this.removeIndentation();
     }
     if (ctx.ELSE()) {
       this.addIndentation();
+      this.breakLine();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression(1));
       this.removeIndentation();

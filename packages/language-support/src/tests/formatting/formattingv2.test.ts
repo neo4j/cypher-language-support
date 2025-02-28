@@ -391,8 +391,8 @@ RETURN name, count(*) AS count ORDER BY count`;
 RETURN name, count(*) AS count ORDER BY count`;
     verifyFormatting(query, expected);
   });
-  // TODO
-  /* test('generic case expression example', () => {
+
+  test('generic case expression example', () => {
     const query = `MATCH (n:Person)
 RETURN CASE
 WHEN n.eyes = 'blue' THEN 1
@@ -408,7 +408,7 @@ CASE
 END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
-// TODO
+
   test('case expression with value example', () => {
     const query = `MATCH (n:Person)
 RETURN n.name, CASE n.age WHEN = 0, = 1, = 2 THEN "Baby"
@@ -429,7 +429,7 @@ CASE n.age
   ELSE "Adult"
 END AS result`;
     verifyFormatting(query, expected);
-  }); */
+  });
 
   test('should put nested FOREACH on newline', () => {
     const query = `MATCH (u:User)
@@ -647,7 +647,7 @@ RETURN u, r, b, c`;
     verifyFormatting(query, expected);
   });
   // TODO
-  /* test('does not concatenate IS X', () => {
+  test('does not concatenate IS X', () => {
     const query = `MATCH (n)
 WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
 return n`;
@@ -659,7 +659,7 @@ CASE
 END
 RETURN n`;
     verifyFormatting(query, expected);
-  }); */
+  });
 
   test('does not break CALL YIELD', () => {
     const query = `CALL dbms.procedures YIELD name, signature, description`;
