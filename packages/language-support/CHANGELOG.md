@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.17
+
+### Patch Changes
+
+- bffbb19: Fix comment, QPP and pattern bugs in v1 formatter
+
 ## 2.0.0-next.16
 
 ### Patch Changes
