@@ -4,7 +4,12 @@
 
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
-import { Chunk, MAX_COL, RegularChunk } from './formattingHelpersv2';
+import {
+  Chunk,
+  isCommentBreak,
+  MAX_COL,
+  RegularChunk,
+} from './formattingHelpersv2';
 
 const errorMessage = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -78,19 +83,10 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getNextIndent(currIndent: number, choice: Choice): number {
-  if (choice.left.type === 'INDENT') {
-    return currIndent + INDENTATION;
-  }
-  if (choice.left.type === 'DEDENT') {
-    return currIndent - INDENTATION;
-  }
-  return currIndent;
-}
-
 function getIndentations(curr: State, choice: Choice): [number, number] {
   const currBaseIndent = curr.baseIndentation;
-  const nextBaseIndent = getNextIndent(currBaseIndent, choice);
+  const nextBaseIndent =
+    currBaseIndent + choice.left.modifyIndentation * INDENTATION;
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
@@ -115,6 +111,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
+  const nextGroups = [...curr.activeGroups];
+
   const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
@@ -126,8 +124,13 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const thisWordEnd = actualColumn + leftLength + splitLength;
   const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
 
-  const nextGroups = [...curr.activeGroups];
-  if (choice.left.type === 'GROUP_END') {
+  for (let i = 0; i < choice.left.groupsStarting; i++) {
+    nextGroups.push({
+      align: actualColumn,
+      breakCost: Math.pow(10, nextGroups.length + 1),
+    });
+  }
+  for (let i = 0; i < choice.left.groupsEnding; i++) {
     nextGroups.pop();
   }
 
@@ -140,14 +143,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     // Incentivize not breaking to avoid cases where we have longer lines after short
     // ones.
     extraCost = -1;
-  }
-
-  if (choice.left.type === 'GROUP_START') {
-    const extraIndent = choice.left.extraIndent || 0;
-    nextGroups.push({
-      align: actualColumn + extraIndent,
-      breakCost: Math.pow(10, nextGroups.length + 1),
-    });
   }
 
   return {
@@ -244,11 +239,15 @@ function bestFirstSolnSearch(
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
-function addGroupsIfSet(buffer: string[], decision: Decision) {
-  const leftType = decision.left.type;
-  if (showGroups && (leftType === 'GROUP_START' || leftType === 'GROUP_END')) {
-    const groupType = decision.left.type;
-    buffer.push(groupType === 'GROUP_START' ? '[' : ']');
+function addGroupStart(buffer: string[], decision: Decision) {
+  for (let i = 0; i < decision.left.groupsStarting; i++) {
+    buffer.push('[');
+  }
+}
+
+function addGroupEnd(buffer: string[], decision: Decision) {
+  for (let i = 0; i < decision.left.groupsEnding; i++) {
+    buffer.push(']');
   }
 }
 
@@ -272,12 +271,13 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     ) {
       cursorPos = buffer.join('').length;
     }
+    if (showGroups) addGroupStart(buffer, decision);
     pushIfNotEmpty(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
-    addGroupsIfSet(buffer, decision);
+    if (showGroups) addGroupEnd(buffer, decision);
     if (decision.chosenSplit.splitType === '\n') {
       if (buffer.at(-1) === ' ') {
         buffer.pop();
@@ -293,27 +293,17 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  if (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore) {
-    return [{ splitType: '\n', cost: 0 }];
+  if (isCommentBreak(chunk, nextChunk)) {
+    return onlyBreakSplit;
   }
-  switch (chunk.type) {
-    case 'COMMENT':
-    case 'INDENT':
-      return [{ splitType: '\n', cost: 0 }];
-    case 'REGULAR':
-      if (doesNotWantSpace(chunk, nextChunk)) {
-        if (chunk.noBreak) {
-          return basicNoSpaceNoBreakSplits;
-        }
-        return basicNoSpaceSplits;
-      }
-      if (chunk.noBreak) {
-        return basicNoBreakSplits;
-      }
-      return basicSplits;
-    default:
-      return basicNoSpaceSplits;
+
+  if (chunk.type === 'REGULAR') {
+    if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
+      return noSpaceNoBreakSplit;
+    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceSplits;
+    if (chunk.noBreak) return noBreakSplit;
   }
+  return standardSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -361,18 +351,22 @@ export function buffersToFormattedString(
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
 
-const basicSplits: Split[] = [
+const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const basicNoSpaceSplits: Split[] = [
+const noSpaceSplits: Split[] = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const basicNoBreakSplits: Split[] = [{ splitType: ' ', cost: 0 }];
-const basicNoSpaceNoBreakSplits: Split[] = [{ splitType: '', cost: 0 }];
+const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
+const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
+const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  modifyIndentation: 0,
 };

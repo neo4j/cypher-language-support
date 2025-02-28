@@ -197,7 +197,10 @@
       {
         "id": "cypher",
         "extensions": [
-          ".cypher"
+          ".cypher",
+          ".cql",
+          ".cy",
+          ".cyp"
         ],
         "aliases": [
           "Cypher"
