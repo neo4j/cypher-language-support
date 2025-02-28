@@ -23,10 +23,11 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
 export type Connection = {
   key: string;
   scheme: Scheme;
+  name?: string;
   host: string;
-  port?: string | undefined;
+  port?: string;
   user: string;
-  database?: string | undefined;
+  database?: string;
   state: State;
 };
 
@@ -56,7 +57,12 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
   delete connections[key];
   await saveConnections(connections);
   await deletePasswordByKey(key);
-  await disconnectFromDatabaseAndNotifyLanguageClient();
+
+  if (connection.state !== 'inactive') {
+    const result = await disconnectFromDatabaseAndNotifyLanguageClient();
+    connection.state = 'inactive';
+    displayMessageForConnectionResult(connection, result);
+  }
 }
 
 /**
@@ -83,7 +89,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 
   const result = await initializeDatabaseConnection(connection, password);
 
-  if (result.success || (forceSave && result.retriable)) {
+  if (result.success || forceSave) {
     await saveConnection(connection);
     await savePasswordByKey(connection.key, password);
     return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
@@ -181,7 +187,7 @@ export function getActiveConnection(): Connection | null {
  */
 export function getAllConnections(): Connection[] {
   const connections = Object.values(getConnections());
-  return connections.length ? [connections[0]] : [];
+  return connections.length ? connections : [];
 }
 
 /**

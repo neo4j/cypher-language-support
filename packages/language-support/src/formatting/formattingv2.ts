@@ -315,7 +315,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.MATCH());
     this.avoidBreakBetween();
     const id1 = this.startBasicGroup();
-    this.visitIfNotNull(ctx.matchMode());
     this.visit(ctx.patternList());
     this.endGroup(id1);
     const n = ctx.hint_list().length;
@@ -968,8 +967,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitSetClause = (ctx: SetClauseContext) => {
     this.visit(ctx.SET());
     this.avoidBreakBetween();
-    const id1 = this.startBasicGroup();
     const n = ctx.setItem_list().length;
+    const id1 = this.startBasicGroup();
     for (let i = 0; i < n; i++) {
       const id2 = this.startBasicGroup();
       this.visit(ctx.setItem(i));
