@@ -224,7 +224,7 @@ ON MATCH SET b.name='you' /* Update name if matched */
 RETURN a.prop// Output the result`;
     const expected = `MERGE (n) // Ensure node exists
   ON CREATE SET n.prop = 0 /* Default value */
-  /* Match or create a relationship
+/* Match or create a relationship
    and update properties as needed */
 MERGE (a:A)-[:T]->(b:B)
   ON CREATE SET a.name = 'me' // Name set during creation
@@ -400,11 +400,12 @@ WHEN n.age < 40      THEN 2
 ELSE 3
 END AS result, n.eyes, n.age`;
     const expected = `MATCH (n:Person)
-RETURN CASE
-         WHEN n.eyes = 'blue' THEN 1
-         WHEN n.age < 40 THEN 2
-         ELSE 3
-       END AS result, n.eyes, n.age`;
+RETURN
+CASE
+  WHEN n.eyes = 'blue' THEN 1
+  WHEN n.age < 40 THEN 2
+  ELSE 3
+END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -418,14 +419,15 @@ WHEN > 1000 THEN "Immortal"
 ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
-RETURN n.name, CASE n.age
-                 WHEN = 0, = 1, = 2 THEN "Baby"
-                 WHEN <= 13 THEN "Child"
-                 WHEN < 20 THEN "Teenager"
-                 WHEN < 30 THEN "Young Adult"
-                 WHEN > 1000 THEN "Immortal"
-                 ELSE "Adult"
-               END AS result`;
+RETURN n.name,
+CASE n.age
+  WHEN = 0, = 1, = 2 THEN "Baby"
+  WHEN <= 13 THEN "Child"
+  WHEN < 20 THEN "Teenager"
+  WHEN < 30 THEN "Young Adult"
+  WHEN > 1000 THEN "Immortal"
+  ELSE "Adult"
+END AS result`;
     verifyFormatting(query, expected);
   });
 
@@ -644,16 +646,17 @@ WHERE b.name = "XGyhUMQO"
 RETURN u, r, b, c`;
     verifyFormatting(query, expected);
   });
-
+  // TODO
   test('does not concatenate IS X', () => {
     const query = `MATCH (n)
 WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
 return n`;
     const expected = `MATCH (n)
-WHERE CASE
-        WHEN n["asdf"] IS STRING THEN n.prop
-        ELSE 'default'
-      END
+WHERE
+CASE
+  WHEN n["asdf"] IS STRING THEN n.prop
+  ELSE 'default'
+END
 RETURN n`;
     verifyFormatting(query, expected);
   });
