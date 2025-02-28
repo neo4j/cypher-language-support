@@ -27,9 +27,7 @@ A chunk is similar to ANTLR Tokens, but differs in the following ways
 1. A chunk can consist of multiple tokens, if those tokens should always be kept together.
 An example would be the opening parenthesis of a function call, e.g. `function()`; `function(` would become one chunk,
 since these tokens should never be separated.
-2. A chunk can represent the start or end of a group or indentation
-    - This is not ideal and will likely be moved away from in the future.
-3. A chunk embeds information about the possible splitting characters that can follow it. For instance, we never want
+2. A chunk embeds information about the possible splitting characters that can follow it. For instance, we never want
 to split a line after `WHERE`, and so we encode that in the chunk for `WHERE`.
 
 ### Group
