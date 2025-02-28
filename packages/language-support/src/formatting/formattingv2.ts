@@ -952,6 +952,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       (node) => this.visit(node),
       () => this.startGroup(),
       (id) => this.endGroup(id),
+      () => this.avoidBreakBetween(),
     );
   };
 

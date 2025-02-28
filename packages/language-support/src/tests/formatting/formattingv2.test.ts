@@ -1327,7 +1327,7 @@ RETURN n`;
     // TODO: broken because of visitFunctioninvocation.
     const expected = `MATCH (n)
 WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-                          "asdfklsjdf")
+                                   "asdfklsjdf")
 RETURN n`;
     verifyFormatting(query, expected);
   });
