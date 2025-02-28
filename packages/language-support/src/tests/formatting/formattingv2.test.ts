@@ -750,6 +750,15 @@ RETURN n`;
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('should not level dangling bracket', () => {
+    const query = `CREATE (company:Company
+       {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
+       });`;
+    const expected = `CREATE (company:Company {name: "mrUJWq6A", krs: "Yuu9Wl7d",
+                         registration_date: date("FrA1uHGX")});`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
