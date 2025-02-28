@@ -92,8 +92,11 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
     finalIndent = curr.activeGroups.at(-1).align;
   }
 
-  if (choice.left.type === 'COMMENT') {
-    finalIndent = curr.column === 0 ? nextBaseIndent : 0;
+  // Align hard-break comments with the outermost group (usually the one that
+  // aligns things with a clause)
+  if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
+    const lastGroup = curr.activeGroups.at(0);
+    finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
   }
   return [nextBaseIndent, finalIndent];
 }
@@ -122,7 +125,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ? choice.left.text.length
       : 0;
   const thisWordEnd = actualColumn + leftLength + splitLength;
-  const overflowingCount = Math.max(0, thisWordEnd - MAX_COL);
+  // We don't consider comments nor an empty space as overflowing
+  const endWithoutCommentAndSplit =
+    choice.left.type === 'COMMENT'
+      ? actualColumn - 1
+      : thisWordEnd - splitLength;
+  const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting; i++) {
     nextGroups.push({
@@ -252,18 +260,10 @@ function addGroupEnd(buffer: string[], decision: Decision) {
 }
 
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
-  // TODO: This method strips out dangling whitespace at the end of lines.
-  // It should not have to do this as that should not be possible
-  // (related to the fact that special chunks should not be in the decision tree).
   const buffer: string[] = [];
   let cursorPos = -1;
-  const pushIfNotEmpty = (s: string) => {
-    if (s !== '') {
-      buffer.push(s);
-    }
-  };
   decisions.forEach((decision) => {
-    pushIfNotEmpty(' '.repeat(decision.indentation));
+    buffer.push(' '.repeat(decision.indentation));
     const leftType = decision.left.type;
     if (
       (leftType === 'REGULAR' || leftType === 'COMMENT') &&
@@ -272,18 +272,13 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
       cursorPos = buffer.join('').length;
     }
     if (showGroups) addGroupStart(buffer, decision);
-    pushIfNotEmpty(
+    buffer.push(
       leftType === 'REGULAR' || leftType === 'COMMENT'
         ? decision.left.text
         : '',
     );
     if (showGroups) addGroupEnd(buffer, decision);
-    if (decision.chosenSplit.splitType === '\n') {
-      if (buffer.at(-1) === ' ') {
-        buffer.pop();
-      }
-    }
-    pushIfNotEmpty(decision.chosenSplit.splitType);
+    buffer.push(decision.chosenSplit.splitType);
   });
   const result = buffer.join('').trimEnd();
   if (cursorPos === -1) {

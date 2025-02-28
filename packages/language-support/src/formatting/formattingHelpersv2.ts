@@ -79,19 +79,24 @@ const traillingCharacters = [
   CypherCmdLexer.RBRACKET,
 ];
 
+// TODO: This function should probably not exist; we're not really fans of
+// shuffling around the AST like we're doing right now...
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
-  startGroup?: () => void,
-  endGroup?: () => void,
+  startGroup?: () => number,
+  endGroup?: (id: number) => void,
+  avoidBreakBetween?: () => void,
 ) {
   visit(ctx.MERGE());
+  avoidBreakBetween?.();
+  let patternGrp: number;
   if (startGroup) {
-    startGroup();
+    patternGrp = startGroup();
   }
   visit(ctx.pattern());
   if (endGroup) {
-    endGroup();
+    endGroup(patternGrp);
   }
   const mergeActions = ctx
     .mergeAction_list()
