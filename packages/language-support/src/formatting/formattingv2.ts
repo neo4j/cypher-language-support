@@ -336,9 +336,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this.visit(ctx.RETURN());
     this.avoidBreakBetween();
-    const id1 = this.startBasicGroup();
     this.visit(ctx.returnBody());
+  };
+
+  visitReturnBody = (ctx: ReturnBodyContext) => {
+    this.visitIfNotNull(ctx.DISTINCT());
+    const id1 = this.startBasicGroup();
+    this.visit(ctx.returnItems());
+    if (ctx.orderBy() || ctx.skip()) {
+      const id2 = this.startBasicGroup();
+      this.visitIfNotNull(ctx.orderBy());
+      this.visitIfNotNull(ctx.skip());
+      this.endGroup(id2);
+    }
     this.endGroup(id1);
+    this.visitIfNotNull(ctx.limit());
   };
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {
@@ -382,18 +394,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
       }
-      this.endGroup(id1);
-    }
-  };
-
-  visitReturnBody = (ctx: ReturnBodyContext) => {
-    this.visitIfNotNull(ctx.DISTINCT());
-    this.visit(ctx.returnItems());
-    if (ctx.orderBy() || ctx.skip() || ctx.limit()) {
-      const id1 = this.startBasicGroup();
-      this.visitIfNotNull(ctx.orderBy());
-      this.visitIfNotNull(ctx.skip());
-      this.visitIfNotNull(ctx.limit());
       this.endGroup(id1);
     }
   };
