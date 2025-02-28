@@ -996,6 +996,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
+    this.startGroup();
     this.visit(ctx.variable());
     this.visit(ctx.IN());
     this.visit(ctx._inExp);
@@ -1003,6 +1004,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.WHERE());
       this.visit(ctx._whereExp);
     }
+    this.endGroup();
     this.visit(ctx.RPAREN());
   };
 

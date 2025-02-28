@@ -759,6 +759,22 @@ RETURN n`;
                          registration_date: date("FrA1uHGX")});`;
     verifyFormatting(query, expected);
   });
+
+  test('should align with list predicate', () => {
+    const query = `MATCH (f:Frequency)
+WHERE f.value > "WhbRf4O4" AND
+      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
+      % x <> "5DOeV3TE")
+SET f.prime = "zt01uZOH"
+RETURN f`;
+    const expected = `MATCH (f:Frequency)
+WHERE f.value > "WhbRf4O4" AND
+      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
+          % x <> "5DOeV3TE")
+SET f.prime = "zt01uZOH"
+RETURN f`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
