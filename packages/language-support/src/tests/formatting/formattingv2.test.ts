@@ -1275,13 +1275,13 @@ RETURN z`;
 
   test('this query should be idempotent', () => {
     const bad = `
-with "Nc3yUa7F" as vessel_type_code /*trunk land vessel type.  add for FDR */
+with "Nc3yUa7F" as vessel_type_code /*This is a comment in an inconvenient place */
    // detail
    , ["AbQk1wMr","PmA6udnt"] as detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
 return *;`;
     const expected = `
-WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
+WITH "Nc3yUa7F" AS vessel_type_code, /*This is a comment in an inconvenient place */
      // detail
      ["AbQk1wMr", "PmA6udnt"] AS detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
@@ -1540,13 +1540,13 @@ RETURN abcde_fghi`;
   test('the comments here should not stay indented as they have no reason to do so', () => {
     const query = `MATCH (n)
 RETURN *
-       // return count(p.sourceID)
-       // return p.flowState,  count(p.sourceID)
+       // return count(p)
+       // return p.prop,  count(p.prop)
 LIMIT "6pkMe6Kx"`;
     const expected = `MATCH (n)
 RETURN *
-// return count(p.sourceID)
-// return p.flowState,  count(p.sourceID)
+// return count(p)
+// return p.prop,  count(p.prop)
 LIMIT "6pkMe6Kx"`;
     verifyFormatting(query, expected);
   });
