@@ -90,13 +90,13 @@ export function handleMergeClause(
 ) {
   visit(ctx.MERGE());
   avoidBreakBetween?.();
-  let id: number;
+  let patternGrp: number;
   if (startGroup) {
-    id = startGroup();
+    patternGrp = startGroup();
   }
   visit(ctx.pattern());
   if (endGroup) {
-    endGroup(id);
+    endGroup(patternGrp);
   }
   const mergeActions = ctx
     .mergeAction_list()
