@@ -1022,7 +1022,7 @@ RETURN path`.trimStart();
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
 MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-      {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
 
