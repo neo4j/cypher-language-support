@@ -8,6 +8,10 @@
 - Adds support for CYPHER preparser options (runtime, planner, etc)
 - Adds setting neo4j.features.linting to disable linting of Cypher files
 - Adds support for multiple Neo4j connections
+- Adds hint when using function as procedure and viceversa
+- Adds automatically triggered completions on "YIELD "
+- Improves support for cypher versions (errors, procedure/function registry)
+- Various bugfixes (using console commands as variable labels, highlighting preparser options and comments, case-insensitivity of built-in methods)
 
 ## 1.6.1
 
