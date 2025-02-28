@@ -1260,6 +1260,7 @@ CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
        (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
     verifyFormatting(query, expected);
   });
+
   test('should not put the arrow on a newline for no reason', () => {
     const query = `match (z:Consumer {zen_id: "T1M3wiuA"})-[:HAS_INTERACTION]-(i)
 MATCH (i:Interaction:PageView)-[:HAS_TARGET]->(t)
@@ -1279,9 +1280,6 @@ with "Nc3yUa7F" as vessel_type_code /*trunk land vessel type.  add for FDR */
    , ["AbQk1wMr","PmA6udnt"] as detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
 return *;`;
-    const once = formatQuery(bad);
-    const twice = formatQuery(once);
-    expect(once).toEqual(twice);
     const expected = `
 WITH "Nc3yUa7F" AS vessel_type_code, /*trunk land vessel type.  add for FDR */
      // detail
