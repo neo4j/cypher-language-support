@@ -133,7 +133,6 @@ RETURN n.prop // comment`;
   });
 
   test('basic inline comments', () => {
-    // Whitespace after the comment lines is intentional. It should be removed
     const inlinecomments = `
 MERGE (n) ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
 MERGE (a:A)-[:T]->(b:B)           // Create or match a relationship from 'a:A' to 'b:B'
