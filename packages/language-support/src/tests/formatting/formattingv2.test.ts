@@ -1939,4 +1939,60 @@ MERGE (a:Person {name: "Alice"})
 RETURN a`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('this query should not lose idempotency because of double break and concatenate', () => {
+    const query = `MATCH (a:AbCdEf {XyZ012345: "ABCDEFGH"})
+
+MATCH (a)-[b:ZxCvBnMq]->(d:GhIjKlM)<-[e1:ZxCvBnMq]-(zYxWvUtSrqP:AbCdEf)
+WHERE (
+  // abcdefghijklmnopqrstuvwxy
+  (b.AbCdEfGhIjKlMn <= "1A2b3C4d")
+
+  // Qwertyuiopasdfghjklzxcvbnm1234567890AB
+  OR (
+      e1.OpQrStUvW >= "Z9y8X7w6"
+      AND b.AbCdEfGhIjKlMn in ["aBcDeFgH","IjKlMnOp"]
+  )
+
+  // QazwsxedcrfvtgbyhnujmikolpASDFGHJKLQWERTYUIOPZXCVBNM1234567abcdefghij
+  OR (
+      b.OpQrStUvW <= e1.OpQrStUvW
+      AND e1.OpQrStUvW >= "QrStUvWx"
+      AND b.AbCdEfGhIjKlMn in ["YzXwVuTs","LmNoPqRs"]
+      // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
+  )
+
+  // 0123456789abcdefghijKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW
+  OR (
+      b.OpQrStUvW = e1.OpQrStUvW
+      AND e1.OpQrStUvW >= "StUvWxYz"
+      AND b.AbCdEfGhIjKlMn > "QwErTyUi"
+      // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
+  )
+)
+
+RETURN a, b, d, e1, zYxWvUtSrqP`;
+    const expected = `MATCH (a:AbCdEf {XyZ012345: "ABCDEFGH"})
+
+MATCH (a)-[b:ZxCvBnMq]->(d:GhIjKlM)<-[e1:ZxCvBnMq]-(zYxWvUtSrqP:AbCdEf)
+WHERE (
+      // abcdefghijklmnopqrstuvwxy
+      (b.AbCdEfGhIjKlMn <= "1A2b3C4d")
+
+      // Qwertyuiopasdfghjklzxcvbnm1234567890AB
+      OR (e1.OpQrStUvW >= "Z9y8X7w6" AND
+          b.AbCdEfGhIjKlMn IN ["aBcDeFgH", "IjKlMnOp"])
+
+      // QazwsxedcrfvtgbyhnujmikolpASDFGHJKLQWERTYUIOPZXCVBNM1234567abcdefghij
+      OR (b.OpQrStUvW <= e1.OpQrStUvW AND e1.OpQrStUvW >= "QrStUvWx" AND
+          b.AbCdEfGhIjKlMn IN ["YzXwVuTs", "LmNoPqRs"])
+      // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
+
+      // 0123456789abcdefghijKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW
+      OR (b.OpQrStUvW = e1.OpQrStUvW AND e1.OpQrStUvW >= "StUvWxYz" AND
+          b.AbCdEfGhIjKlMn > "QwErTyUi"))
+// AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
+RETURN a, b, d, e1, zYxWvUtSrqP`;
+    verifyFormatting(query, expected);
+  });
 });

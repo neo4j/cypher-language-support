@@ -187,6 +187,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  doubleBreakBetweenNonComment = (): void => {
+    if (
+      this.currentBuffer().length > 0 &&
+      this.currentBuffer().at(-1).type !== 'COMMENT'
+    ) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
+  };
+
   getFirstNonCommentIdx = (): number => {
     let idx = this.currentBuffer().length - 1;
     while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
@@ -249,7 +258,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ).length;
     // If there are comments, they take responsibility of the explicit newlines.
     if (hiddenNewlines > 1 && commentCount === 0) {
-      this.doubleBreakBetween();
+      this.doubleBreakBetweenNonComment();
     }
   };
 
