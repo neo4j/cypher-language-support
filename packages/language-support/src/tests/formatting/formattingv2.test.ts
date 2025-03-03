@@ -2008,4 +2008,15 @@ RETURN n`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should keep the logical delimiter the user has made intact', () => {
+    const query = `
+MATCH (n)
+
+// === THIS IS THE START OF THE RETURN STATEMENT ===
+
+RETURN n`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
