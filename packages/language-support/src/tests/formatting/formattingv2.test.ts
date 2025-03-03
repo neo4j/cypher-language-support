@@ -782,6 +782,18 @@ YIELD graphName, nodeCount, relationshipCount, createMillis
 RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     verifyFormatting(query, expected);
   });
+
+  test('comment should not disappear in this query', () => {
+    const query = `MATCH (n)
+WITH *, n.prop, // This comment should not disappear
+     n.otherprop
+RETURN n`;
+    const expected = `MATCH (n)
+WITH *, n.prop, // This comment should not disappear
+     n.otherprop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
