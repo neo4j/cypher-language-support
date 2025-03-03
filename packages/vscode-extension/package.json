@@ -173,14 +173,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "neo4j-connection-explorer",
+          "id": "neo4j-explorer",
           "title": "Neo4j",
           "icon": "resources/images/neo4j.png"
         }
       ]
     },
     "views": {
-      "neo4j-connection-explorer": [
+      "neo4j-explorer": [
         {
           "type": "tree",
           "id": "neo4jConnections",
@@ -190,6 +190,11 @@
           "type": "tree",
           "id": "neo4jDatabaseInformation",
           "name": "Database Information"
+        },
+        {
+          "type": "tree",
+          "id": "neo4jParameters",
+          "name": "Parameters"
         }
       ]
     },

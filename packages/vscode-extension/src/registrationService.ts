@@ -16,6 +16,7 @@ import {
 } from './treeviews/connectionTreeDataProvider';
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
+import { parametersTreeProvider } from './treeviews/parametersTreeProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -33,6 +34,7 @@ export function registerDisposables(): Disposable[] {
       'neo4jDatabaseInformation',
       databaseInformationTreeDataProvider,
     ),
+    window.registerTreeDataProvider('neo4jParameters', parametersTreeProvider),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
