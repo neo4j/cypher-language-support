@@ -310,6 +310,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
+    const n = ctx.statementOrCommand_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.statementOrCommand(i));
+      if (i < n - 1 || ctx.SEMICOLON(i)) {
+        if (this.currentBuffer().at(-1).text === '\n') {
+          this.currentBuffer().pop();
+        }
+        this.visit(ctx.SEMICOLON(i));
+      }
+    }
+  }
+
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
