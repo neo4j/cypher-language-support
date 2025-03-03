@@ -1791,4 +1791,60 @@ RETURN n`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('another long example with clauses and comments', () => {
+    const query = `MERGE (qwerty:Abcdef {name: "ABCDEFGH"})
+// Xyzzab qwe POIUYTREWQ poiuy rty uio MNBVCXZ
+MERGE (A1B2C3D4E5:Qwert {name: "IJKLMNOP"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "abcdefgh"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "ijklmnop"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "qrstuvwx"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "yzABCDEF"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "GHIJKLMN"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "opqrstuv"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "wxyz0123"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "456789ab"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "cdefghij"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "klmnopqr"})
+MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "stuvwxyz"})
+MERGE (qwerty)-[:PLMKOIJNBHUY]->(A1B2C3D4E5)
+
+// Abcdef ghi ZxcvbnmQwertyz uiopa sdx fgh jklzxcv
+MERGE (F6G7H8J9K0L1M2:Qwert {name: "ZXCVBNML"})
+MERGE (F6G7H8J9K0L1M2)-[:QAZWSXEDCR]->(:Zxcvbn {name: "asdfghjk"})
+MERGE (F6G7H8J9K0L1M2)-[:QAZWSXEDCR]->(:Zxcvbn {name: "poiuytre"})
+MERGE (qwerty)-[:PLMKOIJNBHUY]->(F6G7H8J9K0L1M2)
+
+MERGE (ZyXwVuTsr:Qwert {name: "lkjhgfds"})
+MERGE (ZyXwVuTsr)-[:QAZWSXEDCR]->(:Zxcvbn {name: "mnbvcxza"})
+MERGE (ZyXwVuTsr)-[:QAZWSXEDCR]->(:Zxcvbn {name: "qwertyui"})
+MERGE (qwerty)-[:PLMKOIJNBHUY]->(ZyXwVuTsr)
+
+// Fghijk lmn QWERTYUIOPASDFGHJ KJIHG QAZ WSX EDCRFVT
+MERGE (QWERTYUIOPASDFGHJ:Qwert {name: "1234abcd"})
+MERGE (QWERTYUIOPASDFGHJ)-[:QAZWSXEDCR]->(:Zxcvbn {name: "efghijkl"})
+MERGE (QWERTYUIOPASDFGHJ)-[:QAZWSXEDCR]->(:Zxcvbn {name: "mnopqrst"})
+MERGE (QWERTYUIOPASDFGHJ)-[:QAZWSXEDCR]->(:Zxcvbn {name: "uvwxYZ12"})
+MERGE (QWERTYUIOPASDFGHJ)-[:QAZWSXEDCR]->(:Zxcvbn {name: "34567890"})
+MERGE (qwerty)-[:PLMKOIJNBHUY]->(QWERTYUIOPASDFGHJ)
+
+// Lmnopq rst UVWXYZABCDEFG NOPQR STU VWX YZABCDF
+MERGE (LMNOPQRSTUVWX:Qwert {name: "zxvbnmlk"})
+MERGE (LMNOPQRSTUVWX)-[:QAZWSXEDCR]->(:Zxcvbn {name: "opaslkdj"})
+MERGE (LMNOPQRSTUVWX)-[:QAZWSXEDCR]->(:Zxcvbn {name: "qwerty12"})
+MERGE (qwerty)-[:PLMKOIJNBHUY]->(LMNOPQRSTUVWX)
+
+// uvwxyz efg lmno pqrstuvwxyzab
+MERGE (pqr45:Qwer {name: "asdf1234", type: "zxcv5678"})
+MERGE (LMNOPQRSTUVWX)-[:ZXCVB]->(pqr45)-[:ZXCVB]->(A1B2C3D4E5)
+MERGE (qwerty)-[:ASDFGHJKL]->(pqr45)
+MERGE (stu78:Qwer {name: "poiuy987", type: "lkjh6543"})
+MERGE (A1B2C3D4E5)-[:ZXCVB]->(stu78)-[:ZXCVB]->(F6G7H8J9K0L1M2)
+MERGE (qwerty)-[:ASDFGHJKL]->(stu78)
+MERGE (vwx90:Qwer {name: "mnbv3210", type: "zazxswed"})
+MERGE (A1B2C3D4E5)-[:ZXCVB]->(vwx90)-[:ZXCVB]->(ZyXwVuTsr)
+MERGE (qwerty)-[:ASDFGHJKL]->(vwx90)`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
