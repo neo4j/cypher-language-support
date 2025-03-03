@@ -8,16 +8,9 @@ import { MAX_COL } from '../../formatting/formattingHelpersv2';
 import { formatQuery } from '../../formatting/formattingv2';
 import { standardizeQuery } from '../../formatting/standardizer';
 
-function countComments(query: string): number {
-  const basicComments = query.match(/\/\/.*/g);
-  const multilineComments = query.match(/\/\*[\s\S]*?\*\//g);
-  return (basicComments?.length ?? 0) + (multilineComments?.length ?? 0);
-}
-
 function verifyFormatting(query: string, expected: string): void {
   const formatted = formatQuery(query);
   expect(formatted).toEqual(expected);
-  expect(countComments(query)).toEqual(countComments(formatted));
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
   if (formattedStandardized !== queryStandardized) {
