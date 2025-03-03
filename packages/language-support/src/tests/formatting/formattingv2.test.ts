@@ -1810,6 +1810,7 @@ MERGE (A1B2C3D4E5)-[:QAZWSXEDCR]->(:Zxcvbn {name: "stuvwxyz"})
 MERGE (qwerty)-[:PLMKOIJNBHUY]->(A1B2C3D4E5)
 
 // Abcdef ghi ZxcvbnmQwertyz uiopa sdx fgh jklzxcv
+
 MERGE (F6G7H8J9K0L1M2:Qwert {name: "ZXCVBNML"})
 MERGE (F6G7H8J9K0L1M2)-[:QAZWSXEDCR]->(:Zxcvbn {name: "asdfghjk"})
 MERGE (F6G7H8J9K0L1M2)-[:QAZWSXEDCR]->(:Zxcvbn {name: "poiuytre"})
@@ -1829,12 +1830,14 @@ MERGE (QWERTYUIOPASDFGHJ)-[:QAZWSXEDCR]->(:Zxcvbn {name: "34567890"})
 MERGE (qwerty)-[:PLMKOIJNBHUY]->(QWERTYUIOPASDFGHJ)
 
 // Lmnopq rst UVWXYZABCDEFG NOPQR STU VWX YZABCDF
+
 MERGE (LMNOPQRSTUVWX:Qwert {name: "zxvbnmlk"})
 MERGE (LMNOPQRSTUVWX)-[:QAZWSXEDCR]->(:Zxcvbn {name: "opaslkdj"})
 MERGE (LMNOPQRSTUVWX)-[:QAZWSXEDCR]->(:Zxcvbn {name: "qwerty12"})
 MERGE (qwerty)-[:PLMKOIJNBHUY]->(LMNOPQRSTUVWX)
 
 // uvwxyz efg lmno pqrstuvwxyzab
+
 MERGE (pqr45:Qwer {name: "asdf1234", type: "zxcv5678"})
 MERGE (LMNOPQRSTUVWX)-[:ZXCVB]->(pqr45)-[:ZXCVB]->(A1B2C3D4E5)
 MERGE (qwerty)-[:ASDFGHJKL]->(pqr45)
@@ -1993,6 +1996,16 @@ WHERE (
           b.AbCdEfGhIjKlMn > "QwErTyUi"))
 // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
 RETURN a, b, d, e1, zYxWvUtSrqP`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should preserve newlines also after a comment', () => {
+    const query = `
+MATCH (n)
+// Comment, please preserve the line below
+
+RETURN n`.trimStart();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });
