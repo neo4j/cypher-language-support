@@ -21,7 +21,7 @@ const INDENTATION = 2;
 const showGroups = false;
 
 export interface Split {
-  splitType: ' ' | '\n' | '';
+  splitType: ' ' | '\n' | '\n\n' | '';
   cost: number;
 }
 
@@ -110,7 +110,7 @@ function stateToString(state: State) {
 }
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
-  const isBreak = split.splitType === '\n';
+  const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
@@ -291,17 +291,22 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  const onlyBreaksSplit = chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
   if (isCommentBreak(chunk, nextChunk)) {
-    return onlyBreakSplit;
+    return onlyBreaksSplit;
   }
+
+  const noSpaceBreaksSplit = chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
 
   if (chunk.type === 'REGULAR') {
     if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
       return noSpaceNoBreakSplit;
-    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceSplits;
+    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceBreaksSplit;
     if (chunk.noBreak) return noBreakSplit;
   }
-  return standardSplits;
+
+  const standardBreaksSplit = chunk.doubleBreak ? doubleBreakSplits : standardSplits;
+  return standardBreaksSplit;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -353,13 +358,22 @@ const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
+const doubleBreakSplits: Split[] = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
 const noSpaceSplits: Split[] = [
   { splitType: '', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
+const noSpaceDoubleBreakSplits: Split[] = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
 const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
 const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
 const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
+const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
 
 const emptyChunk: RegularChunk = {
   type: 'REGULAR',

@@ -1237,6 +1237,7 @@ CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
        (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
        (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
        (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+
        // this is a loooooooooooooooooooong comment
        (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
        (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
@@ -1244,9 +1245,11 @@ CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
        (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
        (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
        (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+
        // this is a loooooooooooooooooooong comment
        (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
        (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+
        // this is a loooooooooooooooooooong comment
        (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
        (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
@@ -1776,6 +1779,16 @@ RETURN n`;
 MATCH (n)
 
 RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('this comment should leave a newline before it', () => {
+    const query = `
+MATCH (n)
+
+// Comment
+RETURN n`.trimStart();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });

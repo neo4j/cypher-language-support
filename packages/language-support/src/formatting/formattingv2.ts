@@ -113,17 +113,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  softBreakLine = () => {
-    this.currentBuffer().push({
-      type: 'REGULAR',
-      groupsStarting: 0,
-      groupsEnding: 0,
-      modifyIndentation: 0,
-      text: '\n',
-      node: null,
-    })
-  }
-
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
     // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
@@ -190,6 +179,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   avoidBreakBetween = (): void => {
     this.setAvoidProperty('noBreak');
   };
+
+  doubleBreakBetween = (): void => {
+    if (this.currentBuffer().length > 0) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
+  }
 
   getFirstNonCommentIdx = (): number => {
     let idx = this.currentBuffer().length - 1;
@@ -282,10 +277,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       token.tokenIndex,
     );
     const nodeLine = node.symbol.line;
+    let breakCount = 0;
     for (const hiddenToken of hiddenTokens || []) {
+      if (hiddenToken.text === '\n') {
+        breakCount++;
+      }
       if (!isComment(hiddenToken)) {
         continue;
       }
+      if (breakCount > 1) {
+        this.doubleBreakBetween();
+      }
+      breakCount = 0;
       const commentToken = hiddenToken;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
