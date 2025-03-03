@@ -185,7 +185,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.currentBuffer().length > 0) {
       this.currentBuffer().at(-1).doubleBreak = true;
     }
-  }
+  };
 
   getFirstNonCommentIdx = (): number => {
     let idx = this.currentBuffer().length - 1;
@@ -220,25 +220,38 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).modifyIndentation -= 1;
   };
 
-  findBottomRightChild = (ctx: any): TerminalNode => {
+  findBottomRightChild = (
+    ctx: ParserRuleContext | TerminalNode,
+  ): TerminalNode => {
+    if (ctx instanceof TerminalNode) {
+      return ctx;
+    }
     const child = ctx.getChild(ctx.getChildCount() - 1);
     if (child instanceof TerminalNode) {
       return child;
+    } else if (child instanceof ParserRuleContext) {
+      return this.findBottomRightChild(child);
     }
-    return this.findBottomRightChild(child);
-  }
+    throw new Error('Internal formatting error in findBottomRightChild');
+  };
 
-  preserveExplicitNewline = (ctx: any) => {
+  preserveExplicitNewline = (ctx: ParserRuleContext) => {
     const bottomRightChild = this.findBottomRightChild(ctx);
     const token = bottomRightChild.symbol;
-    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
-    const hiddenNewlines = hiddenTokens?.filter(token => token.text === '\n').length;
-    const commentCount = hiddenTokens?.filter(token => isComment(token)).length;
+    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
+      token.tokenIndex,
+    );
+    const hiddenNewlines = hiddenTokens?.filter(
+      (token) => token.text === '\n',
+    ).length;
+    const commentCount = hiddenTokens?.filter((token) =>
+      isComment(token),
+    ).length;
     // If there are comments, they take responsibility of the explicit newlines.
     if (hiddenNewlines > 1 && commentCount === 0) {
       this.doubleBreakBetween();
     }
-  }
+  };
 
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
@@ -330,7 +343,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.SEMICOLON(i));
       }
     }
-  }
+  };
 
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
