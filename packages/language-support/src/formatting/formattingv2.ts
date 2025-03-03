@@ -213,6 +213,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).modifyIndentation -= 1;
   };
 
+  findBottomRightChild = (ctx: any): TerminalNode => {
+    const child = ctx.getChild(ctx.getChildCount() - 1);
+    if (child instanceof TerminalNode) {
+      return child;
+    }
+    return this.findBottomRightChild(child);
+  }
+
+  preserveExplicitNewline = (ctx: any) => {
+    const bottomRightChild = this.findBottomRightChild(ctx);
+    const token = bottomRightChild.symbol;
+    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
+    const hiddenNewlines = hiddenTokens?.filter(token => token.text === '\n').length;
+    const commentCount = hiddenTokens?.filter(token => isComment(token)).length;
+    // If there are comments, they take responsibility of the explicit newlines.
+    if (hiddenNewlines > 1 && commentCount === 0) {
+      this.currentBuffer().push({
+        type: 'REGULAR',
+        groupsStarting: 0,
+        groupsEnding: 0,
+        modifyIndentation: 0,
+        text: '\n',
+        node: null,
+      })
+    }
+  }
+
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
@@ -288,6 +315,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitClause = (ctx: ClauseContext) => {
     this.breakLine();
     this.visitChildren(ctx);
+    this.preserveExplicitNewline(ctx);
   };
 
   visitWithClause = (ctx: WithClauseContext) => {

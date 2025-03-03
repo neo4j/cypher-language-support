@@ -280,7 +280,10 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     if (showGroups) addGroupEnd(buffer, decision);
     buffer.push(decision.chosenSplit.splitType);
   });
-  const result = buffer.join('').trimEnd();
+  let result = buffer.join('').trimEnd();
+  if (decisions.at(-1).left.text === '\n') {
+    result += '\n';
+  }
   if (cursorPos === -1) {
     return result;
   }
