@@ -1921,4 +1921,22 @@ MATCH (a)
 RETURN a`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should remove the first but not the second newline, and keep indentation', () => {
+    const query = `
+MERGE (a:Person {name: "Alice"})
+
+ON CREATE SET a.created = timestamp()
+ON MATCH SET a.lastSeen = timestamp()
+
+RETURN a
+`.trimStart();
+    const expected = `
+MERGE (a:Person {name: "Alice"})
+  ON CREATE SET a.created = timestamp()
+  ON MATCH SET a.lastSeen = timestamp()
+
+RETURN a`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
