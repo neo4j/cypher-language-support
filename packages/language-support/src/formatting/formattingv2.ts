@@ -1133,16 +1133,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
+      const m = ctx.procedureResultItem_list().length;
       this.visit(ctx.YIELD());
       if (ctx.TIMES()) {
         this.visit(ctx.TIMES());
-        if (n > 1) {
+        if (m > 1) {
           this.visit(ctx.COMMA(commaIdx));
           commaIdx++;
         }
       }
       const procedureListGrp = this.startGroup();
-      const m = ctx.procedureResultItem_list().length;
       for (let i = 0; i < m; i++) {
         this.visit(ctx.procedureResultItem(i));
         if (i < m - 1) {
