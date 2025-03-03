@@ -291,28 +291,25 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  const onlyBreaksSplit = chunk.doubleBreak
-    ? onlyDoubleBreakSplit
-    : onlyBreakSplit;
   if (isCommentBreak(chunk, nextChunk)) {
-    return onlyBreaksSplit;
+    return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
   }
-
-  const noSpaceBreaksSplits = chunk.doubleBreak
-    ? noSpaceDoubleBreakSplits
-    : noSpaceSplits;
 
   if (chunk.type === 'REGULAR') {
-    if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
-      return noSpaceNoBreakSplit;
-    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceBreaksSplits;
-    if (chunk.noBreak) return noBreakSplit;
+    const noSpace = doesNotWantSpace(chunk, nextChunk);
+
+    if (noSpace) {
+      if (chunk.noBreak) {
+        return noSpaceNoBreakSplit;
+      }
+      return chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
+    }
+    if (chunk.noBreak) {
+      return noBreakSplit;
+    }
   }
 
-  const standardBreaksSplits = chunk.doubleBreak
-    ? doubleBreakStandardSplits
-    : standardSplits;
-  return standardBreaksSplits;
+  return chunk.doubleBreak ? doubleBreakStandardSplits : standardSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
