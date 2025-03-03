@@ -753,7 +753,7 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('should not level dangling bracket', () => {
+  test('should not leave dangling bracket', () => {
     const query = `CREATE (company:Company
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
