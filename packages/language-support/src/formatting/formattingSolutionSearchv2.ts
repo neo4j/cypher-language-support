@@ -21,7 +21,7 @@ const INDENTATION = 2;
 const showGroups = false;
 
 export interface Split {
-  splitType: ' ' | '\n' | '\n\n' | '';
+  splitType: ' ' | '' | '\n' | '\n\n';
   cost: number;
 }
 
