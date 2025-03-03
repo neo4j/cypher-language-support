@@ -1551,3 +1551,238 @@ LIMIT "6pkMe6Kx"`;
     verifyFormatting(query, expected);
   });
 });
+
+describe('tests for respcecting user line breaks', () => {
+  test('multiple clauses', () => {
+    const query = `MATCH (move:Item) WHERE move.name = $move
+OPTIONAL MATCH (insertBefore:Item) WHERE insertBefore.name = $insertBefore
+
+WITH move, insertBefore
+WHERE (insertBefore IS NULL OR move <> insertBefore) AND
+      (NOT EXISTS {(move)-[:NEXT]->(insertBefore)}) AND
+      (insertBefore IS NOT NULL OR EXISTS{(move)-[:NEXT]->()})
+
+OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
+OPTIONAL MATCH (move)-[relAfterMove:NEXT]->(afterMove:Item)
+
+DELETE relBeforeMove
+DELETE relAfterMove
+
+WITH move, insertBefore, beforeMove, afterMove
+OPTIONAL MATCH (insertAfter:Item)-[oldRel:NEXT]->(insertBefore)
+
+DELETE oldRel
+
+WITH move, insertBefore, insertAfter, beforeMove, afterMove
+CALL(beforeMove, afterMove) {
+  WITH *
+  WHERE beforeMove IS NOT NULL AND afterMove IS NOT NULL
+  CREATE (beforeMove)-[:NEXT]->(afterMove)
+}
+
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertBefore IS NULL // insertAfter will always be NULL in this case
+  MATCH (lastElement:Item)
+  WHERE NOT (lastElement)-[:NEXT]->() AND lastElement <> move
+  CREATE (lastElement)-[:NEXT]->(move)
+}
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NULL AND insertBefore IS NOT NULL
+  CREATE (move)-[:NEXT]->(insertBefore)
+}
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NOT NULL AND insertBefore IS NOT NULL
+  CREATE (insertAfter)-[:NEXT]->(move)
+  CREATE (move)-[:NEXT]->(insertBefore)
+}`;
+    const expected = `MATCH (move:Item)
+WHERE move.name = $move
+OPTIONAL MATCH (insertBefore:Item)
+WHERE insertBefore.name = $insertBefore
+
+WITH move, insertBefore
+WHERE (insertBefore IS NULL OR move <> insertBefore) AND
+      (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
+      (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
+
+OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
+OPTIONAL MATCH (move)-[relAfterMove:NEXT]->(afterMove:Item)
+
+DELETE relBeforeMove
+DELETE relAfterMove
+
+WITH move, insertBefore, beforeMove, afterMove
+OPTIONAL MATCH (insertAfter:Item)-[oldRel:NEXT]->(insertBefore)
+
+DELETE oldRel
+
+WITH move, insertBefore, insertAfter, beforeMove, afterMove
+CALL (beforeMove, afterMove) {
+  WITH *
+  WHERE beforeMove IS NOT NULL AND afterMove IS NOT NULL
+  CREATE (beforeMove)-[:NEXT]->(afterMove)
+}
+
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertBefore IS NULL // insertAfter will always be NULL in this case
+  MATCH (lastElement:Item)
+  WHERE NOT (lastElement)-[:NEXT]->() AND lastElement <> move
+  CREATE (lastElement)-[:NEXT]->(move)
+}
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NULL AND insertBefore IS NOT NULL
+  CREATE (move)-[:NEXT]->(insertBefore)
+}
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NOT NULL AND insertBefore IS NOT NULL
+  CREATE (insertAfter)-[:NEXT]->(move)
+  CREATE (move)-[:NEXT]->(insertBefore)
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple clauses with comments', () => {
+    const query = `
+// Find the cell to move and the cell to insert it before (which may be null to insert at the end of the list)
+MATCH (move:Item) WHERE move.name = $move
+OPTIONAL MATCH (insertBefore:Item) WHERE insertBefore.name = $insertBefore
+
+// If we ask to have it placed at the same position, don't do anything
+WITH move, insertBefore
+WHERE (insertBefore IS NULL OR move <> insertBefore) AND
+      (NOT EXISTS {(move)-[:NEXT]->(insertBefore)}) AND
+      (insertBefore IS NOT NULL OR EXISTS{(move)-[:NEXT]->()})
+
+// Find the items before and after the item to move (if they exist)
+OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
+OPTIONAL MATCH (move)-[relAfterMove:NEXT]->(afterMove:Item)
+
+// Disconnect the item to move
+DELETE relBeforeMove
+DELETE relAfterMove
+
+// Now locate the item to insert it after (if any)
+WITH move, insertBefore, beforeMove, afterMove
+OPTIONAL MATCH (insertAfter:Item)-[oldRel:NEXT]->(insertBefore)
+
+// Delete the old link to make place for the moved item
+DELETE oldRel
+
+// Now patch up the link where the item was removed (unless in start or end)
+WITH move, insertBefore, insertAfter, beforeMove, afterMove
+CALL(beforeMove, afterMove) {
+  WITH *
+  WHERE beforeMove IS NOT NULL AND afterMove IS NOT NULL
+  CREATE (beforeMove)-[:NEXT]->(afterMove)
+}
+
+// Now we need to insert the moved item, but how we do that depends on where it goes
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertBefore IS NULL // insertAfter will always be NULL in this case
+  MATCH (lastElement:Item)
+  WHERE NOT (lastElement)-[:NEXT]->() AND lastElement <> move
+  CREATE (lastElement)-[:NEXT]->(move)
+}
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NULL AND insertBefore IS NOT NULL
+  CREATE (move)-[:NEXT]->(insertBefore)
+}
+CALL(move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NOT NULL AND insertBefore IS NOT NULL
+  CREATE (insertAfter)-[:NEXT]->(move)
+  CREATE (move)-[:NEXT]->(insertBefore)
+}`;
+    const expected = `// Find the cell to move and the cell to insert it before (which may be null to insert at the end of the list)
+MATCH (move:Item)
+WHERE move.name = $move
+OPTIONAL MATCH (insertBefore:Item)
+WHERE insertBefore.name = $insertBefore
+
+// If we ask to have it placed at the same position, don't do anything
+WITH move, insertBefore
+WHERE (insertBefore IS NULL OR move <> insertBefore) AND
+      (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
+      (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
+
+// Find the items before and after the item to move (if they exist)
+OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
+OPTIONAL MATCH (move)-[relAfterMove:NEXT]->(afterMove:Item)
+
+// Disconnect the item to move
+DELETE relBeforeMove
+DELETE relAfterMove
+
+// Now locate the item to insert it after (if any)
+WITH move, insertBefore, beforeMove, afterMove
+OPTIONAL MATCH (insertAfter:Item)-[oldRel:NEXT]->(insertBefore)
+
+// Delete the old link to make place for the moved item
+DELETE oldRel
+
+// Now patch up the link where the item was removed (unless in start or end)
+WITH move, insertBefore, insertAfter, beforeMove, afterMove
+CALL (beforeMove, afterMove) {
+  WITH *
+  WHERE beforeMove IS NOT NULL AND afterMove IS NOT NULL
+  CREATE (beforeMove)-[:NEXT]->(afterMove)
+}
+
+// Now we need to insert the moved item, but how we do that depends on where it goes
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertBefore IS NULL // insertAfter will always be NULL in this case
+  MATCH (lastElement:Item)
+  WHERE NOT (lastElement)-[:NEXT]->() AND lastElement <> move
+  CREATE (lastElement)-[:NEXT]->(move)
+}
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NULL AND insertBefore IS NOT NULL
+  CREATE (move)-[:NEXT]->(insertBefore)
+}
+CALL (move, insertBefore, insertAfter) {
+  WITH *
+  WHERE insertAfter IS NOT NULL AND insertBefore IS NOT NULL
+  CREATE (insertAfter)-[:NEXT]->(move)
+  CREATE (move)-[:NEXT]->(insertBefore)
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('simplest possible match return example', () => {
+    const query = `
+MATCH (n)
+
+RETURN n`;
+    const expected = `
+MATCH (n)
+
+RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('simplest possible match return example with more than one break', () => {
+    const query = `
+MATCH (n)
+
+
+
+
+
+RETURN n`;
+    const expected = `
+MATCH (n)
+
+RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+});
