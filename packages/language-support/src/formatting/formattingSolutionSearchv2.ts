@@ -73,6 +73,34 @@ interface FinalResultWithPos {
 type FinalResult = string | FinalResultWithPos;
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
+const standardSplits: Split[] = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];
+const doubleBreakStandardSplits: Split[] = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
+const noSpaceSplits: Split[] = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];
+const noSpaceDoubleBreakSplits: Split[] = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
+const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
+const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
+const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
+const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
+
+const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
+  text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  modifyIndentation: 0,
+};
 
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
@@ -356,32 +384,3 @@ export function buffersToFormattedString(
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
-
-const standardSplits: Split[] = [
-  { splitType: ' ', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
-const doubleBreakStandardSplits: Split[] = [
-  { splitType: ' ', cost: 0 },
-  { splitType: '\n\n', cost: 1 },
-];
-const noSpaceSplits: Split[] = [
-  { splitType: '', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
-const noSpaceDoubleBreakSplits: Split[] = [
-  { splitType: '', cost: 0 },
-  { splitType: '\n\n', cost: 1 },
-];
-const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
-const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
-const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
-const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
-
-const emptyChunk: RegularChunk = {
-  type: 'REGULAR',
-  text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
-  modifyIndentation: 0,
-};
