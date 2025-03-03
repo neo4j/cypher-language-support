@@ -693,6 +693,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.variable()) {
       this.visit(ctx.variable());
+      this.avoidBreakBetween();
       this.visit(ctx.EQ());
       this.avoidBreakBetween();
     }
@@ -1018,7 +1019,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(keyValueGrp);
     }
-    this.avoidSpaceBetween();
     this.endGroup(mapGrp);
     this.visit(ctx.RCURLY());
     this.concatenate();
@@ -1049,7 +1049,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
-    this.startGroup();
+    const listGrp = this.startGroup();
     this.visit(ctx.variable());
     this.visit(ctx.IN());
     this.visit(ctx._inExp);
@@ -1057,7 +1057,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.WHERE());
       this.visit(ctx._whereExp);
     }
-    this.endGroup();
+    this.endGroup(listGrp);
     this.visit(ctx.RPAREN());
   };
 
