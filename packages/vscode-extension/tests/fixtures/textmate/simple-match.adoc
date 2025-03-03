@@ -1,0 +1,38 @@
+[source,java]
+----
+import org.neo4j.cypherdsl.parser.CypherParser;
+
+public class Demo {
+	public static void main(String...a) {
+		var node = CypherParser.parseNode("(m:Movie)");
+	}
+}
+----
+Some random text
+
+
+[source,cypher]
+----
+/* This is a
+multiline comment
+*/
+MATCH (u1:CommerceUser{user_id:$seller_id}),
+      (u2:CommerceUser{user_id:$customer_id}),
+    p = allShortestPaths((u1)-[:PURCHASE*..10]->(u2))
+WHERE u1 <> u2
+WITH
+    // This is a single line comment
+    reduce(output = [], n IN relationships(p) | output + n.create_time.epochMillis ) as relsDate,
+    reduce(output = [], n IN nodes(p) | output + n ) as nodes,
+    "double quoted string" as a,
+    'single quoted string' as b
+RETURN relsDate, nodes
+LIMIT $limit
+----
+
+Some other text
+
+[source,cypher,indent=0,tabsize=4]
+----
+MATCH (n) RETURN n
+----
