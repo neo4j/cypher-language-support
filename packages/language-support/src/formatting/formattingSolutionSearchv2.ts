@@ -291,22 +291,28 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  const onlyBreaksSplit = chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
+  const onlyBreaksSplit = chunk.doubleBreak
+    ? onlyDoubleBreakSplit
+    : onlyBreakSplit;
   if (isCommentBreak(chunk, nextChunk)) {
     return onlyBreaksSplit;
   }
 
-  const noSpaceBreaksSplit = chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
+  const noSpaceBreaksSplits = chunk.doubleBreak
+    ? noSpaceDoubleBreakSplits
+    : noSpaceSplits;
 
   if (chunk.type === 'REGULAR') {
     if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
       return noSpaceNoBreakSplit;
-    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceBreaksSplit;
+    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceBreaksSplits;
     if (chunk.noBreak) return noBreakSplit;
   }
 
-  const standardBreaksSplit = chunk.doubleBreak ? doubleBreakSplits : standardSplits;
-  return standardBreaksSplit;
+  const standardBreaksSplits = chunk.doubleBreak
+    ? doubleBreakStandardSplits
+    : standardSplits;
+  return standardBreaksSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -358,7 +364,7 @@ const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
 ];
-const doubleBreakSplits: Split[] = [
+const doubleBreakStandardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n\n', cost: 1 },
 ];
