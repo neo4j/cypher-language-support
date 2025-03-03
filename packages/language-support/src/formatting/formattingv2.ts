@@ -141,6 +141,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: RegularChunk = {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
+      doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
