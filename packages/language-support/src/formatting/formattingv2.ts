@@ -235,14 +235,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const commentCount = hiddenTokens?.filter(token => isComment(token)).length;
     // If there are comments, they take responsibility of the explicit newlines.
     if (hiddenNewlines > 1 && commentCount === 0) {
-      this.currentBuffer().push({
-        type: 'REGULAR',
-        groupsStarting: 0,
-        groupsEnding: 0,
-        modifyIndentation: 0,
-        text: '\n',
-        node: null,
-      })
+      this.doubleBreakBetween();
     }
   }
 

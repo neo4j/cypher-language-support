@@ -281,7 +281,7 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
-  if (decisions.at(-1).left.text === '\n') {
+  if (decisions.at(-1).left.doubleBreak) {
     result += '\n';
   }
   if (cursorPos === -1) {
