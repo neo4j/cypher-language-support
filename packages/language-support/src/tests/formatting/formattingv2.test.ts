@@ -1847,4 +1847,78 @@ MERGE (qwerty)-[:ASDFGHJKL]->(vwx90)`;
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('double newline before block comment', () => {
+    const query = `
+MATCH (a)
+
+
+/* block comment */
+RETURN a`;
+    const expected = `
+MATCH (a)
+
+/* block comment */
+RETURN a`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('inline block comment with internal newlines', () => {
+    const query = `
+MATCH (a)
+RETURN a; /* comment line 1
+
+comment line 2 */
+MATCH (b)
+RETURN b;`;
+    const expected = `
+MATCH (a)
+RETURN a; /* comment line 1
+
+comment line 2 */
+MATCH (b)
+RETURN b;`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('multiline block comment with line before it', () => {
+    const query = `
+MATCH (a)
+RETURN a;
+
+/* comment line 1
+
+
+comment line 3 */
+MATCH (b)
+RETURN b;`;
+    const expected = `
+MATCH (a)
+RETURN a;
+
+/* comment line 1
+
+
+comment line 3 */
+MATCH (b)
+RETURN b;`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('mixed comments with explicit newline', () => {
+    const query = `
+MATCH (a)
+// single line comment
+
+
+/* block comment */
+RETURN a`.trimStart();
+    const expected = `
+MATCH (a)
+// single line comment
+
+/* block comment */
+RETURN a`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
