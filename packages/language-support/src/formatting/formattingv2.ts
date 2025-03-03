@@ -659,9 +659,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.rightArrow());
       this.concatenate();
     }
-    if (!ctx.LBRACKET()) {
-      this.concatenate();
-    }
     this.avoidSpaceBetween();
   };
 
