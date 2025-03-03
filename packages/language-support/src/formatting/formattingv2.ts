@@ -113,6 +113,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  softBreakLine = () => {
+    this.currentBuffer().push({
+      type: 'REGULAR',
+      groupsStarting: 0,
+      groupsEnding: 0,
+      modifyIndentation: 0,
+      text: '\n',
+      node: null,
+    })
+  }
+
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
     // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
@@ -270,11 +281,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
       token.tokenIndex,
     );
-    const commentTokens = (hiddenTokens || []).filter((token) =>
-      isComment(token),
-    );
     const nodeLine = node.symbol.line;
-    for (const commentToken of commentTokens) {
+    for (const hiddenToken of hiddenTokens || []) {
+      if (!isComment(hiddenToken)) {
+        continue;
+      }
+      const commentToken = hiddenToken;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
       const chunk: CommentChunk = {
