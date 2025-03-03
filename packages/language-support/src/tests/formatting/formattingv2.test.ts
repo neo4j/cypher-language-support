@@ -8,9 +8,16 @@ import { MAX_COL } from '../../formatting/formattingHelpersv2';
 import { formatQuery } from '../../formatting/formattingv2';
 import { standardizeQuery } from '../../formatting/standardizer';
 
+function countComments(query: string): number {
+  const basicComments = query.match(/\/\/.*/g);
+  const multilineComments = query.match(/\/\*[\s\S]*?\*\//g);
+  return (basicComments?.length ?? 0) + (multilineComments?.length ?? 0);
+}
+
 function verifyFormatting(query: string, expected: string): void {
   const formatted = formatQuery(query);
   expect(formatted).toEqual(expected);
+  expect(countComments(query)).toEqual(countComments(formatted));
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
   if (formattedStandardized !== queryStandardized) {
@@ -750,6 +757,29 @@ RETURN path`;
 RETURN n`;
     const expected = `MATCH (n)-[:ACTED_IN|AMPLIFIES|:SCREAMS|OBSERVES|:ANALYZES]-(m)
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('comments should not start replicating themselves', () => {
+    const query = `CALL gds.graph.project(
+    "qk5jpmGl",           // Name of the projected graph
+    ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
+    {
+        connection: {
+            type: "R3e8WLkh",            // Include all relationships
+            orientation: "weFW44Gy" // Treat relationships as undirected
+        }
+    }
+)
+YIELD graphName, nodeCount, relationshipCount, createMillis
+RETURN graphName, nodeCount, relationshipCount, createMillis;`;
+    const expected = `CALL gds.graph.project("qk5jpmGl", // Name of the projected graph
+                       ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
+                       {connection: {type: "R3e8WLkh", // Include all relationships
+                                     orientation: "weFW44Gy" // Treat relationships as undirected
+                        }})
+YIELD graphName, nodeCount, relationshipCount, createMillis
+RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     verifyFormatting(query, expected);
   });
 });
