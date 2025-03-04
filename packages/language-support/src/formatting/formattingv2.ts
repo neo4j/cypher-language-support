@@ -171,7 +171,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (chunk.type !== 'REGULAR') {
       throw new Error(`Internal formatter bug in setting ${propertyName}`);
     }
-
     chunk[propertyName] = true;
   };
 
@@ -848,8 +847,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
-    const caseAlternativeGrp = this.startGroup();
     this.visit(ctx.WHEN());
+    this.avoidBreakBetween();
+    const caseAlternativeGrp = this.startGroup();
     this.visit(ctx.expression(0));
     this.visit(ctx.THEN());
     this.visit(ctx.expression(1));
@@ -858,9 +858,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    /* while (this.groupStack.length > 2) {
+    while (this.groupStack.length > 1) {
       this.endGroup(this.groupStack.at(-1));
-    } */
+    }
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());

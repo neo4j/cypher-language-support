@@ -91,19 +91,22 @@ function getIndentations(
   const currBaseIndent = curr.baseIndentation;
   const nextBaseIndent =
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
-  let nextSpecialIndent = curr.specialIndentation;
-  if (choice.left.specialIndentation > 0) {
-    nextSpecialIndent += choice.left.specialIndentation * INDENTATION;
-  }
-  if (choice.left.specialIndentation < 0) {
-    nextSpecialIndent += choice.left.specialIndentation * INDENTATION;
-  }
+  const nextSpecialIndent =
+    curr.specialIndentation + choice.left.specialIndentation * INDENTATION;
+
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
   }
   if (curr.specialIndentation != 0 && curr.column === 0) {
-    finalIndent = curr.specialIndentation;
+    if (curr.activeGroups.length > 1) {
+      finalIndent = curr.activeGroups.at(-1).align;
+    } else {
+      finalIndent = curr.specialIndentation;
+      if (curr.activeGroups.length > 0) {
+        finalIndent += curr.activeGroups.at(0).align;
+      }
+    }
   }
 
   // Align hard-break comments with the outermost group (usually the one that
