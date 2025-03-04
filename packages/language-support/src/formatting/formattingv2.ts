@@ -921,9 +921,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    const functionNameGrp = this.startGroup();
     this.visit(ctx.functionName());
+    this.endGroup(functionNameGrp);
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const invocationGrp = this.startGroup();
     this.visit(ctx.LPAREN());
-    this.concatenate(); // Don't separate the function name and the (
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
     }
@@ -945,6 +949,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visit(ctx.RPAREN());
     this.endGroup(allFunctionArgsGrp);
+    this.endGroup(invocationGrp);
   };
 
   // Handled separately because we want ON CREATE before ON MATCH
@@ -1013,6 +1018,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.variable());
     this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     // Not sure if these should have groups around them?
     // Haven't been able to find a case where it matters so far.
@@ -1023,6 +1030,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.avoidSpaceBetween();
+    this.endGroup(mapProjectionGrp);
     this.visit(ctx.RCURLY());
   };
 
