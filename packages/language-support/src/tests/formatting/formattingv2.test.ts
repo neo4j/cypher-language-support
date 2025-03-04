@@ -2029,4 +2029,28 @@ RETURN n`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should allow an explicit newline before LIMIT', () => {
+    const query = `
+MATCH (n)
+RETURN n
+
+LIMIT 10`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('WHERE and LIMIT with comments in between', () => {
+    const query = `
+MATCH (n)
+// Comment before WHERE
+
+WHERE n.prop = "String"
+RETURN n
+// Comment before LIMIT
+
+LIMIT 10`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });

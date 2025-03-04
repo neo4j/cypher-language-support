@@ -446,6 +446,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitLimit = (ctx: LimitContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visitChildren(ctx);
   };
