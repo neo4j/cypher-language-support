@@ -928,6 +928,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     const invocationGrp = this.startGroup();
     this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
     }
