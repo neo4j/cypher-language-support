@@ -229,27 +229,41 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).modifyIndentation -= 1;
   };
 
-  findBottomRightChild = (
+  findBottomChild = (
     ctx: ParserRuleContext | TerminalNode,
+    side: 'before' | 'after',
   ): TerminalNode => {
     if (ctx instanceof TerminalNode) {
       return ctx;
     }
-    const child = ctx.getChild(ctx.getChildCount() - 1);
+    const idx = side === 'before' ? 0 : ctx.getChildCount() - 1;
+    const child = ctx.getChild(idx);
     if (child instanceof TerminalNode) {
       return child;
     } else if (child instanceof ParserRuleContext) {
-      return this.findBottomRightChild(child);
+      return this.findBottomChild(child, side);
     }
-    throw new Error('Internal formatting error in findBottomRightChild');
+    throw new Error('Internal formatting error in findBottomChild');
   };
 
-  preserveExplicitNewline = (ctx: ParserRuleContext) => {
-    const bottomRightChild = this.findBottomRightChild(ctx);
-    const token = bottomRightChild.symbol;
-    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
-      token.tokenIndex,
-    );
+  preserveExplicitNewlineAfter = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'after');
+  };
+
+  preserveExplicitNewlineBefore = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'before');
+  };
+
+  preserveExplicitNewline = (
+    ctx: ParserRuleContext,
+    side: 'before' | 'after',
+  ) => {
+    const bottomChild = this.findBottomChild(ctx, side);
+    const token = bottomChild.symbol;
+    const hiddenTokens =
+      side === 'before'
+        ? this.tokenStream.getHiddenTokensToLeft(token.tokenIndex)
+        : this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
     const hiddenNewlines = hiddenTokens?.filter(
       (token) => token.text === '\n',
     ).length;
@@ -364,7 +378,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitClause = (ctx: ClauseContext) => {
     this.breakLine();
     this.visitChildren(ctx);
-    this.preserveExplicitNewline(ctx);
+    this.preserveExplicitNewlineAfter(ctx);
   };
 
   visitWithClause = (ctx: WithClauseContext) => {
@@ -838,6 +852,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because where is not a clause (it is a subclause)
   visitWhereClause = (ctx: WhereClauseContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visit(ctx.WHERE());
     this.avoidBreakBetween();

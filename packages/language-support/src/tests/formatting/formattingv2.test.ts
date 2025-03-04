@@ -2019,4 +2019,14 @@ RETURN n`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should allow an explicit newline between MATCH and WHERE', () => {
+    const query = `
+MATCH (n)
+
+WHERE n.prop = "String"
+RETURN n`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
