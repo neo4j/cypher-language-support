@@ -753,7 +753,7 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('aligns and breaks long namespaced functions well', () => {
+  test('aligns and breaks long namespaced functions well 1', () => {
     const query = `MATCH (u:User)
 WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does not have an active status which is required for processing the requested operation. ' + 'Please check the user account settings for further details.', [u.id, u.username]) AS validation
 RETURN u;`;
@@ -766,6 +766,43 @@ WITH u,
               + 'Please check the user account settings for further details.',
               [u.id, u.username]) AS validation
 RETURN u;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('aligns and breaks long namespaced functions well 2', () => {
+    const query = `MATCH (userAccountInfo:UserAccountInformation)
+WITH userAccountInfo,
+     apoc.util.
+     validate(NOT userAccountInfo.isVerified,
+              'Verification Error: The user account with unique identifier ' +
+              userAccountInfo.accountUniqueIdentifier +
+              ' has not completed the mandatory ' +
+              'verification process required for accessing premium features. ' +
+              'Please review your verification email and follow the provided instructions to secure your account.',
+              [userAccountInfo.accountUniqueIdentifier,
+               userAccountInfo.emailAddress]) AS verificationStatus
+RETURN userAccountInfo;`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('aligns and breaks long namespaced functions well 3', () => {
+    const query = `MATCH (inventoryRecord:ProductInventoryTrackingInformation)
+WITH inventoryRecord,
+     apoc.util.
+     validate(inventoryRecord.currentStock
+              < inventoryRecord.criticalThresholdStock,
+              'Alert: The inventory record for product SKU '
+              + inventoryRecord.productSKU
+              + ' indicates a current stock level of '
+              + toString(inventoryRecord.currentStock)
+              + ', which is below the critical threshold of ' +
+              toString(inventoryRecord.criticalThresholdStock) +
+              '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
+              [inventoryRecord.productSKU, inventoryRecord.currentStock])
+     AS stockValidation
+RETURN inventoryRecord;`;
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });
