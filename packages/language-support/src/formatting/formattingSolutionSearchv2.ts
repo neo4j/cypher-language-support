@@ -188,7 +188,9 @@ function reconstructBestPath(state: State): Result {
 }
 
 function getStateKey(state: State): string {
-  return `${state.column}-${state.choiceIndex}`;
+  return `${state.column}-${state.choiceIndex}-${
+    state.activeGroups.at(-1)?.align
+  }`;
 }
 
 function bestFirstSolnSearch(
