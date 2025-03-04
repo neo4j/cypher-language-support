@@ -144,6 +144,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
+      specialIndentation: prefix.specialIndentation + suffix.specialIndentation,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -153,7 +154,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Sets that if the previous token should not choose between the argument ('noSpace' or 'noBreak')
    * Skips any preceding comments or special chunks we did not expect.
    */
-  setAvoidProperty = (propertyName: 'noSpace' | 'noBreak'): void => {
+  setAvoidProperty = (
+    propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
+  ): void => {
     let idx = this.currentBuffer().length - 1;
 
     while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
@@ -213,6 +216,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).modifyIndentation -= 1;
   };
 
+  mustBreakBetween = () => {
+    this.setAvoidProperty('mustBreak');
+  };
+
+  addSpecialIndentation = () => {
+    this.currentBuffer().at(-1).specialIndentation += 1;
+  };
+
+  removeSpecialIndentation = () => {
+    this.currentBuffer().at(-1).specialIndentation -= 1;
+  };
+
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
@@ -231,6 +246,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
         modifyIndentation: 0,
+        specialIndentation: 0,
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -257,6 +273,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
         modifyIndentation: 0,
+        specialIndentation: 0,
       };
       this.startGroupCounter = 0;
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
@@ -496,6 +513,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
       modifyIndentation: 0,
+      specialIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -537,6 +555,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
       modifyIndentation: 0,
+      specialIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -839,25 +858,28 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.breakLine();
+    while (this.groupStack.length > 2) {
+      this.endGroup(this.groupStack.at(-1));
+    }
+    this.mustBreakBetween();
     this.visit(ctx.CASE());
     const caseGrp = this.startGroup();
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
-      this.addIndentation();
-      this.breakLine();
+      this.addSpecialIndentation();
+      this.mustBreakBetween();
       this.visit(ctx.caseAlternative(i));
-      this.removeIndentation();
+      this.removeSpecialIndentation();
     }
     if (ctx.ELSE()) {
-      this.addIndentation();
-      this.breakLine();
+      this.addSpecialIndentation();
+      this.mustBreakBetween();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
-      this.removeIndentation();
+      this.removeSpecialIndentation();
     }
     this.endGroup(caseGrp);
-    this.breakLine();
+    this.mustBreakBetween();
     this.visit(ctx.END());
   };
 

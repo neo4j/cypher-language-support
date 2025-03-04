@@ -49,6 +49,7 @@ export interface State {
   column: number;
   choiceIndex: number;
   baseIndentation: number;
+  specialIndentation: number;
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
@@ -83,13 +84,28 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getIndentations(curr: State, choice: Choice): [number, number] {
+function getIndentations(
+  curr: State,
+  choice: Choice,
+): [number, number, number] {
   const currBaseIndent = curr.baseIndentation;
   const nextBaseIndent =
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
+  let nextSpecialIndent = curr.specialIndentation;
+  if (choice.left.specialIndentation > 0) {
+    nextSpecialIndent =
+      (curr.activeGroups.length > 0 ? curr.activeGroups.at(0).align : 0) +
+      choice.left.specialIndentation * INDENTATION;
+  }
+  if (choice.left.specialIndentation < 0) {
+    nextSpecialIndent += choice.left.specialIndentation * INDENTATION;
+  }
   let finalIndent = curr.column === 0 ? currBaseIndent : 0;
   if (curr.activeGroups.length > 0 && curr.column === 0) {
     finalIndent = curr.activeGroups.at(-1).align;
+  }
+  if (curr.specialIndentation != 0 && curr.column === 0) {
+    finalIndent = curr.specialIndentation;
   }
 
   // Align hard-break comments with the outermost group (usually the one that
@@ -98,7 +114,7 @@ function getIndentations(curr: State, choice: Choice): [number, number] {
     const lastGroup = curr.activeGroups.at(0);
     finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
   }
-  return [nextBaseIndent, finalIndent];
+  return [nextBaseIndent, nextSpecialIndent, finalIndent];
 }
 
 // Very useful for debugging but not actually used in the code
@@ -116,7 +132,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
 
-  const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
+  const [nextBaseIndent, nextSpecialIndent, finalIndent] = getIndentations(
+    curr,
+    choice,
+  );
 
   const actualColumn = curr.column === 0 ? finalIndent : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -159,6 +178,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choiceIndex: curr.choiceIndex + 1,
     baseIndentation: nextBaseIndent,
     cost: curr.cost + extraCost,
+    specialIndentation: nextSpecialIndent,
     overflowingCount: curr.overflowingCount + overflowingCount,
     edge: {
       prevState: curr,
@@ -293,6 +313,9 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   }
 
   if (chunk.type === 'REGULAR') {
+    if (chunk.mustBreak) {
+      return onlyBreakSplit;
+    }
     if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
       return noSpaceNoBreakSplit;
     if (doesNotWantSpace(chunk, nextChunk)) return noSpaceSplits;
@@ -326,6 +349,7 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       baseIndentation: indentation,
       cost: 0,
+      specialIndentation: 0,
       overflowingCount: 0,
       edge: null,
     };
@@ -364,4 +388,5 @@ const emptyChunk: RegularChunk = {
   groupsStarting: 0,
   groupsEnding: 0,
   modifyIndentation: 0,
+  specialIndentation: 0,
 };

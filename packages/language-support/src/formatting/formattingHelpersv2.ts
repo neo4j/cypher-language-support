@@ -52,6 +52,7 @@ export interface BaseChunk {
   groupsStarting: number;
   groupsEnding: number;
   modifyIndentation: number;
+  specialIndentation: number;
 }
 
 // Regular chunk specific properties
@@ -60,6 +61,7 @@ export interface RegularChunk extends BaseChunk {
   node?: TerminalNode;
   noSpace?: boolean;
   noBreak?: boolean;
+  mustBreak?: boolean;
 }
 
 // Comment chunk specific properties
