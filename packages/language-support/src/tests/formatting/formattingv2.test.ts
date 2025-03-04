@@ -752,6 +752,22 @@ RETURN n`;
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('aligns and breaks long namespaced functions well', () => {
+    const query = `MATCH (u:User)
+WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does not have an active status which is required for processing the requested operation. ' + 'Please check the user account settings for further details.', [u.id, u.username]) AS validation
+RETURN u;`;
+    const expected = `MATCH (u:User)
+WITH u,
+     apoc.util.
+     validate(u.status <> 'active',
+              'User ' + u.username +
+              ' does not have an active status which is required for processing the requested operation. '
+              + 'Please check the user account settings for further details.',
+              [u.id, u.username]) AS validation
+RETURN u;`;
+    verifyFormatting(query, expected);
+  });
 });
 
 // The @ represents the position of the cursor
@@ -1102,10 +1118,10 @@ WHERE p.price > 1000 AND p.stock > 50 AND
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE p.price > 1000 AND p.stock > 50 AND
-      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment', 'Automotive Parts',
-                     'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
-                     'Musical Instruments', 'Art Supplies', 'Office Supplies']
+      p.category IN
+      ['Electronics', 'Home Appliances', 'Garden Tools', 'Sports Equipment',
+       'Automotive Parts', 'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
+       'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
     verifyFormatting(query, expected);
   });
@@ -1128,9 +1144,10 @@ RETURN p`;
   });
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
-    const expected = `RETURN collect(create_this1 {datetime: apoc.date.convertFormat(
-               toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g")})
-       AS data`;
+    const expected = `RETURN collect(create_this1
+               {datetime:
+                apoc.date.convertFormat(toString(create_this1.datetime),
+                                        "OZQvXyoU", "EhpkDy8g")}) AS data`;
     verifyFormatting(query, expected);
   });
 
