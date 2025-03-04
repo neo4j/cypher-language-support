@@ -858,29 +858,29 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    while (this.groupStack.length > 2) {
+    /* while (this.groupStack.length > 2) {
       this.endGroup(this.groupStack.at(-1));
-    }
+    } */
+    this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
     const caseGrp = this.startGroup();
     const n = ctx.caseAlternative_list().length;
+    this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
-      this.addSpecialIndentation();
       this.mustBreakBetween();
       this.visit(ctx.caseAlternative(i));
-      this.removeSpecialIndentation();
     }
     if (ctx.ELSE()) {
-      this.addSpecialIndentation();
       this.mustBreakBetween();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression());
-      this.removeSpecialIndentation();
     }
+    this.removeSpecialIndentation();
     this.endGroup(caseGrp);
     this.mustBreakBetween();
     this.visit(ctx.END());
+    this.removeSpecialIndentation();
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {

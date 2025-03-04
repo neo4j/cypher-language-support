@@ -93,9 +93,7 @@ function getIndentations(
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
   let nextSpecialIndent = curr.specialIndentation;
   if (choice.left.specialIndentation > 0) {
-    nextSpecialIndent =
-      (curr.activeGroups.length > 0 ? curr.activeGroups.at(0).align : 0) +
-      choice.left.specialIndentation * INDENTATION;
+    nextSpecialIndent += choice.left.specialIndentation * INDENTATION;
   }
   if (choice.left.specialIndentation < 0) {
     nextSpecialIndent += choice.left.specialIndentation * INDENTATION;
@@ -283,6 +281,7 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   const buffer: string[] = [];
   let cursorPos = -1;
   decisions.forEach((decision) => {
+    // console.log(decision.left.text, decision.indentation);
     buffer.push(' '.repeat(decision.indentation));
     const leftType = decision.left.type;
     if (
