@@ -2,6 +2,7 @@ import { int } from 'neo4j-driver';
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
 import { getExtensionContext } from '../contextService';
+import { sendNotificationToLanguageClient } from '../languageClientService';
 
 export const PARAMETERS = 'neo4j.parameters';
 
@@ -81,6 +82,10 @@ export class ParameterManager {
     await context.globalState.update(PARAMETERS, state);
 
     this.tree.refresh();
+    void sendNotificationToLanguageClient(
+      'updateParameters',
+      this.asParameters(),
+    );
   }
 
   asParameters(): Record<string, unknown> {

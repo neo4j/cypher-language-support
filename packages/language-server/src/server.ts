@@ -21,7 +21,11 @@ import { doAutoCompletion } from './autocompletion';
 import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
-import { Neo4jConnectionSettings, Neo4jSettings } from './types';
+import {
+  Neo4jConnectionSettings,
+  Neo4jParameters,
+  Neo4jSettings,
+} from './types';
 
 if (process.env.CYPHER_25 === 'true') {
   _internalFeatureFlags.cypher25 = true;
@@ -32,8 +36,9 @@ let settings: Neo4jSettings | undefined = undefined;
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+let parameters: Neo4jParameters = {};
 
-const neo4jSchemaPoller = new Neo4jSchemaPoller();
+const neo4jSchemaPoller = new Neo4jSchemaPoller(() => parameters);
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
   if (settings?.features?.linting) {
@@ -129,6 +134,11 @@ connection.onNotification(
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
 );
+
+connection.onNotification('updateParameters', (params: Neo4jParameters) => {
+  parameters = params;
+  //relintAllDocuments();
+});
 
 connection.onNotification('connectionDisconnected', () => {
   disconnect();
