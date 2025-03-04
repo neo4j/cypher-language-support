@@ -33,7 +33,7 @@ export interface Parameter {
   type: ParameterType;
 }
 
-function convertParameter(parameter: Parameter): [string, any] {
+function convertParameter(parameter: Parameter): [string, unknown] {
   switch (parameter.type) {
     case PARAMETER_TYPE_NULL:
       return [parameter.key, null];
@@ -48,7 +48,7 @@ function convertParameter(parameter: Parameter): [string, any] {
   }
 }
 
-class ParameterManager {
+export class ParameterManager {
   private readonly tree: ParameterTreeProvider;
 
   constructor() {
@@ -134,16 +134,10 @@ class ParameterTreeItem implements INode {
   getTreeItem(): TreeItem | Promise<TreeItem> {
     return {
       id: this.parameter.key,
-      label: `${this.parameter.key} (${this.parameter.type})`,
+      label: `${this.parameter.key}: ${this.parameter.value} (${this.parameter.type})`,
       contextValue: 'parameter',
       // TODO Nacho What is this?
       iconPath: '',
-      command: {
-        title: 'Set Parameter Value',
-        command: 'neo4j.setParameterValue',
-        arguments: [this.parameter.key],
-        tooltip: 'Set the value for this parameter',
-      },
     };
   }
 
@@ -197,5 +191,5 @@ class ParameterTreeProvider extends TreeProvider {
   }
 }
 
-const parametersManager = new ParameterManager();
+export const parametersManager = new ParameterManager();
 export const parametersTreeProvider = parametersManager.getTreeProvider();

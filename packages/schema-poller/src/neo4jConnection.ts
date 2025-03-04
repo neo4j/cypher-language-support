@@ -31,6 +31,7 @@ type SdkQueryArgs = {
 
 type RunCypherQueryArgs = {
   query: string;
+  parameters: Record<string, unknown>;
   database?: string;
   abortSignal?: AbortSignal;
 };
@@ -51,6 +52,7 @@ export class Neo4jConnection {
 
   async runCypherQuery({
     query,
+    parameters,
     database,
     abortSignal,
   }: RunCypherQueryArgs): Promise<QueryResultWithLimit> {
@@ -68,7 +70,7 @@ export class Neo4jConnection {
     try {
       const result = await session.executeWrite(
         async (tx) => {
-          const result = tx.run(query, {});
+          const result = tx.run(query, parameters);
 
           const records = [];
           let recordLimitHit = false;

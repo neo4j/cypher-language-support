@@ -97,12 +97,15 @@ export class MetadataPoller {
 
   constructor(
     databases: Database[],
+    parameters: () => Record<string, unknown>,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
     const supportsCypherAnnotation =
       _internalFeatureFlags.cypher25 ||
       databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
+
+    this.dbSchema.parameters = parameters();
 
     this.databases = new QueryPoller({
       connection,

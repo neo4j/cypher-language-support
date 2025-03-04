@@ -78,6 +78,10 @@
       {
         "command": "neo4j.cypherFileFromSelection",
         "title": "Neo4j: Create Cypher file from selection"
+      },
+      {
+        "command": "neo4j.setParameter",
+        "title": "Neo4j: Set parameter"
       }
     ],
     "keybindings": [
