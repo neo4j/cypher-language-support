@@ -142,6 +142,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: RegularChunk = {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
+      doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
@@ -181,6 +182,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   avoidBreakBetween = (): void => {
     this.setAvoidProperty('noBreak');
+  };
+
+  doubleBreakBetween = (): void => {
+    if (this.currentBuffer().length > 0) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
+  };
+
+  doubleBreakBetweenNonComment = (): void => {
+    if (
+      this.currentBuffer().length > 0 &&
+      this.currentBuffer().at(-1).type !== 'COMMENT'
+    ) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
   };
 
   getFirstNonCommentIdx = (): number => {
@@ -232,6 +248,53 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(-1).specialIndentation -= 1;
   };
 
+  findBottomChild = (
+    ctx: ParserRuleContext | TerminalNode,
+    side: 'before' | 'after',
+  ): TerminalNode => {
+    if (ctx instanceof TerminalNode) {
+      return ctx;
+    }
+    const idx = side === 'before' ? 0 : ctx.getChildCount() - 1;
+    const child = ctx.getChild(idx);
+    if (child instanceof TerminalNode) {
+      return child;
+    } else if (child instanceof ParserRuleContext) {
+      return this.findBottomChild(child, side);
+    }
+    throw new Error('Internal formatting error in findBottomChild');
+  };
+
+  preserveExplicitNewlineAfter = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'after');
+  };
+
+  preserveExplicitNewlineBefore = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'before');
+  };
+
+  preserveExplicitNewline = (
+    ctx: ParserRuleContext,
+    side: 'before' | 'after',
+  ) => {
+    const bottomChild = this.findBottomChild(ctx, side);
+    const token = bottomChild.symbol;
+    const hiddenTokens =
+      side === 'before'
+        ? this.tokenStream.getHiddenTokensToLeft(token.tokenIndex)
+        : this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
+    const hiddenNewlines = hiddenTokens?.filter(
+      (token) => token.text === '\n',
+    ).length;
+    const commentCount = hiddenTokens?.filter((token) =>
+      isComment(token),
+    ).length;
+    // If there are comments, they take responsibility of the explicit newlines.
+    if (hiddenNewlines > 1 && commentCount === 0) {
+      this.doubleBreakBetweenNonComment();
+    }
+  };
+
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
@@ -263,11 +326,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
       token.tokenIndex,
     );
-    const commentTokens = (hiddenTokens || []).filter((token) =>
-      isComment(token),
-    );
     const nodeLine = node.symbol.line;
-    for (const commentToken of commentTokens) {
+    let breakCount = 0;
+    let includesComment = false;
+    for (const hiddenToken of hiddenTokens || []) {
+      if (hiddenToken.text === '\n') {
+        breakCount++;
+      }
+      if (!isComment(hiddenToken)) {
+        continue;
+      }
+      if (breakCount > 1) {
+        this.doubleBreakBetween();
+      }
+      breakCount = 0;
+      const commentToken = hiddenToken;
+      includesComment = true;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
       const chunk: CommentChunk = {
@@ -290,6 +364,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.currentBuffer().push(chunk);
     }
+    // Account for the last comment having multiple newline after it, to remember explicit
+    // newlines when we have e.g. [C, \n, \n]
+    if (breakCount > 1 && includesComment) {
+      this.doubleBreakBetween();
+    }
   };
 
   visitIfNotNull = (ctx: ParserRuleContext | TerminalNode) => {
@@ -304,11 +383,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
+    const n = ctx.statementOrCommand_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.statementOrCommand(i));
+      if (i < n - 1 || ctx.SEMICOLON(i)) {
+        if (this.currentBuffer().at(-1).text === '\n') {
+          this.currentBuffer().pop();
+        }
+        this.visit(ctx.SEMICOLON(i));
+      }
+    }
+  };
+
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
     this.breakLine();
     this.visitChildren(ctx);
+    this.preserveExplicitNewlineAfter(ctx);
   };
 
   visitWithClause = (ctx: WithClauseContext) => {
@@ -376,6 +469,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitLimit = (ctx: LimitContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visitChildren(ctx);
   };
@@ -395,14 +489,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
+    let commaIdx = 0;
     if (ctx.TIMES() && n > 0) {
-      this.visit(ctx.COMMA(0));
+      this.visit(ctx.COMMA(commaIdx));
+      commaIdx++;
     }
     for (let i = 0; i < n; i++) {
       const returnItemGrp = this.startGroup();
       this.visit(ctx.returnItem(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this.visit(ctx.COMMA(commaIdx));
+        commaIdx++;
       }
       this.endGroup(returnItemGrp);
     }
@@ -682,16 +779,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.rightArrow());
       this.concatenate();
     }
-    if (!ctx.LBRACKET()) {
-      this.concatenate();
-    }
     this.avoidSpaceBetween();
   };
 
   visitNodePattern = (ctx: NodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
     const nodePatternGrp = this.startGroup();
-    this.visitChildren(ctx);
+    if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
+      this.visitIfNotNull(ctx.variable());
+      this.visitIfNotNull(ctx.labelExpression());
+      this.visitIfNotNull(ctx.properties());
+      if (ctx.WHERE()) {
+        this.visit(ctx.WHERE());
+        this.visit(ctx.expression());
+      }
+    } else {
+      this.visitIfNotNull(ctx.WHERE());
+      this.visitIfNotNull(ctx.expression());
+    }
     this.endGroup(nodePatternGrp);
+    this.visit(ctx.RPAREN());
   };
 
   visitPattern = (ctx: PatternContext) => {
@@ -702,6 +810,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.variable()) {
       this.visit(ctx.variable());
+      this.avoidBreakBetween();
       this.visit(ctx.EQ());
       this.avoidBreakBetween();
     }
@@ -784,6 +893,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because where is not a clause (it is a subclause)
   visitWhereClause = (ctx: WhereClauseContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visit(ctx.WHERE());
     this.avoidBreakBetween();
@@ -1058,9 +1168,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(keyValueGrp);
     }
-    this.avoidSpaceBetween();
     this.endGroup(mapGrp);
     this.visit(ctx.RCURLY());
+    this.concatenate();
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
@@ -1088,6 +1198,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
+    const listGrp = this.startGroup();
     this.visit(ctx.variable());
     this.visit(ctx.IN());
     this.visit(ctx._inExp);
@@ -1095,6 +1206,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.WHERE());
       this.visit(ctx._whereExp);
     }
+    this.endGroup(listGrp);
     this.visit(ctx.RPAREN());
   };
 
@@ -1167,13 +1279,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (n > 0) {
       argGrp = this.startGroup();
     }
+    let commaIdx = 0;
     for (let i = 0; i < n; i++) {
       if (i === 0) {
         this.avoidSpaceBetween();
       }
       this.visit(ctx.procedureArgument(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this.visit(ctx.COMMA(commaIdx));
+        commaIdx++;
       }
     }
     this.visitRawIfNotNull(ctx.RPAREN());
@@ -1182,19 +1296,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
+      const m = ctx.procedureResultItem_list().length;
       this.visit(ctx.YIELD());
       if (ctx.TIMES()) {
         this.visit(ctx.TIMES());
-        if (n > 1) {
-          this.visit(ctx.COMMA(n - 1));
+        if (m > 1) {
+          this.visit(ctx.COMMA(commaIdx));
+          commaIdx++;
         }
       }
       const procedureListGrp = this.startGroup();
-      const m = ctx.procedureResultItem_list().length;
       for (let i = 0; i < m; i++) {
         this.visit(ctx.procedureResultItem(i));
         if (i < m - 1) {
-          this.visit(ctx.COMMA(i));
+          this.visit(ctx.COMMA(commaIdx));
+          commaIdx++;
         }
       }
       this.endGroup(procedureListGrp);
