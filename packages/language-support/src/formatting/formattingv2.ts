@@ -164,7 +164,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
       idx--;
     }
-
+    // After a comment we always hardBreak, so if the loop finds a comment
+    // we should not also set mustBreak, it will cause breaking twice
+    if (
+      propertyName === 'mustBreak' &&
+      this.currentBuffer().length - 1 !== idx
+    ) {
+      return;
+    }
     if (idx < 0) {
       return;
     }
