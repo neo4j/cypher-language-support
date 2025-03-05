@@ -343,6 +343,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.currentBuffer().push(chunk);
     }
+    // Account for the last comment having multiple newline after it, to remember explicit
+    // newlines when we have e.g. [C, \n, \n]
     if (breakCount > 1 && includesComment) {
       this.doubleBreakBetween();
     }
