@@ -374,14 +374,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
+    let commaIdx = 0;
     if (ctx.TIMES() && n > 0) {
-      this.visit(ctx.COMMA(0));
+      this.visit(ctx.COMMA(commaIdx));
+      commaIdx++;
     }
     for (let i = 0; i < n; i++) {
       const returnItemGrp = this.startGroup();
       this.visit(ctx.returnItem(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this.visit(ctx.COMMA(commaIdx));
+        commaIdx++;
       }
       this.endGroup(returnItemGrp);
     }
@@ -1127,13 +1130,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (n > 0) {
       argGrp = this.startGroup();
     }
+    let commaIdx = 0;
     for (let i = 0; i < n; i++) {
       if (i === 0) {
         this.avoidSpaceBetween();
       }
       this.visit(ctx.procedureArgument(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this.visit(ctx.COMMA(commaIdx));
+        commaIdx++;
       }
     }
     this.visitRawIfNotNull(ctx.RPAREN());
@@ -1142,19 +1147,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
+      const m = ctx.procedureResultItem_list().length;
       this.visit(ctx.YIELD());
       if (ctx.TIMES()) {
         this.visit(ctx.TIMES());
-        if (n > 1) {
-          this.visit(ctx.COMMA(n - 1));
+        if (m > 1) {
+          this.visit(ctx.COMMA(commaIdx));
+          commaIdx++;
         }
       }
       const procedureListGrp = this.startGroup();
-      const m = ctx.procedureResultItem_list().length;
       for (let i = 0; i < m; i++) {
         this.visit(ctx.procedureResultItem(i));
         if (i < m - 1) {
-          this.visit(ctx.COMMA(i));
+          this.visit(ctx.COMMA(commaIdx));
+          commaIdx++;
         }
       }
       this.endGroup(procedureListGrp);
