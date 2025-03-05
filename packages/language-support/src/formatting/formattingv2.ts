@@ -1013,7 +1013,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.WHEN());
     this.avoidBreakBetween();
     const extendedCaseAlterniveGroup = this.startGroup();
-    const n = ctx.extendedWhen_list.length;
+    const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.extendedWhen(i));
       if (i < n - 1) {
@@ -1035,6 +1035,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < this.currentBuffer().at(-1).groupsStarting; i++) {
       this.removeGroup();
     }
+    this.avoidBreakBetween();
     this.currentBuffer().at(-1).groupsStarting = 0;
     this.visit(ctx.expression(0));
     const extendedCaseGrp = this.startGroup();
