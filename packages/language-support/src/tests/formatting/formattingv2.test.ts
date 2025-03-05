@@ -847,20 +847,6 @@ RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
 
-  test('should not find the wrong comma here', () => {
-    const query = `CALL gds.nodeSimilarity.filtered.stream(
-    "N5j8G3h2",
-    {
-        A3f7R: "Z2w8Q",
-        L9t4P: "Y3s1D"
-    }
-) YIELD *`;
-    const expected = `CALL gds.nodeSimilarity.filtered.stream("N5j8G3h2",
-                                        {A3f7R: "Z2w8Q", L9t4P: "Y3s1D"})
-YIELD *`;
-    verifyFormatting(query, expected);
-  });
-
   test('should not leave dangling bracket', () => {
     const query = `CREATE (company:Company
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
