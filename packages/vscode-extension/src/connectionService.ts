@@ -13,7 +13,13 @@ import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvid
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 
-export type Scheme = 'neo4j' | 'neo4j+s' | 'bolt' | 'bolt+s';
+export type Scheme =
+  | 'neo4j'
+  | 'neo4j+s'
+  | 'neo4j+ssc'
+  | 'bolt'
+  | 'bolt+s'
+  | 'bolt+ssc';
 
 export type State = 'inactive' | 'activating' | 'active' | 'error';
 
