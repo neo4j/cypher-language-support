@@ -15,6 +15,7 @@ import {
 } from '@codemirror/view';
 import {
   formatQuery,
+  formatQueryExperimental,
   _internalFeatureFlags,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
@@ -180,13 +181,12 @@ export interface CypherEditorProps {
   moveFocusOnTab?: boolean;
 }
 
-const format = (view: EditorView): void => {
+const format = (view: EditorView, experimental: Boolean): void => {
   try {
     const doc = view.state.doc.toString();
-    const { formattedString, newCursorPos } = formatQuery(
-      doc,
-      view.state.selection.main.anchor,
-    );
+    const { formattedString, newCursorPos } = experimental
+     ? formatQueryExperimental(doc, view.state.selection.main.anchor)
+     : formatQuery(doc, view.state.selection.main.anchor);
     view.dispatch({
       changes: {
         from: 0,
@@ -302,8 +302,8 @@ export class CypherEditor extends Component<
   /**
    * Format Cypher query
    */
-  format() {
-    format(this.editorView.current)
+  format(experimentalVersion = false) {
+    format(this.editorView.current, experimentalVersion);
   }
 
   /**

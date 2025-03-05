@@ -1,4 +1,4 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnnectionResult,
   MetadataPoller,
@@ -11,7 +11,10 @@ import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
 
 type LanguageClient = {
-  sendNotification: (method: string, settings?: Neo4jSettings) => Promise<void>;
+  sendNotification: (
+    method: string,
+    settings?: Neo4jConnectionSettings,
+  ) => Promise<void>;
 };
 
 type SchemaPoller = {

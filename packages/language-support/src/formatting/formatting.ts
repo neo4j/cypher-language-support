@@ -8,7 +8,12 @@ import {
   CountStarContext,
   ExistsExpressionContext,
   ExtendedCaseExpressionContext,
+  ForeachClauseContext,
+  FunctionInvocationContext,
   KeywordLiteralContext,
+  LabelExpression2Context,
+  LabelExpression3Context,
+  LabelExpression4Context,
   LabelExpressionContext,
   LeftArrowContext,
   LimitContext,
@@ -21,6 +26,7 @@ import {
   ParameterContext,
   PathLengthContext,
   PropertyContext,
+  QuantifierContext,
   RegularQueryContext,
   RelationshipPatternContext,
   RightArrowContext,
@@ -109,13 +115,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const commentTokens = (hiddenTokens || []).filter((token) =>
       isComment(token),
     );
+    const nodeLine = node.symbol.line;
     for (const commentToken of commentTokens) {
+      const commentLine = commentToken.line;
+      const shouldBreak = nodeLine !== commentLine;
       if (
+        !shouldBreak &&
         this.buffer.length > 0 &&
         this.buffer[this.buffer.length - 1] !== ' ' &&
         this.buffer[this.buffer.length - 1] !== '\n'
       ) {
         this.addSpace();
+      }
+      if (shouldBreak) {
+        this.breakLine();
       }
       this.buffer.push(commentToken.text.trim());
       this.breakLine();
@@ -180,6 +193,40 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitRawIfNotNull(ctx.COLON());
     this.visitIfNotNull(ctx.IS());
     this.visit(ctx.labelExpression4());
+  };
+
+  visitLabelExpression4 = (ctx: LabelExpression4Context) => {
+    // There is no great way to know which labels have colons before them,
+    // so we have to resort to manually checking the types of the children.
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression3Context) {
+        this.visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminalRaw(child);
+      }
+    }
+  };
+
+  visitLabelExpression3 = (ctx: LabelExpression3Context) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof LabelExpression2Context) {
+        this.visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminalRaw(child);
+      }
+    }
+  };
+
+  visitLabelExpression2 = (ctx: LabelExpression2Context) => {
+    const n = ctx.EXCLAMATION_MARK_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visitTerminalRaw(ctx.EXCLAMATION_MARK(i));
+    }
+    this.visit(ctx.labelExpression1());
   };
 
   visitTerminal = (node: TerminalNode) => {
@@ -331,6 +378,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.rightArrow());
   };
 
+  visitQuantifier = (ctx: QuantifierContext) => {
+    if (ctx.PLUS() || ctx.TIMES()) {
+      this.visitRawIfNotNull(ctx.PLUS());
+      this.visitRawIfNotNull(ctx.TIMES());
+      return;
+    }
+    this.visit(ctx.LCURLY());
+    let idx = 0;
+    if (ctx._from_) {
+      this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      idx++;
+    }
+    this.visitTerminalRaw(ctx.COMMA());
+    if (ctx._to) {
+      this.visitTerminalRaw(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+    }
+    this.visit(ctx.RCURLY());
+  };
+
   // Handled separately because the dots aren't operators
   visitNamespace = (ctx: NamespaceContext) => {
     const n = ctx.DOT_list().length;
@@ -457,6 +523,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     handleMergeClause(ctx, (node) => this.visit(node));
   };
 
+  visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    this.visit(ctx.functionName());
+    this.visit(ctx.LPAREN());
+    this.visitRawIfNotNull(ctx.DISTINCT());
+    this.visitRawIfNotNull(ctx.ALL());
+    if (ctx.DISTINCT() || ctx.ALL()) {
+      this.addSpace();
+    }
+    const n = ctx.functionArgument_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.functionArgument(i));
+      this.visitIfNotNull(ctx.COMMA(i));
+      if (i < n - 1) {
+        this.addSpace();
+      }
+    }
+    this.visit(ctx.RPAREN());
+  };
+
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
@@ -488,6 +573,24 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.visit(ctx.RCURLY());
+  };
+
+  visitForeachClause = (ctx: ForeachClauseContext) => {
+    this.visit(ctx.FOREACH());
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.visit(ctx.IN());
+    this.visit(ctx.expression());
+    this.visit(ctx.BAR());
+
+    const n = ctx.clause_list().length;
+    for (let i = 0; i < n; i++) {
+      this.addIndentation();
+      this.visit(ctx.clause(i));
+      this.removeIndentation();
+    }
+    this.breakLine();
+    this.visit(ctx.RPAREN());
   };
 }
 

@@ -1,10 +1,10 @@
-import { Neo4jSettings } from '@neo4j-cypher/language-server/src/types';
+import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import {
   ConnectionError,
   ConnnectionResult,
   Database,
 } from '@neo4j-cypher/schema-poller';
-import { commands, workspace } from 'vscode';
+import { commands } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
@@ -23,10 +23,11 @@ export type State = 'inactive' | 'activating' | 'active' | 'error';
 export type Connection = {
   key: string;
   scheme: Scheme;
+  name?: string;
   host: string;
-  port?: string | undefined;
+  port?: string;
   user: string;
-  database?: string | undefined;
+  database?: string;
   state: State;
 };
 
@@ -56,7 +57,12 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
   delete connections[key];
   await saveConnections(connections);
   await deletePasswordByKey(key);
-  await disconnectFromDatabaseAndNotifyLanguageClient();
+
+  if (connection.state !== 'inactive') {
+    const result = await disconnectFromDatabaseAndNotifyLanguageClient();
+    connection.state = 'inactive';
+    displayMessageForConnectionResult(connection, result);
+  }
 }
 
 /**
@@ -83,7 +89,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 
   const result = await initializeDatabaseConnection(connection, password);
 
-  if (result.success || (forceSave && result.retriable)) {
+  if (result.success || forceSave) {
     await saveConnection(connection);
     await savePasswordByKey(connection.key, password);
     return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
@@ -181,7 +187,7 @@ export function getActiveConnection(): Connection | null {
  */
 export function getAllConnections(): Connection[] {
   const connections = Object.values(getConnections());
-  return connections.length ? [connections[0]] : [];
+  return connections.length ? connections : [];
 }
 
 /**
@@ -220,15 +226,8 @@ export function getDatabaseConnectionString(
 export function getDatabaseConnectionSettings(
   connection: Connection,
   password: string,
-): Neo4jSettings {
-  const trace = workspace
-    .getConfiguration('neo4j')
-    .get<{ server: 'off' | 'messages' | 'verbose' }>('trace') ?? {
-    server: 'off',
-  };
-
+): Neo4jConnectionSettings {
   return {
-    trace: trace,
     connect: connection.state !== 'inactive',
     connectURL: getDatabaseConnectionString(connection),
     database: connection.database,
@@ -274,7 +273,7 @@ export async function disconnectDatabaseConnectionOnExtensionDeactivation(): Pro
  * @returns A promise that resolves with the result of the connection attempt.
  */
 export async function establishPersistentConnectionToSchemaPoller(
-  connectionSettings: Neo4jSettings,
+  connectionSettings: Neo4jConnectionSettings,
 ): Promise<ConnnectionResult> {
   const schemaPoller = getSchemaPoller();
   const result = await schemaPoller.persistentConnect(

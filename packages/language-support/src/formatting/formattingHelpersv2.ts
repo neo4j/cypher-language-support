@@ -1,3 +1,9 @@
+/*
+ * This file is a WIP of the second iteration of the Cypher formatter.
+ * It's being kept as a separate file to enable having two separate version at once
+ * since it would be difficult to consolidate the new and the old version
+ */
+
 import {
   CharStreams,
   CommonToken,
@@ -14,7 +20,7 @@ import CypherCmdParser, {
   MergeClauseContext,
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
-import { lexerKeywords, lexerOperators } from '../lexerSymbols';
+import { lexerKeywords } from '../lexerSymbols';
 
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
@@ -34,12 +40,64 @@ export class FormatterErrorsListener
   public reportContextSensitivity() {}
 }
 
+/**
+ * The maximum column width for the formatter. Not a hard limit as overflow
+ * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
+ */
+export const MAX_COL = 80;
+
+export interface BaseChunk {
+  isCursor?: boolean;
+  text: string;
+  groupsStarting: number;
+  groupsEnding: number;
+  modifyIndentation: number;
+}
+
+// Regular chunk specific properties
+export interface RegularChunk extends BaseChunk {
+  type: 'REGULAR';
+  node?: TerminalNode;
+  noSpace?: boolean;
+  noBreak?: boolean;
+}
+
+// Comment chunk specific properties
+export interface CommentChunk extends BaseChunk {
+  type: 'COMMENT';
+  breakBefore: boolean;
+}
+
+// Union type for all chunk types
+export type Chunk = RegularChunk | CommentChunk;
+
+const traillingCharacters = [
+  CypherCmdLexer.SEMICOLON,
+  CypherCmdLexer.COMMA,
+  CypherCmdLexer.COLON,
+  CypherCmdLexer.RPAREN,
+  CypherCmdLexer.RBRACKET,
+];
+
+// TODO: This function should probably not exist; we're not really fans of
+// shuffling around the AST like we're doing right now...
 export function handleMergeClause(
   ctx: MergeClauseContext,
   visit: (node: ParseTree) => void,
+  startGroup?: () => number,
+  endGroup?: (id: number) => void,
+  avoidBreakBetween?: () => void,
 ) {
   visit(ctx.MERGE());
+  avoidBreakBetween?.();
+  let patternGrp: number;
+  if (startGroup) {
+    patternGrp = startGroup();
+  }
   visit(ctx.pattern());
+  if (endGroup) {
+    endGroup(patternGrp);
+  }
   const mergeActions = ctx
     .mergeAction_list()
     .map((action, index) => ({ action, index }));
@@ -60,16 +118,8 @@ export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);
 }
 
-export function wantsSpaceBefore(node: TerminalNode): boolean {
-  return isKeywordTerminal(node) || lexerOperators.includes(node.symbol.type);
-}
-
-export function wantsSpaceAfter(node: TerminalNode): boolean {
-  return (
-    isKeywordTerminal(node) ||
-    lexerOperators.includes(node.symbol.type) ||
-    node.symbol.type === CypherCmdLexer.COMMA
-  );
+export function wantsToBeConcatenated(node: TerminalNode): boolean {
+  return traillingCharacters.includes(node.symbol.type);
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
@@ -91,6 +141,7 @@ function isSymbolicName(node: TerminalNode): boolean {
     node.parentCtx instanceof EscapedSymbolicNameStringContext
   );
 }
+
 export function getParseTreeAndTokens(query: string) {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
@@ -117,4 +168,11 @@ export function findTargetToken(
     }
   }
   return false;
+}
+
+export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
+  return (
+    chunk.type === 'COMMENT' ||
+    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
+  );
 }

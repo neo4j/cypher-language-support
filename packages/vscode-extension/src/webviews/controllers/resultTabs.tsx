@@ -44,7 +44,7 @@ function renderRow(keys: any[], row: Record<string, unknown>) {
 
 function renderTable(rows: ResultRows) {
   if (rows.length === 0) {
-    return <p>No records returned</p>;
+    return <p id="query-empty-result">No records returned</p>;
   }
 
   return (
