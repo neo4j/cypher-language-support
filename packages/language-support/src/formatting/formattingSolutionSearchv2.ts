@@ -103,9 +103,9 @@ function getIndentations(
       finalIndent = curr.activeGroups.at(-1).align;
     } else {
       finalIndent = curr.specialIndentation;
-      if (curr.activeGroups.length > 0) {
+      /*   if (curr.activeGroups.length > 0) {
         finalIndent += curr.activeGroups.at(0).align;
-      }
+      } */
     }
   }
 

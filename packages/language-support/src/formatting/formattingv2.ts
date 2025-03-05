@@ -864,6 +864,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
+    this.currentBuffer().at(-1).groupsStarting = 1;
     const caseGrp = this.startGroup();
     const n = ctx.caseAlternative_list().length;
     this.addSpecialIndentation();
