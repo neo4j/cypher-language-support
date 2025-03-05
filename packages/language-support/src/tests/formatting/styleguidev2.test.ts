@@ -3,6 +3,7 @@
  * It's being kept as a separate file to enable having two separate version at once
  * since it would be difficult to consolidate the new and the old version
  */
+
 import { verifyFormatting } from './testutilv2';
 
 describe('styleguide examples', () => {
