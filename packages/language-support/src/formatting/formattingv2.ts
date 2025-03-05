@@ -141,6 +141,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: RegularChunk = {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
+      doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
@@ -180,6 +181,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.setAvoidProperty('noBreak');
   };
 
+  doubleBreakBetween = (): void => {
+    if (this.currentBuffer().length > 0) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
+  };
+
+  doubleBreakBetweenNonComment = (): void => {
+    if (
+      this.currentBuffer().length > 0 &&
+      this.currentBuffer().at(-1).type !== 'COMMENT'
+    ) {
+      this.currentBuffer().at(-1).doubleBreak = true;
+    }
+  };
+
   getFirstNonCommentIdx = (): number => {
     let idx = this.currentBuffer().length - 1;
     while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
@@ -213,6 +229,53 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).modifyIndentation -= 1;
   };
 
+  findBottomChild = (
+    ctx: ParserRuleContext | TerminalNode,
+    side: 'before' | 'after',
+  ): TerminalNode => {
+    if (ctx instanceof TerminalNode) {
+      return ctx;
+    }
+    const idx = side === 'before' ? 0 : ctx.getChildCount() - 1;
+    const child = ctx.getChild(idx);
+    if (child instanceof TerminalNode) {
+      return child;
+    } else if (child instanceof ParserRuleContext) {
+      return this.findBottomChild(child, side);
+    }
+    throw new Error('Internal formatting error in findBottomChild');
+  };
+
+  preserveExplicitNewlineAfter = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'after');
+  };
+
+  preserveExplicitNewlineBefore = (ctx: ParserRuleContext) => {
+    this.preserveExplicitNewline(ctx, 'before');
+  };
+
+  preserveExplicitNewline = (
+    ctx: ParserRuleContext,
+    side: 'before' | 'after',
+  ) => {
+    const bottomChild = this.findBottomChild(ctx, side);
+    const token = bottomChild.symbol;
+    const hiddenTokens =
+      side === 'before'
+        ? this.tokenStream.getHiddenTokensToLeft(token.tokenIndex)
+        : this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
+    const hiddenNewlines = hiddenTokens?.filter(
+      (token) => token.text === '\n',
+    ).length;
+    const commentCount = hiddenTokens?.filter((token) =>
+      isComment(token),
+    ).length;
+    // If there are comments, they take responsibility of the explicit newlines.
+    if (hiddenNewlines > 1 && commentCount === 0) {
+      this.doubleBreakBetweenNonComment();
+    }
+  };
+
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
@@ -243,11 +306,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
       token.tokenIndex,
     );
-    const commentTokens = (hiddenTokens || []).filter((token) =>
-      isComment(token),
-    );
     const nodeLine = node.symbol.line;
-    for (const commentToken of commentTokens) {
+    let breakCount = 0;
+    let includesComment = false;
+    for (const hiddenToken of hiddenTokens || []) {
+      if (hiddenToken.text === '\n') {
+        breakCount++;
+      }
+      if (!isComment(hiddenToken)) {
+        continue;
+      }
+      if (breakCount > 1) {
+        this.doubleBreakBetween();
+      }
+      breakCount = 0;
+      const commentToken = hiddenToken;
+      includesComment = true;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
       const chunk: CommentChunk = {
@@ -269,6 +343,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.currentBuffer().push(chunk);
     }
+    // Account for the last comment having multiple newline after it, to remember explicit
+    // newlines when we have e.g. [C, \n, \n]
+    if (breakCount > 1 && includesComment) {
+      this.doubleBreakBetween();
+    }
   };
 
   visitIfNotNull = (ctx: ParserRuleContext | TerminalNode) => {
@@ -283,11 +362,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
+    const n = ctx.statementOrCommand_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.statementOrCommand(i));
+      if (i < n - 1 || ctx.SEMICOLON(i)) {
+        if (this.currentBuffer().at(-1).text === '\n') {
+          this.currentBuffer().pop();
+        }
+        this.visit(ctx.SEMICOLON(i));
+      }
+    }
+  };
+
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
     this.breakLine();
     this.visitChildren(ctx);
+    this.preserveExplicitNewlineAfter(ctx);
   };
 
   visitWithClause = (ctx: WithClauseContext) => {
@@ -355,6 +448,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitLimit = (ctx: LimitContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visitChildren(ctx);
   };
@@ -776,6 +870,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because where is not a clause (it is a subclause)
   visitWhereClause = (ctx: WhereClauseContext) => {
+    this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this.visit(ctx.WHERE());
     this.avoidBreakBetween();
