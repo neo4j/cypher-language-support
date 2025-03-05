@@ -8,7 +8,7 @@ import { MAX_COL } from '../../formatting/formattingHelpersv2';
 import { formatQuery } from '../../formatting/formattingv2';
 import { standardizeQuery } from '../../formatting/standardizer';
 
-function verifyFormatting(query: string, expected: string): void {
+export function verifyFormatting(query: string, expected: string): void {
   const formatted = formatQuery(query);
   expect(formatted).toEqual(expected);
   const queryStandardized = standardizeQuery(query);
