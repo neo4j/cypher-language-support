@@ -36,9 +36,7 @@ let settings: Neo4jSettings | undefined = undefined;
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let parameters: Neo4jParameters = {};
-
-const neo4jSchemaPoller = new Neo4jSchemaPoller(() => parameters);
+const neo4jSchemaPoller = new Neo4jSchemaPoller();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
   if (settings?.features?.linting) {
@@ -135,9 +133,9 @@ connection.onNotification(
   },
 );
 
-connection.onNotification('updateParameters', (params: Neo4jParameters) => {
-  parameters = params;
-  //relintAllDocuments();
+connection.onNotification('updateParameters', (parameters: Neo4jParameters) => {
+  neo4jSchemaPoller.setParameters(parameters);
+  relintAllDocuments();
 });
 
 connection.onNotification('connectionDisconnected', () => {

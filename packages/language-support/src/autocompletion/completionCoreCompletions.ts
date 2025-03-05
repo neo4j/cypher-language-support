@@ -322,6 +322,7 @@ function getTokenCompletions(
 
 const parameterCompletions = (
   dbInfo: DbSchema,
+  previousToken: Token | undefined,
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
@@ -331,14 +332,33 @@ const parameterCompletions = (
     )
     .map(([paramName]) => {
       const backtickedName = backtickIfNeeded(paramName);
+      let maybeInsertText = backtickedName
+        ? { insertText: `$${backtickedName}` }
+        : {};
+      if (previousToken) {
+        const suffix = maybeInsertText.insertText ?? `$${paramName}`;
+        maybeInsertText = {
+          // We need to complete parameters correctly in VSCode,
+          // otherwise when we have 'RETURN $' and we get offered $param
+          // we would complete RETURN $$param, which is not what we want
+          insertText: computeSuffix(previousToken.text, suffix),
+        };
+      }
+
       return {
         label: `$${paramName}`,
         kind: CompletionItemKind.Variable,
-        ...(backtickedName
-          ? { insertText: `$${backtickIfNeeded(paramName)}` }
-          : {}),
+        ...maybeInsertText,
       };
     });
+
+function computeSuffix(prefix: string, token: string): string {
+  if (token.startsWith(prefix)) {
+    return token.slice(prefix.length);
+  } else {
+    return token;
+  }
+}
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const result: CompletionItem = {
@@ -471,10 +491,10 @@ export function completionCoreCompletion(
   // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
   // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
-  const previousToken = tokens[caretIndex - 1]?.type;
+  const previousToken = tokens[caretIndex - 1];
   if (
-    previousToken === CypherLexer.IDENTIFIER ||
-    lexerKeywords.includes(previousToken)
+    previousToken?.type === CypherLexer.IDENTIFIER ||
+    lexerKeywords.includes(previousToken?.type)
   ) {
     caretIndex--;
   }
@@ -582,6 +602,7 @@ export function completionCoreCompletion(
       if (ruleNumber === CypherParser.RULE_parameter) {
         return parameterCompletions(
           dbSchema,
+          previousToken,
           inferExpectedParameterTypeFromContext(candidateRule),
         );
       }
@@ -723,7 +744,7 @@ export function completionCoreCompletion(
 
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
-  if (CypherLexer.RPAREN === previousToken && !manualTrigger) {
+  if (CypherLexer.RPAREN === previousToken?.type && !manualTrigger) {
     return ruleCompletions.filter(
       (completion) => completion.kind === CompletionItemKind.Snippet,
     );
@@ -738,11 +759,13 @@ export function completionCoreCompletion(
 type CompletionHelperArgs = {
   parsingResult: ParsedStatement;
   dbSchema: DbSchema;
+  previousToken?: Token;
   candidateRule: CandidateRule;
 };
 function completeAliasName({
   candidateRule,
   dbSchema,
+  previousToken,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
@@ -763,6 +786,7 @@ function completeAliasName({
   // parameters are valid values in all cases of symbolicAliasName
   const parameterSuggestions = parameterCompletions(
     dbSchema,
+    previousToken,
     ExpectedParameterType.String,
   );
   const rulesCreatingNewDb = [
@@ -822,11 +846,13 @@ function completeAliasName({
 function completeSymbolicName({
   candidateRule,
   dbSchema,
+  previousToken,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // parameters are valid values in all cases of symbolic name
   const parameterSuggestions = parameterCompletions(
     dbSchema,
+    previousToken,
     inferExpectedParameterTypeFromContext(candidateRule),
   );
 
@@ -835,11 +861,11 @@ function completeSymbolicName({
     CypherParser.RULE_createRole,
   ];
 
-  const previousToken = findPreviousNonSpace(
+  const previousNonSpace = findPreviousNonSpace(
     parsingResult.tokens,
     candidateRule.startTokenIndex,
   );
-  const afterToToken = previousToken.type === CypherParser.TO;
+  const afterToToken = previousNonSpace.type === CypherParser.TO;
   const ruleList = candidateRule.ruleList;
 
   // avoid suggesting existing user names or role names when creating a new one

@@ -9,7 +9,6 @@ import EventEmitter from 'events';
 import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
-import { parametersManager } from './treeviews/parametersTreeProvider';
 
 type LanguageClient = {
   sendNotification: (
@@ -65,7 +64,7 @@ export function setContext(
 ) {
   _context = context;
   _languageClient = languageClient;
-  _schemaPoller = new Neo4jSchemaPoller(() => parametersManager.asParameters());
+  _schemaPoller = new Neo4jSchemaPoller();
   _queryRunner = new CypherRunner();
 }
 
@@ -94,9 +93,7 @@ export function getLanguageClient(): LanguageClient {
  */
 export function getSchemaPoller(): SchemaPoller {
   if (!_schemaPoller) {
-    _schemaPoller = new Neo4jSchemaPoller(() =>
-      parametersManager.asParameters(),
-    );
+    _schemaPoller = new Neo4jSchemaPoller();
   }
 
   return _schemaPoller;

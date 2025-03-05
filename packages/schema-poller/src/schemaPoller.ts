@@ -27,10 +27,14 @@ export class Neo4jSchemaPoller {
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
-  private parameters: () => Record<string, unknown>;
+  private parameters: Record<string, unknown> = {};
 
-  constructor(parameters: () => Record<string, unknown> = () => ({})) {
+  setParameters(parameters: Record<string, unknown>) {
     this.parameters = parameters;
+
+    if (this.metadata) {
+      this.metadata.dbSchema.parameters = parameters;
+    }
   }
 
   async connect(

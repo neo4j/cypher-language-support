@@ -81,11 +81,12 @@ export class ParameterManager {
     const context = getExtensionContext();
     await context.globalState.update(PARAMETERS, state);
 
-    this.tree.refresh();
-    void sendNotificationToLanguageClient(
+    await sendNotificationToLanguageClient(
       'updateParameters',
-      this.asParameters(),
+      parametersManager.asParameters(),
     );
+
+    this.tree.refresh();
   }
 
   asParameters(): Record<string, unknown> {
@@ -181,7 +182,6 @@ class ParameterTreeProvider extends TreeProvider {
     if (!element) {
       return this.getConnectionNodes();
     }
-
     return element.getChildren();
   }
 
