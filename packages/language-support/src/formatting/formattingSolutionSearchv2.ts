@@ -21,7 +21,7 @@ const INDENTATION = 2;
 const showGroups = false;
 
 export interface Split {
-  splitType: ' ' | '\n' | '';
+  splitType: ' ' | '' | '\n' | '\n\n';
   cost: number;
 }
 
@@ -74,6 +74,35 @@ type FinalResult = string | FinalResultWithPos;
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
+const standardSplits: Split[] = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];
+const doubleBreakStandardSplits: Split[] = [
+  { splitType: ' ', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
+const noSpaceSplits: Split[] = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n', cost: 1 },
+];
+const noSpaceDoubleBreakSplits: Split[] = [
+  { splitType: '', cost: 0 },
+  { splitType: '\n\n', cost: 1 },
+];
+const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
+const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
+const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
+const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
+
+const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
+  text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  modifyIndentation: 0,
+};
+
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
     nextChunk?.type !== 'COMMENT' &&
@@ -110,7 +139,7 @@ function stateToString(state: State) {
 }
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
-  const isBreak = split.splitType === '\n';
+  const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
@@ -282,7 +311,10 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     if (showGroups) addGroupEnd(buffer, decision);
     buffer.push(decision.chosenSplit.splitType);
   });
-  const result = buffer.join('').trimEnd();
+  let result = buffer.join('').trimEnd();
+  if (decisions.at(-1).left.doubleBreak) {
+    result += '\n';
+  }
   if (cursorPos === -1) {
     return result;
   }
@@ -291,16 +323,24 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   if (isCommentBreak(chunk, nextChunk)) {
-    return onlyBreakSplit;
+    return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
   }
 
   if (chunk.type === 'REGULAR') {
-    if (doesNotWantSpace(chunk, nextChunk) && chunk.noBreak)
-      return noSpaceNoBreakSplit;
-    if (doesNotWantSpace(chunk, nextChunk)) return noSpaceSplits;
-    if (chunk.noBreak) return noBreakSplit;
+    const noSpace = doesNotWantSpace(chunk, nextChunk);
+
+    if (noSpace) {
+      if (chunk.noBreak) {
+        return noSpaceNoBreakSplit;
+      }
+      return chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
+    }
+    if (chunk.noBreak) {
+      return noBreakSplit;
+    }
   }
-  return standardSplits;
+
+  return chunk.doubleBreak ? doubleBreakStandardSplits : standardSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
@@ -347,23 +387,3 @@ export function buffersToFormattedString(
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
-
-const standardSplits: Split[] = [
-  { splitType: ' ', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
-const noSpaceSplits: Split[] = [
-  { splitType: '', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
-const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
-const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
-const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
-
-const emptyChunk: RegularChunk = {
-  type: 'REGULAR',
-  text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
-  modifyIndentation: 0,
-};

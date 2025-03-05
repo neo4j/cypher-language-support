@@ -92,7 +92,14 @@ export function getConnection(): Connection | null {
  * @returns True if the string is a valid Scheme, false otherwise.
  */
 export function isValidScheme(scheme: string): scheme is Scheme {
-  return ['neo4j', 'neo4j+s', 'bolt', 'bolt+s'].includes(scheme);
+  return [
+    'neo4j',
+    'neo4j+s',
+    'neo4j+ssc',
+    'bolt',
+    'bolt+s',
+    'bolt+ssc',
+  ].includes(scheme);
 }
 
 /**
