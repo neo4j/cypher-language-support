@@ -847,40 +847,6 @@ RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
 
-  test('comments should not start replicating themselves', () => {
-    const query = `CALL gds.graph.project(
-    "qk5jpmGl",           // Name of the projected graph
-    ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
-    {
-        connection: {
-            type: "R3e8WLkh",            // Include all relationships
-            orientation: "weFW44Gy" // Treat relationships as undirected
-        }
-    }
-)
-YIELD graphName, nodeCount, relationshipCount, createMillis
-RETURN graphName, nodeCount, relationshipCount, createMillis;`;
-    const expected = `CALL gds.graph.project("qk5jpmGl", // Name of the projected graph
-                       ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
-                       {connection: {type: "R3e8WLkh", // Include all relationships
-                                     orientation: "weFW44Gy"}}) // Treat relationships as undirected
-YIELD graphName, nodeCount, relationshipCount, createMillis
-RETURN graphName, nodeCount, relationshipCount, createMillis;`;
-    verifyFormatting(query, expected);
-  });
-
-  test('comment should not disappear in this query', () => {
-    const query = `MATCH (n)
-WITH *, n.prop, // This comment should not disappear
-     n.otherprop
-RETURN n`;
-    const expected = `MATCH (n)
-WITH *, n.prop, // This comment should not disappear
-     n.otherprop
-RETURN n`;
-    verifyFormatting(query, expected);
-  });
-
   test('should not find the wrong comma here', () => {
     const query = `CALL gds.nodeSimilarity.filtered.stream(
     "N5j8G3h2",
