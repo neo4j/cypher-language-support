@@ -769,8 +769,7 @@ RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     const expected = `CALL gds.graph.project("qk5jpmGl", // Name of the projected graph
                        ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
                        {connection: {type: "R3e8WLkh", // Include all relationships
-                                     orientation: "weFW44Gy" // Treat relationships as undirected
-                        }})
+                                     orientation: "weFW44Gy"}}) // Treat relationships as undirected
 YIELD graphName, nodeCount, relationshipCount, createMillis
 RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     verifyFormatting(query, expected);
@@ -799,6 +798,31 @@ RETURN n`;
     const expected = `CALL gds.nodeSimilarity.filtered.stream("N5j8G3h2",
                                         {A3f7R: "Z2w8Q", L9t4P: "Y3s1D"})
 YIELD *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not leave dangling bracket', () => {
+    const query = `CREATE (company:Company
+       {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
+       });`;
+    const expected = `CREATE (company:Company {name: "mrUJWq6A", krs: "Yuu9Wl7d",
+                         registration_date: date("FrA1uHGX")});`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should align with list predicate', () => {
+    const query = `MATCH (f:Frequency)
+WHERE f.value > "WhbRf4O4" AND
+      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
+      % x <> "5DOeV3TE")
+SET f.prime = "zt01uZOH"
+RETURN f`;
+    const expected = `MATCH (f:Frequency)
+WHERE f.value > "WhbRf4O4" AND
+      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
+          % x <> "5DOeV3TE")
+SET f.prime = "zt01uZOH"
+RETURN f`;
     verifyFormatting(query, expected);
   });
 });
@@ -982,6 +1006,11 @@ RETURN variable;`;
   const q21 = `MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-[
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
+
+  const q22 = `MATCH (e:Employee) RETURN e.name, CASE WHEN e.salary > 150000 AND e.experience > 10 THEN 'Senior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' WHEN e.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END) WHEN e.salary > 100000 AND e.experience > 7 THEN 'Experienced ' + (CASE WHEN e.department = 'Engineering' THEN 'Developer' WHEN e.department = 'HR' THEN 'HR Specialist' ELSE 'Associate' END) WHEN e.salary > 75000 AND e.experience > 5 THEN 'Mid-Level ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Professional' END) ELSE 'Junior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Staff' END) END AS jobTitle`;
+
+  const q23 = `MATCH (u:User) CALL { WITH u MATCH (u)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product) WHERE p.price > 100 AND p.category IN ['Electronics','Computers','Smartphones','Accessories','Gaming','Wearables','Home Automation','Networking','Audio','Video','Software','Peripherals'] WITH u, o, p, p.price * (1 - COALESCE(p.discount,0)) AS netPrice, CASE WHEN p.rating > 4.5 THEN 'Excellent' WHEN p.rating > 3.5 THEN 'Good' WHEN p.rating > 2.5 THEN 'Average' ELSE 'Poor' END AS qualityRating RETURN o, COLLECT({product: p.name, netPrice: netPrice, qualityRating: qualityRating, features: p.features, warranty: p.warranty, stock: p.stock, supplier: p.supplier}) AS orderProducts } WITH u, COUNT(o) AS totalOrders, SUM([x IN COLLECT(o) | x.total]) AS totalSpent WHERE totalOrders > 3 RETURN u, totalOrders, totalSpent`;
+
   const q24 = `CALL apoc.periodic.iterate ("eZ0sadadawdawdsdsdsdq", "1p7sdsdsasdwasddsdEsdsd", {baisdsdadadze: "v0Asdsdsdadadadsdsdp", paladadadel: "UsdssdsdsddUg"})`;
 
   const queries = [
@@ -1007,6 +1036,8 @@ RETURN path`;
     q19,
     q20,
     q21,
+    q22,
+    q23,
     q24,
   ];
 
@@ -1041,7 +1072,7 @@ RETURN path`.trimStart();
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
 MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-      {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -1151,10 +1182,10 @@ WHERE p.price > 1000 AND p.stock > 50 AND
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE p.price > 1000 AND p.stock > 50 AND
-      p.category IN ['Electronics', 'Home Appliances', 'Garden Tools',
-                     'Sports Equipment', 'Automotive Parts',
-                     'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
-                     'Musical Instruments', 'Art Supplies', 'Office Supplies']
+      p.category IN
+      ['Electronics', 'Home Appliances', 'Garden Tools', 'Sports Equipment',
+       'Automotive Parts', 'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
+       'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
     verifyFormatting(query, expected);
   });

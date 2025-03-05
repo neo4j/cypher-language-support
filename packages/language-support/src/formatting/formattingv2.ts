@@ -662,16 +662,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.rightArrow());
       this.concatenate();
     }
-    if (!ctx.LBRACKET()) {
-      this.concatenate();
-    }
     this.avoidSpaceBetween();
   };
 
   visitNodePattern = (ctx: NodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
     const nodePatternGrp = this.startGroup();
-    this.visitChildren(ctx);
+    if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
+      this.visitIfNotNull(ctx.variable());
+      this.visitIfNotNull(ctx.labelExpression());
+      this.visitIfNotNull(ctx.properties());
+      if (ctx.WHERE()) {
+        this.visit(ctx.WHERE());
+        this.visit(ctx.expression());
+      }
+    } else {
+      this.visitIfNotNull(ctx.WHERE());
+      this.visitIfNotNull(ctx.expression());
+    }
     this.endGroup(nodePatternGrp);
+    this.visit(ctx.RPAREN());
   };
 
   visitPattern = (ctx: PatternContext) => {
@@ -682,6 +693,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.variable()) {
       this.visit(ctx.variable());
+      this.avoidBreakBetween();
       this.visit(ctx.EQ());
       this.avoidBreakBetween();
     }
@@ -1007,9 +1019,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(keyValueGrp);
     }
-    this.avoidSpaceBetween();
     this.endGroup(mapGrp);
     this.visit(ctx.RCURLY());
+    this.concatenate();
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
@@ -1037,6 +1049,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
+    const listGrp = this.startGroup();
     this.visit(ctx.variable());
     this.visit(ctx.IN());
     this.visit(ctx._inExp);
@@ -1044,6 +1057,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.WHERE());
       this.visit(ctx._whereExp);
     }
+    this.endGroup(listGrp);
     this.visit(ctx.RPAREN());
   };
 
