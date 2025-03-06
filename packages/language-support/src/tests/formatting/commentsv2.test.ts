@@ -501,4 +501,14 @@ UNWIND // Expands lists into multiple rows
     const expected = query.trim();
     verifyFormatting(query, expected);
   });
+
+  test('two comments after a clause should not break alignment', () => {
+    const query = `
+MATCH // One comment.
+      // Another comment. Really?
+      (m)-[:RELATION]->(n)
+RETURN m, n`.trim();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
