@@ -482,15 +482,35 @@ LIMIT "6pkMe6Kx"`;
     verifyFormatting(query, expected);
   });
 
-  test('comment directly after outermost group should not break alignment', () => {
+  test('comment directly after outermost group should not break alignment for clauses', () => {
     const query = `
-MATCH // Who comments here???
-(m)-->(n)
-RETURN m, n;`;
-    const expected = `
-MATCH // Who comments here???
-      (m)-->(n)
-RETURN m, n;`.trimStart();
+USE // Specifies the graph or database to use
+    graph
+MATCH // Matches patterns in the graph
+      (m)-[:RELATION]->(n)
+MERGE // Ensures a pattern exists in the graph
+      (p:Person {name: "Alice"})
+CREATE // Creates new nodes or relationships
+       (q:Person {name: "Bob"})-[:KNOWS]->(p)
+INSERT // Adds data to existing structures (hypothetical)
+       (r:Person {name: "Charlie"})
+DELETE // Deletes nodes or relationships
+       r
+SET // Updates properties on nodes or relationships
+    p.age = 30
+WITH // Passes results to the next clause
+     p, q
+UNWIND // Expands lists into multiple rows
+       [1, 2, 3] AS num
+CALL // Invokes a procedure
+     dbms.procedures() YIELD name
+LOAD CSV // Loads data from CSV files
+    FROM 'file:///data.csv' AS row
+LIMIT // Limits the number of rows returned
+      10
+RETURN // Returns results
+       p, q, num;`;
+    const expected = query.trim();
     verifyFormatting(query, expected);
   });
 });

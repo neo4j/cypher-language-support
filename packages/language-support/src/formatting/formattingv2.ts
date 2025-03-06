@@ -15,6 +15,7 @@ import {
   ClauseContext,
   CountStarContext,
   CreateClauseContext,
+  DeleteClauseContext,
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
@@ -22,6 +23,7 @@ import {
   ExtendedCaseExpressionContext,
   ForeachClauseContext,
   FunctionInvocationContext,
+  InsertClauseContext,
   KeywordLiteralContext,
   LabelExpression2Context,
   LabelExpression3Context,
@@ -58,6 +60,7 @@ import {
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   UnwindClauseContext,
+  UseClauseContext,
   WhereClauseContext,
   WithClauseContext,
 } from '../generated-parser/CypherCmdParser';
@@ -394,6 +397,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineAfter(ctx);
   };
 
+  visitUseClause = (ctx: UseClauseContext) => {
+    this.visit(ctx.USE());
+    const useGrp = this.startGroupAlsoOnComment();
+    this.visitIfNotNull(ctx.GRAPH());
+    this.visit(ctx.graphReference());
+    this.endGroup(useGrp);
+  };
+
   visitWithClause = (ctx: WithClauseContext) => {
     this.visit(ctx.WITH());
     this.avoidBreakBetween();
@@ -421,9 +432,35 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCreateClause = (ctx: CreateClauseContext) => {
     this.visit(ctx.CREATE());
     this.avoidBreakBetween();
-    const createClauseGrp = this.startGroup();
+    const createClauseGrp = this.startGroupAlsoOnComment();
     this.visit(ctx.patternList());
     this.endGroup(createClauseGrp);
+  };
+
+  visitInsertClause = (ctx: InsertClauseContext) => {
+    this.visit(ctx.INSERT());
+    this.avoidBreakBetween();
+    const insertClauseGrp = this.startGroupAlsoOnComment();
+    this.visit(ctx.insertPatternList());
+    this.endGroup(insertClauseGrp);
+  };
+
+  visitDeleteClause = (ctx: DeleteClauseContext) => {
+    if (ctx.DETACH() || ctx.NODETACH()) {
+      this.visitIfNotNull(ctx.DETACH());
+      this.visitIfNotNull(ctx.NODETACH());
+      this.avoidBreakBetween();
+    }
+    this.visit(ctx.DELETE());
+    const deleteClauseGrp = this.startGroupAlsoOnComment();
+    const n = ctx.expression_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.expression(i));
+      if (i < n - 1) {
+        this.visit(ctx.COMMA(i));
+      }
+    }
+    this.endGroup(deleteClauseGrp);
   };
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
@@ -1073,7 +1110,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     handleMergeClause(
       ctx,
       (node) => this.visit(node),
-      () => this.startGroup(),
+      () => this.startGroupAlsoOnComment(),
       (id) => this.endGroup(id),
       () => this.avoidBreakBetween(),
     );
