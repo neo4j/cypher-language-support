@@ -64,6 +64,7 @@ export interface Result {
   cost: number;
   decisions: Decision[];
   indentation: number;
+  specialIndentation: number;
 }
 
 interface FinalResultWithPos {
@@ -133,9 +134,6 @@ function getIndentations(
       finalIndent = curr.activeGroups.at(-1).align;
     } else {
       finalIndent = curr.specialIndentation;
-      /*   if (curr.activeGroups.length > 0) {
-        finalIndent += curr.activeGroups.at(0).align;
-      } */
     }
   }
 
@@ -235,6 +233,7 @@ function reconstructBestPath(state: State): Result {
     cost: state.cost,
     decisions,
     indentation: state.baseIndentation,
+    specialIndentation: state.specialIndentation,
   };
 }
 
@@ -316,7 +315,6 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   const buffer: string[] = [];
   let cursorPos = -1;
   decisions.forEach((decision) => {
-    // console.log(decision.left.text, decision.indentation);
     buffer.push(' '.repeat(decision.indentation));
     const leftType = decision.left.type;
     if (
@@ -384,6 +382,7 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation: number = 0;
+  let specialIndentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
@@ -394,12 +393,13 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       baseIndentation: indentation,
       cost: 0,
-      specialIndentation: 0,
+      specialIndentation: specialIndentation,
       overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
+    specialIndentation = result.specialIndentation;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {
@@ -409,7 +409,7 @@ export function buffersToFormattedString(
       formatted += formattingResult.formattedString + '\n';
     }
   }
-  if (indentation > 0) {
+  if (indentation !== 0 || specialIndentation !== 0) {
     throw new Error(errorMessage);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
