@@ -15,6 +15,7 @@ import { listProcedures } from './queries/procedures.js';
 import { listRoles, Neo4jRole } from './queries/roles.js';
 import { listUsers, Neo4jUser } from './queries/users.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
+import { cypher25Supported } from './utils.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -97,12 +98,13 @@ export class MetadataPoller {
 
   constructor(
     databases: Database[],
+    serverVersion: string | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
     const supportsCypherAnnotation =
       _internalFeatureFlags.cypher25 ||
-      databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
+      (serverVersion && cypher25Supported(serverVersion));
 
     this.databases = new QueryPoller({
       connection,
