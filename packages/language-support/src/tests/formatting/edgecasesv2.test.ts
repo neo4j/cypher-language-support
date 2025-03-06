@@ -264,14 +264,14 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND true AND true AND
-         true AND true AND true THEN "(PK)"
+    WHEN true AND true AND true AND true AND
+         true AND true AND true AND true AND true THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true THEN "(FK)"
+    WHEN true AND true AND true AND true AND true AND true AND
+         true AND true AND true AND true AND true AND true AND
+         true AND true AND true AND true AND true AND true AND true THEN "(FK)"
     ELSE ""
   END}) AS columns`;
     verifyFormatting(query, expected);

@@ -1026,7 +1026,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    while (this.groupStack.length >= 1) {
+    while (this.groupStack.length > 1) {
       this.endGroup(this.groupStack.at(-1));
     }
     this.addSpecialIndentation();
