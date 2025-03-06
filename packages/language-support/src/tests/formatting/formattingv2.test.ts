@@ -641,7 +641,7 @@ WHERE b.name = "XGyhUMQO"
 RETURN u, r, b, c`;
     verifyFormatting(query, expected);
   });
-  // TODO
+
   test('does not concatenate IS X', () => {
     const query = `MATCH (n)
 WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
@@ -653,6 +653,112 @@ WHERE
     ELSE 'default'
   END
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple case statments after each other', () => {
+    const query = `RETURN {Node: p.Node, description:CASE
+WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+ELSE p.Description[.. "VM6fSkTL"]
+END} AS node, r, {Node: b.Node, description:
+CASE
+WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+ELSE b.Description[.. "NHIwucAy"]
+END} AS endNode;`;
+    const expected = `RETURN {Node: p.Node, description:
+  CASE
+    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+    ELSE p.Description[.. "VM6fSkTL"]
+  END} AS node, r, {Node: b.Node, description:
+  CASE
+    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+    ELSE b.Description[.. "NHIwucAy"]
+  END} AS endNode;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple case statements with extended case', () => {
+    const query = `RETURN {Node: p.Node, description:CASE p.age
+    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+    ELSE p.Description[.. "VM6fSkTL"]
+    END} AS node, r, {Node: b.Node, description:
+    CASE p.age
+    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+    ELSE b.Description[.. "NHIwucAy"]
+    END} AS endNode;`;
+    const expected = `RETURN {Node: p.Node, description:
+  CASE p.age
+    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+    ELSE p.Description[.. "VM6fSkTL"]
+  END} AS node, r, {Node: b.Node, description:
+  CASE p.age
+    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+    ELSE b.Description[.. "NHIwucAy"]
+  END} AS endNode;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('case statements were wrapping line occurs in a when statatement', () => {
+    const query = `RETURN 
+    CASE 
+        WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN 'Medium Spender'
+        WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND SUM(product.price) < 1000 AND SUM(product.price) < 1000  THEN 'High Spender'
+        ELSE 'VIP Customer'
+    END AS CustomerCategory`;
+    const expected = `RETURN
+  CASE
+    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN
+         'Medium Spender'
+    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
+         'High Spender'
+    ELSE 'VIP Customer'
+  END AS CustomerCategory`;
+    verifyFormatting(query, expected);
+  });
+
+  test('extended case statements were wrapping line occurs in a when statatement', () => {
+    const query = `RETURN 
+    CASE p.age
+        WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN 'Medium Spender'
+        WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND SUM(product.price) < 1000 AND SUM(product.price) < 1000  THEN 'High Spender'
+        ELSE 'VIP Customer'
+    END AS CustomerCategory`;
+    const expected = `RETURN
+  CASE p.age
+    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN
+         'Medium Spender'
+    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
+         'High Spender'
+    ELSE 'VIP Customer'
+  END AS CustomerCategory`;
+    verifyFormatting(query, expected);
+  });
+
+  test('deeply nested case', () => {
+    const query = `
+WITH s,
+    t.name as tableName,
+    collect({name: c.name,
+            pk: CASE (not pk is null and $printKeyInfo) WHEN True AND TRUE AND 
+TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(PK)" ELSE "" END,
+            fk: CASE  WHEN True AND TRUE AND TRUE AND TRUE AND TRUE
+ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE 
+AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE "" END
+    }) as columns`;
+    const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
+  CASE (NOT pk IS NULL AND $printKeyInfo)
+    WHEN true AND true AND true AND true AND true AND true AND
+         true AND true AND true THEN "(PK)"
+    ELSE ""
+  END, fk:
+  CASE
+    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
+         true AND true AND true AND true AND true AND
+         true AND true AND true AND true AND true AND true THEN "(FK)"
+    ELSE ""
+  END}) AS columns`;
     verifyFormatting(query, expected);
   });
 
