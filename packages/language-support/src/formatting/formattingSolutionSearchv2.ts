@@ -72,6 +72,12 @@ interface FinalResultWithPos {
   cursorPos: number;
 }
 
+interface Indentations {
+  finalIndentation: number;
+  nextBaseIndentation: number;
+  nextSpecialIndentation: number;
+}
+
 type FinalResult = string | FinalResultWithPos;
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
@@ -115,10 +121,7 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getIndentations(
-  curr: State,
-  choice: Choice,
-): [number, number, number] {
+function getIndentations(curr: State, choice: Choice): Indentations {
   const currBaseIndent = curr.baseIndentation;
   const nextBaseIndent =
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
@@ -143,7 +146,11 @@ function getIndentations(
     const lastGroup = curr.activeGroups.at(0);
     finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
   }
-  return [nextBaseIndent, nextSpecialIndent, finalIndent];
+  return {
+    nextBaseIndentation: nextBaseIndent,
+    nextSpecialIndentation: nextSpecialIndent,
+    finalIndentation: finalIndent,
+  };
 }
 
 // Very useful for debugging but not actually used in the code
@@ -161,12 +168,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
 
-  const [nextBaseIndent, nextSpecialIndent, finalIndent] = getIndentations(
-    curr,
-    choice,
-  );
+  const { nextBaseIndentation, nextSpecialIndentation, finalIndentation } =
+    getIndentations(curr, choice);
 
-  const actualColumn = curr.column === 0 ? finalIndent : curr.column;
+  const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const leftLength =
     choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
@@ -205,14 +210,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
-    baseIndentation: nextBaseIndent,
+    baseIndentation: nextBaseIndentation,
     cost: curr.cost + extraCost,
-    specialIndentation: nextSpecialIndent,
+    specialIndentation: nextSpecialIndentation,
     overflowingCount: curr.overflowingCount + overflowingCount,
     edge: {
       prevState: curr,
       decision: {
-        indentation: finalIndent,
+        indentation: finalIndentation,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
