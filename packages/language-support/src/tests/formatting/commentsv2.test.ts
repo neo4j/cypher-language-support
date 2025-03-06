@@ -481,4 +481,16 @@ RETURN *
 LIMIT "6pkMe6Kx"`;
     verifyFormatting(query, expected);
   });
+
+  test('comment directly after outermost group should not break alignment', () => {
+    const query = `
+MATCH // Who comments here???
+(m)-->(n)
+RETURN m, n;`;
+    const expected = `
+MATCH // Who comments here???
+      (m)-->(n)
+RETURN m, n;`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });

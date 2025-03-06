@@ -220,6 +220,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.groupID - 1;
   };
 
+  startGroupAlsoOnComment = (): number => {
+    const last = this.currentBuffer().at(-1);
+    if (last.type === 'COMMENT') {
+      last.groupsStarting = 1;
+      this.groupStack.push(this.groupID);
+      this.groupID++;
+      return this.groupID - 1;
+    }
+    return this.startGroup();
+  };
+
   addIndentation = () => {
     this.currentBuffer().at(-1).modifyIndentation += 1;
   };
@@ -396,7 +407,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitIfNotNull(ctx.OPTIONAL());
     this.visit(ctx.MATCH());
     this.avoidBreakBetween();
-    const matchClauseGrp = this.startGroup();
+    const matchClauseGrp = this.startGroupAlsoOnComment();
     this.visitIfNotNull(ctx.matchMode());
     this.visit(ctx.patternList());
     this.endGroup(matchClauseGrp);
