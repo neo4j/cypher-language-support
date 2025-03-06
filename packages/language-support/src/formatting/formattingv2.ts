@@ -156,7 +156,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Sets that if the previous token should not choose between the argument ('noSpace' or 'noBreak')
    * Skips any preceding comments or special chunks we did not expect.
    */
-  setAvoidProperty = (
+  setChunkSplitProperty = (
     propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
   ): void => {
     let idx = this.currentBuffer().length - 1;
@@ -184,11 +184,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   avoidSpaceBetween = (): void => {
-    this.setAvoidProperty('noSpace');
+    this.setChunkSplitProperty('noSpace');
   };
 
   avoidBreakBetween = (): void => {
-    this.setAvoidProperty('noBreak');
+    this.setChunkSplitProperty('noBreak');
+  };
+
+  mustBreakBetween = () => {
+    this.setChunkSplitProperty('mustBreak');
   };
 
   doubleBreakBetween = (): void => {
@@ -241,10 +245,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   removeIndentation = () => {
     const idx = this.getFirstNonCommentIdx();
     this.currentBuffer().at(idx).modifyIndentation -= 1;
-  };
-
-  mustBreakBetween = () => {
-    this.setAvoidProperty('mustBreak');
   };
 
   addSpecialIndentation = () => {
