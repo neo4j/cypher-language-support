@@ -128,24 +128,32 @@ function getIndentations(curr: State, choice: Choice): Indentations {
   const nextSpecialIndent =
     curr.specialIndentation + choice.left.specialIndentation * INDENTATION;
 
-  let finalIndent = curr.column === 0 ? currBaseIndent : 0;
-  if (curr.activeGroups.length > 0 && curr.column === 0) {
-    finalIndent = curr.activeGroups.at(-1).align;
-  }
-  if (curr.specialIndentation != 0 && curr.column === 0) {
-    if (curr.activeGroups.length > 1) {
-      finalIndent = curr.activeGroups.at(-1).align;
-    } else {
-      finalIndent = curr.specialIndentation;
+  let finalIndent = currBaseIndent;
+
+  // Only apply indentation at the start of a line (column === 0)
+  if (curr.column === 0) {
+    // Case 1: Hard-break comments align with outermost group or base indentation
+    if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
+      const outerGroup = curr.activeGroups[0];
+      finalIndent = outerGroup ? outerGroup.align : nextBaseIndent;
     }
+    // Case 2: Special indentation with active groups
+    else if (curr.specialIndentation !== 0) {
+      finalIndent =
+        curr.activeGroups.length > 1
+          ? curr.activeGroups.at(-1).align
+          : curr.specialIndentation;
+    }
+    // Case 3: Active groups exist
+    else if (curr.activeGroups.length > 0) {
+      finalIndent = curr.activeGroups.at(-1).align;
+    }
+    // Default case is already set to currBaseIndent
+  } else {
+    // When not at the start of a line, no indentation
+    finalIndent = 0;
   }
 
-  // Align hard-break comments with the outermost group (usually the one that
-  // aligns things with a clause)
-  if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
-    const lastGroup = curr.activeGroups.at(0);
-    finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
-  }
   return {
     nextBaseIndentation: nextBaseIndent,
     nextSpecialIndentation: nextSpecialIndent,
