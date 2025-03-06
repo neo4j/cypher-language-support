@@ -1123,17 +1123,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.variable());
     this.visit(ctx.LCURLY());
     this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
-    // Not sure if these should have groups around them?
-    // Haven't been able to find a case where it matters so far.
     for (let i = 0; i < n; i++) {
       this.visit(ctx.mapProjectionElement(i));
       if (i < n - 1) {
         this.visit(ctx.COMMA(i));
       }
     }
-    this.avoidSpaceBetween();
+    this.endGroup(mapProjectionGrp);
     this.visit(ctx.RCURLY());
+    this.concatenate();
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
