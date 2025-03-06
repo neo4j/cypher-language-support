@@ -227,8 +227,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.groupStack.pop();
   };
 
-  removeGroup = () => {
-    this.groupStack.pop();
+  removeAllGroups = () => {
+    for (let i = 0; i < this.currentBuffer().at(-1).groupsStarting; i++) {
+      this.groupStack.pop();
+    }
   };
 
   startGroup = (): number => {
@@ -986,9 +988,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
-    for (let i = 0; i < this.currentBuffer().at(-1).groupsStarting; i++) {
-      this.removeGroup();
-    }
+    this.removeAllGroups();
     this.currentBuffer().at(-1).groupsStarting = 0;
     const caseGroup = this.startGroup();
     const n = ctx.caseAlternative_list().length;
@@ -1032,9 +1032,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
-    for (let i = 0; i < this.currentBuffer().at(-1).groupsStarting; i++) {
-      this.removeGroup();
-    }
+    this.removeAllGroups();
     this.avoidBreakBetween();
     this.currentBuffer().at(-1).groupsStarting = 0;
     this.visit(ctx.expression(0));
