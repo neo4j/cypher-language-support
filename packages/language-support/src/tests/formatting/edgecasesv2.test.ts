@@ -277,6 +277,80 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     verifyFormatting(query, expected);
   });
 
+  test('nesting case statement inside case statements', () => {
+    const query = `MATCH (p:Person)
+RETURN p.name,
+       p.age,
+       p.occupation,
+       CASE 
+           WHEN p.age < 18 THEN 'Minor'
+           WHEN p.age >= 18 AND p.age < 65 THEN 
+               CASE
+                   WHEN p.occupation = 'Student' THEN 'Student (Adult)'
+                   WHEN p.occupation = 'Engineer' THEN 
+                       CASE 
+                           WHEN p.experienceYears < 5 THEN 'Junior Engineer'
+                           WHEN p.experienceYears >= 5 AND p.experienceYears < 10 THEN 'Mid-level Engineer'
+                           ELSE 'Senior Engineer'
+                       END
+                   WHEN p.occupation = 'Doctor' THEN 
+                       CASE
+                           WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
+                           WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
+                           ELSE 'Medical Doctor'
+                       END
+                   ELSE 'Working Adult'
+               END
+           ELSE 'Senior'
+       END AS status,
+       CASE
+           WHEN p.salary IS NULL THEN 'No Income Data'
+           ELSE
+               CASE
+                   WHEN p.salary < 30000 THEN 'Low Income'
+                   WHEN p.salary >= 30000 AND p.salary < 75000 THEN 'Middle Income'
+                   WHEN p.salary >= 75000 AND p.salary < 150000 THEN 'Upper Middle Income'
+                   ELSE 'High Income'
+               END
+       END AS incomeCategory
+ORDER BY p.age DESC`;
+    const expected = `MATCH (p:Person)
+RETURN p.name, p.age, p.occupation,
+  CASE
+    WHEN p.age < 18 THEN 'Minor'
+    WHEN p.age >= 18 AND p.age < 65 THEN
+      CASE
+        WHEN p.occupation = 'Student' THEN 'Student (Adult)'
+        WHEN p.occupation = 'Engineer' THEN
+          CASE
+            WHEN p.experienceYears < 5 THEN 'Junior Engineer'
+            WHEN p.experienceYears >= 5 AND p.experienceYears < 10 THEN
+                 'Mid-level Engineer'
+            ELSE 'Senior Engineer'
+          END
+        WHEN p.occupation = 'Doctor' THEN
+          CASE
+            WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
+            WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
+            ELSE 'Medical Doctor'
+          END
+        ELSE 'Working Adult'
+      END
+    ELSE 'Senior'
+  END AS status,
+  CASE
+    WHEN p.salary IS NULL THEN 'No Income Data'
+    ELSE
+      CASE
+        WHEN p.salary < 30000 THEN 'Low Income'
+        WHEN p.salary >= 30000 AND p.salary < 75000 THEN 'Middle Income'
+        WHEN p.salary >= 75000 AND p.salary < 150000 THEN 'Upper Middle Income'
+        ELSE 'High Income'
+      END
+  END AS incomeCategory ORDER BY p.age DESC`;
+    verifyFormatting(query, expected);
+  });
+
   test('does not break CALL YIELD', () => {
     const query = `CALL dbms.procedures YIELD name, signature, description`;
     const expected = `CALL dbms.procedures YIELD name, signature, description`;
