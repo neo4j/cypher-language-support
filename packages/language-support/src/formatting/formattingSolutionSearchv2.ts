@@ -132,10 +132,10 @@ function getIndentations(curr: State, choice: Choice): Indentations {
 
   // Only apply indentation at the start of a line (column === 0)
   if (curr.column === 0) {
-    // Case 1: Hard-break comments align with outermost group or base indentation
+    // Case 1: Hard-break comments align with base group or base indentation
     if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
-      const outerGroup = curr.activeGroups[0];
-      finalIndent = outerGroup ? outerGroup.align : nextBaseIndent;
+      const baseGroup = curr.activeGroups[0];
+      finalIndent = baseGroup ? baseGroup.align : nextBaseIndent;
     }
     // Case 2: Special indentation with active groups
     else if (curr.specialIndentation !== 0) {
