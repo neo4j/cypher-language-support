@@ -403,11 +403,11 @@ ELSE 3
 END AS result, n.eyes, n.age`;
     const expected = `MATCH (n:Person)
 RETURN
-CASE
-  WHEN n.eyes = 'blue' THEN 1
-  WHEN n.age < 40 THEN 2
-  ELSE 3
-END AS result, n.eyes, n.age`;
+  CASE
+    WHEN n.eyes = 'blue' THEN 1
+    WHEN n.age < 40 THEN 2
+    ELSE 3
+  END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -422,14 +422,14 @@ ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
 RETURN n.name,
-CASE n.age
-  WHEN = 0, = 1, = 2 THEN "Baby"
-  WHEN <= 13 THEN "Child"
-  WHEN < 20 THEN "Teenager"
-  WHEN < 30 THEN "Young Adult"
-  WHEN > 1000 THEN "Immortal"
-  ELSE "Adult"
-END AS result`;
+  CASE n.age
+    WHEN = 0, = 1, = 2 THEN "Baby"
+    WHEN <= 13 THEN "Child"
+    WHEN < 20 THEN "Teenager"
+    WHEN < 30 THEN "Young Adult"
+    WHEN > 1000 THEN "Immortal"
+    ELSE "Adult"
+  END AS result`;
     verifyFormatting(query, expected);
   });
 
@@ -648,10 +648,10 @@ WHERE CASE WHEN n["asdf"] IS STRING THEN n.prop ELSE 'default' END
 return n`;
     const expected = `MATCH (n)
 WHERE
-CASE
-  WHEN n["asdf"] IS STRING THEN n.prop
-  ELSE 'default'
-END
+  CASE
+    WHEN n["asdf"] IS STRING THEN n.prop
+    ELSE 'default'
+  END
 RETURN n`;
     verifyFormatting(query, expected);
   });
