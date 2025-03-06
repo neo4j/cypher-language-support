@@ -233,6 +233,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  endAllExceptBaseGroup = () => {
+    while (this.groupStack.length > 1) {
+      this.endGroup(this.groupStack.at(-1));
+    }
+  };
+
   startGroup = (): number => {
     this.startGroupCounter += 1;
     this.groupStack.push(this.groupID);
@@ -367,9 +373,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
       // which makes it very hard for the search to find a good solution.
       if (nodeLine !== commentLine) {
-        while (this.groupStack.length > 1) {
-          this.endGroup(this.groupStack.at(-1));
-        }
+        this.endAllExceptBaseGroup();
       }
       this.currentBuffer().push(chunk);
     }
@@ -982,9 +986,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    while (this.groupStack.length > 1) {
-      this.endGroup(this.groupStack.at(-1));
-    }
+    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
@@ -1026,9 +1028,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    while (this.groupStack.length > 1) {
-      this.endGroup(this.groupStack.at(-1));
-    }
+    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
     this.mustBreakBetween();
     this.visit(ctx.CASE());
