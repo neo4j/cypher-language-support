@@ -1,7 +1,3 @@
-/*
- * This file is a WIP of the second iteration of the Cypher formatter.
- */
-
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {

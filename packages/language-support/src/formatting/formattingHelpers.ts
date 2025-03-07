@@ -1,9 +1,3 @@
-/*
- * This file is a WIP of the second iteration of the Cypher formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
 import {
   CharStreams,
   CommonToken,
