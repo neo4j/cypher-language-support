@@ -213,7 +213,7 @@ END} AS endNode;`;
     verifyFormatting(query, expected);
   });
 
-  test('case statements were wrapping line occurs in a when statatement', () => {
+  test('case statements where wrapping line occurs in a when statement', () => {
     const query = `RETURN 
     CASE 
         WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN 'Medium Spender'
@@ -222,8 +222,8 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN
-         'Medium Spender'
+    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
+         THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
          SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
          'High Spender'
@@ -232,7 +232,7 @@ END} AS endNode;`;
     verifyFormatting(query, expected);
   });
 
-  test('extended case statements were wrapping line occurs in a when statatement', () => {
+  test('extended case statements where wrapping line occurs in a when statement', () => {
     const query = `RETURN 
     CASE p.age
         WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN 'Medium Spender'
@@ -241,8 +241,8 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE p.age
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500 THEN
-         'Medium Spender'
+    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
+         THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
          SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
          'High Spender'
@@ -269,9 +269,9 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     ELSE ""
   END, fk:
   CASE
-    WHEN true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true AND true THEN "(FK)"
+    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
+         true AND true AND true AND true AND true AND true AND true AND true AND
+         true AND true AND true THEN "(FK)"
     ELSE ""
   END}) AS columns`;
     verifyFormatting(query, expected);
