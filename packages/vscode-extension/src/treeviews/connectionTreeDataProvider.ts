@@ -161,7 +161,7 @@ export class ConnectionItem extends TreeItem {
       case 'connection':
         this.id = key;
         break;
-      case 'activeDatabase':
+      case 'activeDatabase': //nothing
       case 'database':
         this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
         this.iconPath = '.';
