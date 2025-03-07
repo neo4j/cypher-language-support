@@ -1031,9 +1031,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
+    const functionNameGrp = this.startGroup();
     this.visit(ctx.functionName());
+    this.endGroup(functionNameGrp);
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
     this.visit(ctx.LPAREN());
-    this.concatenate(); // Don't separate the function name and the (
+    this.avoidBreakBetween();
+    const invocationGrp = this.startGroup();
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
     }
@@ -1055,6 +1060,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.visit(ctx.RPAREN());
     this.endGroup(allFunctionArgsGrp);
+    this.endGroup(invocationGrp);
   };
 
   // Handled separately because we want ON CREATE before ON MATCH
