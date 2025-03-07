@@ -77,7 +77,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { buffersToFormattedString } from './formattingSolutionSearchv2';
+import { buffersToFormattedString } from './formattingSolutionSearch';
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
