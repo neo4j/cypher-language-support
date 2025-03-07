@@ -4,6 +4,7 @@
  * since it would be difficult to consolidate the new and the old version
  */
 
+import { formatQuery } from '../../formatting/formattingv2';
 import { verifyFormatting } from './testutilv2';
 
 describe('various edgecases', () => {
@@ -25,6 +26,13 @@ RETURN 3;`;
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
+  });
+
+  test('syntax error', () => {
+    const query = 'MATCH (n) RETRUN n.prop,';
+    expect(() => formatQuery(query)).toThrowError(
+      `Could not format due to syntax error at line 1:10 near "RETRUN"`,
+    );
   });
 
   test('apoc call, namespaced function', () => {
@@ -56,6 +64,14 @@ RETURN count(DISTINCT n, a)`;
   test('map projections', () => {
     const query = `RETURN this {.id,.title} AS this`;
     const expected = `RETURN this {.id, .title} AS this`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length in relationship pattern', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
     verifyFormatting(query, expected);
   });
 

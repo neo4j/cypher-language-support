@@ -135,6 +135,20 @@ RETURN 1,
        3`.trim();
     verifyFormatting(query, expected);
   });
+
+  test('multiple comments should not be moved to the previous line', () => {
+    const query = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+return n;`;
+    const expected = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+RETURN n;`.trim();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for line breaks with comments', () => {
