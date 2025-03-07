@@ -504,6 +504,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
     this.visitIfNotNull(ctx.DISTINCT());
+    this.avoidBreakBetween();
     const returnItemsGrp = this.startGroup();
     this.visit(ctx.returnItems());
     if (ctx.orderBy() || ctx.skip()) {

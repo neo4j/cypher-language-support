@@ -401,6 +401,24 @@ MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
 RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
+
+  test('should not break after DISTINCT that follows RETURN', () => {
+    const query = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
+WHERE abcde.zxcvbnml = "XyZpQ8Rt"
+RETURN DISTINCT
+abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml, fgh.qwertyuiopa,
+fgh.zxcvbnmasdfgh, fgh.zxcvbnml, ijk.qwertyuiopa, ijk.zxcvbnmasdfgh,
+ijk.zxcvbnml, lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
+ORDER BY lm.lkjhgfdswert ASC`;
+    const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
+WHERE abcde.zxcvbnml = "XyZpQ8Rt"
+RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
+                fgh.qwertyuiopa, fgh.zxcvbnmasdfgh, fgh.zxcvbnml,
+                ijk.qwertyuiopa, ijk.zxcvbnmasdfgh, ijk.zxcvbnml,
+                lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
+                ORDER BY lm.lkjhgfdswert ASC`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
