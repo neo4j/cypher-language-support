@@ -1,6 +1,6 @@
-import { cypher25Supported } from '../utils';
+import { cypher25Supported } from '../version';
 
-describe('utils tests', () => {
+describe('version tests', () => {
   test('cypher 25 should not be supported in 5.27.0', () => {
     expect(cypher25Supported('5.27.0')).toBe(false);
   });

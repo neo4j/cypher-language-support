@@ -1,5 +1,6 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
+  cypher25Supported,
   cypherVersions,
   DbSchema,
   Neo4jFunction,
@@ -15,7 +16,6 @@ import { listProcedures } from './queries/procedures.js';
 import { listRoles, Neo4jRole } from './queries/roles.js';
 import { listUsers, Neo4jUser } from './queries/users.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
-import { cypher25Supported } from './utils.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 

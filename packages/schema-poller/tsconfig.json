@@ -3,7 +3,6 @@
   "include": ["src"],
   "compilerOptions": {
     "strict": true,
-    "resolveJsonModule": true,
-    "types": ["vitest/globals"]
+    "resolveJsonModule": true
   }
 }
