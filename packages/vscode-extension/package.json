@@ -81,7 +81,9 @@
       },
       {
         "command": "neo4j.setParameter",
-        "title": "Neo4j: Set parameter"
+        "title": "Neo4j: Set parameter",
+        "category": "Neo4j",
+        "icon": "$(add)"
       }
     ],
     "keybindings": [
@@ -138,12 +140,21 @@
         {
           "command": "neo4j.editConnection",
           "when": "false"
+        },
+        {
+          "command": "neo4j.setParameter",
+          "when": "false"
         }
       ],
       "view/title": [
         {
           "command": "neo4j.createConnection",
           "when": "view == neo4jConnections",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.setParameter",
+          "when": "view == neo4jParameters",
           "group": "navigation"
         }
       ],
