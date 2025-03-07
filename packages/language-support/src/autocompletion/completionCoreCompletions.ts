@@ -11,6 +11,7 @@ import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   CallClauseContext,
   Expression2Context,
+  ShowCommandContext,
 } from '../generated-parser/CypherCmdParser';
 import {
   findParent,
@@ -41,6 +42,61 @@ const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 const versions = () =>
   _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
 
+const showItems: Record<string, string[]> = {
+  settings: [
+    'name',
+    'value',
+    'isDynamic',
+    'defaultValue',
+    'description',
+    'startupValue',
+    'isExplicitlySet',
+    'validValues',
+    'isDeprecated',
+  ],
+  database: [
+    'name',
+    'type',
+    'aliases',
+    'access',
+    'databaseID',
+    'serverID',
+    'address',
+    'role',
+    'writer',
+    'requestedStatus',
+    'currentStatus',
+    'statusMessage',
+    'default',
+    'home',
+    'currentPrimariesCount',
+    'currentSecondariesCount',
+    'requestedPrimariesCount',
+    'requestedSecondariesCount',
+    'creationTime',
+    'lastStartTime',
+    'lastStopTime',
+    'store',
+    'lastCommittedTxn',
+    'replicationLag',
+    'constituents',
+    'options',
+  ],
+  constraintCommand: [
+    'id',
+    'name',
+    'type',
+    'entityType',
+    'labelsOrTypes',
+    'properties',
+    'ownedIndex',
+    'propertyType',
+    'options',
+    'createStatement',
+  ],
+  currentUser: ['user', 'roles', 'passwordChangeRequired', 'suspended', 'home'],
+};
+
 function backtickIfNeeded(e: string): string | undefined {
   if (e == null || e == '') {
     return undefined;
@@ -60,6 +116,18 @@ function backtickDbNameIfNeeded(e: string): string | undefined {
     return undefined;
   }
 }
+
+const showCompletions = (showType: string) => {
+  const yieldItems = showItems[showType] ? showItems[showType] : [];
+  const result = yieldItems.map((yieldItem) => {
+    const result: CompletionItem = {
+      label: yieldItem,
+      kind: CompletionItemKind.EnumMember,
+    };
+    return result;
+  });
+  return result;
+};
 
 const versionCompletions = () =>
   versions().map((v) => {
@@ -493,6 +561,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_procedureResultItem,
     CypherParser.RULE_cypherVersion,
     CypherParser.RULE_cypher,
+    CypherParser.RULE_yieldItem,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -540,6 +609,24 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_cypherVersion) {
         return versionCompletions();
+      }
+
+      if (ruleNumber === CypherParser.RULE_yieldItem) {
+        const showCommand = findParent(
+          parsingResult.stopNode,
+          (x) => x instanceof ShowCommandContext,
+        );
+        if (showCommand instanceof ShowCommandContext) {
+          if (showCommand.showSettings()) {
+            return showCompletions('settings');
+          } else if (showCommand.showConstraintCommand()) {
+            return showCompletions('constraintCommand');
+          } else if (showCommand.showCurrentUser()) {
+            return showCompletions('currentUser');
+          } else if (showCommand.showDatabase()) {
+            return showCompletions('database');
+          }
+        }
       }
 
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
