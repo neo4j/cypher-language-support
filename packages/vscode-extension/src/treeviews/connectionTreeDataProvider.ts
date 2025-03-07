@@ -1,4 +1,5 @@
 import { Database } from '@neo4j-cypher/schema-poller';
+import path from 'path';
 import {
   Event,
   EventEmitter,
@@ -7,6 +8,7 @@ import {
   TreeItemCollapsibleState,
   Uri,
 } from 'vscode';
+import { CONSTANTS } from '../constants';
 import {
   Connection,
   getAllConnections,
@@ -29,8 +31,8 @@ export class ConnectionTreeDataProvider
   readonly onDidChangeTreeData: Event<ConnectionItem | undefined | void> =
     this._onDidChangeTreeData.event;
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
+  refresh(item?: ConnectionItem): void {
+    this._onDidChangeTreeData.fire(item);
   }
 
   getTreeItem(element: ConnectionItem): TreeItem | Thenable<TreeItem> {
@@ -74,7 +76,7 @@ export class ConnectionTreeDataProvider
             this.getConnectionName(connection),
             description,
             connection.state === 'active'
-              ? TreeItemCollapsibleState.Collapsed
+              ? TreeItemCollapsibleState.Expanded
               : TreeItemCollapsibleState.None,
             connection.key,
           ),
@@ -155,16 +157,103 @@ export class ConnectionItem extends TreeItem {
     super(label, collapsibleState);
     this.tooltip = label;
     this.contextValue = this.type;
-
+    this.command = {
+      title: 'onClickConnect',
+      command: CONSTANTS.COMMANDS.CONNECT_COMMAND,
+      arguments: [this],
+    };
     switch (type) {
       case 'activeConnection':
+        this.iconPath = {
+          light: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jActiveLight.svg',
+            ),
+          ),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jActiveDark.svg',
+            ),
+          ),
+        };
+        this.id = `${key}-${collapsibleState}`;
+        break;
       case 'connection':
-        this.id = key;
+        this.iconPath = {
+          light: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jInactiveLight.svg',
+            ),
+          ),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jInactiveDark.svg',
+            ),
+          ),
+        };
+        this.id = `${key}-${collapsibleState}`;
         break;
       case 'activeDatabase':
+        this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
+        this.iconPath = {
+          light: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'ConnectedLight.svg',
+            ),
+          ),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'ConnectedDark.svg',
+            ),
+          ),
+        };
+        break;
       case 'database':
         this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
-        this.iconPath = '.';
+        this.iconPath = {
+          light: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'DisconnectedLight.svg',
+            ),
+          ),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'DisconnectedDark.svg',
+            ),
+          ),
+        };
         break;
     }
   }
