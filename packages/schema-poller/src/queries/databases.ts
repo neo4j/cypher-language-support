@@ -41,7 +41,7 @@ export type Database = {
 export function listDatabases(): ExecuteQueryArgs<{
   databases: Database[];
 }> {
-  const query = 'SHOW DATABASES';
+  const query = 'SHOW DATABASES YIELD *';
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
