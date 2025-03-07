@@ -1,10 +1,4 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('should not forget to include all comments', () => {
   test('property comments', () => {
@@ -133,6 +127,20 @@ RETURN 1,
        2,
        // Second comment
        3`.trim();
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple comments should not be moved to the previous line', () => {
+    const query = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+return n;`;
+    const expected = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+RETURN n;`.trim();
     verifyFormatting(query, expected);
   });
 });

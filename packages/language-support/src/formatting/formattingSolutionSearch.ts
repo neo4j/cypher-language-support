@@ -1,7 +1,3 @@
-/*
- * This file is a WIP of the second iteration of the Cypher formatter.
- */
-
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
@@ -9,7 +5,7 @@ import {
   isCommentBreak,
   MAX_COL,
   RegularChunk,
-} from './formattingHelpersv2';
+} from './formattingHelpers';
 
 const errorMessage = `
 Internal formatting error: An unexpected issue occurred while formatting.
