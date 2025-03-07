@@ -4,7 +4,7 @@
  * since it would be difficult to consolidate the new and the old version
  */
 
-import { formatQuery } from '../../formatting/formattingv2';
+import { formatQuery } from '../../formatting/formatting';
 import { verifyFormatting } from './testutil';
 
 describe('various edgecases', () => {

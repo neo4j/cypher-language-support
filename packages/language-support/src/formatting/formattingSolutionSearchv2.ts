@@ -9,7 +9,7 @@ import {
   isCommentBreak,
   MAX_COL,
   RegularChunk,
-} from './formattingHelpersv2';
+} from './formattingHelpers';
 
 const errorMessage = `
 Internal formatting error: An unexpected issue occurred while formatting.

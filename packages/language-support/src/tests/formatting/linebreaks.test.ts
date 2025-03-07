@@ -4,8 +4,8 @@
  * since it would be difficult to consolidate the new and the old version
  */
 
-import { MAX_COL } from '../../formatting/formattingHelpersv2';
-import { formatQuery } from '../../formatting/formattingv2';
+import { formatQuery } from '../../formatting/formatting';
+import { MAX_COL } from '../../formatting/formattingHelpers';
 import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {

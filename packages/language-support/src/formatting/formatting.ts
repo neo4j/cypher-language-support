@@ -76,7 +76,7 @@ import {
   RegularChunk,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
-} from './formattingHelpersv2';
+} from './formattingHelpers';
 import { buffersToFormattedString } from './formattingSolutionSearchv2';
 
 interface RawTerminalOptions {
