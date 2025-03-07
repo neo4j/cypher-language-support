@@ -3,7 +3,10 @@ export { autocomplete } from './autocompletion/autocompletion';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
-export { formatQuery } from './formatting/formatting';
+export {
+  formatQuery,
+  formatQuery as formatQueryExperimental,
+} from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
