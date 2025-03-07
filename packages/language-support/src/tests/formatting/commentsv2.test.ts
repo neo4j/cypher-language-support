@@ -481,4 +481,34 @@ RETURN *
 LIMIT "6pkMe6Kx"`;
     verifyFormatting(query, expected);
   });
+
+  test('comment directly after outermost group should not break alignment for clauses', () => {
+    const query = `
+USE // Specifies the graph or database to use
+    graph
+MATCH // Matches patterns in the graph
+      (m)-[:RELATION]->(n)
+MERGE // Ensures a pattern exists in the graph
+      (p:Person {name: "Alice"})
+CREATE // Creates new nodes or relationships
+       (q:Person {name: "Bob"})-[:KNOWS]->(p)
+DELETE // Deletes nodes or relationships
+       r
+WITH // Passes results to the next clause
+     p, q
+UNWIND // Expands lists into multiple rows
+       [1, 2, 3] AS num;`;
+    const expected = query.trim();
+    verifyFormatting(query, expected);
+  });
+
+  test('two comments after a clause should not break alignment', () => {
+    const query = `
+MATCH // One comment.
+      // Another comment. Really?
+      (m)-[:RELATION]->(n)
+RETURN m, n`.trim();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
