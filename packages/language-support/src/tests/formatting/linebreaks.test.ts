@@ -6,7 +6,7 @@
 
 import { MAX_COL } from '../../formatting/formattingHelpersv2';
 import { formatQuery } from '../../formatting/formattingv2';
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
   const q0 = `

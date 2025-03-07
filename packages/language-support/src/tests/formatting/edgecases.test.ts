@@ -5,7 +5,7 @@
  */
 
 import { formatQuery } from '../../formatting/formattingv2';
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('various edgecases', () => {
   test('Should be space in between', () => {
