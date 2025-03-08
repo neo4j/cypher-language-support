@@ -1,7 +1,9 @@
 import {
+  getPropertyTypeDisplayName,
   Neo4jType,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
+import { CypherBasicPropertyType } from '@neo4j-cypher/schema-poller/dist/cjs/src/types/cypher-data-types';
 import { window } from 'vscode';
 import { getSchemaPoller } from './contextService';
 import { parametersManager } from './treeviews/parametersTreeProvider';
@@ -39,8 +41,11 @@ export async function setParameter(): Promise<void> {
     }
     const resultEntries = Object.values(record.toObject());
     const param = resultEntries[0] as Neo4jType;
+    const type = getPropertyTypeDisplayName(
+      resultEntries[0] as CypherBasicPropertyType,
+    );
     const serializedValue = serializeTypeAnnotations(param);
-    await parameters.set(key, serializedValue);
+    await parameters.set(key, serializedValue, type);
   }
 }
 

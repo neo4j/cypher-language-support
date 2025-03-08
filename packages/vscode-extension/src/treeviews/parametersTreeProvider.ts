@@ -1,26 +1,13 @@
-import { deserializeTypeAnnotations } from '@neo4j-cypher/schema-poller';
+import {
+  CypherDataTypeName,
+  deserializeTypeAnnotations,
+} from '@neo4j-cypher/schema-poller';
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
 import { getExtensionContext } from '../contextService';
 import { sendNotificationToLanguageClient } from '../languageClientService';
 
 export const PARAMETERS = 'neo4j.parameters';
-
-export const PARAMETER_TYPE_STRING = 'STRING'; // will keep value
-export const PARAMETER_TYPE_INT = 'INT'; // neo4j.int(value)
-export const PARAMETER_TYPE_FLOAT = 'FLOAT'; // parseFloat(value)
-export const PARAMETER_TYPE_OBJECT = 'JSON or OBJECT'; // JSON.parse(value)
-export const PARAMETER_TYPE_NULL = 'NULL'; // null
-
-export const parameterTypes = [
-  PARAMETER_TYPE_STRING,
-  PARAMETER_TYPE_INT,
-  PARAMETER_TYPE_FLOAT,
-  PARAMETER_TYPE_OBJECT,
-  PARAMETER_TYPE_NULL,
-] as const;
-
-export type ParameterType = (typeof parameterTypes)[number];
 
 interface INode {
   getTreeItem(): Promise<vscode.TreeItem> | vscode.TreeItem;
@@ -31,6 +18,7 @@ interface INode {
 export interface Parameter {
   key: string;
   value: unknown;
+  type: CypherDataTypeName;
 }
 
 export class ParameterManager {
@@ -91,10 +79,10 @@ export class ParameterManager {
     return Object.keys(parameters);
   }
 
-  async set(key: string, value: unknown) {
+  async set(key: string, value: unknown, type: CypherDataTypeName) {
     const parameters = this.getState();
 
-    parameters[key.trim()] = { key: key.trim(), value };
+    parameters[key.trim()] = { key: key.trim(), value, type };
 
     await this.updateState(parameters);
 
@@ -110,9 +98,11 @@ class ParameterTreeItem implements INode {
   }
 
   getTreeItem(): TreeItem | Promise<TreeItem> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const value = deserializeTypeAnnotations(this.parameter.value);
     return {
       id: this.parameter.key,
-      label: `${this.parameter.key}`,
+      label: `${this.parameter.key}: ${value} (${this.parameter.type})`,
       contextValue: 'parameter',
       // TODO Nacho What is this?
       iconPath: '',
