@@ -9,7 +9,7 @@ import {
   switchToDatabase,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers';
-import { setParameter } from './commandHandlersParams';
+import { clearParameters, setParameter } from './commandHandlersParams';
 import { CONSTANTS } from './constants';
 import {
   ConnectionItem,
@@ -80,6 +80,10 @@ export function registerDisposables(): Disposable[] {
       cypherFileFromSelection,
     ),
     commands.registerCommand(CONSTANTS.COMMANDS.SET_PARAMETER, setParameter),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.CLEAR_PARAMETERS,
+      clearParameters,
+    ),
   );
 
   return disposables;

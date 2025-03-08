@@ -11,6 +11,7 @@ export const CONSTANTS = {
     RUN_CYPHER: 'neo4j.runCypher',
     CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
     SET_PARAMETER: 'neo4j.setParameter',
+    CLEAR_PARAMETERS: 'neo4j.clearParameters',
   },
   MESSAGES: {
     CONNECTED_MESSAGE: 'Connected to Neo4j.',

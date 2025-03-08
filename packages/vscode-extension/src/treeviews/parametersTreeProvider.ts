@@ -1,4 +1,4 @@
-import { int } from 'neo4j-driver';
+import { deserializeTypeAnnotations } from '@neo4j-cypher/schema-poller';
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
 import { getExtensionContext } from '../contextService';
@@ -30,23 +30,7 @@ interface INode {
 
 export interface Parameter {
   key: string;
-  value: string;
-  type: ParameterType;
-}
-
-function convertParameter(parameter: Parameter): [string, unknown] {
-  switch (parameter.type) {
-    case PARAMETER_TYPE_NULL:
-      return [parameter.key, null];
-    case PARAMETER_TYPE_INT:
-      return [parameter.key, int(parameter.value)];
-    case PARAMETER_TYPE_FLOAT:
-      return [parameter.key, parseFloat(parameter.value)];
-    case PARAMETER_TYPE_OBJECT:
-      return [parameter.key, JSON.parse(parameter.value)];
-    default:
-      return [parameter.key, parameter.value];
-  }
+  value: unknown;
 }
 
 export class ParameterManager {
@@ -92,11 +76,13 @@ export class ParameterManager {
   asParameters(): Record<string, unknown> {
     const parameters = this.getState();
 
-    return Object.fromEntries(
-      Object.values(parameters).map((param: Parameter) =>
-        convertParameter(param),
-      ),
+    const res = Object.fromEntries(
+      Object.values(parameters).map((p) => [
+        p.key,
+        deserializeTypeAnnotations(p.value),
+      ]),
     );
+    return res;
   }
 
   keys(): string[] {
@@ -105,28 +91,14 @@ export class ParameterManager {
     return Object.keys(parameters);
   }
 
-  async set(
-    key: string,
-    value: string,
-    type: ParameterType = PARAMETER_TYPE_STRING,
-  ) {
+  async set(key: string, value: unknown) {
     const parameters = this.getState();
 
-    parameters[key.trim()] = { key: key.trim(), value, type };
+    parameters[key.trim()] = { key: key.trim(), value };
 
     await this.updateState(parameters);
 
     await vscode.window.showInformationMessage(`Parameter \`${key}\` set.`);
-  }
-
-  async remove(key: string) {
-    const parameters = this.getState();
-
-    delete parameters[key];
-
-    await this.updateState(parameters);
-
-    await vscode.window.showInformationMessage(`Parameter \`${key}\` removed.`);
   }
 }
 
@@ -140,7 +112,7 @@ class ParameterTreeItem implements INode {
   getTreeItem(): TreeItem | Promise<TreeItem> {
     return {
       id: this.parameter.key,
-      label: `${this.parameter.key}: ${this.parameter.value} (${this.parameter.type})`,
+      label: `${this.parameter.key}`,
       contextValue: 'parameter',
       // TODO Nacho What is this?
       iconPath: '',
