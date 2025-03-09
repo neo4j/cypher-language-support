@@ -27,6 +27,15 @@ export class Neo4jSchemaPoller {
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
+  private parameters: Record<string, unknown> = {};
+
+  setParameters(parameters: Record<string, unknown>) {
+    this.parameters = parameters;
+
+    if (this.metadata) {
+      this.metadata.dbSchema.parameters = parameters;
+    }
+  }
 
   async connect(
     url: string,
@@ -163,7 +172,12 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    this.metadata = new MetadataPoller(databases, this.connection, this.events);
+    this.metadata = new MetadataPoller(
+      databases,
+      this.parameters,
+      this.connection,
+      this.events,
+    );
     this.metadata.startBackgroundPolling();
   }
 
