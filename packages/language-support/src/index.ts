@@ -7,7 +7,12 @@ export { formatQuery } from './formatting/formatting';
 export { formatQuery as formatQueryExperimental } from './formatting/formattingv2';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
+export {
+  parse,
+  parseParam,
+  parserWrapper,
+  parseStatementsStrs,
+} from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

@@ -4,6 +4,7 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { DbSchema } from './dbSchema';
 import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
@@ -29,7 +30,10 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import {
+  lintCypherQuery,
+  SyntaxDiagnostic,
+} from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import { CypherVersion, cypherVersionNumbers, cypherVersions } from './types';
 
@@ -166,6 +170,27 @@ export function parse(query: string): StatementOrCommandContext[] {
   );
 
   return result;
+}
+
+type ParamParsing = {
+  key: string;
+  value: string;
+  errors: SyntaxDiagnostic[];
+};
+
+export function parseParam(param: string, dbSchema: DbSchema): ParamParsing {
+  const errors = lintCypherQuery(`:param ${param}`, dbSchema);
+  if (errors) {
+    return { key: '', value: '', errors };
+  }
+  const inputStream = CharStreams.fromString(param);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const parser = new CypherParser(tokenStream);
+  const p = parser.lambda();
+  const key = p.parameterName().getText();
+  const value = p.expression().getText();
+  return { key, value, errors };
 }
 
 export function createParsingResult(query: string): ParsingResult {
