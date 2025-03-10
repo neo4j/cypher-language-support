@@ -141,21 +141,24 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
       const baseGroup = curr.activeGroups[0];
       finalIndent = baseGroup ? baseGroup.align : nextBaseIndent;
     }
-    // Case 2: Special indentation with active groups
+    // Case 2: Special indentation, used with CASE
+    // Aligns as usual if more than one group exists
+    // else indents as specified in state
     else if (curr.indentationState.special !== 0) {
       finalIndent =
         curr.activeGroups.length > 1
           ? curr.activeGroups.at(-1).align
           : curr.indentationState.special;
-      // Case 3: align indentation
+      // Case 3: Currently only for EXISTS,
+      // Aaligning with base group plus indentation
     } else if (curr.indentationState.align.length > 0) {
-      if (curr.activeGroups.length === 0) {
-        finalIndent = align.at(-1) + INDENTATION;
-      } else if (curr.activeGroups.length > 0) {
-        finalIndent = curr.activeGroups.at(-1).align;
-      }
+      finalIndent =
+        curr.activeGroups.length > 0
+          ? curr.activeGroups.at(-1).align
+          : align.at(-1) + INDENTATION;
     }
-    // Case 4: Active groups exist
+    // Case 4: No special indentation rules applied,
+    // Align with latest added active group
     else if (curr.activeGroups.length > 0) {
       finalIndent = curr.activeGroups.at(-1).align;
     }
