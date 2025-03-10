@@ -600,7 +600,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitLabelExpression = (ctx: LabelExpressionContext) => {
     this.visitRawIfNotNull(ctx.COLON());
     if (ctx.IS()) {
-      this.visitIfNotNull(ctx.IS());
+      this.visit(ctx.IS());
     } else {
       this.avoidSpaceBetween();
     }
