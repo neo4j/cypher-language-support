@@ -147,7 +147,7 @@ function getIndentations(curr: State, choice: Choice): Indentations {
         curr.activeGroups.length > 1
           ? curr.activeGroups.at(-1).align
           : curr.indentationState.special;
-      // Case 42: align indentation
+      // Case 3: align indentation
     } else if (curr.indentationState.align.length > 0) {
       if (curr.activeGroups.length === 0) {
         finalIndent = align.at(-1) + INDENTATION;
@@ -155,7 +155,7 @@ function getIndentations(curr: State, choice: Choice): Indentations {
         finalIndent = curr.activeGroups.at(-1).align;
       }
     }
-    // Case 3: Active groups exist
+    // Case 4: Active groups exist
     else if (curr.activeGroups.length > 0) {
       finalIndent = curr.activeGroups.at(-1).align;
     }
