@@ -109,6 +109,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   breakLine = () => {
+    // This is a workaround because group does not translate between chunk lists
     if (this.groupsToEndOnBreak.length > 0) {
       this.endGroup(this.groupsToEndOnBreak.pop());
     }
@@ -1029,6 +1030,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
+      // This is a workaround because group does not translate between chunk lists
       const endOfExistGroup = this.startGroup();
       this.visit(ctx.RCURLY());
       this.removeAlignIndentation();
