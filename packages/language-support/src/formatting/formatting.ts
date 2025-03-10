@@ -105,6 +105,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   currentBuffer = () => this.buffers.at(-1);
 
+  lastInCurrentBuffer = () => this.currentBuffer().at(-1);
+
   breakLine = () => {
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
@@ -194,16 +196,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   doubleBreakBetween = (): void => {
     if (this.currentBuffer().length > 0) {
-      this.currentBuffer().at(-1).doubleBreak = true;
+      this.lastInCurrentBuffer().doubleBreak = true;
     }
   };
 
   doubleBreakBetweenNonComment = (): void => {
     if (
       this.currentBuffer().length > 0 &&
-      this.currentBuffer().at(-1).type !== 'COMMENT'
+      this.lastInCurrentBuffer().type !== 'COMMENT'
     ) {
-      this.currentBuffer().at(-1).doubleBreak = true;
+      this.lastInCurrentBuffer().doubleBreak = true;
     }
   };
 
@@ -225,7 +227,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   removeAllGroups = () => {
-    for (let i = 0; i < this.currentBuffer().at(-1).groupsStarting; i++) {
+    for (let i = 0; i < this.lastInCurrentBuffer().groupsStarting; i++) {
       this.groupStack.pop();
     }
   };
@@ -244,7 +246,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroupAlsoOnComment = (): number => {
-    if (this.currentBuffer().at(-1).type === 'COMMENT') {
+    if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
       this.currentBuffer().at(idx + 1).groupsStarting = 1;
       this.groupStack.push(this.groupID);
@@ -255,7 +257,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   addIndentation = () => {
-    this.currentBuffer().at(-1).modifyIndentation += 1;
+    this.lastInCurrentBuffer().modifyIndentation += 1;
   };
 
   removeIndentation = () => {
@@ -264,11 +266,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   addSpecialIndentation = () => {
-    this.currentBuffer().at(-1).specialIndentation += 1;
+    this.lastInCurrentBuffer().specialIndentation += 1;
   };
 
   removeSpecialIndentation = () => {
-    this.currentBuffer().at(-1).specialIndentation -= 1;
+    this.lastInCurrentBuffer().specialIndentation -= 1;
   };
 
   findBottomChild = (
@@ -408,7 +410,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this.visit(ctx.statementOrCommand(i));
       if (i < n - 1 || ctx.SEMICOLON(i)) {
-        if (this.currentBuffer().at(-1).text === '\n') {
+        if (this.lastInCurrentBuffer().text === '\n') {
           this.currentBuffer().pop();
         }
         this.visit(ctx.SEMICOLON(i));
@@ -1033,7 +1035,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.mustBreakBetween();
     this.visit(ctx.CASE());
     this.removeAllGroups();
-    this.currentBuffer().at(-1).groupsStarting = 0;
+    this.lastInCurrentBuffer().groupsStarting = 0;
     const caseGroup = this.startGroup();
     const n = ctx.caseAlternative_list().length;
     this.addSpecialIndentation();
@@ -1076,7 +1078,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.CASE());
     this.removeAllGroups();
     this.avoidBreakBetween();
-    this.currentBuffer().at(-1).groupsStarting = 0;
+    this.lastInCurrentBuffer().groupsStarting = 0;
     this.visit(ctx.expression(0));
     const extendedCaseGrp = this.startGroup();
     this.mustBreakBetween();
