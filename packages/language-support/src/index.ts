@@ -3,12 +3,7 @@ export { autocomplete } from './autocompletion/autocompletion';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
-export {
-  formatQuery,
-  // Currently, the experimental version is the same as the regular version. Keeping it here rather
-  // than removing it since we are likely to reintroduce an experimental version soon.
-  formatQuery as formatQueryExperimental,
-} from './formatting/formatting';
+export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
