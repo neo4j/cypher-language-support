@@ -2,21 +2,23 @@ import {
   createConnection,
   Diagnostic,
   DidChangeConfigurationNotification,
+  DocumentFormattingParams,
   InitializeResult,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
+  TextEdit,
 } from 'vscode-languageserver/node';
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
-
 import {
+  formatQuery,
   syntaxColouringLegend,
   _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { doAutoCompletion } from './autocompletion';
 import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
@@ -79,6 +81,7 @@ connection.onInitialize(() => {
       signatureHelpProvider: {
         triggerCharacters: ['(', ',', ')'],
       },
+      documentFormattingProvider: true,
     },
   };
 
@@ -127,6 +130,32 @@ connection.onNotification(
   (connectionSettings: Neo4jConnectionSettings) => {
     changeConnection(connectionSettings);
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
+  },
+);
+
+connection.onDocumentFormatting(
+  (params: DocumentFormattingParams): TextEdit[] => {
+    const document = documents.get(params.textDocument.uri);
+    if (!document) {
+      return [];
+    }
+
+    const text = document.getText();
+    const formattedText = formatQuery(text);
+
+    if (text === formattedText) {
+      return [];
+    }
+
+    return [
+      TextEdit.replace(
+        {
+          start: { line: 0, character: 0 },
+          end: { line: document.lineCount, character: 0 },
+        },
+        formattedText,
+      ),
+    ];
   },
 );
 
