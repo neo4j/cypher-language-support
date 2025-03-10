@@ -279,7 +279,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   addAlignIndentation = () => {
-    this.currentBuffer().at(-1).alignIndentation += 1;
+    this.lastInCurrentBuffer().alignIndentation += 1;
   };
 
   removeAlignIndentation = () => {
