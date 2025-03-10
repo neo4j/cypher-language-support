@@ -128,8 +128,11 @@ function getIndentations(curr: State, choice: Choice): Indentations {
   const nextSpecialIndent =
     curr.indentationState.special +
     choice.left.specialIndentation * INDENTATION;
-
   let finalIndent = currBaseIndent;
+  const align = [...curr.indentationState.align];
+  if (choice.left.alignIndentation > 0) {
+    align.push(curr.activeGroups.at(0).align);
+  }
 
   // Only apply indentation at the start of a line (column === 0)
   if (curr.column === 0) {
@@ -144,6 +147,13 @@ function getIndentations(curr: State, choice: Choice): Indentations {
         curr.activeGroups.length > 1
           ? curr.activeGroups.at(-1).align
           : curr.indentationState.special;
+      // Case 42: align indentation
+    } else if (curr.indentationState.align.length > 0) {
+      if (curr.activeGroups.length === 0) {
+        finalIndent = align.at(-1) + INDENTATION;
+      } else if (curr.activeGroups.length > 0) {
+        finalIndent = curr.activeGroups.at(-1).align;
+      }
     }
     // Case 3: Active groups exist
     else if (curr.activeGroups.length > 0) {
@@ -154,13 +164,16 @@ function getIndentations(curr: State, choice: Choice): Indentations {
     // When not at the start of a line, no indentation
     finalIndent = 0;
   }
+  if (choice.left.alignIndentation < 0) {
+    finalIndent = align.pop();
+  }
 
   return {
     finalIndentation: finalIndent,
     indentationState: {
-      align: curr.indentationState.align,
       base: nextBaseIndent,
       special: nextSpecialIndent,
+      align: align,
     },
   };
 }
