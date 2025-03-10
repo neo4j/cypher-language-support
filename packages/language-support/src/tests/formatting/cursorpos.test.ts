@@ -1,10 +1,4 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { formatQuery } from '../../formatting/formattingv2';
+import { formatQuery } from '../../formatting/formatting';
 
 // The @ represents the position of the cursor
 describe('tests for correct cursor position', () => {

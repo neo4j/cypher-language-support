@@ -1,7 +1,3 @@
-/*
- * This file is a WIP of the second iteration of the Cypher formatter.
- */
-
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
@@ -9,7 +5,7 @@ import {
   isCommentBreak,
   MAX_COL,
   RegularChunk,
-} from './formattingHelpersv2';
+} from './formattingHelpers';
 
 const errorMessage = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -49,6 +45,7 @@ export interface State {
   column: number;
   choiceIndex: number;
   baseIndentation: number;
+  specialIndentation: number;
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
@@ -63,11 +60,18 @@ export interface Result {
   cost: number;
   decisions: Decision[];
   indentation: number;
+  specialIndentation: number;
 }
 
 interface FinalResultWithPos {
   formattedString: string;
   cursorPos: number;
+}
+
+interface Indentations {
+  finalIndentation: number;
+  nextBaseIndentation: number;
+  nextSpecialIndentation: number;
 }
 
 type FinalResult = string | FinalResultWithPos;
@@ -101,6 +105,7 @@ const emptyChunk: RegularChunk = {
   groupsStarting: 0,
   groupsEnding: 0,
   modifyIndentation: 0,
+  specialIndentation: 0,
 };
 
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
@@ -112,22 +117,44 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getIndentations(curr: State, choice: Choice): [number, number] {
+function getIndentations(curr: State, choice: Choice): Indentations {
   const currBaseIndent = curr.baseIndentation;
   const nextBaseIndent =
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
-  let finalIndent = curr.column === 0 ? currBaseIndent : 0;
-  if (curr.activeGroups.length > 0 && curr.column === 0) {
-    finalIndent = curr.activeGroups.at(-1).align;
+  const nextSpecialIndent =
+    curr.specialIndentation + choice.left.specialIndentation * INDENTATION;
+
+  let finalIndent = currBaseIndent;
+
+  // Only apply indentation at the start of a line (column === 0)
+  if (curr.column === 0) {
+    // Case 1: Hard-break comments align with base group or base indentation
+    if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
+      const baseGroup = curr.activeGroups[0];
+      finalIndent = baseGroup ? baseGroup.align : nextBaseIndent;
+    }
+    // Case 2: Special indentation with active groups
+    else if (curr.specialIndentation !== 0) {
+      finalIndent =
+        curr.activeGroups.length > 1
+          ? curr.activeGroups.at(-1).align
+          : curr.specialIndentation;
+    }
+    // Case 3: Active groups exist
+    else if (curr.activeGroups.length > 0) {
+      finalIndent = curr.activeGroups.at(-1).align;
+    }
+    // Default case is already set to currBaseIndent
+  } else {
+    // When not at the start of a line, no indentation
+    finalIndent = 0;
   }
 
-  // Align hard-break comments with the outermost group (usually the one that
-  // aligns things with a clause)
-  if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
-    const lastGroup = curr.activeGroups.at(0);
-    finalIndent = lastGroup ? lastGroup.align : nextBaseIndent;
-  }
-  return [nextBaseIndent, finalIndent];
+  return {
+    nextBaseIndentation: nextBaseIndent,
+    nextSpecialIndentation: nextSpecialIndent,
+    finalIndentation: finalIndent,
+  };
 }
 
 // Very useful for debugging but not actually used in the code
@@ -145,9 +172,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
 
-  const [nextBaseIndent, finalIndent] = getIndentations(curr, choice);
+  const { nextBaseIndentation, nextSpecialIndentation, finalIndentation } =
+    getIndentations(curr, choice);
 
-  const actualColumn = curr.column === 0 ? finalIndent : curr.column;
+  const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const leftLength =
     choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
@@ -186,13 +214,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
-    baseIndentation: nextBaseIndent,
+    baseIndentation: nextBaseIndentation,
     cost: curr.cost + extraCost,
+    specialIndentation: nextSpecialIndentation,
     overflowingCount: curr.overflowingCount + overflowingCount,
     edge: {
       prevState: curr,
       decision: {
-        indentation: finalIndent,
+        indentation: finalIndentation,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
@@ -213,6 +242,7 @@ function reconstructBestPath(state: State): Result {
     cost: state.cost,
     decisions,
     indentation: state.baseIndentation,
+    specialIndentation: state.specialIndentation,
   };
 }
 
@@ -327,6 +357,9 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   }
 
   if (chunk.type === 'REGULAR') {
+    if (chunk.mustBreak) {
+      return onlyBreakSplit;
+    }
     const noSpace = doesNotWantSpace(chunk, nextChunk);
 
     if (noSpace) {
@@ -358,6 +391,7 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation: number = 0;
+  let specialIndentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
@@ -368,11 +402,13 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       baseIndentation: indentation,
       cost: 0,
+      specialIndentation: specialIndentation,
       overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
+    specialIndentation = result.specialIndentation;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {
@@ -382,7 +418,7 @@ export function buffersToFormattedString(
       formatted += formattingResult.formattedString + '\n';
     }
   }
-  if (indentation > 0) {
+  if (indentation !== 0 || specialIndentation !== 0) {
     throw new Error(errorMessage);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };

@@ -1,12 +1,6 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { MAX_COL } from '../../formatting/formattingHelpersv2';
-import { formatQuery } from '../../formatting/formattingv2';
-import { verifyFormatting } from './testutilv2';
+import { formatQuery } from '../../formatting/formatting';
+import { MAX_COL } from '../../formatting/formattingHelpers';
+import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
   const q0 = `
@@ -320,9 +314,11 @@ RETURN p`;
   });
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
-    const expected = `RETURN collect(create_this1 {datetime: apoc.date.convertFormat(
-               toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g")})
-       AS data`;
+    const expected = `
+RETURN collect(create_this1
+               {datetime:
+                apoc.date.convertFormat(toString(create_this1.datetime),
+                                        "OZQvXyoU", "EhpkDy8g")}) AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -397,6 +393,24 @@ MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
       [:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
       [:NEXT]->*(l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`.trim();
+    verifyFormatting(query, expected);
+  });
+
+  test('should not break after DISTINCT that follows RETURN', () => {
+    const query = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
+WHERE abcde.zxcvbnml = "XyZpQ8Rt"
+RETURN DISTINCT
+abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml, fgh.qwertyuiopa,
+fgh.zxcvbnmasdfgh, fgh.zxcvbnml, ijk.qwertyuiopa, ijk.zxcvbnmasdfgh,
+ijk.zxcvbnml, lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
+ORDER BY lm.lkjhgfdswert ASC`;
+    const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
+WHERE abcde.zxcvbnml = "XyZpQ8Rt"
+RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
+                fgh.qwertyuiopa, fgh.zxcvbnmasdfgh, fgh.zxcvbnml,
+                ijk.qwertyuiopa, ijk.zxcvbnmasdfgh, ijk.zxcvbnml,
+                lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
+                ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 });

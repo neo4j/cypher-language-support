@@ -1,10 +1,4 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('styleguide examples', () => {
   test('on match indentation example', () => {
@@ -255,11 +249,11 @@ ELSE 3
 END AS result, n.eyes, n.age`;
     const expected = `MATCH (n:Person)
 RETURN
-CASE
-  WHEN n.eyes = 'blue' THEN 1
-  WHEN n.age < 40 THEN 2
-  ELSE 3
-END AS result, n.eyes, n.age`;
+  CASE
+    WHEN n.eyes = 'blue' THEN 1
+    WHEN n.age < 40 THEN 2
+    ELSE 3
+  END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -274,14 +268,14 @@ ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
 RETURN n.name,
-CASE n.age
-  WHEN = 0, = 1, = 2 THEN "Baby"
-  WHEN <= 13 THEN "Child"
-  WHEN < 20 THEN "Teenager"
-  WHEN < 30 THEN "Young Adult"
-  WHEN > 1000 THEN "Immortal"
-  ELSE "Adult"
-END AS result`;
+  CASE n.age
+    WHEN = 0, = 1, = 2 THEN "Baby"
+    WHEN <= 13 THEN "Child"
+    WHEN < 20 THEN "Teenager"
+    WHEN < 30 THEN "Young Adult"
+    WHEN > 1000 THEN "Immortal"
+    ELSE "Adult"
+  END AS result`;
     verifyFormatting(query, expected);
   });
 
