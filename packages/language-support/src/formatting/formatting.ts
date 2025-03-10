@@ -273,7 +273,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.lastInCurrentBuffer().specialIndentation -= 1;
   };
 
-  findBottomChild = (
+  getBottomChild = (
     ctx: ParserRuleContext | TerminalNode,
     side: 'before' | 'after',
   ): TerminalNode => {
@@ -285,7 +285,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (child instanceof TerminalNode) {
       return child;
     } else if (child instanceof ParserRuleContext) {
-      return this.findBottomChild(child, side);
+      return this.getBottomChild(child, side);
     }
     throw new Error('Internal formatting error in findBottomChild');
   };
@@ -302,7 +302,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ctx: ParserRuleContext,
     side: 'before' | 'after',
   ) => {
-    const bottomChild = this.findBottomChild(ctx, side);
+    const bottomChild = this.getBottomChild(ctx, side);
     const token = bottomChild.symbol;
     const hiddenTokens =
       side === 'before'
