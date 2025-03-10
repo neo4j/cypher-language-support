@@ -90,7 +90,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupID = 0;
   groupStack: number[] = [];
   startGroupCounter = 0;
-  shouldEndOnNext: number[] = [];
+  groupsToEndOnBreak: number[] = [];
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -109,8 +109,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   breakLine = () => {
-    if (this.shouldEndOnNext.length > 0) {
-      this.endGroup(this.shouldEndOnNext.pop());
+    if (this.groupsToEndOnBreak.length > 0) {
+      this.endGroup(this.groupsToEndOnBreak.pop());
     }
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
@@ -1032,7 +1032,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const endOfExistGroup = this.startGroup();
       this.visit(ctx.RCURLY());
       this.removeAlignIndentation();
-      this.shouldEndOnNext.push(endOfExistGroup);
+      this.groupsToEndOnBreak.push(endOfExistGroup);
     } else {
       this.visitIfNotNull(ctx.matchMode());
       this.visit(ctx.patternList());
