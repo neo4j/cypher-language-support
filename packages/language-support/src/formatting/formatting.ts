@@ -571,9 +571,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReduceExpression = (ctx: ReduceExpressionContext) => {
-    const reduceExprGrp = this.startGroup();
     this.visitTerminalRaw(ctx.REDUCE());
     this.visit(ctx.LPAREN());
+    const reduceExprGrp = this.startGroup();
     this.visit(ctx.variable(0));
     this.visit(ctx.EQ());
     this.visit(ctx.expression(0));
