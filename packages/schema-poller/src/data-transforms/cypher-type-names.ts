@@ -142,8 +142,6 @@ export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
     return 'Path';
   }
 
-  // We should have only maps left, but if neo4j adds a new type that's no longer true.
-  // So we'll just return unknown for maps
-
-  return 'Unknown';
+  // TODO Nacho: this was `Unknown` in the upx code. What should we do here?
+  return 'Map';
 }

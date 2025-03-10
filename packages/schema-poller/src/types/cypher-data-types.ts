@@ -6,6 +6,7 @@ import type {
   LocalDateTime,
   LocalTime,
   Node,
+  NumberOrInteger,
   Path,
   Point,
   Relationship,
@@ -60,12 +61,12 @@ export type CypherBasicPropertyType =
   | Point;
 
 export type CypherTemporalType =
-  | Date
-  | Time
+  | Date<NumberOrInteger>
+  | Time<NumberOrInteger>
   | DateTime
-  | LocalTime
+  | LocalTime<NumberOrInteger>
   | LocalDateTime
-  | Duration;
+  | Duration<NumberOrInteger>;
 
 // Lists are also allowed as property types, as long as all items are the same basic type
 export type CypherProperty =

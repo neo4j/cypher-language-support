@@ -80,7 +80,7 @@
         "title": "Neo4j: Create Cypher file from selection"
       },
       {
-        "command": "neo4j.setParameter",
+        "command": "neo4j.addParameter",
         "title": "Neo4j: Set parameter",
         "category": "Neo4j",
         "icon": "$(add)"
@@ -146,7 +146,7 @@
           "when": "false"
         },
         {
-          "command": "neo4j.setParameter",
+          "command": "neo4j.addParameter",
           "when": "false"
         }
       ],
@@ -157,7 +157,7 @@
           "group": "navigation"
         },
         {
-          "command": "neo4j.setParameter",
+          "command": "neo4j.addParameter",
           "when": "view == neo4jParameters",
           "group": "navigation"
         }

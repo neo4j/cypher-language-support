@@ -18,6 +18,7 @@ interface INode {
 export interface Parameter {
   key: string;
   value: unknown;
+  stringifiedValue: string;
   type: CypherDataTypeName;
 }
 
@@ -79,10 +80,15 @@ export class ParameterManager {
     return Object.keys(parameters);
   }
 
-  async set(key: string, value: unknown, type: CypherDataTypeName) {
+  async set(
+    key: string,
+    value: unknown,
+    stringifiedValue: string,
+    type: CypherDataTypeName,
+  ) {
     const parameters = this.getState();
 
-    parameters[key.trim()] = { key: key.trim(), value, type };
+    parameters[key.trim()] = { key: key.trim(), value, stringifiedValue, type };
 
     await this.updateState(parameters);
 
@@ -99,7 +105,7 @@ class ParameterTreeItem implements INode {
 
   getTreeItem(): TreeItem | Promise<TreeItem> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const value = deserializeTypeAnnotations(this.parameter.value);
+    const value = this.parameter.stringifiedValue;
     return {
       id: this.parameter.key,
       label: `${this.parameter.key}: ${value} (${this.parameter.type})`,
