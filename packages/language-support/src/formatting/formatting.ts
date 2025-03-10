@@ -150,10 +150,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   /**
-   * Sets that if the previous token should not choose between the argument ('noSpace' or 'noBreak')
+   * Sets a property on a chunk to control e.g. splitting behavior.
    * Skips any preceding comments or special chunks we did not expect.
    */
-  setChunkSplitProperty = (
+  setChunkProperty = (
     propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
   ): void => {
     let idx = this.currentBuffer().length - 1;
@@ -181,15 +181,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   avoidSpaceBetween = (): void => {
-    this.setChunkSplitProperty('noSpace');
+    this.setChunkProperty('noSpace');
   };
 
   avoidBreakBetween = (): void => {
-    this.setChunkSplitProperty('noBreak');
+    this.setChunkProperty('noBreak');
   };
 
   mustBreakBetween = () => {
-    this.setChunkSplitProperty('mustBreak');
+    this.setChunkProperty('mustBreak');
   };
 
   doubleBreakBetween = (): void => {
