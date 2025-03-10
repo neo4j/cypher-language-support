@@ -1,10 +1,5 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { verifyFormatting } from './testutilv2';
+import { formatQuery } from '../../formatting/formatting';
+import { verifyFormatting } from './testutil';
 
 describe('various edgecases', () => {
   test('Should be space in between', () => {
@@ -25,6 +20,13 @@ RETURN 3;`;
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
+  });
+
+  test('syntax error', () => {
+    const query = 'MATCH (n) RETRUN n.prop,';
+    expect(() => formatQuery(query)).toThrowError(
+      `Could not format due to syntax error at line 1:10 near "RETRUN"`,
+    );
   });
 
   test('apoc call, namespaced function', () => {
@@ -56,6 +58,14 @@ RETURN count(DISTINCT n, a)`;
   test('map projections', () => {
     const query = `RETURN this {.id,.title} AS this`;
     const expected = `RETURN this {.id, .title} AS this`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path length in relationship pattern', () => {
+    const query = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
+    const expected = `MATCH (p:Person)-[r:LOVES*]-()
+RETURN e`;
     verifyFormatting(query, expected);
   });
 
@@ -586,6 +596,25 @@ RETURN p {.name, .age, .email, .phone, address:
 RETURN p {.name, .age, .email, .phone,
           address: {street: p.street, city: c.name, zip: p.zip}, .occupation,
           .nationality, .birthdate, .gender} AS personInfo`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should remember all clauses in foreach', () => {
+    const query = `
+MATCH (n)
+UNWIND n.list as items
+FOREACH (item in items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
+    const expected = `MATCH (n)
+UNWIND n.list AS items
+FOREACH (item IN items |
+  CREATE (p:Product {name: item})
+  CREATE (n)-[:CONTAINS]->(p)
+)
+RETURN n`;
     verifyFormatting(query, expected);
   });
 });
