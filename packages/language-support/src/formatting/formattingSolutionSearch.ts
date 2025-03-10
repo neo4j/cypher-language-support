@@ -44,8 +44,7 @@ export interface State {
   activeGroups: Group[];
   column: number;
   choiceIndex: number;
-  baseIndentation: number;
-  specialIndentation: number;
+  indentationState: IndentationState;
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
@@ -59,8 +58,7 @@ interface StateEdge {
 export interface Result {
   cost: number;
   decisions: Decision[];
-  indentation: number;
-  specialIndentation: number;
+  indentation: IndentationState;
 }
 
 interface FinalResultWithPos {
@@ -70,8 +68,13 @@ interface FinalResultWithPos {
 
 interface Indentations {
   finalIndentation: number;
-  nextBaseIndentation: number;
-  nextSpecialIndentation: number;
+  indentationState: IndentationState;
+}
+
+interface IndentationState {
+  base: number;
+  special: number;
+  align: number[];
 }
 
 type FinalResult = string | FinalResultWithPos;
@@ -106,6 +109,7 @@ const emptyChunk: RegularChunk = {
   groupsEnding: 0,
   modifyIndentation: 0,
   specialIndentation: 0,
+  alignIndentation: 0,
 };
 
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
@@ -118,11 +122,12 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 }
 
 function getIndentations(curr: State, choice: Choice): Indentations {
-  const currBaseIndent = curr.baseIndentation;
+  const currBaseIndent = curr.indentationState.base;
   const nextBaseIndent =
     currBaseIndent + choice.left.modifyIndentation * INDENTATION;
   const nextSpecialIndent =
-    curr.specialIndentation + choice.left.specialIndentation * INDENTATION;
+    curr.indentationState.special +
+    choice.left.specialIndentation * INDENTATION;
 
   let finalIndent = currBaseIndent;
 
@@ -134,11 +139,11 @@ function getIndentations(curr: State, choice: Choice): Indentations {
       finalIndent = baseGroup ? baseGroup.align : nextBaseIndent;
     }
     // Case 2: Special indentation with active groups
-    else if (curr.specialIndentation !== 0) {
+    else if (curr.indentationState.special !== 0) {
       finalIndent =
         curr.activeGroups.length > 1
           ? curr.activeGroups.at(-1).align
-          : curr.specialIndentation;
+          : curr.indentationState.special;
     }
     // Case 3: Active groups exist
     else if (curr.activeGroups.length > 0) {
@@ -151,9 +156,12 @@ function getIndentations(curr: State, choice: Choice): Indentations {
   }
 
   return {
-    nextBaseIndentation: nextBaseIndent,
-    nextSpecialIndentation: nextSpecialIndent,
     finalIndentation: finalIndent,
+    indentationState: {
+      align: curr.indentationState.align,
+      base: nextBaseIndent,
+      special: nextSpecialIndent,
+    },
   };
 }
 
@@ -172,8 +180,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
 
-  const { nextBaseIndentation, nextSpecialIndentation, finalIndentation } =
-    getIndentations(curr, choice);
+  const { finalIndentation, indentationState } = getIndentations(curr, choice);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -214,10 +221,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     activeGroups: nextGroups,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
-    baseIndentation: nextBaseIndentation,
     cost: curr.cost + extraCost,
-    specialIndentation: nextSpecialIndentation,
     overflowingCount: curr.overflowingCount + overflowingCount,
+    indentationState: indentationState,
     edge: {
       prevState: curr,
       decision: {
@@ -241,8 +247,7 @@ function reconstructBestPath(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentation: state.baseIndentation,
-    specialIndentation: state.specialIndentation,
+    indentation: state.indentationState,
   };
 }
 
@@ -391,6 +396,7 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation: number = 0;
+  let align: number[] = [];
   let specialIndentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
@@ -400,15 +406,19 @@ export function buffersToFormattedString(
       activeGroups: [],
       column: 0,
       choiceIndex: 0,
-      baseIndentation: indentation,
       cost: 0,
-      specialIndentation: specialIndentation,
+      indentationState: {
+        special: specialIndentation,
+        base: indentation,
+        align: align,
+      },
       overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
-    indentation = result.indentation;
-    specialIndentation = result.specialIndentation;
+    indentation = result.indentation.base;
+    specialIndentation = result.indentation.special;
+    align = result.indentation.align;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {

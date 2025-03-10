@@ -48,6 +48,7 @@ export interface BaseChunk {
   groupsEnding: number;
   modifyIndentation: number;
   specialIndentation: number;
+  alignIndentation: number;
 }
 
 // Regular chunk specific properties

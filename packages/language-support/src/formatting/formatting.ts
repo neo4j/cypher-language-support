@@ -90,6 +90,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupID = 0;
   groupStack: number[] = [];
   startGroupCounter = 0;
+  shouldEndOnNext: number[] = [];
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -108,6 +109,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   breakLine = () => {
+    if (this.shouldEndOnNext.length > 0) {
+      this.endGroup(this.shouldEndOnNext.pop());
+    }
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
     }
@@ -146,6 +150,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
       specialIndentation: prefix.specialIndentation + suffix.specialIndentation,
+      alignIndentation: prefix.alignIndentation + suffix.alignIndentation,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -273,6 +278,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.lastInCurrentBuffer().specialIndentation -= 1;
   };
 
+  addAlignIndentation = () => {
+    this.currentBuffer().at(-1).alignIndentation += 1;
+  };
+
+  removeAlignIndentation = () => {
+    const idx = this.getFirstNonCommentIdx();
+    this.currentBuffer().at(idx).alignIndentation -= 1;
+  };
+
   getBottomChild = (
     ctx: ParserRuleContext | TerminalNode,
     side: 'before' | 'after',
@@ -339,6 +353,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
+        alignIndentation: 0,
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -377,6 +392,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
+        alignIndentation: 0,
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
@@ -672,6 +688,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       modifyIndentation: 0,
       specialIndentation: 0,
+      alignIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -714,6 +731,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       modifyIndentation: 0,
       specialIndentation: 0,
+      alignIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -1005,17 +1023,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.EXISTS());
     this.avoidBreakBetween();
     this.visit(ctx.LCURLY());
-    if (ctx.regularQuery()) {
-      this.addIndentation();
+    const isRegularQuery = ctx.regularQuery() ? true : false;
+    if (isRegularQuery) {
+      this.addAlignIndentation();
       this.visit(ctx.regularQuery());
-      this.removeIndentation();
       this.breakLine();
     } else {
       this.visitIfNotNull(ctx.matchMode());
       this.visit(ctx.patternList());
       this.visitIfNotNull(ctx.whereClause());
     }
+    let endOfExistGroup: number;
+    if (isRegularQuery) {
+      this.mustBreakBetween();
+      endOfExistGroup = this.startGroup();
+    }
     this.visit(ctx.RCURLY());
+    if (isRegularQuery) {
+      this.removeAlignIndentation();
+      this.shouldEndOnNext.push(endOfExistGroup);
+    }
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
