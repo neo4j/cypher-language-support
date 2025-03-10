@@ -335,7 +335,8 @@ const parameterCompletions = (
       let maybeInsertText = backtickedName
         ? { insertText: `$${backtickedName}` }
         : {};
-      if (previousToken) {
+      // If there is a preceding token and it's not empty, compute the suffix
+      if (previousToken && previousToken.text.trim().length > 0) {
         const suffix = maybeInsertText.insertText ?? `$${paramName}`;
         maybeInsertText = {
           // We need to complete parameters correctly in VSCode,

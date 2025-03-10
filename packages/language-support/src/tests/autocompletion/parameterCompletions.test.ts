@@ -19,9 +19,21 @@ describe('Completes parameters outside of databases, roles, user names', () => {
       query,
       dbSchema,
       expected: [
-        { label: '$stringParam', kind: CompletionItemKind.Variable },
-        { label: '$intParam', kind: CompletionItemKind.Variable },
-        { label: '$mapParam', kind: CompletionItemKind.Variable },
+        {
+          label: '$stringParam',
+          insertText: 'stringParam',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$intParam',
+          insertText: 'intParam',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$mapParam',
+          insertText: 'mapParam',
+          kind: CompletionItemKind.Variable,
+        },
       ],
     });
   });
@@ -32,9 +44,18 @@ describe('Completes parameters outside of databases, roles, user names', () => {
       query,
       dbSchema,
       expected: [
-        { label: '$stringParam', kind: CompletionItemKind.Variable },
-        { label: '$intParam', kind: CompletionItemKind.Variable },
-        { label: '$mapParam', kind: CompletionItemKind.Variable },
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$intParam',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$mapParam',
+          kind: CompletionItemKind.Variable,
+        },
       ],
     });
   });

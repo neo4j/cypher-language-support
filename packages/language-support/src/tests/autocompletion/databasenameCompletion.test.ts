@@ -156,7 +156,12 @@ describe('Can complete database names', () => {
         { label: '$param3', kind: CompletionItemKind.Variable },
       ],
       // can create new database name using parameter
-      expected: [{ label: '$param1', kind: CompletionItemKind.Variable }],
+      expected: [
+        {
+          label: '$param1',
+          kind: CompletionItemKind.Variable,
+        },
+      ],
     });
   });
 
