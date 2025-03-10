@@ -1,10 +1,7 @@
 import { TerminalNode } from 'antlr4';
-import {
-  MergeClauseContext,
-  StatementsOrCommandsContext,
-} from '../generated-parser/CypherCmdParser';
+import { StatementsOrCommandsContext } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
-import { getParseTreeAndTokens, handleMergeClause } from './formattingHelpers';
+import { getParseTreeAndTokens } from './formattingHelpers';
 
 class StandardizingVisitor extends CypherCmdParserVisitor<void> {
   buffer = [];
@@ -12,10 +9,6 @@ class StandardizingVisitor extends CypherCmdParserVisitor<void> {
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);
     return this.buffer.join('');
-  };
-
-  visitMergeClause = (ctx: MergeClauseContext) => {
-    handleMergeClause(ctx, (node) => this.visit(node));
   };
 
   visitTerminal = (node: TerminalNode) => {
