@@ -179,8 +179,10 @@ type ParamParsing = {
 };
 
 export function parseParam(param: string, dbSchema: DbSchema): ParamParsing {
-  const errors = lintCypherQuery(`:param ${param}`, dbSchema);
-  if (errors) {
+  const errors = lintCypherQuery(`:param ${param}`, dbSchema).filter(
+    (e) => e.message !== unsupportedConsoleCmds,
+  );
+  if (errors.length > 0) {
     return { key: '', value: '', errors };
   }
   const inputStream = CharStreams.fromString(param);
@@ -667,12 +669,16 @@ function translateTokensToRange(
     },
   };
 }
+
+const unsupportedConsoleCmds =
+  'Console commands are unsupported in this environment.';
+
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
     .filter((cmd) => cmd.type !== 'cypher')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
-        message: 'Console commands are unsupported in this environment.',
+        message: unsupportedConsoleCmds,
         severity: DiagnosticSeverity.Error,
         ...translateTokensToRange(start, stop),
       }),

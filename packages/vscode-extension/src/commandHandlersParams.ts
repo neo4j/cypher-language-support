@@ -1,10 +1,11 @@
 import { parseParam } from '@neo4j-cypher/language-support';
 import {
-  getPropertyTypeDisplayName,
+  CypherDataType,
+  CypherDataTypeName,
+  getCypherTypeName,
   Neo4jType,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
-import { CypherBasicPropertyType } from '@neo4j-cypher/schema-poller/dist/cjs/src/types/cypher-data-types';
 import { window } from 'vscode';
 import { getSchemaPoller } from './contextService';
 import { parametersManager } from './treeviews/parametersTreeProvider';
@@ -40,8 +41,9 @@ export async function setParameter(): Promise<void> {
   }
   const resultEntries = Object.values(record.toObject());
   const paramAsNeo4jType = resultEntries[0] as Neo4jType;
-  const type = getPropertyTypeDisplayName(
-    resultEntries[0] as CypherBasicPropertyType,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const type: CypherDataTypeName = getCypherTypeName(
+    resultEntries[0] as CypherDataType,
   );
   const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
   await parameters.set(key, serializedValue, type);
