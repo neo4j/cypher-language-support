@@ -1,5 +1,9 @@
 # neo4j-for-vscode
 
+## 1.7.1
+
+- Solves a bug with the polling of methods for Cypher 25, which should not be enabled for the version 2025.02.
+
 ## 1.7.0
 
 - Adds support for multiple Neo4j connections
