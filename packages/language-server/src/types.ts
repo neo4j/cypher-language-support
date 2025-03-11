@@ -13,3 +13,5 @@ export type Neo4jSettings = {
   };
   features: { linting: boolean };
 };
+
+export type Neo4jParameters = Record<string, unknown>;

@@ -78,6 +78,16 @@
       {
         "command": "neo4j.cypherFileFromSelection",
         "title": "Neo4j: Create Cypher file from selection"
+      },
+      {
+        "command": "neo4j.addParameter",
+        "title": "Neo4j: Set parameter",
+        "category": "Neo4j",
+        "icon": "$(add)"
+      },
+      {
+        "command": "neo4j.clearParameters",
+        "title": "Neo4j: Clear all parameters"
       }
     ],
     "keybindings": [
@@ -134,12 +144,21 @@
         {
           "command": "neo4j.editConnection",
           "when": "false"
+        },
+        {
+          "command": "neo4j.addParameter",
+          "when": "false"
         }
       ],
       "view/title": [
         {
           "command": "neo4j.createConnection",
           "when": "view == neo4jConnections",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.addParameter",
+          "when": "view == neo4jParameters",
           "group": "navigation"
         }
       ],
@@ -173,14 +192,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "neo4j-connection-explorer",
+          "id": "neo4j-explorer",
           "title": "Neo4j",
           "icon": "resources/images/neo4j.png"
         }
       ]
     },
     "views": {
-      "neo4j-connection-explorer": [
+      "neo4j-explorer": [
         {
           "type": "tree",
           "id": "neo4jConnections",
@@ -190,6 +209,11 @@
           "type": "tree",
           "id": "neo4jDatabaseInformation",
           "name": "Database Information"
+        },
+        {
+          "type": "tree",
+          "id": "neo4jParameters",
+          "name": "Parameters"
         }
       ]
     },
