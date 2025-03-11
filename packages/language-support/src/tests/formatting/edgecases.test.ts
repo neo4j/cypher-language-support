@@ -405,6 +405,13 @@ RETURN m`;
     verifyFormatting(query, expected);
   });
 
+  test('QPP with only a number', () => {
+    const query = `MATCH (n)-->{4}(m)
+RETURN n`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
   // Example 1 by Finbar
   test('QPP spacing with star', () => {
     const query = `
