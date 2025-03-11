@@ -413,6 +413,19 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
                 ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
+
+  test('path length example', () => {
+    const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                 (:Station {name: 'Cheltenham Spa'}) WHERE none(
+                 stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                  (:Station {name: 'Cheltenham Spa'}) WHERE
+                  none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

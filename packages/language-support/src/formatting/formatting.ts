@@ -38,6 +38,7 @@ import {
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
+  ParenthesizedPathContext,
   PathLengthContext,
   PatternContext,
   PatternListContext,
@@ -801,6 +802,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitParenthesizedPath = (ctx: ParenthesizedPathContext) => {
+    this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
+    const parenthesizedPathGrp = this.startGroup();
+    this.visit(ctx.pattern());
+    if (ctx.WHERE()) {
+      this.visit(ctx.WHERE());
+      this.visit(ctx.expression());
+    }
+    this.endGroup(parenthesizedPathGrp);
+    this.visit(ctx.RPAREN());
+    this.visitIfNotNull(ctx.quantifier());
+  };
+
   visitArrowLine = (ctx: ArrowLineContext) => {
     this.visitRawIfNotNull(ctx.MINUS());
     this.visitRawIfNotNull(ctx.ARROW_LINE());
@@ -871,10 +886,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.EQ());
       this.avoidBreakBetween();
     }
+    const selectorAnonymousPatternGrp = this.startGroup();
     this.visitIfNotNull(ctx.selector());
-    const anonymousPatternGrp = this.startGroup();
     this.visit(ctx.anonymousPattern());
-    this.endGroup(anonymousPatternGrp);
+    this.endGroup(selectorAnonymousPatternGrp);
   };
 
   visitPatternList = (ctx: PatternListContext) => {
@@ -1248,6 +1263,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
+    const wholeListItemGrp = this.startGroup();
     this.visitRawIfNotNull(ctx.ALL());
     this.visitRawIfNotNull(ctx.ANY());
     this.visitRawIfNotNull(ctx.NONE());
@@ -1265,6 +1281,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(listGrp);
     this.visit(ctx.RPAREN());
+    this.endGroup(wholeListItemGrp);
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
