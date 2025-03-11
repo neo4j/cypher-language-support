@@ -8,6 +8,7 @@ import {
   CaseExpressionContext,
   ClauseContext,
   CollectExpressionContext,
+  CountExpressionContext,
   CountStarContext,
   CreateClauseContext,
   DeleteClauseContext,
@@ -1056,6 +1057,29 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.RCURLY());
     this.removeAlignIndentation();
     this.groupsToEndOnBreak.push(endOfCollectGroup);
+  };
+
+  visitCountExpression = (ctx: CountExpressionContext) => {
+    this.visit(ctx.COUNT());
+    this.avoidBreakBetween();
+    this.visit(ctx.LCURLY());
+
+    if (ctx.regularQuery()) {
+      this.addAlignIndentation();
+      this.visit(ctx.regularQuery());
+      this.breakLine();
+      this.mustBreakBetween();
+      // This is a workaround because group does not translate between chunk lists
+      const endOfCountGroup = this.startGroup();
+      this.visit(ctx.RCURLY());
+      this.removeAlignIndentation();
+      this.groupsToEndOnBreak.push(endOfCountGroup);
+    } else {
+      this.visitIfNotNull(ctx.matchMode());
+      this.visit(ctx.patternList());
+      this.visitIfNotNull(ctx.whereClause());
+      this.visit(ctx.RCURLY());
+    }
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {

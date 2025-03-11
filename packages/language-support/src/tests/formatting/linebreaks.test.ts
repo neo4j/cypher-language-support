@@ -473,6 +473,25 @@ RETURN person.name AS name, COLLECT {
     const expected = query;
     verifyFormatting(query, expected);
   });
+  test('count expression with only expression', () => {
+    const query = `MATCH (person:Person)
+WHERE COUNT { (person)-[:HAS_DOG]->(:Dog) } > 1
+RETURN person.name AS name`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('count expression with regular query', () => {
+    const query = `MATCH (person:Person)
+RETURN person.name AS name, COUNT {
+         MATCH (person)-[:HAS_DOG]->(dog:Dog)
+         RETURN dog.name AS petName
+         UNION
+         MATCH (person)-[:HAS_CAT]->(cat:Cat)
+         RETURN cat.name AS petName
+       } AS numPets`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
