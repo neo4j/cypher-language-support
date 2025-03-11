@@ -44,15 +44,19 @@ export enum AlignIndentationOptions {
   Maintain = 0,
 }
 
+interface ChunkIndentation {
+  base: number;
+  special: number;
+  align: AlignIndentationOptions;
+}
+
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
   groupsStarting: number;
   groupsEnding: number;
-  modifyIndentation: number;
-  specialIndentation: number;
-  alignIndentation: AlignIndentationOptions;
+  indentation: ChunkIndentation;
 }
 
 // Regular chunk specific properties

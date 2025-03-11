@@ -108,9 +108,11 @@ const emptyChunk: RegularChunk = {
   text: '',
   groupsStarting: 0,
   groupsEnding: 0,
-  modifyIndentation: 0,
-  specialIndentation: 0,
-  alignIndentation: 0,
+  indentation: {
+    base: 0,
+    special: 0,
+    align: 0,
+  },
 };
 
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
@@ -125,13 +127,13 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 function getIndentations(curr: State, choice: Choice): IndentationResult {
   const currBaseIndent = curr.indentationState.base;
   const nextBaseIndent =
-    currBaseIndent + choice.left.modifyIndentation * INDENTATION;
+    currBaseIndent + choice.left.indentation.base * INDENTATION;
   const nextSpecialIndent =
     curr.indentationState.special +
-    choice.left.specialIndentation * INDENTATION;
+    choice.left.indentation.special * INDENTATION;
   let finalIndent = currBaseIndent;
   const align = [...curr.indentationState.align];
-  if (choice.left.alignIndentation === AlignIndentationOptions.Add) {
+  if (choice.left.indentation.align === AlignIndentationOptions.Add) {
     align.push(curr.activeGroups.at(0).align);
   }
 
@@ -169,7 +171,7 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
     // When not at the start of a line, no indentation
     finalIndent = 0;
   }
-  if (choice.left.alignIndentation === AlignIndentationOptions.Remove) {
+  if (choice.left.indentation.align === AlignIndentationOptions.Remove) {
     finalIndent = align.pop();
   }
 

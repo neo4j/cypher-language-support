@@ -152,9 +152,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
-      modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
-      specialIndentation: prefix.specialIndentation + suffix.specialIndentation,
-      alignIndentation: prefix.alignIndentation,
+      indentation: {
+        base: prefix.indentation.base + suffix.indentation.base,
+        special: prefix.indentation.special + suffix.indentation.special,
+        align: prefix.indentation.align,
+      },
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -265,31 +267,39 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.startGroup();
   };
 
+  setIndentationProperty = (
+    modifier: 'add' | 'remove',
+    type: 'base' | 'special' | 'align',
+  ) => {
+    if (modifier === 'add') {
+      this.lastInCurrentBuffer().indentation[type] += 1;
+    } else if (modifier === 'remove') {
+      this.lastInCurrentBuffer().indentation[type] -= 1;
+    }
+  };
+
   addIndentation = () => {
-    this.lastInCurrentBuffer().modifyIndentation += 1;
+    this.setIndentationProperty('add', 'base');
   };
 
   removeIndentation = () => {
-    const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).modifyIndentation -= 1;
+    this.setIndentationProperty('remove', 'base');
   };
 
   addSpecialIndentation = () => {
-    this.lastInCurrentBuffer().specialIndentation += 1;
+    this.setIndentationProperty('add', 'special');
   };
 
   removeSpecialIndentation = () => {
-    this.lastInCurrentBuffer().specialIndentation -= 1;
+    this.setIndentationProperty('remove', 'special');
   };
 
   addAlignIndentation = () => {
-    this.lastInCurrentBuffer().alignIndentation = AlignIndentationOptions.Add;
+    this.setIndentationProperty('add', 'align');
   };
 
   removeAlignIndentation = () => {
-    const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).alignIndentation =
-      AlignIndentationOptions.Remove;
+    this.setIndentationProperty('remove', 'align');
   };
 
   getBottomChild = (
@@ -356,9 +366,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
-        modifyIndentation: 0,
-        specialIndentation: 0,
-        alignIndentation: AlignIndentationOptions.Maintain,
+        indentation: {
+          base: 0,
+          special: 0,
+          align: AlignIndentationOptions.Maintain,
+        },
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -395,9 +407,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: 0,
         groupsEnding: 0,
-        modifyIndentation: 0,
-        specialIndentation: 0,
-        alignIndentation: AlignIndentationOptions.Maintain,
+        indentation: {
+          base: 0,
+          special: 0,
+          align: AlignIndentationOptions.Maintain,
+        },
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
@@ -691,9 +705,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
-      modifyIndentation: 0,
-      specialIndentation: 0,
-      alignIndentation: 0,
+      indentation: {
+        base: 0,
+        special: 0,
+        align: 0,
+      },
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -734,9 +750,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
-      modifyIndentation: 0,
-      specialIndentation: 0,
-      alignIndentation: 0,
+      indentation: {
+        base: 0,
+        special: 0,
+        align: 0,
+      },
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
