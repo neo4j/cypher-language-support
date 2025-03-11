@@ -204,19 +204,8 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 4: No special indentation rules applied
   if (state.activeGroups.length > 0) {
-    const finalIndent = state.activeGroups.at(-1).align;
-
     return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // End of a align indentation
-  // Closing bracket needs ot match with base group
-  if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-    return {
-      finalIndentation: align.pop(),
+      finalIndentation: state.activeGroups.at(-1).align,
       indentationState: { base, special, align },
     };
   }
