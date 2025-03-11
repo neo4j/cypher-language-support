@@ -180,7 +180,7 @@ export class ConnectionItem extends TreeItem {
             ),
           ),
         };
-        this.id = key//`${key}-${collapsibleState}`;
+        this.id = key;
         break;
       case 'connection':
         this.iconPath = {
@@ -203,7 +203,7 @@ export class ConnectionItem extends TreeItem {
             ),
           ),
         };
-        this.id = `${key}-${collapsibleState}`;
+        this.id = key;
         this.command = {
           title: 'onClickConnect',
           command: CONSTANTS.COMMANDS.CONNECT_COMMAND,
