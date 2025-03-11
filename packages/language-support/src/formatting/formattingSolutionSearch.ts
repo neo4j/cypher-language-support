@@ -18,12 +18,12 @@ https://github.com/neo4j/cypher-language-support.`.trim();
 const INDENTATION = 2;
 const showGroups = false;
 
-export interface Split {
+interface Split {
   splitType: ' ' | '' | '\n' | '\n\n';
   cost: number;
 }
 
-export interface Choice {
+interface Choice {
   left: Chunk;
   right: Chunk;
   // The possible splits that the best first search can choose
@@ -35,14 +35,14 @@ interface Group {
   breakCost: number;
 }
 
-export interface Decision {
+interface Decision {
   indentation: number;
   left: Chunk;
   right: Chunk;
   chosenSplit: Split;
 }
 
-export interface State {
+interface State {
   activeGroups: Group[];
   column: number;
   choiceIndex: number;
@@ -57,7 +57,7 @@ interface StateEdge {
   decision: Decision;
 }
 
-export interface Result {
+interface Result {
   cost: number;
   decisions: Decision[];
   indentation: IndentationState;
@@ -116,7 +116,7 @@ const emptyChunk: RegularChunk = {
   },
 };
 
-export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
     nextChunk?.type !== 'COMMENT' &&
     chunk.type === 'REGULAR' &&
