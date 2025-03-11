@@ -414,15 +414,29 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
     verifyFormatting(query, expected);
   });
 
-  test('path length example', () => {
+  test('selector example', () => {
     const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
                  (:Station {name: 'Cheltenham Spa'}) WHERE none(
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
-                  (:Station {name: 'Cheltenham Spa'}) WHERE
+MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'})
+                  (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
                   none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('selector example with path', () => {
+    const query = `MATCH p = SHORTEST 1 ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH p = SHORTEST 1
+          ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
