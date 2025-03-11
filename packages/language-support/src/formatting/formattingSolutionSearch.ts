@@ -212,15 +212,18 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
-  // Default case
-  let finalIndent = state.indentationState.base;
-
+  // End of a align indentation
+  // Closing bracket needs ot match with base group
   if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-    finalIndent = align.pop();
+    return {
+      finalIndentation: align.pop(),
+      indentationState: { base, special, align },
+    };
   }
 
+  // Default case
   return {
-    finalIndentation: finalIndent,
+    finalIndentation: state.indentationState.base,
     indentationState: { base, special, align },
   };
 }
