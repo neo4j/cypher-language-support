@@ -153,13 +153,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // When not at the start of a line, no indentation
   if (state.column !== 0) {
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
-
     return {
       finalIndentation: 0,
       indentationState: { base, special, align },
@@ -170,14 +163,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     const baseGroup = state.activeGroups[0];
     const finalIndent = baseGroup ? baseGroup.align : base;
-
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
-
     return {
       finalIndentation: finalIndent,
       indentationState: { base, special, align },
