@@ -176,13 +176,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
         ? state.activeGroups.at(-1).align
         : state.indentationState.special;
 
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
-
     return {
       finalIndentation: finalIndent,
       indentationState: { base, special, align },
@@ -212,13 +205,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   // Case 4: No special indentation rules applied
   if (state.activeGroups.length > 0) {
     const finalIndent = state.activeGroups.at(-1).align;
-
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
 
     return {
       finalIndentation: finalIndent,
