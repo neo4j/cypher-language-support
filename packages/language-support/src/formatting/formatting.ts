@@ -7,6 +7,7 @@ import {
   CaseAlternativeContext,
   CaseExpressionContext,
   ClauseContext,
+  CollectExpressionContext,
   CountStarContext,
   CreateClauseContext,
   DeleteClauseContext,
@@ -1042,6 +1043,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitIfNotNull(ctx.whereClause());
       this.visit(ctx.RCURLY());
     }
+  };
+
+  visitCollectExpression = (ctx: CollectExpressionContext) => {
+    this.visit(ctx.COLLECT());
+    this.avoidBreakBetween();
+    this.visit(ctx.LCURLY());
+    this.addAlignIndentation();
+    this.visit(ctx.regularQuery());
+    this.breakLine();
+    const endOfCollectGroup = this.startGroup();
+    this.visit(ctx.RCURLY());
+    this.removeAlignIndentation();
+    this.groupsToEndOnBreak.push(endOfCollectGroup);
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
