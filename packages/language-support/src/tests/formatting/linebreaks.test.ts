@@ -414,7 +414,19 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
     verifyFormatting(query, expected);
   });
 
-  test('selector example', () => {
+  test('simple selector example', () => {
+    const query = `MATCH SHORTEST 1
+  (:Station {name: 'Hartlebury'})
+  (()--(n))+
+  (:Station {name: 'Cheltenham Spa'})
+RETURN [stop in n[..-1] | stop.name] AS stops`;
+    const expected = `MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
+      (:Station {name: 'Cheltenham Spa'})
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    verifyFormatting(query, expected);
+  });
+
+  test('complex selector example', () => {
     const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
                  (:Station {name: 'Cheltenham Spa'}) WHERE none(
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
