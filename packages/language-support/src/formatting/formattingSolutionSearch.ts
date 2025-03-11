@@ -163,6 +163,12 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     const baseGroup = state.activeGroups[0];
     const finalIndent = baseGroup ? baseGroup.align : base;
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
     return {
       finalIndentation: finalIndent,
       indentationState: { base, special, align },
@@ -175,6 +181,12 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
       state.activeGroups.length > 1
         ? state.activeGroups.at(-1).align
         : state.indentationState.special;
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
 
     return {
       finalIndentation: finalIndent,
