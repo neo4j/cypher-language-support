@@ -159,16 +159,17 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
+  if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+    return {
+      finalIndentation: align.pop(),
+      indentationState: { base, special, align },
+    };
+  }
+
   // Case 1: Hard-break comments align with base group or base indentation
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     const baseGroup = state.activeGroups[0];
     const finalIndent = baseGroup ? baseGroup.align : base;
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
     return {
       finalIndentation: finalIndent,
       indentationState: { base, special, align },
@@ -181,12 +182,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
       state.activeGroups.length > 1
         ? state.activeGroups.at(-1).align
         : state.indentationState.special;
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
-    }
 
     return {
       finalIndentation: finalIndent,
@@ -202,13 +197,6 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     // more than one group, align as usual
     if (state.activeGroups.length > 0) {
       finalIndent = state.activeGroups.at(-1).align;
-    }
-
-    // Removing one indentationstep
-    // Right bracket should align with base group
-    // What was (align.at(-1))
-    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      finalIndent = align.pop();
     }
 
     return {
