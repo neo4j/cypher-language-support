@@ -40,6 +40,12 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
+export enum AlignIndentationOptions {
+  Add = 1,
+  Remove = -1,
+  Maintain = 0,
+}
+
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
@@ -48,7 +54,7 @@ export interface BaseChunk {
   groupsEnding: number;
   modifyIndentation: number;
   specialIndentation: number;
-  alignIndentation: number;
+  alignIndentation: AlignIndentationOptions;
 }
 
 // Regular chunk specific properties

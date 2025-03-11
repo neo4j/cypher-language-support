@@ -1,6 +1,7 @@
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
+  AlignIndentationOptions,
   Chunk,
   isCommentBreak,
   MAX_COL,
@@ -130,7 +131,7 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
     choice.left.specialIndentation * INDENTATION;
   let finalIndent = currBaseIndent;
   const align = [...curr.indentationState.align];
-  if (choice.left.alignIndentation > 0) {
+  if (choice.left.alignIndentation === AlignIndentationOptions.Add) {
     align.push(curr.activeGroups.at(0).align);
   }
 
@@ -167,7 +168,7 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
     // When not at the start of a line, no indentation
     finalIndent = 0;
   }
-  if (choice.left.alignIndentation < 0) {
+  if (choice.left.alignIndentation === AlignIndentationOptions.Remove) {
     finalIndent = align.pop();
   }
 

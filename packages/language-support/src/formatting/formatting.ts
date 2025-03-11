@@ -61,6 +61,7 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  AlignIndentationOptions,
   Chunk,
   CommentChunk,
   findTargetToken,
@@ -151,7 +152,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
       specialIndentation: prefix.specialIndentation + suffix.specialIndentation,
-      alignIndentation: prefix.alignIndentation + suffix.alignIndentation,
+      alignIndentation: prefix.alignIndentation,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -280,12 +281,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   addAlignIndentation = () => {
-    this.lastInCurrentBuffer().alignIndentation += 1;
+    this.lastInCurrentBuffer().alignIndentation = AlignIndentationOptions.Add;
   };
 
   removeAlignIndentation = () => {
     const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).alignIndentation -= 1;
+    this.currentBuffer().at(idx).alignIndentation =
+      AlignIndentationOptions.Remove;
   };
 
   getBottomChild = (
@@ -354,7 +356,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
-        alignIndentation: 0,
+        alignIndentation: AlignIndentationOptions.Maintain,
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -393,7 +395,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
-        alignIndentation: 0,
+        alignIndentation: AlignIndentationOptions.Maintain,
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
