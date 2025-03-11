@@ -1053,6 +1053,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addAlignIndentation();
     this.visit(ctx.regularQuery());
     this.breakLine();
+    // This is a workaround because group does not translate between chunk lists
     const endOfCollectGroup = this.startGroup();
     this.visit(ctx.RCURLY());
     this.removeAlignIndentation();

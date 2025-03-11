@@ -151,7 +151,7 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
           ? curr.activeGroups.at(-1).align
           : curr.indentationState.special;
       // Case 3: Currently for for EXISTS, COLLECT and COUNT,
-      // Aligning with base group plus indentation plus possible baseIndentation
+      // Aligning with base group plus indentation plus possible baseIndentation.
       // baseIndentation can happen with UNION
     } else if (curr.indentationState.align.length > 0) {
       finalIndent =
