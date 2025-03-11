@@ -157,11 +157,7 @@ export class ConnectionItem extends TreeItem {
     super(label, collapsibleState);
     this.tooltip = label;
     this.contextValue = this.type;
-    this.command = {
-      title: 'onClickConnect',
-      command: CONSTANTS.COMMANDS.CONNECT_COMMAND,
-      arguments: [this],
-    };
+
     switch (type) {
       case 'activeConnection':
         this.iconPath = {
@@ -184,7 +180,7 @@ export class ConnectionItem extends TreeItem {
             ),
           ),
         };
-        this.id = `${key}-${collapsibleState}`;
+        this.id = key//`${key}-${collapsibleState}`;
         break;
       case 'connection':
         this.iconPath = {
@@ -208,6 +204,11 @@ export class ConnectionItem extends TreeItem {
           ),
         };
         this.id = `${key}-${collapsibleState}`;
+        this.command = {
+          title: 'onClickConnect',
+          command: CONSTANTS.COMMANDS.CONNECT_COMMAND,
+          arguments: [this],
+        };
         break;
       case 'activeDatabase':
         this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
