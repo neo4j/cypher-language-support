@@ -125,7 +125,7 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getNextIndentationLevel(
+function deriveNextIndentationState(
   chunkIndentation: ChunkIndentation,
   indentationState: IndentationState,
 ): IndentationState {
@@ -137,7 +137,7 @@ function getNextIndentationLevel(
 }
 
 function getIndentations(state: State, chunk: Chunk): IndentationResult {
-  const { base, special, align } = getNextIndentationLevel(
+  const { base, special, align } = deriveNextIndentationState(
     chunk.indentation,
     state.indentationState,
   );
