@@ -2,24 +2,22 @@ import {
   createConnection,
   Diagnostic,
   DidChangeConfigurationNotification,
-  DocumentFormattingParams,
   InitializeResult,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
-  TextEdit,
 } from 'vscode-languageserver/node';
 
 import {
-  formatQuery,
   syntaxColouringLegend,
   _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { doAutoCompletion } from './autocompletion';
+import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
@@ -133,31 +131,9 @@ connection.onNotification(
   },
 );
 
-connection.onDocumentFormatting(
-  (params: DocumentFormattingParams): TextEdit[] => {
-    const document = documents.get(params.textDocument.uri);
-    if (!document) {
-      return [];
-    }
-
-    const text = document.getText();
-    const formattedText = formatQuery(text);
-
-    if (text === formattedText) {
-      return [];
-    }
-
-    return [
-      TextEdit.replace(
-        {
-          start: { line: 0, character: 0 },
-          end: { line: document.lineCount, character: 0 },
-        },
-        formattedText,
-      ),
-    ];
-  },
-);
+connection.onDocumentFormatting((params) => {
+  return formatDocument(params, documents);
+});
 
 connection.onNotification('connectionDisconnected', () => {
   disconnect();
