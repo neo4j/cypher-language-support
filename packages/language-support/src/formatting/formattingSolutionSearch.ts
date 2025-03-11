@@ -184,16 +184,13 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 3: Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
-    const finalIndent =
+    let finalIndent =
       state.activeGroups.length > 0
         ? state.activeGroups.at(-1).align
         : align.at(-1) + INDENTATION + state.indentationState.base;
 
     if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-      return {
-        finalIndentation: align.pop(),
-        indentationState: { base, special, align },
-      };
+      finalIndent = align.pop();
     }
 
     return {
