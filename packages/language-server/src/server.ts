@@ -10,12 +10,13 @@ import {
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
 
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import {
   syntaxColouringLegend,
   _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument } from './linting';
