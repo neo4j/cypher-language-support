@@ -141,53 +141,53 @@ function getNextIndentationLevel(
   };
 }
 
-function getIndentations(curr: State, choice: Choice): IndentationResult {
+function getIndentations(state: State, chunk: Chunk): IndentationResult {
   const { base, special, align } = getNextIndentationLevel(
-    choice.left.indentation,
-    curr.indentationState,
+    chunk.indentation,
+    state.indentationState,
   );
 
-  if (choice.left.indentation.align === AlignIndentationOptions.Add) {
-    align.push(curr.activeGroups.at(0).align);
+  if (chunk.indentation.align === AlignIndentationOptions.Add) {
+    align.push(state.activeGroups.at(0).align);
   }
 
-  let finalIndent = curr.indentationState.base;
+  let finalIndent = state.indentationState.base;
 
   // Only apply indentation at the start of a line (column === 0)
-  if (curr.column === 0) {
+  if (state.column === 0) {
     // Case 1: Hard-break comments align with base group or base indentation
-    if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
-      const baseGroup = curr.activeGroups[0];
+    if (chunk.type === 'COMMENT' && chunk.breakBefore) {
+      const baseGroup = state.activeGroups[0];
       finalIndent = baseGroup ? baseGroup.align : base;
     }
     // Case 2: Special indentation, used with CASE
     // Aligns as usual if more than one group exists
     // else indents as specified in state
-    else if (curr.indentationState.special !== 0) {
+    else if (state.indentationState.special !== 0) {
       finalIndent =
-        curr.activeGroups.length > 1
-          ? curr.activeGroups.at(-1).align
-          : curr.indentationState.special;
+        state.activeGroups.length > 1
+          ? state.activeGroups.at(-1).align
+          : state.indentationState.special;
       // Case 3: Currently for for EXISTS, COLLECT and COUNT,
       // Aligning with base group plus indentation plus possible baseIndentation.
       // baseIndentation can happen with UNION
-    } else if (curr.indentationState.align.length > 0) {
+    } else if (state.indentationState.align.length > 0) {
       finalIndent =
-        curr.activeGroups.length > 0
-          ? curr.activeGroups.at(-1).align
-          : align.at(-1) + INDENTATION + curr.indentationState.base;
+        state.activeGroups.length > 0
+          ? state.activeGroups.at(-1).align
+          : align.at(-1) + INDENTATION + state.indentationState.base;
     }
     // Case 4: No special indentation rules applied,
     // Align with latest added active group
-    else if (curr.activeGroups.length > 0) {
-      finalIndent = curr.activeGroups.at(-1).align;
+    else if (state.activeGroups.length > 0) {
+      finalIndent = state.activeGroups.at(-1).align;
     }
     // Default case is already set to currBaseIndent
   } else {
     // When not at the start of a line, no indentation
     finalIndent = 0;
   }
-  if (choice.left.indentation.align === AlignIndentationOptions.Remove) {
+  if (chunk.indentation.align === AlignIndentationOptions.Remove) {
     finalIndent = align.pop();
   }
 
@@ -216,7 +216,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
 
-  const { finalIndentation, indentationState } = getIndentations(curr, choice);
+  const { finalIndentation, indentationState } = getIndentations(
+    curr,
+    choice.left,
+  );
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
