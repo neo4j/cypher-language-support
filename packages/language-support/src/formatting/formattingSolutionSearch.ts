@@ -184,11 +184,17 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 3: Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
-    let finalIndent =
-      state.activeGroups.length > 0
-        ? state.activeGroups.at(-1).align
-        : align.at(-1) + INDENTATION + state.indentationState.base;
+    // base case
+    let finalIndent = align.at(-1) + INDENTATION + state.indentationState.base;
 
+    // more than one group, align as usual
+    if (state.activeGroups.length > 0) {
+      finalIndent = state.activeGroups.at(-1).align;
+    }
+
+    // Removing one indentationstep
+    // Right bracket should align with base group
+    // What was (align.at(-1))
     if (chunk.indentation.align === AlignIndentationOptions.Remove) {
       finalIndent = align.pop();
     }
@@ -200,6 +206,7 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   }
 
   // Case 4: No special indentation rules applied
+  // Align on the active groups
   if (state.activeGroups.length > 0) {
     return {
       finalIndentation: state.activeGroups.at(-1).align,
