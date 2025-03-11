@@ -278,11 +278,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  addIndentation = () => {
+  addBaseIndentation = () => {
     this.setIndentationProperty('add', 'base');
   };
 
-  removeIndentation = () => {
+  removeBaseIndentation = () => {
     this.setIndentationProperty('remove', 'base');
   };
 
@@ -1198,10 +1198,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.CALL());
     this.visitIfNotNull(ctx.subqueryScope());
     this.visit(ctx.LCURLY());
-    this.addIndentation();
+    this.addBaseIndentation();
     this.breakLine();
     this.visit(ctx.regularQuery());
-    this.removeIndentation();
+    this.removeBaseIndentation();
     this.breakLine();
     this.visit(ctx.RCURLY());
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
@@ -1212,10 +1212,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
-      this.addIndentation();
+      this.addBaseIndentation();
       this.breakLine();
       this.visit(ctx.UNION(i));
-      this.removeIndentation();
+      this.removeBaseIndentation();
       if (ctx.ALL(i)) {
         this.visit(ctx.ALL(i));
       } else if (ctx.DISTINCT(i)) {
@@ -1291,10 +1291,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
-    this.addIndentation();
+    this.addBaseIndentation();
     this.breakLine();
     this.visitChildren(ctx);
-    this.removeIndentation();
+    this.removeBaseIndentation();
   };
 
   visitSetClause = (ctx: SetClauseContext) => {
@@ -1407,9 +1407,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
     const n = ctx.clause_list().length;
     for (let i = 0; i < n; i++) {
-      this.addIndentation();
+      this.addBaseIndentation();
       this.visit(ctx.clause(i));
-      this.removeIndentation();
+      this.removeBaseIndentation();
     }
     this.breakLine();
     this.visit(ctx.RPAREN());
