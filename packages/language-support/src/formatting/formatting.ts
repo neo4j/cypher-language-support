@@ -62,11 +62,11 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
+  AlignIndentationOptions,
   Chunk,
   CommentChunk,
   findTargetToken,
   getParseTreeAndTokens,
-  handleMergeClause,
   isComment,
   RegularChunk,
   wantsToBeConcatenated,
@@ -91,6 +91,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupID = 0;
   groupStack: number[] = [];
   startGroupCounter = 0;
+  groupsToEndOnBreak: number[] = [];
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -109,6 +110,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   breakLine = () => {
+    // This is a workaround because group does not translate between chunk lists
+    if (this.groupsToEndOnBreak.length > 0) {
+      this.endGroup(this.groupsToEndOnBreak.pop());
+    }
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
     }
@@ -147,6 +152,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       modifyIndentation: prefix.modifyIndentation + suffix.modifyIndentation,
       specialIndentation: prefix.specialIndentation + suffix.specialIndentation,
+      alignIndentation: prefix.alignIndentation,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -274,6 +280,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.lastInCurrentBuffer().specialIndentation -= 1;
   };
 
+  addAlignIndentation = () => {
+    this.lastInCurrentBuffer().alignIndentation = AlignIndentationOptions.Add;
+  };
+
+  removeAlignIndentation = () => {
+    const idx = this.getFirstNonCommentIdx();
+    this.currentBuffer().at(idx).alignIndentation =
+      AlignIndentationOptions.Remove;
+  };
+
   getBottomChild = (
     ctx: ParserRuleContext | TerminalNode,
     side: 'before' | 'after',
@@ -340,6 +356,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
+        alignIndentation: AlignIndentationOptions.Maintain,
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -378,6 +395,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         modifyIndentation: 0,
         specialIndentation: 0,
+        alignIndentation: AlignIndentationOptions.Maintain,
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
@@ -673,6 +691,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       modifyIndentation: 0,
       specialIndentation: 0,
+      alignIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -715,6 +734,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       modifyIndentation: 0,
       specialIndentation: 0,
+      alignIndentation: 0,
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -770,8 +790,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     this.visitIfNotNull(ctx.variable());
     this.visitIfNotNull(ctx.labelExpression());
-    if (ctx instanceof RelationshipPatternContext) {
-      this.visitIfNotNull(ctx.pathLength());
+    if (ctx instanceof RelationshipPatternContext && ctx.pathLength()) {
+      this.visit(ctx.pathLength());
       this.concatenate();
     }
     this.visitIfNotNull(ctx.properties());
@@ -923,6 +943,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
       return;
     }
+    if (!ctx._from_ && !ctx._to) {
+      this.visitChildren(ctx);
+      this.concatenate();
+      this.concatenate();
+      this.concatenate();
+      this.avoidSpaceBetween();
+      return;
+    }
     if (!ctx._from_) {
       this.visitTerminalRaw(ctx.LCURLY(), { spacingChoice: 'EXTRA_SPACE' });
     } else {
@@ -1026,17 +1054,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.EXISTS());
     this.avoidBreakBetween();
     this.visit(ctx.LCURLY());
+
     if (ctx.regularQuery()) {
-      this.addIndentation();
+      this.addAlignIndentation();
       this.visit(ctx.regularQuery());
-      this.removeIndentation();
       this.breakLine();
+      this.mustBreakBetween();
+      // This is a workaround because group does not translate between chunk lists
+      const endOfExistGroup = this.startGroup();
+      this.visit(ctx.RCURLY());
+      this.removeAlignIndentation();
+      this.groupsToEndOnBreak.push(endOfExistGroup);
     } else {
       this.visitIfNotNull(ctx.matchMode());
       this.visit(ctx.patternList());
       this.visitIfNotNull(ctx.whereClause());
+      this.visit(ctx.RCURLY());
     }
-    this.visit(ctx.RCURLY());
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
@@ -1188,15 +1222,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(invocationGrp);
   };
 
-  // Handled separately because we want ON CREATE before ON MATCH
   visitMergeClause = (ctx: MergeClauseContext) => {
-    handleMergeClause(
-      ctx,
-      (node) => this.visit(node),
-      () => this.startGroupAlsoOnComment(),
-      (id) => this.endGroup(id),
-      () => this.avoidBreakBetween(),
-    );
+    this.visit(ctx.MERGE());
+    this.avoidBreakBetween();
+    const patternGrp = this.startGroupAlsoOnComment();
+    this.visit(ctx.pattern());
+    this.endGroup(patternGrp);
+    const n = ctx.mergeAction_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.mergeAction(i));
+    }
   };
 
   // Handled separately because it wants indentation
