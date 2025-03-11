@@ -151,53 +151,106 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     align.push(state.activeGroups.at(0).align);
   }
 
+  // When not at the start of a line, no indentation
+  if (state.column !== 0) {
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
+
+    return {
+      finalIndentation: 0,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Case 1: Hard-break comments align with base group or base indentation
+  if (chunk.type === 'COMMENT' && chunk.breakBefore) {
+    const baseGroup = state.activeGroups[0];
+    const finalIndent = baseGroup ? baseGroup.align : base;
+
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
+
+    return {
+      finalIndentation: finalIndent,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Case 2: Special indentation, used with CASE
+  if (state.indentationState.special !== 0) {
+    const finalIndent =
+      state.activeGroups.length > 1
+        ? state.activeGroups.at(-1).align
+        : state.indentationState.special;
+
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
+
+    return {
+      finalIndentation: finalIndent,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Case 3: Currently for EXISTS, COLLECT and COUNT
+  if (state.indentationState.align.length > 0) {
+    const finalIndent =
+      state.activeGroups.length > 0
+        ? state.activeGroups.at(-1).align
+        : align.at(-1) + INDENTATION + state.indentationState.base;
+
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
+
+    return {
+      finalIndentation: finalIndent,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Case 4: No special indentation rules applied
+  if (state.activeGroups.length > 0) {
+    const finalIndent = state.activeGroups.at(-1).align;
+
+    if (chunk.indentation.align === AlignIndentationOptions.Remove) {
+      return {
+        finalIndentation: align.pop(),
+        indentationState: { base, special, align },
+      };
+    }
+
+    return {
+      finalIndentation: finalIndent,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Default case
   let finalIndent = state.indentationState.base;
 
-  // Only apply indentation at the start of a line (column === 0)
-  if (state.column === 0) {
-    // Case 1: Hard-break comments align with base group or base indentation
-    if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-      const baseGroup = state.activeGroups[0];
-      finalIndent = baseGroup ? baseGroup.align : base;
-    }
-    // Case 2: Special indentation, used with CASE
-    // Aligns as usual if more than one group exists
-    // else indents as specified in state
-    else if (state.indentationState.special !== 0) {
-      finalIndent =
-        state.activeGroups.length > 1
-          ? state.activeGroups.at(-1).align
-          : state.indentationState.special;
-      // Case 3: Currently for for EXISTS, COLLECT and COUNT,
-      // Aligning with base group plus indentation plus possible baseIndentation.
-      // baseIndentation can happen with UNION
-    } else if (state.indentationState.align.length > 0) {
-      finalIndent =
-        state.activeGroups.length > 0
-          ? state.activeGroups.at(-1).align
-          : align.at(-1) + INDENTATION + state.indentationState.base;
-    }
-    // Case 4: No special indentation rules applied,
-    // Align with latest added active group
-    else if (state.activeGroups.length > 0) {
-      finalIndent = state.activeGroups.at(-1).align;
-    }
-    // Default case is already set to currBaseIndent
-  } else {
-    // When not at the start of a line, no indentation
-    finalIndent = 0;
-  }
   if (chunk.indentation.align === AlignIndentationOptions.Remove) {
     finalIndent = align.pop();
   }
 
   return {
     finalIndentation: finalIndent,
-    indentationState: {
-      base: base,
-      special: special,
-      align: align,
-    },
+    indentationState: { base, special, align },
   };
 }
 
