@@ -420,9 +420,10 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
   (()--(n))+
   (:Station {name: 'Cheltenham Spa'})
 RETURN [stop in n[..-1] | stop.name] AS stops`;
-    const expected = `MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
-      (:Station {name: 'Cheltenham Spa'})
-RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
+                 (:Station {name: 'Cheltenham Spa'})
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -432,8 +433,8 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`;
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'})
-                  (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                  (:Station {name: 'Cheltenham Spa'}) WHERE
                   none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
@@ -459,7 +460,7 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
 RETURN [r IN relationships(path) | r.distance] AS distances`;
     const expected = `
 MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
-             (b:Station {name: 'Bromsgrove'})
+                 (b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
