@@ -768,8 +768,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     this.visitIfNotNull(ctx.variable());
     this.visitIfNotNull(ctx.labelExpression());
-    if (ctx instanceof RelationshipPatternContext) {
-      this.visitIfNotNull(ctx.pathLength());
+    if (ctx instanceof RelationshipPatternContext && ctx.pathLength()) {
+      this.visit(ctx.pathLength());
       this.concatenate();
     }
     this.visitIfNotNull(ctx.properties());
