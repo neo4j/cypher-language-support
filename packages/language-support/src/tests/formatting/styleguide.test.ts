@@ -1,6 +1,8 @@
 import { verifyFormatting } from './testutil';
 
 describe('styleguide examples', () => {
+  // NOTE: We do not swap the order of ON MATCH and ON CREATE since
+  // we feel that it falls outside the responsbilities of a formatter.
   test('on match indentation example', () => {
     const query = `MERGE (n) ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
@@ -10,8 +12,8 @@ RETURN a.prop`;
     const expected = `MERGE (n)
   ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
-  ON CREATE SET a.name = 'me'
   ON MATCH SET b.name = 'you'
+  ON CREATE SET a.name = 'me'
 RETURN a.prop`;
     verifyFormatting(query, expected);
   });
