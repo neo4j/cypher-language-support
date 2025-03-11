@@ -485,7 +485,7 @@ RETURN person.name AS name`;
 RETURN person.name AS name, COUNT {
          MATCH (person)-[:HAS_DOG]->(dog:Dog)
          RETURN dog.name AS petName
-         UNION
+           UNION
          MATCH (person)-[:HAS_CAT]->(cat:Cat)
          RETURN cat.name AS petName
        } AS numPets`;
