@@ -129,15 +129,10 @@ function getNextIndentationLevel(
   chunkIndentation: ChunkIndentation,
   indentationState: IndentationState,
 ): IndentationState {
-  const nextBaseIndent =
-    indentationState.base + chunkIndentation.base * INDENTATION;
-  const nextSpecialIndent =
-    indentationState.special + chunkIndentation.special * INDENTATION;
-  const align = [...indentationState.align];
   return {
-    base: nextBaseIndent,
-    special: nextSpecialIndent,
-    align: align,
+    base: indentationState.base + chunkIndentation.base * INDENTATION,
+    special: indentationState.special + chunkIndentation.special * INDENTATION,
+    align: [...indentationState.align],
   };
 }
 
