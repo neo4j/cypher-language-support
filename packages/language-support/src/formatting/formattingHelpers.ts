@@ -44,7 +44,7 @@ export enum AlignIndentationOptions {
   Maintain = 0,
 }
 
-interface ChunkIndentation {
+export interface ChunkIndentation {
   base: number;
   special: number;
   align: AlignIndentationOptions;

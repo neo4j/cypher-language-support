@@ -3,6 +3,7 @@ import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
   AlignIndentationOptions,
   Chunk,
+  ChunkIndentation,
   isCommentBreak,
   MAX_COL,
   RegularChunk,
@@ -124,25 +125,40 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getIndentations(curr: State, choice: Choice): IndentationResult {
-  const currBaseIndent = curr.indentationState.base;
+function getNextIndentationLevel(
+  chunkIndentation: ChunkIndentation,
+  indentationState: IndentationState,
+): IndentationState {
   const nextBaseIndent =
-    currBaseIndent + choice.left.indentation.base * INDENTATION;
+    indentationState.base + chunkIndentation.base * INDENTATION;
   const nextSpecialIndent =
-    curr.indentationState.special +
-    choice.left.indentation.special * INDENTATION;
-  let finalIndent = currBaseIndent;
-  const align = [...curr.indentationState.align];
+    indentationState.special + chunkIndentation.special * INDENTATION;
+  const align = [...indentationState.align];
+  return {
+    base: nextBaseIndent,
+    special: nextSpecialIndent,
+    align: align,
+  };
+}
+
+function getIndentations(curr: State, choice: Choice): IndentationResult {
+  const { base, special, align } = getNextIndentationLevel(
+    choice.left.indentation,
+    curr.indentationState,
+  );
+
   if (choice.left.indentation.align === AlignIndentationOptions.Add) {
     align.push(curr.activeGroups.at(0).align);
   }
+
+  let finalIndent = curr.indentationState.base;
 
   // Only apply indentation at the start of a line (column === 0)
   if (curr.column === 0) {
     // Case 1: Hard-break comments align with base group or base indentation
     if (choice.left.type === 'COMMENT' && choice.left.breakBefore) {
       const baseGroup = curr.activeGroups[0];
-      finalIndent = baseGroup ? baseGroup.align : nextBaseIndent;
+      finalIndent = baseGroup ? baseGroup.align : base;
     }
     // Case 2: Special indentation, used with CASE
     // Aligns as usual if more than one group exists
@@ -159,7 +175,7 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
       finalIndent =
         curr.activeGroups.length > 0
           ? curr.activeGroups.at(-1).align
-          : align.at(-1) + INDENTATION + currBaseIndent;
+          : align.at(-1) + INDENTATION + curr.indentationState.base;
     }
     // Case 4: No special indentation rules applied,
     // Align with latest added active group
@@ -178,8 +194,8 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
   return {
     finalIndentation: finalIndent,
     indentationState: {
-      base: nextBaseIndent,
-      special: nextSpecialIndent,
+      base: base,
+      special: special,
       align: align,
     },
   };
