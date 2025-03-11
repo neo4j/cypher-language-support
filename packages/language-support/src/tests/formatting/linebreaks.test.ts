@@ -440,6 +440,17 @@ MATCH p = SHORTEST 1
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('selector and quantifier example', () => {
+    const query = `MATCH path = ANY
+  (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`;
+    const expected = `
+MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+             (b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
