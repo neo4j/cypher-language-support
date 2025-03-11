@@ -617,4 +617,11 @@ FOREACH (item IN items |
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('relation with IS CONNECTED should not concatenate to ISCONNECTED', () => {
+    const query = `MATCH (n)-[IS CONNECTED]->(m)
+RETURN n, m`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
