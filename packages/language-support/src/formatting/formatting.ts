@@ -271,10 +271,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     modifier: 'add' | 'remove',
     type: 'base' | 'special' | 'align',
   ) => {
+    const chunk = this.lastInCurrentBuffer();
+    if (type === 'align' && chunk[type] !== AlignIndentationOptions.Maintain) {
+      new Error('Error: align should not modify if it is not maintain');
+    }
     if (modifier === 'add') {
-      this.lastInCurrentBuffer().indentation[type] += 1;
+      chunk.indentation[type] += 1;
     } else if (modifier === 'remove') {
-      this.lastInCurrentBuffer().indentation[type] -= 1;
+      chunk.indentation[type] -= 1;
     }
   };
 
