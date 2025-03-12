@@ -142,6 +142,9 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     state.indentationState,
   );
 
+  // AlignIndentation, used for EXISTS, COUNT, COLLECT
+  // Pushes base groups alignment to list to be used later
+  // for closing bracket
   if (chunk.indentation.align === AlignIndentationOptions.Add) {
     align.push(state.activeGroups.at(0).align);
   }
@@ -154,6 +157,9 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
+  // A closing bracket of EXISTS, COLLECT, COUNT
+  // Should align with the first group, which alignment only exist
+  // in align group
   if (chunk.indentation.align === AlignIndentationOptions.Remove) {
     return {
       finalIndentation: align.pop(),
