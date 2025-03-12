@@ -1,13 +1,11 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { getDocumentUri, openDocument } from '../../helpers';
+import { newUntitledFileWithContent } from '../../helpers';
 
 suite('Formatting', () => {
   test('tests that formatting document works', async () => {
-    const textFile = 'unformatted.cypher';
-    const docUri = getDocumentUri(textFile);
-    const document = await vscode.workspace.openTextDocument(docUri);
-    await openDocument(docUri);
+    const query = `match (p:   Person)  where  p.name = "John Doe" reTUrn p lIMIt 25`;
+    const document = await newUntitledFileWithContent(query);
     await vscode.commands.executeCommand('editor.action.formatDocument');
     const formattedText = document.getText();
     const expected = `MATCH (p:Person)
