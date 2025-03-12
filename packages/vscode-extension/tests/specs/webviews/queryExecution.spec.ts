@@ -4,7 +4,7 @@ import * as os from 'os';
 import { ViewSection, Workbench } from 'wdio-vscode-service';
 import { CONSTANTS } from '../../../src/constants';
 import {
-  clickOnConnectionItem,
+  clickOnContextMenuItem,
   getConnectionSection,
   openFixtureFile,
   waitUntilNotification,
@@ -95,7 +95,7 @@ suite('Query results testing', () => {
 
     // Disconnect from the current instance
     // Connect to an empty one, the results should be empty
-    await clickOnConnectionItem(connectionSection, 'Connect', 0);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     await executeFile('match-for-create.cypher');
@@ -105,7 +105,7 @@ suite('Query results testing', () => {
     });
 
     // Reconnect to the original instance
-    await clickOnConnectionItem(connectionSection, 'Connect', 1);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 });

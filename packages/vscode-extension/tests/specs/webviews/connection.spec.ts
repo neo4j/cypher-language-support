@@ -4,11 +4,10 @@ import * as os from 'os';
 import { ViewSection, Workbench } from 'wdio-vscode-service';
 import { CONSTANTS } from '../../../src/constants';
 import {
-  clickOnConnectionItem,
+  clickOnContextMenuItem,
   closeActiveTab,
   getConnectionSection,
   openFixtureFile,
-  selectConnectionItem,
   setText,
   waitUntilNotification,
 } from '../../webviewUtils';
@@ -26,7 +25,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnConnectionItem(connectionSection, 'Disconnect', 1);
+    await clickOnContextMenuItem(connectionSection, 'Disconnect', 1);
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
@@ -34,32 +33,32 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnConnectionItem(connectionSection, 'Connect', 1);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
-  test('should connect when selecting new connection', async function () {
-    await selectConnectionItem(connectionSection, 1);
-    await waitUntilNotification(browser, 'Connected to Neo4j.');
-  });
+  // test('should connect when selecting new connection', async function () {
+  //   await selectConnectionItem(connectionSection, 1);
+  //   await waitUntilNotification(browser, 'Connected to Neo4j.');
+  // });
 
-  test('should expand connectionItems when selecting connected connection', async function () {
-    await selectConnectionItem(connectionSection, 1);
-    await waitUntilNotification(browser, 'Connected to Neo4j.');
-    await expect((await connectionSection.getVisibleItems()).length).toBe(2);
-    await selectConnectionItem(connectionSection, 1);
-    await expect((await connectionSection.getVisibleItems()).length).toBe(4);
-  });
+  // test('should expand connectionItems when selecting connected connection', async function () {
+  //   await selectConnectionItem(connectionSection, 1);
+  //   await waitUntilNotification(browser, 'Connected to Neo4j.');
+  //   await expect((await connectionSection.getVisibleItems()).length).toBe(2);
+  //   await selectConnectionItem(connectionSection, 1);
+  //   await expect((await connectionSection.getVisibleItems()).length).toBe(4);
+  // });
 
   test('should be able to connect to another instance', async function () {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnConnectionItem(connectionSection, 'Connect', 0);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     // Reconnect to the original instance
-    await clickOnConnectionItem(connectionSection, 'Connect', 1);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 

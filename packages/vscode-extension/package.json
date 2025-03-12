@@ -337,7 +337,7 @@
     "clean": "rm -rf dist",
     "test:e2e": "npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
     "test:apiAndUnit": "npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "wdio run ./dist/tests/runWebviewTests.js"
+    "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.17",
