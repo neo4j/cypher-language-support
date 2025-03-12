@@ -123,7 +123,7 @@ export async function getConnectionSection(
   return connectionSection;
 }
 
-export async function onClickConnectToConnectionItem(
+export async function selectConnectionItem(
   connectionSection: ViewSection,
   connectionIndex: integer,
 ): Promise<void> {
@@ -145,33 +145,6 @@ export async function clickOnConnectionItem(
     async (i) => !(await i.parent),
   );
 
-  await expect(items.length).toBeGreaterThan(connectionIndex);
-  const connectionItem = items.at(connectionIndex) as TreeItem;
-
-  // This context menu does not work in OSX because it's a native element rather
-  // than a browser, so we get errors of the sort of
-  //    element (".monaco-menu-container") still not displayed after 5000ms
-  //
-  // https://github.com/webdriverio-community/wdio-vscode-service/issues/57
-  const contextMenu = await connectionItem.openContextMenu();
-  const menuItems = await contextMenu.getItems();
-  const connect = menuItems.find(async (menuItem) => {
-    const menuText = await menuItem.elem.getText();
-    return menuText === item;
-  });
-
-  if (connect) {
-    const connectOption = await connect.elem;
-    await connectOption.click();
-  }
-}
-
-export async function clickOnContextMenuItem(
-  connectionSection: ViewSection,
-  item: string,
-  connectionIndex: number,
-): Promise<void> {
-  const items = await connectionSection.getVisibleItems();
   await expect(items.length).toBeGreaterThan(connectionIndex);
   const connectionItem = items.at(connectionIndex) as TreeItem;
 
