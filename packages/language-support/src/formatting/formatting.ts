@@ -56,6 +56,7 @@ import {
   SetClauseContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
+  TrimFunctionContext,
   UnwindClauseContext,
   UseClauseContext,
   WhereClauseContext,
@@ -924,6 +925,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
       return;
     }
+    if (!ctx._from_ && !ctx._to) {
+      this.visitChildren(ctx);
+      this.concatenate();
+      this.concatenate();
+      this.concatenate();
+      this.avoidSpaceBetween();
+      return;
+    }
     if (!ctx._from_) {
       this.visitTerminalRaw(ctx.LCURLY(), { spacingChoice: 'EXTRA_SPACE' });
     } else {
@@ -1197,6 +1206,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.breakLine();
       this.visit(ctx.singleQuery(i + 1));
     }
+  };
+
+  visitTrimFunction = (ctx: TrimFunctionContext) => {
+    this.visitTerminalRaw(ctx.TRIM());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this.visit(ctx.LPAREN());
+    this.avoidBreakBetween();
+    const trimGrp = this.startGroup();
+    this.visitIfNotNull(ctx.BOTH());
+    this.visitIfNotNull(ctx.LEADING());
+    this.visitIfNotNull(ctx.TRAILING());
+    this.visitIfNotNull(ctx._trimCharacterString);
+    this.visitIfNotNull(ctx.FROM());
+    this.visit(ctx._trimSource);
+    this.visit(ctx.RPAREN());
+    this.endGroup(trimGrp);
   };
 
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
