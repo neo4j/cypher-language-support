@@ -150,13 +150,14 @@ function getIndentations(curr: State, choice: Choice): IndentationResult {
         curr.activeGroups.length > 1
           ? curr.activeGroups.at(-1).align
           : curr.indentationState.special;
-      // Case 3: Currently only for EXISTS,
-      // Aaligning with base group plus indentation
+      // Case 3: Currently for for EXISTS, COLLECT and COUNT,
+      // Aligning with base group plus indentation plus possible baseIndentation.
+      // baseIndentation can happen with UNION
     } else if (curr.indentationState.align.length > 0) {
       finalIndent =
         curr.activeGroups.length > 0
           ? curr.activeGroups.at(-1).align
-          : align.at(-1) + INDENTATION;
+          : align.at(-1) + INDENTATION + currBaseIndent;
     }
     // Case 4: No special indentation rules applied,
     // Align with latest added active group

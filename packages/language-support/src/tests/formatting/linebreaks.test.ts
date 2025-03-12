@@ -463,6 +463,35 @@ WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
       } AND user.last_login > datetime() - duration({days: 30}))`;
     verifyFormatting(query, expected);
   });
+  test('test that clause under collect gets properly indented', () => {
+    const query = `MATCH (person:Person)
+RETURN person.name AS name, COLLECT {
+         MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+         WHERE r.since > 2017
+         RETURN dog.name
+       } AS youngDogs`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('count expression with only expression', () => {
+    const query = `MATCH (person:Person)
+WHERE COUNT { (person)-[:HAS_DOG]->(:Dog) } > 1
+RETURN person.name AS name`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('count expression with regular query', () => {
+    const query = `MATCH (person:Person)
+RETURN person.name AS name, COUNT {
+         MATCH (person)-[:HAS_DOG]->(dog:Dog)
+         RETURN dog.name AS petName
+           UNION
+         MATCH (person)-[:HAS_CAT]->(cat:Cat)
+         RETURN cat.name AS petName
+       } AS numPets`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
