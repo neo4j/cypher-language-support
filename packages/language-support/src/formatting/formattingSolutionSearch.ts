@@ -390,19 +390,11 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   let cursorPos = -1;
   decisions.forEach((decision) => {
     buffer.push(' '.repeat(decision.indentation));
-    const leftType = decision.left.type;
-    if (
-      (leftType === 'REGULAR' || leftType === 'COMMENT') &&
-      decision.left.isCursor
-    ) {
+    if (decision.left.isCursor) {
       cursorPos = buffer.join('').length;
     }
     if (showGroups) addGroupStart(buffer, decision);
-    buffer.push(
-      leftType === 'REGULAR' || leftType === 'COMMENT'
-        ? decision.left.text
-        : '',
-    );
+    buffer.push(decision.left.text);
     if (showGroups) addGroupEnd(buffer, decision);
     buffer.push(decision.chosenSplit.splitType);
   });
@@ -410,10 +402,8 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   if (decisions.at(-1).left.doubleBreak) {
     result += '\n';
   }
-  if (cursorPos === -1) {
-    return result;
-  }
-  return { formattedString: result, cursorPos: cursorPos };
+  // Return appropriate result type based on cursor presence
+  return cursorPos === -1 ? result : { formattedString: result, cursorPos };
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
