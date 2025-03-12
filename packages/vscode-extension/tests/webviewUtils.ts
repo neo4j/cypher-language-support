@@ -1,3 +1,4 @@
+import { integer } from 'vscode-languageclient';
 import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
@@ -120,6 +121,19 @@ export async function getConnectionSection(
   const sections = await content.getSections();
   const connectionSection = sections.at(0);
   return connectionSection;
+}
+
+export async function onClickConnectToConnectionItem(
+  connectionSection: ViewSection,
+  connectionIndex: integer,
+): Promise<void> {
+  const items = (await connectionSection.getVisibleItems()).filter(
+    async (i) => !(await i.parent),
+  );
+
+  await expect(items.length).toBeGreaterThan(connectionIndex);
+  const connectionItem = items.at(connectionIndex) as TreeItem;
+  await connectionItem.select();
 }
 
 export async function clickOnConnectionItem(

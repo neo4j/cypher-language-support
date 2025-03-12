@@ -7,6 +7,7 @@ import {
   clickOnConnectionItem,
   closeActiveTab,
   getConnectionSection,
+  onClickConnectToConnectionItem,
   openFixtureFile,
   setText,
   waitUntilNotification,
@@ -33,7 +34,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnConnectionItem(connectionSection, 'Connect', 1);
+    await onClickConnectToConnectionItem(connectionSection, 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
@@ -41,11 +42,11 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnConnectionItem(connectionSection, 'Connect', 0);
+    await onClickConnectToConnectionItem(connectionSection, 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     // Reconnect to the original instance
-    await clickOnConnectionItem(connectionSection, 'Connect', 1);
+    await onClickConnectToConnectionItem(connectionSection, 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
