@@ -1,5 +1,9 @@
 # neo4j-for-vscode
 
+## 1.8.0
+
+- Adds support for formatting a Cypher file according to styleguide rules 
+
 ## 1.7.0
 
 - Adds support for multiple Neo4j connections
