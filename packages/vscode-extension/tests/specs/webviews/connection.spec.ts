@@ -4,7 +4,7 @@ import * as os from 'os';
 import { ViewSection, Workbench } from 'wdio-vscode-service';
 import { CONSTANTS } from '../../../src/constants';
 import {
-  clickOnContextMenuItem,
+  clickOnConnectionItem,
   closeActiveTab,
   getConnectionSection,
   openFixtureFile,
@@ -25,7 +25,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem(connectionSection, 'Disconnect', 1);
+    await clickOnConnectionItem(connectionSection, 'Disconnect', 1);
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   });
 
@@ -33,7 +33,7 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    await clickOnConnectionItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
@@ -41,11 +41,11 @@ suite('Connection testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem(connectionSection, 'Connect', 0);
+    await clickOnConnectionItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     // Reconnect to the original instance
-    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    await clickOnConnectionItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
