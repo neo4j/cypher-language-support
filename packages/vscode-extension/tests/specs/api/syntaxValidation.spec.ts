@@ -69,7 +69,7 @@ export async function testSyntaxValidation({
   );
 }
 
-suite.only('Syntax validation spec', () => {
+suite('Syntax validation spec', () => {
   afterEach(async () => {
     await toggleLinting(true);
   });
