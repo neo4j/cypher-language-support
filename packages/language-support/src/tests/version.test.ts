@@ -16,5 +16,8 @@ describe('version tests', () => {
     expect(cypher25Supported('5.28')).toBe(true);
     expect(cypher25Supported('5.28.0')).toBe(true);
     expect(cypher25Supported('6.1.0')).toBe(true);
+    expect(cypher25Supported('5.27.0-beta')).toBe(false);
+    expect(cypher25Supported('5.27.0-alpha.2025050')).toBe(false);
+    expect(cypher25Supported('6.1.0-preRelease.3')).toBe(true);
   });
 });

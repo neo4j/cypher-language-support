@@ -2,8 +2,7 @@ import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
 /**
- * List available databases in your dbms
- * https://neo4j.com/docs/cypher-manual/current/administration/databases/#administration-databases-show-databases
+ * Get dbms version
  */
 export function getVersion(): ExecuteQueryArgs<{
   serverVersion: string | undefined;
