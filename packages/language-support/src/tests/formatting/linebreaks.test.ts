@@ -413,6 +413,58 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
                 ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
+
+  test('simple selector example', () => {
+    const query = `MATCH SHORTEST 1
+  (:Station {name: 'Hartlebury'})
+  (()--(n))+
+  (:Station {name: 'Cheltenham Spa'})
+RETURN [stop in n[..-1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
+                 (:Station {name: 'Cheltenham Spa'})
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('complex selector example', () => {
+    const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                 (:Station {name: 'Cheltenham Spa'}) WHERE none(
+                 stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                  (:Station {name: 'Cheltenham Spa'}) WHERE
+                  none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('selector example with path', () => {
+    const query = `MATCH p = SHORTEST 1 ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH p = SHORTEST 1
+          ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('selector and quantifier example', () => {
+    const query = `MATCH path = ANY
+  (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`;
+    const expected = `
+MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+                 (b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
   test('test for nested exists cases', () => {
     const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
 WHERE(
