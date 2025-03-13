@@ -717,7 +717,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: {
         base: 0,
         special: 0,
-        align: 0,
+        align: AlignIndentationOptions.Maintain,
       },
     };
     this.startGroupCounter = 0;
@@ -762,7 +762,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: {
         base: 0,
         special: 0,
-        align: 0,
+        align: AlignIndentationOptions.Maintain,
       },
     };
     this.startGroupCounter = 0;
