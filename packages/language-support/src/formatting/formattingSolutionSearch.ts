@@ -366,6 +366,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
+  if (decisions.at(0).left.type === 'SYNTAX_ERROR') {
+    result = result.trimStart();
+  }
   if (decisions.at(-1).left.doubleBreak) {
     result += '\n';
   }
