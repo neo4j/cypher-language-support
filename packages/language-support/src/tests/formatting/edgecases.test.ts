@@ -405,6 +405,13 @@ RETURN m`;
     verifyFormatting(query, expected);
   });
 
+  test('QPP with only a number', () => {
+    const query = `MATCH (n)-->{4}(m)
+RETURN n`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
   // Example 1 by Finbar
   test('QPP spacing with star', () => {
     const query = `
@@ -615,6 +622,51 @@ FOREACH (item IN items |
   CREATE (n)-[:CONTAINS]->(p)
 )
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('relation with IS CONNECTED should not concatenate to ISCONNECTED', () => {
+    const query = `MATCH (n)-[IS CONNECTED]->(m)
+RETURN n, m`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not treat the trim function as a keyword', () => {
+    const query = `MATCH (v)
+WHERE trim(v.authors) <> ''
+RETURN v`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('trim with leading/trailling/both', () => {
+    let query = `MATCH (n)
+WHERE trim(LEADING ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    let expected = query;
+    verifyFormatting(query, expected);
+    query = `MATCH (n)
+WHERE trim(TRAILING ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    expected = query;
+    verifyFormatting(query, expected);
+    query = `MATCH (n)
+WHERE trim(BOTH ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not treat the normalize function as a keyword', () => {
+    const query = `RETURN normalize('Café') AS normalizedDefault`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not forget about the second argument in normalize', () => {
+    const query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });

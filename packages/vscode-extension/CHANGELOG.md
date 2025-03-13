@@ -1,7 +1,8 @@
 # neo4j-for-vscode
 
-## 1.7.1
+## 1.8.0
 
+- Adds support for formatting a Cypher file according to styleguide rules
 - Solves a bug with the polling of methods for Cypher 25, which should not be enabled for the version 2025.02.
 
 ## 1.7.0

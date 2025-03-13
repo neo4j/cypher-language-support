@@ -3,7 +3,6 @@ import {
   CommonToken,
   CommonTokenStream,
   ErrorListener as ANTLRErrorListener,
-  ParseTree,
   Recognizer,
   TerminalNode,
   Token,
@@ -11,7 +10,6 @@ import {
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
-  MergeClauseContext,
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
@@ -40,14 +38,25 @@ export class FormatterErrorsListener
  */
 export const MAX_COL = 80;
 
+export enum AlignIndentationOptions {
+  Add = 1,
+  Remove = -1,
+  Maintain = 0,
+}
+
+export interface ChunkIndentation {
+  base: number;
+  special: number;
+  align: AlignIndentationOptions;
+}
+
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
   groupsStarting: number;
   groupsEnding: number;
-  modifyIndentation: number;
-  specialIndentation: number;
+  indentation: ChunkIndentation;
 }
 
 // Regular chunk specific properties
@@ -68,6 +77,20 @@ export interface CommentChunk extends BaseChunk {
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk;
 
+export const initialIndentation: ChunkIndentation = {
+  base: 0,
+  special: 0,
+  align: AlignIndentationOptions.Maintain,
+};
+
+export const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
+  text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  indentation: { ...initialIndentation },
+};
+
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
   CypherCmdLexer.COMMA,
@@ -75,41 +98,6 @@ const traillingCharacters = [
   CypherCmdLexer.RPAREN,
   CypherCmdLexer.RBRACKET,
 ];
-
-// TODO: This function should probably not exist; we're not really fans of
-// shuffling around the AST like we're doing right now...
-export function handleMergeClause(
-  ctx: MergeClauseContext,
-  visit: (node: ParseTree) => void,
-  startGroup?: () => number,
-  endGroup?: (id: number) => void,
-  avoidBreakBetween?: () => void,
-) {
-  visit(ctx.MERGE());
-  avoidBreakBetween?.();
-  let patternGrp: number;
-  if (startGroup) {
-    patternGrp = startGroup();
-  }
-  visit(ctx.pattern());
-  if (endGroup) {
-    endGroup(patternGrp);
-  }
-  const mergeActions = ctx
-    .mergeAction_list()
-    .map((action, index) => ({ action, index }));
-  mergeActions.sort((a, b) => {
-    if (a.action.CREATE() && b.action.MATCH()) {
-      return -1;
-    } else if (a.action.MATCH() && b.action.CREATE()) {
-      return 1;
-    }
-    return a.index - b.index;
-  });
-  mergeActions.forEach(({ action }) => {
-    visit(action);
-  });
-}
 
 export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);

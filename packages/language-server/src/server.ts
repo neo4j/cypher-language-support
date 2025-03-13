@@ -18,6 +18,7 @@ import {
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import { doAutoCompletion } from './autocompletion';
+import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
@@ -79,6 +80,7 @@ connection.onInitialize(() => {
       signatureHelpProvider: {
         triggerCharacters: ['(', ',', ')'],
       },
+      documentFormattingProvider: true,
     },
   };
 
@@ -129,6 +131,10 @@ connection.onNotification(
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
 );
+
+connection.onDocumentFormatting((params) => {
+  return formatDocument(params, documents);
+});
 
 connection.onNotification('connectionDisconnected', () => {
   disconnect();

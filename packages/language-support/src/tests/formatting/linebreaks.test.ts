@@ -413,6 +413,137 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
                 ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
+
+  test('simple selector example', () => {
+    const query = `MATCH SHORTEST 1
+  (:Station {name: 'Hartlebury'})
+  (()--(n))+
+  (:Station {name: 'Cheltenham Spa'})
+RETURN [stop in n[..-1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
+                 (:Station {name: 'Cheltenham Spa'})
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('complex selector example', () => {
+    const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                 (:Station {name: 'Cheltenham Spa'}) WHERE none(
+                 stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                  (:Station {name: 'Cheltenham Spa'}) WHERE
+                  none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('selector example with path', () => {
+    const query = `MATCH p = SHORTEST 1 ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH p = SHORTEST 1
+          ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
+           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('selector and quantifier example', () => {
+    const query = `MATCH path = ANY
+  (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`;
+    const expected = `
+MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+                 (b:Station {name: 'Bromsgrove'})
+RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('test for nested exists cases', () => {
+    const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
+WHERE(
+(size(apoc.coll.intersection(labels(user),idp_label_list))="3INQ6teR" OR user.service_type="UlAAMmmD")AND NOT EXISTS{
+MATCH(user)-[:PART_OF]->(group:Actor{actor_type:"A0cFHwrB"})
+WITH group,apoc.coll.intersection(labels(group),idp_label_list)AS group_idp_labels
+WHERE(size(group_idp_labels)="7SOM63mX" OR group.service_type="11gaOJfr")AND EXISTS{
+MATCH(group)-[:HAS_ACCESS]->(resource:Resource)
+WHERE resource.sensitivity>7 AND NOT EXISTS{
+MATCH(resource)-[:PROTECTED_BY]->(policy:Policy)
+WHERE policy.enforcement="strict"
+}AND resource.type IN["confidential","restricted"]
+}OR group.created_at<datetime("2023-01-01") 
+OR group.created_at<datetime("2023-01-01")
+OR group.created_at<datetime("2023-01-01")
+}
+)OR(
+user.active=true AND EXISTS{
+MATCH(user)-[:HAS_ROLE]->(role:Role)
+WHERE role.type IN role_types AND NOT EXISTS{
+MATCH(role)-[:REQUIRES]->(approval:Approval)
+WHERE approval.status<>"granted"
+}AND(role.expiry_date>datetime()OR role.permanent=true)
+}AND user.last_login>datetime()-duration({days:30})
+)`;
+    const expected = `MATCH (user:Actor {actor_type: "EFXxFHob"})
+WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
+        OR user.service_type = "UlAAMmmD") AND NOT EXISTS {
+        MATCH (user)-[:PART_OF]->(group:Actor {actor_type: "A0cFHwrB"})
+        WITH group, apoc.coll.intersection(labels(group), idp_label_list)
+                    AS group_idp_labels
+        WHERE (size(group_idp_labels) = "7SOM63mX" OR
+               group.service_type = "11gaOJfr") AND EXISTS {
+                MATCH (group)-[:HAS_ACCESS]->(resource:Resource)
+                WHERE resource.sensitivity > 7 AND NOT EXISTS {
+                        MATCH (resource)-[:PROTECTED_BY]->(policy:Policy)
+                        WHERE policy.enforcement = "strict"
+                      } AND resource.type IN ["confidential", "restricted"]
+              } OR group.created_at < datetime("2023-01-01") OR
+              group.created_at < datetime("2023-01-01") OR
+              group.created_at < datetime("2023-01-01")
+      }) OR (user.active = true AND EXISTS {
+        MATCH (user)-[:HAS_ROLE]->(role:Role)
+        WHERE role.type IN role_types AND NOT EXISTS {
+                MATCH (role)-[:REQUIRES]->(approval:Approval)
+                WHERE approval.status <> "granted"
+              } AND (role.expiry_date > datetime() OR role.permanent = true)
+      } AND user.last_login > datetime() - duration({days: 30}))`;
+    verifyFormatting(query, expected);
+  });
+  test('test that clause under collect gets properly indented', () => {
+    const query = `MATCH (person:Person)
+RETURN person.name AS name, COLLECT {
+         MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+         WHERE r.since > 2017
+         RETURN dog.name
+       } AS youngDogs`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('count expression with only expression', () => {
+    const query = `MATCH (person:Person)
+WHERE COUNT { (person)-[:HAS_DOG]->(:Dog) } > 1
+RETURN person.name AS name`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('count expression with regular query', () => {
+    const query = `MATCH (person:Person)
+RETURN person.name AS name, COUNT {
+         MATCH (person)-[:HAS_DOG]->(dog:Dog)
+         RETURN dog.name AS petName
+           UNION
+         MATCH (person)-[:HAS_CAT]->(cat:Cat)
+         RETURN cat.name AS petName
+       } AS numPets`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
@@ -918,6 +1049,71 @@ RETURN n
 
 LIMIT 10`.trimStart();
     const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('two statements', () => {
+    const query = `
+MATCH (n)
+
+RETURN n;
+
+MATCH (n)
+
+RETURN m;`;
+    const expected = query.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple statements with comments inbetween', () => {
+    const query = `
+MATCH (n)
+
+RETURN n;
+// This is a comment
+
+MATCH (n)
+
+RETURN n;
+
+// This is another comment
+
+MATCH (n)
+RETURN n;`;
+    const expected = query.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('end of statement with multiple newlines', () => {
+    const query = `
+MATCH (n)
+RETURN m;
+
+
+`;
+    const expected = `MATCH (n)
+RETURN m;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('too many newlines between statements should truncate to one', () => {
+    const query = `
+MATCH (n)
+RETURN n;
+
+
+
+
+
+
+MATCH (n)
+RETURN m;`;
+    const expected = `
+MATCH (n)
+RETURN n;
+
+MATCH (n)
+RETURN m;`.trimStart();
     verifyFormatting(query, expected);
   });
 });

@@ -1,6 +1,8 @@
 import { verifyFormatting } from './testutil';
 
 describe('styleguide examples', () => {
+  // NOTE: We do not swap the order of ON MATCH and ON CREATE since
+  // we feel that it falls outside the responsbilities of a formatter.
   test('on match indentation example', () => {
     const query = `MERGE (n) ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
@@ -10,8 +12,8 @@ RETURN a.prop`;
     const expected = `MERGE (n)
   ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
-  ON CREATE SET a.name = 'me'
   ON MATCH SET b.name = 'you'
+  ON CREATE SET a.name = 'me'
 RETURN a.prop`;
     verifyFormatting(query, expected);
   });
@@ -21,9 +23,9 @@ RETURN a.prop`;
 
     const expected = `MATCH (a:A)
 WHERE EXISTS {
-  MATCH (a)-->(b:B)
-  WHERE b.prop = 'yellow'
-}
+        MATCH (a)-->(b:B)
+        WHERE b.prop = 'yellow'
+      }
 RETURN a.foo`;
     verifyFormatting(query, expected);
   });
@@ -324,8 +326,8 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 ;`;
     const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
 WHERE NOT EXISTS {
-  MATCH (c)-[:TRANSFIERE]->(c2)
-}
+        MATCH (c)-[:TRANSFIERE]->(c2)
+      }
 WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
 LIMIT 1000
 CALL (c, c2, trxs, avgTrx, totalSum) {
