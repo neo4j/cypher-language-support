@@ -999,4 +999,69 @@ LIMIT 10`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('two statements', () => {
+    const query = `
+MATCH (n)
+
+RETURN n;
+
+MATCH (n)
+
+RETURN m;`;
+    const expected = query.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple statements with comments inbetween', () => {
+    const query = `
+MATCH (n)
+
+RETURN n;
+// This is a comment
+
+MATCH (n)
+
+RETURN n;
+
+// This is another comment
+
+MATCH (n)
+RETURN n;`;
+    const expected = query.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('end of statement with multiple newlines', () => {
+    const query = `
+MATCH (n)
+RETURN m;
+
+
+`;
+    const expected = `MATCH (n)
+RETURN m;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('too many newlines between statements should truncate to one', () => {
+    const query = `
+MATCH (n)
+RETURN n;
+
+
+
+
+
+
+MATCH (n)
+RETURN m;`;
+    const expected = `
+MATCH (n)
+RETURN n;
+
+MATCH (n)
+RETURN m;`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
