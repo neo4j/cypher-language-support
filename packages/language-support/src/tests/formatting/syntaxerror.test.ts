@@ -93,13 +93,13 @@ WHERE variable.property = "String"
     OR namespaced.function() = false
     syntax error 
 // comment
-OR $parameter > 2 
+OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false
     syntax error 
-    // comment
-    OR $parameter > 2 
+// comment
+OR $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
