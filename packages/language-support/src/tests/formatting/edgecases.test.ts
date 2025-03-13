@@ -659,11 +659,14 @@ RETURN n`;
   });
 
   test('should not treat the normalize function as a keyword', () => {
-    let query = `RETURN normalize('Café') AS normalizedDefault`;
-    let expected = query;
+    const query = `RETURN normalize('Café') AS normalizedDefault`;
+    const expected = query;
     verifyFormatting(query, expected);
-    query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
-    expected = query;
+  });
+
+  test('should not forget about the second argument in normalize', () => {
+    const query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });
