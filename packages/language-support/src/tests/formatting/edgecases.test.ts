@@ -657,4 +657,16 @@ RETURN n`;
     expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should not treat the normalize function as a keyword', () => {
+    const query = `RETURN normalize('Café') AS normalizedDefault`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not forget about the second argument in normalize', () => {
+    const query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });

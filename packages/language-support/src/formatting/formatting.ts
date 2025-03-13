@@ -37,6 +37,7 @@ import {
   MergeClauseContext,
   NamespaceContext,
   NodePatternContext,
+  NormalizeFunctionContext,
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
@@ -1228,6 +1229,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.breakLine();
       this.visit(ctx.singleQuery(i + 1));
     }
+  };
+
+  visitNormalizeFunction = (ctx: NormalizeFunctionContext) => {
+    this.visitTerminalRaw(ctx.NORMALIZE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this.visit(ctx.LPAREN());
+    const normalizeGrp = this.startGroup();
+    this.avoidBreakBetween();
+    this.avoidSpaceBetween();
+    this.visit(ctx.expression());
+    if (ctx.COMMA()) {
+      this.visit(ctx.COMMA());
+      this.visit(ctx.normalForm());
+    }
+    this.visit(ctx.RPAREN());
+    this.endGroup(normalizeGrp);
   };
 
   visitTrimFunction = (ctx: TrimFunctionContext) => {
