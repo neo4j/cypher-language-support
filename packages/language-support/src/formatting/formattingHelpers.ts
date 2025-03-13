@@ -3,7 +3,6 @@ import {
   CommonToken,
   CommonTokenStream,
   ErrorListener as ANTLRErrorListener,
-  Recognizer,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -17,16 +16,7 @@ import { lexerKeywords } from '../lexerSymbols';
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
 {
-  syntaxError<T extends Token>(
-    _r: Recognizer<CommonToken>,
-    offendingSymbol: T,
-    line: number,
-    column: number,
-  ) {
-    throw new Error(
-      `Could not format due to syntax error at line ${line}:${column} near "${offendingSymbol?.text}"`,
-    );
-  }
+  syntaxError() {}
   public reportAmbiguity() {}
   public reportAttemptingFullContext() {}
   public reportContextSensitivity() {}

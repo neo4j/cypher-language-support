@@ -1,4 +1,9 @@
-import { CommonTokenStream, ParserRuleContext, TerminalNode } from 'antlr4';
+import {
+  CommonTokenStream,
+  ErrorNode,
+  ParserRuleContext,
+  TerminalNode,
+} from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   ArrowLineContext,
@@ -91,6 +96,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupStack: number[] = [];
   startGroupCounter = 0;
   groupsToEndOnBreak: number[] = [];
+  lastTokenIndex: number = -1;
 
   constructor(private tokenStream: CommonTokenStream) {
     super();
@@ -423,6 +429,37 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitErrorNode = (node: ErrorNode) => {
+    const token = node.symbol;
+    const errorTokenIndex = token.tokenIndex;
+
+    let gapText = '';
+    if (this.lastTokenIndex < errorTokenIndex - 1) {
+      const skippedTokens = this.tokenStream.tokens.slice(
+        this.lastTokenIndex + 1,
+        errorTokenIndex,
+      );
+      gapText = skippedTokens.map((t) => t.text).join('');
+    }
+
+    const errorText = token.text;
+    const combinedText = gapText + errorText;
+
+    this.lastTokenIndex = errorTokenIndex;
+
+    const chunk: RegularChunk = {
+      type: 'REGULAR',
+      text: combinedText,
+      groupsStarting: 0,
+      groupsEnding: 0,
+      modifyIndentation: 0,
+      specialIndentation: 0,
+      alignIndentation: AlignIndentationOptions.Maintain,
+    };
+
+    this.currentBuffer().push(chunk);
+  };
+
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
     const n = ctx.statementOrCommand_list().length;
     for (let i = 0; i < n; i++) {
@@ -701,6 +738,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.concatenate();
     }
     this.addCommentsAfter(node);
+    this.lastTokenIndex = node.symbol.tokenIndex;
   };
 
   // Some terminals don't want to have the regular rules applied to them,
@@ -748,6 +786,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.concatenate();
     }
     this.addCommentsAfter(node);
+    this.lastTokenIndex = node.symbol.tokenIndex;
   };
 
   // Handled separately because the dollar should not be treated
