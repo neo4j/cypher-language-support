@@ -180,7 +180,7 @@ export class ConnectionItem extends TreeItem {
             ),
           ),
         };
-        this.id = key;
+        this.id = `${key}${collapsibleState}`;
         break;
       case 'connection':
         this.iconPath = {
@@ -203,7 +203,7 @@ export class ConnectionItem extends TreeItem {
             ),
           ),
         };
-        this.id = key;
+        this.id = `${key}${collapsibleState}`;
         this.command = {
           title: 'onClickConnect',
           command: CONSTANTS.COMMANDS.CONNECT_COMMAND,
@@ -254,6 +254,11 @@ export class ConnectionItem extends TreeItem {
               'DisconnectedDark.svg',
             ),
           ),
+        };
+        this.command = {
+          title: 'onClickDbConnect',
+          command: CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
+          arguments: [this],
         };
         break;
     }

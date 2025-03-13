@@ -41,25 +41,27 @@ suite('Connection testing', () => {
   test('should connect when selecting new connection', async function () {
     await selectConnectionItem(connectionSection, 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
+    await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
   });
 
-  test('should expand connectionItems when selecting connected connection', async function () {
+  test('should collapse connectionItems when selecting expanded connection', async function () {
     await selectConnectionItem(connectionSection, 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
-    await expect((await connectionSection.getVisibleItems()).length).toBe(2);
-    await selectConnectionItem(connectionSection, 1);
     await expect((await connectionSection.getVisibleItems()).length).toBe(4);
+    await selectConnectionItem(connectionSection, 1);
+    await expect((await connectionSection.getVisibleItems()).length).toBe(2);
+    await clickOnContextMenuItem(connectionSection, 'Disconnect', 1);
   });
 
   test('should be able to connect to another instance', async function () {
     if (os.platform() === 'darwin') {
       this.skip();
     }
-    await clickOnContextMenuItem(connectionSection, 'Connect', 0);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     // Reconnect to the original instance
-    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    await clickOnContextMenuItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
