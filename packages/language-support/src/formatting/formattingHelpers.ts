@@ -44,15 +44,19 @@ export enum AlignIndentationOptions {
   Maintain = 0,
 }
 
+export interface ChunkIndentation {
+  base: number;
+  special: number;
+  align: AlignIndentationOptions;
+}
+
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
   groupsStarting: number;
   groupsEnding: number;
-  modifyIndentation: number;
-  specialIndentation: number;
-  alignIndentation: AlignIndentationOptions;
+  indentation: ChunkIndentation;
 }
 
 // Regular chunk specific properties
@@ -72,6 +76,20 @@ export interface CommentChunk extends BaseChunk {
 
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk;
+
+export const initialIndentation: ChunkIndentation = {
+  base: 0,
+  special: 0,
+  align: AlignIndentationOptions.Maintain,
+};
+
+export const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
+  text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  indentation: { ...initialIndentation },
+};
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
