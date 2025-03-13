@@ -278,7 +278,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       chunk.indentation[type] !== AlignIndentationOptions.Maintain
     ) {
       throw new Error(
-        'Error: align should not be modified if it is not maintain',
+        'Internal formatting error: Chunk should not get its alignIndentation set twice',
       );
     }
     if (modifier === 'add') {
