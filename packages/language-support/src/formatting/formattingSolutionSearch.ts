@@ -168,10 +168,14 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 2: Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
-    const finalIndent =
+    let finalIndent =
       state.activeGroups.length > 1
         ? state.activeGroups.at(-1).align
         : state.indentationState.special;
+
+    if (state.indentationState.align.length > 0) {
+      finalIndent += INDENTATION_SPACES;
+    }
 
     return {
       finalIndentation: finalIndent,
@@ -184,6 +188,10 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     // base case
     let finalIndent =
       align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
+
+    if (state.indentationState.special !== 0) {
+      finalIndent += INDENTATION_SPACES;
+    }
 
     // more than one group, align as usual
     if (state.activeGroups.length > 0) {
