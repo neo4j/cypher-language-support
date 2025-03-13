@@ -15,7 +15,7 @@ This is likely a bug in the formatter itself. If possible, please report the iss
 along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
 
-const INDENTATION = 2;
+const INDENTATION_SPACES = 2;
 const showGroups = false;
 
 interface Split {
@@ -130,8 +130,9 @@ function deriveNextIndentationState(
   indentationState: IndentationState,
 ): IndentationState {
   return {
-    base: indentationState.base + chunkIndentation.base * INDENTATION,
-    special: indentationState.special + chunkIndentation.special * INDENTATION,
+    base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
+    special:
+      indentationState.special + chunkIndentation.special * INDENTATION_SPACES,
     align: [...indentationState.align],
   };
 }
@@ -193,7 +194,8 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   // Case 3: Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
     // base case
-    let finalIndent = align.at(-1) + INDENTATION + state.indentationState.base;
+    let finalIndent =
+      align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
 
     // more than one group, align as usual
     if (state.activeGroups.length > 0) {
