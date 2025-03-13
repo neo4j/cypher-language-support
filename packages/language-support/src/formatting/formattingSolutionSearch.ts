@@ -244,11 +244,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
-  const leftLength =
-    choice.left.type === 'COMMENT' || choice.left.type === 'REGULAR'
-      ? choice.left.text.length
-      : 0;
-  const thisWordEnd = actualColumn + leftLength + splitLength;
+  const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
   // We don't consider comments nor an empty space as overflowing
   const endWithoutCommentAndSplit =
     choice.left.type === 'COMMENT'
