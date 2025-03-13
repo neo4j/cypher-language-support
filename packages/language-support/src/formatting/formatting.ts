@@ -329,16 +329,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     throw new Error('Internal formatting error in findBottomChild');
   };
 
-  preserveExplicitNewlineAfter = (ctx: ParserRuleContext) => {
+  preserveExplicitNewlineAfter = (ctx: ParserRuleContext | TerminalNode) => {
     this.preserveExplicitNewline(ctx, 'after');
   };
 
-  preserveExplicitNewlineBefore = (ctx: ParserRuleContext) => {
+  preserveExplicitNewlineBefore = (ctx: ParserRuleContext | TerminalNode) => {
     this.preserveExplicitNewline(ctx, 'before');
   };
 
   preserveExplicitNewline = (
-    ctx: ParserRuleContext,
+    ctx: ParserRuleContext | TerminalNode,
     side: 'before' | 'after',
   ) => {
     const bottomChild = this.getBottomChild(ctx, side);
@@ -451,6 +451,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           this.currentBuffer().pop();
         }
         this.visit(ctx.SEMICOLON(i));
+        this.preserveExplicitNewlineAfter(ctx.SEMICOLON(i));
       }
     }
   };
