@@ -47,10 +47,13 @@ suite('Connection testing', () => {
   test('should collapse connectionItems when selecting expanded connection', async function () {
     await selectConnectionItem(connectionSection, 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
-    await expect((await connectionSection.getVisibleItems()).length).toBe(4);
-    await selectConnectionItem(connectionSection, 1);
-    await expect((await connectionSection.getVisibleItems()).length).toBe(2);
-    await clickOnContextMenuItem(connectionSection, 'Disconnect', 1);
+    try {
+      await expect((await connectionSection.getVisibleItems()).length).toBe(4);
+      await selectConnectionItem(connectionSection, 1);
+      await expect((await connectionSection.getVisibleItems()).length).toBe(2);
+    } finally {
+      await clickOnContextMenuItem(connectionSection, 'Disconnect', 1);
+    }
   });
 
   test('should be able to connect to another instance', async function () {
