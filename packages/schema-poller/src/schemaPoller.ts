@@ -9,6 +9,7 @@ import {
 import { MetadataPoller } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
+import { getVersion } from './queries/version';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -145,11 +146,11 @@ export class Neo4jSchemaPoller {
       this.driver ??
       (await this.initializeDriver(url, credentials, config, database));
 
-    const { query, queryConfig } = listDatabases();
+    const { query: dbQuery, queryConfig: dbQueryConfig } = listDatabases();
     const { databases, summary } = await this.driver.executeQuery(
-      query,
+      dbQuery,
       {},
-      queryConfig,
+      dbQueryConfig,
     );
 
     const protocolVersion =
@@ -163,7 +164,20 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    this.metadata = new MetadataPoller(databases, this.connection, this.events);
+    const { query: versionQuery, queryConfig: versionQueryConfig } =
+      getVersion();
+    const { serverVersion } = await this.driver.executeQuery(
+      versionQuery,
+      {},
+      versionQueryConfig,
+    );
+
+    this.metadata = new MetadataPoller(
+      databases,
+      serverVersion,
+      this.connection,
+      this.events,
+    );
     this.metadata.startBackgroundPolling();
   }
 
