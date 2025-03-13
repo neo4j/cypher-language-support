@@ -669,4 +669,68 @@ RETURN n`;
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('case within exists expression', () => {
+    const query = `MATCH (n)
+RETURN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+RETURN
+CASE
+WHEN dog.name = 'Ozzy' THEN true
+ELSE false
+END
+} THEN 'Relationship'
+END`;
+    const expected = `
+MATCH (n)
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (person)-[:HAS_DOG]->(dog:Dog)
+      WHERE person.name = 'Chris'
+      WITH dog
+      RETURN
+        CASE
+          WHEN dog.name = 'Ozzy' THEN true
+          ELSE false
+        END
+    } THEN 'Relationship'
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('exists expression within a case clause', () => {
+    const query = `
+MATCH (n)
+RETURN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+RETURN CASE WHEN dog.name = 'Ozzy' THEN true ELSE false END
+} THEN 'Relationship'
+END
+`.trimStart();
+    const expected = `
+MATCH (n)
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (person)-[:HAS_DOG]->(dog:Dog)
+      WHERE person.name = 'Chris'
+      WITH dog
+      RETURN
+        CASE
+          WHEN dog.name = 'Ozzy' THEN true
+          ELSE false
+        END
+    } THEN 'Relationship'
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
