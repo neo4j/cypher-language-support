@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { switchToDatabase } from '../../../src/commandHandlers';
+import { switchToDatabase } from '../../../src/commandHandlers/connection';
 import * as connection from '../../../src/connectionService';
 import { getMockConnection } from '../../helpers';
 import { MockLanguageClient } from '../../mocks/mockLanguageClient';

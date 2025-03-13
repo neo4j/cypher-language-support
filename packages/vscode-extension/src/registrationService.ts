@@ -8,8 +8,12 @@ import {
   showConnectionPanelForConnectionItem,
   switchToDatabase,
   toggleConnectionItemsConnectionState,
-} from './commandHandlers';
-import { addParameter, clearParameters } from './commandHandlersParams';
+} from './commandHandlers/connection';
+import {
+  addParameter,
+  clearParameters,
+  evaluateParam,
+} from './commandHandlers/params';
 import { CONSTANTS } from './constants';
 import {
   ConnectionItem,
@@ -83,6 +87,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.CLEAR_PARAMETERS,
       clearParameters,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      evaluateParam,
     ),
   );
 

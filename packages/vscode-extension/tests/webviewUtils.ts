@@ -178,3 +178,25 @@ export async function closeActiveTab(browser: WebdriverIO.Browser) {
     );
   });
 }
+
+export async function checkResultsContent(
+  workbench: Workbench,
+  check: () => Promise<void>,
+) {
+  const webviews = await workbench.getAllWebviews();
+  await expect(webviews.length).toBe(1);
+  const resultsWebview = (await workbench.getAllWebviews()).at(0);
+  await resultsWebview.open();
+  await check();
+  await resultsWebview.close();
+  await workbench.getEditorView().closeAllEditors();
+}
+
+export async function executeFile(
+  workbench: Workbench,
+  fileName: string,
+  opts?: { selectLines?: number },
+) {
+  await openFixtureFile(browser, fileName, opts);
+  await workbench.executeCommand('neo4j.runCypher');
+}

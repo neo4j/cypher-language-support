@@ -12,6 +12,9 @@ export const CONSTANTS = {
     CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
     ADD_PARAMETER: 'neo4j.addParameter',
     CLEAR_PARAMETERS: 'neo4j.clearParameters',
+    INTERNAL: {
+      EVAL_PARAMETER: 'neo4j.internal.evalParam',
+    },
   },
   MESSAGES: {
     CONNECTED_MESSAGE: 'Connected to Neo4j.',

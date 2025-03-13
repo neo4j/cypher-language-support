@@ -11,5 +11,8 @@
   },
   "playwright.env": {
     "NODE_OPTIONS": "--max_old_space_size=8192"
+  },
+  "[cypher]": {
+    "editor.defaultFormatter": "neo4j-extensions.neo4j-for-vscode"
   }
 }

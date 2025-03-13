@@ -3,7 +3,7 @@ import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { Position, Selection, window } from 'vscode';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { runCypher } from '../../../src/commandHandlers';
+import { runCypher } from '../../../src/commandHandlers/connection';
 import * as connectionService from '../../../src/connectionService';
 import * as contextService from '../../../src/contextService';
 import CypherRunner from '../../../src/cypherRunner';
