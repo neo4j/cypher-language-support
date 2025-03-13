@@ -4,9 +4,9 @@ import {
   AlignIndentationOptions,
   Chunk,
   ChunkIndentation,
+  emptyChunk,
   isCommentBreak,
   MAX_COL,
-  RegularChunk,
 } from './formattingHelpers';
 
 const errorMessage = `
@@ -103,18 +103,6 @@ const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
 const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
 const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
-
-const emptyChunk: RegularChunk = {
-  type: 'REGULAR',
-  text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
-  indentation: {
-    base: 0,
-    special: 0,
-    align: 0,
-  },
-};
 
 function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (

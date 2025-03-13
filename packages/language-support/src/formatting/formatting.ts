@@ -69,6 +69,7 @@ import {
   CommentChunk,
   findTargetToken,
   getParseTreeAndTokens,
+  initialIndentation,
   isComment,
   RegularChunk,
   wantsToBeConcatenated,
@@ -375,11 +376,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: this.startGroupCounter,
         groupsEnding: 0,
-        indentation: {
-          base: 0,
-          special: 0,
-          align: AlignIndentationOptions.Maintain,
-        },
+        indentation: { ...initialIndentation },
       };
       this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
@@ -416,11 +413,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: 0,
         groupsEnding: 0,
-        indentation: {
-          base: 0,
-          special: 0,
-          align: AlignIndentationOptions.Maintain,
-        },
+        indentation: { ...initialIndentation },
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
@@ -714,11 +707,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
-      indentation: {
-        base: 0,
-        special: 0,
-        align: AlignIndentationOptions.Maintain,
-      },
+      indentation: { ...initialIndentation },
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
@@ -759,11 +748,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
-      indentation: {
-        base: 0,
-        special: 0,
-        align: AlignIndentationOptions.Maintain,
-      },
+      indentation: { ...initialIndentation },
     };
     this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
