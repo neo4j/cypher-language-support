@@ -356,7 +356,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     }
     if (showGroups) addGroupStart(buffer, decision);
     buffer.push(
-      leftType === 'REGULAR' || leftType === 'COMMENT'
+      leftType === 'REGULAR' ||
+        leftType === 'COMMENT' ||
+        leftType === 'SYNTAX_ERROR'
         ? decision.left.text
         : '',
     );
@@ -374,6 +376,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+    return [{ splitType: '', cost: 0 }];
+  }
   if (isCommentBreak(chunk, nextChunk)) {
     return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
   }

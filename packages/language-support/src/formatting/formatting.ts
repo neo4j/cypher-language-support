@@ -448,7 +448,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.lastTokenIndex = errorTokenIndex;
 
     const chunk: RegularChunk = {
-      type: 'REGULAR',
+      type: 'SYNTAX_ERROR',
       text: combinedText,
       groupsStarting: 0,
       groupsEnding: 0,
