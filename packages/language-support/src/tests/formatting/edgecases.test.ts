@@ -807,4 +807,59 @@ RETURN 5 +
   END`.trimStart();
     verifyFormatting(query, expected);
   });
+  test('else statements for CASE needs to align its expression', () => {
+    const query = `MATCH (u:User)
+WITH u, count((u)-[:LIKES]->()) AS likeCount,
+     collect(DISTINCT u.interests) AS interestList
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+    } AND likeCount > 10 THEN
+      CASE p.name
+        WHEN size(interestList)
+             > 3 THEN 'Active smartphone user with diverse interests: ' +
+                 toString(interestList)
+        ELSE 'Active smartphone user with few interests: ' +
+        toString(interestList)
+      END
+    ELSE
+      CASE
+        WHEN NOT EXISTS {
+          MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+        } AND likeCount <= 10
+        THEN 'Less active user without a smartphone, interests: ' +
+        toString(interestList)
+        ELSE 'User with moderate activity, ' + toString(likeCount) +
+        ' likes and interests: ' + toString(interestList)
+      END
+  END AS userProfile;`;
+    const expected = `MATCH (u:User)
+WITH u, count((u)-[:LIKES]->()) AS likeCount,
+     collect(DISTINCT u.interests) AS interestList
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+    } AND likeCount > 10 THEN
+      CASE p.name
+        WHEN size(interestList)
+             > 3 THEN 'Active smartphone user with diverse interests: ' +
+                 toString(interestList)
+        ELSE 'Active smartphone user with few interests: ' +
+             toString(interestList)
+      END
+    ELSE
+      CASE
+        WHEN NOT EXISTS {
+          MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+        } AND likeCount <= 10
+        THEN 'Less active user without a smartphone, interests: ' +
+        toString(interestList)
+        ELSE 'User with moderate activity, ' + toString(likeCount) +
+             ' likes and interests: ' + toString(interestList)
+      END
+  END AS userProfile;`;
+    verifyFormatting(query, expected);
+  });
 });
