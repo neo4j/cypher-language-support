@@ -156,10 +156,17 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
+  if (state.activeGroups.length > 0) {
+    const finalIndent = state.activeGroups.at(-1).align;
+    return {
+      finalIndentation: finalIndent,
+      indentationState: { base, special, align },
+    };
+  }
+
   // Case 1: Hard-break comments align with base group or base indentation
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    const baseGroup = state.activeGroups[0];
-    const finalIndent = baseGroup ? baseGroup.align : base;
+    const finalIndent = base;
     return {
       finalIndentation: finalIndent,
       indentationState: { base, special, align },
@@ -170,13 +177,10 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   if (state.indentationState.special !== 0) {
     let finalIndent = state.indentationState.special;
 
-    // More than one group, align as usual
-    // Otherwise if align indentation is present
+    // If align indentation is present
     // Meaning inside EXIST, COUNT or COLLECT, add one
     // more indentation to easier differentiate
-    if (state.activeGroups.length > 0) {
-      finalIndent = state.activeGroups.at(-1).align;
-    } else if (state.indentationState.align.length > 0) {
+    if (state.indentationState.align.length > 0) {
       finalIndent += INDENTATION_SPACES;
     }
 
@@ -188,26 +192,11 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 3: Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
-    // Base case
-    let finalIndent =
+    const finalIndent =
       align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
-
-    // More than one group, align as usual
-    if (state.activeGroups.length > 0) {
-      finalIndent = state.activeGroups.at(-1).align;
-    }
 
     return {
       finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // Case 4: No  indentation rules applied
-  // Align on the active groups if present
-  if (state.activeGroups.length > 0) {
-    return {
-      finalIndentation: state.activeGroups.at(-1).align,
       indentationState: { base, special, align },
     };
   }
