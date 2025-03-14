@@ -1,12 +1,8 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('styleguide examples', () => {
+  // NOTE: We do not swap the order of ON MATCH and ON CREATE since
+  // we feel that it falls outside the responsbilities of a formatter.
   test('on match indentation example', () => {
     const query = `MERGE (n) ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
@@ -16,8 +12,8 @@ RETURN a.prop`;
     const expected = `MERGE (n)
   ON CREATE SET n.prop = 0
 MERGE (a:A)-[:T]->(b:B)
-  ON CREATE SET a.name = 'me'
   ON MATCH SET b.name = 'you'
+  ON CREATE SET a.name = 'me'
 RETURN a.prop`;
     verifyFormatting(query, expected);
   });
@@ -27,9 +23,9 @@ RETURN a.prop`;
 
     const expected = `MATCH (a:A)
 WHERE EXISTS {
-  MATCH (a)-->(b:B)
-  WHERE b.prop = 'yellow'
-}
+        MATCH (a)-->(b:B)
+        WHERE b.prop = 'yellow'
+      }
 RETURN a.foo`;
     verifyFormatting(query, expected);
   });
@@ -255,11 +251,11 @@ ELSE 3
 END AS result, n.eyes, n.age`;
     const expected = `MATCH (n:Person)
 RETURN
-CASE
-  WHEN n.eyes = 'blue' THEN 1
-  WHEN n.age < 40 THEN 2
-  ELSE 3
-END AS result, n.eyes, n.age`;
+  CASE
+    WHEN n.eyes = 'blue' THEN 1
+    WHEN n.age < 40 THEN 2
+    ELSE 3
+  END AS result, n.eyes, n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -274,14 +270,14 @@ ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
 RETURN n.name,
-CASE n.age
-  WHEN = 0, = 1, = 2 THEN "Baby"
-  WHEN <= 13 THEN "Child"
-  WHEN < 20 THEN "Teenager"
-  WHEN < 30 THEN "Young Adult"
-  WHEN > 1000 THEN "Immortal"
-  ELSE "Adult"
-END AS result`;
+  CASE n.age
+    WHEN = 0, = 1, = 2 THEN "Baby"
+    WHEN <= 13 THEN "Child"
+    WHEN < 20 THEN "Teenager"
+    WHEN < 30 THEN "Young Adult"
+    WHEN > 1000 THEN "Immortal"
+    ELSE "Adult"
+  END AS result`;
     verifyFormatting(query, expected);
   });
 
@@ -330,8 +326,8 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 ;`;
     const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
 WHERE NOT EXISTS {
-  MATCH (c)-[:TRANSFIERE]->(c2)
-}
+        MATCH (c)-[:TRANSFIERE]->(c2)
+      }
 WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
 LIMIT 1000
 CALL (c, c2, trxs, avgTrx, totalSum) {

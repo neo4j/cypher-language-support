@@ -1,4 +1,4 @@
-import { formatQuery } from '../../formatting/formattingv2';
+import { formatQuery } from '../../formatting/formatting';
 import { standardizeQuery } from '../../formatting/standardizer';
 
 export function verifyFormatting(query: string, expected: string): void {

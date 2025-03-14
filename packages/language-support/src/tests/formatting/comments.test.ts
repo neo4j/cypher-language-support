@@ -1,10 +1,4 @@
-/*
- * This file is a WIP of the next iteration of the cypher-formatter.
- * It's being kept as a separate file to enable having two separate version at once
- * since it would be difficult to consolidate the new and the old version
- */
-
-import { verifyFormatting } from './testutilv2';
+import { verifyFormatting } from './testutil';
 
 describe('should not forget to include all comments', () => {
   test('property comments', () => {
@@ -29,8 +23,8 @@ RETURN a.prop                     // Return the 'prop' of 'a'
 MERGE (n)
   ON CREATE SET n.prop = 0 // Ensure 'n' exists and initialize 'prop' to 0 if created
 MERGE (a:A)-[:T]->(b:B) // Create or match a relationship from 'a:A' to 'b:B'
-  ON CREATE SET a.name = 'me' // If 'a' is created, set its 'name' to 'me'
   ON MATCH SET b.name = 'you' // If 'b' already exists, set its 'name' to 'you'
+  ON CREATE SET a.name = 'me' // If 'a' is created, set its 'name' to 'me'
 RETURN a.prop // Return the 'prop' of 'a'`.trim();
     verifyFormatting(inlinecomments, expected);
   });
@@ -133,6 +127,20 @@ RETURN 1,
        2,
        // Second comment
        3`.trim();
+    verifyFormatting(query, expected);
+  });
+
+  test('multiple comments should not be moved to the previous line', () => {
+    const query = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+return n;`;
+    const expected = `
+MATCH (n)
+// One comment about the return
+// Another comment about the return
+RETURN n;`.trim();
     verifyFormatting(query, expected);
   });
 });
@@ -479,6 +487,36 @@ RETURN *
 // return count(p)
 // return p.prop,  count(p.prop)
 LIMIT "6pkMe6Kx"`;
+    verifyFormatting(query, expected);
+  });
+
+  test('comment directly after outermost group should not break alignment for clauses', () => {
+    const query = `
+USE // Specifies the graph or database to use
+    graph
+MATCH // Matches patterns in the graph
+      (m)-[:RELATION]->(n)
+MERGE // Ensures a pattern exists in the graph
+      (p:Person {name: "Alice"})
+CREATE // Creates new nodes or relationships
+       (q:Person {name: "Bob"})-[:KNOWS]->(p)
+DELETE // Deletes nodes or relationships
+       r
+WITH // Passes results to the next clause
+     p, q
+UNWIND // Expands lists into multiple rows
+       [1, 2, 3] AS num;`;
+    const expected = query.trim();
+    verifyFormatting(query, expected);
+  });
+
+  test('two comments after a clause should not break alignment', () => {
+    const query = `
+MATCH // One comment.
+      // Another comment. Really?
+      (m)-[:RELATION]->(n)
+RETURN m, n`.trim();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 });
