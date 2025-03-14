@@ -156,30 +156,30 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
+  // Active groups, prioritize lining up on these if break
+  // Works because after breakLine no groups are active
   if (state.activeGroups.length > 0) {
-    const finalIndent = state.activeGroups.at(-1).align;
     return {
-      finalIndentation: finalIndent,
+      finalIndentation: state.activeGroups.at(-1).align,
       indentationState: { base, special, align },
     };
   }
 
-  // Case 1: Hard-break comments align with base group or base indentation
+  // Hard-break comments or chunk must break before
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    const finalIndent = base;
     return {
-      finalIndentation: finalIndent,
+      finalIndentation: base,
       indentationState: { base, special, align },
     };
   }
 
-  // Case 2: Special indentation, used with CASE
+  // Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
     let finalIndent = state.indentationState.special;
 
     // If align indentation is present
     // Meaning inside EXIST, COUNT or COLLECT, add one
-    // more indentation to easier differentiate
+    // more indentation to better differentiate
     if (state.indentationState.align.length > 0) {
       finalIndent += INDENTATION_SPACES;
     }
@@ -190,7 +190,7 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
-  // Case 3: Currently for EXISTS, COLLECT and COUNT
+  // Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
     const finalIndent =
       align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
