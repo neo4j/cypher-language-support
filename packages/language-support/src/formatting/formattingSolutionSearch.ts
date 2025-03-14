@@ -193,13 +193,8 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
       align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
 
     // More than one group, align as usual
-    // Otherwise if special alignment already is present
-    // Meaning inside CASE, add one more indentation to
-    // easier differentiate
     if (state.activeGroups.length > 0) {
       finalIndent = state.activeGroups.at(-1).align;
-    } else if (state.indentationState.special !== 0) {
-      finalIndent += INDENTATION_SPACES;
     }
 
     return {
