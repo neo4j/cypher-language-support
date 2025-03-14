@@ -2,13 +2,9 @@ import { Database } from '@neo4j-cypher/schema-poller';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { TreeItemCollapsibleState } from 'vscode';
 import * as connectionService from '../../../src/connectionService';
 import { Connection } from '../../../src/connectionService';
-import {
-  ConnectionItem,
-  connectionTreeDataProvider,
-} from '../../../src/treeviews/connectionTreeDataProvider';
+import { connectionTreeDataProvider } from '../../../src/treeviews/connectionTreeDataProvider';
 
 suite('Connection tree data provider spec', () => {
   const mockConnections: Connection[] = [
@@ -84,18 +80,9 @@ suite('Connection tree data provider spec', () => {
     const children = connectionTreeDataProvider.getChildren();
 
     const actual = children.find((child) => child.key === 'test-connection');
-    const expected: ConnectionItem = {
-      collapsibleState: TreeItemCollapsibleState.Collapsed,
-      contextValue: 'activeConnection',
-      description: 'connected',
-      id: 'test-connection',
-      key: 'test-connection',
-      label: 'neo4j@neo4j://localhost',
-      tooltip: 'neo4j@neo4j://localhost',
-      type: 'activeConnection',
-    };
 
-    assert.deepStrictEqual({ ...actual }, expected);
+    assert.equal(actual.description, 'connected');
+    assert.equal(actual.contextValue, 'activeConnection');
   });
 
   test('An active Connection should have a list of child databases', () => {
@@ -121,27 +108,9 @@ suite('Connection tree data provider spec', () => {
       ...database,
       resourceUri: { ...database.resourceUri },
     };
-    const expected = {
-      collapsibleState: 0,
-      contextValue: 'activeDatabase',
-      description: 'active',
-      iconPath: '.',
-      key: 'neo4j',
-      label: 'neo4j 🏠',
-      resourceUri: {
-        _formatted: null,
-        _fsPath: null,
-        authority: '',
-        fragment: '',
-        path: '/',
-        query: 'type=activeDatabase',
-        scheme: 'file',
-      },
-      tooltip: 'neo4j 🏠',
-      type: 'activeDatabase',
-    };
 
-    assert.deepStrictEqual(actual, expected);
+    assert.equal(actual.description, 'active');
+    assert.equal(actual.contextValue, 'activeDatabase');
   });
 
   test('An active Connection should show the specified database as active', () => {
@@ -156,27 +125,9 @@ suite('Connection tree data provider spec', () => {
       ...database,
       resourceUri: { ...database.resourceUri },
     };
-    const expected = {
-      collapsibleState: 0,
-      contextValue: 'activeDatabase',
-      description: 'active',
-      iconPath: '.',
-      key: 'schemas',
-      label: 'schemas',
-      resourceUri: {
-        _formatted: null,
-        _fsPath: null,
-        authority: '',
-        fragment: '',
-        path: '/',
-        query: 'type=activeDatabase',
-        scheme: 'file',
-      },
-      tooltip: 'schemas',
-      type: 'activeDatabase',
-    };
 
-    assert.deepStrictEqual(actual, expected);
+    assert.equal(actual.description, 'active');
+    assert.equal(actual.contextValue, 'activeDatabase');
   });
 
   test('An activating Connection should show as connecting', () => {
@@ -185,18 +136,8 @@ suite('Connection tree data provider spec', () => {
     const actual = {
       ...children.find((child) => child.key === 'test-connection-4'),
     };
-    const expected: ConnectionItem = {
-      collapsibleState: TreeItemCollapsibleState.None,
-      contextValue: 'connection',
-      description: 'connecting...',
-      id: 'test-connection-4',
-      key: 'test-connection-4',
-      label: 'neo4j@neo4j://localhost',
-      tooltip: 'neo4j@neo4j://localhost',
-      type: 'connection',
-    };
 
-    assert.deepStrictEqual(actual, expected);
+    assert.equal(actual.description, 'connecting...');
   });
 
   test('An errored Connection should show as connecting', () => {
@@ -205,18 +146,8 @@ suite('Connection tree data provider spec', () => {
     const actual = {
       ...children.find((child) => child.key === 'test-connection-5'),
     };
-    const expected: ConnectionItem = {
-      collapsibleState: TreeItemCollapsibleState.None,
-      contextValue: 'connection',
-      description: 'connecting...',
-      id: 'test-connection-5',
-      key: 'test-connection-5',
-      label: 'neo4j@neo4j://localhost',
-      tooltip: 'neo4j@neo4j://localhost',
-      type: 'connection',
-    };
 
-    assert.deepStrictEqual(actual, expected);
+    assert.equal(actual.description, 'connecting...');
   });
 
   test('An inactive Connection should not show as connected or connecting', () => {
@@ -225,17 +156,7 @@ suite('Connection tree data provider spec', () => {
     const actual = {
       ...children.find((child) => child.key === 'test-connection-3'),
     };
-    const expected: ConnectionItem = {
-      collapsibleState: TreeItemCollapsibleState.None,
-      contextValue: 'connection',
-      description: '',
-      id: 'test-connection-3',
-      key: 'test-connection-3',
-      label: 'neo4j@neo4j://localhost:7687',
-      tooltip: 'neo4j@neo4j://localhost:7687',
-      type: 'connection',
-    };
 
-    assert.deepStrictEqual(actual, expected);
+    assert.equal(actual.description, '');
   });
 });

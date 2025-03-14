@@ -1,3 +1,4 @@
+import { integer } from 'vscode-languageclient';
 import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
@@ -122,12 +123,23 @@ export async function getConnectionSection(
   return connectionSection;
 }
 
+export async function selectConnectionItem(
+  connectionSection: ViewSection,
+  connectionIndex: integer,
+): Promise<void> {
+  const items = await connectionSection.getVisibleItems();
+  await expect(items.length).toBeGreaterThan(connectionIndex);
+  const connectionItem = items.at(connectionIndex) as TreeItem;
+  await connectionItem.select();
+}
+
 export async function clickOnContextMenuItem(
   connectionSection: ViewSection,
   item: string,
   connectionIndex: number,
 ): Promise<void> {
   const items = await connectionSection.getVisibleItems();
+
   await expect(items.length).toBeGreaterThan(connectionIndex);
   const connectionItem = items.at(connectionIndex) as TreeItem;
 

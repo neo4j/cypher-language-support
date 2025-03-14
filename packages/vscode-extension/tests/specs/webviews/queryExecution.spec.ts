@@ -82,6 +82,10 @@ suite('Query results testing', () => {
     if (os.platform() === 'darwin') {
       this.skip();
     }
+    await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
+
+    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+
     await executeFile('create-for-match.cypher');
     await checkResultsContent(async () => {
       const querySummary = await (await $('#query-summary')).getText();
@@ -103,6 +107,7 @@ suite('Query results testing', () => {
       const queryResult = await (await $('#query-empty-result')).getText();
       await expect(queryResult).toContain('No records returned');
     });
+    await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
 
     // Reconnect to the original instance
     await clickOnContextMenuItem(connectionSection, 'Connect', 1);

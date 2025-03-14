@@ -188,7 +188,6 @@ export function getActiveConnection(): Connection | null {
 
 /**
  * Gets all Connections from the global state as an array of Connection objects.
- * This is artificially limited to one, for now.
  * @returns An array of all Connection objects.
  */
 export function getAllConnections(): Connection[] {
