@@ -1154,13 +1154,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.ELSE()) {
       this.breakLine();
-      const caseElseGroup = this.startGroup();
+      const elseGroup = this.startGroup();
       this.visit(ctx.ELSE());
       this.avoidBreakBetween();
-      const n = this.startGroup();
+      const expressionGroup = this.startGroup();
       this.visit(ctx.expression());
-      this.endGroup(n);
-      this.endGroup(caseElseGroup);
+      this.endGroup(expressionGroup);
+      this.endGroup(elseGroup);
     }
     this.removeSpecialIndentation();
     this.breakLine();
@@ -1203,13 +1203,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.ELSE()) {
       this.breakLine();
-      const g = this.startGroup();
+      const elseGroup = this.startGroup();
       this.visit(ctx.ELSE());
       this.avoidBreakBetween();
-      const n = this.startGroup();
+      const expressionGroup = this.startGroup();
       this.visit(ctx.expression(1));
-      this.endGroup(n);
-      this.endGroup(g);
+      this.endGroup(expressionGroup);
+      this.endGroup(elseGroup);
     }
     this.removeSpecialIndentation();
     this.breakLine();
