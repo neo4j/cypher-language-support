@@ -150,4 +150,11 @@ CALL {
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('map that uses dot instead of colon should still work fine', () => {
+    const query = `match (n:Person {age.5}) return n`;
+    const expected = `MATCH (n:Person {age.5})
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });

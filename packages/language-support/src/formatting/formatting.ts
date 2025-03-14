@@ -765,6 +765,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
+    if (node.getText().startsWith('<missing')) {
+      return;
+    }
     if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
       this.addCommentsBefore(node);
     }
@@ -803,6 +806,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
+    if (node.getText().startsWith('<missing')) {
+      return;
+    }
     if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
       this.addCommentsBefore(node);
     }
@@ -1427,17 +1433,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     const mapGrp = this.startGroup();
-    const propertyKeyNames = ctx.propertyKeyName_list();
-    const expressions = ctx.expression_list();
-    const commaList = ctx.COMMA_list();
-    const colonList = ctx.COLON_list();
-    for (let i = 0; i < expressions.length; i++) {
+    const n = ctx.expression_list().length;
+    for (let i = 0; i < n; i++) {
       const keyValueGrp = this.startGroup();
-      this._visit(propertyKeyNames[i]);
-      this._visitTerminalRaw(colonList[i]);
-      this._visit(expressions[i]);
-      if (i < expressions.length - 1) {
-        this._visit(commaList[i]);
+      this._visit(ctx.propertyKeyName(i));
+      this._visitTerminalRaw(ctx.COLON(i));
+      this._visit(ctx.expression(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
       }
       this.endGroup(keyValueGrp);
     }
