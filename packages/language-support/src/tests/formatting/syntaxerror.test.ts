@@ -35,26 +35,6 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('nested subquery with a syntax error inside', () => {
-    const query = `MATCH (n:Person)
-CALL {
-  WITH n
-  MATCH (m:Movie)
-  syntax error inside subquery
-  RETURN m
-}
-RETURN n`;
-    const expected = `MATCH (n:Person)
-CALL {
-  WITH n
-  MATCH (m:Movie)
-  syntax error inside subquery
-RETURN m
-}
-RETURN n`;
-    verifyFormatting(query, expected);
-  });
-
   test('query with misplaced parenthesis (incomplete pattern)', () => {
     const query = `MATCH (n:Person
 RETURN n`;
@@ -147,6 +127,30 @@ RETURN n;`;
     const expected = `MATCH (n:Person)
 WITH n
 ERROR RETURN n;`;
+    verifyFormatting(query, expected);
+  });
+
+  // TODO: make the formatter able to handle these syntax errors as well. This one is tricky
+  // because the parser miraculously recovers to find 'RETURN m' as a clause, though outside
+  // the CALL expression. If this kind of unbehavior (which seems extremely hard
+  // to account for) happens, just give up and return the query as is.
+  test('query that we are currently unable to handle should return itself.', () => {
+    const query = `MATCH (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie)
+  syntax error inside subquery
+  RETURN m
+}
+RETURN n`;
+    const expected = `MATCH (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie)
+  syntax error inside subquery
+  RETURN m
+}
+RETURN n`;
     verifyFormatting(query, expected);
   });
 });

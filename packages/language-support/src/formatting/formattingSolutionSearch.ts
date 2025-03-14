@@ -3,16 +3,11 @@ import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
   AlignIndentationOptions,
   Chunk,
+  errorMessage,
   isCommentBreak,
   MAX_COL,
   RegularChunk,
 } from './formattingHelpers';
-
-const errorMessage = `
-Internal formatting error: An unexpected issue occurred while formatting.
-This is likely a bug in the formatter itself. If possible, please report the issue
-along with your input on GitHub:
-https://github.com/neo4j/cypher-language-support.`.trim();
 
 const INDENTATION = 2;
 const showGroups = false;

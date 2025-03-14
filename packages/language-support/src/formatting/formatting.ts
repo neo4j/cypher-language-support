@@ -69,6 +69,7 @@ import {
   AlignIndentationOptions,
   Chunk,
   CommentChunk,
+  errorMessage,
   findTargetToken,
   getParseTreeAndTokens,
   isComment,
@@ -111,11 +112,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   }
 
-  format = (root: StatementsOrCommandsContext) => {
+  format = (root: StatementsOrCommandsContext, query: string) => {
     this.visit(root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
-    return result.formattedString + (this.unParseable ? '\n' + this.unParseable: '');
+    const resultString = result.formattedString + (this.unParseable ? '\n' + this.unParseable: '')
+    const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
+    const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
+    if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
+      if (this.unParseable) {
+        return query;
+      }
+      throw new Error(
+        errorMessage
+      );
+    }
+    return resultString;
   };
 
   currentBuffer = () => this.buffers.at(-1);
@@ -1481,10 +1493,10 @@ export function formatQuery(
 
   tokens.fill();
 
-  if (cursorPosition === undefined) return visitor.format(tree)
+  if (cursorPosition === undefined) return visitor.format(tree, query)
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
-    const result = visitor.format(tree)
+    const result = visitor.format(tree, query)
     return {
       formattedString: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
@@ -1494,7 +1506,7 @@ export function formatQuery(
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
   if (!targetToken) {
     return {
-      formattedString: visitor.format(tree),
+      formattedString: visitor.format(tree, query),
       newCursorPos: 0,
     };
   }
@@ -1502,7 +1514,7 @@ export function formatQuery(
   visitor.targetToken = targetToken.tokenIndex;
 
   return {
-    formattedString: visitor.format(tree),
+    formattedString: visitor.format(tree, query),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }

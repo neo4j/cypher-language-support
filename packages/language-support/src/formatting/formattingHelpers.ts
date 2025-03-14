@@ -13,6 +13,12 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
+export const errorMessage = `
+Internal formatting error: An unexpected issue occurred while formatting.
+This is likely a bug in the formatter itself. If possible, please report the issue
+along with your input on GitHub:
+https://github.com/neo4j/cypher-language-support.`.trim();
+
 
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
