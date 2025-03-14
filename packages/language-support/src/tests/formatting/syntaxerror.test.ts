@@ -49,7 +49,7 @@ CALL {
   WITH n
   MATCH (m:Movie)
   syntax error inside subquery
-  RETURN m
+RETURN m
 }
 RETURN n`;
     verifyFormatting(query, expected);
@@ -96,7 +96,7 @@ OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false
-    syntax error 
+syntax error 
 // comment
 OR $parameter > 2
 RETURN variable;`;
@@ -142,11 +142,11 @@ RETURN n;`;
     verifyFormatting(query, expected);
   });
 
-  test('extra wor in with', () => {
+  test('extra word in with', () => {
     const query = `MATCH (n:Person) WITH n ERROR RETURN n;`;
     const expected = `MATCH (n:Person)
-WITH n ERROR
-RETURN n;`;
+WITH n
+ERROR RETURN n;`;
     verifyFormatting(query, expected);
   });
 });

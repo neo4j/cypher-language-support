@@ -97,10 +97,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroupCounter = 0;
   groupsToEndOnBreak: number[] = [];
   lastTokenIndex: number = -1;
+  unparseableStart: number = 1e9;
 
-  constructor(private tokenStream: CommonTokenStream) {
+  constructor(private tokenStream: CommonTokenStream, unparseableStart: number | undefined) {
     super();
     this.buffers.push([]);
+    if (unparseableStart) {
+      this.unparseableStart = unparseableStart;
+    }
   }
 
   format = (root: StatementsOrCommandsContext) => {
@@ -430,6 +434,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitErrorNode = (node: ErrorNode) => {
+    if (node.symbol.tokenIndex >= this.unparseableStart) {
+      return;
+    }
     const token = node.symbol;
     const errorTokenIndex = token.tokenIndex;
 
@@ -1465,8 +1472,8 @@ export function formatQuery(
   query: string,
   cursorPosition?: number,
 ): string | FormattingResultWithCursor {
-  const { tree, tokens, unParseable } = getParseTreeAndTokens(query);
-  const visitor = new TreePrintVisitor(tokens);
+  const { tree, tokens, unParseable, unParseableStart } = getParseTreeAndTokens(query);
+  const visitor = new TreePrintVisitor(tokens, unParseableStart);
 
   tokens.fill();
 
