@@ -113,7 +113,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   }
 
   format = (root: StatementsOrCommandsContext, query: string) => {
-    this.visit(root);
+    this._visit(root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + (this.unParseable ? '\n' + this.unParseable: '')
@@ -437,7 +437,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  visitIfNotNull = (ctx: ParserRuleContext | TerminalNode) => {
+  _visit = (ctx: ParserRuleContext | TerminalNode) => {
     if (ctx) {
       this.visit(ctx);
     }
@@ -486,12 +486,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
     const n = ctx.statementOrCommand_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.statementOrCommand(i));
+      this._visit(ctx.statementOrCommand(i));
       if (i < n - 1 || ctx.SEMICOLON(i)) {
         if (this.lastInCurrentBuffer().text === '\n') {
           this.currentBuffer().pop();
         }
-        this.visit(ctx.SEMICOLON(i));
+        this._visit(ctx.SEMICOLON(i));
       }
     }
   };
@@ -505,100 +505,100 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitUseClause = (ctx: UseClauseContext) => {
-    this.visit(ctx.USE());
+    this._visit(ctx.USE());
     const useGrp = this.startGroupAlsoOnComment();
-    this.visitIfNotNull(ctx.GRAPH());
-    this.visit(ctx.graphReference());
+    this._visit(ctx.GRAPH());
+    this._visit(ctx.graphReference());
     this.endGroup(useGrp);
   };
 
   visitWithClause = (ctx: WithClauseContext) => {
-    this.visit(ctx.WITH());
+    this._visit(ctx.WITH());
     this.avoidBreakBetween();
     const withClauseGrp = this.startGroupAlsoOnComment();
-    this.visit(ctx.returnBody());
-    this.visitIfNotNull(ctx.whereClause());
+    this._visit(ctx.returnBody());
+    this._visit(ctx.whereClause());
     this.endGroup(withClauseGrp);
   };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
-    this.visitIfNotNull(ctx.OPTIONAL());
-    this.visit(ctx.MATCH());
+    this._visit(ctx.OPTIONAL());
+    this._visit(ctx.MATCH());
     this.avoidBreakBetween();
     const matchClauseGrp = this.startGroupAlsoOnComment();
-    this.visitIfNotNull(ctx.matchMode());
-    this.visit(ctx.patternList());
+    this._visit(ctx.matchMode());
+    this._visit(ctx.patternList());
     this.endGroup(matchClauseGrp);
     const n = ctx.hint_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.hint(i));
+      this._visit(ctx.hint(i));
     }
-    this.visitIfNotNull(ctx.whereClause());
+    this._visit(ctx.whereClause());
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
-    this.visit(ctx.CREATE());
+    this._visit(ctx.CREATE());
     this.avoidBreakBetween();
     const createClauseGrp = this.startGroupAlsoOnComment();
-    this.visit(ctx.patternList());
+    this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
   };
 
   visitInsertClause = (ctx: InsertClauseContext) => {
-    this.visit(ctx.INSERT());
+    this._visit(ctx.INSERT());
     this.avoidBreakBetween();
     const insertClauseGrp = this.startGroupAlsoOnComment();
-    this.visit(ctx.insertPatternList());
+    this._visit(ctx.insertPatternList());
     this.endGroup(insertClauseGrp);
   };
 
   visitDeleteClause = (ctx: DeleteClauseContext) => {
     if (ctx.DETACH() || ctx.NODETACH()) {
-      this.visitIfNotNull(ctx.DETACH());
-      this.visitIfNotNull(ctx.NODETACH());
+      this._visit(ctx.DETACH());
+      this._visit(ctx.NODETACH());
       this.avoidBreakBetween();
     }
-    this.visit(ctx.DELETE());
+    this._visit(ctx.DELETE());
     const deleteClauseGrp = this.startGroupAlsoOnComment();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.expression(i));
+      this._visit(ctx.expression(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
     }
     this.endGroup(deleteClauseGrp);
   };
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
-    this.visit(ctx.RETURN());
+    this._visit(ctx.RETURN());
     this.avoidBreakBetween();
-    this.visit(ctx.returnBody());
+    this._visit(ctx.returnBody());
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
-    this.visitIfNotNull(ctx.DISTINCT());
+    this._visit(ctx.DISTINCT());
     this.avoidBreakBetween();
     const returnItemsGrp = this.startGroup();
-    this.visit(ctx.returnItems());
+    this._visit(ctx.returnItems());
     if (ctx.orderBy() || ctx.skip()) {
       const orderSkipGrp = this.startGroup();
-      this.visitIfNotNull(ctx.orderBy());
-      this.visitIfNotNull(ctx.skip());
+      this._visit(ctx.orderBy());
+      this._visit(ctx.skip());
       this.endGroup(orderSkipGrp);
     }
     this.endGroup(returnItemsGrp);
-    this.visitIfNotNull(ctx.limit());
+    this._visit(ctx.limit());
   };
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {
-    this.visit(ctx.UNWIND());
+    this._visit(ctx.UNWIND());
     this.avoidBreakBetween();
     const unwindClauseGrp = this.startGroupAlsoOnComment();
-    this.visit(ctx.expression());
+    this._visit(ctx.expression());
     const asGrp = this.startGroup();
-    this.visit(ctx.AS());
-    this.visit(ctx.variable());
+    this._visit(ctx.AS());
+    this._visit(ctx.variable());
     this.endGroup(asGrp);
     this.endGroup(unwindClauseGrp);
   };
@@ -610,30 +610,30 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {
-    this.visit(ctx.expression());
+    this._visit(ctx.expression());
     if (ctx.AS() || ctx.variable()) {
       const asGrp = this.startGroup();
-      this.visitIfNotNull(ctx.AS());
-      this.visitIfNotNull(ctx.variable());
+      this._visit(ctx.AS());
+      this._visit(ctx.variable());
       this.endGroup(asGrp);
     }
   };
 
   visitReturnItems = (ctx: ReturnItemsContext) => {
     if (ctx.TIMES()) {
-      this.visit(ctx.TIMES());
+      this._visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
     let commaIdx = 0;
     if (ctx.TIMES() && n > 0) {
-      this.visit(ctx.COMMA(commaIdx));
+      this._visit(ctx.COMMA(commaIdx));
       commaIdx++;
     }
     for (let i = 0; i < n; i++) {
       const returnItemGrp = this.startGroup();
-      this.visit(ctx.returnItem(i));
+      this._visit(ctx.returnItem(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(commaIdx));
+        this._visit(ctx.COMMA(commaIdx));
         commaIdx++;
       }
       this.endGroup(returnItemGrp);
@@ -643,46 +643,46 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because count star is its own thing
   visitCountStar = (ctx: CountStarContext) => {
     this.visitTerminalRaw(ctx.COUNT());
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     this.visitTerminalRaw(ctx.TIMES());
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
   };
 
   visitReduceExpression = (ctx: ReduceExpressionContext) => {
     this.visitTerminalRaw(ctx.REDUCE());
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     const reduceExprGrp = this.startGroup();
-    this.visit(ctx.variable(0));
-    this.visit(ctx.EQ());
-    this.visit(ctx.expression(0));
+    this._visit(ctx.variable(0));
+    this._visit(ctx.EQ());
+    this._visit(ctx.expression(0));
     this.visitTerminalRaw(ctx.COMMA());
-    this.visit(ctx.variable(1));
-    this.visit(ctx.IN());
-    this.visit(ctx.expression(1));
-    this.visit(ctx.BAR());
-    this.visit(ctx.expression(2));
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.variable(1));
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(1));
+    this._visit(ctx.BAR());
+    this._visit(ctx.expression(2));
+    this._visit(ctx.RPAREN());
     this.endGroup(reduceExprGrp);
   };
 
   // Handled separately to avoid spaces between a minus and a number
   visitNumberLiteral = (ctx: NumberLiteralContext) => {
     this.visitRawIfNotNull(ctx.MINUS());
-    this.visitIfNotNull(ctx.DECIMAL_DOUBLE());
-    this.visitIfNotNull(ctx.UNSIGNED_DECIMAL_INTEGER());
-    this.visitIfNotNull(ctx.UNSIGNED_HEX_INTEGER());
-    this.visitIfNotNull(ctx.UNSIGNED_OCTAL_INTEGER());
+    this._visit(ctx.DECIMAL_DOUBLE());
+    this._visit(ctx.UNSIGNED_DECIMAL_INTEGER());
+    this._visit(ctx.UNSIGNED_HEX_INTEGER());
+    this._visit(ctx.UNSIGNED_OCTAL_INTEGER());
   };
 
   // Handled separately since otherwise they will get weird spacing
   visitLabelExpression = (ctx: LabelExpressionContext) => {
     this.visitRawIfNotNull(ctx.COLON());
     if (ctx.IS()) {
-      this.visit(ctx.IS());
+      this._visit(ctx.IS());
     } else {
       this.avoidSpaceBetween();
     }
-    this.visit(ctx.labelExpression4());
+    this._visit(ctx.labelExpression4());
   };
 
   visitLabelExpression4 = (ctx: LabelExpression4Context) => {
@@ -692,7 +692,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       const child = ctx.getChild(i);
       if (child instanceof LabelExpression3Context) {
-        this.visit(child);
+        this._visit(child);
         if (i > 0) {
           this.concatenate();
         }
@@ -708,7 +708,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       const child = ctx.getChild(i);
       if (child instanceof LabelExpression2Context) {
-        this.visit(child);
+        this._visit(child);
         if (i > 0) {
           this.concatenate();
         }
@@ -728,7 +728,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.avoidSpaceBetween();
       }
     }
-    this.visit(ctx.labelExpression1());
+    this._visit(ctx.labelExpression1());
   };
 
   visitTerminal = (node: TerminalNode) => {
@@ -816,7 +816,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // as an operator
   visitParameter = (ctx: ParameterContext) => {
     this.visitTerminalRaw(ctx.DOLLAR());
-    this.visit(ctx.parameterName());
+    this._visit(ctx.parameterName());
     this.concatenate();
   };
 
@@ -849,16 +849,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   handleInnerPatternContext = (
     ctx: NodePatternContext | RelationshipPatternContext,
   ) => {
-    this.visitIfNotNull(ctx.variable());
-    this.visitIfNotNull(ctx.labelExpression());
+    this._visit(ctx.variable());
+    this._visit(ctx.labelExpression());
     if (ctx instanceof RelationshipPatternContext && ctx.pathLength()) {
-      this.visit(ctx.pathLength());
+      this._visit(ctx.pathLength());
       this.concatenate();
     }
-    this.visitIfNotNull(ctx.properties());
+    this._visit(ctx.properties());
     if (ctx.WHERE()) {
-      this.visit(ctx.WHERE());
-      this.visit(ctx.expression());
+      this._visit(ctx.WHERE());
+      this._visit(ctx.expression());
     }
   };
 
@@ -891,12 +891,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
     if (ctx.leftArrow()) {
       this.avoidSpaceBetween();
-      this.visitIfNotNull(ctx.leftArrow());
+      this._visit(ctx.leftArrow());
     }
     const arrowLineList = ctx.arrowLine_list();
     // Concatenations are to ensure the (left) arrow remains
     // on the previous line (styleguide rule) if we need to break within the pattern
-    this.visit(arrowLineList[0]);
+    this._visit(arrowLineList[0]);
     this.concatenate();
     this.avoidSpaceBetween();
     if (ctx.leftArrow()) {
@@ -905,40 +905,40 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     if (ctx.LBRACKET()) {
       const bracketPatternGrp = this.startGroup();
-      this.visit(ctx.LBRACKET());
+      this._visit(ctx.LBRACKET());
       this.handleInnerPatternContext(ctx);
-      this.visit(ctx.RBRACKET());
+      this._visit(ctx.RBRACKET());
       this.endGroup(bracketPatternGrp);
     }
     // Same idea with concatenation as above
     this.avoidSpaceBetween();
-    this.visit(arrowLineList[1]);
+    this._visit(arrowLineList[1]);
     this.concatenate();
     if (ctx.rightArrow()) {
-      this.visit(ctx.rightArrow());
+      this._visit(ctx.rightArrow());
       this.concatenate();
     }
     this.avoidSpaceBetween();
   };
 
   visitNodePattern = (ctx: NodePatternContext) => {
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
     const nodePatternGrp = this.startGroup();
     if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
-      this.visitIfNotNull(ctx.variable());
-      this.visitIfNotNull(ctx.labelExpression());
-      this.visitIfNotNull(ctx.properties());
+      this._visit(ctx.variable());
+      this._visit(ctx.labelExpression());
+      this._visit(ctx.properties());
       if (ctx.WHERE()) {
-        this.visit(ctx.WHERE());
-        this.visit(ctx.expression());
+        this._visit(ctx.WHERE());
+        this._visit(ctx.expression());
       }
     } else {
-      this.visitIfNotNull(ctx.WHERE());
-      this.visitIfNotNull(ctx.expression());
+      this._visit(ctx.WHERE());
+      this._visit(ctx.expression());
     }
     this.endGroup(nodePatternGrp);
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
   };
 
   visitPattern = (ctx: PatternContext) => {
@@ -948,14 +948,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     if (ctx.variable()) {
-      this.visit(ctx.variable());
+      this._visit(ctx.variable());
       this.avoidBreakBetween();
-      this.visit(ctx.EQ());
+      this._visit(ctx.EQ());
       this.avoidBreakBetween();
     }
-    this.visitIfNotNull(ctx.selector());
+    this._visit(ctx.selector());
     const anonymousPatternGrp = this.startGroup();
-    this.visit(ctx.anonymousPattern());
+    this._visit(ctx.anonymousPattern());
     this.endGroup(anonymousPatternGrp);
   };
 
@@ -967,9 +967,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     for (let i = 0; i < n; i++) {
       const patternListItemGrp = this.startGroup();
-      this.visit(ctx.pattern(i));
+      this._visit(ctx.pattern(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
       this.endGroup(patternListItemGrp);
     }
@@ -995,25 +995,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (!ctx._from_) {
       this.visitTerminalRaw(ctx.LCURLY(), { spacingChoice: 'EXTRA_SPACE' });
     } else {
-      this.visit(ctx.LCURLY());
+      this._visit(ctx.LCURLY());
     }
     this.concatenate();
     let idx = 0;
     if (ctx._from_) {
-      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      this._visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
       this.concatenate();
       idx++;
     }
     if (ctx._to) {
-      this.visit(ctx.COMMA());
+      this._visit(ctx.COMMA());
       this.concatenate();
-      this.visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
+      this._visit(ctx.UNSIGNED_DECIMAL_INTEGER(idx));
       this.concatenate();
     } else {
       this.visitTerminalRaw(ctx.COMMA(), { spacingChoice: 'EXTRA_SPACE' });
       this.concatenate();
     }
-    this.visit(ctx.RCURLY());
+    this._visit(ctx.RCURLY());
     this.concatenate();
     this.avoidSpaceBetween();
   };
@@ -1022,7 +1022,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitNamespace = (ctx: NamespaceContext) => {
     const n = ctx.DOT_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.symbolicNameString(i));
+      this._visit(ctx.symbolicNameString(i));
       this.avoidSpaceBetween();
       this.visitTerminalRaw(ctx.DOT(i));
     }
@@ -1034,7 +1034,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (!(ctx.parentCtx instanceof MapProjectionElementContext)) {
       this.concatenate();
     }
-    this.visit(ctx.propertyKeyName());
+    this._visit(ctx.propertyKeyName());
     this.concatenate();
   };
 
@@ -1042,33 +1042,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitWhereClause = (ctx: WhereClauseContext) => {
     this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
-    this.visit(ctx.WHERE());
+    this._visit(ctx.WHERE());
     this.avoidBreakBetween();
     const whereClauseGrp = this.startGroup();
-    this.visit(ctx.expression());
+    this._visit(ctx.expression());
     this.endGroup(whereClauseGrp);
   };
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
     const parenthesizedExprGrp = this.startGroup();
-    this.visit(ctx.expression());
+    this._visit(ctx.expression());
     this.endGroup(parenthesizedExprGrp);
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
   };
 
   visitExpression = (ctx: ExpressionContext) => {
     const n = ctx.expression11_list().length;
     if (n === 1) {
-      this.visit(ctx.expression11(0));
+      this._visit(ctx.expression11(0));
       return;
     }
     for (let i = 0; i < n; i++) {
       const orExprGrp = this.startGroup();
-      this.visit(ctx.expression11(i));
+      this._visit(ctx.expression11(i));
       if (i < n - 1) {
-        this.visit(ctx.OR(i));
+        this._visit(ctx.OR(i));
       }
       this.endGroup(orExprGrp);
     }
@@ -1077,14 +1077,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitExpression10 = (ctx: Expression10Context) => {
     const n = ctx.expression9_list().length;
     if (n === 1) {
-      this.visit(ctx.expression9(0));
+      this._visit(ctx.expression9(0));
       return;
     }
     for (let i = 0; i < n; i++) {
       const andExprGrp = this.startGroup();
-      this.visit(ctx.expression9(i));
+      this._visit(ctx.expression9(i));
       if (i < n - 1) {
-        this.visit(ctx.AND(i));
+        this._visit(ctx.AND(i));
       }
       this.endGroup(andExprGrp);
     }
@@ -1092,35 +1092,35 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately because it contains subclauses (and thus indentation rules)
   visitExistsExpression = (ctx: ExistsExpressionContext) => {
-    this.visit(ctx.EXISTS());
+    this._visit(ctx.EXISTS());
     this.avoidBreakBetween();
-    this.visit(ctx.LCURLY());
+    this._visit(ctx.LCURLY());
 
     if (ctx.regularQuery()) {
       this.addAlignIndentation();
-      this.visit(ctx.regularQuery());
+      this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
       // This is a workaround because group does not translate between chunk lists
       const endOfExistGroup = this.startGroup();
-      this.visit(ctx.RCURLY());
+      this._visit(ctx.RCURLY());
       this.removeAlignIndentation();
       this.groupsToEndOnBreak.push(endOfExistGroup);
     } else {
-      this.visitIfNotNull(ctx.matchMode());
-      this.visit(ctx.patternList());
-      this.visitIfNotNull(ctx.whereClause());
-      this.visit(ctx.RCURLY());
+      this._visit(ctx.matchMode());
+      this._visit(ctx.patternList());
+      this._visit(ctx.whereClause());
+      this._visit(ctx.RCURLY());
     }
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
-    this.visit(ctx.WHEN());
+    this._visit(ctx.WHEN());
     this.avoidBreakBetween();
     const caseAlternativeGrp = this.startGroup();
-    this.visit(ctx.expression(0));
-    this.visit(ctx.THEN());
-    this.visit(ctx.expression(1));
+    this._visit(ctx.expression(0));
+    this._visit(ctx.THEN());
+    this._visit(ctx.expression(1));
     this.endGroup(caseAlternativeGrp);
   };
 
@@ -1129,7 +1129,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
     this.mustBreakBetween();
-    this.visit(ctx.CASE());
+    this._visit(ctx.CASE());
     this.removeAllGroups();
     this.lastInCurrentBuffer().groupsStarting = 0;
     const caseGroup = this.startGroup();
@@ -1137,33 +1137,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.mustBreakBetween();
-      this.visit(ctx.caseAlternative(i));
+      this._visit(ctx.caseAlternative(i));
     }
     if (ctx.ELSE()) {
       this.mustBreakBetween();
-      this.visit(ctx.ELSE());
-      this.visit(ctx.expression());
+      this._visit(ctx.ELSE());
+      this._visit(ctx.expression());
     }
     this.endGroup(caseGroup);
     this.removeSpecialIndentation();
     this.mustBreakBetween();
-    this.visit(ctx.END());
+    this._visit(ctx.END());
     this.removeSpecialIndentation();
   };
 
   visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => {
-    this.visit(ctx.WHEN());
+    this._visit(ctx.WHEN());
     this.avoidBreakBetween();
     const extendedCaseAlterniveGroup = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.extendedWhen(i));
+      this._visit(ctx.extendedWhen(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
     }
-    this.visit(ctx.THEN());
-    this.visit(ctx.expression());
+    this._visit(ctx.THEN());
+    this._visit(ctx.expression());
     this.endGroup(extendedCaseAlterniveGroup);
   };
 
@@ -1171,79 +1171,79 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
     this.mustBreakBetween();
-    this.visit(ctx.CASE());
+    this._visit(ctx.CASE());
     this.removeAllGroups();
     this.avoidBreakBetween();
     this.lastInCurrentBuffer().groupsStarting = 0;
-    this.visit(ctx.expression(0));
+    this._visit(ctx.expression(0));
     const extendedCaseGrp = this.startGroup();
     this.mustBreakBetween();
     const n = ctx.extendedCaseAlternative_list().length;
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.mustBreakBetween();
-      this.visit(ctx.extendedCaseAlternative(i));
+      this._visit(ctx.extendedCaseAlternative(i));
     }
     if (ctx.ELSE()) {
       this.mustBreakBetween();
-      this.visit(ctx.ELSE());
-      this.visit(ctx.expression(1));
+      this._visit(ctx.ELSE());
+      this._visit(ctx.expression(1));
     }
     this.endGroup(extendedCaseGrp);
     this.removeSpecialIndentation();
     this.mustBreakBetween();
-    this.visit(ctx.END());
+    this._visit(ctx.END());
     this.removeSpecialIndentation();
   };
 
   // Handled separately because it wants indentation and line breaks
   visitSubqueryClause = (ctx: SubqueryClauseContext) => {
-    this.visitIfNotNull(ctx.OPTIONAL());
-    this.visit(ctx.CALL());
-    this.visitIfNotNull(ctx.subqueryScope());
-    this.visit(ctx.LCURLY());
+    this._visit(ctx.OPTIONAL());
+    this._visit(ctx.CALL());
+    this._visit(ctx.subqueryScope());
+    this._visit(ctx.LCURLY());
     this.addIndentation();
     this.breakLine();
-    this.visit(ctx.regularQuery());
+    this._visit(ctx.regularQuery());
     this.removeIndentation();
     this.breakLine();
-    this.visitIfNotNull(ctx.RCURLY());
-    this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
+    this._visit(ctx.RCURLY());
+    this._visit(ctx.subqueryInTransactionsParameters());
   };
 
   // Handled separately because UNION wants to look a certain way
   visitRegularQuery = (ctx: RegularQueryContext) => {
-    this.visit(ctx.singleQuery(0));
+    this._visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
       this.breakLine();
-      this.visit(ctx.UNION(i));
+      this._visit(ctx.UNION(i));
       this.removeIndentation();
       if (ctx.ALL(i)) {
-        this.visit(ctx.ALL(i));
+        this._visit(ctx.ALL(i));
       } else if (ctx.DISTINCT(i)) {
-        this.visit(ctx.DISTINCT(i));
+        this._visit(ctx.DISTINCT(i));
       }
       this.breakLine();
-      this.visit(ctx.singleQuery(i + 1));
+      this._visit(ctx.singleQuery(i + 1));
     }
   };
 
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
     const functionNameGrp = this.startGroup();
-    this.visit(ctx.functionName());
+    this._visit(ctx.functionName());
     this.endGroup(functionNameGrp);
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
     const invocationGrp = this.startGroup();
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
     }
-    this.visitIfNotNull(ctx.ALL());
-    this.visitIfNotNull(ctx.DISTINCT());
+    this._visit(ctx.ALL());
+    this._visit(ctx.DISTINCT());
     const allFunctionArgsGrp = this.startGroup();
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
@@ -1252,26 +1252,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.avoidSpaceBetween();
       }
       const functionArgGrp = this.startGroup();
-      this.visit(ctx.functionArgument(i));
+      this._visit(ctx.functionArgument(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
       this.endGroup(functionArgGrp);
     }
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
     this.endGroup(allFunctionArgsGrp);
     this.endGroup(invocationGrp);
   };
 
   visitMergeClause = (ctx: MergeClauseContext) => {
-    this.visit(ctx.MERGE());
+    this._visit(ctx.MERGE());
     this.avoidBreakBetween();
     const patternGrp = this.startGroupAlsoOnComment();
-    this.visit(ctx.pattern());
+    this._visit(ctx.pattern());
     this.endGroup(patternGrp);
     const n = ctx.mergeAction_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.mergeAction(i));
+      this._visit(ctx.mergeAction(i));
     }
   };
 
@@ -1285,15 +1285,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitSetClause = (ctx: SetClauseContext) => {
-    this.visit(ctx.SET());
+    this._visit(ctx.SET());
     this.avoidBreakBetween();
     const n = ctx.setItem_list().length;
     const setClauseGrp = this.startGroup();
     for (let i = 0; i < n; i++) {
       const setItemGrp = this.startGroup();
-      this.visit(ctx.setItem(i));
+      this._visit(ctx.setItem(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
       this.endGroup(setItemGrp);
     }
@@ -1303,7 +1303,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    this.visit(ctx.LCURLY());
+    this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     const mapGrp = this.startGroup();
@@ -1313,34 +1313,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const colonList = ctx.COLON_list();
     for (let i = 0; i < expressions.length; i++) {
       const keyValueGrp = this.startGroup();
-      this.visit(propertyKeyNames[i]);
+      this._visit(propertyKeyNames[i]);
       this.visitTerminalRaw(colonList[i]);
-      this.visit(expressions[i]);
+      this._visit(expressions[i]);
       if (i < expressions.length - 1) {
-        this.visit(commaList[i]);
+        this._visit(commaList[i]);
       }
       this.endGroup(keyValueGrp);
     }
     this.endGroup(mapGrp);
-    this.visit(ctx.RCURLY());
+    this._visit(ctx.RCURLY());
     this.concatenate();
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
-    this.visit(ctx.variable());
-    this.visit(ctx.LCURLY());
+    this._visit(ctx.variable());
+    this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
-      this.visit(ctx.mapProjectionElement(i));
+      this._visit(ctx.mapProjectionElement(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
     }
     this.endGroup(mapProjectionGrp);
-    this.visit(ctx.RCURLY());
+    this._visit(ctx.RCURLY());
     this.concatenate();
   };
 
@@ -1349,80 +1349,80 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitRawIfNotNull(ctx.ANY());
     this.visitRawIfNotNull(ctx.NONE());
     this.visitRawIfNotNull(ctx.SINGLE());
-    this.visit(ctx.LPAREN());
+    this._visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
     const listGrp = this.startGroup();
-    this.visit(ctx.variable());
-    this.visit(ctx.IN());
-    this.visit(ctx._inExp);
+    this._visit(ctx.variable());
+    this._visit(ctx.IN());
+    this._visit(ctx._inExp);
     if (ctx.WHERE()) {
-      this.visit(ctx.WHERE());
-      this.visit(ctx._whereExp);
+      this._visit(ctx.WHERE());
+      this._visit(ctx._whereExp);
     }
     this.endGroup(listGrp);
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
-    this.visit(ctx.LBRACKET());
+    this._visit(ctx.LBRACKET());
     this.avoidBreakBetween();
     const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       const listElemGrp = this.startGroup();
-      this.visit(ctx.expression(i));
+      this._visit(ctx.expression(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(i));
+        this._visit(ctx.COMMA(i));
       }
       if (i === n - 1) {
         this.avoidSpaceBetween();
       }
       this.endGroup(listElemGrp);
     }
-    this.visit(ctx.RBRACKET());
+    this._visit(ctx.RBRACKET());
     this.endGroup(listGrp);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
-    this.visit(ctx.FOREACH());
-    this.visit(ctx.LPAREN());
-    this.visit(ctx.variable());
-    this.visit(ctx.IN());
-    this.visit(ctx.expression());
-    this.visit(ctx.BAR());
+    this._visit(ctx.FOREACH());
+    this._visit(ctx.LPAREN());
+    this._visit(ctx.variable());
+    this._visit(ctx.IN());
+    this._visit(ctx.expression());
+    this._visit(ctx.BAR());
 
     const n = ctx.clause_list().length;
     for (let i = 0; i < n; i++) {
       this.addIndentation();
-      this.visit(ctx.clause(i));
+      this._visit(ctx.clause(i));
       this.removeIndentation();
     }
     this.breakLine();
-    this.visit(ctx.RPAREN());
+    this._visit(ctx.RPAREN());
   };
 
   visitExpression2 = (ctx: Expression2Context) => {
-    this.visit(ctx.expression1());
+    this._visit(ctx.expression1());
     const n = ctx.postFix_list().length;
     for (let i = 0; i < n; i++) {
       this.avoidSpaceBetween();
-      this.visit(ctx.postFix(i));
+      this._visit(ctx.postFix(i));
     }
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
     const procedureNameGrp = this.startGroup();
-    this.visit(ctx.namespace());
-    this.visit(ctx.symbolicNameString());
+    this._visit(ctx.namespace());
+    this._visit(ctx.symbolicNameString());
     this.endGroup(procedureNameGrp);
   };
 
   visitCallClause = (ctx: CallClauseContext) => {
-    this.visitIfNotNull(ctx.OPTIONAL());
-    this.visit(ctx.CALL());
+    this._visit(ctx.OPTIONAL());
+    this._visit(ctx.CALL());
     this.avoidBreakBetween();
-    this.visit(ctx.procedureName());
+    this._visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
     if (ctx.LPAREN()) {
       this.visitTerminalRaw(ctx.LPAREN());
@@ -1438,9 +1438,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (i === 0) {
         this.avoidSpaceBetween();
       }
-      this.visit(ctx.procedureArgument(i));
+      this._visit(ctx.procedureArgument(i));
       if (i < n - 1) {
-        this.visit(ctx.COMMA(commaIdx));
+        this._visit(ctx.COMMA(commaIdx));
         commaIdx++;
       }
     }
@@ -1451,24 +1451,24 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
       const m = ctx.procedureResultItem_list().length;
-      this.visit(ctx.YIELD());
+      this._visit(ctx.YIELD());
       if (ctx.TIMES()) {
-        this.visit(ctx.TIMES());
+        this._visit(ctx.TIMES());
         if (m > 1) {
-          this.visit(ctx.COMMA(commaIdx));
+          this._visit(ctx.COMMA(commaIdx));
           commaIdx++;
         }
       }
       const procedureListGrp = this.startGroup();
       for (let i = 0; i < m; i++) {
-        this.visit(ctx.procedureResultItem(i));
+        this._visit(ctx.procedureResultItem(i));
         if (i < m - 1) {
-          this.visit(ctx.COMMA(commaIdx));
+          this._visit(ctx.COMMA(commaIdx));
           commaIdx++;
         }
       }
       this.endGroup(procedureListGrp);
-      this.visitIfNotNull(ctx.whereClause());
+      this._visit(ctx.whereClause());
       this.endGroup(yieldGrp);
     }
   };
