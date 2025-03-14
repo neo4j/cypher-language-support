@@ -110,7 +110,7 @@ syntaxerror
 }`;
     const expected = query;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('incorrect node label syntax', () => {
     const query = `match(n.Person{name:'Alice'}) return n`;
@@ -126,11 +126,27 @@ RETURN n`;
 RETURN toUpper
 n.name`;
     verifyFormatting(query, expected);
-  })
+  });
 
   test('typoed match keyword', () => {
-    const query = `macth (n:Person {name:'Alice'}) return n;`
+    const query = `macth (n:Person {name:'Alice'}) return n;`;
     const expected = query;
     verifyFormatting(query, expected);
-  })
+  });
+
+  test('double equals', () => {
+    const query = `MATCH (n:Person) WHERE n.name == 'Alice' RETURN n;`;
+    const expected = `MATCH (n:Person)
+WHERE n.name =='Alice'
+RETURN n;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('extra wor in with', () => {
+    const query = `MATCH (n:Person) WITH n ERROR RETURN n;`;
+    const expected = `MATCH (n:Person)
+WITH n ERROR
+RETURN n;`;
+    verifyFormatting(query, expected);
+  });
 });
