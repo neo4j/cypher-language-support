@@ -2,6 +2,8 @@ import { commands, Disposable, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
+  forceConnect,
+  forceDisconnect,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -91,6 +93,14 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       evaluateParam,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
+      forceDisconnect,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
+      forceConnect,
     ),
   );
 

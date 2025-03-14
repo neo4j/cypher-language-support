@@ -1,7 +1,11 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';
-import { checkResultsContent, executeFile } from '../../webviewUtils';
+import {
+  checkResultsContent,
+  executeFile,
+  waitUntilNotification,
+} from '../../webviewUtils';
 
 suite('Params panel testing', () => {
   let workbench: Workbench;
@@ -24,6 +28,20 @@ suite('Params panel testing', () => {
     });
   }
 
+  async function forceDisconnect() {
+    await browser.executeWorkbench((vscode) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      void vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
+    });
+  }
+
+  async function forceConnect(i: number) {
+    await browser.executeWorkbench((vscode, i) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      void vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
+    }, i);
+  }
+
   test('Should correctly set and clear cypher parameters', async function () {
     await evalParam('a => "charmander"');
     await evalParam('b => "caterpie"');
@@ -44,5 +62,15 @@ suite('Params panel testing', () => {
         'Error executing query RETURN $a, $b:\nExpected parameter(s): a, b',
       );
     });
+  });
+
+  test('Cannot set parameters when disconnected from the database', async function () {
+    await forceDisconnect();
+    await evalParam('c => "charmander"');
+    await waitUntilNotification(
+      browser,
+      'You need to be connected to neo4j to set parameters.',
+    );
+    await forceConnect(1);
   });
 });

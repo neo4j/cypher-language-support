@@ -495,7 +495,7 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
  * Gets all Connections from the global state.
  * @returns A Connections object.
  */
-function getConnections(): Connections {
+export function getConnections(): Connections {
   const context = getExtensionContext();
   return context.globalState.get(CONNECTIONS_KEY, {});
 }

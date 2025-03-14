@@ -26,6 +26,15 @@ export async function addParameter(): Promise<void> {
 export async function evaluateParam(param: string): Promise<void> {
   const parameters = parametersManager;
   const schemaPoller = getSchemaPoller();
+  const connected = await schemaPoller.connection?.healthcheck();
+
+  if (!connected) {
+    await window.showErrorMessage(
+      'You need to be connected to neo4j to set parameters.',
+    );
+    return;
+  }
+
   const dbSchema = schemaPoller.metadata.dbSchema;
 
   try {
@@ -41,7 +50,7 @@ export async function evaluateParam(param: string): Promise<void> {
     });
     const [record] = result.records;
     if (record === undefined) {
-      await window.showErrorMessage('Parameter evaluation failed');
+      await window.showErrorMessage('Parameter evaluation failed.');
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
@@ -56,7 +65,7 @@ export async function evaluateParam(param: string): Promise<void> {
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
     await parameters.set(key, serializedValue, stringifiedValue, type);
   } catch (e) {
-    await window.showErrorMessage('Parsing parameters failed');
+    await window.showErrorMessage('Parsing parameters failed.');
   }
 
   return;

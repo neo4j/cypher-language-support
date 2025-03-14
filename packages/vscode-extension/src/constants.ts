@@ -14,6 +14,8 @@ export const CONSTANTS = {
     CLEAR_PARAMETERS: 'neo4j.clearParameters',
     INTERNAL: {
       EVAL_PARAMETER: 'neo4j.internal.evalParam',
+      FORCE_DISCONNECT: 'neo4j.internal.forceDisconnect',
+      FORCE_CONNECT: 'neo4j.internal.forceConnect',
     },
   },
   MESSAGES: {

@@ -5,6 +5,7 @@ import {
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
+  getConnections,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
@@ -214,5 +215,22 @@ export async function cypherFileFromSelection(): Promise<void> {
       language: 'cypher',
     });
     await window.showTextDocument(textDocument);
+  }
+}
+
+export async function forceDisconnect(): Promise<void> {
+  const activeConnection = getActiveConnection();
+  const { result, connection } =
+    await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
+  displayMessageForConnectionResult(connection, result);
+}
+
+export async function forceConnect(i: number): Promise<void> {
+  const connections = getConnections();
+  const connectionToToggle = Object.values(connections).at(i);
+  if (connectionToToggle) {
+    const { result, connection } =
+      await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
+    displayMessageForConnectionResult(connection, result);
   }
 }
