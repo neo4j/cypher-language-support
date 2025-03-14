@@ -235,8 +235,8 @@ END} AS endNode;`;
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
-         'High Spender'
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+         THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -274,8 +274,8 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND
-         true AND true AND true AND true AND true THEN "(PK)"
+    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
+         true THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
@@ -334,8 +334,8 @@ RETURN p.name, p.age, p.occupation,
         WHEN p.occupation = 'Engineer' THEN
           CASE
             WHEN p.experienceYears < 5 THEN 'Junior Engineer'
-            WHEN p.experienceYears >= 5 AND p.experienceYears < 10 THEN
-                 'Mid-level Engineer'
+            WHEN p.experienceYears >= 5 AND p.experienceYears < 10
+                 THEN 'Mid-level Engineer'
             ELSE 'Senior Engineer'
           END
         WHEN p.occupation = 'Doctor' THEN
