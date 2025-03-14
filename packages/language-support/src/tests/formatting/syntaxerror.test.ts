@@ -76,7 +76,7 @@ OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false
-syntax error 
+    syntax error 
 // comment
 OR $parameter > 2
 RETURN variable;`;
@@ -103,8 +103,7 @@ RETURN n`;
     const query = `MATCH (n:Person) RETURN toUpper n.name`;
     // Ideally the n.name part wouldn't go on a newline but whatever
     const expected = `MATCH (n:Person)
-RETURN toUpper
-n.name`;
+RETURN toUpper n.name`;
     verifyFormatting(query, expected);
   });
 
@@ -125,8 +124,7 @@ RETURN n;`;
   test('extra word in with', () => {
     const query = `MATCH (n:Person) WITH n ERROR RETURN n;`;
     const expected = `MATCH (n:Person)
-WITH n
-ERROR RETURN n;`;
+WITH n ERROR RETURN n;`;
     verifyFormatting(query, expected);
   });
 

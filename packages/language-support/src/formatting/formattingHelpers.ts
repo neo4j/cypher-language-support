@@ -118,9 +118,11 @@ export function getParseTreeAndTokens(query: string) {
   let unParseable: string | undefined;
   let unParseableStart: number | undefined;
   if(tree.exception) {
-    const errorTokens = tokens.tokens.slice(tree.exception.offendingToken.tokenIndex)
-    unParseable = errorTokens.slice(0,-1).map(t => t.text).join('');
-    unParseableStart = tree.exception.offendingToken.tokenIndex
+    const idx = tree.exception.offendingToken.tokenIndex
+    const errorTokens = tokens.tokens.slice(idx)
+    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || []).map(t => t.text).join('');
+    unParseable = hiddenBefore + errorTokens.slice(0,-1).map(t => t.text).join('');
+    unParseableStart = idx;
     console.log("Whole query")
     console.log(query);
     console.log('\n\n');
