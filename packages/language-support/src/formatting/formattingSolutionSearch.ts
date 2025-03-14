@@ -169,12 +169,14 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
   // Case 2: Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
     let finalIndent = state.indentationState.special;
-    // Active groups, align as usual
+
+    // More than one group, align as usual
+    // Otherwise if align indentation is present
+    // Meaning inside EXIST, COUNT or COLLECT, add one
+    // more indentation to easier differentiate
     if (state.activeGroups.length > 0) {
       finalIndent = state.activeGroups.at(-1).align;
     } else if (state.indentationState.align.length > 0) {
-      // If nested with EXISTS, COUNT and COLLECT
-      // Add indentation
       finalIndent += INDENTATION_SPACES;
     }
 
@@ -186,15 +188,17 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
 
   // Case 3: Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
-    // base case
+    // Base case
     let finalIndent =
       align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
 
-    // more than one group, align as usual
+    // More than one group, align as usual
+    // Otherwise if special alignment already is present
+    // Meaning inside CASE, add one more indentation to
+    // easier differentiate
     if (state.activeGroups.length > 0) {
       finalIndent = state.activeGroups.at(-1).align;
     } else if (state.indentationState.special !== 0) {
-      // When we nest with CASE, add one indentation step
       finalIndent += INDENTATION_SPACES;
     }
 
@@ -204,8 +208,8 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
-  // Case 4: No special indentation rules applied
-  // Align on the active groups
+  // Case 4: No  indentation rules applied
+  // Align on the active groups if present
   if (state.activeGroups.length > 0) {
     return {
       finalIndentation: state.activeGroups.at(-1).align,
