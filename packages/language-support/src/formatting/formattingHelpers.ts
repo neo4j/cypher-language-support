@@ -19,14 +19,13 @@ This is likely a bug in the formatter itself. If possible, please report the iss
 along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
 
-
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
 {
-  syntaxError() { }
-  public reportAmbiguity() { }
-  public reportAttemptingFullContext() { }
-  public reportContextSensitivity() { }
+  syntaxError() {}
+  public reportAmbiguity() {}
+  public reportAttemptingFullContext() {}
+  public reportContextSensitivity() {}
 }
 
 /**
@@ -117,21 +116,19 @@ export function getParseTreeAndTokens(query: string) {
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let unParseableStart: number | undefined;
-  if(tree.exception) {
-    const idx = tree.exception.offendingToken.tokenIndex
-    const errorTokens = tokens.tokens.slice(idx)
-    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || []).map(t => t.text).join('');
-    unParseable = hiddenBefore + errorTokens.slice(0,-1).map(t => t.text).join('');
+  if (tree.exception) {
+    const idx = tree.exception.offendingToken.tokenIndex;
+    const errorTokens = tokens.tokens.slice(idx);
+    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
+      .map((t) => t.text)
+      .join('');
+    unParseable =
+      hiddenBefore +
+      errorTokens
+        .slice(0, -1)
+        .map((t) => t.text)
+        .join('');
     unParseableStart = idx;
-    console.log("Whole query")
-    console.log(query);
-    console.log('\n\n');
-    console.log("parseable part");
-    console.log(query.slice(0, errorTokens[0].start));
-    console.log('\n\n');
-    console.log("unparseable part")
-    console.log(unParseable);
-    console.log('\n\n-----------');
   }
   return { tree, tokens, unParseable, unParseableStart };
 }
