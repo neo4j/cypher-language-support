@@ -101,7 +101,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseable: string = '';
   unParseableStart: number = 1e9;
 
-  constructor(private tokenStream: CommonTokenStream, unParseable: string | undefined, unParseableStart: number | undefined) {
+  constructor(
+    private tokenStream: CommonTokenStream,
+    unParseable: string | undefined,
+    unParseableStart: number | undefined,
+  ) {
     super();
     this.buffers.push([]);
     if (unParseable) {
@@ -116,16 +120,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
-    const resultString = result.formattedString + (this.unParseable ? '\n' + this.unParseable: '')
+    const resultString =
+      result.formattedString +
+      (this.unParseable ? '\n' + this.unParseable : '');
     const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
     const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
       if (this.unParseable) {
         return query;
       }
-      throw new Error(
-        errorMessage
-      );
+      throw new Error(errorMessage);
     }
     return resultString;
   };
@@ -160,7 +164,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (indices.length < 2) {
       return;
     }
-    if (this.currentBuffer()[indices[0]].type !== 'REGULAR' || this.currentBuffer()[indices[1]].type !== 'REGULAR') {
+    if (
+      this.currentBuffer()[indices[0]].type !== 'REGULAR' ||
+      this.currentBuffer()[indices[1]].type !== 'REGULAR'
+    ) {
       return;
     }
     const suffix = this.currentBuffer().splice(indices[0], 1)[0];
@@ -443,7 +450,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  visitRawIfNotNull = (ctx: TerminalNode, options?: RawTerminalOptions) => {
+  _visitTerminalRaw = (ctx: TerminalNode, options?: RawTerminalOptions) => {
     if (ctx) {
       this.visitTerminalRaw(ctx, options);
     }
@@ -667,7 +674,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately to avoid spaces between a minus and a number
   visitNumberLiteral = (ctx: NumberLiteralContext) => {
-    this.visitRawIfNotNull(ctx.MINUS());
+    this._visitTerminalRaw(ctx.MINUS());
     this._visit(ctx.DECIMAL_DOUBLE());
     this._visit(ctx.UNSIGNED_DECIMAL_INTEGER());
     this._visit(ctx.UNSIGNED_HEX_INTEGER());
@@ -676,7 +683,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since otherwise they will get weird spacing
   visitLabelExpression = (ctx: LabelExpressionContext) => {
-    this.visitRawIfNotNull(ctx.COLON());
+    this._visitTerminalRaw(ctx.COLON());
     if (ctx.IS()) {
       this._visit(ctx.IS());
     } else {
@@ -823,11 +830,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Literals have casing rules, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-casing
   visitBooleanLiteral = (ctx: BooleanLiteralContext) => {
-    this.visitRawIfNotNull(ctx.TRUE(), {
+    this._visitTerminalRaw(ctx.TRUE(), {
       lowerCase: true,
       spacingChoice: 'SPACE_AFTER',
     });
-    this.visitRawIfNotNull(ctx.FALSE(), {
+    this._visitTerminalRaw(ctx.FALSE(), {
       lowerCase: true,
       spacingChoice: 'SPACE_AFTER',
     });
@@ -884,8 +891,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitArrowLine = (ctx: ArrowLineContext) => {
-    this.visitRawIfNotNull(ctx.MINUS());
-    this.visitRawIfNotNull(ctx.ARROW_LINE());
+    this._visitTerminalRaw(ctx.MINUS());
+    this._visitTerminalRaw(ctx.ARROW_LINE());
   };
 
   visitRelationshipPattern = (ctx: RelationshipPatternContext) => {
@@ -1345,10 +1352,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
-    this.visitRawIfNotNull(ctx.ALL());
-    this.visitRawIfNotNull(ctx.ANY());
-    this.visitRawIfNotNull(ctx.NONE());
-    this.visitRawIfNotNull(ctx.SINGLE());
+    this._visitTerminalRaw(ctx.ALL());
+    this._visitTerminalRaw(ctx.ANY());
+    this._visitTerminalRaw(ctx.NONE());
+    this._visitTerminalRaw(ctx.SINGLE());
     this._visit(ctx.LPAREN());
     this.concatenate();
     this.avoidSpaceBetween();
@@ -1444,7 +1451,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         commaIdx++;
       }
     }
-    this.visitRawIfNotNull(ctx.RPAREN());
+    this._visitTerminalRaw(ctx.RPAREN());
     if (n > 0) {
       this.endGroup(argGrp);
     }
@@ -1488,15 +1495,16 @@ export function formatQuery(
   query: string,
   cursorPosition?: number,
 ): string | FormattingResultWithCursor {
-  const { tree, tokens, unParseable, unParseableStart } = getParseTreeAndTokens(query);
+  const { tree, tokens, unParseable, unParseableStart } =
+    getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens, unParseable, unParseableStart);
 
   tokens.fill();
 
-  if (cursorPosition === undefined) return visitor.format(tree, query)
+  if (cursorPosition === undefined) return visitor.format(tree, query);
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
-    const result = visitor.format(tree, query)
+    const result = visitor.format(tree, query);
     return {
       formattedString: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
