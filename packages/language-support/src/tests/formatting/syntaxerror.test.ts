@@ -111,4 +111,26 @@ syntaxerror
     const expected = query;
     verifyFormatting(query, expected);
   })
+
+  test('incorrect node label syntax', () => {
+    const query = `match(n.Person{name:'Alice'}) return n`;
+    const expected = `MATCH(n.Person{name:'Alice'})
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('missing parentheses', () => {
+    const query = `MATCH (n:Person) RETURN toUpper n.name`;
+    // Ideally the n.name part wouldn't go on a newline but whatever
+    const expected = `MATCH (n:Person)
+RETURN toUpper
+n.name`;
+    verifyFormatting(query, expected);
+  })
+
+  test('typoed match keyword', () => {
+    const query = `macth (n:Person {name:'Alice'}) return n;`
+    const expected = query;
+    verifyFormatting(query, expected);
+  })
 });
