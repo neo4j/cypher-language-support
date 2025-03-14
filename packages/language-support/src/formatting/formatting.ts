@@ -101,7 +101,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseable: string = '';
   unParseableStart: number = 1e9;
 
-  constructor(private tokenStream: CommonTokenStream, unParseable: string | undefined, unParseableStart: number | undefined) {
+  constructor(
+    private tokenStream: CommonTokenStream,
+    unParseable: string | undefined,
+    unParseableStart: number | undefined,
+  ) {
     super();
     this.buffers.push([]);
     if (unParseable) {
@@ -116,16 +120,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
-    const resultString = result.formattedString + (this.unParseable)
+    const resultString = result.formattedString + this.unParseable;
     const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
     const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
       if (this.unParseable) {
         return query;
       }
-      throw new Error(
-        errorMessage
-      );
+      throw new Error(errorMessage);
     }
     return resultString;
   };
@@ -160,7 +162,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (indices.length < 2) {
       return;
     }
-    if (this.currentBuffer()[indices[0]].type !== 'REGULAR' || this.currentBuffer()[indices[1]].type !== 'REGULAR') {
+    if (
+      this.currentBuffer()[indices[0]].type !== 'REGULAR' ||
+      this.currentBuffer()[indices[1]].type !== 'REGULAR'
+    ) {
       return;
     }
     const suffix = this.currentBuffer().splice(indices[0], 1)[0];
@@ -1488,15 +1493,16 @@ export function formatQuery(
   query: string,
   cursorPosition?: number,
 ): string | FormattingResultWithCursor {
-  const { tree, tokens, unParseable, unParseableStart } = getParseTreeAndTokens(query);
+  const { tree, tokens, unParseable, unParseableStart } =
+    getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens, unParseable, unParseableStart);
 
   tokens.fill();
 
-  if (cursorPosition === undefined) return visitor.format(tree, query)
+  if (cursorPosition === undefined) return visitor.format(tree, query);
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
-    const result = visitor.format(tree, query)
+    const result = visitor.format(tree, query);
     return {
       formattedString: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
