@@ -2,7 +2,10 @@ import {
   CharStreams,
   CommonToken,
   CommonTokenStream,
+  DefaultErrorStrategy,
   ErrorListener as ANTLRErrorListener,
+  Parser,
+  RecognitionException,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -13,13 +16,38 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
+const SYNC_TOKENS = new Set([
+  CypherCmdLexer.RETURN
+]);
+
+class RestartParseException extends Error {
+  public readonly resumeIndex: number;
+  constructor(message: string, recognizer: Parser) {
+    super(message);
+    this.resumeIndex = recognizer.getTokenStream().index;
+  }
+}
+
+class CypherErrorStrategy extends DefaultErrorStrategy {
+  // Override recover to skip tokens until we hit one of our syncTokens.
+  public recover(recognizer: CypherCmdParser, e: RecognitionException): void {
+    // Skip tokens until we find a token in our syncTokens set.
+    while (recognizer.getTokenStream().LA(1) !== Token.EOF) {
+      if (SYNC_TOKENS.has(recognizer.getTokenStream().LA(1))) {
+        throw new RestartParseException('Restart parse', recognizer);
+      }
+      recognizer.consume();
+    }
+  }
+}
+
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
 {
-  syntaxError() {}
-  public reportAmbiguity() {}
-  public reportAttemptingFullContext() {}
-  public reportContextSensitivity() {}
+  syntaxError() { }
+  public reportAmbiguity() { }
+  public reportAttemptingFullContext() { }
+  public reportContextSensitivity() { }
 }
 
 /**
@@ -106,8 +134,25 @@ export function getParseTreeAndTokens(query: string) {
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
   parser.addErrorListener(new FormatterErrorsListener());
+  parser._errHandler = new CypherErrorStrategy();
   parser.buildParseTrees = true;
-  const tree = parser.statementsOrCommands();
+  //const tree = parser.statementsOrCommands();
+  let tree;
+  try {
+    tree = parser.statementsOrCommands();
+  } catch (e) {
+    if (e instanceof RestartParseException) {
+      // At this point, the error strategy has already advanced the token stream
+      // to the sync token. We just need to clear the error state and restart
+      // parsing from the top-level rule.
+      parser.reset();
+      tokens.index = e.resumeIndex;
+      tree = parser.statementsOrCommands();
+    } else {
+      throw e;
+    }
+  }
+
   return { tree, tokens };
 }
 

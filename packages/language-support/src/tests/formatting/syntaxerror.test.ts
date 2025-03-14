@@ -103,4 +103,13 @@ OR $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
+
+  test('does not add a random newline in this query', () => {
+    const query = `CALL {
+syntaxerror
+  RETURN 5
+}`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  })
 });
