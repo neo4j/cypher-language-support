@@ -180,9 +180,7 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     // If align indentation is present
     // Meaning inside EXIST, COUNT or COLLECT, add one
     // more indentation to better differentiate
-    if (state.indentationState.align.length > 0) {
-      finalIndent += INDENTATION_SPACES;
-    }
+    finalIndent += INDENTATION_SPACES * state.indentationState.align.length;
 
     return {
       finalIndentation: finalIndent,
