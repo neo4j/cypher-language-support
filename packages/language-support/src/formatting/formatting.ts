@@ -1184,7 +1184,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.regularQuery());
     this.removeIndentation();
     this.breakLine();
-    this.visit(ctx.RCURLY());
+    this.visitIfNotNull(ctx.RCURLY());
     this.visitIfNotNull(ctx.subqueryInTransactionsParameters());
   };
 
@@ -1465,12 +1465,13 @@ export function formatQuery(
   query: string,
   cursorPosition?: number,
 ): string | FormattingResultWithCursor {
-  const { tree, tokens } = getParseTreeAndTokens(query);
+  const { tree, tokens, unParseable } = getParseTreeAndTokens(query);
   const visitor = new TreePrintVisitor(tokens);
 
   tokens.fill();
 
-  if (cursorPosition === undefined) return visitor.format(tree);
+  if (cursorPosition === undefined) return visitor.format(tree) + 
+    (unParseable ? '\n' + unParseable: '');
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
     const result = visitor.format(tree);

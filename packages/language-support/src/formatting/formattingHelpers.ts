@@ -134,26 +134,23 @@ export function getParseTreeAndTokens(query: string) {
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
   parser.addErrorListener(new FormatterErrorsListener());
-  parser._errHandler = new CypherErrorStrategy();
   parser.buildParseTrees = true;
-  //const tree = parser.statementsOrCommands();
-  let tree;
-  try {
-    tree = parser.statementsOrCommands();
-  } catch (e) {
-    if (e instanceof RestartParseException) {
-      // At this point, the error strategy has already advanced the token stream
-      // to the sync token. We just need to clear the error state and restart
-      // parsing from the top-level rule.
-      parser.reset();
-      tokens.index = e.resumeIndex;
-      tree = parser.statementsOrCommands();
-    } else {
-      throw e;
-    }
+  const tree = parser.statementsOrCommands();
+  let unParseable: string | undefined;
+  if(tree.exception) {
+    const errorTokens = tokens.tokens.slice(tree.exception.offendingToken.tokenIndex)
+    unParseable = errorTokens.slice(0,-1).map(t => t.text).join('');
+    console.log("Whole query")
+    console.log(query);
+    console.log('\n\n');
+    console.log("parseable part");
+    console.log(query.slice(0, errorTokens[0].start));
+    console.log('\n\n');
+    console.log("unparseable part")
+    console.log(unParseable);
+    console.log('\n\n-----------');
   }
-
-  return { tree, tokens };
+  return { tree, tokens, unParseable };
 }
 
 export function findTargetToken(
