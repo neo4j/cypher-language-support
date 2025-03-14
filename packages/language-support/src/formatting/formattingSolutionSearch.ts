@@ -156,38 +156,32 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
-  // Case 1: Hard-break comments align with base group or base indentation
+  // Active groups, prioritize lining up on these if break
+  // Works because after breakLine no groups are active
+  if (state.activeGroups.length > 0) {
+    return {
+      finalIndentation: state.activeGroups.at(-1).align,
+      indentationState: { base, special, align },
+    };
+  }
+
+  // Hard-break comments or chunk must break before
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    const baseGroup = state.activeGroups[0];
-    const finalIndent = baseGroup ? baseGroup.align : base;
     return {
-      finalIndentation: finalIndent,
+      finalIndentation: base,
       indentationState: { base, special, align },
     };
   }
 
-  // Case 2: Special indentation, used with CASE
+  // Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
-    const finalIndent =
-      state.activeGroups.length > 1
-        ? state.activeGroups.at(-1).align
-        : state.indentationState.special;
+    let finalIndent = state.indentationState.special;
 
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // Case 3: Currently for EXISTS, COLLECT and COUNT
-  if (state.indentationState.align.length > 0) {
-    // base case
-    let finalIndent =
-      align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
-
-    // more than one group, align as usual
-    if (state.activeGroups.length > 0) {
-      finalIndent = state.activeGroups.at(-1).align;
+    // If align indentation is present
+    // Meaning inside EXIST, COUNT or COLLECT, add one
+    // more indentation to better differentiate
+    if (state.indentationState.align.length > 0) {
+      finalIndent += INDENTATION_SPACES;
     }
 
     return {
@@ -196,11 +190,13 @@ function getIndentations(state: State, chunk: Chunk): IndentationResult {
     };
   }
 
-  // Case 4: No special indentation rules applied
-  // Align on the active groups
-  if (state.activeGroups.length > 0) {
+  // Currently for EXISTS, COLLECT and COUNT
+  if (state.indentationState.align.length > 0) {
+    const finalIndent =
+      align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
+
     return {
-      finalIndentation: state.activeGroups.at(-1).align,
+      finalIndentation: finalIndent,
       indentationState: { base, special, align },
     };
   }
