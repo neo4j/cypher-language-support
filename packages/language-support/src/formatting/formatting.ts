@@ -1481,7 +1481,8 @@ export function formatQuery(
     (unParseable ? '\n' + unParseable: '');
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
-    const result = visitor.format(tree);
+    const result = visitor.format(tree) + 
+    (unParseable ? '\n' + unParseable: '');
     return {
       formattedString: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
@@ -1491,7 +1492,8 @@ export function formatQuery(
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
   if (!targetToken) {
     return {
-      formattedString: visitor.format(tree),
+      formattedString: visitor.format(tree) + 
+    (unParseable ? '\n' + unParseable: ''),
       newCursorPos: 0,
     };
   }
@@ -1499,7 +1501,8 @@ export function formatQuery(
   visitor.targetToken = targetToken.tokenIndex;
 
   return {
-    formattedString: visitor.format(tree),
+    formattedString: visitor.format(tree) + 
+    (unParseable ? '\n' + unParseable: ''),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
