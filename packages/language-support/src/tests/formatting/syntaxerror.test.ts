@@ -101,7 +101,6 @@ RETURN n`;
 
   test('missing parentheses', () => {
     const query = `MATCH (n:Person) RETURN toUpper n.name`;
-    // Ideally the n.name part wouldn't go on a newline but whatever
     const expected = `MATCH (n:Person)
 RETURN toUpper n.name`;
     verifyFormatting(query, expected);
@@ -122,7 +121,7 @@ RETURN n;`;
   });
 
   test('extra word in with', () => {
-    const query = `MATCH (n:Person) WITH n ERROR RETURN n;`;
+    const query = `match (n:    Person) WitH n ERROR RETURN n;`;
     const expected = `MATCH (n:Person)
 WITH n ERROR RETURN n;`;
     verifyFormatting(query, expected);
