@@ -254,8 +254,8 @@ END} AS endNode;`;
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
-         'High Spender'
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+         THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);

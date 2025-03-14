@@ -1176,8 +1176,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
+    const extendedCaseThenGroup = this.startGroup();
     this.visit(ctx.THEN());
     this.visit(ctx.expression());
+    this.endGroup(extendedCaseThenGroup);
     this.endGroup(extendedCaseAlterniveGroup);
   };
 
