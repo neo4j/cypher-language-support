@@ -140,11 +140,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (indices.length < 2) {
       return;
     }
+    if (this.currentBuffer()[indices[0]].type !== 'REGULAR' || this.currentBuffer()[indices[1]].type !== 'REGULAR') {
+      return;
+    }
     const suffix = this.currentBuffer().splice(indices[0], 1)[0];
     const prefix = this.currentBuffer()[indices[1]];
-    if (prefix.type !== 'REGULAR' || suffix.type !== 'REGULAR') {
-      throw new Error('Internal formatter bug in concatenate');
-    }
     const hasCursor = prefix.isCursor || suffix.isCursor;
     if (suffix.isCursor) {
       this.cursorPos += prefix.text.length;
