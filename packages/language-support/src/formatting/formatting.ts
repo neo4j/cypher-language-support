@@ -1141,12 +1141,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.CASE());
-    this.removeAllGroups();
-    this.lastInCurrentBuffer().groupsStarting = 0;
     const n = ctx.caseAlternative_list().length;
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
@@ -1163,7 +1160,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(caseElseGroup);
     }
     this.removeSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.END());
     this.removeSpecialIndentation();
   };
@@ -1185,30 +1182,29 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.CASE());
-    this.removeAllGroups();
     this.avoidBreakBetween();
-    this.lastInCurrentBuffer().groupsStarting = 0;
     this.visit(ctx.expression(0));
-    const extendedCaseGrp = this.startGroup();
     this.mustBreakBetween();
     const n = ctx.extendedCaseAlternative_list().length;
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const g = this.startGroup();
       this.visit(ctx.extendedCaseAlternative(i));
+      this.endGroup(g);
     }
     if (ctx.ELSE()) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const g = this.startGroup();
       this.visit(ctx.ELSE());
       this.visit(ctx.expression(1));
+      this.endGroup(g);
     }
-    this.endGroup(extendedCaseGrp);
     this.removeSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.END());
     this.removeSpecialIndentation();
   };
