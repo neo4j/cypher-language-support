@@ -12,6 +12,7 @@ Our extension preview provides a rich set of features for working with Cypher, t
 - Syntax checking - both simple and semantic errors (e.g. type errors, unknown labels, etc)
 - Autocompletion for Cypher keywords, functions, labels, properties, database names and more
 - Signature help for functions - shows the signature of the function while typing
+- Formatting - format the document according to the Cypher styleguide
 
 ![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo.gif?raw=true)
 
@@ -82,7 +83,6 @@ We're working on adding more features to the extension, such as:
 - Improved database connection management
 - Embedded cypher support in other file types
 - Query execution and result visualization
-- Automatic query formatting
 
 ## Extension settings
 

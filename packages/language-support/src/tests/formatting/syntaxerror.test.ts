@@ -59,7 +59,7 @@ MERGE (a:Article {v.article_number})
 MERGE (s:Source {name: v.source})
 MERGE (a)-[:PUBLISHED_IN]->(s)
 WITH a, v
-WHERE TRIM (v.authors) <> ''
+WHERE trim(v.authors) <> ''
 UNWIND split(v.authors, ',') AS name
 MERGE (author:Author {name: name})
 MERGE (a)-[:WRITTEN_BY]->(author)`;

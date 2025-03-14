@@ -623,4 +623,42 @@ RETURN n, m`;
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should not treat the trim function as a keyword', () => {
+    const query = `MATCH (v)
+WHERE trim(v.authors) <> ''
+RETURN v`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('trim with leading/trailling/both', () => {
+    let query = `MATCH (n)
+WHERE trim(LEADING ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    let expected = query;
+    verifyFormatting(query, expected);
+    query = `MATCH (n)
+WHERE trim(TRAILING ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    expected = query;
+    verifyFormatting(query, expected);
+    query = `MATCH (n)
+WHERE trim(BOTH ' ' FROM n.name) = 'Neo'
+RETURN n`;
+    expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not treat the normalize function as a keyword', () => {
+    const query = `RETURN normalize('Café') AS normalizedDefault`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not forget about the second argument in normalize', () => {
+    const query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });
