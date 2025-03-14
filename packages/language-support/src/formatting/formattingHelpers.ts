@@ -2,10 +2,7 @@ import {
   CharStreams,
   CommonToken,
   CommonTokenStream,
-  DefaultErrorStrategy,
   ErrorListener as ANTLRErrorListener,
-  Parser,
-  RecognitionException,
   TerminalNode,
   Token,
 } from 'antlr4';
@@ -16,30 +13,6 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-const SYNC_TOKENS = new Set([
-  CypherCmdLexer.RETURN
-]);
-
-class RestartParseException extends Error {
-  public readonly resumeIndex: number;
-  constructor(message: string, recognizer: Parser) {
-    super(message);
-    this.resumeIndex = recognizer.getTokenStream().index;
-  }
-}
-
-class CypherErrorStrategy extends DefaultErrorStrategy {
-  // Override recover to skip tokens until we hit one of our syncTokens.
-  public recover(recognizer: CypherCmdParser, e: RecognitionException): void {
-    // Skip tokens until we find a token in our syncTokens set.
-    while (recognizer.getTokenStream().LA(1) !== Token.EOF) {
-      if (SYNC_TOKENS.has(recognizer.getTokenStream().LA(1))) {
-        throw new RestartParseException('Restart parse', recognizer);
-      }
-      recognizer.consume();
-    }
-  }
-}
 
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
