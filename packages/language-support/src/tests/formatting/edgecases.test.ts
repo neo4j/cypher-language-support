@@ -733,4 +733,78 @@ RETURN
   END`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('extremely complex expressions with nested exist and case', () => {
+    const query = `
+MATCH (n)
+RETURN 5 +
+CASE
+WHEN (n)--() THEN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris'
+WITH dog
+WHERE dog.name = 'Ozzy'
+} THEN 'Relationship'
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--()  THEN 'Relationship'
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+WHERE dog.name = 'Ozzy'
+} THEN 'Relationship'
+WHEN (n {prop: 42}) THEN 'Node'
+END
+END
+END
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN (n)--() THEN 'Relationship'
+WHEN (n {prop: 42}) THEN 'Node'
+END
+END`.trimStart();
+    const expected = `
+MATCH (n)
+RETURN 5 +
+  CASE
+    WHEN (n)--() THEN
+      CASE
+        WHEN EXISTS {
+          MATCH (person)-[:HAS_DOG]->(dog:Dog)
+          WHERE person.name = 'Chris' OR person.name = 'Chris' OR
+                person.name = 'Chris' OR person.name = 'Chris' OR
+                person.name = 'Chris' OR person.name = 'Chris'
+          WITH dog
+          WHERE dog.name = 'Ozzy'
+        } THEN 'Relationship'
+        WHEN (n {prop: 42}) THEN
+          CASE
+            WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
+                 (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
+                 (n)--() OR (n)--() THEN 'Relationship'
+            WHEN (n {prop: 42}) THEN
+              CASE
+                WHEN EXISTS {
+                  MATCH (person)-[:HAS_DOG]->(dog:Dog)
+                  WHERE person.name = 'Chris'
+                  WITH dog
+                  WHERE dog.name = 'Ozzy'
+                } THEN 'Relationship'
+                WHEN (n {prop: 42}) THEN 'Node'
+              END
+          END
+      END
+    WHEN (n {prop: 42}) THEN
+      CASE
+        WHEN (n)--() THEN 'Relationship'
+        WHEN (n {prop: 42}) THEN 'Node'
+      END
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
