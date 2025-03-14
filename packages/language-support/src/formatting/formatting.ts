@@ -123,6 +123,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const resultString = result.formattedString + this.unParseable;
     const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
     const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
+
+    // Do not return the formatting result if we have accidentally modified it beyond
+    // whitespace changes. If we did so even when there wasn't a syntax error,
+    // it should raise an internal error. If there is a syntax error, we do not guarantee
+    // we can format the query.
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
       if (this.unParseable) {
         return query;
