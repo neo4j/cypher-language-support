@@ -8,8 +8,7 @@ import {
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
-import { getSchemaPoller } from '../contextService';
-import { parametersManager } from '../treeviews/parametersTreeProvider';
+import { getParameterStore, getSchemaPoller } from '../contextService';
 
 export async function addParameter(): Promise<void> {
   const param = await window.showInputBox({
@@ -24,7 +23,7 @@ export async function addParameter(): Promise<void> {
 }
 
 export async function evaluateParam(param: string): Promise<void> {
-  const parameters = parametersManager;
+  const parameterStore = getParameterStore();
   const schemaPoller = getSchemaPoller();
   const connected = await schemaPoller.connection?.healthcheck();
 
@@ -63,7 +62,7 @@ export async function evaluateParam(param: string): Promise<void> {
     );
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
-    await parameters.set(key, serializedValue, stringifiedValue, type);
+    await parameterStore.set(key, serializedValue, stringifiedValue, type);
   } catch (e) {
     await window.showErrorMessage('Parsing parameters failed.');
   }
@@ -72,6 +71,6 @@ export async function evaluateParam(param: string): Promise<void> {
 }
 
 export async function clearParameters(): Promise<void> {
-  const parameters = parametersManager;
-  await parameters.clear();
+  const parameterStore = getParameterStore();
+  await parameterStore.clear();
 }

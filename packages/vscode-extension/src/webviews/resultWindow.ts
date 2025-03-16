@@ -2,9 +2,12 @@ import type { QueryResultWithLimit } from '@neo4j-cypher/schema-poller';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
-import { getExtensionContext, getSchemaPoller } from '../contextService';
+import {
+  getExtensionContext,
+  getParameterStore,
+  getSchemaPoller,
+} from '../contextService';
 import { getNonce } from '../getNonce';
-import { parametersManager } from '../treeviews/parametersTreeProvider';
 import { toNativeTypes } from '../typeUtils';
 
 export function querySummary(result: QueryResultWithLimit): string[] {
@@ -215,12 +218,14 @@ export default class ResultWindow {
 
   private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
     const connection = this.schemaPoller.connection;
+    const parameterStore = getParameterStore();
 
     if (connection) {
+      const parameters = parameterStore.getAllParameters();
       try {
         return await connection.runCypherQuery({
           query,
-          parameters: parametersManager.asParameters(),
+          parameters: parameters,
         });
       } catch (e) {
         const error = e as Error;

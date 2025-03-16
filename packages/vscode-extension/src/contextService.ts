@@ -9,6 +9,7 @@ import EventEmitter from 'events';
 import { Config } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
+import { ParameterStore } from './parameterStore';
 
 type LanguageClient = {
   sendNotification: (
@@ -50,6 +51,7 @@ type SchemaPoller = {
 
 let _context: ExtensionContext | undefined;
 let _languageClient: LanguageClient | undefined;
+let _parameterStore: ParameterStore | undefined;
 let _schemaPoller: SchemaPoller | undefined;
 let _queryRunner: CypherRunner | undefined;
 
@@ -108,4 +110,15 @@ export function getQueryRunner(): CypherRunner {
   }
 
   return _queryRunner;
+}
+
+/**
+ * @returns The parameter store.
+ */
+export function getParameterStore(): ParameterStore {
+  if (!_parameterStore) {
+    _parameterStore = new ParameterStore();
+  }
+
+  return _parameterStore;
 }

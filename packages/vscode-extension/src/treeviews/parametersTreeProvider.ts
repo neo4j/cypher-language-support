@@ -85,6 +85,3 @@ export class ParameterTreeProvider extends TreeProvider {
     );
   }
 }
-
-export const parametersManager = new ParameterStore();
-export const parametersTreeProvider = parametersManager.getTreeProvider();

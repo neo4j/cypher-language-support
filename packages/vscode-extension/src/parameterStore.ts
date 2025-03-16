@@ -3,12 +3,11 @@ import {
   deserializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
 import * as vscode from 'vscode';
-import { getExtensionContext } from './contextService';
+import { getExtensionContext, getParameterStore } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import {
   Parameter,
   PARAMETERS,
-  parametersManager,
   ParameterTreeProvider,
 } from './treeviews/parametersTreeProvider';
 
@@ -35,16 +34,11 @@ export class ParameterStore {
   async updateState(state: Record<string, Parameter>) {
     const context = getExtensionContext();
     await context.globalState.update(PARAMETERS, state);
-
-    await sendNotificationToLanguageClient(
-      'updateParameters',
-      parametersManager.asParameters(),
-    );
-
+    await sendParametersToLanguageServer();
     this.tree.refresh();
   }
 
-  asParameters(): Record<string, unknown> {
+  getAllParameters(): Record<string, unknown> {
     const parameters = this.getState();
 
     const res = Object.fromEntries(
@@ -73,8 +67,9 @@ export class ParameterStore {
 }
 
 export async function sendParametersToLanguageServer() {
+  const parameterStore = getParameterStore();
   await sendNotificationToLanguageClient(
     'updateParameters',
-    parametersManager.asParameters(),
+    parameterStore.getAllParameters(),
   );
 }
