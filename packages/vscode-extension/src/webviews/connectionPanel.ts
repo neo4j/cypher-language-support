@@ -224,6 +224,11 @@ export class ConnectionPanel {
                             ? 'selected'
                             : ''
                         }>bolt+s://</option>
+                        <option value="bolt+ssc" ${
+                          this._connection?.scheme === 'bolt+ssc'
+                            ? 'selected'
+                            : ''
+                        }>bolt+ssc://</option>
                         <option value="neo4j" ${
                           this._connection?.scheme === 'neo4j' ||
                           !this._connection
@@ -235,6 +240,11 @@ export class ConnectionPanel {
                             ? 'selected'
                             : ''
                         }>neo4j+s://</option>
+                        <option value="neo4j+ssc" ${
+                          this._connection?.scheme === 'neo4j+ssc'
+                            ? 'selected'
+                            : ''
+                        }>neo4j+ssc://</option>
                     </select>
                   </div>
                   <div class="form--input-wrapper">

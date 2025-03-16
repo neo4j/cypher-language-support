@@ -3,7 +3,6 @@ import {
   CommonToken,
   CommonTokenStream,
   ErrorListener as ANTLRErrorListener,
-  ParseTree,
   Recognizer,
   TerminalNode,
   Token,
@@ -11,10 +10,9 @@ import {
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
-  MergeClauseContext,
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
-import { lexerKeywords, lexerOperators } from '../lexerSymbols';
+import { lexerKeywords } from '../lexerSymbols';
 
 export class FormatterErrorsListener
   implements ANTLRErrorListener<CommonToken>
@@ -34,42 +32,79 @@ export class FormatterErrorsListener
   public reportContextSensitivity() {}
 }
 
-export function handleMergeClause(
-  ctx: MergeClauseContext,
-  visit: (node: ParseTree) => void,
-) {
-  visit(ctx.MERGE());
-  visit(ctx.pattern());
-  const mergeActions = ctx
-    .mergeAction_list()
-    .map((action, index) => ({ action, index }));
-  mergeActions.sort((a, b) => {
-    if (a.action.CREATE() && b.action.MATCH()) {
-      return -1;
-    } else if (a.action.MATCH() && b.action.CREATE()) {
-      return 1;
-    }
-    return a.index - b.index;
-  });
-  mergeActions.forEach(({ action }) => {
-    visit(action);
-  });
+/**
+ * The maximum column width for the formatter. Not a hard limit as overflow
+ * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
+ */
+export const MAX_COL = 80;
+
+export enum AlignIndentationOptions {
+  Add = 1,
+  Remove = -1,
+  Maintain = 0,
 }
+
+export interface ChunkIndentation {
+  base: number;
+  special: number;
+  align: AlignIndentationOptions;
+}
+
+export interface BaseChunk {
+  isCursor?: boolean;
+  doubleBreak?: true;
+  text: string;
+  groupsStarting: number;
+  groupsEnding: number;
+  indentation: ChunkIndentation;
+}
+
+// Regular chunk specific properties
+export interface RegularChunk extends BaseChunk {
+  type: 'REGULAR';
+  node?: TerminalNode;
+  noSpace?: boolean;
+  noBreak?: boolean;
+  mustBreak?: boolean;
+}
+
+// Comment chunk specific properties
+export interface CommentChunk extends BaseChunk {
+  type: 'COMMENT';
+  breakBefore: boolean;
+}
+
+// Union type for all chunk types
+export type Chunk = RegularChunk | CommentChunk;
+
+export const initialIndentation: ChunkIndentation = {
+  base: 0,
+  special: 0,
+  align: AlignIndentationOptions.Maintain,
+};
+
+export const emptyChunk: RegularChunk = {
+  type: 'REGULAR',
+  text: '',
+  groupsStarting: 0,
+  groupsEnding: 0,
+  indentation: { ...initialIndentation },
+};
+
+const traillingCharacters = [
+  CypherCmdLexer.SEMICOLON,
+  CypherCmdLexer.COMMA,
+  CypherCmdLexer.COLON,
+  CypherCmdLexer.RPAREN,
+  CypherCmdLexer.RBRACKET,
+];
 
 export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);
 }
 
-export function wantsSpaceBefore(node: TerminalNode): boolean {
-  return isKeywordTerminal(node) || lexerOperators.includes(node.symbol.type);
-}
-
-export function wantsSpaceAfter(node: TerminalNode): boolean {
-  return (
-    isKeywordTerminal(node) ||
-    lexerOperators.includes(node.symbol.type) ||
-    node.symbol.type === CypherCmdLexer.COMMA
-  );
+export function wantsToBeConcatenated(node: TerminalNode): boolean {
+  return traillingCharacters.includes(node.symbol.type);
 }
 
 function isKeywordTerminal(node: TerminalNode): boolean {
@@ -91,6 +126,7 @@ function isSymbolicName(node: TerminalNode): boolean {
     node.parentCtx instanceof EscapedSymbolicNameStringContext
   );
 }
+
 export function getParseTreeAndTokens(query: string) {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
@@ -117,4 +153,11 @@ export function findTargetToken(
     }
   }
   return false;
+}
+
+export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
+  return (
+    chunk.type === 'COMMENT' ||
+    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
+  );
 }

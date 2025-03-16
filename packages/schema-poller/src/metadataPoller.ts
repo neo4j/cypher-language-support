@@ -1,5 +1,6 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
+  cypher25Supported,
   cypherVersions,
   DbSchema,
   Neo4jFunction,
@@ -98,12 +99,13 @@ export class MetadataPoller {
   constructor(
     databases: Database[],
     parameters: Record<string, unknown>,
+    serverVersion: string | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
     const supportsCypherAnnotation =
       _internalFeatureFlags.cypher25 ||
-      databases.find((db) => db.defaultLanguage !== undefined) !== undefined;
+      (serverVersion && cypher25Supported(serverVersion));
 
     this.dbSchema.parameters = parameters;
 
