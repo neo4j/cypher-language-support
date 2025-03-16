@@ -1,11 +1,7 @@
-import {
-  CypherDataTypeName,
-  deserializeTypeAnnotations,
-} from '@neo4j-cypher/schema-poller';
+import { CypherDataTypeName } from '@neo4j-cypher/schema-poller';
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
-import { getExtensionContext } from '../contextService';
-import { sendNotificationToLanguageClient } from '../languageClientService';
+import { ParameterStore } from '../parameterStore';
 
 export const PARAMETERS = 'neo4j.parameters';
 
@@ -20,80 +16,6 @@ export interface Parameter {
   value: unknown;
   stringifiedValue: string;
   type: CypherDataTypeName;
-}
-
-export class ParameterManager {
-  private readonly tree: ParameterTreeProvider;
-
-  constructor() {
-    this.tree = new ParameterTreeProvider(this);
-  }
-
-  getTreeProvider(): ParameterTreeProvider {
-    return this.tree;
-  }
-
-  getState(): Record<string, Parameter> {
-    const context = getExtensionContext();
-    return context.globalState.get(PARAMETERS) || {};
-  }
-
-  has(key: string): boolean {
-    const state = this.getState();
-
-    // TODO Nacho What is this?
-    // eslint-disable-next-line no-prototype-builtins
-    return state.hasOwnProperty(key);
-  }
-
-  clear(): Promise<void> {
-    return this.updateState({});
-  }
-
-  async updateState(state: Record<string, Parameter>) {
-    const context = getExtensionContext();
-    await context.globalState.update(PARAMETERS, state);
-
-    await sendNotificationToLanguageClient(
-      'updateParameters',
-      parametersManager.asParameters(),
-    );
-
-    this.tree.refresh();
-  }
-
-  asParameters(): Record<string, unknown> {
-    const parameters = this.getState();
-
-    const res = Object.fromEntries(
-      Object.values(parameters).map((p) => [
-        p.key,
-        deserializeTypeAnnotations(p.value),
-      ]),
-    );
-    return res;
-  }
-
-  keys(): string[] {
-    const parameters = this.getState();
-
-    return Object.keys(parameters);
-  }
-
-  async set(
-    key: string,
-    value: unknown,
-    stringifiedValue: string,
-    type: CypherDataTypeName,
-  ) {
-    const parameters = this.getState();
-
-    parameters[key.trim()] = { key: key.trim(), value, stringifiedValue, type };
-
-    await this.updateState(parameters);
-
-    await vscode.window.showInformationMessage(`Parameter \`${key}\` set.`);
-  }
 }
 
 class ParameterTreeItem implements INode {
@@ -141,8 +63,8 @@ abstract class TreeProvider implements vscode.TreeDataProvider<INode> {
   }
 }
 
-class ParameterTreeProvider extends TreeProvider {
-  constructor(private readonly parameters: ParameterManager) {
+export class ParameterTreeProvider extends TreeProvider {
+  constructor(private readonly parameters: ParameterStore) {
     super();
   }
 
@@ -164,5 +86,5 @@ class ParameterTreeProvider extends TreeProvider {
   }
 }
 
-export const parametersManager = new ParameterManager();
+export const parametersManager = new ParameterStore();
 export const parametersTreeProvider = parametersManager.getTreeProvider();

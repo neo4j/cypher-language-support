@@ -11,7 +11,7 @@ import {
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
 import { setContext } from './contextService';
-import { sendParametersToLanguageServer } from './paramsService';
+import { sendParametersToLanguageServer } from './parameterStore';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
