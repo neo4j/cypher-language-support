@@ -98,6 +98,8 @@ interface RawTerminalOptions {
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
+  root: StatementsOrCommandsContext;
+  query: string;
   buffers: Chunk[][] = [];
   indentation = 0;
   indentationSpaces = 2;
@@ -114,10 +116,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   constructor(
     private tokenStream: CommonTokenStream,
+    root: StatementsOrCommandsContext,
+    query: string,
     unParseable: string | undefined,
     firstUnParseableToken: Token | undefined,
   ) {
     super();
+    this.root = root;
+    this.query = query;
     this.buffers.push([]);
     if (unParseable) {
       this.unParseable = unParseable;
@@ -128,12 +134,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   }
 
-  format = (root: StatementsOrCommandsContext, query: string) => {
-    this._visit(root);
+  format = () => {
+    this._visit(this.root);
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
-    const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
+    const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
     const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
 
     // Do not return the formatting result if we have accidentally modified it beyond
@@ -1634,18 +1640,20 @@ export function formatQuery(
 ): string | FormattingResultWithCursor {
   const { tree, tokens, unParseable, firstUnParseableToken } =
     getParseTreeAndTokens(query);
+
+  tokens.fill();
   const visitor = new TreePrintVisitor(
     tokens,
+    tree,
+    query,
     unParseable,
     firstUnParseableToken,
   );
 
-  tokens.fill();
-
-  if (cursorPosition === undefined) return visitor.format(tree, query);
+  if (cursorPosition === undefined) return visitor.format();
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
-    const result = visitor.format(tree, query);
+    const result = visitor.format();
     return {
       formattedString: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
@@ -1655,7 +1663,7 @@ export function formatQuery(
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
   if (!targetToken) {
     return {
-      formattedString: visitor.format(tree, query),
+      formattedString: visitor.format(),
       newCursorPos: 0,
     };
   }
@@ -1663,7 +1671,7 @@ export function formatQuery(
   visitor.targetToken = targetToken.tokenIndex;
 
   return {
-    formattedString: visitor.format(tree, query),
+    formattedString: visitor.format(),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
