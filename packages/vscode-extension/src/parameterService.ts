@@ -23,16 +23,26 @@ export const PARAMETERS_KEY = 'neo4j.parameters';
  * Gets all Parameters from the global state.
  * @returns A Parameters object.
  */
-export function getParameters(): Record<string, Parameter> {
+export function getParameters(): Parameters {
   const context = getExtensionContext();
   return context.globalState.get(PARAMETERS_KEY) || {};
 }
 
+/**
+ * Removes all parameters from the global state.
+ * @returns void
+ */
 export async function clearParameters(): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(PARAMETERS_KEY, {});
 }
 
+/**
+ * Parameters are objects that are stored serialized in the global state.
+ * This method deserializes them and returns them as a Record<string, unknown>
+ * where unknown is the type of each parameter object.
+ * @returns the deserialized parameters
+ */
 export function getDeserializedParams(): Record<string, unknown> {
   const parameters = getParameters();
 
@@ -45,6 +55,10 @@ export function getDeserializedParams(): Record<string, unknown> {
   return res;
 }
 
+/**
+ * Sets parameter in the global state, sends them to the language server and shows a confirmation message in the UI.
+ * @returns void
+ */
 export async function setParameter(param: Parameter) {
   const parameters = getParameters();
   const key = param.key;
@@ -55,16 +69,21 @@ export async function setParameter(param: Parameter) {
 }
 
 /**
- * Saves a Connections object in the global state.
- * A command to refresh the Connections view will be executed after the Connections object has been saved.
- * @param connections The Connections object to save.
- * @returns A promise that resolves when the Connections object has been saved.
+ * Saves a Parameters object to the global state.
+ * @param parameters The Parameters object to save.
+ * @returns A void promise that resolves when the Parameters object has been saved.
  */
-async function saveParameters(connections: Parameters): Promise<void> {
+async function saveParameters(parameters: Parameters): Promise<void> {
   const context = getExtensionContext();
-  await context.globalState.update(PARAMETERS_KEY, connections);
+  await context.globalState.update(PARAMETERS_KEY, parameters);
 }
 
+/**
+ * Fetches teh parameters from the global store and signals
+ * the language server to update the parameters.
+ * @returns A void promise that resolves when the
+ *          Parameters object has been sent the language server.
+ */
 export async function sendParametersToLanguageServer() {
   const params = getDeserializedParams();
   await sendNotificationToLanguageClient('updateParameters', params);

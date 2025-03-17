@@ -81,7 +81,7 @@
       },
       {
         "command": "neo4j.addParameter",
-        "title": "Neo4j: Set parameter",
+        "title": "Neo4j: Add parameter",
         "category": "Neo4j",
         "icon": "$(add)"
       },

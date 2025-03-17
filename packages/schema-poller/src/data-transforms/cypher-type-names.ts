@@ -142,6 +142,5 @@ export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
     return 'Path';
   }
 
-  // TODO Nacho: this was `Unknown` in the upx code. What should we do here?
   return 'Map';
 }

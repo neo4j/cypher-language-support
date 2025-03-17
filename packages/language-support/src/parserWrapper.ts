@@ -179,6 +179,10 @@ type ParamParsing = {
 };
 
 export function parseParam(param: string, dbSchema: DbSchema): ParamParsing {
+  // We need to filter out unsupported console commands
+  // errors. In this method we are using :param to get
+  // syntax errors. The console commands could be disabled
+  // in that environment
   const errors = lintCypherQuery(`:param ${param}`, dbSchema).filter(
     (e) => e.message !== unsupportedConsoleCmds,
   );
