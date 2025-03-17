@@ -8,9 +8,17 @@ import {
   CaseExpressionContext,
   ClauseContext,
   CollectExpressionContext,
+  CommandContext,
+  CommandNodePatternContext,
+  ConstraintIsNotNullContext,
+  ConstraintIsUniqueContext,
+  ConstraintKeyContext,
+  ConstraintTypedContext,
   CountExpressionContext,
   CountStarContext,
   CreateClauseContext,
+  CreateCommandContext,
+  CreateConstraintContext,
   DeleteClauseContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -456,6 +464,78 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.preserveExplicitNewlineAfter(ctx.SEMICOLON(i));
       }
     }
+  };
+
+  visitCommand = (ctx: CommandContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+    this.preserveExplicitNewlineAfter(ctx);
+  };
+
+  visitCreateCommand = (ctx: CreateCommandContext) => {
+    this.visit(ctx.CREATE());
+    this.avoidBreakBetween();
+    if (ctx.OR()) {
+      this.visit(ctx.OR());
+      this.avoidBreakBetween();
+      this.visit(ctx.REPLACE());
+      this.avoidBreakBetween();
+    }
+    this.visitIfNotNull(ctx.createCompositeDatabase());
+    this.visitIfNotNull(ctx.createConstraint());
+    this.visitIfNotNull(ctx.createDatabase());
+    this.visitIfNotNull(ctx.createIndex());
+    this.visitIfNotNull(ctx.createRole());
+    this.visitIfNotNull(ctx.createUser());
+  };
+
+  visitCreateConstraint = (ctx: CreateConstraintContext) => {
+    this.visit(ctx.CONSTRAINT());
+    this.avoidBreakBetween();
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    if (ctx.IF()) {
+      this.avoidBreakBetween();
+      this.visit(ctx.IF());
+      this.avoidBreakBetween();
+      this.visit(ctx.NOT());
+      this.avoidBreakBetween();
+      this.visit(ctx.EXISTS());
+    }
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.avoidBreakBetween();
+    this.visitIfNotNull(ctx.commandNodePattern());
+    this.visitIfNotNull(ctx.commandRelPattern());
+    this.visit(ctx.constraintType());
+    this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitConstraintTyped = (ctx: ConstraintTypedContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+
+  visitConstraintIsUnique = (ctx: ConstraintIsUniqueContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+
+  visitConstraintKey = (ctx: ConstraintKeyContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+  visitConstraintIsNotNull = (ctx: ConstraintIsNotNullContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+
+  visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.concatenate();
+    this.visit(ctx.labelType());
+    this.concatenate();
+    this.visit(ctx.RPAREN());
   };
 
   // Handled separately because clauses should start on new lines, see
