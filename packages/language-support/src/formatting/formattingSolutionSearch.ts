@@ -114,7 +114,7 @@ function deriveNextIndentationState(
   activeGroups: Group[],
 ): IndentationState {
   const align = [...indentationState.align];
-  // AlignIndentation, used for EXISTS, COUNT, COLLECT
+  // Align indentation, used for EXISTS, COUNT, COLLECT
   // Pushes base groups alignment to list to be used later
   // for closing bracket
   if (chunkIndentation.align === AlignIndentationOptions.Add) {
