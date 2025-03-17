@@ -156,4 +156,14 @@ RETURN n AS`;
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('incomplete list literal remains unchanged', () => {
+    const query = `match (n:Person)
+where n.hobbies = ["reading", "biking
+return n`;
+    const expected = `MATCH (n:Person)
+WHERE n.hobbies = ["reading", "biking
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
