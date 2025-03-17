@@ -111,12 +111,27 @@ function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 function deriveNextIndentationState(
   chunkIndentation: ChunkIndentation,
   indentationState: IndentationState,
+  activeGroups: Group[],
 ): IndentationState {
+  const align = [...indentationState.align];
+  // A closing bracket of EXISTS, COLLECT, COUNT
+  // Should align with the first group, which alignment only exist
+  // in align group
+  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
+    align.pop();
+  }
+
+  // AlignIndentation, used for EXISTS, COUNT, COLLECT
+  // Pushes base groups alignment to list to be used later
+  // for closing bracket
+  if (chunkIndentation.align === AlignIndentationOptions.Add) {
+    align.push(activeGroups.at(0).align);
+  }
   return {
     base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
     special:
       indentationState.special + chunkIndentation.special * INDENTATION_SPACES,
-    align: [...indentationState.align],
+    align: align,
   };
 }
 
@@ -125,23 +140,17 @@ function getIndentation(
   chunk: Chunk,
   nextIndentationState: IndentationState,
 ): number {
-  // A closing bracket of EXISTS, COLLECT, COUNT
-  // Should align with the first group, which alignment only exist
-  // in align group
-  if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-    return nextIndentationState.align.pop();
-  }
-
-  // AlignIndentation, used for EXISTS, COUNT, COLLECT
-  // Pushes base groups alignment to list to be used later
-  // for closing bracket
-  if (chunk.indentation.align === AlignIndentationOptions.Add) {
-    nextIndentationState.align.push(state.activeGroups.at(0).align);
-  }
-
   // When not at the start of a line, no indentation
   if (state.column !== 0) {
     return 0;
+  }
+
+  // This happens if align.pop() was done in deriveNextIndentationState
+  // Also means we are on a closing brackets and should align
+  // on what was the last element in align, however because we popped it before
+  // we need to fetch it from the state where it still exists
+  if (state.indentationState.align.length > nextIndentationState.align.length) {
+    return state.indentationState.align.at(-1);
   }
 
   // Active groups, prioritize lining up on these if break
@@ -196,6 +205,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const nextIndentationState = deriveNextIndentationState(
     choice.left.indentation,
     curr.indentationState,
+    nextGroups,
   );
   const finalIndentation = getIndentation(
     curr,
