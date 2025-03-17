@@ -141,7 +141,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // it should raise an internal error. If there is a syntax error, we do not guarantee
     // we can format the query.
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
-      if (this.unParseable) {
+      if (this.unParseable && this.firstUnParseableToken) {
         throw new Error(
           `Unable to format query due to syntax error near ${this.firstUnParseableToken?.text} at line ${this.firstUnParseableToken?.line}`,
         );
