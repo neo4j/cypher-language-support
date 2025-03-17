@@ -499,7 +499,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  // Error nodes are attacahed to the first token that the parser recognizes again.
+  // Error nodes are attached to the first token that the parser recognizes again.
   // So to restore all the syntactically incorrect parts, we keep track of the last valid
   // token, and grab everything between it and the error node
   visitErrorNode = (node: ErrorNode) => {
