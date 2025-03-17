@@ -107,7 +107,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupStack: number[] = [];
   startGroupCounter = 0;
   groupsToEndOnBreak: number[] = [];
-  lastTokenIndex: number = -1;
+  previousTokenIndex: number = -1;
   unParseable: string = '';
   unParseableStart: number = 1e9;
   firstUnParseableToken: Token | undefined;
@@ -510,9 +510,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const errorTokenIndex = token.tokenIndex;
 
     let gapText = '';
-    if (this.lastTokenIndex < errorTokenIndex - 1) {
+    if (this.previousTokenIndex < errorTokenIndex - 1) {
       const skippedTokens = this.tokenStream.tokens.slice(
-        this.lastTokenIndex + 1,
+        this.previousTokenIndex + 1,
         errorTokenIndex,
       );
       gapText = skippedTokens.map((t) => t.text).join('');
@@ -521,7 +521,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const errorText = token.text.startsWith(MISSING) ? '' : token.text;
     const combinedText = gapText + errorText;
 
-    this.lastTokenIndex = errorTokenIndex;
+    this.previousTokenIndex = errorTokenIndex;
 
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
@@ -814,7 +814,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.concatenate();
     }
     this.addCommentsAfter(node);
-    this.lastTokenIndex = node.symbol.tokenIndex;
+    this.previousTokenIndex = node.symbol.tokenIndex;
   };
 
   // Some terminals don't want to have the regular rules applied to them,
@@ -863,7 +863,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.concatenate();
     }
     this.addCommentsAfter(node);
-    this.lastTokenIndex = node.symbol.tokenIndex;
+    this.previousTokenIndex = node.symbol.tokenIndex;
   };
 
   // Handled separately because the dollar should not be treated
