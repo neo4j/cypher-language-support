@@ -224,6 +224,10 @@ suite('Execute commands spec', () => {
         CONSTANTS.MESSAGES.CONNECTED_MESSAGE,
       );
 
+      // This test is flaky due to the deletion command occasionally happening too quickly, so wait
+      // for it a bit.
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       await commands.executeCommand(
         CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,
         {
