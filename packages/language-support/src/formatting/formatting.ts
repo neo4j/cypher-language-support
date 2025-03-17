@@ -1134,7 +1134,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.expression(0));
     const caseThenGroup = this.startGroup();
     this.visit(ctx.THEN());
+    const expressionGroup = this.startGroup();
     this.visit(ctx.expression(1));
+    this.endGroup(expressionGroup);
     this.endGroup(caseThenGroup);
     this.endGroup(caseAlternativeGrp);
   };
@@ -1181,7 +1183,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const extendedCaseThenGroup = this.startGroup();
     this.visit(ctx.THEN());
+    const expressionGroup = this.startGroup();
     this.visit(ctx.expression());
+    this.endGroup(expressionGroup);
     this.endGroup(extendedCaseThenGroup);
     this.endGroup(extendedCaseAlterniveGroup);
   };
