@@ -18,14 +18,14 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('query with misplaced parenthesis (incomplete pattern)', () => {
+  test('query with missing parenthesis', () => {
     const query = `MATCH (n:Person return n`;
     const expected = `MATCH (n:Person
 RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('incorrect node map projection', () => {
+  test('node map projection with . instead of :', () => {
     const query = `call apoc.load.json(url) yield value as v
 merge (a:Article {v.article_number})
 on create set a += v {.content_text, .published_date, .title, .url }
@@ -130,7 +130,7 @@ RETURN n`;
     );
   });
 
-  test('map that uses dot instead of colon should still work fine', () => {
+  test('map that uses dot instead of colon', () => {
     const query = `match (n:Person {age. 5}) return n`;
     const expected = `MATCH (n:Person {age. 5})
 RETURN n`;
