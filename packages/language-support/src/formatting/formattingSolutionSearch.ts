@@ -114,16 +114,16 @@ function deriveNextIndentationState(
   activeGroups: Group[],
 ): IndentationState {
   const align = [...indentationState.align];
-  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
-    align.pop();
-  }
-
   // AlignIndentation, used for EXISTS, COUNT, COLLECT
   // Pushes base groups alignment to list to be used later
   // for closing bracket
   if (chunkIndentation.align === AlignIndentationOptions.Add) {
     align.push(activeGroups.at(0).align);
   }
+  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
+    align.pop();
+  }
+
   return {
     base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
     special:
