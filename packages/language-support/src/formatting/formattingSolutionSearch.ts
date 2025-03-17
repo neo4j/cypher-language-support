@@ -68,11 +68,6 @@ interface FinalResultWithPos {
   cursorPos: number;
 }
 
-interface IndentationResult {
-  finalIndentation: number;
-  indentationState: IndentationState;
-}
-
 interface IndentationState {
   base: number;
   special: number;
@@ -125,85 +120,63 @@ function deriveNextIndentationState(
   };
 }
 
-function getIndentations(state: State, chunk: Chunk): IndentationResult {
-  const { base, special, align } = deriveNextIndentationState(
-    chunk.indentation,
-    state.indentationState,
-  );
-
+function getIndentation(
+  state: State,
+  chunk: Chunk,
+  nextIndentationState: IndentationState,
+): number {
   // A closing bracket of EXISTS, COLLECT, COUNT
   // Should align with the first group, which alignment only exist
   // in align group
   if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-    return {
-      finalIndentation: align.pop(),
-      indentationState: { base, special, align },
-    };
+    return nextIndentationState.align.pop();
   }
 
   // AlignIndentation, used for EXISTS, COUNT, COLLECT
   // Pushes base groups alignment to list to be used later
   // for closing bracket
   if (chunk.indentation.align === AlignIndentationOptions.Add) {
-    align.push(state.activeGroups.at(0).align);
+    nextIndentationState.align.push(state.activeGroups.at(0).align);
   }
 
   // When not at the start of a line, no indentation
   if (state.column !== 0) {
-    return {
-      finalIndentation: 0,
-      indentationState: { base, special, align },
-    };
+    return 0;
   }
 
   // Active groups, prioritize lining up on these if break
   // Works because after breakLine no groups are active
   if (state.activeGroups.length > 0) {
-    return {
-      finalIndentation: state.activeGroups.at(-1).align,
-      indentationState: { base, special, align },
-    };
+    return state.activeGroups.at(-1).align;
   }
 
   // Hard-break comments or chunk must break before
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    return {
-      finalIndentation: base,
-      indentationState: { base, special, align },
-    };
+    return nextIndentationState.base;
   }
 
   // Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
-    let finalIndent = state.indentationState.special;
-
     // If align indentation is present
     // Meaning inside EXIST, COUNT or COLLECT, add one
     // more indentation to better differentiate
-    finalIndent += INDENTATION_SPACES * state.indentationState.align.length;
-
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
+    return (
+      state.indentationState.special +
+      INDENTATION_SPACES * state.indentationState.align.length
+    );
   }
 
   // Currently for EXISTS, COLLECT and COUNT
   if (state.indentationState.align.length > 0) {
-    const finalIndent =
-      align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
-
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
+    return (
+      nextIndentationState.align.at(-1) +
+      INDENTATION_SPACES +
+      state.indentationState.base
+    );
   }
 
   // Default case
-  return {
-    finalIndentation: state.indentationState.base,
-    indentationState: { base, special, align },
-  };
+  return state.indentationState.base;
 }
 
 // Very useful for debugging but not actually used in the code
@@ -220,10 +193,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
-
-  const { finalIndentation, indentationState } = getIndentations(
+  const nextIndentationState = deriveNextIndentationState(
+    choice.left.indentation,
+    curr.indentationState,
+  );
+  const finalIndentation = getIndentation(
     curr,
     choice.left,
+    nextIndentationState,
   );
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
@@ -263,7 +240,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choiceIndex: curr.choiceIndex + 1,
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
-    indentationState: indentationState,
+    indentationState: nextIndentationState,
     edge: {
       prevState: curr,
       decision: {
