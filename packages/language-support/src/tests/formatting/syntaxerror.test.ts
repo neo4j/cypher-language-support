@@ -149,4 +149,11 @@ RETURN n`;
 RETURN n AS`;
     verifyFormatting(query, expected);
   });
+
+  test('missing closing quote in string literal inside map', () => {
+    const query = `match (n:Person {name:'Alice}) return n`;
+    const expected = `MATCH (n:Person {name:'Alice})
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
