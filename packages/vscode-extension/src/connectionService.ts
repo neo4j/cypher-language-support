@@ -60,11 +60,14 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
     return;
   }
 
+  const activeConnection = getActiveConnection();
+  const isActiveConnection = activeConnection && activeConnection.key === key;
+
   delete connections[key];
   await saveConnections(connections);
   await deletePasswordByKey(key);
 
-  if (connection.state !== 'inactive') {
+  if (isActiveConnection) {
     const result = await disconnectFromDatabaseAndNotifyLanguageClient();
     connection.state = 'inactive';
     displayMessageForConnectionResult(connection, result);
