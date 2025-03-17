@@ -364,6 +364,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx instanceof TerminalNode) {
       return ctx;
     }
+    if (ctx.getChildCount() === 0) {
+      return null;
+    }
     const idx = side === 'before' ? 0 : ctx.getChildCount() - 1;
     const child = ctx.getChild(idx);
     if (child instanceof TerminalNode) {
@@ -387,6 +390,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     side: 'before' | 'after',
   ) => {
     const bottomChild = this.getBottomChild(ctx, side);
+    // If the bottom child does not exist (missing due to syntax error) or is a MISSING token,
+    // disregard preserving explicit newlines
+    if (!bottomChild) {
+      return;
+    }
     const token = bottomChild.symbol;
     if (token.text.startsWith(MISSING)) {
       return;

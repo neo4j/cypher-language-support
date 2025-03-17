@@ -142,4 +142,11 @@ RETURN n`;
     const expected = `MERGE (n:Person {name:'Alice'`;
     verifyFormatting(query, expected);
   });
+
+  test('incomplete AS in RETURN', () => {
+    const query = `match (n:Person) return n as`;
+    const expected = `MATCH (n:Person)
+RETURN n AS`;
+    verifyFormatting(query, expected);
+  });
 });
