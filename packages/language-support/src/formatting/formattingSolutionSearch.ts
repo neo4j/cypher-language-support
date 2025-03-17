@@ -132,7 +132,7 @@ function deriveNextIndentationState(
   };
 }
 
-function getIndentation(
+function getFinalIndentation(
   state: State,
   chunk: Chunk,
   nextIndentationState: IndentationState,
@@ -142,7 +142,12 @@ function getIndentation(
     return 0;
   }
 
-  // Case 1: This happens if align.pop() was done in deriveNextIndentationState
+  // Case 1: Active groups, prioritize lining up on these
+  if (state.activeGroups.length > 0) {
+    return state.activeGroups.at(-1).align;
+  }
+
+  // Case 2: This happens if align.pop() was done in deriveNextIndentationState
   // Also means we are on a closing brackets and should align
   // on what was the last element in align, however because we popped it before
   // we need to fetch it from the state where it still exists
@@ -150,23 +155,16 @@ function getIndentation(
     return state.indentationState.align.at(-1);
   }
 
-  // Case 2: Active groups, prioritize lining up on these if break
-  // Works because after breakLine no groups are active
-  if (state.activeGroups.length > 0) {
-    return state.activeGroups.at(-1).align;
-  }
-
-  // Case 3: Hard-break comments and
-  // chunk has property must break before
+  // Case 3: If chunk is comment and has propery breakBefore
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     return nextIndentationState.base;
   }
 
   // Case 4: Special indentation, used with CASE
+  // If align indentation is present
+  // Meaning inside EXIST, COUNT or COLLECT, add one
+  // more indentation per nesting to better differentiate
   if (state.indentationState.special !== 0) {
-    // If align indentation is present
-    // Meaning inside EXIST, COUNT or COLLECT, add one
-    // more indentation to better differentiate
     return (
       state.indentationState.special +
       INDENTATION_SPACES * state.indentationState.align.length
@@ -210,7 +208,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     curr.indentationState,
     nextGroups,
   );
-  const finalIndentation = getIndentation(
+  const finalIndentation = getFinalIndentation(
     curr,
     choice.left,
     nextIndentationState,
