@@ -81,6 +81,7 @@ import {
   initialIndentation,
   isComment,
   RegularChunk,
+  SyntaxErrorChunk,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
@@ -522,7 +523,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
     this.lastTokenIndex = errorTokenIndex;
 
-    const chunk: RegularChunk = {
+    const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
       text: combinedText,
       groupsStarting: 0,

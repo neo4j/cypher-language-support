@@ -57,11 +57,15 @@ export interface BaseChunk {
 
 // Regular chunk specific properties
 export interface RegularChunk extends BaseChunk {
-  type: 'REGULAR' | 'SYNTAX_ERROR';
+  type: 'REGULAR';
   node?: TerminalNode;
   noSpace?: boolean;
   noBreak?: boolean;
   mustBreak?: boolean;
+}
+
+export interface SyntaxErrorChunk extends BaseChunk {
+  type: 'SYNTAX_ERROR';
 }
 
 // Comment chunk specific properties
@@ -71,7 +75,7 @@ export interface CommentChunk extends BaseChunk {
 }
 
 // Union type for all chunk types
-export type Chunk = RegularChunk | CommentChunk;
+export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
 export const initialIndentation: ChunkIndentation = {
   base: 0,
