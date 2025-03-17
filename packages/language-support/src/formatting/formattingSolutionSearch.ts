@@ -380,6 +380,7 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
+  // Syntax error tokens might include more whitespace than we want before them
   if (decisions.at(0).left.type === 'SYNTAX_ERROR') {
     result = result.trimStart();
   }
