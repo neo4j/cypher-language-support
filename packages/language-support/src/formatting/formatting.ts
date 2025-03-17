@@ -86,6 +86,8 @@ import {
 } from './formattingHelpers';
 import { buffersToFormattedString } from './formattingSolutionSearch';
 
+const MISSING = '<missing';
+
 interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
@@ -386,7 +388,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     const bottomChild = this.getBottomChild(ctx, side);
     const token = bottomChild.symbol;
-    if (token.text.startsWith('<missing')) {
+    if (token.text.startsWith(MISSING)) {
       return;
     }
     const hiddenTokens =
@@ -507,7 +509,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       gapText = skippedTokens.map((t) => t.text).join('');
     }
 
-    const errorText = token.text.startsWith('<missing') ? '' : token.text;
+    const errorText = token.text.startsWith(MISSING) ? '' : token.text;
     const combinedText = gapText + errorText;
 
     this.lastTokenIndex = errorTokenIndex;
@@ -773,7 +775,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
-    if (node.getText().startsWith('<missing')) {
+    if (node.getText().startsWith(MISSING)) {
       return;
     }
     if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
@@ -814,7 +816,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
-    if (node.getText().startsWith('<missing')) {
+    if (node.getText().startsWith(MISSING)) {
       return;
     }
     if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
