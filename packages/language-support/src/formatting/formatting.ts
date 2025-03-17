@@ -3,6 +3,7 @@ import {
   ErrorNode,
   ParserRuleContext,
   TerminalNode,
+  Token,
 } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
@@ -106,19 +107,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastTokenIndex: number = -1;
   unParseable: string = '';
   unParseableStart: number = 1e9;
+  firstUnParseableToken: Token | undefined;
 
   constructor(
     private tokenStream: CommonTokenStream,
     unParseable: string | undefined,
-    unParseableStart: number | undefined,
+    firstUnParseableToken: Token | undefined,
   ) {
     super();
     this.buffers.push([]);
     if (unParseable) {
       this.unParseable = unParseable;
     }
-    if (unParseableStart) {
-      this.unParseableStart = unParseableStart;
+    if (firstUnParseableToken) {
+      this.firstUnParseableToken = firstUnParseableToken;
+      this.unParseableStart = firstUnParseableToken.tokenIndex;
     }
   }
 
@@ -136,7 +139,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // we can format the query.
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
       if (this.unParseable) {
-        return query;
+        throw new Error(
+          `Unable to format query due to syntax error near ${this.firstUnParseableToken?.text} at line ${this.firstUnParseableToken?.line}`,
+        );
       }
       throw new Error(errorMessage);
     }
@@ -1613,9 +1618,13 @@ export function formatQuery(
   query: string,
   cursorPosition?: number,
 ): string | FormattingResultWithCursor {
-  const { tree, tokens, unParseable, unParseableStart } =
+  const { tree, tokens, unParseable, firstUnParseableToken } =
     getParseTreeAndTokens(query);
-  const visitor = new TreePrintVisitor(tokens, unParseable, unParseableStart);
+  const visitor = new TreePrintVisitor(
+    tokens,
+    unParseable,
+    firstUnParseableToken,
+  );
 
   tokens.fill();
 

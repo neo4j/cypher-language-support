@@ -133,7 +133,7 @@ export function getParseTreeAndTokens(query: string) {
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
-  let unParseableStart: number | undefined;
+  let firstUnParseableToken: Token | undefined;
   if (tree.exception) {
     const idx = tree.exception.offendingToken.tokenIndex;
     const errorTokens = tokens.tokens.slice(idx);
@@ -146,9 +146,9 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    unParseableStart = idx;
+    firstUnParseableToken = tree.exception.offendingToken;
   }
-  return { tree, tokens, unParseable, unParseableStart };
+  return { tree, tokens, unParseable, firstUnParseableToken };
 }
 
 export function findTargetToken(

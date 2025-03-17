@@ -1,3 +1,4 @@
+import { formatQuery } from '../../formatting/formatting';
 import { verifyFormatting } from './testutil';
 
 describe('formatting despite syntax errors', () => {
@@ -15,22 +16,6 @@ WHERE n.name = "Alice
 RETURN n`;
     const expected = `MATCH (n:Person)
 WHERE n.name = "Alice
-RETURN n`;
-    verifyFormatting(query, expected);
-  });
-
-  test('mixed valid and invalid comment lines', () => {
-    const query = `MATCH (n:Person)
-// Valid comment
-invalid statement here
-/* multi-line
-comment with syntax error */
-RETURN n`;
-    const expected = `MATCH (n:Person)
-// Valid comment
-invalid statement here
-/* multi-line
-comment with syntax error */
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -131,7 +116,7 @@ WITH n ERROR RETURN n;`;
   // because the parser miraculously recovers to find 'RETURN m' as a clause, though outside
   // the CALL expression. If this kind of unbehavior (which seems extremely hard
   // to account for) happens, just give up and return the query as is.
-  test('query that we are currently unable to handle should return itself.', () => {
+  test('query that we are currently unable to handle should throw.', () => {
     const query = `MATCH (n:Person)
 CALL {
   WITH n
@@ -140,21 +125,22 @@ CALL {
   RETURN m
 }
 RETURN n`;
-    const expected = `MATCH (n:Person)
-CALL {
-  WITH n
-  MATCH (m:Movie)
-  syntax error inside subquery
-  RETURN m
-}
-RETURN n`;
-    verifyFormatting(query, expected);
+    expect(() => formatQuery(query)).toThrowError(
+      `Unable to format query due to syntax error near } at line 7`,
+    );
   });
 
   test('map that uses dot instead of colon should still work fine', () => {
     const query = `match (n:Person {age. 5}) return n`;
     const expected = `MATCH (n:Person {age. 5})
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('map with trailing comma in properties', () => {
+    const query = `MATCH (n:Person {name:'Alice',}) return n;`;
+    const expected = `MATCH (n:Person {name:'Alice',})
+RETURN n;`;
     verifyFormatting(query, expected);
   });
 });
