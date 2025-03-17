@@ -166,4 +166,12 @@ WHERE n.hobbies = ["reading", "biking
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('incomplete function call', () => {
+    const query = `match (n:Person) where toUpper(n.name return n;`;
+    const expected = `MATCH (n:Person)
+WHERE toUpper(n.name
+RETURN n;`;
+    verifyFormatting(query, expected);
+  });
 });
