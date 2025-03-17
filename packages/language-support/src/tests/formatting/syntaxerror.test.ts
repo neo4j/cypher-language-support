@@ -11,9 +11,7 @@ MATCH (n:Person) RETURN n`;
   });
 
   test('unclosed string literal remains unchanged', () => {
-    const query = `MATCH (n:Person)
-WHERE n.name = "Alice
-RETURN n`;
+    const query = `MATCH (n:Person) where n.name = "Alice return n`;
     const expected = `MATCH (n:Person)
 WHERE n.name = "Alice
 RETURN n`;
@@ -21,8 +19,7 @@ RETURN n`;
   });
 
   test('query with misplaced parenthesis (incomplete pattern)', () => {
-    const query = `MATCH (n:Person
-RETURN n`;
+    const query = `MATCH (n:Person return n`;
     const expected = `MATCH (n:Person
 RETURN n`;
     verifyFormatting(query, expected);
@@ -71,9 +68,12 @@ RETURN variable;`;
   test('does not add a random newline in this query', () => {
     const query = `CALL {
 syntaxerror
+  return 5
+}`;
+    const expected = `CALL {
+syntaxerror
   RETURN 5
 }`;
-    const expected = query;
     verifyFormatting(query, expected);
   });
 
@@ -85,7 +85,7 @@ RETURN n`;
   });
 
   test('missing parentheses', () => {
-    const query = `MATCH (n:Person) RETURN toUpper n.name`;
+    const query = `match (n:Person) return toUpper n.name`;
     const expected = `MATCH (n:Person)
 RETURN toUpper n.name`;
     verifyFormatting(query, expected);
@@ -98,7 +98,7 @@ RETURN toUpper n.name`;
   });
 
   test('double equals', () => {
-    const query = `MATCH (n:Person) WHERE n.name == 'Alice' RETURN n;`;
+    const query = `match (n:Person) where n.name == 'Alice' return n;`;
     const expected = `MATCH (n:Person)
 WHERE n.name =='Alice'
 RETURN n;`;
@@ -106,7 +106,7 @@ RETURN n;`;
   });
 
   test('extra word in with', () => {
-    const query = `match (n:    Person) WitH n ERROR RETURN n;`;
+    const query = `match (n:    Person) with n ERROR RETURN n;`;
     const expected = `MATCH (n:Person)
 WITH n ERROR RETURN n;`;
     verifyFormatting(query, expected);
