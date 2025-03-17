@@ -371,6 +371,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx instanceof TerminalNode) {
       return ctx;
     }
+    // In case there were syntax errors (missing tokens) there might not be any children.
     if (ctx.getChildCount() === 0) {
       return null;
     }
