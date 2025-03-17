@@ -386,6 +386,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     const bottomChild = this.getBottomChild(ctx, side);
     const token = bottomChild.symbol;
+    if (token.text.startsWith('<missing')) {
+      return;
+    }
     const hiddenTokens =
       side === 'before'
         ? this.tokenStream.getHiddenTokensToLeft(token.tokenIndex)
@@ -504,7 +507,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       gapText = skippedTokens.map((t) => t.text).join('');
     }
 
-    const errorText = token.text;
+    const errorText = token.text.startsWith('<missing') ? '' : token.text;
     const combinedText = gapText + errorText;
 
     this.lastTokenIndex = errorTokenIndex;

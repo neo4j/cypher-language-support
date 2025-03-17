@@ -137,10 +137,9 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  test('map with trailing comma in properties', () => {
-    const query = `MATCH (n:Person {name:'Alice',}) return n;`;
-    const expected = `MATCH (n:Person {name:'Alice',})
-RETURN n;`;
+  test('incomplete MERGE clause', () => {
+    const query = `merge (n:Person {name:'Alice'`;
+    const expected = `MERGE (n:Person {name:'Alice'`;
     verifyFormatting(query, expected);
   });
 });
