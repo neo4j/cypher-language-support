@@ -15,9 +15,9 @@ suite('Params panel testing', () => {
   });
 
   async function evalParam(param: string) {
-    await browser.executeWorkbench((vscode, param: string) => {
+    await browser.executeWorkbench(async (vscode, param: string) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      void vscode.commands.executeCommand('neo4j.internal.evalParam', param);
+      await vscode.commands.executeCommand('neo4j.internal.evalParam', param);
     }, param);
   }
 

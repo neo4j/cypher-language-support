@@ -8,7 +8,9 @@ import {
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
-import { getParameterStore, getSchemaPoller } from '../contextService';
+import { getSchemaPoller } from '../contextService';
+import { clearParameters, setParameter } from '../parameterService';
+import { parametersTreeDataProvider } from '../treeviews/parametersTreeProvider';
 
 export async function addParameter(): Promise<void> {
   const param = await window.showInputBox({
@@ -22,8 +24,12 @@ export async function addParameter(): Promise<void> {
   await evaluateParam(param);
 }
 
+export async function clearAllParameters(): Promise<void> {
+  await clearParameters();
+  parametersTreeDataProvider.refresh();
+}
+
 export async function evaluateParam(param: string): Promise<void> {
-  const parameterStore = getParameterStore();
   const schemaPoller = getSchemaPoller();
   const connected = await schemaPoller.connection?.healthcheck();
 
@@ -56,21 +62,17 @@ export async function evaluateParam(param: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const paramAsCypherType = resultEntries[0] as CypherDataType;
     const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
-    const stringifiedValue = cypherDataToString(paramAsCypherType).replaceAll(
+    const stringValue = cypherDataToString(paramAsCypherType).replaceAll(
       '\n',
       '',
     );
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
-    await parameterStore.set(key, serializedValue, stringifiedValue, type);
+    await setParameter({ key, serializedValue, stringValue, type });
+    parametersTreeDataProvider.refresh();
   } catch (e) {
     await window.showErrorMessage('Parsing parameters failed.');
   }
 
   return;
-}
-
-export async function clearParameters(): Promise<void> {
-  const parameterStore = getParameterStore();
-  await parameterStore.clear();
 }
