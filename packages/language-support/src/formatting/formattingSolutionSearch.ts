@@ -114,9 +114,6 @@ function deriveNextIndentationState(
   activeGroups: Group[],
 ): IndentationState {
   const align = [...indentationState.align];
-  // A closing bracket of EXISTS, COLLECT, COUNT
-  // Should align with the first group, which alignment only exist
-  // in align group
   if (chunkIndentation.align === AlignIndentationOptions.Remove) {
     align.pop();
   }
@@ -140,12 +137,12 @@ function getIndentation(
   chunk: Chunk,
   nextIndentationState: IndentationState,
 ): number {
-  // When not at the start of a line, no indentation
+  // Case 0:  When not at the start of a line, no indentation
   if (state.column !== 0) {
     return 0;
   }
 
-  // This happens if align.pop() was done in deriveNextIndentationState
+  // Case 1: This happens if align.pop() was done in deriveNextIndentationState
   // Also means we are on a closing brackets and should align
   // on what was the last element in align, however because we popped it before
   // we need to fetch it from the state where it still exists
@@ -153,18 +150,19 @@ function getIndentation(
     return state.indentationState.align.at(-1);
   }
 
-  // Active groups, prioritize lining up on these if break
+  // Case 2: Active groups, prioritize lining up on these if break
   // Works because after breakLine no groups are active
   if (state.activeGroups.length > 0) {
     return state.activeGroups.at(-1).align;
   }
 
-  // Hard-break comments or chunk must break before
+  // Case 3: Hard-break comments and
+  // chunk has property must break before
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     return nextIndentationState.base;
   }
 
-  // Special indentation, used with CASE
+  // Case 4: Special indentation, used with CASE
   if (state.indentationState.special !== 0) {
     // If align indentation is present
     // Meaning inside EXIST, COUNT or COLLECT, add one
@@ -175,7 +173,12 @@ function getIndentation(
     );
   }
 
-  // Currently for EXISTS, COLLECT and COUNT
+  // Case 5: If there are active alignment groups
+  // (typically for EXISTS, COLLECT, COUNT),
+  // calculate the final indentation by combining:
+  //   - the last alignment value,
+  //   - an extra unit of spacing, and
+  //   - the base indentation.
   if (state.indentationState.align.length > 0) {
     return (
       nextIndentationState.align.at(-1) +
