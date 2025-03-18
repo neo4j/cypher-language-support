@@ -40,4 +40,12 @@ FOR (a:Athlete)
 REQUIRE a.id IS NOT NULL`;
     verifyFormatting(query, expected);
   });
+
+  test('basic create index for on', () => {
+    const query = `create index index_name for (a: Athlete) on (a.id)`;
+    const expected = `CREATE INDEX index_name
+FOR (a:Athlete)
+ON (a.id)`;
+    verifyFormatting(query, expected);
+  });
 });
