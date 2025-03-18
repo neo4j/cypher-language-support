@@ -17,7 +17,7 @@ REQUIRE a.id :: INT`;
     verifyFormatting(query, expected);
   });
 
-  test('basic create with "is typed"', () => {
+  test('basic create constraint with "is typed"', () => {
     const query = `create constraint for (a: Athlete) require a.id is typed int`;
     const expected = `CREATE CONSTRAINT
 FOR (a:Athlete)
