@@ -19,6 +19,7 @@ import {
   CreateClauseContext,
   CreateCommandContext,
   CreateConstraintContext,
+  CreateIndex_Context,
   DeleteClauseContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -472,6 +473,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineAfter(ctx);
   };
 
+  _visitCommandIfNotExists = (
+    ctx: CreateConstraintContext | CreateIndex_Context,
+  ) => {
+    if (ctx.IF()) {
+      this.avoidBreakBetween();
+      this.visit(ctx.IF());
+      this.avoidBreakBetween();
+      this.visit(ctx.NOT());
+      this.avoidBreakBetween();
+      this.visit(ctx.EXISTS());
+    }
+  };
+
   visitCreateCommand = (ctx: CreateCommandContext) => {
     this.visit(ctx.CREATE());
     this.avoidBreakBetween();
@@ -493,14 +507,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.CONSTRAINT());
     this.avoidBreakBetween();
     this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
-    if (ctx.IF()) {
-      this.avoidBreakBetween();
-      this.visit(ctx.IF());
-      this.avoidBreakBetween();
-      this.visit(ctx.NOT());
-      this.avoidBreakBetween();
-      this.visit(ctx.EXISTS());
-    }
+    this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
     this.avoidBreakBetween();
@@ -527,6 +534,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitConstraintIsNotNull = (ctx: ConstraintIsNotNullContext) => {
     this.breakLine();
     this.visitChildren(ctx);
+  };
+
+  visitCreateIndex_ = (ctx: CreateIndex_Context) => {
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visitIfNotNull(ctx.commandNodePattern());
+    this.visitIfNotNull(ctx.commandRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.propertyList());
+    this.visitIfNotNull(ctx.commandOptions());
   };
 
   visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
