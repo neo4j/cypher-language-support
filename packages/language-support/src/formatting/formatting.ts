@@ -70,6 +70,7 @@ import {
   ReturnItemContext,
   ReturnItemsContext,
   SetClauseContext,
+  ShowCommandYieldContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   TrimFunctionContext,
@@ -491,6 +492,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.NOT());
       this.avoidBreakBetween();
       this.visit(ctx.EXISTS());
+    }
+  };
+
+  visitShowCommandYield = (ctx: ShowCommandYieldContext) => {
+    if (ctx.yieldClause()) {
+      this.breakLine();
+      this.visit(ctx.yieldClause());
+      if (ctx.returnClause()) {
+        this.breakLine();
+        this.visit(ctx.returnClause());
+      }
+    } else {
+      this.visit(ctx.whereClause());
     }
   };
 

@@ -121,6 +121,23 @@ OPTIONS {aaaaaa: "20z9vakp",
           aaaaaa: ["EEJJKZGC", "GGDt2msc"]}}`;
     verifyFormatting(query, expected);
   });
+
+  test('show indexes with where and return', () => {
+    const query = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+WHERE aaaaaa = "wjL0ojNI" RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
+    const expected = `SHOW INDEXES
+YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+WHERE aaaaaa = "wjL0ojNI"
+RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
+    verifyFormatting(query, expected);
+  });
+
+  test('show indexes with just a where clause', () => {
+    const query = `SHOW INDEXES WHERE aaaaaa = "wjL0ojNI"`;
+    const expected = `SHOW INDEXES
+WHERE aaaaaa = "wjL0ojNI"`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for explicit newlines in commands', () => {
