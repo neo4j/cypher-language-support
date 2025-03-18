@@ -49,6 +49,14 @@ ON (a.id)`;
     verifyFormatting(query, expected);
   });
 
+  test('create index with command rel pattern', () => {
+    const query = `create index relationship_index for ()-[rel:FRIENDS_WITH]-() on (rel.since, rel.status)`;
+    const expected = `CREATE INDEX relationship_index
+FOR ()-[rel:FRIENDS_WITH]-()
+ON (rel.since, rel.status)`;
+    verifyFormatting(query, expected);
+  });
+
   test('create constraint with options', () => {
     const query = `create constraint for (a: Athlete) require a.id is unique options { constraintName: 'Athlete_Id_Unique' }`;
     const expected = `
