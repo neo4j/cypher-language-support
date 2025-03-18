@@ -104,6 +104,23 @@ FOR (a:Athlete|CouchPotato|Olympian)
 ON EACH [a.name]`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should not break after options', () => {
+    const query = `CREATE CONSTRAINT aaaaaa FOR ( aaaaaa : aaaaaa ) REQUIRE ( aaaaaa . aaaaaa ) IS UNIQUE OPTIONS { aaaaaa : "20z9vakp" , aaaaaa : { aaaaaa : [ "aotV0uiw" , "SCxu0Vyn" , "ekTx6ngu" ] , aaaaaa : [ "WqAr9IvS" , "j5fYJwuN" ] , aaaaaa : [ "HUDXLCRN" , "LUfKWGc7" ] , aaaaaa : [ "qbk3JzMe" , "Ca4n1Ea9" , "I96Uwq16" ] , aaaaaa : [ "zcBcWjoJ" , "dz78begI" ] , aaaaaa : [ "MIADLwls" , "qkacQgzY" , "wYYAgiGo" ] , aaaaaa : [ "Jmw0tXjZ" , "ALiXrHno" , "QRYTGYFd" ] , aaaaaa : [ "EEJJKZGC" , "GGDt2msc" ] } }`;
+    const expected = `CREATE CONSTRAINT aaaaaa
+FOR (aaaaaa:aaaaaa)
+REQUIRE (aaaaaa.aaaaaa) IS UNIQUE
+OPTIONS {aaaaaa: "20z9vakp",
+         aaaaaa:
+         {aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
+          aaaaaa: ["WqAr9IvS", "j5fYJwuN"], aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
+          aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
+          aaaaaa: ["zcBcWjoJ", "dz78begI"],
+          aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],
+          aaaaaa: ["Jmw0tXjZ", "ALiXrHno", "QRYTGYFd"],
+          aaaaaa: ["EEJJKZGC", "GGDt2msc"]}}`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for explicit newlines in commands', () => {
