@@ -54,7 +54,16 @@ ON (a.id)`;
     const expected = `
 CREATE FULLTEXT INDEX index_name
 FOR (a:Athlete)
-ON EACH [a.name]`;
+ON EACH [a.name]`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('create fulltext index with multiple bars', () => {
+    const query = `create fulltext index index_name for (a: Athlete|CouchPotato|Olympian) on each [a.name]`;
+    const expected = `
+CREATE FULLTEXT INDEX index_name
+FOR (a:Athlete|CouchPotato|Olympian)
+ON EACH [a.name]`.trimStart();
     verifyFormatting(query, expected);
   });
 });

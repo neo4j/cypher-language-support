@@ -10,6 +10,7 @@ import {
   CollectExpressionContext,
   CommandContext,
   CommandNodePatternContext,
+  CommandOptionsContext,
   ConstraintIsNotNullContext,
   ConstraintIsUniqueContext,
   ConstraintKeyContext,
@@ -19,6 +20,7 @@ import {
   CreateClauseContext,
   CreateCommandContext,
   CreateConstraintContext,
+  CreateFulltextIndexContext,
   CreateIndex_Context,
   DeleteClauseContext,
   ExistsExpressionContext,
@@ -28,6 +30,7 @@ import {
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
   ForeachClauseContext,
+  FulltextNodePatternContext,
   FunctionInvocationContext,
   InsertClauseContext,
   KeywordLiteralContext,
@@ -474,7 +477,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitCommandIfNotExists = (
-    ctx: CreateConstraintContext | CreateIndex_Context,
+    ctx:
+      | CreateConstraintContext
+      | CreateIndex_Context
+      | CreateFulltextIndexContext,
   ) => {
     if (ctx.IF()) {
       this.avoidBreakBetween();
@@ -547,6 +553,47 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.ON());
     this.visit(ctx.propertyList());
     this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitCreateFulltextIndex = (ctx: CreateFulltextIndexContext) => {
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visitIfNotNull(ctx.fulltextNodePattern());
+    this.visitIfNotNull(ctx.fulltextRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.EACH());
+    this.avoidBreakBetween();
+    this.visit(ctx.LBRACKET());
+    this.visit(ctx.enclosedPropertyList());
+    this.visit(ctx.RBRACKET());
+    this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitCommandOptions = (ctx: CommandOptionsContext) => {
+    this.breakLine();
+    this.visit(ctx.OPTIONS());
+    this.visit(ctx.mapOrParameter());
+  };
+
+  visitFulltextNodePattern = (ctx: FulltextNodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this.visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    const n = ctx.symbolicNameString_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.symbolicNameString(i));
+      if (i < n - 1) {
+        this.avoidSpaceBetween();
+        this.visit(ctx.BAR(i));
+        this.avoidSpaceBetween();
+      }
+    }
+    this.visit(ctx.RPAREN());
   };
 
   visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
