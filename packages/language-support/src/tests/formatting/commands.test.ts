@@ -59,6 +59,16 @@ OPTIONS {constraintName: 'Athlete_Id_Unique'}`.trimStart();
     verifyFormatting(query, expected);
   });
 
+  test('create constraint with multiple options', () => {
+    const query = `create constraint for (a: Athlete) require a.id is unique options { constraintName: 'Athlete_Id_Unique', enforced: true }`;
+    const expected = `
+CREATE CONSTRAINT
+FOR (a:Athlete)
+REQUIRE a.id IS UNIQUE
+OPTIONS {constraintName: 'Athlete_Id_Unique', enforced: true}`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
   test('create fulltext index', () => {
     const query = `create fulltext index index_name for (a: Athlete) on each [a.name]`;
     const expected = `
