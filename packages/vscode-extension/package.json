@@ -50,45 +50,55 @@
       },
       {
         "command": "neo4j.connect",
-        "title": "Connect"
+        "title": "Connect",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.disconnect",
-        "title": "Disconnect"
+        "title": "Disconnect",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.deleteConnection",
-        "title": "Delete connection..."
+        "title": "Delete connection...",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.refreshConnections",
-        "title": "Refresh connections"
+        "title": "Refresh connections",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create connection"
+        "title": "Create connection",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.switchDatabase",
-        "title": "Switch to database"
+        "title": "Switch to database",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.runCypher",
-        "title": "Neo4j: Run Cypher statements"
+        "title": "Neo4j: Run Cypher statements",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
-        "title": "Neo4j: Create Cypher file from selection"
+        "title": "Create Cypher file from selection",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.addParameter",
-        "title": "Neo4j: Add parameter",
+        "title": "Add parameter",
         "category": "Neo4j",
         "icon": "$(add)"
       },
       {
         "command": "neo4j.clearParameters",
-        "title": "Neo4j: Clear all parameters"
+        "title": "Clear all parameters",
+        "category": "Neo4j",
+        "icon": "$(trash)"
       }
     ],
     "keybindings": [
@@ -145,16 +155,17 @@
         {
           "command": "neo4j.editConnection",
           "when": "false"
-        },
-        {
-          "command": "neo4j.addParameter",
-          "when": "false"
         }
       ],
       "view/title": [
         {
           "command": "neo4j.createConnection",
           "when": "view == neo4jConnections",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.clearParameters",
+          "when": "view == neo4jParameters",
           "group": "navigation"
         },
         {

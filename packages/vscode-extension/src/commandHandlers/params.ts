@@ -13,15 +13,22 @@ import { clearParameters, setParameter } from '../parameterService';
 import { parametersTreeDataProvider } from '../treeviews/parametersTreeProvider';
 
 export async function addParameter(): Promise<void> {
-  const param = await window.showInputBox({
-    prompt: 'Parameter string',
-    placeHolder: 'eg. key: string, integer => 1234 or map => {a: 1}',
+  const paramName = await window.showInputBox({
+    prompt: 'Parameter name',
+    placeHolder:
+      'The name you want to store your parameter with, for exsample: param, p, `my parameter`',
     ignoreFocusOut: true,
   });
-  if (!param) {
+  const paramValue = await window.showInputBox({
+    prompt: 'Parameter value',
+    placeHolder:
+      'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
+    ignoreFocusOut: true,
+  });
+  if (!paramName || !paramValue) {
     return;
   }
-  await evaluateParam(param);
+  await evaluateParam(paramName, paramValue);
 }
 
 export async function clearAllParameters(): Promise<void> {
@@ -29,7 +36,10 @@ export async function clearAllParameters(): Promise<void> {
   parametersTreeDataProvider.refresh();
 }
 
-export async function evaluateParam(param: string): Promise<void> {
+export async function evaluateParam(
+  paramName: string,
+  paramValue: string,
+): Promise<void> {
   const schemaPoller = getSchemaPoller();
   const connected = await schemaPoller.connection?.healthcheck();
 
@@ -43,7 +53,7 @@ export async function evaluateParam(param: string): Promise<void> {
   const dbSchema = schemaPoller.metadata.dbSchema;
 
   try {
-    const paramParsing = parseParam(param, dbSchema);
+    const paramParsing = parseParam(`${paramName} => ${paramValue}`, dbSchema);
     const { key, value, errors } = paramParsing;
     if (errors.length > 0) {
       errors.forEach((e) => void window.showErrorMessage(e.message));
@@ -71,7 +81,7 @@ export async function evaluateParam(param: string): Promise<void> {
     await setParameter({ key, serializedValue, stringValue, type });
     parametersTreeDataProvider.refresh();
   } catch (e) {
-    await window.showErrorMessage('Parsing parameters failed.');
+    await window.showErrorMessage('Wrong format for the parameter.');
   }
 
   return;

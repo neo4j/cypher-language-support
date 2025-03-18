@@ -8,9 +8,9 @@ export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
   parse,
-  parseParam,
   parserWrapper,
   parseStatementsStrs,
+  parseWithRule as parseParam,
 } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
