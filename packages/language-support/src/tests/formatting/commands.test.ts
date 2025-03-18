@@ -57,6 +57,16 @@ ON (rel.since, rel.status)`;
     verifyFormatting(query, expected);
   });
 
+  test('create index on relationship with options', () => {
+    const query = `create index index_name for ()-[r:RELATIONTYPE]-() on (r.since) options { indexProvider: 'range-1.0' }`;
+    const expected = `
+CREATE INDEX index_name
+FOR ()-[r:RELATIONTYPE]-()
+ON (r.since)
+OPTIONS {indexProvider: 'range-1.0'}`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
   test('create constraint with options', () => {
     const query = `create constraint for (a: Athlete) require a.id is unique options { constraintName: 'Athlete_Id_Unique' }`;
     const expected = `
