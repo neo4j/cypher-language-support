@@ -11,6 +11,7 @@ import {
   CommandContext,
   CommandNodePatternContext,
   CommandOptionsContext,
+  CommandRelPatternContext,
   ConstraintIsNotNullContext,
   ConstraintIsUniqueContext,
   ConstraintKeyContext,
@@ -63,6 +64,7 @@ import {
   ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
+  RelTypeContext,
   ReturnBodyContext,
   ReturnClauseContext,
   ReturnItemContext,
@@ -603,6 +605,40 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.labelType());
     this.concatenate();
     this.visit(ctx.RPAREN());
+  };
+
+  visitCommandRelPattern = (ctx: CommandRelPatternContext) => {
+    this.visit(ctx.LPAREN(0));
+    this.visit(ctx.RPAREN(0));
+    if (ctx.leftArrow()) {
+      this.visit(ctx.leftArrow());
+      this.concatenate();
+    }
+    this.visit(ctx.arrowLine(0));
+    this.concatenate();
+    this.avoidSpaceBetween();
+    this.visit(ctx.LBRACKET());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this.visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this.visit(ctx.relType());
+    this.visit(ctx.RBRACKET());
+    this.visit(ctx.arrowLine(1));
+    this.concatenate();
+    if (ctx.rightArrow()) {
+      this.visit(ctx.rightArrow());
+      this.concatenate();
+    }
+    this.avoidSpaceBetween();
+    this.visit(ctx.LPAREN(1));
+    this.visit(ctx.RPAREN(1));
+  };
+
+  visitRelType = (ctx: RelTypeContext) => {
+    this.visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    this.visit(ctx.symbolicNameString());
   };
 
   // Handled separately because clauses should start on new lines, see
