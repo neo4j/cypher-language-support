@@ -105,3 +105,35 @@ ON EACH [a.name]`.trimStart();
     verifyFormatting(query, expected);
   });
 });
+
+describe('tests for explicit newlines', () => {
+  test('two indexes with explicit newline inbetween', () => {
+    const query = `
+CREATE FULLTEXT INDEX index_name FOR (a:Athlete) ON EACH [a.name];
+
+CREATE FULLTEXT INDEX index_name FOR (a:Athlete) ON EACH [a.id];`;
+    const expected = `
+CREATE FULLTEXT INDEX index_name
+FOR (a:Athlete)
+ON EACH [a.name];
+
+CREATE FULLTEXT INDEX index_name
+FOR (a:Athlete)
+ON EACH [a.id];`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('two constraints with comments', () => {
+    const query = `CREATE CONSTRAINT FOR (a:Athlete) REQUIRE a.id IS UNIQUE
+
+// This is a comment and there is an explicit newline
+OPTIONS {constraintName: 'Athlete_Id_Unique'}`;
+    const expected = `CREATE CONSTRAINT
+FOR (a:Athlete)
+REQUIRE a.id IS UNIQUE
+
+// This is a comment and there is an explicit newline
+OPTIONS {constraintName: 'Athlete_Id_Unique'}`;
+    verifyFormatting(query, expected);
+  });
+});
