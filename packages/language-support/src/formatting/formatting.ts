@@ -459,6 +459,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  breakAndVisitChildren = (ctx: ParserRuleContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
     const n = ctx.statementOrCommand_list().length;
     for (let i = 0; i < n; i++) {
@@ -474,8 +479,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCommand = (ctx: CommandContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
 
@@ -540,22 +544,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitConstraintTyped = (ctx: ConstraintTypedContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
 
   visitConstraintIsUnique = (ctx: ConstraintIsUniqueContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
 
   visitConstraintKey = (ctx: ConstraintKeyContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
   visitConstraintIsNotNull = (ctx: ConstraintIsNotNullContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
 
   visitCreateIndex_ = (ctx: CreateIndex_Context) => {
@@ -659,8 +659,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
 
@@ -765,8 +764,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitLimit = (ctx: LimitContext) => {
     this.preserveExplicitNewlineBefore(ctx);
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {
@@ -1524,8 +1522,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
     this.addBaseIndentation();
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
     this.removeBaseIndentation();
   };
 
