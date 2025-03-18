@@ -155,7 +155,10 @@ function getFinalIndentation(
     return state.indentationState.align.at(-1);
   }
 
-  // Case 3: If chunk is comment and has propery breakBefore
+  // Case 3: Hard-break comments align on base indentation if
+  // no active groups. Uses nextIndentationState because remove indentation
+  // is attached on same chunk as the comment, Therefore we need to use
+  // the next calculated indentation state directly
   if (chunk.type === 'COMMENT' && chunk.breakBefore) {
     return nextIndentationState.base;
   }
