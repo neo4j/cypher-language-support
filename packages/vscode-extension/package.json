@@ -10,7 +10,8 @@
   "preview": true,
   "categories": [
     "Programming Languages",
-    "Linters"
+    "Linters",
+    "Formatters"
   ],
   "keywords": [
     "cypher",
@@ -320,7 +321,8 @@
     },
     "configurationDefaults": {
       "[cypher]": {
-        "editor.semanticHighlighting.enabled": true
+        "editor.semanticHighlighting.enabled": true,
+        "editor.defaultFormatter": "neo4j-extensions.neo4j-for-vscode"
       }
     }
   },
