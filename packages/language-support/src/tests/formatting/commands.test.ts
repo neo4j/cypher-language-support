@@ -1,6 +1,6 @@
 import { verifyFormatting } from './testutil';
 
-describe('tests for create constraint', () => {
+describe('tests for commands', () => {
   test('basic create constraint is unique', () => {
     const query = `create constraint for (a: Athlete) require a.id is unique`;
     const expected = `CREATE CONSTRAINT
