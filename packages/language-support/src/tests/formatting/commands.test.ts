@@ -48,4 +48,13 @@ FOR (a:Athlete)
 ON (a.id)`;
     verifyFormatting(query, expected);
   });
+
+  test('create fulltext index', () => {
+    const query = `create fulltext index index_name for (a: Athlete) on each [a.name]`;
+    const expected = `
+CREATE FULLTEXT INDEX index_name
+FOR (a:Athlete)
+ON EACH [a.name]`;
+    verifyFormatting(query, expected);
+  });
 });
