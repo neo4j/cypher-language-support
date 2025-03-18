@@ -106,7 +106,7 @@ ON EACH [a.name]`.trimStart();
   });
 });
 
-describe('tests for explicit newlines', () => {
+describe('tests for explicit newlines in commands', () => {
   test('two indexes with explicit newline inbetween', () => {
     const query = `
 CREATE FULLTEXT INDEX index_name FOR (a:Athlete) ON EACH [a.name];
