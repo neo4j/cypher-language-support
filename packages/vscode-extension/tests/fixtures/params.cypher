@@ -1,1 +1,1 @@
-RETURN $a, $b
+RETURN $a, $b, $`some param`, $`some-param`

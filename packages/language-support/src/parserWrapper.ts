@@ -4,7 +4,6 @@ import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { DbSchema } from './dbSchema';
 import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
@@ -23,17 +22,13 @@ import {
 import {
   findParent,
   findStopNode,
-  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import {
-  lintCypherQuery,
-  SyntaxDiagnostic,
-} from './syntaxValidation/syntaxValidation';
+import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import { CypherVersion, cypherVersionNumbers, cypherVersions } from './types';
 
@@ -146,7 +141,7 @@ export function parseStatementsStrs(query: string): string[] {
 
   for (const statement of statements) {
     const tokenStream = statement.parser?.getTokenStream() ?? [];
-    const tokens = getTokens(tokenStream as CommonTokenStream);
+    const tokens = (tokenStream as CommonTokenStream).tokens;
     const statementStr = tokens
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
@@ -170,32 +165,6 @@ export function parse(query: string): StatementOrCommandContext[] {
   );
 
   return result;
-}
-
-type ParamParsing = {
-  key: string;
-  value: string;
-  errors: SyntaxDiagnostic[];
-};
-
-export function parseWithRule(param: string, dbSchema: DbSchema): ParamParsing {
-  // We need to filter out unsupported console commands
-  // errors. In this method we are using :param to get
-  // syntax errors. The console commands could be disabled
-  // in that environment
-  const allErrors = lintCypherQuery(`:param ${param}`, dbSchema);
-  const errors = allErrors.filter((e) => e.message !== unsupportedConsoleCmds);
-  if (errors.length > 0) {
-    return { key: '', value: '', errors };
-  }
-  const inputStream = CharStreams.fromString(param);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherParser(tokenStream);
-  const p = parser.lambda();
-  const key = p.parameterName().getText();
-  const value = p.expression().getText();
-  return { key, value, errors };
 }
 
 export function createParsingResult(query: string): ParsingResult {
@@ -673,15 +642,12 @@ function translateTokensToRange(
   };
 }
 
-const unsupportedConsoleCmds =
-  'Console commands are unsupported in this environment.';
-
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
     .filter((cmd) => cmd.type !== 'cypher')
     .map(
       ({ start, stop }): SyntaxDiagnostic => ({
-        message: unsupportedConsoleCmds,
+        message: 'Console commands are unsupported in this environment.',
         severity: DiagnosticSeverity.Error,
         ...translateTokensToRange(start, stop),
       }),

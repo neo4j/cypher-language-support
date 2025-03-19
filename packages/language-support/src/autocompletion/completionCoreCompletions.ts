@@ -41,7 +41,7 @@ const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 const versions = () =>
   _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
 
-function backtickIfNeeded(e: string): string | undefined {
+export function backtickIfNeeded(e: string): string | undefined {
   if (e == null || e == '') {
     return undefined;
   } else if (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {

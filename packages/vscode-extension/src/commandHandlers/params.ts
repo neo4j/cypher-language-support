@@ -1,4 +1,7 @@
-import { parseParam } from '@neo4j-cypher/language-support';
+import {
+  backtickIfNeeded,
+  lintCypherQuery,
+} from '@neo4j-cypher/language-support';
 import {
   cypherDataToString,
   CypherDataType,
@@ -13,21 +16,35 @@ import { clearParameters, setParameter } from '../parameterService';
 import { parametersTreeDataProvider } from '../treeviews/parametersTreeProvider';
 
 export async function addParameter(): Promise<void> {
+  const schemaPoller = getSchemaPoller();
+  const connected = await schemaPoller.connection?.healthcheck();
+
+  if (!connected) {
+    await window.showErrorMessage(
+      'You need to be connected to neo4j to set parameters.',
+    );
+    return;
+  }
+
   const paramName = await window.showInputBox({
     prompt: 'Parameter name',
     placeHolder:
       'The name you want to store your parameter with, for exsample: param, p, `my parameter`',
     ignoreFocusOut: true,
   });
+  if (!paramName) {
+    await window.showErrorMessage('Parameter name cannot be empty.');
+  }
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
   });
-  if (!paramName || !paramValue) {
-    return;
+  if (!paramValue) {
+    await window.showErrorMessage('Parameter value cannot be empty.');
   }
+
   await evaluateParam(paramName, paramValue);
 }
 
@@ -41,26 +58,26 @@ export async function evaluateParam(
   paramValue: string,
 ): Promise<void> {
   const schemaPoller = getSchemaPoller();
-  const connected = await schemaPoller.connection?.healthcheck();
-
-  if (!connected) {
-    await window.showErrorMessage(
-      'You need to be connected to neo4j to set parameters.',
-    );
-    return;
-  }
-
   const dbSchema = schemaPoller.metadata.dbSchema;
 
   try {
-    const paramParsing = parseParam(`${paramName} => ${paramValue}`, dbSchema);
-    const { key, value, errors } = paramParsing;
+    const maybeEscapedName = backtickIfNeeded(paramName) ?? paramName;
+    const errors = lintCypherQuery(
+      `:param ${maybeEscapedName} => ${paramValue}`,
+      dbSchema,
+    ).filter(
+      (e) =>
+        e.message !== 'Console commands are unsupported in this environment.',
+    );
     if (errors.length > 0) {
-      errors.forEach((e) => void window.showErrorMessage(e.message));
+      await window.showErrorMessage(
+        'Wrong format for parameters: parameter key should be an identifier (with or without espaces) and parameter value should be a valid expression (something that can be used in a RETURN statement).',
+      );
+      return;
     }
 
     const result = await schemaPoller.connection.runCypherQuery({
-      query: `RETURN ${value} AS param`,
+      query: `RETURN ${paramValue} AS param`,
       parameters: {},
     });
     const [record] = result.records;
@@ -78,7 +95,7 @@ export async function evaluateParam(
     );
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
-    await setParameter({ key, serializedValue, stringValue, type });
+    await setParameter({ key: paramName, serializedValue, stringValue, type });
     parametersTreeDataProvider.refresh();
   } catch (e) {
     await window.showErrorMessage('Wrong format for the parameter.');

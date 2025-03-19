@@ -1,17 +1,13 @@
 export type { ParserRuleContext } from 'antlr4';
 export { autocomplete } from './autocompletion/autocompletion';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers';
+export { backtickIfNeeded } from './autocompletion/completionCoreCompletions';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export {
-  parse,
-  parserWrapper,
-  parseStatementsStrs,
-  parseWithRule as parseParam,
-} from './parserWrapper';
+export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

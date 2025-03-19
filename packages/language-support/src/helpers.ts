@@ -71,12 +71,6 @@ export function findParent(
   return current;
 }
 
-export function getTokens(tokenStream: CommonTokenStream): Token[] {
-  // FIXME The type of .tokens is string[], it seems wrong in the antlr4 library
-  // Fix this after we've raised an issue and a PR and has been corrected in antlr4
-  return tokenStream.tokens as unknown as Token[];
-}
-
 export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
