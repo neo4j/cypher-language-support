@@ -1,6 +1,7 @@
 import { Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
+import { _internalFeatureFlags } from '../featureFlags';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import {
@@ -45,9 +46,13 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_statement]: 'a statement',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    [CypherParser.RULE_useCompletionRule]: 'use',
-    [CypherParser.RULE_listCompletionRule]: 'list',
-    [CypherParser.RULE_serverCompletionRule]: 'server',
+    ...(_internalFeatureFlags.consoleCommands
+      ? {
+          [CypherParser.RULE_useCompletionRule]: 'use',
+          [CypherParser.RULE_listCompletionRule]: 'list',
+          [CypherParser.RULE_serverCompletionRule]: 'server',
+        }
+      : { [CypherParser.RULE_consoleCommand]: null }),
   };
 
   codeCompletion.preferredRules = new Set<number>(
