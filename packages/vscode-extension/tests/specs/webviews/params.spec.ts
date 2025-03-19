@@ -37,23 +37,23 @@ suite('Params panel testing', () => {
   }
 
   async function clearParams() {
-    await browser.executeWorkbench((vscode) => {
+    await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      void vscode.commands.executeCommand('neo4j.clearParameters');
+      await vscode.commands.executeCommand('neo4j.clearParameters');
     });
   }
 
   async function forceDisconnect() {
-    await browser.executeWorkbench((vscode) => {
+    await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      void vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
+      await vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
     });
   }
 
   async function forceConnect(i: number) {
-    await browser.executeWorkbench((vscode, i) => {
+    await browser.executeWorkbench(async (vscode, i) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      void vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
+      await vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
     }, i);
   }
 

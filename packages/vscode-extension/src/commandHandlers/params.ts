@@ -65,9 +65,7 @@ export async function evaluateParam(
     const errors = lintCypherQuery(
       `:param ${maybeEscapedName} => ${paramValue}`,
       dbSchema,
-    ).filter(
-      (e) =>
-        e.message !== 'Console commands are unsupported in this environment.',
+      true,
     );
     if (errors.length > 0) {
       await window.showErrorMessage(

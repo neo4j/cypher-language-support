@@ -167,7 +167,10 @@ export function parse(query: string): StatementOrCommandContext[] {
   return result;
 }
 
-export function createParsingResult(query: string): ParsingResult {
+export function createParsingResult(
+  query: string,
+  consoleCommandsEnabled: boolean,
+): ParsingResult {
   const parsingScaffolding = createParsingScaffolding(query);
 
   const results: ParsedStatement[] =
@@ -177,7 +180,10 @@ export function createParsingResult(query: string): ParsingResult {
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
-      const errorListener = new SyntaxErrorsListener(tokens);
+      const errorListener = new SyntaxErrorsListener(
+        tokens,
+        consoleCommandsEnabled,
+      );
       parser._parseListeners = [
         labelsCollector,
         variableFinder,
@@ -194,7 +200,7 @@ export function createParsingResult(query: string): ParsingResult {
       const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
       const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
-      if (!_internalFeatureFlags.consoleCommands) {
+      if (!consoleCommandsEnabled) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
@@ -657,14 +663,17 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 class ParserWrapper {
   parsingResult?: ParsingResult;
 
-  parse(query: string): ParsingResult {
+  parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingResult = createParsingResult(query);
+      const parsingResult = createParsingResult(
+        query,
+        consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
+      );
 
       return parsingResult;
     }
