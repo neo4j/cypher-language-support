@@ -465,7 +465,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
-  // Meaningless change
 
   visitUseClause = (ctx: UseClauseContext) => {
     this.visit(ctx.USE());
