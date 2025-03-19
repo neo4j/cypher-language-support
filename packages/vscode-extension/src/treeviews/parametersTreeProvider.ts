@@ -1,4 +1,5 @@
-import { Event, EventEmitter, TreeDataProvider, TreeItem } from 'vscode';
+import path from 'path';
+import { Event, EventEmitter, TreeDataProvider, TreeItem, Uri } from 'vscode';
 import { getParameters, Parameter } from '../parameterService';
 
 class ParameterTreeItem extends TreeItem {
@@ -8,6 +9,14 @@ class ParameterTreeItem extends TreeItem {
     this.id = parameter.key;
     this.contextValue = 'parameter';
     this.label = label;
+    this.iconPath = {
+      light: Uri.file(
+        path.join(__dirname, '..', 'resources', 'images', 'ParameterLight.svg'),
+      ),
+      dark: Uri.file(
+        path.join(__dirname, '..', 'resources', 'images', 'ParameterDark.svg'),
+      ),
+    };
   }
 }
 
