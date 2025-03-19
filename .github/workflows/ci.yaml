@@ -54,7 +54,7 @@ jobs:
           npm test
 
   verify-formatting:
-    name: Verify formatting
+    name: Formatter integrity check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
