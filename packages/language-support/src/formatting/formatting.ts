@@ -8,9 +8,21 @@ import {
   CaseExpressionContext,
   ClauseContext,
   CollectExpressionContext,
+  CommandContext,
+  CommandNodePatternContext,
+  CommandOptionsContext,
+  CommandRelPatternContext,
+  ConstraintIsNotNullContext,
+  ConstraintIsUniqueContext,
+  ConstraintKeyContext,
+  ConstraintTypedContext,
   CountExpressionContext,
   CountStarContext,
   CreateClauseContext,
+  CreateCommandContext,
+  CreateConstraintContext,
+  CreateFulltextIndexContext,
+  CreateIndex_Context,
   DeleteClauseContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -19,6 +31,7 @@ import {
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
   ForeachClauseContext,
+  FulltextNodePatternContext,
   FunctionInvocationContext,
   InsertClauseContext,
   KeywordLiteralContext,
@@ -51,11 +64,13 @@ import {
   ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
+  RelTypeContext,
   ReturnBodyContext,
   ReturnClauseContext,
   ReturnItemContext,
   ReturnItemsContext,
   SetClauseContext,
+  ShowCommandYieldContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   TrimFunctionContext,
@@ -444,6 +459,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  breakAndVisitChildren = (ctx: ParserRuleContext) => {
+    this.breakLine();
+    this.visitChildren(ctx);
+  };
+
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
     const n = ctx.statementOrCommand_list().length;
     for (let i = 0; i < n; i++) {
@@ -458,11 +478,188 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitCommand = (ctx: CommandContext) => {
+    this.breakAndVisitChildren(ctx);
+    this.preserveExplicitNewlineAfter(ctx);
+  };
+
+  _visitCommandIfNotExists = (
+    ctx:
+      | CreateConstraintContext
+      | CreateIndex_Context
+      | CreateFulltextIndexContext,
+  ) => {
+    if (ctx.IF()) {
+      this.avoidBreakBetween();
+      this.visit(ctx.IF());
+      this.avoidBreakBetween();
+      this.visit(ctx.NOT());
+      this.avoidBreakBetween();
+      this.visit(ctx.EXISTS());
+    }
+  };
+
+  visitShowCommandYield = (ctx: ShowCommandYieldContext) => {
+    if (ctx.yieldClause()) {
+      this.breakLine();
+      this.visit(ctx.yieldClause());
+      if (ctx.returnClause()) {
+        this.breakLine();
+        this.visit(ctx.returnClause());
+      }
+    } else {
+      this.visit(ctx.whereClause());
+    }
+  };
+
+  visitCreateCommand = (ctx: CreateCommandContext) => {
+    this.visit(ctx.CREATE());
+    this.avoidBreakBetween();
+    if (ctx.OR()) {
+      this.visit(ctx.OR());
+      this.avoidBreakBetween();
+      this.visit(ctx.REPLACE());
+      this.avoidBreakBetween();
+    }
+    this.visitIfNotNull(ctx.createCompositeDatabase());
+    this.visitIfNotNull(ctx.createConstraint());
+    this.visitIfNotNull(ctx.createDatabase());
+    this.visitIfNotNull(ctx.createIndex());
+    this.visitIfNotNull(ctx.createRole());
+    this.visitIfNotNull(ctx.createUser());
+  };
+
+  visitCreateConstraint = (ctx: CreateConstraintContext) => {
+    this.visit(ctx.CONSTRAINT());
+    this.avoidBreakBetween();
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.avoidBreakBetween();
+    this.visitIfNotNull(ctx.commandNodePattern());
+    this.visitIfNotNull(ctx.commandRelPattern());
+    this.visit(ctx.constraintType());
+    this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitConstraintTyped = (ctx: ConstraintTypedContext) => {
+    this.breakAndVisitChildren(ctx);
+  };
+
+  visitConstraintIsUnique = (ctx: ConstraintIsUniqueContext) => {
+    this.breakAndVisitChildren(ctx);
+  };
+
+  visitConstraintKey = (ctx: ConstraintKeyContext) => {
+    this.breakAndVisitChildren(ctx);
+  };
+  visitConstraintIsNotNull = (ctx: ConstraintIsNotNullContext) => {
+    this.breakAndVisitChildren(ctx);
+  };
+
+  visitCreateIndex_ = (ctx: CreateIndex_Context) => {
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visitIfNotNull(ctx.commandNodePattern());
+    this.visitIfNotNull(ctx.commandRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.propertyList());
+    this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitCreateFulltextIndex = (ctx: CreateFulltextIndexContext) => {
+    this.visitIfNotNull(ctx.symbolicNameOrStringParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visitIfNotNull(ctx.fulltextNodePattern());
+    this.visitIfNotNull(ctx.fulltextRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.EACH());
+    this.avoidBreakBetween();
+    this.visit(ctx.LBRACKET());
+    this.visit(ctx.enclosedPropertyList());
+    this.visit(ctx.RBRACKET());
+    this.visitIfNotNull(ctx.commandOptions());
+  };
+
+  visitCommandOptions = (ctx: CommandOptionsContext) => {
+    this.breakLine();
+    this.visit(ctx.OPTIONS());
+    this.avoidBreakBetween();
+    this.visit(ctx.mapOrParameter());
+  };
+
+  visitFulltextNodePattern = (ctx: FulltextNodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this.visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    const n = ctx.symbolicNameString_list().length;
+    for (let i = 0; i < n; i++) {
+      this.visit(ctx.symbolicNameString(i));
+      if (i < n - 1) {
+        this.avoidSpaceBetween();
+        this.visit(ctx.BAR(i));
+        this.avoidSpaceBetween();
+      }
+    }
+    this.visit(ctx.RPAREN());
+  };
+
+  visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.variable());
+    this.concatenate();
+    this.visit(ctx.labelType());
+    this.concatenate();
+    this.visit(ctx.RPAREN());
+  };
+
+  visitCommandRelPattern = (ctx: CommandRelPatternContext) => {
+    this.visit(ctx.LPAREN(0));
+    this.visit(ctx.RPAREN(0));
+    if (ctx.leftArrow()) {
+      this.visit(ctx.leftArrow());
+      this.concatenate();
+    }
+    this.visit(ctx.arrowLine(0));
+    this.concatenate();
+    this.avoidSpaceBetween();
+    this.visit(ctx.LBRACKET());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this.visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this.visit(ctx.relType());
+    this.visit(ctx.RBRACKET());
+    this.visit(ctx.arrowLine(1));
+    this.concatenate();
+    if (ctx.rightArrow()) {
+      this.visit(ctx.rightArrow());
+      this.concatenate();
+    }
+    this.avoidSpaceBetween();
+    this.visit(ctx.LPAREN(1));
+    this.visit(ctx.RPAREN(1));
+  };
+
+  visitRelType = (ctx: RelTypeContext) => {
+    this.visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    this.visit(ctx.symbolicNameString());
+  };
+
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
 
@@ -567,8 +764,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitLimit = (ctx: LimitContext) => {
     this.preserveExplicitNewlineBefore(ctx);
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {
@@ -1326,8 +1522,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
     this.addBaseIndentation();
-    this.breakLine();
-    this.visitChildren(ctx);
+    this.breakAndVisitChildren(ctx);
     this.removeBaseIndentation();
   };
 
