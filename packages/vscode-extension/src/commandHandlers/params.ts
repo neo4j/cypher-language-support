@@ -29,7 +29,7 @@ export async function addParameter(): Promise<void> {
   const paramName = await window.showInputBox({
     prompt: 'Parameter name',
     placeHolder:
-      'The name you want to store your parameter with, for exsample: param, p, `my parameter`',
+      'The name you want to store your parameter with, for example: param, p, `my parameter`',
     ignoreFocusOut: true,
   });
   if (!paramName) {

@@ -1,5 +1,10 @@
 # neo4j-for-vscode
 
+## 1.9.0
+
+- Adds parameter pane to VSCode.
+- Improves connection pane with icons and auto-connecting on left mouse click.
+
 ## 1.8.0
 
 - Adds support for formatting a Cypher file according to styleguide rules
