@@ -53,6 +53,10 @@ describe('sanity checks', () => {
     expectParsedCommands(':connect', [{ type: 'connect' }]);
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
+    expectParsedCommands(':style', [{ type: 'style' }]);
+    expectParsedCommands(':style clear', [
+      { type: 'style', operation: 'clear' },
+    ]);
   });
 
   test('properly highlights simple commands', () => {
@@ -166,6 +170,40 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+    expect(applySyntaxColouring(':style')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'style',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':style clear')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'style',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 6, startOffset: 6 },
+        token: 'clear',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
@@ -179,6 +217,7 @@ describe('sanity checks', () => {
       { kind: 23, label: 'param' },
       { kind: 23, label: 'history' },
       { kind: 23, label: 'clear' },
+      { kind: 23, label: 'style' },
     ]);
   });
 
@@ -214,7 +253,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
