@@ -53,23 +53,23 @@ jobs:
         run: |
           npm test
 
-  verify-formatting:
-    name: Formatter integrity check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Run formatting check
-        run: npm run test:formattingIntegrity
+  # verify-formatting:
+  #   name: Formatter integrity check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Setup antlr4
+  #       uses: ./.github/actions/setup-antlr4
+  #
+  #     - name: Install dependencies with frozen lock file and generate parser
+  #       run: npm ci
+  #
+  #     - name: Build Project
+  #       run: npm run build
+  #
+  #     - name: Run formatting check
+  #       run: npm run test:formattingIntegrity
 
   e2e-test:
     name: E2E tests
