@@ -2,14 +2,14 @@ on:
   push:
     branches:
       - main
-    # paths:
-    #   - 'packages/language-support/src/formatting'
+    paths:
+      - 'packages/language-support/src/formatting/**'
 
   pull_request:
     branches:
       - main
-    # paths:
-    #   - 'packages/language-support/src/formatting'
+    paths:
+      - 'packages/language-support/src/formatting/**'
 
 jobs:
   formatting-integrity-check:
