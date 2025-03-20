@@ -619,6 +619,16 @@ function parseToCommand(
         return { type: 'sysinfo', start, stop };
       }
 
+      const styleCmd = consoleCmd.styleCmd();
+      if (styleCmd) {
+        return {
+          type: 'style',
+          start,
+          stop,
+          operation: styleCmd.RESET() ? 'reset' : undefined,
+        };
+      }
+
       return { type: 'parse-error', start, stop };
     }
     const stopToken = stop ?? tokens.at(-1);
