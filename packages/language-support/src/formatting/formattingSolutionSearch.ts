@@ -5,7 +5,7 @@ import {
   Chunk,
   ChunkIndentation,
   emptyChunk,
-  errorMessage,
+  INTERNAL_FORMAT_ERROR_MESSAGE,
   isCommentBreak,
   MAX_COL,
 } from './formattingHelpers';
@@ -335,7 +335,7 @@ function bestFirstSolnSearch(
       heap.push(neighbourState);
     }
   }
-  throw new Error(errorMessage);
+  throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -452,7 +452,7 @@ export function buffersToFormattedString(
     indentationState.special !== 0 ||
     indentationState.align.length !== 0
   ) {
-    throw new Error(errorMessage);
+    throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
