@@ -69,7 +69,7 @@ export async function evaluateParam(
     );
     if (errors.length > 0) {
       await window.showErrorMessage(
-        'Wrong format for parameters: parameter key should be an identifier (with or without espaces) and parameter value should be a valid expression (something that can be used in a RETURN statement).',
+        'Wrong format for parameters: parameter key should be an identifier (with or without spaces) and parameter value should be a valid expression (something that can be used in a RETURN statement).',
       );
       return;
     }

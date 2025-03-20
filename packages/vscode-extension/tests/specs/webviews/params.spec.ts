@@ -15,9 +15,9 @@ suite('Params panel testing', () => {
   });
 
   async function addParam() {
-    await browser.executeWorkbench((vscode) => {
+    await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      void vscode.commands.executeCommand('neo4j.addParameter');
+      await vscode.commands.executeCommand('neo4j.addParameter');
     });
   }
 
@@ -87,7 +87,7 @@ suite('Params panel testing', () => {
     await forceDisconnect();
     // This tries to add the params with the window prompts we cannot manipulate in the tests
     // but it will fail before showing those prompts because we are not connected to the database
-    await addParam();
+    void addParam();
     await waitUntilNotification(
       browser,
       'You need to be connected to neo4j to set parameters.',

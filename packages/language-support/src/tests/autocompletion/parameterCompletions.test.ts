@@ -1,4 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
+import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 import { testCompletions } from './completionAssertionHelpers';
 
@@ -60,7 +61,7 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     });
   });
 
-  test('Correctly completes started parameter in where clause', () => {
+  test('Correctly completes unstarted parameter in where clause', () => {
     const query = 'MATCH (n) WHERE ';
     testCompletions({
       query,
@@ -73,7 +74,32 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     });
   });
 
-  test('Correctly completes started parameter in expression', () => {
+  test('Correctly completes started parameter in where clause', () => {
+    const query = 'MATCH (n) WHERE $';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'stringParam',
+        },
+        {
+          label: '$intParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'intParam',
+        },
+        {
+          label: '$mapParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'mapParam',
+        },
+      ],
+    });
+  });
+
+  test('Correctly completes unstarted parameter in expression', () => {
     const query = 'RETURN 1 + ';
     testCompletions({
       query,
@@ -82,6 +108,21 @@ describe('Completes parameters outside of databases, roles, user names', () => {
         { label: '$stringParam', kind: CompletionItemKind.Variable },
         { label: '$intParam', kind: CompletionItemKind.Variable },
         { label: '$mapParam', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
+  test('Correctly completes started parameter in expression', () => {
+    const query = 'RETURN 1 + $int';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: '$intParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'Param',
+        },
       ],
     });
   });
@@ -116,7 +157,7 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     });
   });
 
-  test('suggests parameter in options field of create index', () => {
+  test('Suggests parameter in options field of create index', () => {
     const query = 'CREATE INDEX abc FOR (n:person) ON (n.name) OPTIONS ';
     testCompletions({
       query,
@@ -127,6 +168,33 @@ describe('Completes parameters outside of databases, roles, user names', () => {
         { label: '$intParam', kind: CompletionItemKind.Variable },
       ],
     });
+  });
+
+  test('Suggests started parameter in DDL commands', () => {
+    const queries = [
+      'CREATE INDEX $string',
+      'CREATE USER $string',
+      'CREATE USER user SET HOME DATABASE $string',
+      'SHOW DATABASE $string',
+    ];
+
+    queries.forEach((query) =>
+      testCompletions({
+        query,
+        dbSchema,
+        expected: [
+          {
+            label: '$stringParam',
+            kind: CompletionItemKind.Variable,
+            insertText: 'Param',
+          },
+        ],
+        excluded: [
+          { label: '$mapParam', kind: CompletionItemKind.Variable },
+          { label: '$intParam', kind: CompletionItemKind.Variable },
+        ],
+      }),
+    );
   });
 
   test('Suggests parameter in options field of create composite database', () => {
@@ -203,5 +271,16 @@ describe('Completes parameters outside of databases, roles, user names', () => {
         ],
       });
     });
+  });
+
+  test('Does not suggest duplicated parameters', () => {
+    const query = 'CREATE ALIAS alias FOR DATABASE ';
+    const actualCompletionList = autocomplete(
+      query,
+      dbSchema,
+      query.length,
+    ).filter((v) => v.label.startsWith('$stringParam'));
+
+    expect(actualCompletionList.length).toBe(1);
   });
 });

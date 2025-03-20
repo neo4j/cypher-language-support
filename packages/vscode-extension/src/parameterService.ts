@@ -79,7 +79,7 @@ async function saveParameters(parameters: Parameters): Promise<void> {
 }
 
 /**
- * Fetches teh parameters from the global store and signals
+ * Fetches the parameters from the global store and signals
  * the language server to update the parameters.
  * @returns A void promise that resolves when the
  *          Parameters object has been sent the language server.

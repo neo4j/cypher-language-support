@@ -337,13 +337,12 @@ const parameterCompletions = (
         : {};
       // If there is a preceding token and it's not empty, compute the suffix
       if (previousToken && previousToken.text.trim().length > 0) {
-        const suffix = maybeInsertText.insertText ?? `$${paramName}`;
-        maybeInsertText = {
-          // We need to complete parameters correctly in VSCode,
-          // otherwise when we have 'RETURN $' and we get offered $param
-          // we would complete RETURN $$param, which is not what we want
-          insertText: computeSuffix(previousToken.text, suffix),
-        };
+        const param = maybeInsertText.insertText ?? `$${paramName}`;
+        const suffix = computeSuffix(previousToken.text, param);
+        // We need to complete parameters correctly in VSCode,
+        // otherwise when we have 'RETURN $' and we get offered $param
+        // we would complete RETURN $$param, which is not what we want
+        maybeInsertText = suffix ? { insertText: suffix } : {};
       }
 
       return {
@@ -353,11 +352,13 @@ const parameterCompletions = (
       };
     });
 
-function computeSuffix(prefix: string, token: string): string {
-  if (token.startsWith(prefix)) {
-    return token.slice(prefix.length);
+function computeSuffix(prefix: string, param: string): string | undefined {
+  if (param.startsWith(prefix)) {
+    return param.slice(prefix.length);
+  } else if (param.startsWith(`$${prefix}`)) {
+    return param.slice(prefix.length + 1);
   } else {
-    return token;
+    return undefined;
   }
 }
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
@@ -665,11 +666,20 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
-        return completeAliasName({ candidateRule, dbSchema, parsingResult });
+        return completeAliasName({
+          candidateRule,
+          dbSchema,
+          parsingResult,
+        });
       }
 
       if (ruleNumber === CypherParser.RULE_commandNameExpression) {
-        return completeSymbolicName({ candidateRule, dbSchema, parsingResult });
+        return completeSymbolicName({
+          candidateRule,
+          dbSchema,
+          previousToken,
+          parsingResult,
+        });
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
@@ -766,7 +776,6 @@ type CompletionHelperArgs = {
 function completeAliasName({
   candidateRule,
   dbSchema,
-  previousToken,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // The rule for RULE_symbolicAliasName technically allows for spaces given that a dot is included in the name
@@ -784,12 +793,6 @@ function completeAliasName({
     return [];
   }
 
-  // parameters are valid values in all cases of symbolicAliasName
-  const parameterSuggestions = parameterCompletions(
-    dbSchema,
-    previousToken,
-    ExpectedParameterType.String,
-  );
   const rulesCreatingNewDb = [
     CypherParser.RULE_createDatabase,
     CypherParser.RULE_createCompositeDatabase,
@@ -798,7 +801,7 @@ function completeAliasName({
   if (
     rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
   ) {
-    return parameterSuggestions;
+    return [];
   }
 
   // For `CREATE ALIAS aliasName FOR DATABASE databaseName`
@@ -808,7 +811,7 @@ function completeAliasName({
     candidateRule.ruleList.includes(CypherParser.RULE_createAlias) &&
     candidateRule.ruleList.includes(CypherParser.RULE_aliasName)
   ) {
-    return parameterSuggestions;
+    return [];
   }
 
   const rulesThatOnlyAcceptAlias = [
@@ -821,27 +824,34 @@ function completeAliasName({
       candidateRule.ruleList.includes(rule),
     )
   ) {
-    return [
-      ...parameterSuggestions,
-      ...(dbSchema.aliasNames ?? []).map((aliasName) => ({
+    return (dbSchema.aliasNames ?? []).map((aliasName) => {
+      const backtickedName = backtickDbNameIfNeeded(aliasName);
+      const maybeInsertText = backtickedName
+        ? { insertText: backtickedName }
+        : {};
+      return {
         label: aliasName,
         kind: CompletionItemKind.Value,
-        insertText: backtickDbNameIfNeeded(aliasName),
-      })),
-    ];
+        ...maybeInsertText,
+      };
+    });
   }
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
-  return [
-    ...parameterSuggestions,
-    ...(dbSchema.databaseNames ?? [])
-      .concat(dbSchema.aliasNames ?? [])
-      .map((databaseName) => ({
+  return (dbSchema.databaseNames ?? [])
+    .concat(dbSchema.aliasNames ?? [])
+    .map((databaseName) => {
+      const backtickedName = backtickDbNameIfNeeded(databaseName);
+      const maybeInsertText = backtickedName
+        ? { insertText: backtickedName }
+        : {};
+
+      return {
         label: databaseName,
         kind: CompletionItemKind.Value,
-        insertText: backtickDbNameIfNeeded(databaseName),
-      })),
-  ];
+        ...maybeInsertText,
+      };
+    });
 }
 
 function completeSymbolicName({
