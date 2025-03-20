@@ -854,4 +854,10 @@ RETURN
   END AS userProfile;`;
     verifyFormatting(query, expected);
   });
+
+  test('string that contains <missing', () => {
+    const query = `return "<missing>"`;
+    const expected = `RETURN "<missing>"`;
+    verifyFormatting(query, expected);
+  });
 });
