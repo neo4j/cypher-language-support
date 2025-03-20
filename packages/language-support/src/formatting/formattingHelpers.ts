@@ -1,11 +1,4 @@
-import {
-  CharStreams,
-  CommonToken,
-  CommonTokenStream,
-  ErrorListener as ANTLRErrorListener,
-  TerminalNode,
-  Token,
-} from 'antlr4';
+import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
@@ -18,15 +11,6 @@ Internal formatting error: An unexpected issue occurred while formatting.
 This is likely a bug in the formatter itself. If possible, please report the issue
 along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
-
-export class FormatterErrorsListener
-  implements ANTLRErrorListener<CommonToken>
-{
-  syntaxError() {}
-  public reportAmbiguity() {}
-  public reportAttemptingFullContext() {}
-  public reportContextSensitivity() {}
-}
 
 /**
  * The maximum column width for the formatter. Not a hard limit as overflow
@@ -133,7 +117,6 @@ export function getParseTreeAndTokens(query: string) {
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
-  parser.addErrorListener(new FormatterErrorsListener());
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
