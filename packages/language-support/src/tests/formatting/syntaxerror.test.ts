@@ -174,4 +174,20 @@ WHERE toUpper(n.name
 RETURN n;`;
     verifyFormatting(query, expected);
   });
+
+  test('missing end quote and extra word in same query', () => {
+    const query = `MATCH (n:Person {name:'Alice)
+WITH n EXTRA return n;`;
+    const expected = `MATCH (n:Person {name:'Alice)
+WITH n EXTRA return n;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('missing ending brace/parenthesis and missing alias', () => {
+    const query = `merge (n:Person {name:'Alice'
+return n as;`;
+    const expected = `MERGE (n:Person {name:'Alice'
+RETURN n AS;`;
+    verifyFormatting(query, expected);
+  });
 });
