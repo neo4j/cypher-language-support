@@ -68,11 +68,6 @@ interface FinalResultWithPos {
   cursorPos: number;
 }
 
-interface IndentationResult {
-  finalIndentation: number;
-  indentationState: IndentationState;
-}
-
 interface IndentationState {
   base: number;
   special: number;
@@ -116,100 +111,85 @@ function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 function deriveNextIndentationState(
   chunkIndentation: ChunkIndentation,
   indentationState: IndentationState,
+  activeGroups: Group[],
 ): IndentationState {
+  const align = [...indentationState.align];
+  // Align indentation, used for EXISTS, COUNT, COLLECT
+  // Pushes base groups alignment to list to be used later
+  // for closing bracket
+  if (chunkIndentation.align === AlignIndentationOptions.Add) {
+    align.push(activeGroups.at(0).align);
+  }
+  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
+    align.pop();
+  }
+
   return {
     base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
     special:
       indentationState.special + chunkIndentation.special * INDENTATION_SPACES,
-    align: [...indentationState.align],
+    align: align,
   };
 }
 
-function getIndentations(state: State, chunk: Chunk): IndentationResult {
-  const { base, special, align } = deriveNextIndentationState(
-    chunk.indentation,
-    state.indentationState,
-  );
-
-  // A closing bracket of EXISTS, COLLECT, COUNT
-  // Should align with the first group, which alignment only exist
-  // in align group
-  if (chunk.indentation.align === AlignIndentationOptions.Remove) {
-    return {
-      finalIndentation: align.pop(),
-      indentationState: { base, special, align },
-    };
-  }
-
-  // AlignIndentation, used for EXISTS, COUNT, COLLECT
-  // Pushes base groups alignment to list to be used later
-  // for closing bracket
-  if (chunk.indentation.align === AlignIndentationOptions.Add) {
-    align.push(state.activeGroups.at(0).align);
-  }
-
-  // When not at the start of a line, no indentation
+function getFinalIndentation(
+  state: State,
+  chunk: Chunk,
+  nextIndentationState: IndentationState,
+): number {
+  // Case 0:  When not at the start of a line, no indentation
   if (state.column !== 0) {
-    return {
-      finalIndentation: 0,
-      indentationState: { base, special, align },
-    };
+    return 0;
   }
 
-  // Case 1: Hard-break comments align with base group or base indentation
-  if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    const baseGroup = state.activeGroups[0];
-    const finalIndent = baseGroup ? baseGroup.align : base;
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // Case 2: Special indentation, used with CASE
-  if (state.indentationState.special !== 0) {
-    const finalIndent =
-      state.activeGroups.length > 1
-        ? state.activeGroups.at(-1).align
-        : state.indentationState.special;
-
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // Case 3: Currently for EXISTS, COLLECT and COUNT
-  if (state.indentationState.align.length > 0) {
-    // base case
-    let finalIndent =
-      align.at(-1) + INDENTATION_SPACES + state.indentationState.base;
-
-    // more than one group, align as usual
-    if (state.activeGroups.length > 0) {
-      finalIndent = state.activeGroups.at(-1).align;
-    }
-
-    return {
-      finalIndentation: finalIndent,
-      indentationState: { base, special, align },
-    };
-  }
-
-  // Case 4: No special indentation rules applied
-  // Align on the active groups
+  // Case 1: Active groups, prioritize lining up on these
   if (state.activeGroups.length > 0) {
-    return {
-      finalIndentation: state.activeGroups.at(-1).align,
-      indentationState: { base, special, align },
-    };
+    return state.activeGroups.at(-1).align;
+  }
+
+  // Case 2: This happens if align.pop() was done in deriveNextIndentationState
+  // Also means we are on a closing brackets and should align
+  // on what was the last element in align, however because we popped it before
+  // we need to fetch it from the state where it still exists
+  if (state.indentationState.align.length > nextIndentationState.align.length) {
+    return state.indentationState.align.at(-1);
+  }
+
+  // Case 3: Hard-break comments align on base indentation if
+  // no active groups. Uses nextIndentationState because remove indentation
+  // is attached on same chunk as the comment, Therefore we need to use
+  // the next calculated indentation state directly
+  if (chunk.type === 'COMMENT' && chunk.breakBefore) {
+    return nextIndentationState.base;
+  }
+
+  // Case 4: Special indentation, used with CASE
+  // If align indentation is present
+  // Meaning inside EXIST, COUNT or COLLECT, add one
+  // more indentation per nesting to better differentiate
+  if (state.indentationState.special !== 0) {
+    return (
+      state.indentationState.special +
+      INDENTATION_SPACES * state.indentationState.align.length
+    );
+  }
+
+  // Case 5: If there are active alignment groups
+  // (typically for EXISTS, COLLECT, COUNT),
+  // calculate the final indentation by combining:
+  //   - the last alignment value,
+  //   - an extra unit of spacing, and
+  //   - the base indentation.
+  if (state.indentationState.align.length > 0) {
+    return (
+      nextIndentationState.align.at(-1) +
+      INDENTATION_SPACES +
+      state.indentationState.base
+    );
   }
 
   // Default case
-  return {
-    finalIndentation: state.indentationState.base,
-    indentationState: { base, special, align },
-  };
+  return state.indentationState.base;
 }
 
 // Very useful for debugging but not actually used in the code
@@ -226,10 +206,15 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
-
-  const { finalIndentation, indentationState } = getIndentations(
+  const nextIndentationState = deriveNextIndentationState(
+    choice.left.indentation,
+    curr.indentationState,
+    nextGroups,
+  );
+  const finalIndentation = getFinalIndentation(
     curr,
     choice.left,
+    nextIndentationState,
   );
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
@@ -269,7 +254,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choiceIndex: curr.choiceIndex + 1,
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
-    indentationState: indentationState,
+    indentationState: nextIndentationState,
     edge: {
       prevState: curr,
       decision: {

@@ -235,8 +235,8 @@ END} AS endNode;`;
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
-         'High Spender'
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+         THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -254,8 +254,8 @@ END} AS endNode;`;
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
     WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000 THEN
-         'High Spender'
+         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+         THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -274,8 +274,8 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND
-         true AND true AND true AND true AND true THEN "(PK)"
+    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
+         true THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
@@ -334,8 +334,8 @@ RETURN p.name, p.age, p.occupation,
         WHEN p.occupation = 'Engineer' THEN
           CASE
             WHEN p.experienceYears < 5 THEN 'Junior Engineer'
-            WHEN p.experienceYears >= 5 AND p.experienceYears < 10 THEN
-                 'Mid-level Engineer'
+            WHEN p.experienceYears >= 5 AND p.experienceYears < 10
+                 THEN 'Mid-level Engineer'
             ELSE 'Senior Engineer'
           END
         WHEN p.occupation = 'Doctor' THEN
@@ -667,6 +667,199 @@ RETURN n`;
   test('should not forget about the second argument in normalize', () => {
     const query = `RETURN normalize('Café', NFD) AS normalizedNFD`;
     const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('case within exists expression', () => {
+    const query = `MATCH (n)
+RETURN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+RETURN
+CASE
+WHEN dog.name = 'Ozzy' THEN true
+ELSE false
+END
+} THEN 'Relationship'
+END`;
+    const expected = `
+MATCH (n)
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (person)-[:HAS_DOG]->(dog:Dog)
+      WHERE person.name = 'Chris'
+      WITH dog
+      RETURN
+        CASE
+          WHEN dog.name = 'Ozzy' THEN true
+          ELSE false
+        END
+    } THEN 'Relationship'
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('exists expression within a case clause', () => {
+    const query = `
+MATCH (n)
+RETURN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+RETURN CASE WHEN dog.name = 'Ozzy' THEN true ELSE false END
+} THEN 'Relationship'
+END
+`.trimStart();
+    const expected = `
+MATCH (n)
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (person)-[:HAS_DOG]->(dog:Dog)
+      WHERE person.name = 'Chris'
+      WITH dog
+      RETURN
+        CASE
+          WHEN dog.name = 'Ozzy' THEN true
+          ELSE false
+        END
+    } THEN 'Relationship'
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('extremely complex expressions with nested exist and case', () => {
+    const query = `
+MATCH (n)
+RETURN 5 +
+CASE
+WHEN (n)--() THEN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris' OR person.name = 'Chris'
+WITH dog
+WHERE dog.name = 'Ozzy'
+} THEN 'Relationship'
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--()  THEN 'Relationship'
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN EXISTS {
+MATCH (person)-[:HAS_DOG]->(dog:Dog)
+WHERE person.name = 'Chris'
+WITH dog
+WHERE dog.name = 'Ozzy'
+} THEN 'Relationship'
+WHEN (n {prop: 42}) THEN 'Node'
+END
+END
+END
+WHEN (n {prop: 42}) THEN
+CASE
+WHEN (n)--() THEN 'Relationship'
+WHEN (n {prop: 42}) THEN 'Node'
+END
+END`.trimStart();
+    const expected = `
+MATCH (n)
+RETURN 5 +
+  CASE
+    WHEN (n)--() THEN
+      CASE
+        WHEN EXISTS {
+          MATCH (person)-[:HAS_DOG]->(dog:Dog)
+          WHERE person.name = 'Chris' OR person.name = 'Chris' OR
+                person.name = 'Chris' OR person.name = 'Chris' OR
+                person.name = 'Chris' OR person.name = 'Chris'
+          WITH dog
+          WHERE dog.name = 'Ozzy'
+        } THEN 'Relationship'
+        WHEN (n {prop: 42}) THEN
+          CASE
+            WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
+                 (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
+                 (n)--() OR (n)--() THEN 'Relationship'
+            WHEN (n {prop: 42}) THEN
+              CASE
+                WHEN EXISTS {
+                  MATCH (person)-[:HAS_DOG]->(dog:Dog)
+                  WHERE person.name = 'Chris'
+                  WITH dog
+                  WHERE dog.name = 'Ozzy'
+                } THEN 'Relationship'
+                WHEN (n {prop: 42}) THEN 'Node'
+              END
+          END
+      END
+    WHEN (n {prop: 42}) THEN
+      CASE
+        WHEN (n)--() THEN 'Relationship'
+        WHEN (n {prop: 42}) THEN 'Node'
+      END
+  END`.trimStart();
+    verifyFormatting(query, expected);
+  });
+  test('else statements for CASE needs to align its expression', () => {
+    const query = `MATCH (u:User)
+WITH u, count((u)-[:LIKES]->()) AS likeCount,
+     collect(DISTINCT u.interests) AS interestList
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+    } AND likeCount > 10 THEN
+      CASE p.name
+        WHEN size(interestList)
+             > 3 THEN 'Active smartphone user with diverse interests: ' +
+                 toString(interestList)
+        ELSE 'Active smartphone user with few interests: ' +
+        toString(interestList)
+      END
+    ELSE
+      CASE
+        WHEN NOT EXISTS {
+          MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+        } AND likeCount <= 10
+        THEN 'Less active user without a smartphone, interests: ' +
+        toString(interestList)
+        ELSE 'User with moderate activity, ' + toString(likeCount) +
+        ' likes and interests: ' + toString(interestList)
+      END
+  END AS userProfile;`;
+    const expected = `MATCH (u:User)
+WITH u, count((u)-[:LIKES]->()) AS likeCount,
+     collect(DISTINCT u.interests) AS interestList
+RETURN
+  CASE
+    WHEN EXISTS {
+      MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+    } AND likeCount > 10 THEN
+      CASE p.name
+        WHEN size(interestList) > 3
+             THEN 'Active smartphone user with diverse interests: ' +
+                  toString(interestList)
+        ELSE 'Active smartphone user with few interests: ' +
+             toString(interestList)
+      END
+    ELSE
+      CASE
+        WHEN NOT EXISTS {
+          MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+        } AND likeCount <= 10
+        THEN 'Less active user without a smartphone, interests: ' +
+             toString(interestList)
+        ELSE 'User with moderate activity, ' + toString(likeCount) +
+             ' likes and interests: ' + toString(interestList)
+      END
+  END AS userProfile;`;
     verifyFormatting(query, expected);
   });
 });

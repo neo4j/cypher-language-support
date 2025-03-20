@@ -1328,34 +1328,40 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     const caseAlternativeGrp = this.startGroup();
     this.visit(ctx.expression(0));
+    const caseThenGroup = this.startGroup();
     this.visit(ctx.THEN());
+    const expressionGroup = this.startGroup();
     this.visit(ctx.expression(1));
+    this.endGroup(expressionGroup);
+    this.endGroup(caseThenGroup);
     this.endGroup(caseAlternativeGrp);
   };
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.CASE());
-    this.removeAllGroups();
-    this.lastInCurrentBuffer().groupsStarting = 0;
-    const caseGroup = this.startGroup();
     const n = ctx.caseAlternative_list().length;
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const caseWhenGroup = this.startGroup();
       this.visit(ctx.caseAlternative(i));
+      this.endGroup(caseWhenGroup);
     }
     if (ctx.ELSE()) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const elseGroup = this.startGroup();
       this.visit(ctx.ELSE());
+      this.avoidBreakBetween();
+      const expressionGroup = this.startGroup();
       this.visit(ctx.expression());
+      this.endGroup(expressionGroup);
+      this.endGroup(elseGroup);
     }
-    this.endGroup(caseGroup);
     this.removeSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.END());
     this.removeSpecialIndentation();
   };
@@ -1371,36 +1377,42 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
+    const extendedCaseThenGroup = this.startGroup();
     this.visit(ctx.THEN());
+    const expressionGroup = this.startGroup();
     this.visit(ctx.expression());
+    this.endGroup(expressionGroup);
+    this.endGroup(extendedCaseThenGroup);
     this.endGroup(extendedCaseAlterniveGroup);
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.endAllExceptBaseGroup();
     this.addSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.CASE());
-    this.removeAllGroups();
     this.avoidBreakBetween();
-    this.lastInCurrentBuffer().groupsStarting = 0;
     this.visit(ctx.expression(0));
-    const extendedCaseGrp = this.startGroup();
     this.mustBreakBetween();
     const n = ctx.extendedCaseAlternative_list().length;
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const g = this.startGroup();
       this.visit(ctx.extendedCaseAlternative(i));
+      this.endGroup(g);
     }
     if (ctx.ELSE()) {
-      this.mustBreakBetween();
+      this.breakLine();
+      const elseGroup = this.startGroup();
       this.visit(ctx.ELSE());
+      this.avoidBreakBetween();
+      const expressionGroup = this.startGroup();
       this.visit(ctx.expression(1));
+      this.endGroup(expressionGroup);
+      this.endGroup(elseGroup);
     }
-    this.endGroup(extendedCaseGrp);
     this.removeSpecialIndentation();
-    this.mustBreakBetween();
+    this.breakLine();
     this.visit(ctx.END());
     this.removeSpecialIndentation();
   };
