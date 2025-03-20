@@ -1,0 +1,58 @@
+on:
+  schedule:
+    - cron: '10 4 25 * *'
+  workflow_dispatch:
+  
+
+jobs:
+  fetch-artifacts:
+   runs-on: ubuntu-latest
+   steps:
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+    - name: Configure CodeArtifact Authentication Token 
+      run: |
+          CODEARTIFACT_TOKEN=`aws codeartifact get-authorization-token --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
+          echo "::add-mask::$CODEARTIFACT_TOKEN"
+          echo "CODEARTIFACT_TOKEN=$CODEARTIFACT_TOKEN" >> "$GITHUB_ENV"
+
+    - uses: actions/checkout@v3
+    
+    - name: Determine latest neo4j CI version
+      run: |
+          neo4j_version_base=$(cat neoBaseVersion.txt)
+          echo "neo4j_version_base=$neo4j_version_base"
+          NEO4J_VERSION_CI=`aws --no-cli-pager codeartifact list-package-versions --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}  --repository ci-live --format maven --namespace org.neo4j --package neo4j --sort-by PUBLISHED_TIME --status Published --query "versions[?starts_with(version, '$neo4j_version_base')].version | [0]" --output json | sed 's/"//g'`
+          echo "NEO4J_VERSION_CI=$NEO4J_VERSION_CI" >> "$GITHUB_ENV"
+          echo "Found NEO4j_VERSION_CI=$NEO4J_VERSION_CI"
+
+    - name: fetch parser artifacts from latest neo4j CI
+      run: |
+          aws codeartifact get-package-version-asset --region eu-west-1 --namespace org.neo4j --domain build-service-live --repository ci-live --format maven --package cypher-v25-antlr-parser --package-version $NEO4J_VERSION_CI --asset "cypher-v25-antlr-parser-$NEO4J_VERSION_CI-grammar.zip" grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          
+    - name: fetch semantic analysis artifacts from latest neo4j CI
+      run: | 
+          aws codeartifact get-package-version-asset --region eu-west-1 --namespace com.neo4j --domain build-service-live --repository ci-live --format maven --package semantic-analysis-js --package-version $NEO4J_VERSION_CI --asset "semantic-analysis-js-$NEO4J_VERSION_CI-artifacts.zip" "semantic-analysis-js.zip" --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+    
+    - name: unpack grammar artifacts
+      run: |
+           unzip -j -o grammar.zip \
+            "$(unzip -l grammar.zip | awk '{print $4}' | grep "Cypher25Lexer.g4$")" \
+            "$(unzip -l grammar.zip | awk '{print $4}' | grep "Cypher25Parser.g4$")" \
+            -d ./packages/language-support/src/antlr-grammar
+
+    - name: unpack semantic analysis
+      run: |
+        unzip -j -o "semantic-analysis-js.zip" \
+         "$(unzip -l semantic-analysis-js.zip | awk '{print $4}' | grep "classes.js$")" \
+         -d ./packages/language-support/src/syntaxValidation
+
+    
+    - name: rename semantic analysis
+      run: mv -f ./packages/language-support/src/syntaxValidation/classes.js \
+              ./packages/language-support/src/syntaxValidation/semanticAnalysis.js
+    
