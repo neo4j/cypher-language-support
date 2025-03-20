@@ -81,20 +81,30 @@ const cypherVersionCompletions = () =>
 
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
+    const backtickedName = backtickIfNeeded(labelName);
+    const maybeInsertText = backtickedName
+      ? { insertText: backtickedName }
+      : {};
+
     const result: CompletionItem = {
       label: labelName,
       kind: CompletionItemKind.TypeParameter,
-      insertText: backtickIfNeeded(labelName),
+      ...maybeInsertText,
     };
     return result;
   }) ?? [];
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
   dbSchema.relationshipTypes?.map((relType) => {
+    const backtickedName = backtickIfNeeded(relType);
+    const maybeInsertText = backtickedName
+      ? { insertText: backtickedName }
+      : {};
+
     const result: CompletionItem = {
       label: relType,
       kind: CompletionItemKind.TypeParameter,
-      insertText: backtickIfNeeded(relType),
+      ...maybeInsertText,
     };
     return result;
   }) ?? [];
@@ -336,13 +346,13 @@ const parameterCompletions = (
         ? { insertText: `$${backtickedName}` }
         : {};
       // If there is a preceding token and it's not empty, compute the suffix
-      if (previousToken && previousToken.text.trim().length > 0) {
+      if (previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
-        const suffix = computeSuffix(previousToken.text, param);
-        // We need to complete parameters correctly in VSCode,
+        const suffix = isSuffix(previousToken.text, param);
+        // We need to have the insert text without the starting $ in VSCode,
         // otherwise when we have 'RETURN $' and we get offered $param
         // we would complete RETURN $$param, which is not what we want
-        maybeInsertText = suffix ? { insertText: suffix } : {};
+        maybeInsertText = suffix ? { insertText: paramName } : {};
       }
 
       return {
@@ -352,21 +362,20 @@ const parameterCompletions = (
       };
     });
 
-function computeSuffix(prefix: string, param: string): string | undefined {
-  if (param.startsWith(prefix)) {
-    return param.slice(prefix.length);
-  } else if (param.startsWith(`$${prefix}`)) {
-    return param.slice(prefix.length + 1);
-  } else {
-    return undefined;
-  }
+function isSuffix(prefix: string, param: string): boolean {
+  return param.startsWith(prefix) || param.startsWith(`$${prefix}`);
 }
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
+    const backtickedName = backtickIfNeeded(propertyKey);
+    const maybeInsertText = backtickedName
+      ? { insertText: backtickedName }
+      : {};
+
     const result: CompletionItem = {
       label: propertyKey,
       kind: CompletionItemKind.Property,
-      insertText: backtickIfNeeded(propertyKey),
+      ...maybeInsertText,
     };
     return result;
   }) ?? [];

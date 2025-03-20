@@ -121,7 +121,15 @@ describe('Completes parameters outside of databases, roles, user names', () => {
         {
           label: '$intParam',
           kind: CompletionItemKind.Variable,
-          insertText: 'Param',
+          insertText: 'intParam',
+        },
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$mapParam',
+          kind: CompletionItemKind.Variable,
         },
       ],
     });
@@ -186,7 +194,7 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           {
             label: '$stringParam',
             kind: CompletionItemKind.Variable,
-            insertText: 'Param',
+            insertText: 'stringParam',
           },
         ],
         excluded: [
