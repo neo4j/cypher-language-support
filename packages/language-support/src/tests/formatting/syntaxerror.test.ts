@@ -190,4 +190,27 @@ return n as;`;
 RETURN n AS;`;
     verifyFormatting(query, expected);
   });
+
+  test('dot instead of colon and also misisng closing parenthesis', () => {
+    const query = `call apoc.load.json(url) yield value as v
+merge (a:Article {v.article_number})
+on create set a +=+ v {.content_text .published_date, .title, .url }
+merge (s:Source {name: v.source})
+merge (a)-[:PUBLISHED_IN]->(s)
+with a, v where trim(v.authors) <> '' 
+unwind split(v.authors,',' as name
+merge (author:Author {name:name})
+merge (a)-[:WRITTEN_BY]->(author)`;
+    const expected = `CALL apoc.load.json(url) YIELD value AS v
+MERGE (a:Article {v.article_number})
+  ON CREATE SET a += + v {.content_text.published_date, .title, .url }
+MERGE (s:Source {name: v.source})
+MERGE (a)-[:PUBLISHED_IN]->(s)
+WITH a, v
+WHERE trim(v.authors) <> ''
+UNWIND split(v.authors, ','AS name
+MERGE (author:Author {name: name})
+MERGE (a)-[:WRITTEN_BY]->(author)`;
+    verifyFormatting(query, expected);
+  });
 });
