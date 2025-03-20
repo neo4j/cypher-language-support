@@ -5,15 +5,10 @@ import {
   Chunk,
   ChunkIndentation,
   emptyChunk,
+  INTERNAL_FORMAT_ERROR_MESSAGE,
   isCommentBreak,
   MAX_COL,
 } from './formattingHelpers';
-
-const errorMessage = `
-Internal formatting error: An unexpected issue occurred while formatting.
-This is likely a bug in the formatter itself. If possible, please report the issue
-along with your input on GitHub:
-https://github.com/neo4j/cypher-language-support.`.trim();
 
 const INDENTATION_SPACES = 2;
 const showGroups = false;
@@ -341,7 +336,7 @@ function bestFirstSolnSearch(
       heap.push(neighbourState);
     }
   }
-  throw new Error(errorMessage);
+  throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -371,6 +366,10 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
+  // Syntax error tokens might include more whitespace than we want before them
+  if (decisions.at(0).left.type === 'SYNTAX_ERROR') {
+    result = result.trimStart();
+  }
   if (decisions.at(-1).left.doubleBreak) {
     result += '\n';
   }
@@ -379,6 +378,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+    return noSpaceNoBreakSplit;
+  }
   if (isCommentBreak(chunk, nextChunk)) {
     return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
   }
@@ -451,7 +453,7 @@ export function buffersToFormattedString(
     indentationState.special !== 0 ||
     indentationState.align.length !== 0
   ) {
-    throw new Error(errorMessage);
+    throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }

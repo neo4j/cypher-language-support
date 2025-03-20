@@ -1,12 +1,4 @@
-import {
-  CharStreams,
-  CommonToken,
-  CommonTokenStream,
-  ErrorListener as ANTLRErrorListener,
-  Recognizer,
-  TerminalNode,
-  Token,
-} from 'antlr4';
+import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
@@ -14,23 +6,11 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-export class FormatterErrorsListener
-  implements ANTLRErrorListener<CommonToken>
-{
-  syntaxError<T extends Token>(
-    _r: Recognizer<CommonToken>,
-    offendingSymbol: T,
-    line: number,
-    column: number,
-  ) {
-    throw new Error(
-      `Could not format due to syntax error at line ${line}:${column} near "${offendingSymbol?.text}"`,
-    );
-  }
-  public reportAmbiguity() {}
-  public reportAttemptingFullContext() {}
-  public reportContextSensitivity() {}
-}
+export const INTERNAL_FORMAT_ERROR_MESSAGE = `
+Internal formatting error: An unexpected issue occurred while formatting.
+This is likely a bug in the formatter itself. If possible, please report the issue
+along with your input on GitHub:
+https://github.com/neo4j/cypher-language-support.`.trim();
 
 /**
  * The maximum column width for the formatter. Not a hard limit as overflow
@@ -68,6 +48,10 @@ export interface RegularChunk extends BaseChunk {
   mustBreak?: boolean;
 }
 
+export interface SyntaxErrorChunk extends BaseChunk {
+  type: 'SYNTAX_ERROR';
+}
+
 // Comment chunk specific properties
 export interface CommentChunk extends BaseChunk {
   type: 'COMMENT';
@@ -75,7 +59,7 @@ export interface CommentChunk extends BaseChunk {
 }
 
 // Union type for all chunk types
-export type Chunk = RegularChunk | CommentChunk;
+export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
 export const initialIndentation: ChunkIndentation = {
   base: 0,
@@ -133,10 +117,25 @@ export function getParseTreeAndTokens(query: string) {
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
-  parser.addErrorListener(new FormatterErrorsListener());
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
-  return { tree, tokens };
+  let unParseable: string | undefined;
+  let firstUnParseableToken: Token | undefined;
+  if (tree.exception) {
+    const idx = tree.exception.offendingToken.tokenIndex;
+    const errorTokens = tokens.tokens.slice(idx);
+    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
+      .map((t) => t.text)
+      .join('');
+    unParseable =
+      hiddenBefore +
+      errorTokens
+        .slice(0, -1)
+        .map((t) => t.text)
+        .join('');
+    firstUnParseableToken = tree.exception.offendingToken;
+  }
+  return { tree, tokens, unParseable, firstUnParseableToken };
 }
 
 export function findTargetToken(
