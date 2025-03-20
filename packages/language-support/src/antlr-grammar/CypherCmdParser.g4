@@ -18,6 +18,7 @@ consoleCommand: COLON (
     | disconnectCmd
     | welcomeCmd
     | sysInfoCmd
+    | styleCmd
 );
 
 paramsCmd: PARAM paramsArgs?;
@@ -41,6 +42,8 @@ connectCmd: CONNECT;
 disconnectCmd: DISCONNECT;
 
 sysInfoCmd: SYSINFO;
+
+styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
 

@@ -53,6 +53,7 @@ describe('sanity checks', () => {
     expectParsedCommands(':connect', [{ type: 'connect' }]);
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
+    expectParsedCommands(':style', [{ type: 'style' }]);
   });
 
   test('properly highlights simple commands', () => {
@@ -166,12 +167,49 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+    expect(applySyntaxColouring(':style')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'style',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':style reset')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'style',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 7, startOffset: 7 },
+        token: 'reset',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'style' },
+      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },
@@ -214,7 +252,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -727,5 +765,24 @@ describe('command parser also handles cypher', () => {
         { statement: '', type: 'cypher' },
       ],
     );
+  });
+});
+
+describe('style', () => {
+  let consoleCommands: boolean;
+
+  beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
+    _internalFeatureFlags.consoleCommands = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = consoleCommands;
+  });
+
+  test('parses style reset', () => {
+    expectParsedCommands(':style reset', [
+      { type: 'style', operation: 'reset' },
+    ]);
   });
 });
