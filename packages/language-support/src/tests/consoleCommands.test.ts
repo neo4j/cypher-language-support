@@ -54,9 +54,6 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
-    expectParsedCommands(':style clear', [
-      { type: 'style', operation: 'clear' },
-    ]);
   });
 
   test('properly highlights simple commands', () => {
@@ -184,7 +181,8 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':style clear')).toEqual([
+
+    expect(applySyntaxColouring(':style reset')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -199,8 +197,8 @@ describe('sanity checks', () => {
       },
       {
         length: 5,
-        position: { line: 0, startCharacter: 6, startOffset: 6 },
-        token: 'clear',
+        position: { line: 0, startCharacter: 7, startOffset: 7 },
+        token: 'reset',
         tokenType: 'consoleCommand',
       },
     ]);
@@ -210,6 +208,8 @@ describe('sanity checks', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'style' },
+      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },
@@ -217,7 +217,6 @@ describe('sanity checks', () => {
       { kind: 23, label: 'param' },
       { kind: 23, label: 'history' },
       { kind: 23, label: 'clear' },
-      { kind: 23, label: 'style' },
     ]);
   });
 
@@ -766,5 +765,24 @@ describe('command parser also handles cypher', () => {
         { statement: '', type: 'cypher' },
       ],
     );
+  });
+});
+
+describe('style', () => {
+  let consoleCommands: boolean;
+
+  beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
+    _internalFeatureFlags.consoleCommands = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = consoleCommands;
+  });
+
+  test('parses style reset', () => {
+    expectParsedCommands(':style reset', [
+      { type: 'style', operation: 'reset' },
+    ]);
   });
 });

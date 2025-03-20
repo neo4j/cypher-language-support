@@ -17,3 +17,5 @@ WELCOME: W E L C O M E;
 SYSINFO: S Y S I N F O;
 
 STYLE: S T Y L E;
+
+RESET: R E S E T;

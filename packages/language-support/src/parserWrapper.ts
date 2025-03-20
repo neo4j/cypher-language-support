@@ -475,7 +475,7 @@ export type ParsedCommandNoPosition =
   | { type: 'welcome' }
   | { type: 'parse-error' }
   | { type: 'sysinfo' }
-  | { type: 'style'; operation?: 'clear' };
+  | { type: 'style'; operation?: 'reset' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 

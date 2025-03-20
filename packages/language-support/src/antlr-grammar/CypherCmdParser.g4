@@ -43,7 +43,7 @@ disconnectCmd: DISCONNECT;
 
 sysInfoCmd: SYSINFO;
 
-styleCmd: STYLE CLEAR?;
+styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
 
