@@ -6,7 +6,7 @@ import CypherCmdParser, {
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
 
-export const errorMessage = `
+export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
 This is likely a bug in the formatter itself. If possible, please report the issue
 along with your input on GitHub:
