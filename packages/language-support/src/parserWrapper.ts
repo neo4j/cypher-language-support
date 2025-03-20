@@ -474,7 +474,8 @@ export type ParsedCommandNoPosition =
   | { type: 'server'; operation: string }
   | { type: 'welcome' }
   | { type: 'parse-error' }
-  | { type: 'sysinfo' };
+  | { type: 'sysinfo' }
+  | { type: 'style'; operation?: 'reset' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -616,6 +617,16 @@ function parseToCommand(
       const sysInfoCmd = consoleCmd.sysInfoCmd();
       if (sysInfoCmd) {
         return { type: 'sysinfo', start, stop };
+      }
+
+      const styleCmd = consoleCmd.styleCmd();
+      if (styleCmd) {
+        return {
+          type: 'style',
+          start,
+          stop,
+          operation: styleCmd.RESET() ? 'reset' : undefined,
+        };
       }
 
       return { type: 'parse-error', start, stop };

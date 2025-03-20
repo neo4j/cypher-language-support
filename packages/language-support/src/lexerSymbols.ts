@@ -374,6 +374,8 @@ export const lexerConsoleCmds = [
   CypherLexer.DISCONNECT,
   CypherLexer.WELCOME,
   CypherLexer.SYSINFO,
+  CypherLexer.STYLE,
+  CypherLexer.RESET,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {

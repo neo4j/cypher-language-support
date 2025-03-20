@@ -165,7 +165,8 @@ function getFinalIndentation(
   if (state.indentationState.special !== 0) {
     return (
       state.indentationState.special +
-      INDENTATION_SPACES * state.indentationState.align.length
+      INDENTATION_SPACES * state.indentationState.align.length +
+      state.indentationState.base
     );
   }
 
