@@ -1241,44 +1241,35 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitPatternElement = (ctx: PatternElementContext) => {
-    const totalChildren = ctx.getChildCount();
+    const n = ctx.getChildCount();
     let i = 0;
 
     // We do this very convoluted loop since we want to be able to put groups around
     // node patterns and relationships like this: START (node)-[rel](qpp?) END
     // and the grammar is very unhelpful...
-    while (i < totalChildren) {
+    while (i < n) {
       const child = ctx.getChild(i);
       if (
         child instanceof NodePatternContext &&
-        i + 1 < totalChildren &&
+        i + 1 < n &&
         ctx.getChild(i + 1) instanceof RelationshipPatternContext
       ) {
         let nodeRelPatternGrp = this.startGroup();
         this.visitNodePattern(child);
         i++;
-        while (
-          i < totalChildren &&
-          ctx.getChild(i) instanceof RelationshipPatternContext
-        ) {
+        while (i < n && ctx.getChild(i) instanceof RelationshipPatternContext) {
           this.visitRelationshipPattern(
             ctx.getChild(i) as RelationshipPatternContext,
           );
           i++;
-          if (
-            i < totalChildren &&
-            ctx.getChild(i) instanceof QuantifierContext
-          ) {
+          if (i < n && ctx.getChild(i) instanceof QuantifierContext) {
             this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
             i++;
           }
           this.endGroup(nodeRelPatternGrp);
-          if (
-            i < totalChildren &&
-            ctx.getChild(i) instanceof NodePatternContext
-          ) {
+          if (i < n && ctx.getChild(i) instanceof NodePatternContext) {
             if (
-              i + 1 < totalChildren &&
+              i + 1 < n &&
               ctx.getChild(i + 1) instanceof RelationshipPatternContext
             ) {
               nodeRelPatternGrp = this.startGroup();
