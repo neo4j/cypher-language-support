@@ -544,6 +544,23 @@ RETURN person.name AS name, COUNT {
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should prefer to not split before a relation', () => {
+    const query = `
+MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
+      (b:person {name: 'bob'})-[s:colleague_of]->(c:person {name: 'carol'})-
+      [t:partner_of]->(d:person {name: 'david'})-[u:mentor_of]->
+      (e:person {name: 'eve'})
+RETURN a`;
+    const expected = `
+MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
+      (b:person {name: 'bob'})-[s:colleague_of]->
+      (c:person {name: 'carol'})-[t:partner_of]->
+      (d:person {name: 'david'})-[u:mentor_of]->
+      (e:person {name: 'eve'})
+RETURN a`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

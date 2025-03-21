@@ -63,6 +63,7 @@ import {
   ParenthesizedPathContext,
   PathLengthContext,
   PatternContext,
+  PatternElementContext,
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
@@ -1239,6 +1240,76 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(selectorAnonymousPatternGrp);
   };
 
+  visitPatternElement = (ctx: PatternElementContext) => {
+    const totalChildren = ctx.getChildCount();
+    let i = 0;
+
+    while (i < totalChildren) {
+      const child = ctx.getChild(i);
+
+      // Check if we have a nodePattern followed immediately by a relationshipPattern.
+      if (
+        child instanceof NodePatternContext &&
+        i + 1 < totalChildren &&
+        ctx.getChild(i + 1) instanceof RelationshipPatternContext
+      ) {
+        // Start a grouping block for this chain.
+
+        // Visit the first nodePattern.
+        this.visitNodePattern(child);
+        i++;
+
+        // Process one or more groups of relationshipPattern (optionally with quantifier) and nodePattern.
+        while (
+          i < totalChildren &&
+          ctx.getChild(i) instanceof RelationshipPatternContext
+        ) {
+          // Visit the relationshipPattern.
+          this.visitRelationshipPattern(
+            ctx.getChild(i) as RelationshipPatternContext,
+          );
+          i++;
+
+          // Optionally, visit a quantifier if present.
+          if (
+            i < totalChildren &&
+            ctx.getChild(i) instanceof QuantifierContext
+          ) {
+            this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
+            i++;
+          }
+
+          // Next should be a nodePattern.
+          if (
+            i < totalChildren &&
+            ctx.getChild(i) instanceof NodePatternContext
+          ) {
+            this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
+            i++;
+          } else {
+            // If the expected nodePattern isn’t found, break out of this inner loop.
+            break;
+          }
+        }
+      } else if (child instanceof ParenthesizedPathContext) {
+        // For parenthesizedPath, simply call its visitor.
+        this.visitParenthesizedPath(child);
+        i++;
+      } else {
+        // For any other child (e.g. standalone nodePattern, terminal tokens, etc.), handle them explicitly.
+        if (child instanceof NodePatternContext) {
+          this.visitNodePattern(child);
+        } else if (child instanceof RelationshipPatternContext) {
+          this.visitRelationshipPattern(child);
+        } else if (child instanceof QuantifierContext) {
+          this.visitQuantifier(child);
+        } else if (child instanceof TerminalNode) {
+          this.visitTerminal(child);
+        }
+        i++;
+      }
+    }
+  };
   visitPatternList = (ctx: PatternListContext) => {
     const n = ctx.pattern_list().length;
     if (n === 1) {
