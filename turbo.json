@@ -7,8 +7,13 @@
       "outputMode": "new-only"
     },
     "build:intellij": {
-      "dependsOn": [],
-      "outputs": ["editor-plugin/intellij/build/**"]
+      "dependsOn": ["build"],
+      "outputs": ["packages/intellij-extension/build/**"]
+    },
+    "run:intellij": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["build:intellij"]
     },
     "@neo4j-cypher/language-support#build": {
       "outputs": ["src/generated-parser/**", "dist/**"],
@@ -33,11 +38,6 @@
       "cache": false,
       "persistent": false,
       "dependsOn": ["build"]
-    },
-    "run:intellij": {
-      "cache": false,
-      "persistent": false,
-      "dependsOn": []
     },
     "@neo4j-cypher/react-codemirror-playground#dev": {
       "outputs": [],

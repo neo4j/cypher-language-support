@@ -36,6 +36,8 @@ tasks {
     }
 
     runIde {
+        dependsOn(prepareSandbox)
+
         debugOptions {
            enabled = false
            port = 8000
