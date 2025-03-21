@@ -1270,7 +1270,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             ctx.getChild(i) as RelationshipPatternContext,
           );
           i++;
-          this.endGroup(nodeRelPatternGrp);
 
           // Optionally, visit a quantifier if present.
           if (
@@ -1280,6 +1279,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
             i++;
           }
+          this.endGroup(nodeRelPatternGrp);
 
           // Next should be a nodePattern.
           if (
