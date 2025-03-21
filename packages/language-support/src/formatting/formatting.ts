@@ -1252,7 +1252,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         i + 1 < n &&
         ctx.getChild(i + 1) instanceof RelationshipPatternContext
       ) {
-        i = this._processNodeRelSequence(ctx, i);
+        i = this._processNodeRelSequence(ctx, i, n);
       } else if (child instanceof ParenthesizedPathContext) {
         this.visitParenthesizedPath(child);
         i++;
@@ -1269,35 +1269,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   _processNodeRelSequence = (
     ctx: PatternElementContext,
     startIndex: number,
+    n: number,
   ): number => {
     let i = startIndex;
     let nodeRelPatternGrp = this.startGroup();
 
     this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
     i++;
-    while (
-      i < ctx.getChildCount() &&
-      ctx.getChild(i) instanceof RelationshipPatternContext
-    ) {
+    while (i < n && ctx.getChild(i) instanceof RelationshipPatternContext) {
       this.visitRelationshipPattern(
         ctx.getChild(i) as RelationshipPatternContext,
       );
       i++;
 
-      if (
-        i < ctx.getChildCount() &&
-        ctx.getChild(i) instanceof QuantifierContext
-      ) {
+      if (i < n && ctx.getChild(i) instanceof QuantifierContext) {
         this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
         i++;
       }
       this.endGroup(nodeRelPatternGrp);
-      if (
-        i < ctx.getChildCount() &&
-        ctx.getChild(i) instanceof NodePatternContext
-      ) {
+      if (i < n && ctx.getChild(i) instanceof NodePatternContext) {
         if (
-          i + 1 < ctx.getChildCount() &&
+          i + 1 < n &&
           ctx.getChild(i + 1) instanceof RelationshipPatternContext
         ) {
           nodeRelPatternGrp = this.startGroup();
