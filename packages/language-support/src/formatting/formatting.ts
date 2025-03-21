@@ -101,7 +101,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { buffersToFormattedString, Group } from './formattingSolutionSearch';
+import { buffersToFormattedString } from './formattingSolutionSearch';
 
 const MISSING = '<missing';
 
@@ -122,8 +122,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   targetToken?: number;
   cursorPos = 0;
   groupID = 0;
-  groupStack: Group[] = [];
-  startGroupCounter: Group[] = [];
+  groupStack: number[] = [];
+  startGroupCounter: number = 0;
   groupsToEndOnBreak: number[] = [];
   previousTokenIndex: number = -1;
   unParseable: string = '';
@@ -219,7 +219,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
       doubleBreak: suffix.doubleBreak,
-      groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
+      groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
       groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
       indentation: {
         base: prefix.indentation.base + suffix.indentation.base,
@@ -298,7 +298,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = (id: number) => {
-    if (this.groupStack.at(-1).id !== id) {
+    if (this.groupStack.at(-1) !== id) {
       return;
     }
     const idx = this.getFirstNonCommentIdx();
@@ -307,21 +307,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   removeAllGroups = () => {
-    for (let i = 0; i < this.lastInCurrentBuffer().groupsStarting.length; i++) {
+    for (let i = 0; i < this.lastInCurrentBuffer().groupsStarting; i++) {
       this.groupStack.pop();
     }
   };
 
   endAllExceptBaseGroup = () => {
     while (this.groupStack.length > 1) {
-      this.endGroup(this.groupStack.at(-1).id);
+      this.endGroup(this.groupStack.at(-1));
     }
   };
 
   startGroup = (): number => {
-    const newGroup: Group = { id: this.groupID, align: -1, breakCost: 0 };
-    this.startGroupCounter.push(newGroup);
-    this.groupStack.push(newGroup);
+    this.startGroupCounter += 1;
+    this.groupStack.push(this.groupID);
     this.groupID++;
     return this.groupID - 1;
   };
@@ -329,11 +328,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroupAlsoOnComment = (): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
-      const newGroup = { id: this.groupID, align: -1, breakCost: 0 };
-      this.currentBuffer()
-        .at(idx + 1)
-        .groupsStarting.push(newGroup);
-      this.groupStack.push(newGroup);
+      this.currentBuffer().at(idx + 1).groupsStarting += 1;
+      this.groupStack.push(this.groupID);
       this.groupID++;
       return this.groupID - 1;
     }
@@ -462,7 +458,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: 0,
         indentation: { ...initialIndentation },
       };
-      this.startGroupCounter = [];
+      this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
       this.breakLine();
     }
@@ -495,7 +491,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: nodeLine !== commentLine,
         text,
-        groupsStarting: [],
+        groupsStarting: 0,
         groupsEnding: 0,
         indentation: { ...initialIndentation },
       };
@@ -556,7 +552,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
       text: combinedText,
-      groupsStarting: [],
+      groupsStarting: 0,
       groupsEnding: 0,
       indentation: { ...initialIndentation },
     };
@@ -1016,7 +1012,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       indentation: { ...initialIndentation },
     };
-    this.startGroupCounter = [];
+    this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
     }
@@ -1061,7 +1057,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: 0,
       indentation: { ...initialIndentation },
     };
-    this.startGroupCounter = [];
+    this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
     }
