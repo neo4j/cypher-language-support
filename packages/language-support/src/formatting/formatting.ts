@@ -1255,6 +1255,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       ) {
         // Start a grouping block for this chain.
 
+        let nodeRelPatternGrp = this.startGroup();
         // Visit the first nodePattern.
         this.visitNodePattern(child);
         i++;
@@ -1269,6 +1270,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             ctx.getChild(i) as RelationshipPatternContext,
           );
           i++;
+          this.endGroup(nodeRelPatternGrp);
 
           // Optionally, visit a quantifier if present.
           if (
@@ -1286,6 +1288,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           ) {
             this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
             i++;
+            if (ctx.getChild(i) instanceof RelationshipPatternContext) {
+              nodeRelPatternGrp = this.startGroup();
+            }
           } else {
             // If the expected nodePattern isn’t found, break out of this inner loop.
             break;

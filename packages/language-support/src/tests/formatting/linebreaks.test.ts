@@ -549,16 +549,16 @@ RETURN person.name AS name, COUNT {
     const query = `
 MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
       (b:person {name: 'bob'})-[s:colleague_of]->(c:person {name: 'carol'})-
-      [t:partner_of]->(d:person {name: 'david'})-[u:mentor_of]->
+      [t:partner_of]->(d:person {name: 'david'})-[u:mentor_and_friend_of]->
       (e:person {name: 'eve'})
 RETURN a`;
     const expected = `
 MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
       (b:person {name: 'bob'})-[s:colleague_of]->
       (c:person {name: 'carol'})-[t:partner_of]->
-      (d:person {name: 'david'})-[u:mentor_of]->
+      (d:person {name: 'david'})-[u:mentor_and_friend_of]->
       (e:person {name: 'eve'})
-RETURN a`;
+RETURN a`.trimStart();
     verifyFormatting(query, expected);
   });
 });
