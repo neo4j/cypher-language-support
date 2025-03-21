@@ -1263,6 +1263,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  // Very convoluted logic related to visitPatternElement, used becase we want to be able
+  // to put groups around node patterns and relationships like this: START (node)-[rel](qpp?) END
+  // and the grammar is very unhelpful...
   _processNodeRelSequence = (
     ctx: PatternElementContext,
     startIndex: number,
@@ -1305,7 +1308,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         break;
       }
     }
-
     return i;
   };
 
