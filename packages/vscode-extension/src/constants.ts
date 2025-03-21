@@ -11,9 +11,11 @@ export const CONSTANTS = {
     RUN_CYPHER: 'neo4j.runCypher',
     CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
     ADD_PARAMETER: 'neo4j.addParameter',
+    DELETE_PARAMETER: 'neo4j.deleteParameter',
     CLEAR_PARAMETERS: 'neo4j.clearParameters',
     INTERNAL: {
       EVAL_PARAMETER: 'neo4j.internal.evalParam',
+      FORCE_DELETE_PARAMETER: 'neo4j.internal.forceDeleteParam',
       FORCE_DISCONNECT: 'neo4j.internal.forceDisconnect',
       FORCE_CONNECT: 'neo4j.internal.forceConnect',
     },

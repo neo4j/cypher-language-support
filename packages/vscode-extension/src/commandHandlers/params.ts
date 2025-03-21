@@ -12,8 +12,15 @@ import {
 } from '@neo4j-cypher/schema-poller';
 import { window } from 'vscode';
 import { getSchemaPoller } from '../contextService';
-import { clearParameters, setParameter } from '../parameterService';
-import { parametersTreeDataProvider } from '../treeviews/parametersTreeProvider';
+import {
+  clearParameters,
+  deleteParameter,
+  setParameter,
+} from '../parameterService';
+import {
+  ParameterItem,
+  parametersTreeDataProvider,
+} from '../treeviews/parametersTreeDataProvider';
 
 export async function addParameter(): Promise<void> {
   const schemaPoller = getSchemaPoller();
@@ -46,6 +53,15 @@ export async function addParameter(): Promise<void> {
   }
 
   await evaluateParam(paramName, paramValue);
+}
+
+export async function removeParameter(paramItem: ParameterItem): Promise<void> {
+  await removeParameterWithKey(paramItem.id);
+}
+
+export async function removeParameterWithKey(key: string) {
+  await deleteParameter(key);
+  parametersTreeDataProvider.refresh();
 }
 
 export async function clearAllParameters(): Promise<void> {
