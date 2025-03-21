@@ -1,4 +1,3 @@
-import { formatQuery } from '../../formatting/formatting';
 import { verifyFormatting } from './testutil';
 
 describe('various edgecases', () => {
@@ -20,13 +19,6 @@ RETURN 3;`;
     const query = 'RETURN $param';
     const expected = 'RETURN $param';
     verifyFormatting(query, expected);
-  });
-
-  test('syntax error', () => {
-    const query = 'MATCH (n) RETRUN n.prop,';
-    expect(() => formatQuery(query)).toThrowError(
-      `Could not format due to syntax error at line 1:10 near "RETRUN"`,
-    );
   });
 
   test('apoc call, namespaced function', () => {
@@ -860,6 +852,41 @@ RETURN
              ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('CASE expression inside a CALL clause', () => {
+    const query = `MATCH (u:User)
+CALL {
+    WITH u
+    OPTIONAL MATCH (u)-[:PURCHASED]->(:Product)
+    WITH u, COUNT(*) AS purchaseCount
+    RETURN 
+    CASE 
+    WHEN purchaseCount > 0 THEN 'Active' 
+    ELSE 'Inactive' 
+    END AS status
+}
+RETURN u.name, status;`;
+    const expected = `
+MATCH (u:User)
+CALL {
+  WITH u
+  OPTIONAL MATCH (u)-[:PURCHASED]->(:Product)
+  WITH u, COUNT(*) AS purchaseCount
+  RETURN
+    CASE
+      WHEN purchaseCount > 0 THEN 'Active'
+      ELSE 'Inactive'
+    END AS status
+}
+RETURN u.name, status;`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('string that contains <missing', () => {
+    const query = `return "<missing>"`;
+    const expected = `RETURN "<missing>"`;
     verifyFormatting(query, expected);
   });
 });

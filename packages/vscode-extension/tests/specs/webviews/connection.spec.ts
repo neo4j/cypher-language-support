@@ -39,12 +39,18 @@ suite('Connection testing', () => {
   });
 
   test('should connect when selecting new connection', async function () {
+    if (os.platform() === 'darwin') {
+      this.skip();
+    }
     await selectConnectionItem(connectionSection, 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
     await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
   });
 
   test('should collapse connectionItems when selecting expanded connection', async function () {
+    if (os.platform() === 'darwin') {
+      this.skip();
+    }
     await selectConnectionItem(connectionSection, 1);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
     try {

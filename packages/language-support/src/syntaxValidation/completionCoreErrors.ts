@@ -1,7 +1,6 @@
 import { Token } from 'antlr4';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
-import { _internalFeatureFlags } from '../featureFlags';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import {
@@ -28,6 +27,7 @@ function normalizedLevenshteinDistance(s1: string, s2: string): number {
 export function completionCoreErrormessage(
   parser: CypherParser,
   currentToken: Token,
+  consoleCommandsEnabled: boolean,
 ): string | undefined {
   const codeCompletion = new CodeCompletionCore(parser);
   const caretIndex = currentToken.tokenIndex;
@@ -46,7 +46,7 @@ export function completionCoreErrormessage(
     [CypherParser.RULE_statement]: 'a statement',
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(_internalFeatureFlags.consoleCommands
+    ...(consoleCommandsEnabled
       ? {
           [CypherParser.RULE_useCompletionRule]: 'use',
           [CypherParser.RULE_listCompletionRule]: 'list',

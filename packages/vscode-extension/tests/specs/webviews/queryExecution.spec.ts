@@ -2,11 +2,11 @@ import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import * as os from 'os';
 import { ViewSection, Workbench } from 'wdio-vscode-service';
-import { CONSTANTS } from '../../../src/constants';
 import {
+  checkResultsContent,
   clickOnContextMenuItem,
+  executeFile,
   getConnectionSection,
-  openFixtureFile,
   waitUntilNotification,
 } from '../../webviewUtils';
 
@@ -19,35 +19,17 @@ suite('Query results testing', () => {
     connectionSection = await getConnectionSection(workbench);
   });
 
-  async function checkResultsContent(check: () => Promise<void>) {
-    const webviews = await workbench.getAllWebviews();
-    await expect(webviews.length).toBe(1);
-    const resultsWebview = (await workbench.getAllWebviews()).at(0);
-    await resultsWebview.open();
-    await check();
-    await resultsWebview.close();
-    await workbench.getEditorView().closeAllEditors();
-  }
-
-  async function executeFile(
-    fileName: string,
-    opts?: { selectLines?: number },
-  ) {
-    await openFixtureFile(browser, fileName, opts);
-    await workbench.executeCommand(CONSTANTS.COMMANDS.RUN_CYPHER);
-  }
-
   test('should correctly execute a valid Cypher', async function () {
-    await executeFile('valid.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'valid.cypher');
+    await checkResultsContent(workbench, async () => {
       const querySummary = await (await $('#query-summary')).getText();
       await expect(querySummary).toContain('1 nodes created, 1 labels added.');
     });
   });
 
   test('should correctly execute a valid Cypher when highlighting several statements', async function () {
-    await executeFile('multiline.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'multiline.cypher');
+    await checkResultsContent(workbench, async () => {
       // Take the first line query result summary
       const firstCreateSummary = await (await $('#query-summary')).getText();
       // Select the second tab to get the query result for the second line
@@ -68,8 +50,8 @@ suite('Query results testing', () => {
   });
 
   test('should error on invalid cypher', async function () {
-    await executeFile('invalid.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'invalid.cypher');
+    await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
       await expect(text).toContain(
         'Error executing query WITH (n:Person) RETURN n',
@@ -86,13 +68,13 @@ suite('Query results testing', () => {
 
     await clickOnContextMenuItem(connectionSection, 'Connect', 1);
 
-    await executeFile('create-for-match.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'create-for-match.cypher');
+    await checkResultsContent(workbench, async () => {
       const querySummary = await (await $('#query-summary')).getText();
       await expect(querySummary).toContain('1 nodes created, 1 labels added.');
     });
-    await executeFile('match-for-create.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'match-for-create.cypher');
+    await checkResultsContent(workbench, async () => {
       const querySummary = await (await $('#query-summary')).getText();
       await expect(querySummary).toContain('Started streaming 1 record');
     });
@@ -102,8 +84,8 @@ suite('Query results testing', () => {
     await clickOnContextMenuItem(connectionSection, 'Connect', 0);
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
-    await executeFile('match-for-create.cypher');
-    await checkResultsContent(async () => {
+    await executeFile(workbench, 'match-for-create.cypher');
+    await checkResultsContent(workbench, async () => {
       const queryResult = await (await $('#query-empty-result')).getText();
       await expect(queryResult).toContain('No records returned');
     });

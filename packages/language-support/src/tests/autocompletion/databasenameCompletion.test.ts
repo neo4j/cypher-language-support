@@ -301,15 +301,15 @@ describe('Can complete database names', () => {
         { label: 'myMovies', kind: CompletionItemKind.Value },
         { label: 'scoped.alias', kind: CompletionItemKind.Value },
         { label: 'a.b.c.d', kind: CompletionItemKind.Value },
-        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
       excluded: [
         { label: 'db1', kind: CompletionItemKind.Value },
         { label: 'db2', kind: CompletionItemKind.Value },
         { label: 'movies', kind: CompletionItemKind.Value },
-        // do not suggest non-string parameters
+        // do not suggest parameters, it's clear at this point we were not after a parameter in the completions
         { label: '$param2', kind: CompletionItemKind.Variable },
         { label: '$param3', kind: CompletionItemKind.Variable },
+        { label: '$param1', kind: CompletionItemKind.Variable },
       ],
     });
   });
