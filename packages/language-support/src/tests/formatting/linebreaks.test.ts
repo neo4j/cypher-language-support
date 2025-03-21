@@ -593,6 +593,21 @@ MATCH (NOD01)-[REL01]->(NOD02)-[REL02]->(NOD03)-[REL03]->(NOD04)-[REL04]->
 RETURN NOD01`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should prefer to not split before a relation 4', () => {
+    const query = `
+MATCH (Alice123:Person)-[FRND_REL:friendship]->
+      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+      (Carla55:EmployeeType)-[PARTNR:partner_of]->
+      (Dave:Short)
+RETURN Alice123`;
+    const expected = `
+MATCH (Alice123:Person)-[FRND_REL:friendship]->
+      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+      (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
+RETURN Alice123`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
