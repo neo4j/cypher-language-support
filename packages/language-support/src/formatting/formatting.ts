@@ -1306,6 +1306,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
   };
+
   visitPatternList = (ctx: PatternListContext) => {
     const n = ctx.pattern_list().length;
     if (n === 1) {
