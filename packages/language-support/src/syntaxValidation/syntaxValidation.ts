@@ -272,9 +272,10 @@ function fixOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
+  consoleCommandsEnabled?: boolean,
 ): SyntaxDiagnostic[] {
   if (query.length > 0) {
-    const cachedParse = parserWrapper.parse(query);
+    const cachedParse = parserWrapper.parse(query, consoleCommandsEnabled);
     const statements = cachedParse.statementsParsing;
     const errors = statements.flatMap((current) => {
       const cmd = current.command;

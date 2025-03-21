@@ -2,13 +2,20 @@ import { commands, Disposable, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
+  forceConnect,
+  forceDisconnect,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
   showConnectionPanelForConnectionItem,
   switchToDatabase,
   toggleConnectionItemsConnectionState,
-} from './commandHandlers';
+} from './commandHandlers/connection';
+import {
+  addParameter,
+  clearAllParameters,
+  evaluateParam,
+} from './commandHandlers/params';
 import { CONSTANTS } from './constants';
 import {
   ConnectionItem,
@@ -16,6 +23,7 @@ import {
 } from './treeviews/connectionTreeDataProvider';
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
+import { parametersTreeDataProvider } from './treeviews/parametersTreeProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -32,6 +40,10 @@ export function registerDisposables(): Disposable[] {
     window.registerTreeDataProvider(
       'neo4jDatabaseInformation',
       databaseInformationTreeDataProvider,
+    ),
+    window.registerTreeDataProvider(
+      'neo4jParameters',
+      parametersTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
     commands.registerCommand(
@@ -75,6 +87,23 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.CYPHER_FILE_FROM_SELECTION,
       cypherFileFromSelection,
+    ),
+    commands.registerCommand(CONSTANTS.COMMANDS.ADD_PARAMETER, addParameter),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.CLEAR_PARAMETERS,
+      clearAllParameters,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      evaluateParam,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
+      forceDisconnect,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
+      forceConnect,
     ),
   );
 

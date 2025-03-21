@@ -11,6 +11,7 @@ import {
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
 import { setContext } from './contextService';
+import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
@@ -62,6 +63,7 @@ export async function activate(context: ExtensionContext) {
 
   // Handle any sequence events for activation
   await reconnectDatabaseConnectionOnExtensionActivation();
+  await sendParametersToLanguageServer();
 }
 
 export async function deactivate(): Promise<void> | undefined {

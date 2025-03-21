@@ -4,6 +4,7 @@ import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
 import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
+import { getDeserializedParams } from '../parameterService';
 import { toNativeTypes } from '../typeUtils';
 
 export function querySummary(result: QueryResultWithLimit): string[] {
@@ -216,8 +217,12 @@ export default class ResultWindow {
     const connection = this.schemaPoller.connection;
 
     if (connection) {
+      const parameters = getDeserializedParams();
       try {
-        return await connection.runCypherQuery({ query });
+        return await connection.runCypherQuery({
+          query,
+          parameters: parameters,
+        });
       } catch (e) {
         const error = e as Error;
         return error;

@@ -1,7 +1,10 @@
 import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import { getLanguageClient } from './contextService';
 
-export type MethodName = 'connectionUpdated' | 'connectionDisconnected';
+export type MethodName =
+  | 'connectionUpdated'
+  | 'connectionDisconnected'
+  | 'updateParameters';
 
 /**
  * Communicates to the language client that a connection has been updated or disconnected and needs to take action.

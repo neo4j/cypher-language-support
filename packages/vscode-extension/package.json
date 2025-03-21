@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "preview": true,
   "categories": [
     "Programming Languages",
@@ -50,35 +50,55 @@
       },
       {
         "command": "neo4j.connect",
-        "title": "Connect"
+        "title": "Connect",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.disconnect",
-        "title": "Disconnect"
+        "title": "Disconnect",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.deleteConnection",
-        "title": "Delete connection..."
+        "title": "Delete connection...",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.refreshConnections",
-        "title": "Refresh connections"
+        "title": "Refresh connections",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create connection"
+        "title": "Create connection",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.switchDatabase",
-        "title": "Switch to database"
+        "title": "Switch to database",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.runCypher",
-        "title": "Neo4j: Run Cypher statements"
+        "title": "Neo4j: Run Cypher statements",
+        "category": "Neo4j"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
-        "title": "Neo4j: Create Cypher file from selection"
+        "title": "Create Cypher file from selection",
+        "category": "Neo4j"
+      },
+      {
+        "command": "neo4j.addParameter",
+        "title": "Add parameter",
+        "category": "Neo4j",
+        "icon": "$(add)"
+      },
+      {
+        "command": "neo4j.clearParameters",
+        "title": "Clear all parameters",
+        "category": "Neo4j",
+        "icon": "$(trash)"
       }
     ],
     "keybindings": [
@@ -142,6 +162,16 @@
           "command": "neo4j.createConnection",
           "when": "view == neo4jConnections",
           "group": "navigation"
+        },
+        {
+          "command": "neo4j.clearParameters",
+          "when": "view == neo4jParameters",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.addParameter",
+          "when": "view == neo4jParameters",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -174,14 +204,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "neo4j-connection-explorer",
+          "id": "neo4j-explorer",
           "title": "Neo4j",
           "icon": "resources/images/neo4j.png"
         }
       ]
     },
     "views": {
-      "neo4j-connection-explorer": [
+      "neo4j-explorer": [
         {
           "type": "tree",
           "id": "neo4jConnections",
@@ -191,6 +221,11 @@
           "type": "tree",
           "id": "neo4jDatabaseInformation",
           "name": "Database Information"
+        },
+        {
+          "type": "tree",
+          "id": "neo4jParameters",
+          "name": "Parameters"
         }
       ]
     },

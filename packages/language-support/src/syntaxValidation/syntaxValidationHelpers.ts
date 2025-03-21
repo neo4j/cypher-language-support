@@ -19,11 +19,13 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];
   unfinishedToken: boolean;
   tokens: Token[];
+  consoleCommandsEnabled: boolean;
 
-  constructor(tokens: Token[]) {
+  constructor(tokens: Token[], consoleCommandsEnabled: boolean) {
     this.errors = [];
     this.unfinishedToken = false;
     this.tokens = tokens;
+    this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
   public syntaxError<T extends Token>(
@@ -98,6 +100,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,
+          this.consoleCommandsEnabled,
         );
 
         if (errorMessage) {

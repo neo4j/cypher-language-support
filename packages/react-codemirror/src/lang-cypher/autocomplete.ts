@@ -67,7 +67,6 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const yieldTriggered = shouldAutoCompleteYield(documentText, offset);
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
-
     const shouldTriggerCompletion =
       inWord ||
       context.explicit ||
@@ -91,7 +90,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     );
 
     return {
-      from: context.matchBefore(/(\w|\$)*$/).from,
+      from: context.matchBefore(/(\w)*$/).from,
       options: options.map((o) => {
         let maybeInfo = {};
         let emptyInfo = true;

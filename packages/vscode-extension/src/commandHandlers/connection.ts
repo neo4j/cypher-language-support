@@ -5,21 +5,22 @@ import {
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
+  getConnections,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
-} from './connectionService';
-import { CONSTANTS } from './constants';
-import { getExtensionContext, getQueryRunner } from './contextService';
-import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
+} from '../connectionService';
+import { CONSTANTS } from '../constants';
+import { getExtensionContext, getQueryRunner } from '../contextService';
+import { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
 import {
   displayConfirmConnectionDeletionPrompt,
   displayMessageForConnectionResult,
   displayMessageForSwitchDatabaseResult,
   displaySaveConnectionAnywayPrompt,
-} from './uiUtils';
-import { ConnectionPanel } from './webviews/connectionPanel';
+} from '../uiUtils';
+import { ConnectionPanel } from '../webviews/connectionPanel';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -214,5 +215,22 @@ export async function cypherFileFromSelection(): Promise<void> {
       language: 'cypher',
     });
     await window.showTextDocument(textDocument);
+  }
+}
+
+export async function forceDisconnect(): Promise<void> {
+  const activeConnection = getActiveConnection();
+  const { result, connection } =
+    await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
+  displayMessageForConnectionResult(connection, result);
+}
+
+export async function forceConnect(i: number): Promise<void> {
+  const connections = getConnections();
+  const connectionToToggle = Object.values(connections).at(i);
+  if (connectionToToggle) {
+    const { result, connection } =
+      await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
+    displayMessageForConnectionResult(connection, result);
   }
 }

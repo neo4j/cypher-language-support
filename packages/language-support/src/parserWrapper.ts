@@ -22,7 +22,6 @@ import {
 import {
   findParent,
   findStopNode,
-  getTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
@@ -142,7 +141,7 @@ export function parseStatementsStrs(query: string): string[] {
 
   for (const statement of statements) {
     const tokenStream = statement.parser?.getTokenStream() ?? [];
-    const tokens = getTokens(tokenStream as CommonTokenStream);
+    const tokens = (tokenStream as CommonTokenStream).tokens;
     const statementStr = tokens
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
@@ -168,7 +167,10 @@ export function parse(query: string): StatementOrCommandContext[] {
   return result;
 }
 
-export function createParsingResult(query: string): ParsingResult {
+export function createParsingResult(
+  query: string,
+  consoleCommandsEnabled: boolean,
+): ParsingResult {
   const parsingScaffolding = createParsingScaffolding(query);
 
   const results: ParsedStatement[] =
@@ -178,7 +180,10 @@ export function createParsingResult(query: string): ParsingResult {
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
-      const errorListener = new SyntaxErrorsListener(tokens);
+      const errorListener = new SyntaxErrorsListener(
+        tokens,
+        consoleCommandsEnabled,
+      );
       parser._parseListeners = [
         labelsCollector,
         variableFinder,
@@ -195,7 +200,7 @@ export function createParsingResult(query: string): ParsingResult {
       const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
       const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
-      if (!_internalFeatureFlags.consoleCommands) {
+      if (!consoleCommandsEnabled) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
@@ -653,6 +658,7 @@ function translateTokensToRange(
     },
   };
 }
+
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
     .filter((cmd) => cmd.type !== 'cypher')
@@ -668,14 +674,17 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 class ParserWrapper {
   parsingResult?: ParsingResult;
 
-  parse(query: string): ParsingResult {
+  parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingResult = createParsingResult(query);
+      const parsingResult = createParsingResult(
+        query,
+        consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
+      );
 
       return parsingResult;
     }
