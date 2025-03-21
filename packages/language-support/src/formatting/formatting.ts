@@ -319,7 +319,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = (): number => {
-    const newGroup = { id: this.groupID, align: -1, breakCost: 0 };
+    const newGroup: Group = { id: this.groupID, align: -1, breakCost: 0 };
     this.startGroupCounter.push(newGroup);
     this.groupStack.push(newGroup);
     this.groupID++;
@@ -1290,11 +1290,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             i < totalChildren &&
             ctx.getChild(i) instanceof NodePatternContext
           ) {
-            this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
-            i++;
-            if (ctx.getChild(i) instanceof RelationshipPatternContext) {
+            if (
+              i + 1 < totalChildren &&
+              ctx.getChild(i + 1) instanceof RelationshipPatternContext
+            ) {
               nodeRelPatternGrp = this.startGroup();
             }
+            this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
+            i++;
           } else {
             // If the expected nodePattern isn’t found, break out of this inner loop.
             break;
@@ -1305,7 +1308,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visitParenthesizedPath(child);
         i++;
       } else {
-        this._visit(child as ParserRuleContext);
+        // For any other child (e.g. standalone nodePattern, terminal tokens, etc.), handle them explicitly.
+        if (child instanceof NodePatternContext) {
+          this.visitNodePattern(child);
+        } else if (child instanceof RelationshipPatternContext) {
+          this.visitRelationshipPattern(child);
+        } else if (child instanceof QuantifierContext) {
+          this.visitQuantifier(child);
+        } else if (child instanceof TerminalNode) {
+          this.visitTerminal(child);
+        }
         i++;
       }
     }
