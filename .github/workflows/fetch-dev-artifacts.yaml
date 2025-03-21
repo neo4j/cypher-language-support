@@ -1,6 +1,12 @@
+name: Monthly Artifact Bump
+
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   schedule:
-    - cron: '10 4 25 * *'
+    - cron: '10 4 1-7 * 5'
   workflow_dispatch:
   
 
@@ -39,11 +45,11 @@ jobs:
 
     - name: fetch parser artifacts from latest neo4j CI
       run: |
-          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-RC-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-RC-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
           
     - name: fetch semantic analysis artifacts from latest neo4j CI
       run: | 
-          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-RC-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-RC-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
     
     - name: unpack grammar artifacts
       run: |
@@ -60,28 +66,29 @@ jobs:
 
     
     - name: rename semantic analysis
-      run: mv -f "./packages/language-support/src/syntaxValidation/classes.js" \
-              "./packages/language-support/src/syntaxValidation/semanticAnalysis.js"
+      run: mv -f "./packages/language-support/src/syntaxValidation/classes.js" "./packages/language-support/src/syntaxValidation/semanticAnalysis.js"
+
               
     - name: clean up zips
       run: rm -f grammar.zip && rm -f semantic-analysis-js.zip
 
-    - name: Create New Branch
+    - name: Create New Branch Name
       run: |
         BRANCH_NAME="update-artifacts-$(date +%Y%m%d-%H%M%S)"
-        git checkout -b "$BRANCH_NAME"
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
     - name: Commit and Push Changes
       run: |
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git add ./packages/language-support/src/antlr-grammar
         git add ./packages/language-support/src/syntaxValidation
         git commit -m "Updates artifacts from AWS CodeArtifact"
-        git push origin "$BRANCH_NAME"
+        git push origin HEAD:${{ env.BRANCH_NAME }}
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
+        commit-message: Updates artifacts to latest dev snapshot
         token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ env.BRANCH_NAME }}
         base: main
