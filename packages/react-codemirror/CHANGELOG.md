@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.20
+
+### Patch Changes
+
+- Updated dependencies [bffbb19]
+- Updated dependencies [826d922]
+- Updated dependencies [1caab0c]
+  - @neo4j-cypher/language-support@2.0.0-next.17
+
 ## 2.0.0-next.19
 
 ### Patch Changes
