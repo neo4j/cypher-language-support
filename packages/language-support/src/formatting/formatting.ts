@@ -1244,34 +1244,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const totalChildren = ctx.getChildCount();
     let i = 0;
 
+    // We do this very convoluted loop since we want to be able to put groups around
+    // node patterns and relationships like this: START (node)-[rel](qpp?) END
+    // and the grammar is very unhelpful...
     while (i < totalChildren) {
       const child = ctx.getChild(i);
-
-      // Check if we have a nodePattern followed immediately by a relationshipPattern.
       if (
         child instanceof NodePatternContext &&
         i + 1 < totalChildren &&
         ctx.getChild(i + 1) instanceof RelationshipPatternContext
       ) {
-        // Start a grouping block for this chain.
-
         let nodeRelPatternGrp = this.startGroup();
-        // Visit the first nodePattern.
         this.visitNodePattern(child);
         i++;
-
-        // Process one or more groups of relationshipPattern (optionally with quantifier) and nodePattern.
         while (
           i < totalChildren &&
           ctx.getChild(i) instanceof RelationshipPatternContext
         ) {
-          // Visit the relationshipPattern.
           this.visitRelationshipPattern(
             ctx.getChild(i) as RelationshipPatternContext,
           );
           i++;
-
-          // Optionally, visit a quantifier if present.
           if (
             i < totalChildren &&
             ctx.getChild(i) instanceof QuantifierContext
@@ -1280,8 +1273,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             i++;
           }
           this.endGroup(nodeRelPatternGrp);
-
-          // Next should be a nodePattern.
           if (
             i < totalChildren &&
             ctx.getChild(i) instanceof NodePatternContext
@@ -1295,12 +1286,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
             i++;
           } else {
-            // If the expected nodePattern isn’t found, break out of this inner loop.
             break;
           }
         }
       } else if (child instanceof ParenthesizedPathContext) {
-        // For parenthesizedPath, simply call its visitor.
         this.visitParenthesizedPath(child);
         i++;
       } else {
