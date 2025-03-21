@@ -35,21 +35,27 @@ tasks {
         }
     }
 
+    runIde {
+        dependsOn(prepareSandbox)
+
+        debugOptions {
+           enabled = false
+           port = 8000
+           server = true
+           suspend = true
+       }
+    }
+
     prepareSandbox {
         doFirst {
             exec {
-                commandLine("bash", "-c", "cd ../.. && npm run build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
+                commandLine("bash", "-c", "cd ../.. && npx turbo build && cp packages/language-server/dist/cypher-language-server.js ./packages/intellij-extension")
             }
         }
         from(".") {
             include("*.js")
-            into("cypher-lsp-support")
+            into("neo4j-for-intellij")
         }
-    }
-
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("242.*")
     }
 
     signPlugin {
