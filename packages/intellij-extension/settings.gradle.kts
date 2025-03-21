@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "cypher-lsp-support"
+rootProject.name = "neo4j-for-intellij"

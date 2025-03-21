@@ -1,0 +1,14 @@
+{
+  "name": "neo4j-for-intellij",
+  "version": "1.0.0",
+  "description": "Highlighting, completions and more for Neo4j Cypher in IntelliJ",
+  "publisher": "neo4j-extensions",
+  "author": "Neo4j Inc.",
+  "license": "Apache-2.0",
+  "preview": true,
+  "scripts": {
+    "build:intellij": "./gradlew buildPlugin",
+    "clean": "./gradlew clean",
+    "run:intellij": "./gradlew runIde"
+  }
+}

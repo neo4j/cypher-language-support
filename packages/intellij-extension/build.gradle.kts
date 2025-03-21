@@ -47,12 +47,12 @@ tasks {
     prepareSandbox {
         doFirst {
             exec {
-                commandLine("bash", "-c", "cd ../.. && npm run build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
+                commandLine("bash", "-c", "cd ../.. && npx turbo build && cp packages/language-server/dist/cypher-language-server.js ./packages/intellij-extension")
             }
         }
         from(".") {
             include("*.js")
-            into("cypher-lsp-support")
+            into("neo4j-for-intellij")
         }
     }
 

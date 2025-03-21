@@ -1,10 +1,10 @@
 <idea-plugin>
-    <id>org.neo4j.intellij.lsp.cypher-lsp-support</id>
+    <id>org.neo4j.intellij.lsp.neo4j-for-intellij</id>
 
     <!-- see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
     <idea-version since-build="242.22855.74"/>
 
-    <name>Cypher Lsp Support</name>
+    <name>Neo4j for IntelliJ</name>
 
     <vendor url="https://www.neo4j.com">Neo4j Inc.</vendor>
 

@@ -6,6 +6,10 @@
       "dependsOn": ["^build"],
       "outputMode": "new-only"
     },
+    "build:intellij": {
+      "dependsOn": [],
+      "outputs": ["editor-plugin/intellij/build/**"]
+    },
     "@neo4j-cypher/language-support#build": {
       "outputs": ["src/generated-parser/**", "dist/**"],
       "dependsOn": ["antlr4-c3#build"]
@@ -29,6 +33,11 @@
       "cache": false,
       "persistent": false,
       "dependsOn": ["build"]
+    },
+    "run:intellij": {
+      "cache": false,
+      "persistent": false,
+      "dependsOn": []
     },
     "@neo4j-cypher/react-codemirror-playground#dev": {
       "outputs": [],
