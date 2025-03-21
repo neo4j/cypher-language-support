@@ -28,6 +28,7 @@ interface Choice {
 interface Group {
   align: number;
   breakCost: number;
+  shouldBreak: boolean;
 }
 
 interface Decision {
@@ -223,10 +224,11 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       : thisWordEnd - splitLength;
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
-  for (let i = 0; i < choice.left.groupsStarting; i++) {
+  for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     nextGroups.push({
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
+      shouldBreak: actualColumn + choice.left.groupsStarting[i].size > 80,
     });
   }
   for (let i = 0; i < choice.left.groupsEnding; i++) {
@@ -333,6 +335,14 @@ function bestFirstSolnSearch(
     const choice = choiceList[state.choiceIndex];
     for (const split of choice.possibleSplitChoices) {
       const neighbourState = getNeighbourState(state, choice, split);
+      if (
+        neighbourState.activeGroups.length > 0 &&
+        neighbourState.activeGroups.at(-1).shouldBreak &&
+        choice.possibleSplitChoices.length > 1 &&
+        split.splitType === ' '
+      ) {
+        continue;
+      }
       heap.push(neighbourState);
     }
   }
@@ -341,7 +351,7 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupStart(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsStarting; i++) {
+  for (let i = 0; i < decision.left.groupsStarting.length; i++) {
     buffer.push('[');
   }
 }

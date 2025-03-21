@@ -339,7 +339,7 @@ RETURN row`.trimStart();
 MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
 WHERE s.deactivated = "k1fU0uk0" AND
       NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
-WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated}) AS
+WITH p, COLLECT({platfsdadasdId: s.platfId, nasadadsasdme: s.name, numasdasdasdasdMsgs: s.deactivated}) AS
         platfs, COUNT(s) AS numplatf
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;

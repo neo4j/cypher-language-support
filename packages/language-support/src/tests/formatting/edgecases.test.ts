@@ -889,4 +889,7 @@ RETURN u.name, status;`.trimStart();
     const expected = `RETURN "<missing>"`;
     verifyFormatting(query, expected);
   });
+  test('test', () => {
+    // console.log(formatQuery("return ['asdsdsdsdsdsdsdsdsd', 'asdsadsadsadsad' , 'asdsadsadsadsad', 'asdsadsadsadsad', 'asdsadsadsadsad']"));
+  });
 });
