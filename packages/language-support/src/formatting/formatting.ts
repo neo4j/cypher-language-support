@@ -63,6 +63,7 @@ import {
   ParenthesizedPathContext,
   PathLengthContext,
   PatternContext,
+  PatternElementContext,
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
@@ -1237,6 +1238,69 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.anonymousPattern());
     this.endGroup(anonymousPatternGrp);
     this.endGroup(selectorAnonymousPatternGrp);
+  };
+
+  visitPatternElement = (ctx: PatternElementContext) => {
+    const n = ctx.getChildCount();
+    let i = 0;
+
+    while (i < n) {
+      const child = ctx.getChild(i);
+
+      if (
+        child instanceof NodePatternContext &&
+        i + 1 < n &&
+        ctx.getChild(i + 1) instanceof RelationshipPatternContext
+      ) {
+        i = this._processNodeRelSequence(ctx, i, n);
+      } else if (child instanceof ParenthesizedPathContext) {
+        this.visitParenthesizedPath(child);
+        i++;
+      } else {
+        this._visit(child as ParserRuleContext);
+        i++;
+      }
+    }
+  };
+
+  // Very convoluted logic related to visitPatternElement, used becase we want to be able
+  // to put groups around node patterns and relationships like this: START (node)-[rel](qpp?) END
+  // and the grammar is very unhelpful...
+  _processNodeRelSequence = (
+    ctx: PatternElementContext,
+    startIndex: number,
+    n: number,
+  ): number => {
+    let i = startIndex;
+    let nodeRelPatternGrp = this.startGroup();
+
+    this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
+    i++;
+    while (i < n && ctx.getChild(i) instanceof RelationshipPatternContext) {
+      this.visitRelationshipPattern(
+        ctx.getChild(i) as RelationshipPatternContext,
+      );
+      i++;
+
+      if (i < n && ctx.getChild(i) instanceof QuantifierContext) {
+        this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
+        i++;
+      }
+      this.endGroup(nodeRelPatternGrp);
+      if (i < n && ctx.getChild(i) instanceof NodePatternContext) {
+        if (
+          i + 1 < n &&
+          ctx.getChild(i + 1) instanceof RelationshipPatternContext
+        ) {
+          nodeRelPatternGrp = this.startGroup();
+        }
+        this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
+        i++;
+      } else {
+        break;
+      }
+    }
+    return i;
   };
 
   visitPatternList = (ctx: PatternListContext) => {
