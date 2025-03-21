@@ -79,7 +79,7 @@ syntaxerror
 
   test('incorrect node label syntax', () => {
     const query = `match(n.Person{name:'Alice'}) return n`;
-    const expected = `MATCH (n . Person { name:'Alice' })
+    const expected = `MATCH(n.Person{name:'Alice'})
 RETURN n`;
     verifyFormatting(query, expected);
   });

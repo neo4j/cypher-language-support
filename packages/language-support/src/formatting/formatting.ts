@@ -1304,16 +1304,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visitParenthesizedPath(child);
         i++;
       } else {
-        // For any other child (e.g. standalone nodePattern, terminal tokens, etc.), handle them explicitly.
-        if (child instanceof NodePatternContext) {
-          this.visitNodePattern(child);
-        } else if (child instanceof RelationshipPatternContext) {
-          this.visitRelationshipPattern(child);
-        } else if (child instanceof QuantifierContext) {
-          this.visitQuantifier(child);
-        } else if (child instanceof TerminalNode) {
-          this.visitTerminal(child);
-        }
+        this._visit(child as ParserRuleContext);
         i++;
       }
     }
