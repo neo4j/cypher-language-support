@@ -25,7 +25,7 @@ interface Choice {
   possibleSplitChoices: Split[];
 }
 
-export interface Group {
+interface Group {
   align: number;
   breakCost: number;
 }

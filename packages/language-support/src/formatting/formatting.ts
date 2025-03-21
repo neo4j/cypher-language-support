@@ -123,7 +123,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   cursorPos = 0;
   groupID = 0;
   groupStack: number[] = [];
-  startGroupCounter: number = 0;
+  startGroupCounter = 0;
   groupsToEndOnBreak: number[] = [];
   previousTokenIndex: number = -1;
   unParseable: string = '';
