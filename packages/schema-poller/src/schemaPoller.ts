@@ -140,7 +140,10 @@ export class Neo4jSchemaPoller {
     this.connection?.dispose();
     this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
-    this.metadata = undefined;
+    if (this.metadata) {
+      const parameters = this.metadata.dbSchema.parameters;
+      this.metadata.dbSchema = { parameters: parameters };
+    }
     this.driver = undefined;
     clearTimeout(this.reconnectionTimeout);
   }

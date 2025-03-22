@@ -352,7 +352,9 @@ const parameterCompletions = (
         // We need to have the insert text without the starting $ in VSCode,
         // otherwise when we have 'RETURN $' and we get offered $param
         // we would complete RETURN $$param, which is not what we want
-        maybeInsertText = suffix ? { insertText: paramName } : {};
+        maybeInsertText = suffix
+          ? { insertText: param.slice(1) }
+          : maybeInsertText;
       }
 
       return {
