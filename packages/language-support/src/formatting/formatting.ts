@@ -190,7 +190,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   getLength = () => {
     let size = 0;
     for (let i = 0; i < this.getFirstNonCommentIdx(); i++) {
-      size += this.currentBuffer()[0].text.length;
+      size += this.currentBuffer()[i].text.length;
     }
     return size;
   };
@@ -1707,6 +1707,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMapProjection = (ctx: MapProjectionContext) => {
     this._visit(ctx.variable());
+    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
