@@ -190,7 +190,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   getLength = () => {
     let size = 0;
     for (let i = 0; i < this.getFirstNonCommentIdx(); i++) {
-      size += this.currentBuffer()[i].text.length;
+      const chunk = this.currentBuffer()[i];
+      if (chunk.type === 'COMMENT') {
+        return 0;
+      }
+      size += chunk.text.length;
     }
     return size;
   };
