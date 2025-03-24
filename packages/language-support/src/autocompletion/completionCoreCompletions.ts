@@ -348,13 +348,11 @@ const parameterCompletions = (
       // If there is a preceding token and it's not empty, compute the suffix
       if (previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
-        const suffix = isSuffix(previousToken.text, param);
-        // We need to have the insert text without the starting $ in VSCode,
-        // otherwise when we have 'RETURN $' and we get offered $param
-        // we would complete RETURN $$param, which is not what we want
-        maybeInsertText = suffix
-          ? { insertText: param.slice(1) }
-          : maybeInsertText;
+        // If the $ symbol is already there, we need to have the insert
+        // text without the starting $ in VSCode, otherwise when we have
+        // 'RETURN $' and we get offered $param we would complete
+        // RETURN $$param, which is not what we want
+        maybeInsertText = { insertText: param.slice(1) };
       }
 
       return {
@@ -364,9 +362,6 @@ const parameterCompletions = (
       };
     });
 
-function isSuffix(prefix: string, param: string): boolean {
-  return param.startsWith(prefix) || param.startsWith(`$${prefix}`);
-}
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const backtickedName = backtickIfNeeded(propertyKey);

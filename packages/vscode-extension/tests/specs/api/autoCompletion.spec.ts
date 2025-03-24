@@ -213,4 +213,118 @@ suite('Auto completion spec', () => {
       }),
     );
   });
+
+  test('Parameters are available in completions', async () => {
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'a',
+      '"charmander"',
+    );
+
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'b',
+      '"pikachu"',
+    );
+    const textDocument = await newUntitledFileWithContent(`RETURN `);
+    const position = new vscode.Position(1, 5);
+    const expecations: vscode.CompletionItem[] = [
+      {
+        label: '$a',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+      {
+        label: '$b',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: position,
+      expected: expecations,
+    });
+  });
+
+  test('Parameters are available in completions even when disconnected from neo4j', async () => {
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'a',
+      '"charmander"',
+    );
+
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'b',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
+    const textDocument = await newUntitledFileWithContent(`RETURN `);
+    const position = new vscode.Position(1, 5);
+    const expecations: vscode.CompletionItem[] = [
+      {
+        label: '$a',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+      {
+        label: '$b',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: position,
+      expected: expecations,
+    });
+
+    await vscode.commands.executeCommand('neo4j.internal.forceConnect', 0);
+  });
+
+  test('Parameters are backticked correctly', async () => {
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'some-param',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand(
+      'neo4j.internal.evalParam',
+      'someParam',
+      '"charmander"',
+    );
+
+    const firstDoc = await newUntitledFileWithContent(`RETURN $`);
+    await testCompletionContains({
+      textFile: firstDoc.uri,
+      position: new vscode.Position(1, 6),
+      expected: [
+        {
+          label: '$some-param',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: '`some-param`',
+        },
+        {
+          label: '$someParam',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: 'someParam',
+        },
+      ],
+    });
+
+    const secondDoc = await newUntitledFileWithContent(`RETURN $some`);
+    await testCompletionContains({
+      textFile: secondDoc.uri,
+      position: new vscode.Position(1, 6),
+      expected: [
+        {
+          label: '$some-param',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: '`some-param`',
+        },
+        {
+          label: '$someParam',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: 'someParam',
+        },
+      ],
+    });
+  });
 });
