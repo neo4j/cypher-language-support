@@ -874,8 +874,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
+    let distinctGroup: number;
+    if (ctx.DISTINCT()) {
+      distinctGroup = this.startGroup();
+    }
     this._visit(ctx.DISTINCT());
-    this.avoidBreakBetween();
     const returnBodyGrp = this.startGroup();
     if (ctx.orderBy() || ctx.skip()) {
       const returnItemsGrp = this.startGroup();
@@ -890,6 +893,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.returnItems());
     }
     this.endGroup(returnBodyGrp);
+    if (distinctGroup) {
+      this.endGroup(distinctGroup);
+    }
     this._visit(ctx.limit());
   };
 
