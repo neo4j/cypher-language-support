@@ -33,9 +33,7 @@ import {
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
-  Expression5Context,
   Expression6Context,
-  Expression7Context,
   Expression8Context,
   ExpressionContext,
   ExtendedCaseAlternativeContext,
@@ -1397,48 +1395,35 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  visitExpression8 = (ctx: Expression8Context) => {
+  visitBinaryExpression = (ctx: ParserRuleContext) => {
     const n = ctx.getChildCount();
     if (n === 1) {
-      this._visit(ctx.expression7(0));
+      this.visitChildren(ctx);
       return;
     }
-    let expr8grp: number;
+
+    let groupId: number;
     for (let i = 0; i < n; i++) {
       const child = ctx.getChild(i);
-      if (child instanceof Expression7Context) {
-        if (i < n - 1) {
-          expr8grp = this.startGroup();
-        }
-        this._visit(child);
-      } else if (child instanceof TerminalNode) {
+      if (child instanceof TerminalNode) {
         this.avoidBreakBetween();
         this.visitTerminal(child);
-        this.endGroup(expr8grp);
+        this.endGroup(groupId);
+      } else if (child instanceof ParserRuleContext) {
+        if (i < n - 1) {
+          groupId = this.startGroup();
+        }
+        this._visit(child);
       }
     }
   };
 
+  visitExpression8 = (ctx: Expression8Context) => {
+    this.visitBinaryExpression(ctx);
+  };
+
   visitExpression6 = (ctx: Expression6Context) => {
-    const n = ctx.getChildCount();
-    if (n === 1) {
-      this._visit(ctx.expression5(0));
-      return;
-    }
-    let expr8grp: number;
-    for (let i = 0; i < n; i++) {
-      const child = ctx.getChild(i);
-      if (child instanceof Expression5Context) {
-        if (i < n - 1) {
-          expr8grp = this.startGroup();
-        }
-        this._visit(child);
-      } else if (child instanceof TerminalNode) {
-        this.avoidBreakBetween();
-        this.visitTerminal(child);
-        this.endGroup(expr8grp);
-      }
-    }
+    this.visitBinaryExpression(ctx);
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
