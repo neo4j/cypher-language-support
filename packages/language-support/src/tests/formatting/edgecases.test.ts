@@ -910,8 +910,10 @@ RETURN
         } AND likeCount <= 10
         THEN 'Less active user without a smartphone, interests: ' +
              toString(interestList)
-        ELSE 'User with moderate activity, ' + toString(likeCount) +
-             ' likes and interests: ' + toString(interestList)
+        ELSE 'User with moderate activity, ' +
+             toString(likeCount) +
+             ' likes and interests: ' +
+             toString(interestList)
       END
   END AS userProfile;`;
     verifyFormatting(query, expected);
