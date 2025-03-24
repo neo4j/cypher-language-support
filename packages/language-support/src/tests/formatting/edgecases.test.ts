@@ -556,7 +556,8 @@ WITH userAccountInfo,
               'verification process required for accessing premium features. ' +
               'Please review your verification email and follow the provided instructions to secure your account.',
               [userAccountInfo.accountUniqueIdentifier,
-               userAccountInfo.emailAddress]) AS verificationStatus
+               userAccountInfo.emailAddress])
+     AS verificationStatus
 RETURN userAccountInfo;`;
     const expected = query;
     verifyFormatting(query, expected);
