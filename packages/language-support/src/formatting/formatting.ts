@@ -1369,22 +1369,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.RPAREN());
   };
 
-  visitExpression = (ctx: ExpressionContext) => {
-    const n = ctx.expression11_list().length;
-    if (n === 1) {
-      this._visit(ctx.expression11(0));
-      return;
-    }
-    for (let i = 0; i < n; i++) {
-      const orExprGrp = this.startGroup();
-      this._visit(ctx.expression11(i));
-      if (i < n - 1) {
-        this._visit(ctx.OR(i));
-      }
-      this.endGroup(orExprGrp);
-    }
-  };
-
   visitBinaryExpression = (ctx: ParserRuleContext) => {
     const n = ctx.getChildCount();
     if (n === 1) {
@@ -1408,6 +1392,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.endGroup(wrappingGroup);
+  };
+
+  visitExpression = (ctx: ExpressionContext) => {
+    this.visitBinaryExpression(ctx);
   };
 
   visitExpression10 = (ctx: Expression10Context) => {
