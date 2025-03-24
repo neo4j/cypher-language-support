@@ -1758,7 +1758,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMapProjection = (ctx: MapProjectionContext) => {
     this._visit(ctx.variable());
-    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
