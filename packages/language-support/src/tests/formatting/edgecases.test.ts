@@ -873,7 +873,8 @@ RETURN 5 +
   });
   test('else statements for CASE needs to align its expression', () => {
     const query = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
+WITH u,
+     count((u)-[:LIKES]->()) AS likeCount,
      collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
@@ -899,7 +900,8 @@ RETURN
       END
   END AS userProfile;`;
     const expected = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
+WITH u,
+     count((u)-[:LIKES]->()) AS likeCount,
      collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
