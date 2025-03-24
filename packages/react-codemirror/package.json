@@ -68,7 +68,7 @@
     "@types/react": "^18.0.28",
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^8.2.1",
-    "esbuild": "^0.19.4",
+    "esbuild": "^0.25.1",
     "jsdom": "^24.1.1",
     "lodash": "^4.17.21",
     "playwright": "^1.45.3",
