@@ -2,6 +2,7 @@ import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CompletionItemTag } from 'vscode-languageclient';
+import { CONSTANTS } from '../../../src/constants';
 import {
   documentationToString,
   eventually,
@@ -216,13 +217,13 @@ suite('Auto completion spec', () => {
 
   test('Parameters are available in completions', async () => {
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'a',
       '"charmander"',
     );
 
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'b',
       '"pikachu"',
     );
@@ -247,17 +248,19 @@ suite('Auto completion spec', () => {
 
   test('Parameters are available in completions even when disconnected from neo4j', async () => {
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'a',
       '"charmander"',
     );
 
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'b',
       '"pikachu"',
     );
-    await vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
+    );
     const textDocument = await newUntitledFileWithContent(`RETURN `);
     const position = new vscode.Position(1, 5);
     const expecations: vscode.CompletionItem[] = [
@@ -276,17 +279,20 @@ suite('Auto completion spec', () => {
       expected: expecations,
     });
 
-    await vscode.commands.executeCommand('neo4j.internal.forceConnect', 0);
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
+      0,
+    );
   });
 
   test('Parameters are backticked correctly', async () => {
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'some-param',
       '"pikachu"',
     );
     await vscode.commands.executeCommand(
-      'neo4j.internal.evalParam',
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       'someParam',
       '"charmander"',
     );
