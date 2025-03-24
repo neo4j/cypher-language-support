@@ -339,7 +339,8 @@ function bestFirstSolnSearch(
         neighbourState.activeGroups.length > 0 &&
         neighbourState.activeGroups.at(-1).shouldBreak &&
         choice.possibleSplitChoices.length > 1 &&
-        split.splitType === ' '
+        split.splitType === ' ' &&
+        choice.right.type !== 'COMMENT'
       ) {
         continue;
       }

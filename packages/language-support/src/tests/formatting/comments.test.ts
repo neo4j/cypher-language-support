@@ -367,7 +367,8 @@ CREATE (a:Person {name: 'AlexanderTheGreat'})-->
 RETURN pth ORDER BY length(pth) DESC
 LIMIT 10000;`;
     const expected = `
-MATCH pth = (u:User)-[:USER_EVENT]->(e:GeneratedQuery) (()--(:GeneratedQuery))* // Optionally successive
+MATCH pth = (u:User)-[:USER_EVENT]->(e:GeneratedQuery)
+            (()--(:GeneratedQuery))* // Optionally successive
             (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
             (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
             (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
