@@ -272,8 +272,10 @@ CREATE (:actor {name: "jEmtGrSI"}),
        (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`;
     const expected = `
-CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
-       (:actor {name: "ZAvjBFt6"}), (:actor {name: "7hbDfMOa"}),
+CREATE (:actor {name: "jEmtGrSI"}),
+       (:actor {name: "HqFUar0i"}),
+       (:actor {name: "ZAvjBFt6"}),
+       (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -293,6 +295,24 @@ WHERE p.price > 1000 AND p.stock > 50 AND
        'Automotive Parts', 'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
        'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
+    const expected = `MATCH (p:Product)
+WHERE p.price > 1000 AND
+      p.stock > 50 AND
+      p.category
+      IN
+      ['Electronics',
+       'Home Appliances',
+       'Garden Tools',
+       'Sports Equipment',
+       'Automotive Parts',
+       'Fashion Accessories',
+       'Books',
+       'Toys',
+       'Jewelry',
+       'Musical Instruments',
+       'Art Supplies',
+       'Office Supplies']
+RETURN p`;
     verifyFormatting(query, expected);
   });
 
@@ -305,8 +325,10 @@ RETURN p`;
     (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
     (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
     (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
-    const expected = `CREATE (a:Location {name: "DXe5KhL3"}), (b:Location {name: "v2BpdkOj"}),
-       (c:Location {name: "Fi5CMJ9Y"}), (d:Location {name: "S31K3X1o"}),
+    const expected = `CREATE (a:Location {name: "DXe5KhL3"}),
+       (b:Location {name: "v2BpdkOj"}),
+       (c:Location {name: "Fi5CMJ9Y"}),
+       (d:Location {name: "S31K3X1o"}),
        (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
        (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
        (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
@@ -339,16 +361,19 @@ RETURN row`.trimStart();
 MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
 WHERE s.deactivated = "k1fU0uk0" AND
       NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
-WITH p, COLLECT({platfsdadasdId: s.platfId, nasadadsasdme: s.name, numasdasdasdasdMsgs: s.deactivated}) AS
+WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated}) AS
         platfs, COUNT(s) AS numplatf
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     const expected = `EXPLAIN
 MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
 WHERE s.deactivated = "k1fU0uk0" AND
-      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
-WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
-        AS platfs, COUNT(s) AS numplatf
+      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND
+      p.networkDbId IS NOT NULL
+WITH p,
+     COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
+     AS platfs,
+     COUNT(s) AS numplatf
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     verifyFormatting(query, expected);

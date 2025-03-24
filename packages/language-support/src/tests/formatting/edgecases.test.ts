@@ -226,8 +226,10 @@ END} AS endNode;`;
   CASE
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+    WHEN SUM(product.price) >= 500 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000
          THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
@@ -245,8 +247,10 @@ END} AS endNode;`;
   CASE p.age
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+    WHEN SUM(product.price) >= 500 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000
          THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
@@ -271,9 +275,26 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     ELSE ""
   END, fk:
   CASE
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true THEN "(FK)"
+    WHEN true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true
+         THEN "(FK)"
     ELSE ""
   END}) AS columns`;
     verifyFormatting(query, expected);
@@ -768,17 +789,30 @@ RETURN 5 +
       CASE
         WHEN EXISTS {
           MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris'
+          WHERE person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris'
           WITH dog
           WHERE dog.name = 'Ozzy'
         } THEN 'Relationship'
         WHEN (n {prop: 42}) THEN
           CASE
-            WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() THEN 'Relationship'
+            WHEN (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--()
+                 THEN 'Relationship'
             WHEN (n {prop: 42}) THEN
               CASE
                 WHEN EXISTS {
@@ -888,8 +922,5 @@ RETURN u.name, status;`.trimStart();
     const query = `return "<missing>"`;
     const expected = `RETURN "<missing>"`;
     verifyFormatting(query, expected);
-  });
-  test('test', () => {
-    // console.log(formatQuery("return ['asdsdsdsdsdsdsdsdsd', 'asdsadsadsadsad' , 'asdsadsadsadsad', 'asdsadsadsadsad', 'asdsadsadsadsad']"));
   });
 });
