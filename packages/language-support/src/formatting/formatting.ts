@@ -189,12 +189,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  getLength = () => {
+  getLength = (id: number) => {
     let size = 0;
-    for (let i = 0; i < this.getFirstNonCommentIdx(); i++) {
+    for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
       const chunk = this.currentBuffer()[i];
       if (chunk.type === 'REGULAR') {
         size += chunk.text.length;
+        if (!chunk.noSpace) {
+          size += 1;
+        }
+      }
+      if (chunk.groupsStarting.some((group) => group.id === id)) {
+        break;
       }
     }
     return size;
@@ -317,7 +323,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const idx = this.getFirstNonCommentIdx();
     this.currentBuffer().at(idx).groupsEnding += 1;
     const group = this.groupStack.pop();
-    group.size = this.getLength() - group.size;
+    group.size = this.getLength(group.id) - group.size;
   };
 
   removeAllGroups = () => {
@@ -335,7 +341,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroup = (): number => {
     const group: Group = {
       id: this.groupID,
-      size: this.getLength(),
+      size: 0,
     };
     this.startGroupCounter.push(group);
     this.groupStack.push(group);
@@ -348,7 +354,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const idx = this.getFirstNonCommentIdx();
       const group: Group = {
         id: this.groupID,
-        size: this.getLength(),
+        size: 0,
       };
       this.currentBuffer()
         .at(idx + 1)
@@ -1500,7 +1506,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(caseThenGroup);
     this.endGroup(caseAlternativeGrp);
   };
-
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
     this.addSpecialIndentation();
