@@ -181,7 +181,6 @@ MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
        {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
-
   test('aligns nested parentheses well', () => {
     const query = `MATCH (n)
   WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND (this1:WaFQynNy OR this1:hyztnnwg OR this1:QpLckJcy))`;
@@ -1006,12 +1005,14 @@ WHERE (
           b.AbCdEfGhIjKlMn IN ["aBcDeFgH", "IjKlMnOp"])
 
       // QazwsxedcrfvtgbyhnujmikolpASDFGHJKLQWERTYUIOPZXCVBNM1234567abcdefghij
-      OR (b.OpQrStUvW <= e1.OpQrStUvW AND e1.OpQrStUvW >= "QrStUvWx" AND
+      OR (b.OpQrStUvW <= e1.OpQrStUvW AND
+          e1.OpQrStUvW >= "QrStUvWx" AND
           b.AbCdEfGhIjKlMn IN ["YzXwVuTs", "LmNoPqRs"])
       // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
 
       // 0123456789abcdefghijKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW
-      OR (b.OpQrStUvW = e1.OpQrStUvW AND e1.OpQrStUvW >= "StUvWxYz" AND
+      OR (b.OpQrStUvW = e1.OpQrStUvW AND
+          e1.OpQrStUvW >= "StUvWxYz" AND
           b.AbCdEfGhIjKlMn > "QwErTyUi"))
 // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
 RETURN a, b, d, e1, zYxWvUtSrqP`;
