@@ -869,15 +869,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitReturnBody = (ctx: ReturnBodyContext) => {
     this._visit(ctx.DISTINCT());
     this.avoidBreakBetween();
-    const returnItemsGrp = this.startGroup();
-    this._visit(ctx.returnItems());
+    const returnBodyGrp = this.startGroup();
     if (ctx.orderBy() || ctx.skip()) {
+      const returnItemsGrp = this.startGroup();
+      this._visit(ctx.returnItems());
+      this.endGroup(returnItemsGrp);
       const orderSkipGrp = this.startGroup();
       this._visit(ctx.orderBy());
       this._visit(ctx.skip());
       this.endGroup(orderSkipGrp);
+    } else {
+      this._visit(ctx.returnItems());
     }
-    this.endGroup(returnItemsGrp);
+    this.endGroup(returnBodyGrp);
     this._visit(ctx.limit());
   };
 
