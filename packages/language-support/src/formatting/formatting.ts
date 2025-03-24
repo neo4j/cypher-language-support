@@ -1385,28 +1385,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  visitExpression10 = (ctx: Expression10Context) => {
-    const n = ctx.expression9_list().length;
-    if (n === 1) {
-      this._visit(ctx.expression9(0));
-      return;
-    }
-    for (let i = 0; i < n; i++) {
-      const andExprGrp = this.startGroup();
-      this._visit(ctx.expression9(i));
-      if (i < n - 1) {
-        this._visit(ctx.AND(i));
-      }
-      this.endGroup(andExprGrp);
-    }
-  };
-
   visitBinaryExpression = (ctx: ParserRuleContext) => {
     const n = ctx.getChildCount();
     if (n === 1) {
       this.visitChildren(ctx);
       return;
     }
+    const wrappingGroup = this.startGroup();
 
     let groupId: number;
     for (let i = 0; i < n; i++) {
@@ -1422,6 +1407,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(child);
       }
     }
+    this.endGroup(wrappingGroup);
+  };
+
+  visitExpression10 = (ctx: Expression10Context) => {
+    this.visitBinaryExpression(ctx);
   };
 
   visitExpression8 = (ctx: Expression8Context) => {
