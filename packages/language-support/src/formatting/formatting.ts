@@ -33,6 +33,10 @@ import {
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
+  Expression5Context,
+  Expression6Context,
+  Expression7Context,
+  Expression8Context,
   ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
@@ -1390,6 +1394,50 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(ctx.AND(i));
       }
       this.endGroup(andExprGrp);
+    }
+  };
+
+  visitExpression8 = (ctx: Expression8Context) => {
+    const n = ctx.getChildCount();
+    if (n === 1) {
+      this._visit(ctx.expression7(0));
+      return;
+    }
+    let expr8grp: number;
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof Expression7Context) {
+        if (i < n - 1) {
+          expr8grp = this.startGroup();
+        }
+        this._visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.avoidBreakBetween();
+        this.visitTerminal(child);
+        this.endGroup(expr8grp);
+      }
+    }
+  };
+
+  visitExpression6 = (ctx: Expression6Context) => {
+    const n = ctx.getChildCount();
+    if (n === 1) {
+      this._visit(ctx.expression5(0));
+      return;
+    }
+    let expr8grp: number;
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      if (child instanceof Expression5Context) {
+        if (i < n - 1) {
+          expr8grp = this.startGroup();
+        }
+        this._visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.avoidBreakBetween();
+        this.visitTerminal(child);
+        this.endGroup(expr8grp);
+      }
     }
   };
 

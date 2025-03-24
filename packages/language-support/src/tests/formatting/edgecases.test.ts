@@ -568,7 +568,21 @@ WITH inventoryRecord,
               [inventoryRecord.productSKU, inventoryRecord.currentStock])
      AS stockValidation
 RETURN inventoryRecord;`;
-    const expected = query;
+    const expected = `MATCH (inventoryRecord:ProductInventoryTrackingInformation)
+WITH inventoryRecord,
+     apoc.util.
+     validate(inventoryRecord.currentStock <
+              inventoryRecord.criticalThresholdStock,
+              'Alert: The inventory record for product SKU ' +
+              inventoryRecord.productSKU +
+              ' indicates a current stock level of ' +
+              toString(inventoryRecord.currentStock) +
+              ', which is below the critical threshold of ' +
+              toString(inventoryRecord.criticalThresholdStock) +
+              '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
+              [inventoryRecord.productSKU, inventoryRecord.currentStock])
+     AS stockValidation
+RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
 
