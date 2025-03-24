@@ -454,9 +454,24 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
-                  (:Station {name: 'Cheltenham Spa'}) WHERE
-                  none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+MATCH SHORTEST 1
+      ((:Station {name: 'Hartlebury'})
+       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+       WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('complex selector example with long bromsgrove', () => {
+    const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                 (:Station {name: 'Cheltenham Spa'}) WHERE none(
+                 stop IN n[.. -1] WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1
+      ((:Station {name: 'Hartlebury'})
+       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+       WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -469,8 +484,8 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
 MATCH p = SHORTEST 1
           ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
-           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
-           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+           WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
