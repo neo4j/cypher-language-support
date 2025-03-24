@@ -415,7 +415,7 @@ RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
 
-  test('should not break after DISTINCT that follows RETURN', () => {
+  test('should break after DISTINCT that follows RETURN', () => {
     const query = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
 RETURN DISTINCT
@@ -425,11 +425,36 @@ ijk.zxcvbnml, lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
 ORDER BY lm.lkjhgfdswert ASC`;
     const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
-RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
-                fgh.qwertyuiopa, fgh.zxcvbnmasdfgh, fgh.zxcvbnml,
-                ijk.qwertyuiopa, ijk.zxcvbnmasdfgh, ijk.zxcvbnml,
-                lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
-                ORDER BY lm.lkjhgfdswert ASC`;
+RETURN DISTINCT
+       abcde.qwertyuiopa,
+       abcde.zxcvbnmasdfgh,
+       abcde.zxcvbnml,
+       fgh.qwertyuiopa,
+       fgh.zxcvbnmasdfgh,
+       fgh.zxcvbnml,
+       ijk.qwertyuiopa,
+       ijk.zxcvbnmasdfgh,
+       ijk.zxcvbnml,
+       lm.qwertyuiopa,
+       lm.zxcvbnmasdfgh,
+       lm.zxcvbnml,
+       lm.lkjhgfdswert
+       ORDER BY lm.lkjhgfdswert ASC`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should break after distinct but not the alphabet', () => {
+    const query = `return distinct
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
+    const expected = `RETURN DISTINCT
+       a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not  break after distinct', () => {
+    const query = `return distinct
+  a, b, c, d, e, f`;
+    const expected = `RETURN DISTINCT a, b, c, d, e, f`;
     verifyFormatting(query, expected);
   });
 
