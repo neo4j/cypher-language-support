@@ -9,7 +9,7 @@ export function run(): Promise<void> {
     ui: 'tdd',
     color: true,
   });
-  mocha.timeout(30000000);
+  mocha.timeout(30000);
 
   const testsRoot = __dirname;
 

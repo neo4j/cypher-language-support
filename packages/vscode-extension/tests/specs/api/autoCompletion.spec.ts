@@ -228,7 +228,7 @@ suite('Auto completion spec', () => {
       '"pikachu"',
     );
     const textDocument = await newUntitledFileWithContent(`RETURN `);
-    const position = new vscode.Position(1, 5);
+    const position = new vscode.Position(0, 7);
     const expecations: vscode.CompletionItem[] = [
       {
         label: '$a',
@@ -262,7 +262,7 @@ suite('Auto completion spec', () => {
       CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
     );
     const textDocument = await newUntitledFileWithContent(`RETURN `);
-    const position = new vscode.Position(1, 5);
+    const position = new vscode.Position(0, 7);
     const expecations: vscode.CompletionItem[] = [
       {
         label: '$a',
@@ -300,7 +300,7 @@ suite('Auto completion spec', () => {
     const firstDoc = await newUntitledFileWithContent(`RETURN $`);
     await testCompletionContains({
       textFile: firstDoc.uri,
-      position: new vscode.Position(1, 6),
+      position: new vscode.Position(0, 8),
       expected: [
         {
           label: '$some-param',
@@ -318,7 +318,7 @@ suite('Auto completion spec', () => {
     const secondDoc = await newUntitledFileWithContent(`RETURN $some`);
     await testCompletionContains({
       textFile: secondDoc.uri,
-      position: new vscode.Position(1, 6),
+      position: new vscode.Position(0, 12),
       expected: [
         {
           label: '$some-param',
