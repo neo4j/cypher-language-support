@@ -270,8 +270,16 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true THEN "(PK)"
+    WHEN true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true
+         THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
@@ -527,10 +535,12 @@ RETURN u;`;
 WITH u,
      apoc.util.
      validate(u.status <> 'active',
-              'User ' + u.username +
-              ' does not have an active status which is required for processing the requested operation. '
-              + 'Please check the user account settings for further details.',
-              [u.id, u.username]) AS validation
+              'User ' +
+              u.username +
+              ' does not have an active status which is required for processing the requested operation. ' +
+              'Please check the user account settings for further details.',
+              [u.id, u.username])
+     AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
