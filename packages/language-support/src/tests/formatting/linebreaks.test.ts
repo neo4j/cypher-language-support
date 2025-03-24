@@ -290,8 +290,7 @@ RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE p.price > 1000 AND
       p.stock > 50 AND
-      p.category
-      IN
+      p.category IN
       ['Electronics',
        'Home Appliances',
        'Garden Tools',
@@ -471,7 +470,10 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`;
 MATCH SHORTEST 1
       ((:Station {name: 'Hartlebury'})
        (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
-       WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+       WHERE
+       none(stop
+            IN n[.. -1]
+            WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
