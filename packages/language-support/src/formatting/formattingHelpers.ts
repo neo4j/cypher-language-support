@@ -40,7 +40,7 @@ export interface BaseChunk {
   doubleBreak?: true;
   text: string;
   groupsStarting: Group[];
-  groupsEnding: number;
+  groupsEnding: Group[];
   indentation: ChunkIndentation;
 }
 
@@ -76,7 +76,7 @@ export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
   groupsStarting: [],
-  groupsEnding: 0,
+  groupsEnding: [],
   indentation: { ...initialIndentation },
 };
 

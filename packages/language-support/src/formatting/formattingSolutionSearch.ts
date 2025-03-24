@@ -231,7 +231,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       shouldBreak: actualColumn + choice.left.groupsStarting[i].size > 80,
     });
   }
-  for (let i = 0; i < choice.left.groupsEnding; i++) {
+  for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     nextGroups.pop();
   }
 
@@ -358,7 +358,7 @@ function addGroupStart(buffer: string[], decision: Decision) {
 }
 
 function addGroupEnd(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsEnding; i++) {
+  for (let i = 0; i < decision.left.groupsEnding.length; i++) {
     buffer.push(']');
   }
 }

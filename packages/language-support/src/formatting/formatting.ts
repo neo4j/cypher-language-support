@@ -196,7 +196,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const chunk = this.currentBuffer()[i];
       if (chunk.type === 'REGULAR') {
         size += chunk.text.length;
-        if (!chunk.noSpace) {
+        if (!chunk.noSpace && i < this.currentBuffer().length - 1) {
           size += 1;
         }
       }
@@ -240,7 +240,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       text: prefix.text + suffix.text,
       doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
-      groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
+      groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: {
         base: prefix.indentation.base + suffix.indentation.base,
         special: prefix.indentation.special + suffix.indentation.special,
@@ -248,6 +248,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       },
       ...(hasCursor && { isCursor: true }),
     };
+    for (const group of chunk.groupsEnding) {
+      if (group.size === 0) {
+        throw new Error('Internal formatting Error: Group did not have size');
+      }
+      group.size += suffix.text.length;
+    }
     this.currentBuffer()[indices[1]] = chunk;
   };
 
@@ -322,9 +328,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).groupsEnding += 1;
     const group = this.groupStack.pop();
-    group.size = this.getLength(group.id) - group.size;
+    this.currentBuffer().at(idx).groupsEnding.push(group);
+    group.size = this.getLength(group.id);
   };
 
   removeAllGroups = () => {
@@ -486,7 +492,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         breakBefore: false,
         text,
         groupsStarting: this.startGroupCounter,
-        groupsEnding: 0,
+        groupsEnding: [],
         indentation: { ...initialIndentation },
       };
       this.startGroupCounter = [];
@@ -523,7 +529,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         breakBefore: nodeLine !== commentLine,
         text,
         groupsStarting: [],
-        groupsEnding: 0,
+        groupsEnding: [],
         indentation: { ...initialIndentation },
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
@@ -584,7 +590,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'SYNTAX_ERROR',
       text: combinedText,
       groupsStarting: [],
-      groupsEnding: 0,
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
 
@@ -1045,7 +1051,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       text,
       node,
       groupsStarting: this.startGroupCounter,
-      groupsEnding: 0,
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
     this.startGroupCounter = [];
@@ -1090,7 +1096,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       text,
       node,
       groupsStarting: this.startGroupCounter,
-      groupsEnding: 0,
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
     this.startGroupCounter = [];
