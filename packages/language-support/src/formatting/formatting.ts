@@ -879,6 +879,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.skip());
       this.endGroup(orderSkipGrp);
     } else {
+      // Only wrap returnItems in a group if necessary to avoid excessive groups
       this._visit(ctx.returnItems());
     }
     this.endGroup(returnBodyGrp);
