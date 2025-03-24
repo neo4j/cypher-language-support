@@ -34,6 +34,7 @@ import {
   Expression10Context,
   Expression2Context,
   Expression6Context,
+  Expression7Context,
   Expression8Context,
   ExpressionContext,
   ExtendedCaseAlternativeContext,
@@ -1380,7 +1381,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    const wrappingGroup = this.startGroup();
+    const wrappingGrp = this.startGroup();
 
     let groupId: number;
     for (let i = 0; i < n; i++) {
@@ -1396,7 +1397,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(child);
       }
     }
-    this.endGroup(wrappingGroup);
+    this.endGroup(wrappingGrp);
   };
 
   visitExpression = (ctx: ExpressionContext) => {
@@ -1411,8 +1412,28 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitBinaryExpression(ctx);
   };
 
+  visitExpression7 = (ctx: Expression7Context) => {
+    if (!ctx.comparisonExpression6()) {
+      this.visitChildren(ctx);
+      return;
+    }
+    const wrappingGrp = this.startGroup();
+    this._visit(ctx.expression6());
+    this.visit(ctx.comparisonExpression6());
+    this.endGroup(wrappingGrp);
+  };
+
   visitExpression6 = (ctx: Expression6Context) => {
     this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression2 = (ctx: Expression2Context) => {
+    this._visit(ctx.expression1());
+    const n = ctx.postFix_list().length;
+    for (let i = 0; i < n; i++) {
+      this.avoidSpaceBetween();
+      this._visit(ctx.postFix(i));
+    }
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
@@ -1806,15 +1827,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.breakLine();
     this._visit(ctx.RPAREN());
-  };
-
-  visitExpression2 = (ctx: Expression2Context) => {
-    this._visit(ctx.expression1());
-    const n = ctx.postFix_list().length;
-    for (let i = 0; i < n; i++) {
-      this.avoidSpaceBetween();
-      this._visit(ctx.postFix(i));
-    }
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
