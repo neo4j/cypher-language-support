@@ -333,6 +333,7 @@ function getTokenCompletions(
 const parameterCompletions = (
   dbInfo: DbSchema,
   previousToken: Token | undefined,
+  tokens: Token[],
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
@@ -348,11 +349,16 @@ const parameterCompletions = (
       // If there is a preceding token and it's not empty, compute the suffix
       if (previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
+        const hasDollar =
+          previousToken.type === CypherLexer.DOLLAR ||
+          tokens.at(previousToken.tokenIndex - 1).type === CypherLexer.DOLLAR;
         // If the $ symbol is already there, we need to have the insert
         // text without the starting $ in VSCode, otherwise when we have
         // 'RETURN $' and we get offered $param we would complete
         // RETURN $$param, which is not what we want
-        maybeInsertText = { insertText: param.slice(1) };
+        maybeInsertText = hasDollar
+          ? { insertText: param.slice(1) }
+          : maybeInsertText;
       }
 
       return {
@@ -611,6 +617,7 @@ export function completionCoreCompletion(
         return parameterCompletions(
           dbSchema,
           previousToken,
+          tokens,
           inferExpectedParameterTypeFromContext(candidateRule),
         );
       }
@@ -675,6 +682,7 @@ export function completionCoreCompletion(
         return completeAliasName({
           candidateRule,
           dbSchema,
+          tokens,
           parsingResult,
         });
       }
@@ -684,6 +692,7 @@ export function completionCoreCompletion(
           candidateRule,
           dbSchema,
           previousToken,
+          tokens,
           parsingResult,
         });
       }
@@ -777,6 +786,7 @@ type CompletionHelperArgs = {
   parsingResult: ParsedStatement;
   dbSchema: DbSchema;
   previousToken?: Token;
+  tokens: Token[];
   candidateRule: CandidateRule;
 };
 function completeAliasName({
@@ -864,12 +874,14 @@ function completeSymbolicName({
   candidateRule,
   dbSchema,
   previousToken,
+  tokens,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // parameters are valid values in all cases of symbolic name
   const parameterSuggestions = parameterCompletions(
     dbSchema,
     previousToken,
+    tokens,
     inferExpectedParameterTypeFromContext(candidateRule),
   );
 
