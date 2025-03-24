@@ -394,11 +394,13 @@ MATCH (a:Account)-
       [:OWNED_BY]->(p:Person)<-
       // The person who owns the account
       [:SHARED_WITH]-(anotherAccount:Account)-
-      // Another account that is shared with the same person
+      // Another account that is shared with the same person<
       [:HAS_TRANSACTIONS]->(t:Transaction)-
       // Transactions belong to the second account
       [:CATEGORY]->(c:Category)
-RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
+RETURN a.id AS accountId,
+       anotherAccount.id AS sharedAccountId,
+       t.amount,
        c.name AS category;`.trimStart();
     verifyFormatting(query, expected);
   });

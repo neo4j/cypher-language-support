@@ -602,20 +602,34 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-          .birthdate, .gender} AS personInfo`;
+RETURN p {.name,
+          .age,
+          .email,
+          .phone,
+          .address,
+          .occupation,
+          .nationality,
+          .birthdate,
+          .gender} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
-  test('map projections should line up like maps 1', () => {
+  test('map projections should line up like maps 2', () => {
     const query = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
 RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN p {.name, .age, .email, .phone,
-          address: {street: p.street, city: c.name, zip: p.zip}, .occupation,
-          .nationality, .birthdate, .gender} AS personInfo`;
+RETURN p {.name,
+          .age,
+          .email,
+          .phone,
+          address:
+          {street: p.street, city: c.name, zip: p.zip},
+          .occupation,
+          .nationality,
+          .birthdate,
+          .gender} AS personInfo`;
     verifyFormatting(query, expected);
   });
 

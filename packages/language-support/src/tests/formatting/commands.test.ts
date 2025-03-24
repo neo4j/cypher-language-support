@@ -113,7 +113,8 @@ REQUIRE (aaaaaa.aaaaaa) IS UNIQUE
 OPTIONS {aaaaaa: "20z9vakp",
          aaaaaa:
          {aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
-          aaaaaa: ["WqAr9IvS", "j5fYJwuN"], aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
+          aaaaaa: ["WqAr9IvS", "j5fYJwuN"],
+          aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
           aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
           aaaaaa: ["zcBcWjoJ", "dz78begI"],
           aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],

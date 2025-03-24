@@ -383,7 +383,8 @@ MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
   test('function arguments should align', () => {
     const query = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}) YIELD batches, total, timeTaken, committedOperations, failedOperations`;
     const expected = `
-CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE",
+CALL apoc.periodic.iterate("eZQB0P0q",
+                           "1p7EFkyE",
                            {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"})
 YIELD batches, total, timeTaken, committedOperations, failedOperations`.trimStart();
     verifyFormatting(query, expected);
@@ -477,8 +478,9 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
   (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`;
     const expected = `
-MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
-                 (b:Station {name: 'Bromsgrove'})
+MATCH path = ANY
+             (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+             (b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
