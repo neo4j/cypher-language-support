@@ -1900,7 +1900,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(ctx.expression(1));
       }
       this._visit(ctx.BAR());
-      this._visit(ctx.expression(2));
+      if (ctx._whereExp) {
+        this._visit(ctx.expression(2));
+      } else {
+        this._visit(ctx.expression(1));
+      }
     } else {
       this._visit(ctx.WHERE());
       this._visit(ctx.expression(1));
