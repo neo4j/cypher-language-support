@@ -20,6 +20,7 @@ https://github.com/neo4j/cypher-language-support.`.trim();
 export const MAX_COL = 80;
 
 export interface Group {
+  start: number;
   id: number;
   size: number;
 }
@@ -67,7 +68,6 @@ const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
   CypherCmdLexer.COMMA,
   CypherCmdLexer.COLON,
-  CypherCmdLexer.RPAREN,
 ];
 
 export function wantsToBeUpperCase(node: TerminalNode): boolean {
