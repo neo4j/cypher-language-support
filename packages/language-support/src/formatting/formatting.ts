@@ -709,6 +709,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.breakLine();
     this.visit(ctx.ON());
     this.visit(ctx.propertyList());
+    // TODO: Concatenate the ) properly
+    this.concatenate();
     this._visit(ctx.commandOptions());
   };
 
@@ -752,6 +754,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.visit(ctx.RPAREN());
+    this.concatenate();
   };
 
   visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
@@ -791,6 +794,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.visit(ctx.LPAREN(1));
     this.visit(ctx.RPAREN(1));
+    this.concatenate();
   };
 
   visitRelType = (ctx: RelTypeContext) => {
