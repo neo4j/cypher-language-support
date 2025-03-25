@@ -39,7 +39,7 @@ jobs:
     
     - name: Determine latest neo4j CI version
       run: |
-          neo4j_version_base=$(cat neoBaseVersion.txt)
+          neo4j_version_base=`aws --no-cli-pager codeartifact list-package-versions --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --repository ci-live --format generic --namespace com.neo4j.buildservice --package neo4j-community-tarball --sort-by PUBLISHED_TIME --status Published --query "versions[?starts_with(version, '$neo4j_version_base')].version" --output text | tr '\t' '\n' | sed 's/-.*//' | grep '\.0$' | head -n 1`
           echo "neo4j_version_base=$neo4j_version_base" >> $GITHUB_ENV
           echo "Found neo4j_version_base=$neo4j_version_base"
 
@@ -94,3 +94,4 @@ jobs:
         base: main
         title: "Automated update of artifacts"
         body: "Workflow-made PR updating the grammar and semantic analysis artifacts from AWS CodeArtifact."
+    
