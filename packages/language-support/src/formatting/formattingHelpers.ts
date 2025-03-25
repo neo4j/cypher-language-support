@@ -5,6 +5,7 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+import { Indentation } from './formattingSolutionSearch';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -18,21 +19,9 @@ https://github.com/neo4j/cypher-language-support.`.trim();
  */
 export const MAX_COL = 80;
 
-export enum AlignIndentationOptions {
-  Add = 1,
-  Remove = -1,
-  Maintain = 0,
-}
-
 export interface Group {
   id: number;
   size: number;
-}
-
-export interface ChunkIndentation {
-  base: number;
-  special: number;
-  align: AlignIndentationOptions;
 }
 
 export interface BaseChunk {
@@ -41,7 +30,7 @@ export interface BaseChunk {
   text: string;
   groupsStarting: Group[];
   groupsEnding: Group[];
-  indentation: ChunkIndentation;
+  indentation: Indentation;
 }
 
 // Regular chunk specific properties
@@ -66,18 +55,12 @@ export interface CommentChunk extends BaseChunk {
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
-export const initialIndentation: ChunkIndentation = {
-  base: 0,
-  special: 0,
-  align: AlignIndentationOptions.Maintain,
-};
-
 export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
   groupsStarting: [],
   groupsEnding: [],
-  indentation: { ...initialIndentation },
+  indentation: 0,
 };
 
 const traillingCharacters = [
