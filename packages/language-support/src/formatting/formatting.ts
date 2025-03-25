@@ -209,7 +209,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     return size;
   };
-
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
     // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
@@ -247,7 +246,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: 0,
       ...(hasCursor && { isCursor: true }),
     };
-    for (const group of chunk.groupsEnding) {
+    for (const group of prefix.groupsEnding) {
       if (group.size === 0) {
         throw new Error('Internal formatting Error: Group did not have size');
       }
@@ -1771,7 +1770,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(keyValueGrp);
     }
     this._visit(ctx.RCURLY());
-    this.concatenate();
     this.endGroup(mapGrp);
   };
 
