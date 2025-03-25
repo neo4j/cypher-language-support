@@ -1430,11 +1430,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    const wrappingGrp = this.startGroup();
     this._visit(ctx.expression6());
     this.avoidBreakBetween();
     this.visit(ctx.comparisonExpression6());
-    this.endGroup(wrappingGrp);
   };
 
   visitExpression6 = (ctx: Expression6Context) => {
