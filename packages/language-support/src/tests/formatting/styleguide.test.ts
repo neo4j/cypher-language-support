@@ -23,9 +23,9 @@ RETURN a.prop`;
 
     const expected = `MATCH (a:A)
 WHERE EXISTS {
-        MATCH (a)-->(b:B)
-        WHERE b.prop = 'yellow'
-      }
+  MATCH (a)-->(b:B)
+  WHERE b.prop = 'yellow'
+}
 RETURN a.foo`;
     verifyFormatting(query, expected);
   });
