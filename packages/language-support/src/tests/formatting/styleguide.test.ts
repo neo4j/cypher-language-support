@@ -326,8 +326,8 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 ;`;
     const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
 WHERE NOT EXISTS {
-        MATCH (c)-[:TRANSFIERE]->(c2)
-      }
+  MATCH (c)-[:TRANSFIERE]->(c2)
+}
 WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
 LIMIT 1000
 CALL (c, c2, trxs, avgTrx, totalSum) {

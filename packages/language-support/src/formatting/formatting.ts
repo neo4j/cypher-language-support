@@ -83,6 +83,7 @@ import {
   ShowCommandYieldContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
+  SubqueryScopeContext,
   TrimFunctionContext,
   UnwindClauseContext,
   UseClauseContext,
@@ -1615,6 +1616,24 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.breakLine();
     this._visit(ctx.END());
     this.removeSpecialIndentation();
+  };
+
+  visitSubqueryScope = (ctx: SubqueryScopeContext) => {
+    const subqueryScopeGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const n = ctx.variable_list().length;
+    if (ctx.TIMES() || n > 0) {
+      this._visit(ctx.TIMES());
+      for (let i = 0; i < n; i++) {
+        this._visit(ctx.variable(i));
+        if (i < n - 1) {
+          this._visit(ctx.COMMA(i));
+        }
+      }
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RPAREN());
+    this.endGroup(subqueryScopeGrp);
   };
 
   // Handled separately because it wants indentation and line breaks
