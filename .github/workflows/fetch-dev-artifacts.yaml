@@ -1,0 +1,97 @@
+name: Monthly Artifact Bump
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '10 4 1-7 * 5'
+  workflow_dispatch:
+  
+
+jobs:
+  fetch-artifacts:
+   runs-on: ubuntu-latest
+   steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set Up Git User
+      run: |
+          git config --global user.name "Dev Artifact Bot"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+   
+    - name: Configure AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_USERNAME }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_PASSWORD }}
+          aws-region: eu-west-1
+    - name: Configure CodeArtifact Authentication Token 
+      run: |
+          CODEARTIFACT_TOKEN=`aws codeartifact get-authorization-token --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --query authorizationToken --output text`
+          echo "::add-mask::$CODEARTIFACT_TOKEN"
+          echo "CODEARTIFACT_TOKEN=$CODEARTIFACT_TOKEN" >> "$GITHUB_ENV"
+
+    - uses: actions/checkout@v3
+    
+    - name: Determine latest neo4j CI version
+      run: |
+          neo4j_version_base=`aws --no-cli-pager codeartifact list-package-versions --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --repository ci-live --format generic --namespace com.neo4j.buildservice --package neo4j-community-tarball --sort-by PUBLISHED_TIME --status Published --query "versions[?starts_with(version, '$neo4j_version_base')].version" --output text | tr '\t' '\n' | sed 's/-.*//' | grep '\.0$' | head -n 1`
+          echo "neo4j_version_base=$neo4j_version_base" >> $GITHUB_ENV
+          echo "Found neo4j_version_base=$neo4j_version_base"
+
+    - name: fetch parser artifacts from latest neo4j CI
+      run: |
+          grammar_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --asset $grammar_asset grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          
+    - name: fetch semantic analysis artifacts from latest neo4j CI
+      run: | 
+          semantic_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --asset $semantic_asset semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+    
+    - name: unpack grammar artifacts
+      run: |
+           unzip -j -o grammar.zip \
+            "$(unzip -l grammar.zip | awk '{print $4}' | grep "Cypher25Lexer.g4$")" \
+            "$(unzip -l grammar.zip | awk '{print $4}' | grep "Cypher25Parser.g4$")" \
+            -d ./packages/language-support/src/antlr-grammar
+
+    - name: unpack semantic analysis
+      run: |
+        unzip -j -o "semantic-analysis-js.zip" \
+         "$(unzip -l semantic-analysis-js.zip | awk '{print $4}' | grep "classes.js$")" \
+         -d ./packages/language-support/src/syntaxValidation
+
+    
+    - name: rename semantic analysis
+      run: mv -f "./packages/language-support/src/syntaxValidation/classes.js" "./packages/language-support/src/syntaxValidation/semanticAnalysis.js"
+
+              
+    - name: clean up zips
+      run: rm -f grammar.zip && rm -f semantic-analysis-js.zip
+
+    - name: Create New Branch Name
+      run: |
+        BRANCH_NAME="update-artifacts-$(date +%Y%m%d-%H%M%S)"
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+    - name: Commit and Push Changes
+      run: |
+        git add ./packages/language-support/src/antlr-grammar
+        git add ./packages/language-support/src/syntaxValidation
+        git commit -m "Updates artifacts to those from latest dev snapshot (${{ env.neo4j_version_base }}-SNAPSHOT)"
+        git push origin HEAD:${{ env.BRANCH_NAME }}
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ env.BRANCH_NAME }}
+        base: main
+        title: "Automated update of artifacts"
+        body: "Workflow-made PR updating the grammar and semantic analysis artifacts from AWS CodeArtifact."
+    
