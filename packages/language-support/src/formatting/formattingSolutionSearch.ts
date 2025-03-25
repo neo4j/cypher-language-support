@@ -102,10 +102,7 @@ function getFinalIndentation(state: State, chunk: Chunk): number {
   if (state.column !== 0) {
     return 0;
   }
-  if (chunk.indentation < 0) {
-    return state.indentation + chunk.indentation * INDENTATION_SPACES;
-  }
-  return state.indentation;
+  return state.indentation + chunk.indentation * INDENTATION_SPACES;
 }
 
 // Very useful for debugging but not actually used in the code
@@ -205,6 +202,32 @@ function getStateKey(state: State): string {
   }`;
 }
 
+function determineChoices(state: State, choice: Choice): Split[] {
+  if (choice.possibleSplitChoices.length === 1) {
+    return choice.possibleSplitChoices;
+  }
+  const nonBreakSplit = choice.possibleSplitChoices.find(c => c.splitType === ' ' || c.splitType === '');
+  const neighbourState = getNeighbourState(state, choice, nonBreakSplit);
+  let firstCond = false;
+  for (const group of choice.right.groupsStarting) {
+    if (
+      neighbourState.column + group.size > 80 &&
+      choice.possibleSplitChoices.length > 1
+    ) {
+      firstCond = true;
+      break;
+    }
+  }
+  const secondCond =
+    neighbourState.activeGroups.length > 0 &&
+    neighbourState.activeGroups.at(-1).shouldBreak &&
+    choice.right.type !== 'COMMENT';
+  if (firstCond || secondCond) {
+    return choice.possibleSplitChoices.filter(c => c.splitType === '\n' || c.splitType === '\n\n');
+  }
+  return choice.possibleSplitChoices;
+}
+
 function bestFirstSolnSearch(
   startingState: State,
   choiceList: Choice[],
@@ -251,33 +274,14 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
+    let stateString = '';
+    if (state.choiceIndex > 0) {
+      stateString = stateToString(state);
+    }
     const choice = choiceList[state.choiceIndex];
-    for (const split of choice.possibleSplitChoices) {
+    const splitChoices = determineChoices(state, choice);
+    for (const split of splitChoices) {
       const neighbourState = getNeighbourState(state, choice, split);
-      let shouldContinue = false;
-      for (const group of choice.right.groupsStarting) {
-        if (
-          neighbourState.column + group.size >
-          80
-          //choice.possibleSplitChoices.length > 1 &&
-          //split.splitType === ' '
-        ) {
-          shouldContinue = true;
-          break;
-        }
-      }
-      if (shouldContinue) {
-        continue;
-      }
-      if (
-        neighbourState.activeGroups.length > 0 &&
-        neighbourState.activeGroups.at(-1).shouldBreak &&
-        choice.possibleSplitChoices.length > 1 &&
-        split.splitType === ' ' &&
-        choice.right.type !== 'COMMENT'
-      ) {
-        continue;
-      }
       heap.push(neighbourState);
     }
   }

@@ -351,10 +351,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroupAlsoOnComment = (): number => {
-    if (
-      this.currentBuffer().length > 0 &&
-      this.lastInCurrentBuffer().type === 'COMMENT'
-    ) {
+    if (this.currentBuffer().length > 0 && this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
       const group: Group = {
         id: this.groupID,
@@ -373,12 +370,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   addIndentation = () => {
     const chunk = this.lastInCurrentBuffer();
     chunk.indentation += 1;
-  };
+  }
 
   removeIndentation = () => {
     const chunk = this.lastInCurrentBuffer();
     chunk.indentation -= 1;
-  };
+  }
 
   addBaseIndentation = () => {
     this.addIndentation();
@@ -797,19 +794,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitWithClause = (ctx: WithClauseContext) => {
-    const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.WITH());
-    //this.avoidBreakBetween();
+    const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.returnBody());
     this._visit(ctx.whereClause());
     this.endGroup(withClauseGrp);
   };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
-    const matchClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.OPTIONAL());
+    this.avoidBreakBetween();
     this._visit(ctx.MATCH());
-    //this.avoidBreakBetween();
+    const matchClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
     this.endGroup(matchClauseGrp);
@@ -821,17 +817,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
-    const createClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.CREATE());
-    //this.avoidBreakBetween();
+    const createClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
   };
 
   visitInsertClause = (ctx: InsertClauseContext) => {
-    const insertClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.INSERT());
-    //this.avoidBreakBetween();
+    const insertClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.insertPatternList());
     this.endGroup(insertClauseGrp);
   };
@@ -855,11 +849,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
-    const returnGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.RETURN());
-    //this.avoidBreakBetween();
     this._visit(ctx.returnBody());
-    this.endGroup(returnGrp);
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
@@ -867,6 +858,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.DISTINCT()) {
       distinctGroup = this.startGroup();
     }
+    const returnGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.DISTINCT());
     if (ctx.orderBy() || ctx.skip()) {
       const returnItemsGrp = this.startGroup();
@@ -880,6 +872,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // Only wrap returnItems in a group if necessary to avoid excessive groups
       this._visit(ctx.returnItems());
     }
+    this.endGroup(returnGrp);
     if (distinctGroup) {
       this.endGroup(distinctGroup);
     }
@@ -1694,9 +1687,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitMergeClause = (ctx: MergeClauseContext) => {
-    const patternGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.MERGE());
-    this.avoidBreakBetween();
+    const patternGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.pattern());
     this.endGroup(patternGrp);
     const n = ctx.mergeAction_list().length;
@@ -1734,7 +1726,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMap = (ctx: MapContext) => {
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    this.avoidBreakBetween();
+    //this.avoidBreakBetween();
     const mapGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
