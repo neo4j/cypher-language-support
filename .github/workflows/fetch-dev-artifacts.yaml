@@ -15,7 +15,7 @@ jobs:
    runs-on: ubuntu-latest
    steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Set Up Git User
@@ -45,11 +45,13 @@ jobs:
 
     - name: fetch parser artifacts from latest neo4j CI
       run: |
-          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          grammar_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --asset $grammar_asset grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
           
     - name: fetch semantic analysis artifacts from latest neo4j CI
       run: | 
-          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --asset $(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}) semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
+          semantic_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
+          aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --asset $semantic_asset semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
     
     - name: unpack grammar artifacts
       run: |
@@ -79,14 +81,13 @@ jobs:
 
     - name: Commit and Push Changes
       run: |
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git add ./packages/language-support/src/antlr-grammar
         git add ./packages/language-support/src/syntaxValidation
         git commit -m "Updates artifacts from AWS CodeArtifact"
         git push origin HEAD:${{ env.BRANCH_NAME }}
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v7
       with:
         commit-message: Updates artifacts to latest dev snapshot
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -94,4 +95,3 @@ jobs:
         base: main
         title: "Automated update of artifacts"
         body: "Workflow-made PR updating the grammar and semantic analysis artifacts from AWS CodeArtifact."
-    
