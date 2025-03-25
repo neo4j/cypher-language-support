@@ -21,6 +21,7 @@
     "watch": "turbowatch ./turbowatch.ts",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
+    "test:formattingIntegrity": "ts-node ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
     "dev-codemirror": "turbo run @neo4j-cypher/react-codemirror-playground#dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --fix --ext .ts",
