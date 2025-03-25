@@ -1870,9 +1870,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
+    const listGrp = this.startGroup();
     this.avoidBreakBetween();
     this._visit(ctx.LBRACKET());
-    const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       const listElemGrp = this.startGroup();
@@ -1944,14 +1944,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
-    if (ctx.LPAREN()) {
-      this._visitTerminalRaw(ctx.LPAREN());
-      this.concatenate();
-      this.avoidSpaceBetween();
-    }
     let argGrp: number;
     if (n > 0) {
       argGrp = this.startGroup();
+    }
+    if (ctx.LPAREN()) {
+      this.avoidSpaceBetween();
+      this.avoidBreakBetween();
+      this._visitTerminalRaw(ctx.LPAREN());
+      // this.concatenate();
+      this.avoidSpaceBetween();
     }
     let commaIdx = 0;
     for (let i = 0; i < n; i++) {
