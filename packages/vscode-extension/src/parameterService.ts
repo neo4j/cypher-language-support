@@ -69,6 +69,22 @@ export async function setParameter(param: Parameter) {
 }
 
 /**
+ * Deletes the parameter from the global state whose key is passed in to the procedure
+ * @returns void
+ */
+export async function deleteParameter(keyToDelete: string) {
+  const parameters = getParameters();
+  const modifiedParams = Object.fromEntries(
+    Object.entries(parameters).filter(([key]) => key !== keyToDelete),
+  );
+  await saveParameters(modifiedParams);
+  await sendParametersToLanguageServer();
+  void vscode.window.showInformationMessage(
+    `Parameter \`${keyToDelete}\` deleted.`,
+  );
+}
+
+/**
  * Saves a Parameters object to the global state.
  * @param parameters The Parameters object to save.
  * @returns A void promise that resolves when the Parameters object has been saved.

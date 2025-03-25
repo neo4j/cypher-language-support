@@ -21,7 +21,17 @@ suite('Params panel testing', () => {
     });
   }
 
-  async function forceSetParam(key: string, value: string) {
+  async function forceDeleteParam(key: string) {
+    await browser.executeWorkbench(async (vscode, key: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceDeleteParam',
+        key,
+      );
+    }, key);
+  }
+
+  async function forceAddParam(key: string, value: string) {
     await browser.executeWorkbench(
       async (vscode, key: string, value: string) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -58,10 +68,10 @@ suite('Params panel testing', () => {
   }
 
   test('Should correctly set and clear cypher parameters', async function () {
-    await forceSetParam('a', '"charmander"');
-    await forceSetParam('b', '"caterpie"');
-    await forceSetParam('some param', '"pikachu"');
-    await forceSetParam('some-param', '"bulbasur"');
+    await forceAddParam('a', '"charmander"');
+    await forceAddParam('b', '"caterpie"');
+    await forceAddParam('some param', '"pikachu"');
+    await forceAddParam('some-param', '"bulbasur"');
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, async () => {
@@ -79,6 +89,33 @@ suite('Params panel testing', () => {
       const text = await (await $('#query-error')).getText();
       await expect(text).toContain(
         'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b, some param, some-param',
+      );
+    });
+  });
+
+  test('Should correctly delete parameters', async function () {
+    await forceAddParam('a', '"charmander"');
+    await forceAddParam('b', '"caterpie"');
+    await forceAddParam('some param', '"pikachu"');
+    await forceAddParam('some-param', '"bulbasur"');
+
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('charmander');
+      await expect(queryResult).toContain('caterpie');
+      await expect(queryResult).toContain('pikachu');
+      await expect(queryResult).toContain('bulbasur');
+    });
+
+    await forceDeleteParam('a');
+    await forceDeleteParam('b');
+
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const text = await (await $('#query-error')).getText();
+      await expect(text).toContain(
+        'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b',
       );
     });
   });
