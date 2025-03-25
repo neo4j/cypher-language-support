@@ -63,6 +63,7 @@ import {
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
+  ParenthesizedLabelExpressionContext,
   ParenthesizedPathContext,
   PathLengthContext,
   PatternContext,
@@ -1027,6 +1028,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this._visit(ctx.labelExpression1());
+  };
+
+  visitParenthesizedLabelExpression = (
+    ctx: ParenthesizedLabelExpressionContext,
+  ) => {
+    if (ctx.LPAREN()) {
+      this._visit(ctx.LPAREN());
+      this._visit(ctx.labelExpression4());
+      this._visit(ctx.RPAREN());
+      this.concatenate();
+    } else {
+      this.visitChildren(ctx);
+    }
   };
 
   visitTerminal = (node: TerminalNode) => {
