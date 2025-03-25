@@ -617,12 +617,12 @@ RETURN person.name AS name`;
   test('count expression with regular query', () => {
     const query = `MATCH (person:Person)
 RETURN person.name AS name, COUNT {
-         MATCH (person)-[:HAS_DOG]->(dog:Dog)
-         RETURN dog.name AS petName
-           UNION
-         MATCH (person)-[:HAS_CAT]->(cat:Cat)
-         RETURN cat.name AS petName
-       } AS numPets`;
+  MATCH (person)-[:HAS_DOG]->(dog:Dog)
+  RETURN dog.name AS petName
+    UNION
+  MATCH (person)-[:HAS_CAT]->(cat:Cat)
+  RETURN cat.name AS petName
+} AS numPets`;
     const expected = query;
     verifyFormatting(query, expected);
   });
