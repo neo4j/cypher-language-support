@@ -68,7 +68,6 @@ const traillingCharacters = [
   CypherCmdLexer.COMMA,
   CypherCmdLexer.COLON,
   CypherCmdLexer.RPAREN,
-  CypherCmdLexer.RBRACKET,
 ];
 
 export function wantsToBeUpperCase(node: TerminalNode): boolean {
