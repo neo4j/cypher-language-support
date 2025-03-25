@@ -121,7 +121,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const nextGroups = [...curr.activeGroups];
   let nextIndentation: Indentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
-  const finalIndentation = getFinalIndentation(curr, choice.left);
+  let finalIndentation = getFinalIndentation(curr, choice.left);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -136,6 +136,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const shouldBreak = actualColumn + choice.left.groupsStarting[i].size > 80;
     if (shouldBreak) {
+      finalIndentation += INDENTATION_SPACES;
       nextIndentation += INDENTATION_SPACES;
     }
     nextGroups.push({
