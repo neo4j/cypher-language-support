@@ -820,10 +820,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitWithClause = (ctx: WithClauseContext) => {
     this._visit(ctx.WITH());
-    const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.returnBody());
     this._visit(ctx.whereClause());
-    this.endGroup(withClauseGrp);
   };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
@@ -850,9 +848,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitInsertClause = (ctx: InsertClauseContext) => {
     this._visit(ctx.INSERT());
-    const insertClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.insertPatternList());
-    this.endGroup(insertClauseGrp);
   };
 
   visitDeleteClause = (ctx: DeleteClauseContext) => {
@@ -1380,9 +1376,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this._visit(ctx.WHERE());
-    const whereClauseGrp = this.startGroup();
     this._visit(ctx.expression());
-    this.endGroup(whereClauseGrp);
   };
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
