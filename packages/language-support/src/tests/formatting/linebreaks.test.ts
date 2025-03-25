@@ -600,10 +600,10 @@ WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
   test('test that clause under collect gets properly indented', () => {
     const query = `MATCH (person:Person)
 RETURN person.name AS name, COLLECT {
-         MATCH (person)-[r:HAS_DOG]->(dog:Dog)
-         WHERE r.since > 2017
-         RETURN dog.name
-       } AS youngDogs`;
+  MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+  WHERE r.since > 2017
+  RETURN dog.name
+} AS youngDogs`;
     const expected = query;
     verifyFormatting(query, expected);
   });
