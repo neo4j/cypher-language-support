@@ -98,13 +98,6 @@ function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getFinalIndentation(state: State, chunk: Chunk): number {
-  if (state.column !== 0) {
-    return 0;
-  }
-  return state.indentation + chunk.indentation * INDENTATION_SPACES;
-}
-
 // Very useful for debugging but not actually used in the code
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function stateToString(state: State) {
@@ -121,7 +114,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const nextGroups = [...curr.activeGroups];
   let nextIndentation: Indentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
-  let finalIndentation = getFinalIndentation(curr, choice.left);
+  let finalIndentation = curr.indentation;
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -174,7 +167,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       prevState: curr,
       decision: {
         // TODO: Do this somewhere else
-        indentation: curr.column === 0 ? finalIndentation:0,
+        indentation: curr.column === 0 ? finalIndentation : 0,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
@@ -208,7 +201,9 @@ function determineChoices(state: State, choice: Choice): Split[] {
   if (choice.possibleSplitChoices.length === 1) {
     return choice.possibleSplitChoices;
   }
-  const nonBreakSplit = choice.possibleSplitChoices.find(c => c.splitType === ' ' || c.splitType === '');
+  const nonBreakSplit = choice.possibleSplitChoices.find(
+    (c) => c.splitType === ' ' || c.splitType === '',
+  );
   const neighbourState = getNeighbourState(state, choice, nonBreakSplit);
   let firstCond = false;
   for (const group of choice.right.groupsStarting) {
@@ -225,7 +220,9 @@ function determineChoices(state: State, choice: Choice): Split[] {
     neighbourState.activeGroups.at(-1).shouldBreak &&
     choice.right.type !== 'COMMENT';
   if (firstCond || secondCond) {
-    return choice.possibleSplitChoices.filter(c => c.splitType === '\n' || c.splitType === '\n\n');
+    return choice.possibleSplitChoices.filter(
+      (c) => c.splitType === '\n' || c.splitType === '\n\n',
+    );
   }
   return choice.possibleSplitChoices;
 }
@@ -276,9 +273,9 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
-    let stateString = '';
+    // let stateString = '';
     if (state.choiceIndex > 0) {
-      stateString = stateToString(state);
+      // stateString = stateToString(state);
     }
     const choice = choiceList[state.choiceIndex];
     const splitChoices = determineChoices(state, choice);
