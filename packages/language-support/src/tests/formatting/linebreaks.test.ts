@@ -179,7 +179,7 @@ RETURN path`.trimStart();
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
-MERGE 
+MERGE
   (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
