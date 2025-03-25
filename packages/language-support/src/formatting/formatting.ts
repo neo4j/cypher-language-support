@@ -122,7 +122,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   targetToken?: number;
   cursorPos = 0;
   groupID = 0;
-  badGroups: Set<number> = new Set();
   groupStack: Group[] = [];
   startGroupCounter: Group[] = [];
   groupsToEndOnBreak: number[] = [];
@@ -153,16 +152,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
-    for (const chunkList of this.buffers) {
-      for (const chunk of chunkList) {
-        chunk.groupsStarting = chunk.groupsStarting.filter(
-          (group) => !this.badGroups.has(group.id),
-        );
-        chunk.groupsEnding = chunk.groupsEnding.filter(
-          (group) => !this.badGroups.has(group.id),
-        );
-      }
-    }
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
@@ -334,10 +323,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const idx = this.getFirstNonCommentIdx();
     const group = this.groupStack.pop();
     const chunk = this.currentBuffer().at(idx);
-    if (chunk.groupsEnding.some((g) => g.start === group.start)) {
-      this.badGroups.add(group.id);
-    }
-    this.currentBuffer().at(idx).groupsEnding.push(group);
+    chunk.groupsEnding.push(group);
     group.size = this.getLength(group.id);
   };
 
@@ -932,13 +918,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       commaIdx++;
     }
     for (let i = 0; i < n; i++) {
-      const returnItemGrp = this.startGroup();
       this._visit(ctx.returnItem(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(commaIdx));
         commaIdx++;
       }
-      this.endGroup(returnItemGrp);
     }
   };
 
