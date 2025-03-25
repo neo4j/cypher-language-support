@@ -1768,7 +1768,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.variable());
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    this.avoidBreakBetween();
     const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
@@ -1777,9 +1776,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(ctx.COMMA(i));
       }
     }
-    this.endGroup(mapProjectionGrp);
+    this.avoidSpaceBetween();
     this._visit(ctx.RCURLY());
-    this.concatenate();
+    this.endGroup(mapProjectionGrp);
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -1824,8 +1823,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(listElemGrp);
     }
-    this.endGroup(listGrp);
     this._visit(ctx.RBRACKET());
+    this.endGroup(listGrp);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
