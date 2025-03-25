@@ -81,7 +81,23 @@ class QueryPoller<T> {
   }
 }
 
-export class MetadataPoller {
+export abstract class MetadataPoller {
+  public dbSchema: DbSchema = {};
+  abstract stopBackgroundPolling(): void;
+  abstract startBackgroundPolling(intervalSeconds?: number): void;
+}
+
+export class DisconnectedMetadataPoller extends MetadataPoller {
+  public dbSchema: DbSchema = {};
+  constructor(parameters: Record<string, unknown>) {
+    super();
+    this.dbSchema.parameters = parameters;
+  }
+  stopBackgroundPolling() {}
+  startBackgroundPolling() {}
+}
+
+export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
   private functions: Partial<
@@ -103,6 +119,7 @@ export class MetadataPoller {
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
+    super();
     const supportsCypherAnnotation =
       _internalFeatureFlags.cypher25 ||
       (serverVersion && cypher25Supported(serverVersion));
@@ -218,7 +235,7 @@ export class MetadataPoller {
     });
   }
 
-  async fetchDbSchema(): Promise<void> {
+  private async fetchDbSchema(): Promise<void> {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
