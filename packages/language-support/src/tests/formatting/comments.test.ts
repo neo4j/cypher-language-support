@@ -173,30 +173,31 @@ describe('tests for line breaks with comments', () => {
 (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
 (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
     const expected = `
-CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
-       (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
-       (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
-       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
-       (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
-       (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
-       (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+CREATE
+  (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+  (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
+  (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
+  (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
+  (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
+  (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
+  (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
 
-       // this is a loooooooooooooooooooong comment
-       (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
-       (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
-       (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
-       (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
-       (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
-       (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+  // this is a loooooooooooooooooooong comment
+  (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
+  (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
+  (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
+  (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
+  (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
+  (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
 
-       // this is a loooooooooooooooooooong comment
-       (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
-       (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+  // this is a loooooooooooooooooooong comment
+  (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
+  (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
 
-       // this is a loooooooooooooooooooong comment
-       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
-       (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
-       (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
+  // this is a loooooooooooooooooooong comment
+  (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
+  (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
+  (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -346,14 +347,15 @@ RETURN p.name, p.price, p.stock, p.discount;`;
                                          ->(c:Person {name: 'CleopatraTheQueen'
                                            });`;
     const expected = `
-CREATE (a:Person {name: 'AlexanderTheGreat'})-->
-       // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
-       /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
-       (b:Person {name: 'DariusIII'}),
-       (b:Person {name: 'DariusIII'})-->
-       // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
-       /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
-       (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
+CREATE
+  (a:Person {name: 'AlexanderTheGreat'})-->
+  // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
+  /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
+  (b:Person {name: 'DariusIII'}),
+  (b:Person {name: 'DariusIII'})-->
+  // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
+  /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
+  (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
     verifyFormatting(query, expected);
   });
 

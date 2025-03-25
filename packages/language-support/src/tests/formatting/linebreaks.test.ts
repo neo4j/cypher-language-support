@@ -159,8 +159,10 @@ RETURN path`;
 
   test('does not split in the middle of a relation', () => {
     const expected = `
-MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-             [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+MATCH path =
+  (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+  [r:verylongrelationtypename]->
+  (m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(q21, expected);
   });
@@ -177,8 +179,9 @@ RETURN path`.trimStart();
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
-MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+MERGE 
+  (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
+    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
   test('aligns nested parentheses well', () => {
@@ -232,8 +235,9 @@ MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype), (m)-[l1]-
 WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     const expected = `EXPLAIN
-MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
-      (m)-[l1]-(eqa:EquipoEmpresa)
+MATCH
+  (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
+  (m)-[l1]-(eqa:EquipoEmpresa)
 WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     verifyFormatting(query, expected);
@@ -259,8 +263,9 @@ LIMIT "ZTWWLgIq"`;
       (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`;
     const expected = `
-MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
-           (il:nodetyyyype {type: "58vomdG0"})
+MATCH p1 =
+  (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
+  (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -281,11 +286,12 @@ CREATE (:actor {name: "jEmtGrSI"}),
        (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`;
     const expected = `
-CREATE (:actor {name: "jEmtGrSI"}),
-       (:actor {name: "HqFUar0i"}),
-       (:actor {name: "ZAvjBFt6"}),
-       (:actor {name: "7hbDfMOa"}),
-       (:actor {name: "AXhPvCyh"})`.trimStart();
+CREATE
+  (:actor {name: "jEmtGrSI"}),
+  (:actor {name: "HqFUar0i"}),
+  (:actor {name: "ZAvjBFt6"}),
+  (:actor {name: "7hbDfMOa"}),
+  (:actor {name: "AXhPvCyh"})`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -326,13 +332,14 @@ RETURN p`;
     (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
     (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
     (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
-    const expected = `CREATE (a:Location {name: "DXe5KhL3"}),
-       (b:Location {name: "v2BpdkOj"}),
-       (c:Location {name: "Fi5CMJ9Y"}),
-       (d:Location {name: "S31K3X1o"}),
-       (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
-       (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
-       (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
+    const expected = `CREATE
+  (a:Location {name: "DXe5KhL3"}),
+  (b:Location {name: "v2BpdkOj"}),
+  (c:Location {name: "Fi5CMJ9Y"}),
+  (d:Location {name: "S31K3X1o"}),
+  (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
+  (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
+  (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
     verifyFormatting(query, expected);
   });
   test('should align arguments of function invocation after opening bracket', () => {
@@ -370,13 +377,14 @@ WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     const expected = `EXPLAIN
 MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
-WHERE s.deactivated = "k1fU0uk0" AND
-      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND
-      p.networkDbId IS NOT NULL
-WITH p,
-     COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
-     AS platfs,
-     COUNT(s) AS numplatf
+WHERE
+  s.deactivated = "k1fU0uk0" AND
+  NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND
+  p.networkDbId IS NOT NULL
+WITH
+  p,
+  COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated}) AS platfs,
+  COUNT(s) AS numplatf
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     verifyFormatting(query, expected);
@@ -436,20 +444,20 @@ ORDER BY lm.lkjhgfdswert ASC`;
     const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
 RETURN DISTINCT
-       abcde.qwertyuiopa,
-       abcde.zxcvbnmasdfgh,
-       abcde.zxcvbnml,
-       fgh.qwertyuiopa,
-       fgh.zxcvbnmasdfgh,
-       fgh.zxcvbnml,
-       ijk.qwertyuiopa,
-       ijk.zxcvbnmasdfgh,
-       ijk.zxcvbnml,
-       lm.qwertyuiopa,
-       lm.zxcvbnmasdfgh,
-       lm.zxcvbnml,
-       lm.lkjhgfdswert
-       ORDER BY lm.lkjhgfdswert ASC`;
+  abcde.qwertyuiopa,
+  abcde.zxcvbnmasdfgh,
+  abcde.zxcvbnml,
+  fgh.qwertyuiopa,
+  fgh.zxcvbnmasdfgh,
+  fgh.zxcvbnml,
+  ijk.qwertyuiopa,
+  ijk.zxcvbnmasdfgh,
+  ijk.zxcvbnml,
+  lm.qwertyuiopa,
+  lm.zxcvbnmasdfgh,
+  lm.zxcvbnml,
+  lm.lkjhgfdswert
+  ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 
