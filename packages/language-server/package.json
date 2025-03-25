@@ -50,6 +50,6 @@
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
-    "esbuild": "^0.19.4"
+    "esbuild": "^0.25.1"
   }
 }
