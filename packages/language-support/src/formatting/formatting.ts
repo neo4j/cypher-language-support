@@ -1863,7 +1863,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.LPAREN()) {
       this._visitTerminalRaw(ctx.LPAREN());
       this.concatenate();
-      this.avoidBreakBetween();
+      this.avoidSpaceBetween();
     }
     let argGrp: number;
     if (n > 0) {
@@ -1880,8 +1880,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         commaIdx++;
       }
     }
-    this.avoidSpaceBetween();
-    this._visitTerminalRaw(ctx.RPAREN());
+    if (ctx.RPAREN()) {
+      this.avoidSpaceBetween();
+      this._visit(ctx.RPAREN());
+    }
     if (n > 0) {
       this.endGroup(argGrp);
     }
