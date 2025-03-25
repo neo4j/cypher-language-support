@@ -104,7 +104,6 @@ import {
 import { buffersToFormattedString } from './formattingSolutionSearch';
 
 const MISSING = '<missing';
-const GROUP_STRING_DBG = true;
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
@@ -153,6 +152,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
+
+    for (const chunkList of this.buffers) {
+      let activeGroups: Group[] = [];
+      for (let i = 0; i < chunkList.length; i++) {
+        const chunk = chunkList[i];
+        for (const group of chunk.groupsStarting) {
+          activeGroups.push(group);
+        }
+        for (const group of activeGroups) {
+          group.size += chunk.text.length;
+          if (chunk.type === 'REGULAR' && i !== chunkList.length - 1) {
+            group.size += chunk.noSpace ? 0 : 1;
+          }
+        }
+
+        for (const group of chunk.groupsEnding) {
+          activeGroups = activeGroups.filter((g) => g.id !== group.id);
+        }
+      }
+    }
+
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
@@ -188,27 +208,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  getLength = (id: number) => {
-    let size = 0;
-    let dbgString = '';
-    for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
-      const chunk = this.currentBuffer()[i];
-      if (chunk.type === 'REGULAR') {
-        size += chunk.text.length;
-        if (GROUP_STRING_DBG) dbgString += chunk.text;
-        if (!chunk.noSpace && i < this.currentBuffer().length - 1) {
-          size += 1;
-          if (GROUP_STRING_DBG) dbgString += ' ';
-        }
-      }
-      if (chunk.groupsStarting.some((group) => group.id === id)) {
-        const grp = chunk.groupsStarting.find((group) => group.id === id);
-        grp.debugText = dbgString;
-        break;
-      }
-    }
-    return size;
-  };
   // If two tokens should never be split, concatenate them into one chunk
   concatenate = () => {
     // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
@@ -246,12 +245,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: 0,
       ...(hasCursor && { isCursor: true }),
     };
-    for (const group of prefix.groupsEnding) {
-      if (group.size === 0) {
-        throw new Error('Internal formatting Error: Group did not have size');
-      }
-      group.size += suffix.text.length;
-    }
     this.currentBuffer()[indices[1]] = chunk;
   };
 
@@ -329,7 +322,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const group = this.groupStack.pop();
     const chunk = this.currentBuffer().at(idx);
     chunk.groupsEnding.push(group);
-    group.size = this.getLength(group.id);
   };
 
   removeAllGroups = () => {
@@ -1769,6 +1761,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(keyValueGrp);
     }
+    this.avoidSpaceBetween();
     this._visit(ctx.RCURLY());
     this.endGroup(mapGrp);
   };
