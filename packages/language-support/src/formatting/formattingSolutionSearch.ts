@@ -142,6 +142,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     const group = nextGroups.pop();
     if (group && group.shouldBreak) {
       nextIndentation -= INDENTATION_SPACES;
+      finalIndentation -= INDENTATION_SPACES;
     }
   }
 
