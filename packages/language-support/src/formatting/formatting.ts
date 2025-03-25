@@ -104,6 +104,7 @@ import {
 import { buffersToFormattedString } from './formattingSolutionSearch';
 
 const MISSING = '<missing';
+const GROUP_STRING_DBG = true;
 
 interface RawTerminalOptions {
   lowerCase?: boolean;
@@ -189,15 +190,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   getLength = (id: number) => {
     let size = 0;
+    let dbgString = '';
     for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
       const chunk = this.currentBuffer()[i];
       if (chunk.type === 'REGULAR') {
         size += chunk.text.length;
+        if (GROUP_STRING_DBG) dbgString += chunk.text;
         if (!chunk.noSpace && i < this.currentBuffer().length - 1) {
           size += 1;
+          if (GROUP_STRING_DBG) dbgString += ' ';
         }
       }
       if (chunk.groupsStarting.some((group) => group.id === id)) {
+        const grp = chunk.groupsStarting.find((group) => group.id === id);
+        grp.debugText = dbgString;
         break;
       }
     }

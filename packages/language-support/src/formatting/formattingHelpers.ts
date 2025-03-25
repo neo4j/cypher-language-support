@@ -23,6 +23,7 @@ export interface Group {
   start: number;
   id: number;
   size: number;
+  debugText?: string;
 }
 
 export interface BaseChunk {
