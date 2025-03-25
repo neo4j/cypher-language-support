@@ -1496,12 +1496,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.regularQuery()) {
       this.addAlignIndentation();
       this._visit(ctx.regularQuery());
+      this.removeAlignIndentation();
       this.breakLine();
-      this.mustBreakBetween();
       // This is a workaround because group does not translate between chunk lists
       const endOfExistGroup = this.startGroup();
       this._visit(ctx.RCURLY());
-      this.removeAlignIndentation();
       this.groupsToEndOnBreak.push(endOfExistGroup);
     } else {
       this._visit(ctx.matchMode());
@@ -1517,11 +1516,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
     this.addAlignIndentation();
     this._visit(ctx.regularQuery());
+    this.removeAlignIndentation();
     this.breakLine();
     // This is a workaround because group does not translate between chunk lists
     const endOfCollectGroup = this.startGroup();
     this._visit(ctx.RCURLY());
-    this.removeAlignIndentation();
     this.groupsToEndOnBreak.push(endOfCollectGroup);
   };
 
@@ -1533,12 +1532,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.regularQuery()) {
       this.addAlignIndentation();
       this._visit(ctx.regularQuery());
+      this.removeAlignIndentation();
       this.breakLine();
-      this.mustBreakBetween();
       // This is a workaround because group does not translate between chunk lists
       const endOfCountGroup = this.startGroup();
       this._visit(ctx.RCURLY());
-      this.removeAlignIndentation();
       this.groupsToEndOnBreak.push(endOfCountGroup);
     } else {
       this._visit(ctx.matchMode());
