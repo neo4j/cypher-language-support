@@ -129,12 +129,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const shouldBreak = actualColumn + choice.left.groupsStarting[i].size > 80;
     if (shouldBreak) {
-      finalIndentation += INDENTATION_SPACES;
+      // finalIndentation += INDENTATION_SPACES;
       nextIndentation += INDENTATION_SPACES;
     }
     nextGroups.push({
       align: actualColumn,
-      breakCost: Math.pow(10, nextGroups.length + 1),
+      breakCost: shouldBreak ? 0 : Math.pow(10, nextGroups.length + 1),
       shouldBreak,
     });
   }
