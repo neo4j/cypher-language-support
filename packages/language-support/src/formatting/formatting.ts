@@ -1744,6 +1744,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
     const mapGrp = this.startGroup();
+    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     //this.avoidBreakBetween();
@@ -1765,6 +1766,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMapProjection = (ctx: MapProjectionContext) => {
     this._visit(ctx.variable());
+    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     const mapProjectionGrp = this.startGroup();
@@ -1878,6 +1880,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         commaIdx++;
       }
     }
+    this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RPAREN());
     if (n > 0) {
       this.endGroup(argGrp);
