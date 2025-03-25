@@ -42,6 +42,7 @@ import {
   ForeachClauseContext,
   FulltextNodePatternContext,
   FunctionInvocationContext,
+  IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
   LabelExpression2Context,
@@ -49,6 +50,7 @@ import {
   LabelExpression4Context,
   LabelExpressionContext,
   LimitContext,
+  ListComprehensionContext,
   ListItemsPredicateContext,
   ListLiteralContext,
   MapContext,
@@ -71,6 +73,7 @@ import {
   ProcedureNameContext,
   PropertyContext,
   QuantifierContext,
+  RangePostfixContext,
   ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
@@ -1464,6 +1467,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitIndexPostfix = (ctx: IndexPostfixContext) => {
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.expression());
+    this.avoidSpaceBetween();
+    this._visit(ctx.RBRACKET());
+  };
+
+  visitRangePostfix = (ctx: RangePostfixContext) => {
+    this._visit(ctx.LBRACKET());
+    if (ctx._fromExp) {
+      this._visit(ctx.expression(0));
+    }
+    this._visit(ctx.DOTDOT());
+    if (ctx._toExp) {
+      this._visit(ctx.expression(1));
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RBRACKET());
+  };
+
   // Handled separately because it contains subclauses (and thus indentation rules)
   visitExistsExpression = (ctx: ExistsExpressionContext) => {
     this._visit(ctx.EXISTS());
@@ -1862,6 +1885,26 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.RBRACKET());
     this.endGroup(listGrp);
+  };
+
+  visitListComprehension = (ctx: ListComprehensionContext) => {
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.variable());
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(0));
+    if (ctx.BAR()) {
+      if (ctx.expression_list.length > 2) {
+        this._visit(ctx.WHERE());
+        this._visit(ctx.expression(1));
+      }
+      this._visit(ctx.BAR());
+      this._visit(ctx.expression(2));
+    } else {
+      this._visit(ctx.WHERE());
+      this._visit(ctx.expression(1));
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RBRACKET());
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
