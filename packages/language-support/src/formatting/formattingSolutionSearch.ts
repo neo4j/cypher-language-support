@@ -331,6 +331,9 @@ function bestFirstSolnSearch(
     // We found a solution. Since we do best first, it has to be the best
     // solution, so reconstruct that path of decisions
     if (state.choiceIndex === choiceList.length) {
+      if (state.activeGroups.length > 0) {
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+      }
       return reconstructBestPath(state);
     }
     const choice = choiceList[state.choiceIndex];
