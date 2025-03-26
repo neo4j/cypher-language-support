@@ -185,10 +185,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < this.startGroupCounter; i++) {
       this.groupStack.pop();
     }
+    this.startGroupCounter = 0;
     while (this.groupStack.length > 0) {
       this.endGroup(this.groupStack.at(-1));
     }
-    this.startGroupCounter = 0;
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
     }
