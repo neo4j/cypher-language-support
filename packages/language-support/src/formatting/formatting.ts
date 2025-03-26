@@ -313,12 +313,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.groupStack.pop();
   };
 
-  removeAllGroups = () => {
-    for (let i = 0; i < this.lastInCurrentBuffer().groupsStarting; i++) {
-      this.groupStack.pop();
-    }
-  };
-
   endAllExceptBaseGroup = () => {
     while (this.groupStack.length > 1) {
       this.endGroup(this.groupStack.at(-1));
