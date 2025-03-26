@@ -230,6 +230,10 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     });
   }
   for (let i = 0; i < choice.left.groupsEnding; i++) {
+    const stateString = stateToString(curr) as string;
+    if (nextGroups.length === 0) {
+      throw new Error('POPPED EMPTY' + '\n\n\n' + stateString);
+    }
     nextGroups.pop();
   }
 
