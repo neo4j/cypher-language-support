@@ -27,7 +27,6 @@ interface Group {
   align: number; // ONLY USED FOR STATE KEY
   breakCost: number;
   shouldBreak: boolean;
-  hasAddedIndentation: boolean;
 }
 
 interface Decision {
@@ -126,24 +125,24 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ? actualColumn - 1
       : thisWordEnd - splitLength;
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
+
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const shouldBreak =
       actualColumn + choice.left.groupsStarting[i].size > 80 &&
       !choice.left.groupsStarting[i].nonPrettierBreak;
-    /*  if (shouldBreak) {
-      finalIndentation += INDENTATION_SPACES;
+    if (shouldBreak) {
+      // finalIndentation += INDENTATION_SPACES;
       nextIndentation += INDENTATION_SPACES;
-    } */
+    }
     nextGroups.push({
       align: actualColumn,
       breakCost: shouldBreak ? 0 : Math.pow(10, nextGroups.length + 1),
-      hasAddedIndentation: false,
       shouldBreak,
     });
   }
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     const group = nextGroups.pop();
-    if (group && group.hasAddedIndentation) {
+    if (group && group.shouldBreak) {
       nextIndentation -= INDENTATION_SPACES;
       finalIndentation -= INDENTATION_SPACES;
     }
@@ -223,15 +222,6 @@ function determineChoices(state: State, choice: Choice): Split[] {
     neighbourState.activeGroups.length > 0 &&
     neighbourState.activeGroups.at(-1).shouldBreak &&
     choice.right.type !== 'COMMENT';
-  const lastGroupOfNext = neighbourState.activeGroups.at(-1);
-  if (
-    lastGroupOfNext &&
-    lastGroupOfNext.shouldBreak &&
-    !lastGroupOfNext.hasAddedIndentation
-  ) {
-    lastGroupOfNext.hasAddedIndentation = true;
-    // få in det här till nästa state på något sätt :)
-  }
   if (firstCond || secondCond) {
     return choice.possibleSplitChoices.filter(
       (c) => c.splitType === '\n' || c.splitType === '\n\n',
