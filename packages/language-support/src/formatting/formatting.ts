@@ -124,7 +124,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   groupID = 0;
   groupStack: number[] = [];
   startGroupCounter = 0;
-  groupsToEndOnBreak: number[] = [];
   previousTokenIndex: number = -1;
   unParseable: string = '';
   unParseableStart: number | undefined;
@@ -178,10 +177,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   breakLine = () => {
-    // This is a workaround because group does not translate between chunk lists
-    if (this.groupsToEndOnBreak.length > 0) {
-      this.endGroup(this.groupsToEndOnBreak.pop());
-    }
+    // NOTE: Groups do not translate between line breaks. In some cases (primarily CASE and EXISTS)
+    // groups might be active when breakLine() is called, but it does not make sense to keeep them active
+    // so clear all groups when this happens.
+    this.groupStack = [];
+    this.startGroupCounter = 0;
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
     }
@@ -1445,11 +1445,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
-      // This is a workaround because group does not translate between chunk lists
-      const endOfExistGroup = this.startGroup();
+      // Workaround to get indentation because groups do not translate between chunk lists.
+      // This group will be ended on the next breakLine()
+      this.startGroup();
       this._visit(ctx.RCURLY());
       this.removeAlignIndentation();
-      this.groupsToEndOnBreak.push(endOfExistGroup);
     } else {
       this._visit(ctx.matchMode());
       this._visit(ctx.patternList());
@@ -1465,11 +1465,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addAlignIndentation();
     this._visit(ctx.regularQuery());
     this.breakLine();
-    // This is a workaround because group does not translate between chunk lists
-    const endOfCollectGroup = this.startGroup();
+    // Workaround to get indentation because groups do not translate between chunk lists.
+    // This group will be ended on the next breakLine()
+    this.startGroup();
     this._visit(ctx.RCURLY());
     this.removeAlignIndentation();
-    this.groupsToEndOnBreak.push(endOfCollectGroup);
   };
 
   visitCountExpression = (ctx: CountExpressionContext) => {
@@ -1482,11 +1482,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
-      // This is a workaround because group does not translate between chunk lists
-      const endOfCountGroup = this.startGroup();
+      // Workaround to get indentation because groups do not translate between chunk lists.
+      // This group will be ended on the next breakLine()
+      this.startGroup();
       this._visit(ctx.RCURLY());
       this.removeAlignIndentation();
-      this.groupsToEndOnBreak.push(endOfCountGroup);
     } else {
       this._visit(ctx.matchMode());
       this._visit(ctx.patternList());
