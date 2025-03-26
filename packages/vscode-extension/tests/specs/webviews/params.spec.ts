@@ -46,6 +46,11 @@ suite('Params panel testing', () => {
     );
   }
 
+  async function forceModifyParam(key: string, value: string) {
+    // Add param calls the evalParam command, which replaces existing parameter with the same key if it exists
+    await forceAddParam(key, value);
+  }
+
   async function clearParams() {
     await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -90,6 +95,34 @@ suite('Params panel testing', () => {
       await expect(text).toContain(
         'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b, some param, some-param',
       );
+    });
+  });
+
+  test('Should correctly modify cypher parameters', async function () {
+    await forceAddParam('a', '"charmander"');
+    await forceAddParam('b', '"caterpie"');
+    await forceAddParam('some param', '"pikachu"');
+    await forceAddParam('some-param', '"bulbasur"');
+
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('charmander');
+      await expect(queryResult).toContain('caterpie');
+      await expect(queryResult).toContain('pikachu');
+      await expect(queryResult).toContain('bulbasur');
+    });
+
+    await forceModifyParam('a', '"abra"');
+
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('abra');
+      await expect(queryResult).toContain('caterpie');
+      await expect(queryResult).toContain('pikachu');
+      await expect(queryResult).toContain('bulbasur');
+      await expect(queryResult).not.toContain('charmander');
     });
   });
 

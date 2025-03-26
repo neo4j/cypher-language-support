@@ -15,6 +15,7 @@ import { getSchemaPoller } from '../contextService';
 import {
   clearParameters,
   deleteParameter,
+  getParameter,
   setParameter,
 } from '../parameterService';
 import {
@@ -22,9 +23,13 @@ import {
   parametersTreeDataProvider,
 } from '../treeviews/parametersTreeDataProvider';
 
-export async function addParameter(): Promise<void> {
+export async function isConnected(): Promise<boolean> {
   const schemaPoller = getSchemaPoller();
-  const connected = await schemaPoller.connection?.healthcheck();
+  return schemaPoller.connection?.healthcheck();
+}
+
+export async function addParameter(): Promise<void> {
+  const connected = await isConnected();
 
   if (!connected) {
     await window.showErrorMessage(
@@ -41,6 +46,7 @@ export async function addParameter(): Promise<void> {
   });
   if (!paramName) {
     await window.showErrorMessage('Parameter name cannot be empty.');
+    return;
   }
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
@@ -50,9 +56,35 @@ export async function addParameter(): Promise<void> {
   });
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
+    return;
   }
 
   await evaluateParam(paramName, paramValue);
+}
+
+export async function editParameter(paramItem: ParameterItem): Promise<void> {
+  const connected = await isConnected();
+  if (!connected) {
+    await window.showErrorMessage(
+      'You need to be connected to neo4j to edit parameters.',
+    );
+    return;
+  }
+  const existingParam = getParameter(paramItem.id);
+  if (!existingParam) {
+    return;
+  }
+  const paramValue = await window.showInputBox({
+    prompt: 'Parameter value',
+    value: existingParam.evaluatedStatement,
+    ignoreFocusOut: true,
+  });
+  if (!paramValue) {
+    await window.showErrorMessage('Parameter value cannot be empty.');
+    return;
+  }
+
+  await evaluateParam(paramItem.id, paramValue);
 }
 
 export async function removeParameter(paramItem: ParameterItem): Promise<void> {
@@ -109,7 +141,13 @@ export async function evaluateParam(
     );
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
-    await setParameter({ key: paramName, serializedValue, stringValue, type });
+    await setParameter({
+      key: paramName,
+      serializedValue,
+      stringValue,
+      type,
+      evaluatedStatement: paramValue,
+    });
     parametersTreeDataProvider.refresh();
   } catch (e) {
     await window.showErrorMessage('Wrong format for the parameter.');

@@ -14,6 +14,7 @@ import {
 import {
   addParameter,
   clearAllParameters,
+  editParameter,
   evaluateParam,
   removeParameter,
   removeParameterWithKey,
@@ -95,6 +96,7 @@ export function registerDisposables(): Disposable[] {
       CONSTANTS.COMMANDS.DELETE_PARAMETER,
       removeParameter,
     ),
+    commands.registerCommand(CONSTANTS.COMMANDS.EDIT_PARAMETER, editParameter),
     commands.registerCommand(
       CONSTANTS.COMMANDS.CLEAR_PARAMETERS,
       clearAllParameters,
