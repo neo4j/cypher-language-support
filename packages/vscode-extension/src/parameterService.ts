@@ -11,6 +11,7 @@ export interface Parameter {
   serializedValue: unknown;
   stringValue: string;
   type: CypherDataTypeName;
+  evaluatedStatement: string;
 }
 
 export type Parameters = {
@@ -82,6 +83,11 @@ export async function deleteParameter(keyToDelete: string) {
   void vscode.window.showInformationMessage(
     `Parameter \`${keyToDelete}\` deleted.`,
   );
+}
+
+export function getParameter(key: string): Parameter | undefined {
+  const parameters = getParameters();
+  return parameters[key];
 }
 
 /**
