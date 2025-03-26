@@ -181,7 +181,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // groups might be active when breakLine() is called, but it does not make sense to keeep them active
     // so clear all groups when this happens.
     while (this.groupStack.length > 0) {
-      this.endGroup(this.groupStack.pop());
+      this.endGroup(this.groupStack.at(-1));
     }
     this.startGroupCounter = 0;
     if (this.currentBuffer().length > 0) {
