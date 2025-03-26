@@ -1822,14 +1822,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     //this.avoidBreakBetween();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
-      const keyValueGrp = this.startGroup();
       this._visit(ctx.propertyKeyName(i));
       this._visitTerminalRaw(ctx.COLON(i));
+      this.avoidBreakBetween();
       this._visit(ctx.expression(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
       }
-      this.endGroup(keyValueGrp);
     }
     this.avoidSpaceBetween();
     this._visit(ctx.RCURLY());
@@ -1838,10 +1837,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMapProjection = (ctx: MapProjectionContext) => {
     this._visit(ctx.variable());
+    const mapProjectionGrp = this.startGroup();
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.mapProjectionElement(i));
