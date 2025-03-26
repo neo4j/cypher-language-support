@@ -180,6 +180,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // NOTE: Groups do not translate between line breaks. In some cases (primarily CASE and EXISTS)
     // groups might be active when breakLine() is called, but it does not make sense to keeep them active
     // so clear all groups when this happens.
+
+    // Groups that have not even been added to a chunk yet should just disappear
+    for (let i = 0; i < this.startGroupCounter; i++) {
+      this.groupStack.pop();
+    }
     while (this.groupStack.length > 0) {
       this.endGroup(this.groupStack.at(-1));
     }
