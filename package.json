@@ -34,7 +34,7 @@
     "vscode": "^1.22.0"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.8",
+    "@changesets/cli": "^2.28.1",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@wdio/cli": "^8.41.0",
     "@wdio/local-runner": "^8.41.0",
