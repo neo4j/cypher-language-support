@@ -6,7 +6,11 @@ import {
   getConnectionError,
   isRetriableNeo4jError,
 } from './connectionErrorHandler';
-import { MetadataPoller } from './metadataPoller';
+import {
+  ConnectedMetadataPoller,
+  DisconnectedMetadataPoller,
+  MetadataPoller,
+} from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
 import { getVersion } from './queries/version';
@@ -35,6 +39,8 @@ export class Neo4jSchemaPoller {
 
     if (this.metadata) {
       this.metadata.dbSchema.parameters = parameters;
+    } else {
+      this.metadata = new DisconnectedMetadataPoller(parameters);
     }
   }
 
@@ -140,7 +146,8 @@ export class Neo4jSchemaPoller {
     this.connection?.dispose();
     this.metadata?.stopBackgroundPolling();
     this.connection = undefined;
-    this.metadata = undefined;
+    const parameters = this.metadata?.dbSchema?.parameters ?? {};
+    this.metadata = new DisconnectedMetadataPoller(parameters);
     this.driver = undefined;
     clearTimeout(this.reconnectionTimeout);
   }
@@ -181,7 +188,7 @@ export class Neo4jSchemaPoller {
       versionQueryConfig,
     );
 
-    this.metadata = new MetadataPoller(
+    this.metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
       serverVersion,

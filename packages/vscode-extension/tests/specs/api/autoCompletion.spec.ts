@@ -2,6 +2,7 @@ import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CompletionItemTag } from 'vscode-languageclient';
+import { CONSTANTS } from '../../../src/constants';
 import {
   documentationToString,
   eventually,
@@ -212,5 +213,124 @@ suite('Auto completion spec', () => {
         expected: cypher5Expected,
       }),
     );
+  });
+
+  test('Parameters are available in completions', async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'a',
+      '"charmander"',
+    );
+
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'b',
+      '"pikachu"',
+    );
+    const textDocument = await newUntitledFileWithContent(`RETURN `);
+    const position = new vscode.Position(0, 7);
+    const expecations: vscode.CompletionItem[] = [
+      {
+        label: '$a',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+      {
+        label: '$b',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: position,
+      expected: expecations,
+    });
+  });
+
+  test('Parameters are available in completions even when disconnected from neo4j', async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'a',
+      '"charmander"',
+    );
+
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'b',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
+    );
+    const textDocument = await newUntitledFileWithContent(`RETURN `);
+    const position = new vscode.Position(0, 7);
+    const expecations: vscode.CompletionItem[] = [
+      {
+        label: '$a',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+      {
+        label: '$b',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: position,
+      expected: expecations,
+    });
+
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
+      0,
+    );
+  });
+
+  test('Parameters are backticked correctly', async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'some-param',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'someParam',
+      '"charmander"',
+    );
+
+    const firstDoc = await newUntitledFileWithContent(`RETURN $`);
+    await testCompletionContains({
+      textFile: firstDoc.uri,
+      position: new vscode.Position(0, 8),
+      expected: [
+        {
+          label: '$some-param',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: '`some-param`',
+        },
+        {
+          label: '$someParam',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: 'someParam',
+        },
+      ],
+    });
+
+    const secondDoc = await newUntitledFileWithContent(`RETURN $some`);
+    await testCompletionContains({
+      textFile: secondDoc.uri,
+      position: new vscode.Position(0, 12),
+      expected: [
+        {
+          label: '$some-param',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: '`some-param`',
+        },
+        {
+          label: '$someParam',
+          kind: vscode.CompletionItemKind.Variable,
+          insertText: 'someParam',
+        },
+      ],
+    });
   });
 });
