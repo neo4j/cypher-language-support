@@ -131,7 +131,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       actualColumn + choice.left.groupsStarting[i].size > 80 &&
       !choice.left.groupsStarting[i].nonPrettierBreak;
     if (shouldBreak) {
-      // finalIndentation += INDENTATION_SPACES;
+      finalIndentation += INDENTATION_SPACES;
       nextIndentation += INDENTATION_SPACES;
     }
     nextGroups.push({
