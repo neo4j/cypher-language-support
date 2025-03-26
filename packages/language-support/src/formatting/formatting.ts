@@ -777,8 +777,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.returnBody());
-    this._visit(ctx.whereClause());
     this.endGroup(withClauseGrp);
+    this._visit(ctx.whereClause());
   };
 
   visitMatchClause = (ctx: MatchClauseContext) => {
