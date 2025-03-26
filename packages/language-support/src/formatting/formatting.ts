@@ -151,6 +151,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
+    // There may be some trailling groups that are left to achieve indentation
+    this.removeAllActiveGroups();
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
@@ -176,11 +178,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
-  breakLine = () => {
-    // NOTE: Groups do not translate between line breaks. In some cases (primarily CASE and EXISTS)
-    // groups might be active when breakLine() is called, but it does not make sense to keeep them active
-    // so clear all groups when this happens.
-
+  removeAllActiveGroups = () => {
     // Groups that have not even been added to a chunk yet should just disappear
     for (let i = 0; i < this.startGroupCounter; i++) {
       this.groupStack.pop();
@@ -189,6 +187,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     while (this.groupStack.length > 0) {
       this.endGroup(this.groupStack.at(-1));
     }
+  };
+
+  breakLine = () => {
+    // NOTE: Groups do not translate between line breaks. In some cases (primarily CASE and EXISTS)
+    // groups might be active when breakLine() is called, but it does not make sense to keeep them active
+    // so clear all groups when this happens.
+    this.removeAllActiveGroups();
+
     if (this.currentBuffer().length > 0) {
       this.buffers.push([]);
     }

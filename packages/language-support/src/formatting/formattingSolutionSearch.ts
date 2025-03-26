@@ -231,7 +231,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   }
   for (let i = 0; i < choice.left.groupsEnding; i++) {
     if (nextGroups.length === 0) {
-      throw new Error('POPPED EMPTY');
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     nextGroups.pop();
   }
