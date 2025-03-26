@@ -552,11 +552,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
       text: combinedText,
-      groupsStarting: 0,
+      groupsStarting: this.startGroupCounter,
       groupsEnding: 0,
       indentation: { ...initialIndentation },
     };
 
+    this.startGroupCounter = 0;
     this.currentBuffer().push(chunk);
   };
 
