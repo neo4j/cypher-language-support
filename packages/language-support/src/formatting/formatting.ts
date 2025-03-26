@@ -72,6 +72,7 @@ import {
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
+  PropertyListContext,
   QuantifierContext,
   RangePostfixContext,
   ReduceExpressionContext,
@@ -1400,6 +1401,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.propertyKeyName());
     this.concatenate();
+  };
+
+  visitPropertyList = (ctx: PropertyListContext) => {
+    if (ctx.variable()) {
+      this._visit(ctx.variable());
+      this._visit(ctx.property());
+    } else {
+      this._visit(ctx.LPAREN());
+      this._visit(ctx.enclosedPropertyList());
+      this._visit(ctx.RPAREN());
+      this.concatenate();
+    }
   };
 
   // Handled separately because where is not a clause (it is a subclause)
