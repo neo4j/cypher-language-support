@@ -127,7 +127,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
-    const shouldBreak = actualColumn + choice.left.groupsStarting[i].size > 80;
+    const shouldBreak =
+      actualColumn + choice.left.groupsStarting[i].size > 80 &&
+      !choice.left.groupsStarting[i].nonPrettierBreak;
     if (shouldBreak) {
       // finalIndentation += INDENTATION_SPACES;
       nextIndentation += INDENTATION_SPACES;

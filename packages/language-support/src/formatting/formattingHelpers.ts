@@ -24,6 +24,7 @@ export interface Group {
   id: number;
   size: number;
   debugText?: string;
+  nonPrettierBreak: boolean;
 }
 
 export interface BaseChunk {

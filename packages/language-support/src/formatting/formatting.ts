@@ -341,11 +341,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  startGroup = (): number => {
+  startGroup = (nonPrettierBreak = false): number => {
     const group: Group = {
       start: -1,
       id: this.groupID,
       size: 0,
+      nonPrettierBreak,
     };
     this.startGroupCounter.push(group);
     this.groupStack.push(group);
@@ -353,7 +354,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.groupID - 1;
   };
 
-  startGroupAlsoOnComment = (): number => {
+  startNonPrettierGroup = (): number => {
+    return this.startGroup(true);
+  };
+
+  startGroupAlsoOnComment = (nonPrettierBreak = false): number => {
     if (
       this.currentBuffer().length > 0 &&
       this.lastInCurrentBuffer().type === 'COMMENT'
@@ -363,6 +368,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         start: -1,
         id: this.groupID,
         size: 0,
+        nonPrettierBreak: nonPrettierBreak,
       };
       this.currentBuffer()
         .at(idx + 1)
@@ -371,7 +377,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.groupID++;
       return this.groupID - 1;
     }
-    return this.startGroup();
+    return this.startGroup(nonPrettierBreak);
+  };
+
+  startNonPrettierGroupAlsoOnComment = (): number => {
+    return this.startGroupAlsoOnComment(true);
   };
 
   addIndentation = () => {
@@ -818,7 +828,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.OPTIONAL());
     this.avoidBreakBetween();
     this._visit(ctx.MATCH());
-    const matchClauseGrp = this.startGroupAlsoOnComment();
+    const matchClauseGrp = this.startNonPrettierGroupAlsoOnComment();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
     this.endGroup(matchClauseGrp);
@@ -1308,7 +1318,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.selector());
       this.endGroup(selectorGroup);
     }
+    const patternGrp = this.startNonPrettierGroup();
     this._visit(ctx.anonymousPattern());
+    this.endGroup(patternGrp);
   };
 
   visitPatternList = (ctx: PatternListContext) => {
