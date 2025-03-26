@@ -27,6 +27,7 @@ interface Group {
   align: number; // ONLY USED FOR STATE KEY
   breakCost: number;
   shouldBreak: boolean;
+  id: number;
 }
 
 interface Decision {
@@ -44,6 +45,7 @@ interface State {
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
+  responsibleIds: number[];
 }
 
 interface StateEdge {
@@ -130,21 +132,23 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     const shouldBreak =
       actualColumn + choice.left.groupsStarting[i].size > 80 &&
       !choice.left.groupsStarting[i].nonPrettierBreak;
-    if (shouldBreak) {
-      finalIndentation += INDENTATION_SPACES;
+    if (curr.responsibleIds.includes(choice.left.groupsStarting[i].id)) {
       nextIndentation += INDENTATION_SPACES;
     }
     nextGroups.push({
       align: actualColumn,
       breakCost: shouldBreak ? 0 : Math.pow(10, nextGroups.length + 1),
       shouldBreak,
+      id: choice.left.groupsStarting[i].id,
     });
   }
+  let nextResponsibleIds = [...curr.responsibleIds];
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     const group = nextGroups.pop();
-    if (group && group.shouldBreak) {
+    if (group && nextResponsibleIds.includes(group.id)) {
       nextIndentation -= INDENTATION_SPACES;
       finalIndentation -= INDENTATION_SPACES;
+      nextResponsibleIds = nextResponsibleIds.filter((id) => id !== group.id);
     }
   }
 
@@ -166,6 +170,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
     indentation: nextIndentation,
+    responsibleIds: nextResponsibleIds,
     edge: {
       prevState: curr,
       decision: {
@@ -195,39 +200,27 @@ function reconstructBestPath(state: State): Result {
 }
 
 function getStateKey(state: State): string {
-  return `${state.column}-${state.choiceIndex}-${
-    state.activeGroups.at(-1)?.align
-  }`;
+  return `${state.column}-${state.choiceIndex}-${state.activeGroups.at(-1)?.align
+    }`;
 }
 
-function determineChoices(state: State, choice: Choice): Split[] {
+function determineChoices(state: State, choice: Choice): [Split[], number] {
   if (choice.possibleSplitChoices.length === 1) {
-    return choice.possibleSplitChoices;
+    return [choice.possibleSplitChoices, -1];
   }
-  const nonBreakSplit = choice.possibleSplitChoices.find(
-    (c) => c.splitType === ' ' || c.splitType === '',
-  );
-  const neighbourState = getNeighbourState(state, choice, nonBreakSplit);
-  let firstCond = false;
-  for (const group of choice.right.groupsStarting) {
-    if (
-      neighbourState.column + group.size > 80 &&
-      choice.possibleSplitChoices.length > 1
-    ) {
-      firstCond = true;
-      break;
+  if (state.activeGroups.at(-1)?.shouldBreak) {
+    return [[{ splitType: '\n', cost: 0 }], -1];
+  }
+  const containsSpace = choice.possibleSplitChoices.some(split => split.splitType === ' ');
+  const startingGroups = choice.left.groupsStarting;
+  const actualColumn = state.column + choice.left.text.length + (containsSpace ? 1 : 0);
+  for (const group of startingGroups) {
+    if (actualColumn + group.size > 80) {
+      // Should it be this group? What if there are multiple?
+      return [[{ splitType: '\n', cost: 0 }], group.id];
     }
   }
-  const secondCond =
-    neighbourState.activeGroups.length > 0 &&
-    neighbourState.activeGroups.at(-1).shouldBreak &&
-    choice.right.type !== 'COMMENT';
-  if (firstCond || secondCond) {
-    return choice.possibleSplitChoices.filter(
-      (c) => c.splitType === '\n' || c.splitType === '\n\n',
-    );
-  }
-  return choice.possibleSplitChoices;
+  return [choice.possibleSplitChoices, -1];
 }
 
 function bestFirstSolnSearch(
@@ -276,14 +269,21 @@ function bestFirstSolnSearch(
     if (state.choiceIndex === choiceList.length) {
       return reconstructBestPath(state);
     }
-    // let stateString = '';
+    let stateString = '';
     if (state.choiceIndex > 0) {
-      // stateString = stateToString(state);
+       stateString = stateToString(state);
     }
     const choice = choiceList[state.choiceIndex];
-    const splitChoices = determineChoices(state, choice);
+    const [splitChoices, responsibleId] = determineChoices(state, choice);
     for (const split of splitChoices) {
-      const neighbourState = getNeighbourState(state, choice, split);
+      let newState = state;
+      if (responsibleId !== -1) {
+        newState = {
+          ...state,
+          responsibleIds: [...state.responsibleIds, responsibleId],
+        }
+      }
+      const neighbourState = getNeighbourState(newState, choice, split);
       heap.push(neighbourState);
     }
   }
@@ -373,6 +373,17 @@ export function buffersToFormattedString(
   let indentation: Indentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
+    let prev = null;
+    for (const chunk of chunkList) {
+      if (prev && chunk.groupsStarting.length > 0) {
+        prev.groupsStarting = chunk.groupsStarting;
+        chunk.groupsStarting = [];
+      }
+      prev = chunk;
+    }
+  }
+
+  for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
     const initialState: State = {
@@ -382,6 +393,7 @@ export function buffersToFormattedString(
       cost: 0,
       indentation,
       overflowingCount: 0,
+      responsibleIds: [],
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
