@@ -47,6 +47,7 @@ suite('Params panel testing', () => {
   }
 
   async function forceModifyParam(key: string, value: string) {
+    // Add param calls the evalParam command, which replaces existing parameter with the same key if it exists
     await forceAddParam(key, value);
   }
 
@@ -97,7 +98,7 @@ suite('Params panel testing', () => {
     });
   });
 
-  test.only('Should correctly modify cypher parameters', async function () {
+  test('Should correctly modify cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');

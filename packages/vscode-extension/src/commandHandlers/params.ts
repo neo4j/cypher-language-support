@@ -46,6 +46,7 @@ export async function addParameter(): Promise<void> {
   });
   if (!paramName) {
     await window.showErrorMessage('Parameter name cannot be empty.');
+    return;
   }
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
@@ -55,12 +56,13 @@ export async function addParameter(): Promise<void> {
   });
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
+    return;
   }
 
   await evaluateParam(paramName, paramValue);
 }
 
-export async function modifyParameter(paramItem: ParameterItem): Promise<void> {
+export async function editParameter(paramItem: ParameterItem): Promise<void> {
   const connected = await isConnected();
   if (!connected) {
     await window.showErrorMessage(
@@ -77,6 +79,10 @@ export async function modifyParameter(paramItem: ParameterItem): Promise<void> {
     value: existingParam.evaluatedStatement,
     ignoreFocusOut: true,
   });
+  if (!paramValue) {
+    await window.showErrorMessage('Parameter value cannot be empty.');
+    return;
+  }
 
   await evaluateParam(paramItem.id, paramValue);
 }
