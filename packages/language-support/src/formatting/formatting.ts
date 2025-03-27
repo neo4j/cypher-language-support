@@ -1754,9 +1754,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
+      let optionalWrappingGrp: number;
+      if (ctx.mapProjectionElement(i).COLON()) {
+        optionalWrappingGrp = this.startGroup();
+      }
       this._visit(ctx.mapProjectionElement(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
+      }
+      if (ctx.mapProjectionElement(i).COLON()) {
+        this.endGroup(optionalWrappingGrp);
       }
     }
     this.endGroup(mapProjectionGrp);
