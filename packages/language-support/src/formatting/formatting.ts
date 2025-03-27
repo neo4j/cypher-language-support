@@ -1482,9 +1482,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
-      // Workaround to get indentation because groups do not translate between chunk lists.
-      // This group will be ended on the next breakLine() or after all nodes are visited.
-      this.startGroup();
       this._visit(ctx.RCURLY());
     } else {
       this._visit(ctx.matchMode());
@@ -1500,9 +1497,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
     this._visit(ctx.regularQuery());
     this.breakLine();
-    // Workaround to get indentation because groups do not translate between chunk lists.
-    // This group will be ended on the next breakLine() or after all nodes are visited.
-    this.startGroup();
     this._visit(ctx.RCURLY());
   };
 
@@ -1515,9 +1509,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
-      // Workaround to get indentation because groups do not translate between chunk lists.
-      // This group will be ended on the next breakLine() or after all nodes are visited.
-      this.startGroup();
       this._visit(ctx.RCURLY());
     } else {
       this._visit(ctx.matchMode());
