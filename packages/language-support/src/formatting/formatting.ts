@@ -551,12 +551,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: [],
         indentation: 0,
       };
-      // If we have a "hard-break" comment, i.e. one that has a newline before it,
-      // we end all currently active groups. Otherwise, that comment becomes part of the group,
-      // which makes it very hard for the search to find a good solution.
-      if (nodeLine !== commentLine) {
-        this.endAllExceptBaseGroup();
-      }
       this.currentBuffer().push(chunk);
     }
     // Account for the last comment having multiple newline after it, to remember explicit
@@ -1362,6 +1356,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
+    const wholePatternListGrp = this.startGroup();
     for (let i = 0; i < n; i++) {
       const patternListItemGrp = this.startGroup();
       this._visit(ctx.pattern(i));
@@ -1370,6 +1365,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(patternListItemGrp);
     }
+    this.endGroup(wholePatternListGrp);
   };
 
   // Handled separately because we never want to split within the quantifier.
