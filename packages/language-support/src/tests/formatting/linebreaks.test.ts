@@ -159,8 +159,10 @@ RETURN path`;
 
   test('does not split in the middle of a relation', () => {
     const expected = `
-MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-             [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+MATCH path =
+  (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+  [r:verylongrelationtypename]->
+  (m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(q21, expected);
   });
@@ -177,11 +179,11 @@ RETURN path`.trimStart();
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
-MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+MERGE
+  (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
+    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
-
   test('aligns nested parentheses well', () => {
     const query = `MATCH (n)
   WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND (this1:WaFQynNy OR this1:hyztnnwg OR this1:QpLckJcy))`;
@@ -194,9 +196,11 @@ WHERE ((($param1 IS NOT NULL AND this1.title = $param1) AND this1:WaFQynNy) AND
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN {looooooooooooooooooooooongkey: value,
-        loooooooooooooooooooongkeeeyyyyyyyy: value2,
-        looooooooooooooongkeeey: value3}`.trimStart();
+RETURN {
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -208,10 +212,21 @@ WHERE p.article_number IN [
       "g7LjxbGD"]
 RETURN p`;
     const expected = `MATCH (p:Product)
-WHERE p.article_number IN
-      ["OCj0AswA", "dFRbj1s3", "oMbdvgm7", "L4Vey8xn", "GNgeDIkA", "pU4RE0lM",
-       "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
-       "g7LjxbGD"]
+WHERE p.article_number IN [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB",
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]
 RETURN p`;
     verifyFormatting(query, expected);
   });
@@ -223,8 +238,9 @@ MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype), (m)-[l1]-
 WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     const expected = `EXPLAIN
-MATCH (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
-      (m)-[l1]-(eqa:EquipoEmpresa)
+MATCH
+  (eq:loooooongtype {keeeey: "sAGhmzsL"})-[]-(m:tyyyyype),
+  (m)-[l1]-(eqa:EquipoEmpresa)
 WHERE eqa.prop <> "Aq0kC1bX"
 RETURN eq`;
     verifyFormatting(query, expected);
@@ -250,8 +266,9 @@ LIMIT "ZTWWLgIq"`;
       (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`;
     const expected = `
-MATCH p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
-           (il:nodetyyyype {type: "58vomdG0"})
+MATCH p1 =
+  (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
+  (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -272,9 +289,12 @@ CREATE (:actor {name: "jEmtGrSI"}),
        (:actor {name: "7hbDfMOa"}),
        (:actor {name: "AXhPvCyh"})`;
     const expected = `
-CREATE (:actor {name: "jEmtGrSI"}), (:actor {name: "HqFUar0i"}),
-       (:actor {name: "ZAvjBFt6"}), (:actor {name: "7hbDfMOa"}),
-       (:actor {name: "AXhPvCyh"})`.trimStart();
+CREATE
+  (:actor {name: "jEmtGrSI"}),
+  (:actor {name: "HqFUar0i"}),
+  (:actor {name: "ZAvjBFt6"}),
+  (:actor {name: "7hbDfMOa"}),
+  (:actor {name: "AXhPvCyh"})`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -287,11 +307,21 @@ WHERE p.price > 1000 AND p.stock > 50 AND
                     'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
     const expected = `MATCH (p:Product)
-WHERE p.price > 1000 AND p.stock > 50 AND
+WHERE p.price > 1000 AND
+      p.stock > 50 AND
       p.category IN
-      ['Electronics', 'Home Appliances', 'Garden Tools', 'Sports Equipment',
-       'Automotive Parts', 'Fashion Accessories', 'Books', 'Toys', 'Jewelry',
-       'Musical Instruments', 'Art Supplies', 'Office Supplies']
+      ['Electronics',
+       'Home Appliances',
+       'Garden Tools',
+       'Sports Equipment',
+       'Automotive Parts',
+       'Fashion Accessories',
+       'Books',
+       'Toys',
+       'Jewelry',
+       'Musical Instruments',
+       'Art Supplies',
+       'Office Supplies']
 RETURN p`;
     verifyFormatting(query, expected);
   });
@@ -305,11 +335,14 @@ RETURN p`;
     (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
     (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
     (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
-    const expected = `CREATE (a:Location {name: "DXe5KhL3"}), (b:Location {name: "v2BpdkOj"}),
-       (c:Location {name: "Fi5CMJ9Y"}), (d:Location {name: "S31K3X1o"}),
-       (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
-       (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
-       (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
+    const expected = `CREATE
+  (a:Location {name: "DXe5KhL3"}),
+  (b:Location {name: "v2BpdkOj"}),
+  (c:Location {name: "Fi5CMJ9Y"}),
+  (d:Location {name: "S31K3X1o"}),
+  (a)-[:ROUTE_TO {distance: "zjisNPKv", duration: "ivAC2TGF"}]->(b),
+  (b)-[:ROUTE_TO {distance: "Irogkqf1", duration: "QsCt67v1"}]->(c),
+  (c)-[:ROUTE_TO {distance: "Y53yoQwn", duration: "X41tnMDd"}]->(d);`;
     verifyFormatting(query, expected);
   });
   test('should align arguments of function invocation after opening bracket', () => {
@@ -318,7 +351,9 @@ RETURN p`;
 RETURN collect(create_this1
                {datetime:
                 apoc.date.convertFormat(toString(create_this1.datetime),
-                                        "OZQvXyoU", "EhpkDy8g")}) AS data`.trimStart();
+                                        "OZQvXyoU",
+                                        "EhpkDy8g")})
+       AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -345,10 +380,14 @@ WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     const expected = `EXPLAIN
 MATCH (p:Person)-[:HAS_ACCOUNT]->(s:Platform)
-WHERE s.deactivated = "k1fU0uk0" AND
-      NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND p.networkDbId IS NOT NULL
-WITH p, COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated})
-        AS platfs, COUNT(s) AS numplatf
+WHERE
+  s.deactivated = "k1fU0uk0" AND
+  NOT (toLower(s.name) CONTAINS "ki9c1rU8") AND
+  p.networkDbId IS NOT NULL
+WITH
+  p,
+  COLLECT({platfId: s.platfId, name: s.name, numMsgs: s.deactivated}) AS platfs,
+  COUNT(s) AS numplatf
 WHERE numplatf >= "gkLi0qvW"
 RETURN DISTINCT p.networkDbId, p.name, platfs`;
     verifyFormatting(query, expected);
@@ -365,7 +404,8 @@ MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
   test('function arguments should align', () => {
     const query = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}) YIELD batches, total, timeTaken, committedOperations, failedOperations`;
     const expected = `
-CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE",
+CALL apoc.periodic.iterate("eZQB0P0q",
+                           "1p7EFkyE",
                            {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"})
 YIELD batches, total, timeTaken, committedOperations, failedOperations`.trimStart();
     verifyFormatting(query, expected);
@@ -389,15 +429,14 @@ MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-[:NEX
         (l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`;
     const expected = `
-MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-
-      (l1a:CallingPoint)-[:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-
-      (l2a:CallingPoint)-[:NEXT]->*(l2b)-[:CALLS_AT]->
-      (gtw:Station {name: 'Gatwick Airport'})
+MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
+      [:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
+      [:NEXT]->*(l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
 
-  test('should not break after DISTINCT that follows RETURN', () => {
+  test('should break after DISTINCT that follows RETURN', () => {
     const query = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
 RETURN DISTINCT
@@ -407,11 +446,36 @@ ijk.zxcvbnml, lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
 ORDER BY lm.lkjhgfdswert ASC`;
     const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
-RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
-                fgh.qwertyuiopa, fgh.zxcvbnmasdfgh, fgh.zxcvbnml,
-                ijk.qwertyuiopa, ijk.zxcvbnmasdfgh, ijk.zxcvbnml,
-                lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
-                ORDER BY lm.lkjhgfdswert ASC`;
+RETURN DISTINCT
+  abcde.qwertyuiopa,
+  abcde.zxcvbnmasdfgh,
+  abcde.zxcvbnml,
+  fgh.qwertyuiopa,
+  fgh.zxcvbnmasdfgh,
+  fgh.zxcvbnml,
+  ijk.qwertyuiopa,
+  ijk.zxcvbnmasdfgh,
+  ijk.zxcvbnml,
+  lm.qwertyuiopa,
+  lm.zxcvbnmasdfgh,
+  lm.zxcvbnml,
+  lm.lkjhgfdswert
+  ORDER BY lm.lkjhgfdswert ASC`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should break after distinct but not the alphabet', () => {
+    const query = `return distinct
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
+    const expected = `RETURN DISTINCT
+       a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not  break after distinct', () => {
+    const query = `return distinct
+  a, b, c, d, e, f`;
+    const expected = `RETURN DISTINCT a, b, c, d, e, f`;
     verifyFormatting(query, expected);
   });
 
@@ -422,8 +486,9 @@ RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
   (:Station {name: 'Cheltenham Spa'})
 RETURN [stop in n[..-1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1 (:Station {name: 'Hartlebury'}) (()--(n))+
-                 (:Station {name: 'Cheltenham Spa'})
+MATCH SHORTEST 1
+      (:Station {name: 'Hartlebury'})
+      (()--(n))+(:Station {name: 'Cheltenham Spa'})
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -434,9 +499,27 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
-                  (:Station {name: 'Cheltenham Spa'}) WHERE
-                  none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+MATCH SHORTEST 1
+      ((:Station {name: 'Hartlebury'})
+       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+       WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('complex selector example with long bromsgrove', () => {
+    const query = `MATCH SHORTEST 1 ((:Station {name: 'Hartlebury'}) (()--(n:Station))+
+                 (:Station {name: 'Cheltenham Spa'}) WHERE none(
+                 stop IN n[.. -1] WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
+RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    const expected = `
+MATCH SHORTEST 1
+      ((:Station {name: 'Hartlebury'})
+       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+       WHERE
+       none(stop
+            IN n[.. -1]
+            WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -449,8 +532,8 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
 MATCH p = SHORTEST 1
           ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
-           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'}) WHERE
-           none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
+           WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -460,8 +543,9 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
   (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`;
     const expected = `
-MATCH path = ANY (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
-                 (b:Station {name: 'Bromsgrove'})
+MATCH path = ANY
+             (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+             (b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -519,10 +603,10 @@ WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
   test('test that clause under collect gets properly indented', () => {
     const query = `MATCH (person:Person)
 RETURN person.name AS name, COLLECT {
-         MATCH (person)-[r:HAS_DOG]->(dog:Dog)
-         WHERE r.since > 2017
-         RETURN dog.name
-       } AS youngDogs`;
+  MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+  WHERE r.since > 2017
+  RETURN dog.name
+} AS youngDogs`;
     const expected = query;
     verifyFormatting(query, expected);
   });
@@ -536,76 +620,49 @@ RETURN person.name AS name`;
   test('count expression with regular query', () => {
     const query = `MATCH (person:Person)
 RETURN person.name AS name, COUNT {
-         MATCH (person)-[:HAS_DOG]->(dog:Dog)
-         RETURN dog.name AS petName
-           UNION
-         MATCH (person)-[:HAS_CAT]->(cat:Cat)
-         RETURN cat.name AS petName
-       } AS numPets`;
+  MATCH (person)-[:HAS_DOG]->(dog:Dog)
+  RETURN dog.name AS petName
+    UNION
+  MATCH (person)-[:HAS_CAT]->(cat:Cat)
+  RETURN cat.name AS petName
+} AS numPets`;
     const expected = query;
     verifyFormatting(query, expected);
   });
 
-  test('should prefer to not split before a relation 1', () => {
+  test('long list in a return', () => {
     const query = `
-MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
-      (b:person {name: 'bob'})-[s:colleague_of]->(c:person {name: 'carol'})-
-      [t:partner_of]->(d:person {name: 'david'})-[u:mentor_and_friend_of]->
-      (e:person {name: 'eve'})
-RETURN a`;
+RETURN ["OCj0AswA",
+       "dFRbj1s3",
+       "oMbdvgm7",
+       "L4Vey8xn",
+       "GNgeDIkA",
+       "pU4RE0lM",
+       "M6XNVJsO",
+       "NcdW0tuB",
+       "Pf6RIuP4",
+       "6tKStKwl",
+       "HfvahDu5",
+       "gJoq3HnU",
+       "g7LjxbGD"]
+RETURN p`;
     const expected = `
-MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
-      (b:person {name: 'bob'})-[s:colleague_of]->
-      (c:person {name: 'carol'})-[t:partner_of]->
-      (d:person {name: 'david'})-[u:mentor_and_friend_of]->
-      (e:person {name: 'eve'})
-RETURN a`.trimStart();
-    verifyFormatting(query, expected);
-  });
-
-  test('should prefer to not split before a relation 2', () => {
-    const query = `
-MATCH (a:Person {name: 'Alice'})   -[r:KNOWS]->
-      (b:Person {name: 'Bob'}) -[s:FRIEND_OF]->
-      (c:Person {name: 'Charlie'})
-RETURN a`;
-    const expected = `
-MATCH (a:Person {name: 'Alice'})-[r:KNOWS]->
-      (b:Person {name: 'Bob'})-[s:FRIEND_OF]->(c:Person {name: 'Charlie'})
-RETURN a`.trimStart();
-    verifyFormatting(query, expected);
-  });
-
-  test('should prefer to not split before a relation 3', () => {
-    const query = `
-MATCH (NOD01)-[REL01]->
-      (NOD02)-[REL02]->
-      (NOD03)-[REL03]->
-      (NOD04)-[REL04]->
-      (N)-[REL05]->
-      (NOD06)-[REL06]->
-      (NOD07)
-RETURN NOD01`;
-    // The node (N) would fit on the previous line but we prefer to split before nodes
-    const expected = `
-MATCH (NOD01)-[REL01]->(NOD02)-[REL02]->(NOD03)-[REL03]->(NOD04)-[REL04]->
-      (N)-[REL05]->(NOD06)-[REL06]->(NOD07)
-RETURN NOD01`.trimStart();
-    verifyFormatting(query, expected);
-  });
-
-  test('should prefer to not split before a relation 4', () => {
-    const query = `
-MATCH (Alice123:Person)-[FRND_REL:friendship]->
-      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
-      (Carla55:EmployeeType)-[PARTNR:partner_of]->
-      (Dave:Short)
-RETURN Alice123`;
-    const expected = `
-MATCH (Alice123:Person)-[FRND_REL:friendship]->
-      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
-      (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
-RETURN Alice123`.trimStart();
+RETURN [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB",
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]
+RETURN p`.trimStart();
     verifyFormatting(query, expected);
   });
 });
@@ -1049,12 +1106,14 @@ WHERE (
           b.AbCdEfGhIjKlMn IN ["aBcDeFgH", "IjKlMnOp"])
 
       // QazwsxedcrfvtgbyhnujmikolpASDFGHJKLQWERTYUIOPZXCVBNM1234567abcdefghij
-      OR (b.OpQrStUvW <= e1.OpQrStUvW AND e1.OpQrStUvW >= "QrStUvWx" AND
+      OR (b.OpQrStUvW <= e1.OpQrStUvW AND
+          e1.OpQrStUvW >= "QrStUvWx" AND
           b.AbCdEfGhIjKlMn IN ["YzXwVuTs", "LmNoPqRs"])
       // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
 
       // 0123456789abcdefghijKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW
-      OR (b.OpQrStUvW = e1.OpQrStUvW AND e1.OpQrStUvW >= "StUvWxYz" AND
+      OR (b.OpQrStUvW = e1.OpQrStUvW AND
+          e1.OpQrStUvW >= "StUvWxYz" AND
           b.AbCdEfGhIjKlMn > "QwErTyUi"))
 // AND b.LmNo_PqRsTuV = e1.LmNo_PqRsTuV
 RETURN a, b, d, e1, zYxWvUtSrqP`;

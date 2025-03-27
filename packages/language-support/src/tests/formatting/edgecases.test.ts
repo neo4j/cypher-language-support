@@ -226,8 +226,10 @@ END} AS endNode;`;
   CASE
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+    WHEN SUM(product.price) >= 500 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000
          THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
@@ -245,8 +247,10 @@ END} AS endNode;`;
   CASE p.age
     WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
          THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
+    WHEN SUM(product.price) >= 500 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000 AND
+         SUM(product.price) < 1000
          THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
@@ -266,14 +270,39 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true THEN "(PK)"
+    WHEN true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true
+         THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true THEN "(FK)"
+    WHEN true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true AND
+         true
+         THEN "(FK)"
     ELSE ""
   END}) AS columns`;
     verifyFormatting(query, expected);
@@ -506,10 +535,12 @@ RETURN u;`;
 WITH u,
      apoc.util.
      validate(u.status <> 'active',
-              'User ' + u.username +
-              ' does not have an active status which is required for processing the requested operation. '
-              + 'Please check the user account settings for further details.',
-              [u.id, u.username]) AS validation
+              'User ' +
+              u.username +
+              ' does not have an active status which is required for processing the requested operation. ' +
+              'Please check the user account settings for further details.',
+              [u.id, u.username])
+     AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
@@ -525,7 +556,8 @@ WITH userAccountInfo,
               'verification process required for accessing premium features. ' +
               'Please review your verification email and follow the provided instructions to secure your account.',
               [userAccountInfo.accountUniqueIdentifier,
-               userAccountInfo.emailAddress]) AS verificationStatus
+               userAccountInfo.emailAddress])
+     AS verificationStatus
 RETURN userAccountInfo;`;
     const expected = query;
     verifyFormatting(query, expected);
@@ -547,7 +579,21 @@ WITH inventoryRecord,
               [inventoryRecord.productSKU, inventoryRecord.currentStock])
      AS stockValidation
 RETURN inventoryRecord;`;
-    const expected = query;
+    const expected = `MATCH (inventoryRecord:ProductInventoryTrackingInformation)
+WITH inventoryRecord,
+     apoc.util.
+     validate(inventoryRecord.currentStock <
+              inventoryRecord.criticalThresholdStock,
+              'Alert: The inventory record for product SKU ' +
+              inventoryRecord.productSKU +
+              ' indicates a current stock level of ' +
+              toString(inventoryRecord.currentStock) +
+              ', which is below the critical threshold of ' +
+              toString(inventoryRecord.criticalThresholdStock) +
+              '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
+              [inventoryRecord.productSKU, inventoryRecord.currentStock])
+     AS stockValidation
+RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
 
@@ -555,8 +601,11 @@ RETURN inventoryRecord;`;
     const query = `CREATE (company:Company
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
-    const expected = `CREATE (company:Company {name: "mrUJWq6A", krs: "Yuu9Wl7d",
-                         registration_date: date("FrA1uHGX")});`;
+    const expected = `
+CREATE (company:Company
+        {name: "mrUJWq6A",
+         krs: "Yuu9Wl7d",
+         registration_date: date("FrA1uHGX")});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -569,8 +618,9 @@ SET f.prime = "zt01uZOH"
 RETURN f`;
     const expected = `MATCH (f:Frequency)
 WHERE f.value > "WhbRf4O4" AND
-      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
-          % x <> "5DOeV3TE")
+      ALL(x
+          IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
+          WHERE f.value % x <> "5DOeV3TE")
 SET f.prime = "zt01uZOH"
 RETURN f`;
     verifyFormatting(query, expected);
@@ -581,20 +631,34 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-          .birthdate, .gender} AS personInfo`;
+RETURN p {.name,
+          .age,
+          .email,
+          .phone,
+          .address,
+          .occupation,
+          .nationality,
+          .birthdate,
+          .gender} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
-  test('map projections should line up like maps 1', () => {
+  test('map projections should line up like maps 2', () => {
     const query = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
 RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN p {.name, .age, .email, .phone,
-          address: {street: p.street, city: c.name, zip: p.zip}, .occupation,
-          .nationality, .birthdate, .gender} AS personInfo`;
+RETURN p {.name,
+          .age,
+          .email,
+          .phone,
+          address:
+          {street: p.street, city: c.name, zip: p.zip},
+          .occupation,
+          .nationality,
+          .birthdate,
+          .gender} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -768,17 +832,30 @@ RETURN 5 +
       CASE
         WHEN EXISTS {
           MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris'
+          WHERE person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris'
           WITH dog
           WHERE dog.name = 'Ozzy'
         } THEN 'Relationship'
         WHEN (n {prop: 42}) THEN
           CASE
-            WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() THEN 'Relationship'
+            WHEN (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--() OR
+                 (n)--()
+                 THEN 'Relationship'
             WHEN (n {prop: 42}) THEN
               CASE
                 WHEN EXISTS {
@@ -801,7 +878,8 @@ RETURN 5 +
   });
   test('else statements for CASE needs to align its expression', () => {
     const query = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
+WITH u,
+     count((u)-[:LIKES]->()) AS likeCount,
      collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
@@ -827,7 +905,8 @@ RETURN
       END
   END AS userProfile;`;
     const expected = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
+WITH u,
+     count((u)-[:LIKES]->()) AS likeCount,
      collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
@@ -848,8 +927,10 @@ RETURN
         } AND likeCount <= 10
         THEN 'Less active user without a smartphone, interests: ' +
              toString(interestList)
-        ELSE 'User with moderate activity, ' + toString(likeCount) +
-             ' likes and interests: ' + toString(interestList)
+        ELSE 'User with moderate activity, ' +
+             toString(likeCount) +
+             ' likes and interests: ' +
+             toString(interestList)
       END
   END AS userProfile;`;
     verifyFormatting(query, expected);
