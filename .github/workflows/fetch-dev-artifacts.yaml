@@ -12,6 +12,7 @@ on:
 
 jobs:
   fetch-artifacts:
+   environment: aws-artifacts
    runs-on: ubuntu-latest
    steps:
     - name: Checkout Repository
