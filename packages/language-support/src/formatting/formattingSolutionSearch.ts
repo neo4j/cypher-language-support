@@ -28,8 +28,6 @@ export interface Group {
   nonPrettierStyle: boolean;
   size: number;
   dbgText: string;
-  dbgStart: string;
-  dbgEnd: string;
   align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
   breaksAll?: boolean;

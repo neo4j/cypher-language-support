@@ -361,7 +361,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const idx = this.getFirstNonCommentIdx();
     const group = this.groupStack.pop();
-    group.dbgEnd = this.currentBuffer().at(idx).text;
     this.currentBuffer().at(idx).groupsEnding.push(group);
   };
 
@@ -376,10 +375,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const newGroup: Group = {
       id: this.groupID,
       nonPrettierStyle,
-      dbgStart: last.text,
       dbgText: '',
       size: 0,
-      dbgEnd: '',
       align: 0, // Irrelevant here
       breakCost: 0,
     };
@@ -398,8 +395,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         nonPrettierStyle,
         size: 0,
         dbgText: '',
-        dbgStart: target.text,
-        dbgEnd: '',
         align: 0, // Irrelevant here
         breakCost: 0,
       };
