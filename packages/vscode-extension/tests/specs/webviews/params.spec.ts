@@ -65,6 +65,16 @@ suite('Params panel testing', () => {
     });
   }
 
+  async function forceSwitchDatabase(database: string) {
+    await browser.executeWorkbench(async (vscode, database: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceSwitchDatabase',
+        database,
+      );
+    }, database);
+  }
+
   async function forceConnect(i: number) {
     await browser.executeWorkbench(async (vscode, i) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -163,5 +173,27 @@ suite('Params panel testing', () => {
       'You need to be connected to neo4j to set parameters.',
     );
     await forceConnect(1);
+  });
+
+  test('Can still set parameters, even when connected to system', async function () {
+    await forceSwitchDatabase('system');
+    await clearParams();
+
+    await forceAddParam('a', '"charmander"');
+    await forceAddParam('b', '"caterpie"');
+    await forceAddParam('some param', '"pikachu"');
+    await forceAddParam('some-param', '"bulbasur"');
+
+    // We need to go back to the neo4j database to execute the query
+    // because it would fail to execute a non system query against the system db
+    await forceSwitchDatabase('neo4j');
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('charmander');
+      await expect(queryResult).toContain('caterpie');
+      await expect(queryResult).toContain('pikachu');
+      await expect(queryResult).toContain('bulbasur');
+    });
   });
 });

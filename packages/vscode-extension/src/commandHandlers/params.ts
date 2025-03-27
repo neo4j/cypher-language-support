@@ -6,6 +6,7 @@ import {
   cypherDataToString,
   CypherDataType,
   CypherDataTypeName,
+  Database,
   getCypherTypeName,
   Neo4jType,
   serializeTypeAnnotations,
@@ -101,6 +102,21 @@ export async function clearAllParameters(): Promise<void> {
   parametersTreeDataProvider.refresh();
 }
 
+function getUserDatabase(): Database | undefined {
+  const schemaPoller = getSchemaPoller();
+  const databases = schemaPoller?.connection?.databases;
+
+  // We try to prioritize the home database
+  // if possible to evaluate the parameters
+  let userDb = databases?.find((db) => db.type === 'standard' && db.home);
+
+  if (!userDb) {
+    userDb = databases?.find((db) => db.type === 'standard');
+  }
+
+  return userDb;
+}
+
 export async function evaluateParam(
   paramName: string,
   paramValue: string,
@@ -122,9 +138,18 @@ export async function evaluateParam(
       return;
     }
 
+    const userDb = getUserDatabase();
+
+    if (!userDb) {
+      await window.showErrorMessage(
+        'Parameters cannot be evaluated against a system database and it seems you do not have any non-system database in your instance',
+      );
+      return;
+    }
     const result = await schemaPoller.connection.runCypherQuery({
       query: `RETURN ${paramValue} AS param`,
       parameters: {},
+      database: userDb.name,
     });
     const [record] = result.records;
     if (record === undefined) {
