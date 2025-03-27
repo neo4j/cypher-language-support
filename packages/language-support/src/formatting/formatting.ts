@@ -115,6 +115,7 @@ interface RawTerminalOptions {
   lowerCase?: boolean;
   upperCase?: boolean;
   spacingChoice?: SpacingChoice;
+  dontConcatenate?: boolean;
 }
 
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
@@ -1112,7 +1113,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (!options?.spacingChoice) {
       this.avoidSpaceBetween();
     }
-    if (wantsToBeConcatenated(node)) {
+    if (!options?.dontConcatenate && wantsToBeConcatenated(node)) {
       this.concatenate();
     }
     this.addCommentsAfter(node);
@@ -1853,7 +1854,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitListLiteral = (ctx: ListLiteralContext) => {
     this._visit(ctx.LBRACKET());
-    this.avoidBreakBetween();
     const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
@@ -1867,8 +1867,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(listElemGrp);
     }
-    this._visit(ctx.RBRACKET());
     this.endGroup(listGrp);
+    this._visitTerminalRaw(ctx.RBRACKET(), { dontConcatenate: true });
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
