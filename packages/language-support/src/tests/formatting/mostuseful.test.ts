@@ -51,7 +51,7 @@ OPTIONS
 (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
 (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
     const expected = `
-CREATE 
+CREATE
   (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
   (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
   (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
@@ -322,7 +322,7 @@ MATCH (Alice123:Person)-[FRND_REL:friendship]->
       (Dave:Short)
 RETURN Alice123`;
     const expected = `
-MATCH 
+MATCH
   (Alice123:Person)-[FRND_REL:friendship]->
   (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
   (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
