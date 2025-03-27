@@ -143,9 +143,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-      breaksAll:
-        !choice.left.groupsStarting[i].nonPrettierStyle &&
-        nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL,
+      breaksAll: nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL,
     };
     if (curr.indentResponsibleIds.includes(newGroup.id)) {
       // Add finalindentation as well?
@@ -237,6 +235,8 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     (g) => !endingIds.includes(g.id),
   );
   const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
+  const lastGrpNonPrettier =
+    activeGrps.length > 0 && activeGrps.at(-1).nonPrettierStyle;
   const nextStart = lastGrpBreaks
     ? state.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
@@ -256,7 +256,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return splits;
   }
 
-  if (indentResponsibleFound || lastGrpBreaks) {
+  if (indentResponsibleFound || (lastGrpBreaks && !lastGrpNonPrettier)) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
