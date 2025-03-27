@@ -101,7 +101,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { buffersToFormattedString } from './formattingSolutionSearch';
+import { buffersToFormattedString, Group } from './formattingSolutionSearch';
 
 const MISSING = '<missing';
 
@@ -122,7 +122,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   targetToken?: number;
   cursorPos = 0;
   groupID = 0;
-  groupStack: number[] = [];
+  groupStack: Group[] = [];
   startGroupCounter = 0;
   previousTokenIndex: number = -1;
   unParseable: string = '';
@@ -185,7 +185,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.startGroupCounter = 0;
     while (this.groupStack.length > 0) {
-      this.endGroup(this.groupStack.at(-1));
+      this.endGroup(this.groupStack.at(-1).id);
     }
   };
 
@@ -232,8 +232,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text: prefix.text + suffix.text,
       doubleBreak: suffix.doubleBreak,
-      groupsStarting: prefix.groupsStarting + suffix.groupsStarting,
-      groupsEnding: prefix.groupsEnding + suffix.groupsEnding,
+      groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
+      groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: {
         base: prefix.indentation.base + suffix.indentation.base,
         special: prefix.indentation.special + suffix.indentation.special,
@@ -311,23 +311,30 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = (id: number) => {
-    if (this.groupStack.at(-1) !== id) {
+    if (this.groupStack.at(-1).id !== id) {
       return;
     }
     const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).groupsEnding += 1;
-    this.groupStack.pop();
+    this.currentBuffer().at(idx).groupsEnding.push(this.groupStack.pop());
   };
 
   endAllExceptBaseGroup = () => {
     while (this.groupStack.length > 1) {
-      this.endGroup(this.groupStack.at(-1));
+      this.endGroup(this.groupStack.at(-1).id);
     }
   };
 
   startGroup = (): number => {
-    this.startGroupCounter += 1;
-    this.groupStack.push(this.groupID);
+    const last = this.lastInCurrentBuffer();
+    const newGroup: Group = {
+      id: this.groupID,
+      dbgStart: last.text,
+      dbgEnd: '',
+      align: 0, // Irrelevant here
+      breakCost: 0,
+    };
+    last.groupsStarting.push(newGroup);
+    this.groupStack.push(newGroup);
     this.groupID++;
     return this.groupID - 1;
   };
@@ -335,8 +342,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroupAlsoOnComment = (): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
-      this.currentBuffer().at(idx + 1).groupsStarting = 1;
-      this.groupStack.push(this.groupID);
+      const target = this.currentBuffer().at(idx + 1);
+      const newGroup: Group = {
+        id: this.groupID,
+        dbgStart: target.text,
+        dbgEnd: '',
+        align: 0, // Irrelevant here
+        breakCost: 0,
+      };
+      target.groupsStarting.push(newGroup);
+      this.groupStack.push(newGroup);
       this.groupID++;
       return this.groupID - 1;
     }
@@ -461,8 +476,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: false,
         text,
-        groupsStarting: this.startGroupCounter,
-        groupsEnding: 0,
+        groupsStarting: [],
+        groupsEnding: [],
         indentation: { ...initialIndentation },
       };
       this.startGroupCounter = 0;
@@ -498,8 +513,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         type: 'COMMENT',
         breakBefore: nodeLine !== commentLine,
         text,
-        groupsStarting: 0,
-        groupsEnding: 0,
+        groupsStarting: [],
+        groupsEnding: [],
         indentation: { ...initialIndentation },
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
@@ -559,8 +574,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
       text: combinedText,
-      groupsStarting: this.startGroupCounter,
-      groupsEnding: 0,
+      groupsStarting: [],
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
 
@@ -1016,11 +1031,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      groupsStarting: this.startGroupCounter,
-      groupsEnding: 0,
+      groupsStarting: [],
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
-    this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
     }
@@ -1061,8 +1075,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       type: 'REGULAR',
       text,
       node,
-      groupsStarting: this.startGroupCounter,
-      groupsEnding: 0,
+      groupsStarting: [],
+      groupsEnding: [],
       indentation: { ...initialIndentation },
     };
     this.startGroupCounter = 0;
@@ -1506,15 +1520,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
     this._visit(ctx.WHEN());
     this.avoidBreakBetween();
-    const caseAlternativeGrp = this.startGroup();
     this._visit(ctx.expression(0));
-    const caseThenGroup = this.startGroup();
     this._visit(ctx.THEN());
-    const expressionGroup = this.startGroup();
     this._visit(ctx.expression(1));
-    this.endGroup(expressionGroup);
-    this.endGroup(caseThenGroup);
-    this.endGroup(caseAlternativeGrp);
   };
 
   // Handled separately since cases want newlines
@@ -1526,19 +1534,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.breakLine();
-      const caseWhenGroup = this.startGroup();
       this.visit(ctx.caseAlternative(i));
-      this.endGroup(caseWhenGroup);
     }
     if (ctx.ELSE()) {
       this.breakLine();
-      const elseGroup = this.startGroup();
       this._visit(ctx.ELSE());
       this.avoidBreakBetween();
-      const expressionGroup = this.startGroup();
       this.visit(ctx.expression());
-      this.endGroup(expressionGroup);
-      this.endGroup(elseGroup);
     }
     this.removeSpecialIndentation();
     this.breakLine();
@@ -1549,7 +1551,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => {
     this._visit(ctx.WHEN());
     this.avoidBreakBetween();
-    const extendedCaseAlterniveGroup = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.extendedWhen(i));
@@ -1557,13 +1558,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
-    const extendedCaseThenGroup = this.startGroup();
     this._visit(ctx.THEN());
-    const expressionGroup = this.startGroup();
     this._visit(ctx.expression());
-    this.endGroup(expressionGroup);
-    this.endGroup(extendedCaseThenGroup);
-    this.endGroup(extendedCaseAlterniveGroup);
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
@@ -1577,19 +1573,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.breakLine();
-      const g = this.startGroup();
       this.visit(ctx.extendedCaseAlternative(i));
-      this.endGroup(g);
     }
     if (ctx.ELSE()) {
       this.breakLine();
-      const elseGroup = this.startGroup();
       this._visit(ctx.ELSE());
       this.avoidBreakBetween();
-      const expressionGroup = this.startGroup();
       this.visit(ctx.expression(1));
-      this.endGroup(expressionGroup);
-      this.endGroup(elseGroup);
     }
     this.removeSpecialIndentation();
     this.breakLine();

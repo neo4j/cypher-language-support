@@ -25,8 +25,11 @@ interface Choice {
   possibleSplitChoices: Split[];
 }
 
-interface Group {
-  align: number;
+export interface Group {
+  id: number;
+  dbgStart: string;
+  dbgEnd: string;
+  align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
 }
 
@@ -223,13 +226,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       : thisWordEnd - splitLength;
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
-  for (let i = 0; i < choice.left.groupsStarting; i++) {
+  for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     nextGroups.push({
+      ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
     });
   }
-  for (let i = 0; i < choice.left.groupsEnding; i++) {
+  for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
@@ -347,13 +351,13 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupStart(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsStarting; i++) {
+  for (let i = 0; i < decision.left.groupsStarting.length; i++) {
     buffer.push('[');
   }
 }
 
 function addGroupEnd(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsEnding; i++) {
+  for (let i = 0; i < decision.left.groupsEnding.length; i++) {
     buffer.push(']');
   }
 }

@@ -5,6 +5,7 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+import { Group } from './formattingSolutionSearch';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -34,8 +35,8 @@ export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
-  groupsStarting: number;
-  groupsEnding: number;
+  groupsStarting: Group[];
+  groupsEnding: Group[];
   indentation: ChunkIndentation;
 }
 
@@ -70,8 +71,8 @@ export const initialIndentation: ChunkIndentation = {
 export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
+  groupsStarting: [],
+  groupsEnding: [],
   indentation: { ...initialIndentation },
 };
 
