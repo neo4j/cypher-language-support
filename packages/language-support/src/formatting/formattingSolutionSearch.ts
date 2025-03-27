@@ -31,6 +31,7 @@ export interface Group {
   dbgEnd: string;
   align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
+  breaksAll?: boolean;
 }
 
 interface Decision {
@@ -48,6 +49,7 @@ interface State {
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
+  indentResponsibleIds: number[];
 }
 
 interface StateEdge {
@@ -122,7 +124,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr, choice.left);
-  const nextIndentation =
+  let nextIndentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
@@ -136,15 +138,25 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
-    nextGroups.push({
+    const newGroup = {
       ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-    });
+      breaksAll: thisWordEnd + choice.left.groupsStarting[i].size > MAX_COL,
+    };
+    if (curr.indentResponsibleIds.includes(newGroup.id)) {
+      // Add finalindentation as well?
+      nextIndentation += INDENTATION_SPACES;
+    }
+    nextGroups.push(newGroup);
   }
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    if (curr.indentResponsibleIds.includes(nextGroups.at(-1).id)) {
+      // Remove finalindentation as well?
+      nextIndentation -= INDENTATION_SPACES;
     }
     nextGroups.pop();
   }
@@ -167,10 +179,11 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
     indentation: nextIndentation,
+    indentResponsibleIds: curr.indentResponsibleIds,
     edge: {
       prevState: curr,
       decision: {
-        indentation: finalIndentation,
+        indentation: curr.column === 0 ? finalIndentation : 0,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
@@ -198,6 +211,43 @@ function getStateKey(state: State): string {
   return `${state.column}-${state.choiceIndex}-${
     state.activeGroups.at(-1)?.align
   }`;
+}
+
+function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
+  const nonSpace =
+    (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
+    doesNotWantSpace(choice.left, choice.right);
+  const nextStart = state.column + choice.left.text.length + (nonSpace ? 0 : 1);
+
+  const newGroups = choice.left.groupsStarting;
+  let indentResponsibleFound = false;
+  for (const group of newGroups) {
+    if (group.size + nextStart > MAX_COL) {
+      // TODO: mutating which might be messy
+      state.indentResponsibleIds.push(group.id);
+      indentResponsibleFound = true;
+      break;
+    }
+  }
+
+  if (splits.length === 1) {
+    return splits;
+  }
+
+  if (
+    indentResponsibleFound ||
+    (state.activeGroups.length > 0 && state.activeGroups.at(-1).breaksAll)
+  ) {
+    return splits.filter(
+      (split) => split.splitType === '\n' || split.splitType === '\n\n',
+    );
+  }
+  if (state.activeGroups.length > 0 && !state.activeGroups.at(-1).breaksAll) {
+    return splits.filter(
+      (split) => split.splitType === ' ' || split.splitType === '',
+    );
+  }
+  return splits;
 }
 
 function bestFirstSolnSearch(
@@ -249,8 +299,19 @@ function bestFirstSolnSearch(
       }
       return reconstructBestPath(state);
     }
+    const stateString = state.choiceIndex > 0 ? stateToString(state) : '';
+    if (stateString === 'hej hopp') {
+      throw new Error(
+        'error to make sure the above does not have eslint errors',
+      );
+    }
     const choice = choiceList[state.choiceIndex];
-    for (const split of choice.possibleSplitChoices) {
+    const filteredSplits = filterSplits(
+      state,
+      choice,
+      choice.possibleSplitChoices,
+    );
+    for (const split of filteredSplits) {
       const neighbourState = getNeighbourState(state, choice, split);
       heap.push(neighbourState);
     }
@@ -349,6 +410,7 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       cost: 0,
       indentation: 0,
+      indentResponsibleIds: [],
       overflowingCount: 0,
       edge: null,
     };
