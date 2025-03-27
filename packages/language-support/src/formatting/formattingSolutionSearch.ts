@@ -122,7 +122,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
-  const nextGroups = [...curr.activeGroups];
+  let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr, choice.left);
   let nextIndentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
@@ -150,15 +150,26 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     }
     nextGroups.push(newGroup);
   }
+
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
-    if (curr.indentResponsibleIds.includes(nextGroups.at(-1).id)) {
+    if (
+      !nextGroups.some((group) => group.id === choice.left.groupsEnding[i].id)
+    ) {
+      throw new Error('Unexpected group ending');
+    }
+    const toBePopped = nextGroups.find(
+      (group) => group.id === choice.left.groupsEnding[i].id,
+    );
+    if (curr.indentResponsibleIds.includes(toBePopped.id)) {
       // Remove finalindentation as well?
       nextIndentation -= INDENTATION_SPACES;
     }
-    nextGroups.pop();
+    nextGroups = nextGroups.filter(
+      (group) => group.id !== choice.left.groupsEnding[i].id,
+    );
   }
 
   let extraCost = 0;
@@ -234,15 +245,18 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return splits;
   }
 
-  if (
-    indentResponsibleFound ||
-    (state.activeGroups.length > 0 && state.activeGroups.at(-1).breaksAll)
-  ) {
+  const endingIds = choice.left.groupsEnding.map((g) => g.id);
+  const activeGrps = state.activeGroups.filter(
+    (g) => !endingIds.includes(g.id),
+  );
+  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
+
+  if (indentResponsibleFound || lastGrpBreaks) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
   }
-  if (state.activeGroups.length > 0 && !state.activeGroups.at(-1).breaksAll) {
+  if (!lastGrpBreaks) {
     return splits.filter(
       (split) => split.splitType === ' ' || split.splitType === '',
     );
@@ -340,9 +354,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     if (decision.left.isCursor) {
       cursorPos = buffer.join('').length;
     }
-    if (showGroups) addGroupStart(buffer, decision);
     buffer.push(decision.left.text);
     if (showGroups) addGroupEnd(buffer, decision);
+    if (showGroups) addGroupStart(buffer, decision);
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
