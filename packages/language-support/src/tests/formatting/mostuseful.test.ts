@@ -232,8 +232,9 @@ RETURN path`.trimStart();
     const query = `MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
     {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`;
     const expected = `
-MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
-       {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
+MERGE
+  (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
+    {name: $veeeeeeeeerylongparaaaaaaaaaaaaaaam})`.trimStart();
     verifyFormatting(query, expected);
   });
 

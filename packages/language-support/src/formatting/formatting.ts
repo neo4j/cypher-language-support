@@ -1691,7 +1691,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMergeClause = (ctx: MergeClauseContext) => {
     this._visit(ctx.MERGE());
-    this.avoidBreakBetween();
     const patternGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.pattern());
     this.endGroup(patternGrp);
