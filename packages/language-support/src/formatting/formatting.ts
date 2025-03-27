@@ -1787,7 +1787,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMap = (ctx: MapContext) => {
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    this.avoidBreakBetween();
     const mapGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
@@ -1801,15 +1800,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(keyValueGrp);
     }
     this.endGroup(mapGrp);
-    this._visit(ctx.RCURLY());
-    this.concatenate();
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
     this._visit(ctx.variable());
+    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
-    this.avoidBreakBetween();
     const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
@@ -1826,8 +1825,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.endGroup(mapProjectionGrp);
-    this._visit(ctx.RCURLY());
-    this.concatenate();
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -1868,6 +1867,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(listElemGrp);
     }
     this.endGroup(listGrp);
+    this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RBRACKET(), { dontConcatenate: true });
   };
 
