@@ -25,6 +25,7 @@ interface Choice {
 
 export interface Group {
   id: number;
+  nonPrettierStyle: boolean;
   size: number;
   dbgText: string;
   dbgStart: string;
@@ -142,7 +143,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-      breaksAll: thisWordEnd + choice.left.groupsStarting[i].size > MAX_COL,
+      breaksAll:
+        !choice.left.groupsStarting[i].nonPrettierStyle &&
+        thisWordEnd + choice.left.groupsStarting[i].size > MAX_COL,
     };
     if (curr.indentResponsibleIds.includes(newGroup.id)) {
       // Add finalindentation as well?
