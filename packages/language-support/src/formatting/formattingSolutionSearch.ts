@@ -231,7 +231,15 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   const nonSpace =
     (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
     doesNotWantSpace(choice.left, choice.right);
-  const nextStart = state.column + choice.left.text.length + (nonSpace ? 0 : 1);
+
+  const endingIds = choice.left.groupsEnding.map((g) => g.id);
+  const activeGrps = state.activeGroups.filter(
+    (g) => !endingIds.includes(g.id),
+  );
+  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
+  const nextStart = lastGrpBreaks
+    ? state.indentation
+    : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
 
   const newGroups = choice.left.groupsStarting;
   let indentResponsibleFound = false;
@@ -247,12 +255,6 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   if (splits.length === 1) {
     return splits;
   }
-
-  const endingIds = choice.left.groupsEnding.map((g) => g.id);
-  const activeGrps = state.activeGroups.filter(
-    (g) => !endingIds.includes(g.id),
-  );
-  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
 
   if (indentResponsibleFound || lastGrpBreaks) {
     return splits.filter(
