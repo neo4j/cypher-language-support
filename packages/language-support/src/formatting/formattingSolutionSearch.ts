@@ -137,13 +137,15 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
+    // TODO this miiiight be slightly off because of indentation rules
+    const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
     const newGroup = {
       ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
       breaksAll:
         !choice.left.groupsStarting[i].nonPrettierStyle &&
-        thisWordEnd + choice.left.groupsStarting[i].size > MAX_COL,
+        nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL,
     };
     if (curr.indentResponsibleIds.includes(newGroup.id)) {
       // Add finalindentation as well?
