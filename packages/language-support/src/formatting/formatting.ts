@@ -150,6 +150,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(this.root);
     // There may be some trailling groups that are left to achieve indentation
     this.removeAllPendingGroups();
+    this.fillInGroupSizes();
     const result = buffersToFormattedString(this.buffers);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
@@ -169,6 +170,57 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     return resultString;
+  };
+
+  fillInGroupSizes = () => {
+    for (const chunkList of this.buffers) {
+      const activeGroups: Group[] = [];
+      for (const chunk of chunkList) {
+        if (chunk.type === 'REGULAR') {
+          for (const group of activeGroups) {
+            if (!chunk.text) {
+              throw new Error('Expected text, got' + chunk.text);
+            }
+            group.size += chunk.text.length;
+            group.dbgText += chunk.text;
+            if (!chunk.noSpace) {
+              group.size++;
+              group.dbgText += ' ';
+            }
+          }
+        }
+        for (const group of chunk.groupsStarting) {
+          activeGroups.push(group);
+        }
+        const gettingRemoved = new Set<number>(
+          chunk.groupsEnding.map((g) => g.id),
+        );
+        const newActiveGroups: Group[] = [];
+        for (const group of activeGroups) {
+          if (!gettingRemoved.has(group.id)) {
+            newActiveGroups.push(group);
+          } else {
+            if (group.dbgText.at(-1) === ' ') {
+              group.size--;
+              group.dbgText = group.dbgText.slice(0, -1);
+            }
+          }
+        }
+      }
+    }
+
+    // Verify the sizes of all the groups
+    for (const chunkList of this.buffers) {
+      for (const chunk of chunkList) {
+        for (const group of chunk.groupsStarting) {
+          if (group.size !== group.dbgText.length) {
+            throw new Error(
+              `Group size mismatch: ${group.size} !== ${group.dbgText.length}`,
+            );
+          }
+        }
+      }
+    }
   };
 
   currentBuffer = () => this.buffers.at(-1);
@@ -319,6 +371,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const newGroup: Group = {
       id: this.groupID,
       dbgStart: last.text,
+      dbgText: '',
+      size: 0,
       dbgEnd: '',
       align: 0, // Irrelevant here
       breakCost: 0,
@@ -335,6 +389,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const target = this.currentBuffer().at(idx + 1);
       const newGroup: Group = {
         id: this.groupID,
+        size: 0,
+        dbgText: '',
         dbgStart: target.text,
         dbgEnd: '',
         align: 0, // Irrelevant here

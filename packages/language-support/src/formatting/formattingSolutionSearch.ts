@@ -25,6 +25,8 @@ interface Choice {
 
 export interface Group {
   id: number;
+  size: number;
+  dbgText: string;
   dbgStart: string;
   dbgEnd: string;
   align: number; // USE ONLY FOR STATE KEY
