@@ -123,7 +123,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   cursorPos = 0;
   groupID = 0;
   groupStack: Group[] = [];
-  startGroupCounter = 0;
   previousTokenIndex: number = -1;
   unParseable: string = '';
   unParseableStart: number | undefined;
@@ -179,11 +178,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   lastInCurrentBuffer = () => this.currentBuffer().at(-1);
 
   removeAllPendingGroups = () => {
-    // Groups that have not even been added to a chunk yet should just disappear
-    for (let i = 0; i < this.startGroupCounter; i++) {
-      this.groupStack.pop();
-    }
-    this.startGroupCounter = 0;
     while (this.groupStack.length > 0) {
       this.endGroup(this.groupStack.at(-1).id);
     }
@@ -480,7 +474,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: [],
         indentation: { ...initialIndentation },
       };
-      this.startGroupCounter = 0;
       this.currentBuffer().push(chunk);
       this.breakLine();
     }
@@ -579,7 +572,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: { ...initialIndentation },
     };
 
-    this.startGroupCounter = 0;
     this.currentBuffer().push(chunk);
   };
 
@@ -1079,7 +1071,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsEnding: [],
       indentation: { ...initialIndentation },
     };
-    this.startGroupCounter = 0;
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
     }
