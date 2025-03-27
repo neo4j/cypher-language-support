@@ -1785,6 +1785,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
+    const wholeMapGrp = this.startGroup();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     const mapGrp = this.startGroup();
@@ -1802,6 +1803,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
+    this.endGroup(wholeMapGrp);
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
@@ -1899,13 +1901,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCallClause = (ctx: CallClauseContext) => {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.CALL());
-    this.avoidBreakBetween();
+    const callGrp = this.startGroup();
+    const functionGrp = this.startGroup();
     this._visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
     if (ctx.LPAREN()) {
       this._visitTerminalRaw(ctx.LPAREN());
       this.concatenate();
-      this.avoidBreakBetween();
     }
     let argGrp: number;
     if (n > 0) {
@@ -1922,10 +1924,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         commaIdx++;
       }
     }
-    this._visitTerminalRaw(ctx.RPAREN());
     if (n > 0) {
       this.endGroup(argGrp);
     }
+    this.endGroup(functionGrp);
+    this._visitTerminalRaw(ctx.RPAREN(), { dontConcatenate: true });
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
       const m = ctx.procedureResultItem_list().length;
@@ -1951,6 +1954,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(yieldGrp);
       this._visit(ctx.whereClause());
     }
+    this.endGroup(callGrp);
   };
 }
 
