@@ -1,5 +1,6 @@
 import {
   backtickIfNeeded,
+  DbSchema,
   lintCypherQuery,
 } from '@neo4j-cypher/language-support';
 import {
@@ -28,6 +29,14 @@ export async function isConnected(): Promise<boolean> {
   return schemaPoller.connection?.healthcheck();
 }
 
+function validateParamInput(paramValue: string, dbSchema: DbSchema): string {
+  const errors = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
+  if (errors.length > 0) {
+    return 'Invalid param value';
+  }
+  return null;
+}
+
 export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
@@ -48,11 +57,14 @@ export async function addParameter(): Promise<void> {
     await window.showErrorMessage('Parameter name cannot be empty.');
     return;
   }
+  const schemaPoller = getSchemaPoller();
+  const dbSchema = schemaPoller.metadata.dbSchema;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
+    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
@@ -74,10 +86,13 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
   if (!existingParam) {
     return;
   }
+  const schemaPoller = getSchemaPoller();
+  const dbSchema = schemaPoller.metadata.dbSchema;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     value: existingParam.evaluatedStatement,
     ignoreFocusOut: true,
+    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
