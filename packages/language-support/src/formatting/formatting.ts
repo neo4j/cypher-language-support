@@ -305,11 +305,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = (id: number) => {
-    if (this.groupStack.at(-1).id !== id) {
+    if (this.groupStack.length === 0 || this.groupStack.at(-1).id !== id) {
       return;
     }
     const idx = this.getFirstNonCommentIdx();
-    this.currentBuffer().at(idx).groupsEnding.push(this.groupStack.pop());
+    const group = this.groupStack.pop();
+    group.dbgEnd = this.currentBuffer().at(idx).text;
+    this.currentBuffer().at(idx).groupsEnding.push(group);
   };
 
   endAllExceptBaseGroup = () => {
