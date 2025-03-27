@@ -319,4 +319,96 @@ MATCH
 RETURN Alice123`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('very long where', () => {
+    const query = `MATCH (n)
+WHERE true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true and true
+return n`;
+    const expected = `MATCH (n)
+WHERE
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true AND
+  true
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should not find the wrong comma here', () => {
+    const query = `CALL gds.nodeSimilarity.filtered.stream(
+    "N5j8G3h2",
+    {
+        A3f7R: "Z2w8Q",
+        L9t4P: "Y3s1D"
+    }
+) YIELD *`;
+    const expected = `CALL gds.nodeSimilarity.filtered.stream("N5j8G3h2",
+                                        {A3f7R: "Z2w8Q", L9t4P: "Y3s1D"})
+YIELD *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('aligns and breaks long namespaced functions well 1', () => {
+    const query = `MATCH (u:User)
+WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does not have an active status which is required for processing the requested operation. ' + 'Please check the user account settings for further details.', [u.id, u.username]) AS validation
+RETURN u;`;
+    const expected = `MATCH (u:User)
+WITH u,
+     apoc.util.
+     validate(u.status <> 'active',
+              'User ' + u.username +
+              ' does not have an active status which is required for processing the requested operation. '
+              + 'Please check the user account settings for further details.',
+              [u.id, u.username]) AS validation
+RETURN u;`;
+    verifyFormatting(query, expected);
+  });
 });
