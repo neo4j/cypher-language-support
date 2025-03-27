@@ -178,7 +178,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   fillInGroupSizes = () => {
     for (const chunkList of this.buffers) {
-      const activeGroups: Group[] = [];
+      let activeGroups: Group[] = [];
       for (const chunk of chunkList) {
         if (chunk.type === 'REGULAR') {
           for (const group of activeGroups) {
@@ -210,6 +210,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             }
           }
         }
+        activeGroups = newActiveGroups;
       }
     }
 
