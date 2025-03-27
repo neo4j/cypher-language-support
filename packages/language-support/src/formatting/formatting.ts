@@ -818,7 +818,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitWithClause = (ctx: WithClauseContext) => {
     this._visit(ctx.WITH());
-    this.avoidBreakBetween();
     const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.returnBody());
     this.endGroup(withClauseGrp);
@@ -828,7 +827,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMatchClause = (ctx: MatchClauseContext) => {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.MATCH());
-    this.avoidBreakBetween();
     const matchClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
@@ -842,7 +840,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCreateClause = (ctx: CreateClauseContext) => {
     this._visit(ctx.CREATE());
-    this.avoidBreakBetween();
     const createClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
@@ -850,7 +847,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitInsertClause = (ctx: InsertClauseContext) => {
     this._visit(ctx.INSERT());
-    this.avoidBreakBetween();
     const insertClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.insertPatternList());
     this.endGroup(insertClauseGrp);
@@ -876,13 +872,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this._visit(ctx.RETURN());
-    this.avoidBreakBetween();
     this._visit(ctx.returnBody());
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
     this._visit(ctx.DISTINCT());
-    this.avoidBreakBetween();
     const returnItemsGrp = this.startGroup();
     this._visit(ctx.returnItems());
     if (ctx.orderBy() || ctx.skip()) {
@@ -897,7 +891,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     this._visit(ctx.UNWIND());
-    this.avoidBreakBetween();
     const unwindClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.expression());
     const asGrp = this.startGroup();
@@ -1429,7 +1422,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this._visit(ctx.WHERE());
-    this.avoidBreakBetween();
     const whereClauseGrp = this.startGroup();
     this._visit(ctx.expression());
     this.endGroup(whereClauseGrp);
