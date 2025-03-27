@@ -19,25 +19,13 @@ https://github.com/neo4j/cypher-language-support.`.trim();
  */
 export const MAX_COL = 80;
 
-export enum AlignIndentationOptions {
-  Add = 1,
-  Remove = -1,
-  Maintain = 0,
-}
-
-export interface ChunkIndentation {
-  base: number;
-  special: number;
-  align: AlignIndentationOptions;
-}
-
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
   groupsStarting: Group[];
   groupsEnding: Group[];
-  indentation: ChunkIndentation;
+  indentation: number;
 }
 
 // Regular chunk specific properties
@@ -62,18 +50,12 @@ export interface CommentChunk extends BaseChunk {
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
-export const initialIndentation: ChunkIndentation = {
-  base: 0,
-  special: 0,
-  align: AlignIndentationOptions.Maintain,
-};
-
 export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
   groupsStarting: [],
   groupsEnding: [],
-  indentation: { ...initialIndentation },
+  indentation: 0,
 };
 
 const traillingCharacters = [

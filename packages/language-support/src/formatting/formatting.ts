@@ -88,12 +88,10 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
-  AlignIndentationOptions,
   Chunk,
   CommentChunk,
   findTargetToken,
   getParseTreeAndTokens,
-  initialIndentation,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isComment,
   RegularChunk,
@@ -228,11 +226,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
-      indentation: {
-        base: prefix.indentation.base + suffix.indentation.base,
-        special: prefix.indentation.special + suffix.indentation.special,
-        align: prefix.indentation.align,
-      },
+      indentation: prefix.indentation + suffix.indentation,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -354,48 +348,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.startGroup();
   };
 
-  setIndentationProperty = (
-    modifier: 'add' | 'remove',
-    type: 'base' | 'special' | 'align',
-  ) => {
+  setIndentationProperty = (modifier: 'add' | 'remove') => {
     const chunk = this.lastInCurrentBuffer();
-    if (
-      type === 'align' &&
-      chunk.indentation[type] !== AlignIndentationOptions.Maintain
-    ) {
-      throw new Error(
-        'Internal formatting error: Chunk should not get its alignIndentation set twice',
-      );
-    }
     if (modifier === 'add') {
-      chunk.indentation[type] += 1;
-    } else if (modifier === 'remove') {
-      chunk.indentation[type] -= 1;
+      chunk.indentation += 1;
+    } else {
+      chunk.indentation -= 1;
     }
   };
 
-  addBaseIndentation = () => {
-    this.setIndentationProperty('add', 'base');
+  addIndentation = () => {
+    this.setIndentationProperty('add');
   };
 
-  removeBaseIndentation = () => {
-    this.setIndentationProperty('remove', 'base');
-  };
-
-  addSpecialIndentation = () => {
-    this.setIndentationProperty('add', 'special');
-  };
-
-  removeSpecialIndentation = () => {
-    this.setIndentationProperty('remove', 'special');
-  };
-
-  addAlignIndentation = () => {
-    this.setIndentationProperty('add', 'align');
-  };
-
-  removeAlignIndentation = () => {
-    this.setIndentationProperty('remove', 'align');
+  removeIndentation = () => {
+    this.setIndentationProperty('remove');
   };
 
   getBottomChild = (
@@ -474,7 +441,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: [],
         groupsEnding: [],
-        indentation: { ...initialIndentation },
+        indentation: 0,
       };
       this.currentBuffer().push(chunk);
       this.breakLine();
@@ -510,7 +477,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: [],
         groupsEnding: [],
-        indentation: { ...initialIndentation },
+        indentation: 0,
       };
       // If we have a "hard-break" comment, i.e. one that has a newline before it,
       // we end all currently active groups. Otherwise, that comment becomes part of the group,
@@ -571,7 +538,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       text: combinedText,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: { ...initialIndentation },
+      indentation: 0,
     };
 
     this.currentBuffer().push(chunk);
@@ -1027,7 +994,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: { ...initialIndentation },
+      indentation: 0,
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1071,7 +1038,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: { ...initialIndentation },
+      indentation: 0,
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1456,7 +1423,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
 
     if (ctx.regularQuery()) {
-      this.addAlignIndentation();
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
@@ -1464,7 +1430,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // This group will be ended on the next breakLine() or after all nodes are visited.
       this.startGroup();
       this._visit(ctx.RCURLY());
-      this.removeAlignIndentation();
     } else {
       this._visit(ctx.matchMode());
       this._visit(ctx.patternList());
@@ -1477,14 +1442,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.COLLECT());
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
-    this.addAlignIndentation();
     this._visit(ctx.regularQuery());
     this.breakLine();
     // Workaround to get indentation because groups do not translate between chunk lists.
     // This group will be ended on the next breakLine() or after all nodes are visited.
     this.startGroup();
     this._visit(ctx.RCURLY());
-    this.removeAlignIndentation();
   };
 
   visitCountExpression = (ctx: CountExpressionContext) => {
@@ -1493,7 +1456,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
 
     if (ctx.regularQuery()) {
-      this.addAlignIndentation();
       this._visit(ctx.regularQuery());
       this.breakLine();
       this.mustBreakBetween();
@@ -1501,7 +1463,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // This group will be ended on the next breakLine() or after all nodes are visited.
       this.startGroup();
       this._visit(ctx.RCURLY());
-      this.removeAlignIndentation();
     } else {
       this._visit(ctx.matchMode());
       this._visit(ctx.patternList());
@@ -1520,11 +1481,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.addSpecialIndentation();
     this.breakLine();
     this.visit(ctx.CASE());
     const n = ctx.caseAlternative_list().length;
-    this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.breakLine();
       this.visit(ctx.caseAlternative(i));
@@ -1535,10 +1494,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this.visit(ctx.expression());
     }
-    this.removeSpecialIndentation();
     this.breakLine();
     this.visit(ctx.END());
-    this.removeSpecialIndentation();
   };
 
   visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => {
@@ -1556,14 +1513,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    this.addSpecialIndentation();
     this.breakLine();
     this.visit(ctx.CASE());
     this.avoidBreakBetween();
     this._visit(ctx.expression(0));
     this.mustBreakBetween();
     const n = ctx.extendedCaseAlternative_list().length;
-    this.addSpecialIndentation();
     for (let i = 0; i < n; i++) {
       this.breakLine();
       this.visit(ctx.extendedCaseAlternative(i));
@@ -1574,10 +1529,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this.visit(ctx.expression(1));
     }
-    this.removeSpecialIndentation();
     this.breakLine();
     this._visit(ctx.END());
-    this.removeSpecialIndentation();
   };
 
   // Handled separately because it wants indentation and line breaks
@@ -1586,10 +1539,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.CALL());
     this._visit(ctx.subqueryScope());
     this._visit(ctx.LCURLY());
-    this.addBaseIndentation();
+    this.addIndentation();
     this.breakLine();
     this._visit(ctx.regularQuery());
-    this.removeBaseIndentation();
+    this.removeIndentation();
     this.breakLine();
     this._visit(ctx.RCURLY());
     this._visit(ctx.subqueryInTransactionsParameters());
@@ -1600,10 +1553,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {
-      this.addBaseIndentation();
+      this.addIndentation();
       this.breakLine();
       this._visit(ctx.UNION(i));
-      this.removeBaseIndentation();
+      this.removeIndentation();
       if (ctx.ALL(i)) {
         this._visit(ctx.ALL(i));
       } else if (ctx.DISTINCT(i)) {
@@ -1696,9 +1649,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
-    this.addBaseIndentation();
+    this.addIndentation();
     this.breakAndVisitChildren(ctx);
-    this.removeBaseIndentation();
+    this.removeIndentation();
   };
 
   visitSetClause = (ctx: SetClauseContext) => {
@@ -1810,9 +1763,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
     const n = ctx.clause_list().length;
     for (let i = 0; i < n; i++) {
-      this.addBaseIndentation();
+      this.addIndentation();
       this._visit(ctx.clause(i));
-      this.removeBaseIndentation();
+      this.removeIndentation();
     }
     this.breakLine();
     this._visit(ctx.RPAREN());

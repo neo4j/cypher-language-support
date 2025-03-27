@@ -1,9 +1,7 @@
 import { Heap } from 'heap-js';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
-  AlignIndentationOptions,
   Chunk,
-  ChunkIndentation,
   emptyChunk,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isCommentBreak,
@@ -44,7 +42,7 @@ interface State {
   activeGroups: Group[];
   column: number;
   choiceIndex: number;
-  indentationState: IndentationState;
+  indentation: number;
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
@@ -58,18 +56,12 @@ interface StateEdge {
 interface Result {
   cost: number;
   decisions: Decision[];
-  indentation: IndentationState;
+  indentation: number;
 }
 
 interface FinalResultWithPos {
   formattedString: string;
   cursorPos: number;
-}
-
-interface IndentationState {
-  base: number;
-  special: number;
-  align: number[];
 }
 
 type FinalResult = string | FinalResultWithPos;
@@ -106,89 +98,11 @@ function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function deriveNextIndentationState(
-  chunkIndentation: ChunkIndentation,
-  indentationState: IndentationState,
-  activeGroups: Group[],
-): IndentationState {
-  const align = [...indentationState.align];
-  // Align indentation, used for EXISTS, COUNT, COLLECT
-  // Pushes base groups alignment to list to be used later
-  // for closing bracket
-  if (chunkIndentation.align === AlignIndentationOptions.Add) {
-    align.push(activeGroups.at(0).align);
-  }
-  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
-    align.pop();
-  }
-
-  return {
-    base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
-    special:
-      indentationState.special + chunkIndentation.special * INDENTATION_SPACES,
-    align: align,
-  };
-}
-
-function getFinalIndentation(
-  state: State,
-  chunk: Chunk,
-  nextIndentationState: IndentationState,
-): number {
-  // Case 0:  When not at the start of a line, no indentation
+function getFinalIndentation(state: State, chunk: Chunk): number {
   if (state.column !== 0) {
     return 0;
   }
-
-  // Case 1: Active groups, prioritize lining up on these
-  if (state.activeGroups.length > 0) {
-    return state.activeGroups.at(-1).align;
-  }
-
-  // Case 2: This happens if align.pop() was done in deriveNextIndentationState
-  // Also means we are on a closing brackets and should align
-  // on what was the last element in align, however because we popped it before
-  // we need to fetch it from the state where it still exists
-  if (state.indentationState.align.length > nextIndentationState.align.length) {
-    return state.indentationState.align.at(-1);
-  }
-
-  // Case 3: Hard-break comments align on base indentation if
-  // no active groups. Uses nextIndentationState because remove indentation
-  // is attached on same chunk as the comment, Therefore we need to use
-  // the next calculated indentation state directly
-  if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    return nextIndentationState.base;
-  }
-
-  // Case 4: Special indentation, used with CASE
-  // If align indentation is present
-  // Meaning inside EXIST, COUNT or COLLECT, add one
-  // more indentation per nesting to better differentiate
-  if (state.indentationState.special !== 0) {
-    return (
-      state.indentationState.special +
-      INDENTATION_SPACES * state.indentationState.align.length +
-      state.indentationState.base
-    );
-  }
-
-  // Case 5: If there are active alignment groups
-  // (typically for EXISTS, COLLECT, COUNT),
-  // calculate the final indentation by combining:
-  //   - the last alignment value,
-  //   - an extra unit of spacing, and
-  //   - the base indentation.
-  if (state.indentationState.align.length > 0) {
-    return (
-      nextIndentationState.align.at(-1) +
-      INDENTATION_SPACES +
-      state.indentationState.base
-    );
-  }
-
-  // Default case
-  return state.indentationState.base;
+  return state.indentation + chunk.indentation * INDENTATION_SPACES;
 }
 
 // Very useful for debugging but not actually used in the code
@@ -205,16 +119,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   const nextGroups = [...curr.activeGroups];
-  const nextIndentationState = deriveNextIndentationState(
-    choice.left.indentation,
-    curr.indentationState,
-    nextGroups,
-  );
-  const finalIndentation = getFinalIndentation(
-    curr,
-    choice.left,
-    nextIndentationState,
-  );
+  const finalIndentation = getFinalIndentation(curr, choice.left);
+  const nextIndentation =
+    curr.indentation + choice.left.indentation * INDENTATION_SPACES;
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -257,7 +164,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     choiceIndex: curr.choiceIndex + 1,
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
-    indentationState: nextIndentationState,
+    indentation: nextIndentation,
     edge: {
       prevState: curr,
       decision: {
@@ -281,7 +188,7 @@ function reconstructBestPath(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentation: state.indentationState,
+    indentation: state.indentation,
   };
 }
 
@@ -429,11 +336,7 @@ export function buffersToFormattedString(
   buffers: Chunk[][],
 ): FinalResultWithPos {
   let formatted = '';
-  let indentationState: IndentationState = {
-    align: [],
-    base: 0,
-    special: 0,
-  };
+  let indentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
@@ -443,12 +346,12 @@ export function buffersToFormattedString(
       column: 0,
       choiceIndex: 0,
       cost: 0,
-      indentationState: indentationState,
+      indentation: 0,
       overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
-    indentationState = result.indentation;
+    indentation = result.indentation;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {
@@ -458,11 +361,7 @@ export function buffersToFormattedString(
       formatted += formattingResult.formattedString + '\n';
     }
   }
-  if (
-    indentationState.base !== 0 ||
-    indentationState.special !== 0 ||
-    indentationState.align.length !== 0
-  ) {
+  if (indentation !== 0) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
