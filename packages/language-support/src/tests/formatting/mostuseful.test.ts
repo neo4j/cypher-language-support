@@ -85,9 +85,11 @@ WHERE variable.property = "String"
     OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
-WHERE variable.property = "String" OR namespaced.function() = false
-      // comment
-      OR $parameter > 2
+WHERE 
+  variable.property = "String" OR
+  namespaced.function() = false
+  // comment
+  OR $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
@@ -102,13 +104,14 @@ RETURN variable;`;
                                          ->(c:Person {name: 'CleopatraTheQueen'
                                            });`;
     const expected = `
-CREATE (a:Person {name: 'AlexanderTheGreat'})-->
-       // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
-       /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
-       (b:Person {name: 'DariusIII'}), (b:Person {name: 'DariusIII'})-->
-       // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
-       /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
-       (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
+CREATE 
+  (a:Person {name: 'AlexanderTheGreat'})-->
+  // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
+  /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
+  (b:Person {name: 'DariusIII'}), (b:Person {name: 'DariusIII'})-->
+  // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
+  /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
+  (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -163,8 +166,11 @@ RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
     const query = `CREATE (company:Company
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
-    const expected = `CREATE (company:Company {name: "mrUJWq6A", krs: "Yuu9Wl7d",
-                         registration_date: date("FrA1uHGX")});`;
+    const expected = `
+CREATE (company:Company {
+           name: "mrUJWq6A",
+           krs: "Yuu9Wl7d",
+           registration_date: date("FrA1uHGX")});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -173,8 +179,17 @@ RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-          .birthdate, .gender} AS personInfo`;
+RETURN p {
+  .name,
+  .age,
+  .email,
+  .phone,
+  .address,
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -184,9 +199,16 @@ RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN p {.name, .age, .email, .phone,
-          address: {street: p.street, city: c.name, zip: p.zip}, .occupation,
-          .nationality, .birthdate, .gender} AS personInfo`;
+RETURN p {.name,
+  .age,
+  .email,
+  .phone,
+  address: {street: p.street, city: c.name, zip: p.zip},
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -213,9 +235,11 @@ MERGE (veeeeeerylongnodenameeeeeeeee:ZjFYQFrVDTVsA
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN {looooooooooooooooooooooongkey: value,
-        loooooooooooooooooooongkeeeyyyyyyyy: value2,
-        looooooooooooooongkeeey: value3}`.trimStart();
+RETURN {
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -227,10 +251,21 @@ WHERE p.article_number IN [
       "g7LjxbGD"]
 RETURN p`;
     const expected = `MATCH (p:Product)
-WHERE p.article_number IN
-      ["OCj0AswA", "dFRbj1s3", "oMbdvgm7", "L4Vey8xn", "GNgeDIkA", "pU4RE0lM",
-       "M6XNVJsO", "NcdW0tuB", "Pf6RIuP4", "6tKStKwl", "HfvahDu5", "gJoq3HnU",
-       "g7LjxbGD"]
+WHERE p.article_number IN [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB", 
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]
 RETURN p`;
     verifyFormatting(query, expected);
   });
@@ -245,11 +280,21 @@ ijk.zxcvbnml, lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
 ORDER BY lm.lkjhgfdswert ASC`;
     const expected = `MATCH (abcde:wxyz)-[]->(fgh:wxyz)-[]->(ijk:wxyz)-[]->(lm:wxyz)
 WHERE abcde.zxcvbnml = "XyZpQ8Rt"
-RETURN DISTINCT abcde.qwertyuiopa, abcde.zxcvbnmasdfgh, abcde.zxcvbnml,
-                fgh.qwertyuiopa, fgh.zxcvbnmasdfgh, fgh.zxcvbnml,
-                ijk.qwertyuiopa, ijk.zxcvbnmasdfgh, ijk.zxcvbnml,
-                lm.qwertyuiopa, lm.zxcvbnmasdfgh, lm.zxcvbnml, lm.lkjhgfdswert
-                ORDER BY lm.lkjhgfdswert ASC`;
+RETURN DISTINCT
+  abcde.qwertyuiopa,
+  abcde.zxcvbnmasdfgh,
+  abcde.zxcvbnml,
+  fgh.qwertyuiopa,
+  fgh.zxcvbnmasdfgh,
+  fgh.zxcvbnml,
+  ijk.qwertyuiopa,
+  ijk.zxcvbnmasdfgh,
+  ijk.zxcvbnml,
+  lm.qwertyuiopa,
+  lm.zxcvbnmasdfgh,
+  lm.zxcvbnml,
+  lm.lkjhgfdswert
+  ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 
@@ -261,9 +306,10 @@ MATCH (Alice123:Person)-[FRND_REL:friendship]->
       (Dave:Short)
 RETURN Alice123`;
     const expected = `
-MATCH (Alice123:Person)-[FRND_REL:friendship]->
-      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
-      (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
+MATCH 
+  (Alice123:Person)-[FRND_REL:friendship]->
+  (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+  (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
 RETURN Alice123`.trimStart();
     verifyFormatting(query, expected);
   });
