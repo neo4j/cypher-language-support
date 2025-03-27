@@ -1889,15 +1889,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.RPAREN());
   };
 
-  visitExpression2 = (ctx: Expression2Context) => {
-    this._visit(ctx.expression1());
-    const n = ctx.postFix_list().length;
-    for (let i = 0; i < n; i++) {
-      this.avoidSpaceBetween();
-      this._visit(ctx.postFix(i));
-    }
-  };
-
   visitProcedureName = (ctx: ProcedureNameContext) => {
     const procedureNameGrp = this.startGroup();
     this._visit(ctx.namespace());
