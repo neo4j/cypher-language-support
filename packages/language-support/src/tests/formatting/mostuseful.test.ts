@@ -173,10 +173,9 @@ RETURN
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
     const expected = `
-CREATE (company:Company {
-           name: "mrUJWq6A",
-           krs: "Yuu9Wl7d",
-           registration_date: date("FrA1uHGX")});`.trimStart();
+CREATE
+  (company:Company
+    {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")});`.trimStart();
     verifyFormatting(query, expected);
   });
 
