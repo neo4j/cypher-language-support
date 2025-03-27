@@ -104,7 +104,7 @@ RETURN variable;`;
                                          ->(c:Person {name: 'CleopatraTheQueen'
                                            });`;
     const expected = `
-CREATE 
+CREATE
   (a:Person {name: 'AlexanderTheGreat'})-->
   // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
   /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
