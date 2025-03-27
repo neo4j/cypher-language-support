@@ -228,8 +228,10 @@ RETURN
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
     const expected = `
-MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-             [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+MATCH
+  path =
+    (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+    [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -323,9 +325,9 @@ MATCH (Alice123:Person)-[FRND_REL:friendship]->
 RETURN Alice123`;
     const expected = `
 MATCH
-  (Alice123:Person)-[FRND_REL:friendship]->
-  (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
-  (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
+  (Alice123:Person)-[FRND_REL:friendship]->(Bob:Indiv)-
+  [COWORK_REL:colleagueRelationship]->(Carla55:EmployeeType)-
+  [PARTNR:partner_of]->(Dave:Short)
 RETURN Alice123`.trimStart();
     verifyFormatting(query, expected);
   });

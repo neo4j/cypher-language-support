@@ -1226,8 +1226,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
     }
     if (ctx.LBRACKET()) {
-      const bracketPatternGrp = this.startNonPrettierGroup();
       this._visit(ctx.LBRACKET());
+      const bracketPatternGrp = this.startGroup();
       this.handleInnerPatternContext(ctx);
       this._visit(ctx.RBRACKET());
       this.endGroup(bracketPatternGrp);
@@ -1246,6 +1246,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitNodePattern = (ctx: NodePatternContext) => {
     this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
+    const nodePatternGrp = this.startGroup();
     if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
       let variableLabelGrp: number;
       if (ctx.variable() && ctx.labelExpression()) {
@@ -1266,6 +1267,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.expression());
     }
     this._visit(ctx.RPAREN());
+    this.endGroup(nodePatternGrp);
   };
 
   visitPattern = (ctx: PatternContext) => {
