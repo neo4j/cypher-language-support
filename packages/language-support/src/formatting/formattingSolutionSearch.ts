@@ -25,12 +25,12 @@ interface Choice {
 
 export interface Group {
   id: number;
+  breaksAll?: boolean;
   nonPrettierStyle: boolean;
   size: number;
   dbgText: string;
   align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
-  breaksAll?: boolean;
 }
 
 interface Decision {
