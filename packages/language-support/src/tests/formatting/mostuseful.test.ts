@@ -245,11 +245,12 @@ MERGE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN {
-  looooooooooooooooooooooongkey: value,
-  loooooooooooooooooooongkeeeyyyyyyyy: value2,
-  looooooooooooooongkeeey: value3
-}`.trimStart();
+RETURN
+  {
+    looooooooooooooooooooooongkey: value,
+    loooooooooooooooooooongkeeeyyyyyyyy: value2,
+    looooooooooooooongkeeey: value3
+  }`.trimStart();
     verifyFormatting(query, expected);
   });
 
