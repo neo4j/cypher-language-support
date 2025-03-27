@@ -91,7 +91,7 @@ const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
 const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
 
-function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
     nextChunk?.type !== 'COMMENT' &&
     chunk.type === 'REGULAR' &&

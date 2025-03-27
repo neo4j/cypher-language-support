@@ -99,7 +99,11 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { buffersToFormattedString, Group } from './formattingSolutionSearch';
+import {
+  buffersToFormattedString,
+  doesNotWantSpace,
+  Group,
+} from './formattingSolutionSearch';
 
 const MISSING = '<missing';
 
@@ -183,7 +187,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             }
             group.size += chunk.text.length;
             group.dbgText += chunk.text;
-            if (!chunk.noSpace) {
+            if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
               group.size++;
               group.dbgText += ' ';
             }
