@@ -33,12 +33,16 @@ import {
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
+  Expression6Context,
+  Expression7Context,
+  Expression8Context,
   ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
   ForeachClauseContext,
   FulltextNodePatternContext,
   FunctionInvocationContext,
+  IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
   LabelExpression2Context,
@@ -68,6 +72,7 @@ import {
   ProcedureNameContext,
   PropertyContext,
   QuantifierContext,
+  RangePostfixContext,
   ReduceExpressionContext,
   RegularQueryContext,
   RelationshipPatternContext,
@@ -1448,36 +1453,88 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.RPAREN());
   };
 
-  visitExpression = (ctx: ExpressionContext) => {
-    const n = ctx.expression11_list().length;
+  visitBinaryExpression = (ctx: ParserRuleContext) => {
+    const n = ctx.getChildCount();
     if (n === 1) {
-      this._visit(ctx.expression11(0));
+      this.visitChildren(ctx);
       return;
     }
+    const wrappingGrp = this.startGroup();
+
+    let groupId: number;
     for (let i = 0; i < n; i++) {
-      const orExprGrp = this.startGroup();
-      this._visit(ctx.expression11(i));
-      if (i < n - 1) {
-        this._visit(ctx.OR(i));
+      const child = ctx.getChild(i);
+      if (child instanceof TerminalNode) {
+        this.avoidBreakBetween();
+        this.visitTerminal(child);
+        this.endGroup(groupId);
+      } else if (child instanceof ParserRuleContext) {
+        if (i < n - 1) {
+          groupId = this.startGroup();
+        }
+        this._visit(child);
       }
-      this.endGroup(orExprGrp);
     }
+    this.endGroup(wrappingGrp);
+  };
+
+  visitExpression = (ctx: ExpressionContext) => {
+    this.visitBinaryExpression(ctx);
   };
 
   visitExpression10 = (ctx: Expression10Context) => {
-    const n = ctx.expression9_list().length;
-    if (n === 1) {
-      this._visit(ctx.expression9(0));
+    this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression8 = (ctx: Expression8Context) => {
+    this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression7 = (ctx: Expression7Context) => {
+    if (!ctx.comparisonExpression6()) {
+      this.visitChildren(ctx);
       return;
     }
+    this._visit(ctx.expression6());
+    this.avoidBreakBetween();
+    this.visit(ctx.comparisonExpression6());
+  };
+
+  visitExpression6 = (ctx: Expression6Context) => {
+    this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression2 = (ctx: Expression2Context) => {
+    this._visit(ctx.expression1());
+    const n = ctx.postFix_list().length;
     for (let i = 0; i < n; i++) {
-      const andExprGrp = this.startGroup();
-      this._visit(ctx.expression9(i));
-      if (i < n - 1) {
-        this._visit(ctx.AND(i));
-      }
-      this.endGroup(andExprGrp);
+      this.avoidSpaceBetween();
+      this._visit(ctx.postFix(i));
     }
+  };
+
+  visitIndexPostfix = (ctx: IndexPostfixContext) => {
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.expression());
+    this.avoidSpaceBetween();
+    this._visit(ctx.RBRACKET());
+  };
+
+  visitRangePostfix = (ctx: RangePostfixContext) => {
+    this._visit(ctx.LBRACKET());
+    if (ctx._fromExp) {
+      this._visit(ctx.expression(0));
+    }
+    this._visit(ctx.DOTDOT());
+    if (ctx._toExp) {
+      if (ctx._fromExp) {
+        this._visit(ctx.expression(1));
+      } else {
+        this._visit(ctx.expression(0));
+      }
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RBRACKET());
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
