@@ -630,6 +630,71 @@ RETURN person.name AS name, COUNT {
     verifyFormatting(query, expected);
   });
 
+  test('should prefer to not split before a relation 1', () => {
+    const query = `
+MATCH (a:person {name: 'alice', age: 30})-[r:friend_of]->
+      (b:person {name: 'bob'})-[s:colleague_of]->(c:person {name: 'carol'})-
+      [t:partner_of]->(d:person {name: 'david'})-[u:mentor_and_friend_of]->
+      (e:person {name: 'eve'})
+RETURN a`;
+    const expected = `
+MATCH
+  (a:person {name: 'alice', age: 30})-[r:friend_of]->
+  (b:person {name: 'bob'})-[s:colleague_of]->
+  (c:person {name: 'carol'})-[t:partner_of]->
+  (d:person {name: 'david'})-[u:mentor_and_friend_of]->(e:person {name: 'eve'})
+RETURN a`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('should prefer to not split before a relation 2', () => {
+    const query = `
+MATCH (a:Person {name: 'Alice'})   -[r:KNOWS]->
+      (b:Person {name: 'Bob'}) -[s:FRIEND_OF]->
+      (c:Person {name: 'Charlie'})
+RETURN a`;
+    const expected = `
+MATCH
+  (a:Person {name: 'Alice'})-[r:KNOWS]->(b:Person {name: 'Bob'})-[s:FRIEND_OF]->
+  (c:Person {name: 'Charlie'})
+RETURN a`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('should prefer to not split before a relation 3', () => {
+    const query = `
+MATCH (NOD01)-[REL01]->
+      (NOD02)-[REL02]->
+      (NOD03)-[REL03]->
+      (NOD04)-[REL04]->
+      (N)-[REL05]->
+      (NOD06)-[REL06]->
+      (NOD07)
+RETURN NOD01`;
+    // The node (N) would fit on the previous line but we prefer to split before nodes
+    const expected = `
+MATCH (NOD01)-[REL01]->(NOD02)-[REL02]->(NOD03)-[REL03]->(NOD04)-[REL04]->
+      (N)-[REL05]->(NOD06)-[REL06]->(NOD07)
+RETURN NOD01`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('should prefer to not split before a relation 4', () => {
+    const query = `
+MATCH (Alice123:Person)-[FRND_REL:friendship]->
+      (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+      (Carla55:EmployeeType)-[PARTNR:partner_of]->
+      (Dave:Short)
+RETURN Alice123`;
+    const expected = `
+MATCH
+  (Alice123:Person)-[FRND_REL:friendship]->
+  (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+  (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
+RETURN Alice123`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
   test('long list in a return', () => {
     const query = `
 RETURN ["OCj0AswA",

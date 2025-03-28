@@ -1247,8 +1247,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
     }
     if (ctx.LBRACKET()) {
-      this._visit(ctx.LBRACKET());
       const bracketPatternGrp = this.startGroup();
+      this._visit(ctx.LBRACKET());
+      this.avoidBreakBetween();
       this.handleInnerPatternContext(ctx);
       this._visit(ctx.RBRACKET());
       this.endGroup(bracketPatternGrp);
@@ -1348,7 +1349,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     n: number,
   ): number => {
     let i = startIndex;
-    //let nodeRelPatternGrp = this.startNonPrettierGroup();
+    let nodeRelPatternGrp = this.startGroup({
+      nonPrettierStyle: true,
+      addsIndentationWhenBroken: false,
+    });
 
     this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
     i++;
@@ -1362,13 +1366,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visitQuantifier(ctx.getChild(i) as QuantifierContext);
         i++;
       }
-      //this.endGroup(nodeRelPatternGrp);
+      this.endGroup(nodeRelPatternGrp);
       if (i < n && ctx.getChild(i) instanceof NodePatternContext) {
         if (
           i + 1 < n &&
           ctx.getChild(i + 1) instanceof RelationshipPatternContext
         ) {
-          //nodeRelPatternGrp = this.startGroup();
+          nodeRelPatternGrp = this.startGroup({
+            nonPrettierStyle: true,
+            addsIndentationWhenBroken: false,
+          });
         }
         this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
         i++;
