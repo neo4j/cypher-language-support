@@ -103,12 +103,14 @@
       {
         "command": "neo4j.deleteParameter",
         "title": "Delete parameter",
-        "category": "Neo4j"
+        "category": "Neo4j",
+        "icon": "$(trash)"
       },
       {
         "command": "neo4j.editParameter",
         "title": "Edit parameter",
-        "category": "Neo4j"
+        "category": "Neo4j",
+        "icon": "$(pencil)"
       }
     ],
     "keybindings": [
@@ -224,6 +226,16 @@
         {
           "command": "neo4j.editParameter",
           "when": "view == neo4jParameters && viewItem == parameter"
+        },
+        {
+          "command": "neo4j.editParameter",
+          "when": "view == neo4jParameters && viewItem == parameter",
+          "group": "inline"
+        },
+        {
+          "command": "neo4j.deleteParameter",
+          "when": "view == neo4jParameters && viewItem == parameter",
+          "group": "inline"
         }
       ]
     },

@@ -65,6 +65,16 @@ suite('Params panel testing', () => {
     });
   }
 
+  async function forceSwitchDatabase(database: string) {
+    await browser.executeWorkbench(async (vscode, database: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceSwitchDatabase',
+        database,
+      );
+    }, database);
+  }
+
   async function forceConnect(i: number) {
     await browser.executeWorkbench(async (vscode, i) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -163,5 +173,17 @@ suite('Params panel testing', () => {
       'You need to be connected to neo4j to set parameters.',
     );
     await forceConnect(1);
+  });
+
+  test('Parameters cannot be set when connected to system', async function () {
+    await forceSwitchDatabase('system');
+    void forceAddParam('a', '"charmander"');
+    await waitUntilNotification(
+      browser,
+      'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+    );
+
+    // cleanup
+    await forceSwitchDatabase('neo4j');
   });
 });

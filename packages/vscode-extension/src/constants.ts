@@ -19,6 +19,7 @@ export const CONSTANTS = {
       FORCE_DELETE_PARAMETER: 'neo4j.internal.forceDeleteParam',
       FORCE_DISCONNECT: 'neo4j.internal.forceDisconnect',
       FORCE_CONNECT: 'neo4j.internal.forceConnect',
+      SWITCH_DATABASE: 'neo4j.internal.forceSwitchDatabase',
     },
   },
   MESSAGES: {

@@ -66,7 +66,7 @@ export async function setParameter(param: Parameter) {
   parameters[key] = param;
   await saveParameters(parameters);
   await sendParametersToLanguageServer();
-  void vscode.window.showInformationMessage(`Parameter \`${key}\` set.`);
+  void vscode.window.showInformationMessage(`Parameter '${key}' set.`);
 }
 
 /**

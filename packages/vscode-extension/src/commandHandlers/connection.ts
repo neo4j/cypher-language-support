@@ -150,6 +150,12 @@ export async function switchToDatabase(
     return;
   }
   const database = connectionItem.key;
+  await switchToDatabaseWithName(database);
+}
+
+export async function switchToDatabaseWithName(
+  database: string,
+): Promise<void> {
   const connection = getActiveConnection();
   const result = await switchDatabase({ ...connection, database });
   displayMessageForSwitchDatabaseResult(database, result);
