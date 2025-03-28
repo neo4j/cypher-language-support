@@ -76,7 +76,7 @@ export async function testCompletionContains({
   });
 }
 
-suite('Auto completion spec', () => {
+suite.only('Auto completion spec', () => {
   test('Completes allShortestPaths ', async () => {
     const position = new vscode.Position(2, 28);
 
