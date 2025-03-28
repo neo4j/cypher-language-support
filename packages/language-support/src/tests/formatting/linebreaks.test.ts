@@ -825,9 +825,10 @@ WHERE insertBefore.name = $insertBefore
 
 // If we ask to have it placed at the same position, don't do anything
 WITH move, insertBefore
-WHERE (insertBefore IS NULL OR move <> insertBefore) AND
-      (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
-      (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
+WHERE
+  (insertBefore IS NULL OR move <> insertBefore) AND
+  (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
+  (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
 
 // Find the items before and after the item to move (if they exist)
 OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
