@@ -247,9 +247,10 @@ WHERE variable.property = "String"
     OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
-WHERE variable.property = "String" OR namespaced.function() = false
-      // comment
-      OR $parameter > 2
+WHERE
+  variable.property = "String" OR namespaced.function() = false
+  // comment
+  OR $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
