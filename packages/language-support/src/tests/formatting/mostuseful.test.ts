@@ -348,9 +348,9 @@ MATCH (Alice123:Person)-[FRND_REL:friendship]->
 RETURN Alice123`;
     const expected = `
 MATCH
-  (Alice123:Person)-[FRND_REL:friendship]->(Bob:Indiv)-
-  [COWORK_REL:colleagueRelationship]->(Carla55:EmployeeType)-
-  [PARTNR:partner_of]->(Dave:Short)
+  (Alice123:Person)-[FRND_REL:friendship]->
+  (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
+  (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
 RETURN Alice123`.trimStart();
     verifyFormatting(query, expected);
   });

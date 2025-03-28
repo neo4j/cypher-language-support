@@ -308,21 +308,23 @@ WHERE p.price > 1000 AND p.stock > 50 AND
                     'Musical Instruments', 'Art Supplies', 'Office Supplies']
 RETURN p`;
     const expected = `MATCH (p:Product)
-WHERE p.price > 1000 AND
-      p.stock > 50 AND
-      p.category IN
-      ['Electronics',
-       'Home Appliances',
-       'Garden Tools',
-       'Sports Equipment',
-       'Automotive Parts',
-       'Fashion Accessories',
-       'Books',
-       'Toys',
-       'Jewelry',
-       'Musical Instruments',
-       'Art Supplies',
-       'Office Supplies']
+WHERE
+  p.price > 1000 AND
+  p.stock > 50 AND
+  p.category IN [
+    'Electronics',
+    'Home Appliances',
+    'Garden Tools',
+    'Sports Equipment',
+    'Automotive Parts',
+    'Fashion Accessories',
+    'Books',
+    'Toys',
+    'Jewelry',
+    'Musical Instruments',
+    'Art Supplies',
+    'Office Supplies'
+  ]
 RETURN p`;
     verifyFormatting(query, expected);
   });
