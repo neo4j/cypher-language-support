@@ -34,11 +34,7 @@ export function validateParamInput(
   paramValue: string,
   dbSchema: DbSchema,
 ): string {
-  const errors = lintCypherQuery(
-    `RETURN ${paramValue} AS param`,
-    dbSchema,
-    true,
-  );
+  const errors = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
   if (errors.length > 0) {
     return (
       'Value can not be evaluated: ' + errors.map((e) => e.message).join(' ')
