@@ -250,12 +250,37 @@ MERGE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN
-  {
+RETURN {
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('nested maps with long key/value pairs', () => {
+    const query = `
+RETURN {
+  map: {
     looooooooooooooooooooooongkey: value,
     loooooooooooooooooooongkeeeyyyyyyyy: value2,
     looooooooooooooongkeeey: value3
-  }`.trimStart();
+  },
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
+    const expected = `
+RETURN {
+  map: {
+    looooooooooooooooooooooongkey: value,
+    loooooooooooooooooooongkeeeyyyyyyyy: value2,
+    looooooooooooooongkeeey: value3
+  },
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -269,8 +294,7 @@ RETURN p`;
     // Not fully correct right now but I think it's good enough
     const expected = `MATCH (p:Product)
 WHERE
-  p.article_number IN
-  [
+  p.article_number IN [
     "OCj0AswA",
     "dFRbj1s3",
     "oMbdvgm7",
