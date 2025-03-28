@@ -159,10 +159,10 @@ RETURN path`;
 
   test('does not split in the middle of a relation', () => {
     const expected = `
-MATCH path =
-  (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-  [r:verylongrelationtypename]->
-  (m2:anotherverylongrelationtypename)
+MATCH
+  path =
+    (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
+    [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(q21, expected);
   });
