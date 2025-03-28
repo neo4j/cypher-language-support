@@ -762,7 +762,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCommandOptions = (ctx: CommandOptionsContext) => {
     this.breakLine();
     this.visit(ctx.OPTIONS());
+    const optionsGrp = this.startGroup();
     this.visit(ctx.mapOrParameter());
+    this.endGroup(optionsGrp);
   };
 
   visitFulltextNodePattern = (ctx: FulltextNodePatternContext) => {
