@@ -122,7 +122,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
-  const finalIndentation = getFinalIndentation(curr, choice.left);
+  const finalIndentation = getFinalIndentation(curr);
   let nextIndentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
 
