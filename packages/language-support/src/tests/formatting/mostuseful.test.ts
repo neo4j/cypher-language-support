@@ -440,16 +440,16 @@ WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does n
 RETURN u;`;
     const expected = `MATCH (u:User)
 WITH
-    u,
-    apoc.util.validate(
-      u.status <> 'active',
-      'User ' +
-      u.username +
-      ' does not have an active status which is required for processing the requested operation. ' +
-      'Please check the user account settings for further details.',
-      [u.id, u.username]
-    )
-    AS validation
+  u,
+  apoc.util.validate(
+    u.status <> 'active',
+    'User ' +
+    u.username +
+    ' does not have an active status which is required for processing the requested operation. ' +
+    'Please check the user account settings for further details.',
+    [u.id, u.username]
+  )
+  AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
