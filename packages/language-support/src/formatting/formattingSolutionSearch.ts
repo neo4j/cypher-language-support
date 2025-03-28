@@ -438,7 +438,7 @@ export function buffersToFormattedString(
       column: 0,
       choiceIndex: 0,
       cost: 0,
-      indentation: 0,
+      indentation,
       overflowingCount: 0,
       edge: null,
     };
