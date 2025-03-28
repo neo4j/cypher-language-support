@@ -1770,9 +1770,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(functionArgGrp);
     }
-    this._visit(ctx.RPAREN());
     this.endGroup(allFunctionArgsGrp);
     this.endGroup(invocationGrp);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), { dontConcatenate: true });
   };
 
   visitMergeClause = (ctx: MergeClauseContext) => {
