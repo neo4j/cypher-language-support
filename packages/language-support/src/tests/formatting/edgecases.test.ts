@@ -845,30 +845,32 @@ RETURN 5 +
       CASE
         WHEN EXISTS {
           MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE person.name = 'Chris' OR
-                person.name = 'Chris' OR
-                person.name = 'Chris' OR
-                person.name = 'Chris' OR
-                person.name = 'Chris' OR
-                person.name = 'Chris'
+          WHERE
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris'
           WITH dog
           WHERE dog.name = 'Ozzy'
         } THEN 'Relationship'
         WHEN (n {prop: 42}) THEN
           CASE
-            WHEN (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--() OR
-                 (n)--()
-                 THEN 'Relationship'
+            WHEN
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--()
+              THEN 'Relationship'
             WHEN (n {prop: 42}) THEN
               CASE
                 WHEN EXISTS {
@@ -918,9 +920,10 @@ RETURN
       END
   END AS userProfile;`;
     const expected = `MATCH (u:User)
-WITH u,
-     count((u)-[:LIKES]->()) AS likeCount,
-     collect(DISTINCT u.interests) AS interestList
+WITH
+  u,
+  count((u)-[:LIKES]->()) AS likeCount,
+  collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
     WHEN EXISTS {
