@@ -1576,10 +1576,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.regularQuery()) {
       this.addIndentation();
       this._visit(ctx.regularQuery());
+      this.removeIndentation();
       this.breakLine();
       this.mustBreakBetween();
       this._visit(ctx.RCURLY());
-      this.removeIndentation();
     } else {
       this._visit(ctx.matchMode());
       this._visit(ctx.patternList());

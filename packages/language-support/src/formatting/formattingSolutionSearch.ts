@@ -101,11 +101,11 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getFinalIndentation(state: State, chunk: Chunk): number {
+function getFinalIndentation(state: State): number {
   if (state.column !== 0) {
     return 0;
   }
-  return state.indentation + chunk.indentation * INDENTATION_SPACES;
+  return state.indentation;
 }
 
 // Very useful for debugging but not actually used in the code
