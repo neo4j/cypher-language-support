@@ -1542,7 +1542,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.expression6());
     this.avoidBreakBetween();
+    const comparisonExprGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     this.visit(ctx.comparisonExpression6());
+    this.endGroup(comparisonExprGrp);
   };
 
   visitExpression6 = (ctx: Expression6Context) => {
