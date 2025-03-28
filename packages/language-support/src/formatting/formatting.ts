@@ -1482,7 +1482,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.endGroup(groupId);
       } else if (child instanceof ParserRuleContext) {
         if (i < n - 1) {
-          groupId = this.startGroup();
+          groupId = this.startGroup({ addsIndentationWhenBroken: false });
         }
         this._visit(child);
       }
@@ -1726,7 +1726,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitFunctionInvocation = (ctx: FunctionInvocationContext) => {
-    const functionNameGrp = this.startGroup();
+    const functionNameGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     this._visit(ctx.functionName());
     this.endGroup(functionNameGrp);
     this.avoidSpaceBetween();
@@ -1739,14 +1741,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.ALL());
     this._visit(ctx.DISTINCT());
-    const allFunctionArgsGrp = this.startGroup();
+    const allFunctionArgsGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
       if (i == 0 && !ctx.DISTINCT() && !ctx.ALL()) {
         this.avoidSpaceBetween();
       }
-      const functionArgGrp = this.startGroup();
+      const functionArgGrp = this.startGroup({
+        addsIndentationWhenBroken: false,
+      });
       this._visit(ctx.functionArgument(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
