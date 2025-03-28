@@ -6,7 +6,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '10 4 1-7 * 5'
+    - cron: '10 4 4,7 * *'
   workflow_dispatch:
   
 
@@ -80,7 +80,15 @@ jobs:
         BRANCH_NAME="update-artifacts-$(date +%Y%m%d-%H%M%S)"
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
+    - name: Check for modified files
+      shell: bash
+      id: git-check
+      run: |
+        git update-index --refresh || true
+        echo modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi) >> $GITHUB_OUTPUT
+
     - name: Commit and Push Changes
+      if: steps.git-check.outputs.modified == 'true'
       run: |
         git add ./packages/language-support/src/antlr-grammar
         git add ./packages/language-support/src/syntaxValidation
@@ -88,6 +96,7 @@ jobs:
         git push origin HEAD:${{ env.BRANCH_NAME }}
 
     - name: Create Pull Request
+      if: steps.git-check.outputs.modified == 'true'
       uses: peter-evans/create-pull-request@v7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
