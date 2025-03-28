@@ -1,4 +1,3 @@
-import { testData } from '../../../../language-support/src/tests/testData';
 import { validateParamInput } from '../../../src/commandHandlers/params';
 
 suite('Execute commands spec', () => {
@@ -6,18 +5,19 @@ suite('Execute commands spec', () => {
   //   let showInformationMessageStub: sinon.SinonStub;
   //   let showErrorMessageStub: sinon.SinonStub;
 
-  beforeEach(() => {
-    // sandbox = sinon.createSandbox();
-    // showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
-    // showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
-  });
-
-  afterEach(() => {
-    // sandbox.restore();
-  });
-
   suite.only('Parameter validation spec', () => {
     test('Parameter validation works as expected', async () => {
+      const emptyFunction = {
+        name: '',
+        category: '',
+        description: '',
+        isBuiltIn: false,
+        argumentDescription: [],
+        returnDescription: '',
+        signature: '',
+        aggregating: false,
+        isDeprecated: false,
+      };
       const dbSchema = {
         labels: [],
         relationshipTypes: [],
@@ -31,7 +31,7 @@ suite('Execute commands spec', () => {
         functions: {
           'CYPHER 5': {
             datetime: {
-              ...testData.emptyFunction,
+              ...emptyFunction,
               name: 'datetime',
             },
           },
