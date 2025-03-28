@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { validateParamInput } from '../../../src/commandHandlers/params';
 
 suite('Execute commands spec', () => {
@@ -6,7 +7,7 @@ suite('Execute commands spec', () => {
   //   let showErrorMessageStub: sinon.SinonStub;
 
   suite.only('Parameter validation spec', () => {
-    test('Parameter validation works as expected', async () => {
+    test('Parameter validation works as expected', () => {
       const emptyFunction = {
         name: '',
         category: '',
@@ -38,12 +39,15 @@ suite('Execute commands spec', () => {
         },
         defaultLanguage: 'CYPHER 5',
       };
-      await expect(validateParamInput('datetime()', dbSchema)).toBe(null);
-      await expect(validateParamInput('500', dbSchema)).toBe(null);
-      await expect(validateParamInput('datetime(', dbSchema)).toBe(
+      assert.strictEqual(validateParamInput('datetime()', dbSchema), null);
+      assert.strictEqual(validateParamInput('datetime()', dbSchema), null);
+      assert.strictEqual(validateParamInput('500', dbSchema), null);
+      assert.strictEqual(
+        validateParamInput('datetime(', dbSchema),
         'Invalid parameter value',
       );
-      await expect(validateParamInput('500q', dbSchema)).toBe(
+      assert.strictEqual(
+        validateParamInput('500q', dbSchema),
         'Invalid parameter value',
       );
     });
