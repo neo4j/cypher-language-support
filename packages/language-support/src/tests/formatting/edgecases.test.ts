@@ -224,13 +224,15 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
-         THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND
-         SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000
-         THEN 'High Spender'
+    WHEN
+      SUM(product.price) >= 100 AND SUM(product.price) < 500
+      THEN 'Medium Spender'
+    WHEN
+      SUM(product.price) >= 500 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000
+      THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -245,13 +247,15 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE p.age
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
-         THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND
-         SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000
-         THEN 'High Spender'
+    WHEN
+      SUM(product.price) >= 100 AND SUM(product.price) < 500
+      THEN 'Medium Spender'
+    WHEN
+      SUM(product.price) >= 500 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000
+      THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
