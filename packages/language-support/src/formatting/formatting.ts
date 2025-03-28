@@ -1637,10 +1637,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
     this.addIndentation();
     this._visit(ctx.WHEN());
-    this.avoidBreakBetween();
+    const whenGrp = this.startGroup();
     this._visit(ctx.expression(0));
+    const thenGrp = this.startGroup();
     this._visit(ctx.THEN());
     this._visit(ctx.expression(1));
+    this.endGroup(thenGrp);
+    this.endGroup(whenGrp);
     this.removeIndentation();
   };
 
@@ -1670,7 +1673,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => {
     this.addIndentation();
     this._visit(ctx.WHEN());
-    this.avoidBreakBetween();
+    const whenGrp = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.extendedWhen(i));
@@ -1678,8 +1681,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
+    const thenGrp = this.startGroup();
     this._visit(ctx.THEN());
     this._visit(ctx.expression());
+    this.endGroup(thenGrp);
+    this.endGroup(whenGrp);
     this.removeIndentation();
   };
 
