@@ -118,6 +118,16 @@ interface RawTerminalOptions {
   dontConcatenate?: boolean;
 }
 
+interface GroupOptions {
+  nonPrettierStyle?: boolean;
+  addsIndentationWhenBroken?: boolean;
+}
+
+const defaultGroupOptions: GroupOptions = {
+  nonPrettierStyle: false,
+  addsIndentationWhenBroken: true,
+};
+
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
@@ -376,19 +386,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  startGroup = (
-    nonPrettierStyle = false,
-    addsIndentationWhenBroken = true,
-  ): number => {
+  startGroup = (groupOptions: GroupOptions = defaultGroupOptions): number => {
     const last = this.lastInCurrentBuffer();
     const newGroup: Group = {
       id: this.groupID,
-      nonPrettierStyle,
+      nonPrettierStyle: groupOptions.nonPrettierStyle,
       dbgText: '',
       size: 0,
       align: 0, // Irrelevant here
       breakCost: 0,
-      addsIndentationWhenBroken,
+      addsIndentationWhenBroken: groupOptions.addsIndentationWhenBroken,
     };
     last.groupsStarting.push(newGroup);
     this.groupStack.push(newGroup);
@@ -397,35 +404,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroupAlsoOnComment = (
-    nonPrettierStyle = false,
-    addsIndentationWhenBroken = true,
+    groupOptions: GroupOptions = defaultGroupOptions,
   ): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
       const target = this.currentBuffer().at(idx + 1);
       const newGroup: Group = {
         id: this.groupID,
-        nonPrettierStyle,
-        size: 0,
+        nonPrettierStyle: groupOptions.nonPrettierStyle,
         dbgText: '',
+        size: 0,
         align: 0, // Irrelevant here
         breakCost: 0,
-        addsIndentationWhenBroken,
+        addsIndentationWhenBroken: groupOptions.addsIndentationWhenBroken,
       };
       target.groupsStarting.push(newGroup);
       this.groupStack.push(newGroup);
       this.groupID++;
       return this.groupID - 1;
     }
-    return this.startGroup(nonPrettierStyle);
+    return this.startGroup(groupOptions);
   };
 
   startNonPrettierGroup = (): number => {
-    return this.startGroup(true);
+    return this.startGroup({ nonPrettierStyle: true });
   };
 
   startNonPrettierGroupAlsoOnComment = (): number => {
-    return this.startGroupAlsoOnComment(true);
+    return this.startGroupAlsoOnComment({ nonPrettierStyle: true });
   };
 
   setIndentationProperty = (modifier: 'add' | 'remove') => {
@@ -939,7 +945,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       commaIdx++;
     }
     for (let i = 0; i < n; i++) {
-      const returnItemGrp = this.startGroup(false, false);
+      const returnItemGrp = this.startGroup({
+        addsIndentationWhenBroken: false,
+      });
       this._visit(ctx.returnItem(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(commaIdx));
@@ -1463,7 +1471,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    const wrappingGrp = this.startGroup(false, false);
+    const wrappingGrp = this.startGroup({ addsIndentationWhenBroken: false });
 
     let groupId: number;
     for (let i = 0; i < n; i++) {
@@ -1810,7 +1818,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
-    const mapWrappingGrp = this.startGroup(false, false);
+    const mapWrappingGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     this._visit(ctx.variable());
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
