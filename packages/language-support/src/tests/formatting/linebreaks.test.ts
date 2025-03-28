@@ -432,9 +432,11 @@ MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-[:NEX
         (l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`;
     const expected = `
-MATCH (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-(l1a:CallingPoint)-
-      [:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-(l2a:CallingPoint)-
-      [:NEXT]->*(l2b)-[:CALLS_AT]->(gtw:Station {name: 'Gatwick Airport'})
+MATCH
+  (dmk:Station {name: 'Denmark Hill'})<-[:CALLS_AT]-
+  (l1a:CallingPoint)-[:NEXT]->+(l1b)-[:CALLS_AT]->(x:Station)<-[:CALLS_AT]-
+  (l2a:CallingPoint)-[:NEXT]->*(l2b)-[:CALLS_AT]->
+  (gtw:Station {name: 'Gatwick Airport'})
 RETURN dmk`.trim();
     verifyFormatting(query, expected);
   });
