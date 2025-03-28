@@ -1309,14 +1309,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.EQ());
     }
     const selectorAnonymousPatternGrp = this.startGroup({
-      addsIndentationWhenBroken: false,
+      addsIndentationWhenBroken: ctx.variable() != undefined,
     });
     if (ctx.selector()) {
       const selectorGroup = this.startGroup();
       this._visit(ctx.selector());
       this.endGroup(selectorGroup);
     }
-    const anonymousPatternGrp = this.startNonPrettierGroup();
+    const anonymousPatternGrp = this.startGroup({
+      nonPrettierStyle: true,
+      addsIndentationWhenBroken: false,
+    });
     this._visit(ctx.anonymousPattern());
     this.endGroup(anonymousPatternGrp);
     this.endGroup(selectorAnonymousPatternGrp);

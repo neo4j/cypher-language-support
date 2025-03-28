@@ -548,9 +548,11 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
   (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+(b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`;
     const expected = `
-MATCH path = ANY
-             (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
-             (b:Station {name: 'Bromsgrove'})
+MATCH
+  path =
+    ANY
+    (:Station {name: 'Pershore'})-[l:LINK WHERE l.distance < 10]-+
+    (b:Station {name: 'Bromsgrove'})
 RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
