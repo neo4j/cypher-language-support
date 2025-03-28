@@ -1802,7 +1802,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const mapGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
-      const keyValueGrp = this.startGroup();
+      const keyValueGrp = this.startGroup({ addsIndentationWhenBroken: false });
       this._visit(ctx.propertyKeyName(i));
       this._visitTerminalRaw(ctx.COLON(i));
       this._visit(ctx.expression(i));
@@ -1830,7 +1830,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       let optionalWrappingGrp: number;
       if (ctx.mapProjectionElement(i).COLON()) {
-        optionalWrappingGrp = this.startGroup();
+        optionalWrappingGrp = this.startGroup({
+          addsIndentationWhenBroken: false,
+        });
       }
       this._visit(ctx.mapProjectionElement(i));
       if (i < n - 1) {
