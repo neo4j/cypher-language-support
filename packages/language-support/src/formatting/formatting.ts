@@ -427,11 +427,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startNonPrettierGroup = (): number => {
-    return this.startGroup({ nonPrettierStyle: true });
+    return this.startGroup({
+      nonPrettierStyle: true,
+      addsIndentationWhenBroken: true,
+    });
   };
 
   startNonPrettierGroupAlsoOnComment = (): number => {
-    return this.startGroupAlsoOnComment({ nonPrettierStyle: true });
+    return this.startGroupAlsoOnComment({
+      nonPrettierStyle: true,
+      addsIndentationWhenBroken: true,
+    });
   };
 
   setIndentationProperty = (modifier: 'add' | 'remove') => {
@@ -1290,7 +1296,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this._visit(ctx.EQ());
     }
-    const selectorAnonymousPatternGrp = this.startGroup();
+    const selectorAnonymousPatternGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     if (ctx.selector()) {
       const selectorGroup = this.startGroup();
       this._visit(ctx.selector());
@@ -1734,7 +1742,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
-    this.avoidBreakBetween();
     const invocationGrp = this.startGroup();
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
@@ -1802,7 +1809,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    const wholeMapGrp = this.startGroup();
+    const wholeMapGrp = this.startGroup({ addsIndentationWhenBroken: false });
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     const mapGrp = this.startGroup();
