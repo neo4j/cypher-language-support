@@ -719,9 +719,10 @@ OPTIONAL MATCH (insertBefore:Item)
 WHERE insertBefore.name = $insertBefore
 
 WITH move, insertBefore
-WHERE (insertBefore IS NULL OR move <> insertBefore) AND
-      (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
-      (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
+WHERE
+  (insertBefore IS NULL OR move <> insertBefore) AND
+  (NOT EXISTS { (move)-[:NEXT]->(insertBefore) }) AND
+  (insertBefore IS NOT NULL OR EXISTS { (move)-[:NEXT]->() })
 
 OPTIONAL MATCH (beforeMove:Item)-[relBeforeMove:NEXT]->(move)
 OPTIONAL MATCH (move)-[relAfterMove:NEXT]->(afterMove:Item)
