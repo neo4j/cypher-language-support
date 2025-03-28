@@ -1834,7 +1834,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
-    this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
+    this._visitTerminalRaw(ctx.RCURLY(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
     this.endGroup(wholeMapGrp);
   };
 
@@ -1865,7 +1868,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(mapProjectionGrp);
     this.avoidSpaceBetween();
-    this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
+    this._visitTerminalRaw(ctx.RCURLY(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
     this.endGroup(mapWrappingGrp);
   };
 
