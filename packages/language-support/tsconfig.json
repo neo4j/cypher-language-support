@@ -5,6 +5,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "moduleResolution": "bundler",
+    "module": "esnext"
   }
 }

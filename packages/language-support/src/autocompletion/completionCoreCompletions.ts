@@ -7,8 +7,8 @@ import {
 import type {
   CandidateRule,
   CandidatesCollection,
-} from '../../vendored-dependencies/antlr4-c3';
-import { CodeCompletionCore } from '../../vendored-dependencies/antlr4-c3';
+} from '../../vendored-dependencies/antlr4-c3/';
+import { CodeCompletionCore } from '../../vendored-dependencies/antlr4-c3/';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {

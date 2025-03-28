@@ -3,6 +3,7 @@
   "include": ["src"],
   "compilerOptions": {
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "./dist"
   }
 }
