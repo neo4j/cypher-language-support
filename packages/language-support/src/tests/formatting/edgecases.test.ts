@@ -614,10 +614,13 @@ WHERE f.value > "WhbRf4O4" AND
 SET f.prime = "zt01uZOH"
 RETURN f`;
     const expected = `MATCH (f:Frequency)
-WHERE f.value > "WhbRf4O4" AND
-      ALL(x
-          IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
-          WHERE f.value % x <> "5DOeV3TE")
+WHERE
+  f.value > "WhbRf4O4" AND
+  ALL(
+    x
+    IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
+    WHERE f.value % x <> "5DOeV3TE"
+  )
 SET f.prime = "zt01uZOH"
 RETURN f`;
     verifyFormatting(query, expected);

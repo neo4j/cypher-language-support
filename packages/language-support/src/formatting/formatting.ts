@@ -1927,7 +1927,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
-    const wholeListItemGrp = this.startGroup();
+    const wholeListItemGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     this._visitTerminalRaw(ctx.ALL());
     this._visitTerminalRaw(ctx.ANY());
     this._visitTerminalRaw(ctx.NONE());
@@ -1937,14 +1939,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidSpaceBetween();
     const listGrp = this.startGroup();
     this._visit(ctx.variable());
+    const inExprGrp = this.startGroup({ addsIndentationWhenBroken: false });
     this._visit(ctx.IN());
     this._visit(ctx._inExp);
+    this.endGroup(inExprGrp);
     if (ctx.WHERE()) {
+      const whereGrp = this.startGroup({ addsIndentationWhenBroken: false });
       this._visit(ctx.WHERE());
       this._visit(ctx._whereExp);
+      this.endGroup(whereGrp);
     }
     this.endGroup(listGrp);
-    this._visit(ctx.RPAREN());
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
     this.endGroup(wholeListItemGrp);
   };
 
