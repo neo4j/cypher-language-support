@@ -1,5 +1,6 @@
 import {
   backtickIfNeeded,
+  DbSchema,
   lintCypherQuery,
 } from '@neo4j-cypher/language-support';
 import {
@@ -10,6 +11,7 @@ import {
   Neo4jType,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
+import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
 import { getSchemaPoller } from '../contextService';
 import {
@@ -26,6 +28,19 @@ import {
 export async function isConnected(): Promise<boolean> {
   const schemaPoller = getSchemaPoller();
   return schemaPoller.connection?.healthcheck();
+}
+
+export function validateParamInput(
+  paramValue: string,
+  dbSchema: DbSchema,
+): string {
+  const errors = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
+  if (errors.length > 0) {
+    return (
+      'Value can not be evaluated: ' + errors.map((e) => e.message).join(' ')
+    );
+  }
+  return null;
 }
 
 export async function addParameter(): Promise<void> {
@@ -48,12 +63,16 @@ export async function addParameter(): Promise<void> {
     await window.showErrorMessage('Parameter name cannot be empty.');
     return;
   }
+  const schemaPoller = getSchemaPoller();
+  const dbSchema = schemaPoller.metadata.dbSchema;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
+    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
+
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
     return;
@@ -74,10 +93,13 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
   if (!existingParam) {
     return;
   }
+  const schemaPoller = getSchemaPoller();
+  const dbSchema = schemaPoller.metadata.dbSchema;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     value: existingParam.evaluatedStatement,
     ignoreFocusOut: true,
+    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
     await window.showErrorMessage('Parameter value cannot be empty.');
@@ -127,9 +149,6 @@ export async function evaluateParam(
       parameters: {},
     });
     const [record] = result.records;
-    if (record === undefined) {
-      await window.showErrorMessage('Parameter evaluation failed.');
-    }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
@@ -150,7 +169,13 @@ export async function evaluateParam(
     });
     parametersTreeDataProvider.refresh();
   } catch (e) {
-    await window.showErrorMessage('Wrong format for the parameter.');
+    if (e instanceof Neo4jError) {
+      //If we can get past linting-check with invalid query but still have failing query
+      //when executing, we catch here as a backup
+      await window.showErrorMessage(
+        'Failed to evaluate parameter: ' + e.message,
+      );
+    }
   }
 
   return;
