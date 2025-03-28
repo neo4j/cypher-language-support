@@ -147,7 +147,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       breakCost: Math.pow(10, nextGroups.length + 1),
       breaksAll,
     };
-    if (breaksAll && newGroup.addsIndentationWhenBroken) {
+    if (choice.left.specialBreak) {
+      newGroup.addsIndentationWhenBroken = false;
+    }
+    if (
+      breaksAll &&
+      newGroup.addsIndentationWhenBroken &&
+      !choice.left.specialBreak
+    ) {
       // Add finalindentation as well?
       nextIndentation += INDENTATION_SPACES;
     }
@@ -241,11 +248,12 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   const nextStart = lastGrpBreaks
     ? state.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
+  const lastSpecialBreak = choice.left.specialBreak;
 
   const newGroups = choice.left.groupsStarting;
   let breakBeforeCase = false;
   for (const group of newGroups) {
-    if (group.size + nextStart > MAX_COL) {
+    if (!lastSpecialBreak && group.size + nextStart > MAX_COL) {
       breakBeforeCase = true;
       break;
     }
@@ -255,7 +263,10 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return splits;
   }
 
-  if (breakBeforeCase || (lastGrpBreaks && !lastGrpNonPrettier)) {
+  if (
+    breakBeforeCase ||
+    (lastGrpBreaks && !lastGrpNonPrettier && !lastSpecialBreak)
+  ) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );

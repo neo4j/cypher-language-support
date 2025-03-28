@@ -310,7 +310,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Skips any preceding comments or special chunks we did not expect.
    */
   setChunkProperty = (
-    propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
+    propertyName: 'noSpace' | 'noBreak' | 'mustBreak' | 'specialBreak',
   ): void => {
     let idx = this.currentBuffer().length - 1;
 
@@ -342,6 +342,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   avoidBreakBetween = (): void => {
     this.setChunkProperty('noBreak');
+  };
+
+  specialBreakBetween = (): void => {
+    this.setChunkProperty('specialBreak');
   };
 
   mustBreakBetween = () => {
@@ -1820,6 +1824,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
     const wholeMapGrp = this.startGroup({ addsIndentationWhenBroken: false });
+    this.specialBreakBetween();
     this._visit(ctx.LCURLY());
     this.avoidSpaceBetween();
     const mapGrp = this.startGroup();
@@ -1900,6 +1905,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitListLiteral = (ctx: ListLiteralContext) => {
+    this.specialBreakBetween();
     this._visit(ctx.LBRACKET());
     const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
