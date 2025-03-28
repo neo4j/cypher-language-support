@@ -2011,11 +2011,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.CALL());
     const callGrp = this.startGroup();
-    const functionGrp = this.startGroup();
+    const procedureNameGrp = this.startGroup({
+      addsIndentationWhenBroken: false,
+    });
     this._visit(ctx.procedureName());
+    this.endGroup(procedureNameGrp);
+    const functionGrp = this.startGroup();
     const n = ctx.procedureArgument_list().length;
     if (ctx.LPAREN()) {
       this.avoidSpaceBetween();
+      this.avoidBreakBetween();
       this._visit(ctx.LPAREN());
       this.avoidSpaceBetween();
     }
