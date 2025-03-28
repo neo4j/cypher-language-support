@@ -212,21 +212,22 @@ WHERE p.article_number IN [
       "g7LjxbGD"]
 RETURN p`;
     const expected = `MATCH (p:Product)
-WHERE p.article_number IN [
-  "OCj0AswA",
-  "dFRbj1s3",
-  "oMbdvgm7",
-  "L4Vey8xn",
-  "GNgeDIkA",
-  "pU4RE0lM",
-  "M6XNVJsO",
-  "NcdW0tuB",
-  "Pf6RIuP4",
-  "6tKStKwl",
-  "HfvahDu5",
-  "gJoq3HnU",
-  "g7LjxbGD"
-]
+WHERE
+  p.article_number IN [
+    "OCj0AswA",
+    "dFRbj1s3",
+    "oMbdvgm7",
+    "L4Vey8xn",
+    "GNgeDIkA",
+    "pU4RE0lM",
+    "M6XNVJsO",
+    "NcdW0tuB",
+    "Pf6RIuP4",
+    "6tKStKwl",
+    "HfvahDu5",
+    "gJoq3HnU",
+    "g7LjxbGD"
+  ]
 RETURN p`;
     verifyFormatting(query, expected);
   });
