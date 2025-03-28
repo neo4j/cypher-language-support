@@ -445,7 +445,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   setIndentationProperty = (modifier: 'add' | 'remove') => {
-    const chunk = this.lastInCurrentBuffer();
+    const idx = this.getFirstNonCommentIdx();
+    const chunk = this.currentBuffer().at(idx);
     if (modifier === 'add') {
       chunk.indentation += 1;
     } else {
