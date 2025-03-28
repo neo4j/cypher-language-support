@@ -1924,7 +1924,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(listGrp);
     this.avoidSpaceBetween();
-    this._visitTerminalRaw(ctx.RBRACKET(), { dontConcatenate: true });
+    this._visitTerminalRaw(ctx.RBRACKET(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
