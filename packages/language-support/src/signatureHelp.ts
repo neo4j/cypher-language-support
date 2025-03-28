@@ -10,7 +10,7 @@ import CypherParser, {
   FunctionInvocationContext,
 } from './generated-parser/CypherCmdParser';
 
-import { Token } from 'antlr4-c3';
+import { Token } from '../vendored-dependencies/antlr4-c3';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';

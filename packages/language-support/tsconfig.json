@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src"],
+  "include": ["src", "vendored-dependencies"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
-    "outDir": "out",
+    "outDir": "dist",
     "declaration": true,
     "types": ["vitest/globals"]
   }

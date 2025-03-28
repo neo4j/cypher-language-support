@@ -1,11 +1,14 @@
 import { Token } from 'antlr4';
-import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
-import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItemKind,
   CompletionItemTag,
   InsertTextFormat,
 } from 'vscode-languageserver-types';
+import type {
+  CandidateRule,
+  CandidatesCollection,
+} from '../../vendored-dependencies/antlr4-c3';
+import { CodeCompletionCore } from '../../vendored-dependencies/antlr4-c3';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
