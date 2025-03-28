@@ -102,19 +102,11 @@ export async function clearAllParameters(): Promise<void> {
   parametersTreeDataProvider.refresh();
 }
 
-function getUserDatabase(): Database | undefined {
+function getCurrentDatabase(): Database | undefined {
   const schemaPoller = getSchemaPoller();
-  const databases = schemaPoller?.connection?.databases;
-
-  // We try to prioritize the home database
-  // if possible to evaluate the parameters
-  let userDb = databases?.find((db) => db.type === 'standard' && db.home);
-
-  if (!userDb) {
-    userDb = databases?.find((db) => db.type === 'standard');
-  }
-
-  return userDb;
+  const connection = schemaPoller?.connection;
+  const databases = connection?.databases;
+  return databases?.find((db) => db.name === connection.currentDb);
 }
 
 export async function evaluateParam(
@@ -138,18 +130,17 @@ export async function evaluateParam(
       return;
     }
 
-    const userDb = getUserDatabase();
+    const db = getCurrentDatabase();
 
-    if (!userDb) {
+    if (db.type === 'system') {
       await window.showErrorMessage(
-        'Parameters cannot be evaluated against a system database and it seems you do not have any non-system database in your instance',
+        'Parameters cannot be evaluated against a system database. Please connect to a user database.',
       );
       return;
     }
     const result = await schemaPoller.connection.runCypherQuery({
       query: `RETURN ${paramValue} AS param`,
       parameters: {},
-      database: userDb.name,
     });
     const [record] = result.records;
     if (record === undefined) {

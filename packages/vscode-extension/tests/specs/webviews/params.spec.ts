@@ -175,25 +175,15 @@ suite('Params panel testing', () => {
     await forceConnect(1);
   });
 
-  test('Can still set parameters, even when connected to system', async function () {
+  test('Parameters cannot be set when connected to system', async function () {
     await forceSwitchDatabase('system');
-    await clearParams();
+    void forceAddParam('a', '"charmander"');
+    await waitUntilNotification(
+      browser,
+      'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+    );
 
-    await forceAddParam('a', '"charmander"');
-    await forceAddParam('b', '"caterpie"');
-    await forceAddParam('some param', '"pikachu"');
-    await forceAddParam('some-param', '"bulbasur"');
-
-    // We need to go back to the neo4j database to execute the query
-    // because it would fail to execute a non system query against the system db
+    // cleanup
     await forceSwitchDatabase('neo4j');
-    await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('charmander');
-      await expect(queryResult).toContain('caterpie');
-      await expect(queryResult).toContain('pikachu');
-      await expect(queryResult).toContain('bulbasur');
-    });
   });
 });
