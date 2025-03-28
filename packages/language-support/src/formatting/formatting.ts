@@ -1975,8 +1975,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.procedureName());
     const n = ctx.procedureArgument_list().length;
     if (ctx.LPAREN()) {
-      this._visitTerminalRaw(ctx.LPAREN());
-      this.concatenate();
+      this.avoidSpaceBetween();
+      this._visit(ctx.LPAREN());
+      this.avoidSpaceBetween();
     }
     let argGrp: number;
     if (n > 0) {
@@ -1997,7 +1998,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(argGrp);
     }
     this.endGroup(functionGrp);
-    this._visitTerminalRaw(ctx.RPAREN(), { dontConcatenate: true });
+    if (ctx.RPAREN()) {
+      this.avoidSpaceBetween();
+      this._visitTerminalRaw(ctx.RPAREN(), {
+        dontConcatenate: true,
+        spacingChoice: 'SPACE_AFTER',
+      });
+    }
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
       const m = ctx.procedureResultItem_list().length;
