@@ -170,8 +170,9 @@ RETURN path`.trimStart();
   test('does not split the $ and the parameter name', () => {
     const query =
       'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
-    const expected =
-      'RETURN $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam';
+    const expected = `
+RETURN
+  $paraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaam`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -399,8 +400,9 @@ RETURN DISTINCT p.networkDbId, p.name, platfs`;
   test('no splits within an arrow', () => {
     const query = `MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->(naaaaame);`;
     const expected = `
-MERGE (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
-      (naaaaame);`.trimStart();
+MERGE
+  (naame)-[:tyyyyyyyyyype {keeeeeeeey: "dFTkCNlb", keey: "rmmCQGIb"}]->
+  (naaaaame);`.trimStart();
     verifyFormatting(query, expected);
   });
 

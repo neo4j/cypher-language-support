@@ -137,8 +137,12 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
+    const wouldAddIndentation =
+      choice.left.groupsStarting[i].addsIndentationWhenBroken;
     // TODO this miiiight be slightly off because of indentation rules
-    const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
+    const nextGrpStart = isBreak
+      ? curr.indentation + (wouldAddIndentation ? INDENTATION_SPACES : 0)
+      : thisWordEnd;
     const breaksAll =
       nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL;
     const newGroup = {
@@ -245,12 +249,12 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
   const lastGrpNonPrettier =
     activeGrps.length > 0 && activeGrps.at(-1).nonPrettierStyle;
+  const newGroups = choice.left.groupsStarting;
   const nextStart = lastGrpBreaks
     ? state.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
   const lastSpecialBreak = choice.left.specialBreak;
 
-  const newGroups = choice.left.groupsStarting;
   let breakBeforeCase = false;
   for (const group of newGroups) {
     if (!lastSpecialBreak && group.size + nextStart > MAX_COL) {
