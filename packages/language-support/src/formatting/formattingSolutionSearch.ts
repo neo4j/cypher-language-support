@@ -31,6 +31,7 @@ export interface Group {
   dbgText: string;
   align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
+  addsIndentationWhenBroken: boolean;
 }
 
 interface Decision {
@@ -48,7 +49,6 @@ interface State {
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
-  indentResponsibleIds: number[];
 }
 
 interface StateEdge {
@@ -139,13 +139,15 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     // TODO this miiiight be slightly off because of indentation rules
     const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
+    const breaksAll =
+      nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL;
     const newGroup = {
       ...choice.left.groupsStarting[i],
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-      breaksAll: nextGrpStart + choice.left.groupsStarting[i].size > MAX_COL,
+      breaksAll,
     };
-    if (curr.indentResponsibleIds.includes(newGroup.id)) {
+    if (breaksAll && newGroup.addsIndentationWhenBroken) {
       // Add finalindentation as well?
       nextIndentation += INDENTATION_SPACES;
     }
@@ -164,7 +166,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     const toBePopped = nextGroups.find(
       (group) => group.id === choice.left.groupsEnding[i].id,
     );
-    if (curr.indentResponsibleIds.includes(toBePopped.id)) {
+    if (toBePopped.breaksAll && toBePopped.addsIndentationWhenBroken) {
       // Remove finalindentation as well?
       nextIndentation -= INDENTATION_SPACES;
     }
@@ -191,7 +193,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     cost: curr.cost + extraCost,
     overflowingCount: curr.overflowingCount + overflowingCount,
     indentation: nextIndentation,
-    indentResponsibleIds: curr.indentResponsibleIds,
     edge: {
       prevState: curr,
       decision: {
@@ -242,12 +243,10 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
 
   const newGroups = choice.left.groupsStarting;
-  let indentResponsibleFound = false;
+  let breakBeforeCase = false;
   for (const group of newGroups) {
     if (group.size + nextStart > MAX_COL) {
-      // TODO: mutating which might be messy
-      state.indentResponsibleIds.push(group.id);
-      indentResponsibleFound = true;
+      breakBeforeCase = true;
       break;
     }
   }
@@ -256,7 +255,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return splits;
   }
 
-  if (indentResponsibleFound || (lastGrpBreaks && !lastGrpNonPrettier)) {
+  if (breakBeforeCase || (lastGrpBreaks && !lastGrpNonPrettier)) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
@@ -429,7 +428,6 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       cost: 0,
       indentation: 0,
-      indentResponsibleIds: [],
       overflowingCount: 0,
       edge: null,
     };

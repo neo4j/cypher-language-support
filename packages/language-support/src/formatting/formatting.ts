@@ -376,7 +376,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  startGroup = (nonPrettierStyle = false): number => {
+  startGroup = (
+    nonPrettierStyle = false,
+    addsIndentationWhenBroken = true,
+  ): number => {
     const last = this.lastInCurrentBuffer();
     const newGroup: Group = {
       id: this.groupID,
@@ -385,6 +388,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       size: 0,
       align: 0, // Irrelevant here
       breakCost: 0,
+      addsIndentationWhenBroken,
     };
     last.groupsStarting.push(newGroup);
     this.groupStack.push(newGroup);
@@ -392,7 +396,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.groupID - 1;
   };
 
-  startGroupAlsoOnComment = (nonPrettierStyle = false): number => {
+  startGroupAlsoOnComment = (
+    nonPrettierStyle = false,
+    addsIndentationWhenBroken = true,
+  ): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
       const target = this.currentBuffer().at(idx + 1);
@@ -403,6 +410,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         dbgText: '',
         align: 0, // Irrelevant here
         breakCost: 0,
+        addsIndentationWhenBroken,
       };
       target.groupsStarting.push(newGroup);
       this.groupStack.push(newGroup);
@@ -931,7 +939,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       commaIdx++;
     }
     for (let i = 0; i < n; i++) {
-      const returnItemGrp = this.startGroup();
+      const returnItemGrp = this.startGroup(false, false);
       this._visit(ctx.returnItem(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(commaIdx));
@@ -1455,7 +1463,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    const wrappingGrp = this.startGroup();
+    const wrappingGrp = this.startGroup(false, false);
 
     let groupId: number;
     for (let i = 0; i < n; i++) {
@@ -1802,6 +1810,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
+    const mapWrappingGrp = this.startGroup(false, false);
     this._visit(ctx.variable());
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
@@ -1824,6 +1833,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(mapProjectionGrp);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RCURLY(), { dontConcatenate: true });
+    this.endGroup(mapWrappingGrp);
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
