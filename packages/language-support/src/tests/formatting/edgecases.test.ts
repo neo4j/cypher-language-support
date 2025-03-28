@@ -270,39 +270,33 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     }) as columns`;
     const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
   CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true
-         THEN "(PK)"
+    WHEN
+      true AND true AND true AND true AND true AND true AND true AND true AND true
+      THEN "(PK)"
     ELSE ""
   END, fk:
   CASE
-    WHEN true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true AND
-         true
-         THEN "(FK)"
+    WHEN
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true AND
+      true
+      THEN "(FK)"
     ELSE ""
   END}) AS columns`;
     verifyFormatting(query, expected);
@@ -356,7 +350,7 @@ RETURN p.name, p.age, p.occupation,
           CASE
             WHEN p.experienceYears < 5 THEN 'Junior Engineer'
             WHEN p.experienceYears >= 5 AND p.experienceYears < 10
-                 THEN 'Mid-level Engineer'
+              THEN 'Mid-level Engineer'
             ELSE 'Senior Engineer'
           END
         WHEN p.occupation = 'Doctor' THEN
@@ -532,32 +526,35 @@ YIELD *`;
 WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does not have an active status which is required for processing the requested operation. ' + 'Please check the user account settings for further details.', [u.id, u.username]) AS validation
 RETURN u;`;
     const expected = `MATCH (u:User)
-WITH u,
-     apoc.util.
-     validate(u.status <> 'active',
-              'User ' +
-              u.username +
-              ' does not have an active status which is required for processing the requested operation. ' +
-              'Please check the user account settings for further details.',
-              [u.id, u.username])
-     AS validation
+WITH
+  u,
+  apoc.util.validate(
+    u.status <> 'active',
+    'User ' +
+    u.username +
+    ' does not have an active status which is required for processing the requested operation. ' +
+    'Please check the user account settings for further details.',
+    [u.id, u.username]
+  )
+  AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
 
   test('aligns and breaks long namespaced functions well 2', () => {
     const query = `MATCH (userAccountInfo:UserAccountInformation)
-WITH userAccountInfo,
-     apoc.util.
-     validate(NOT userAccountInfo.isVerified,
-              'Verification Error: The user account with unique identifier ' +
-              userAccountInfo.accountUniqueIdentifier +
-              ' has not completed the mandatory ' +
-              'verification process required for accessing premium features. ' +
-              'Please review your verification email and follow the provided instructions to secure your account.',
-              [userAccountInfo.accountUniqueIdentifier,
-               userAccountInfo.emailAddress])
-     AS verificationStatus
+WITH
+  userAccountInfo,
+  apoc.util.validate(
+    NOT userAccountInfo.isVerified,
+    'Verification Error: The user account with unique identifier ' +
+    userAccountInfo.accountUniqueIdentifier +
+    ' has not completed the mandatory ' +
+    'verification process required for accessing premium features. ' +
+    'Please review your verification email and follow the provided instructions to secure your account.',
+    [userAccountInfo.accountUniqueIdentifier, userAccountInfo.emailAddress]
+  )
+  AS verificationStatus
 RETURN userAccountInfo;`;
     const expected = query;
     verifyFormatting(query, expected);
@@ -580,19 +577,20 @@ WITH inventoryRecord,
      AS stockValidation
 RETURN inventoryRecord;`;
     const expected = `MATCH (inventoryRecord:ProductInventoryTrackingInformation)
-WITH inventoryRecord,
-     apoc.util.
-     validate(inventoryRecord.currentStock <
-              inventoryRecord.criticalThresholdStock,
-              'Alert: The inventory record for product SKU ' +
-              inventoryRecord.productSKU +
-              ' indicates a current stock level of ' +
-              toString(inventoryRecord.currentStock) +
-              ', which is below the critical threshold of ' +
-              toString(inventoryRecord.criticalThresholdStock) +
-              '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
-              [inventoryRecord.productSKU, inventoryRecord.currentStock])
-     AS stockValidation
+WITH
+  inventoryRecord,
+  apoc.util.validate(
+    inventoryRecord.currentStock < inventoryRecord.criticalThresholdStock,
+    'Alert: The inventory record for product SKU ' +
+    inventoryRecord.productSKU +
+    ' indicates a current stock level of ' +
+    toString(inventoryRecord.currentStock) +
+    ', which is below the critical threshold of ' +
+    toString(inventoryRecord.criticalThresholdStock) +
+    '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
+    [inventoryRecord.productSKU, inventoryRecord.currentStock]
+  )
+  AS stockValidation
 RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
@@ -602,10 +600,9 @@ RETURN inventoryRecord;`;
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
     const expected = `
-CREATE (company:Company
-        {name: "mrUJWq6A",
-         krs: "Yuu9Wl7d",
-         registration_date: date("FrA1uHGX")});`.trimStart();
+CREATE
+  (company:Company
+    {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -631,15 +628,19 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN p {.name,
-          .age,
-          .email,
-          .phone,
-          .address,
-          .occupation,
-          .nationality,
-          .birthdate,
-          .gender} AS personInfo`;
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    .address,
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  }
+  AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -649,16 +650,19 @@ RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN p {.name,
-          .age,
-          .email,
-          .phone,
-          address:
-          {street: p.street, city: c.name, zip: p.zip},
-          .occupation,
-          .nationality,
-          .birthdate,
-          .gender} AS personInfo`;
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  }
+  AS personInfo`;
     verifyFormatting(query, expected);
   });
 
