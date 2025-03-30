@@ -339,6 +339,7 @@ function bestFirstSolnSearch(
       }
       return reconstructBestPath(state);
     }
+    // TODO: REMOVE THIS
     const stateString = state.choiceIndex > 0 ? stateToString(state) : '';
     if (stateString === 'hej hopp') {
       throw new Error(
