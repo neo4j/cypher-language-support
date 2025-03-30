@@ -594,9 +594,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitTerminalRaw = (ctx: TerminalNode, options?: RawTerminalOptions) => {
-    if (ctx) {
-      this.visitTerminalRaw(ctx, options);
+    if (!ctx) {
+      return;
     }
+    // @ts-expect-error ctx can be ErrorNode but can't really check it.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    if (ctx.isErrorNode && ctx.isErrorNode()) {
+      this.visit(ctx);
+      return;
+    }
+    this.visitTerminalRaw(ctx, options);
   };
 
   // Error nodes are attached to the first token that the parser recognizes again.
