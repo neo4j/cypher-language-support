@@ -260,9 +260,12 @@ MATCH
   (p:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-
   (Kevin:Person {name: "HEZDAAhT"})
 WHERE p.name <> "nnwAPHJg"
-RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
-       ORDER BY Name ASC
-LIMIT "ZTWWLgIq"`;
+RETURN
+  p.name AS Name,
+  p.born AS BirthYear,
+  m.title AS MovieTitle
+  ORDER BY Name ASC
+LIMIT "ZTWWLgIq"`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -271,9 +274,9 @@ LIMIT "ZTWWLgIq"`;
       (il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`;
     const expected = `
-MATCH p1 =
-  (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--
-  (il:nodetyyyype {type: "58vomdG0"})
+MATCH
+  p1 =
+    (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--(il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -355,12 +358,15 @@ RETURN p`;
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
     const expected = `
-RETURN collect(create_this1
-               {datetime:
-                apoc.date.convertFormat(toString(create_this1.datetime),
-                                        "OZQvXyoU",
-                                        "EhpkDy8g")})
-       AS data`.trimStart();
+RETURN
+  collect(
+    create_this1 {
+      datetime: apoc.date.convertFormat(
+        toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g"
+        )
+    }
+  )
+  AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -425,8 +431,8 @@ CALL
 WHERE (p.priiiiiiiiiiiiiiiiiiice + o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
 RETURN p;`;
     const expected = `MATCH (p:Product)--(o:Order)
-WHERE (p.priiiiiiiiiiiiiiiiiiice +
-       o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
+WHERE
+  (p.priiiiiiiiiiiiiiiiiiice + o.siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiize)
 RETURN p;`;
     verifyFormatting(query, expected);
   });
@@ -478,8 +484,31 @@ RETURN DISTINCT
   test('should break after distinct but not the alphabet', () => {
     const query = `return distinct
   a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
-    const expected = `RETURN DISTINCT
-       a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
+    const expected = `
+RETURN DISTINCT
+  a,
+  b,
+  c,
+  d,
+  e,
+  f,
+  g,
+  h,
+  i,
+  j,
+  k,
+  l,
+  m,
+  n,
+  o,
+  p,
+  q,
+  r,
+  s,
+  t,
+  u,
+  v,
+  w`.trimStart();
     verifyFormatting(query, expected);
   });
 

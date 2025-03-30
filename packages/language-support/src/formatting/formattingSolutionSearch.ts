@@ -14,6 +14,7 @@ const showGroups = false;
 
 interface Split {
   splitType: ' ' | '' | '\n' | '\n\n';
+  breakBeforeGrp?: Group;
   cost: number;
 }
 
@@ -148,7 +149,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     const nextGrpStart = isBreak
       ? curr.indentation + (wouldAddIndentation ? grpIndentation : 0)
       : thisWordEnd;
-    const breaksAll = nextGrpStart + grp.size > MAX_COL;
+    const breaksAll =
+      nextGrpStart + grp.size > MAX_COL || grp.id === split.breakBeforeGrp?.id;
     const newGroup = {
       ...grp,
       align: actualColumn,
@@ -262,10 +264,11 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
   const lastSpecialBreak = choice.left.specialBreak;
 
-  let breakBeforeCase = false;
+  // TODO: There might be a better way to do this?
+  let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
     if (!lastSpecialBreak && group.size + nextStart > MAX_COL) {
-      breakBeforeCase = true;
+      breakBeforeGrp = group;
       break;
     }
   }
@@ -274,10 +277,11 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return splits;
   }
 
-  if (
-    breakBeforeCase ||
-    (lastGrpBreaks && !lastGrpNonPrettier && !lastSpecialBreak)
-  ) {
+  if (breakBeforeGrp) {
+    return [{ splitType: '\n', cost: 0, breakBeforeGrp }];
+  }
+
+  if (lastGrpBreaks && !lastGrpNonPrettier && !lastSpecialBreak) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
