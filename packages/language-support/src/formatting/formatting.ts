@@ -121,6 +121,7 @@ interface RawTerminalOptions {
 interface GroupOptions {
   nonPrettierStyle?: boolean;
   addsIndentationWhenBroken?: boolean;
+  halfIndent?: true;
 }
 
 const defaultGroupOptions: GroupOptions = {
@@ -400,6 +401,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       align: 0, // Irrelevant here
       breakCost: 0,
       addsIndentationWhenBroken: groupOptions.addsIndentationWhenBroken,
+      halfIndent: groupOptions.halfIndent,
     };
     last.groupsStarting.push(newGroup);
     this.groupStack.push(newGroup);
@@ -1221,7 +1223,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitParenthesizedPath = (ctx: ParenthesizedPathContext) => {
     this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
-    const parenthesizedPathGrp = this.startGroup();
+    const parenthesizedPathGrp = this.startGroup({
+      addsIndentationWhenBroken: true,
+      halfIndent: true,
+    });
     this._visit(ctx.pattern());
     if (ctx.WHERE()) {
       this._visit(ctx.WHERE());
@@ -1493,7 +1498,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
     this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
-    const parenthesizedExprGrp = this.startGroup();
+    const parenthesizedExprGrp = this.startGroup({
+      addsIndentationWhenBroken: true,
+      halfIndent: true,
+    });
     this._visit(ctx.expression());
     this.endGroup(parenthesizedExprGrp);
     this._visit(ctx.RPAREN());
