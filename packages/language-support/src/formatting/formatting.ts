@@ -1229,8 +1229,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     });
     this._visit(ctx.pattern());
     if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
       this._visit(ctx.WHERE());
+      const whereExprGrp = this.startGroup();
       this._visit(ctx.expression());
+      this.endGroup(whereExprGrp);
+      this.endGroup(whereGrp);
     }
     this.endGroup(parenthesizedPathGrp);
     this._visit(ctx.RPAREN());

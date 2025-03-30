@@ -510,10 +510,12 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH SHORTEST 1
-      ((:Station {name: 'Hartlebury'})
-       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
-       WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+MATCH
+  SHORTEST 1
+  ((:Station {name: 'Hartlebury'})
+   (()--(n:Station))+
+   (:Station {name: 'Cheltenham Spa'})
+   WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -523,14 +525,20 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
                  (:Station {name: 'Cheltenham Spa'}) WHERE none(
                  stop IN n[.. -1] WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
+    // TODO: should the parenthesis ending after none be indented less? since the one after it
+    // belongs to the one wrapping the whole expr
     const expected = `
-MATCH SHORTEST 1
-      ((:Station {name: 'Hartlebury'})
-       (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
-       WHERE
-       none(stop
-            IN n[.. -1]
-            WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'))
+MATCH
+  SHORTEST 1
+  ((:Station {name: 'Hartlebury'})
+   (()--(n:Station))+
+   (:Station {name: 'Cheltenham Spa'})
+     WHERE
+       none(
+         stop
+         IN n[.. -1]
+         WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+       ))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -541,10 +549,13 @@ RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
            none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`;
     const expected = `
-MATCH p = SHORTEST 1
-          ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
-           (()--(n:Station))+(:Station {name: 'Cheltenham Spa'})
-           WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
+MATCH
+  p =
+    SHORTEST 1
+    ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
+     (()--(n:Station))+
+     (:Station {name: 'Cheltenham Spa'})
+     WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
