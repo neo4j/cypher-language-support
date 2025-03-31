@@ -1,16 +1,27 @@
 {
   "compilerOptions": {
     "allowJs": false,
-    "declaration": true,
     "esModuleInterop": true,
     "lib": ["dom", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "skipLibCheck": true,
-    "sourceMap": true,
     "target": "ESNext",
+    "incremental": true,
+
+    // setup
+    "rootDir": ".",
     "outDir": "dist",
-    "incremental": true
+
+    // setting up declaration
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "emitDeclarationOnly": true
+    // todo in the future
+    // strict: true
+    // isolatedDeclatarionts/modules true
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "exclude": ["node_modules", ".vscode-test", "dist"]
 }
