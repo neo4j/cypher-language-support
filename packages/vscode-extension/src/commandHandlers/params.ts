@@ -151,6 +151,9 @@ export async function evaluateParam(
       parameters: {},
     });
     const [record] = result.records;
+    if (record === undefined) {
+      await window.showErrorMessage('Parameter evaluation failed.');
+    }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
