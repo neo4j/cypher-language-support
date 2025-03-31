@@ -6,6 +6,7 @@ import {
   cypherDataToString,
   CypherDataType,
   CypherDataTypeName,
+  Database,
   getCypherTypeName,
   Neo4jType,
   serializeTypeAnnotations,
@@ -101,6 +102,13 @@ export async function clearAllParameters(): Promise<void> {
   parametersTreeDataProvider.refresh();
 }
 
+function getCurrentDatabase(): Database | undefined {
+  const schemaPoller = getSchemaPoller();
+  const connection = schemaPoller?.connection;
+  const databases = connection?.databases;
+  return databases?.find((db) => db.name === connection.currentDb);
+}
+
 export async function evaluateParam(
   paramName: string,
   paramValue: string,
@@ -122,6 +130,14 @@ export async function evaluateParam(
       return;
     }
 
+    const db = getCurrentDatabase();
+
+    if (db.type === 'system') {
+      await window.showErrorMessage(
+        'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+      );
+      return;
+    }
     const result = await schemaPoller.connection.runCypherQuery({
       query: `RETURN ${paramValue} AS param`,
       parameters: {},

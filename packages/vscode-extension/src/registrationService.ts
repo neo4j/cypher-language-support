@@ -9,6 +9,7 @@ import {
   saveConnectionAndDisplayConnectionResult,
   showConnectionPanelForConnectionItem,
   switchToDatabase,
+  switchToDatabaseWithName,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers/connection';
 import {
@@ -86,6 +87,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.SWITCH_DATABASE,
+      switchToDatabaseWithName,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.CYPHER_FILE_FROM_SELECTION,
