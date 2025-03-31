@@ -1,8 +1,4 @@
-import {
-  backtickIfNeeded,
-  DbSchema,
-  lintCypherQuery,
-} from '@neo4j-cypher/language-support';
+import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
 import {
   cypherDataToString,
   CypherDataType,
@@ -132,22 +128,8 @@ export async function evaluateParam(
   paramValue: string,
 ): Promise<void> {
   const schemaPoller = getSchemaPoller();
-  const dbSchema = schemaPoller.metadata.dbSchema;
 
   try {
-    const maybeEscapedName = backtickIfNeeded(paramName) ?? paramName;
-    const errors = lintCypherQuery(
-      `:param ${maybeEscapedName} => ${paramValue}`,
-      dbSchema,
-      true,
-    );
-    if (errors.length > 0) {
-      await window.showErrorMessage(
-        'Wrong format for parameters: parameter key should be an identifier (with or without spaces) and parameter value should be a valid expression (something that can be used in a RETURN statement).',
-      );
-      return;
-    }
-
     const result = await schemaPoller.connection.runCypherQuery({
       query: `RETURN ${paramValue} AS param`,
       parameters: {},
@@ -179,6 +161,9 @@ export async function evaluateParam(
       await window.showErrorMessage(
         'Failed to evaluate parameter: ' + e.message,
       );
+    } else {
+      // only catch neo4j errors
+      throw e;
     }
   }
 
