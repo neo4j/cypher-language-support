@@ -7,8 +7,8 @@
 
     // this tells typescript to look for files, like modern node would do it
     "target": "ESNext",
-    "module": "Node16",
-    "moduleResolution": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
 
     // we need .ts / .js extension with nodenext module resolution, so we write .ts ones and let ts rewrite them to .js
     "allowImportingTsExtensions": true,
@@ -25,10 +25,14 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "composite": true,
-    "emitDeclarationOnly": true
+    "composite": true
 
     // TODO list
+
+    // to use esm in node we want to set this
+    // "module": "NodeNext",
+    // "moduleResolution": "nodenext",
+
     // this let's us have fewer bugs
     // strict: true
 
