@@ -14,10 +14,6 @@
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
 
-    // this means we have to use type when importing types. this avoids edgecases when an import is dropped in the ts rewrite
-    // https://www.typescriptlang.org/tsconfig/#verbatimModuleSyntax
-    "verbatimModuleSyntax": true,
-
     "skipLibCheck": true,
     "incremental": true,
 
@@ -41,6 +37,10 @@
 
     // this allows node to run our typescript files unchanged
     // "erasableSyntaxOnly": true,
+
+    // this means we have to use type when importing types. this avoids edgecases when an import is dropped in the ts rewrite
+    // https://www.typescriptlang.org/tsconfig/#verbatimModuleSyntax
+    // "verbatimModuleSyntax": true,
   },
   "exclude": ["node_modules", ".vscode-test", "dist"]
 }
