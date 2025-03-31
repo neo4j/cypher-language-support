@@ -58,8 +58,7 @@
     "lodash.debounce": "^4.0.8",
     "prismjs": "^1.29.0",
     "vscode-languageserver-types": "^3.17.3",
-    "workerpool": "^9.0.4",
-    "util": "^0.12.5"
+    "workerpool": "^9.0.4"
   },
   "devDependencies": {
     "@neo4j-ndl/base": "^3.2.10",
