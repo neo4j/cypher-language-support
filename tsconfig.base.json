@@ -2,26 +2,45 @@
   "compilerOptions": {
     "allowJs": false,
     "esModuleInterop": true,
+    // TODO not all have DOM ?
     "lib": ["dom", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "skipLibCheck": true,
+
+    // this tells typescript to look for files, like modern node would do it
     "target": "ESNext",
+    "module": "Node16",
+    "moduleResolution": "nodenext",
+
+    // we need .ts / .js extension with nodenext module resolution, so we write .ts ones and let ts rewrite them to .js
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+
+    // this means we have to use type when importing types. this avoids edgecases when an import is dropped in the ts rewrite
+    // https://www.typescriptlang.org/tsconfig/#verbatimModuleSyntax
+    "verbatimModuleSyntax": true,
+
+    "skipLibCheck": true,
     "incremental": true,
 
-    // setup
+    // setting up output
     "rootDir": ".",
     "outDir": "dist",
 
-    // setting up declaration
+    // setting up composite modules
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
     "emitDeclarationOnly": true
-    // todo in the future
+
+    // TODO list
+    // this let's us have fewer bugs
     // strict: true
-    // isolatedDeclatarionts/modules true
+
+    // this means we can compile modules in parallel
+    // isolatedModules true
+
+    // this allows node to run our typescript files unchanged
+    // "erasableSyntaxOnly": true,
   },
   "exclude": ["node_modules", ".vscode-test", "dist"]
 }

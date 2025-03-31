@@ -3,7 +3,6 @@
   "include": ["src", "vendored-dependencies"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
-    "types": ["vitest/globals"],
-    "module": "esnext"
+    "types": ["vitest/globals"]
   }
 }
