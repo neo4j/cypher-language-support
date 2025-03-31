@@ -1,39 +1,48 @@
-import { testData } from '@neo4j-cypher/language-support';
+import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import assert from 'assert';
 import { validateParamInput } from '../../../src/commandHandlers/params';
 
-suite('Parameter validation spec', () => {
-  test('Parameter validation works as expected', () => {
-    const dbSchema = {
-      labels: [],
-      relationshipTypes: [],
-      databaseNames: [],
-      aliasNames: [],
-      userNames: [],
-      roleNames: [],
-      parameters: {},
-      propertyKeys: [],
-      procedures: {},
-      functions: {
-        'CYPHER 5': {
-          datetime: {
-            ...testData.emptyFunction,
-            name: 'datetime',
-          },
+suite.only('Parameter validation spec', () => {
+  const dbSchema: DbSchema = {
+    functions: {
+      'CYPHER 5': {
+        datetime: {
+          ...testData.emptyFunction,
+          name: 'datetime',
+        },
+        deprecatedFunction: {
+          ...testData.emptyFunction,
+          isDeprecated: true,
+          name: 'deprecatedFunction',
         },
       },
-      defaultLanguage: 'CYPHER 5',
-    };
-    assert.strictEqual(validateParamInput('datetime()', dbSchema), null);
-    assert.strictEqual(validateParamInput('datetime()', dbSchema), null);
-    assert.strictEqual(validateParamInput('500', dbSchema), null);
+    },
+  };
+
+  test('Parameter validation succeeds for correct inputs', () => {
+    assert.strictEqual(validateParamInput('datetime()', dbSchema), undefined);
+    assert.strictEqual(validateParamInput('500', dbSchema), undefined);
+  });
+
+  test('Parameter validation fails for incorrect inputs', () => {
     assert.strictEqual(
       validateParamInput('datetime(', dbSchema),
-      "Value can not be evaluated: Invalid input '(': expected an expression, 'FOREACH', ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
+      "Value cannot be evaluated: Invalid input '(': expected an expression, 'FOREACH', ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
     );
     assert.strictEqual(
       validateParamInput('500q', dbSchema),
-      'Value can not be evaluated: invalid literal number',
+      'Value cannot be evaluated: invalid literal number',
+    );
+    assert.strictEqual(
+      validateParamInput('1 + ', dbSchema),
+      `Value cannot be evaluated: Invalid input '': expected an expression`,
+    );
+  });
+
+  test('Parameter validation succeeds on warnings', () => {
+    assert.strictEqual(
+      validateParamInput('deprecatedFunction()', dbSchema),
+      undefined,
     );
   });
 });

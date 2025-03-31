@@ -13,6 +13,7 @@ import {
 } from '@neo4j-cypher/schema-poller';
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
+import { DiagnosticSeverity } from 'vscode-languageclient';
 import { getSchemaPoller } from '../contextService';
 import {
   clearParameters,
@@ -33,14 +34,17 @@ export async function isConnected(): Promise<boolean> {
 export function validateParamInput(
   paramValue: string,
   dbSchema: DbSchema,
-): string {
-  const errors = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
+): string | undefined {
+  const diagnostics = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
+  const errors = diagnostics.filter(
+    (d) => d.severity === DiagnosticSeverity.Error,
+  );
   if (errors.length > 0) {
     return (
-      'Value can not be evaluated: ' + errors.map((e) => e.message).join(' ')
+      'Value cannot be evaluated: ' + errors.map((e) => e.message).join(' ')
     );
   }
-  return null;
+  return undefined;
 }
 
 export async function addParameter(): Promise<void> {
