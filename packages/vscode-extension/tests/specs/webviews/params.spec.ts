@@ -14,7 +14,7 @@ suite('Params panel testing', () => {
     workbench = await browser.getWorkbench();
   });
 
-  async function addParam() {
+  async function addParamWithInputBox() {
     await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand('neo4j.addParameter');
@@ -63,6 +63,16 @@ suite('Params panel testing', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
     });
+  }
+
+  async function forceSwitchDatabase(database: string) {
+    await browser.executeWorkbench(async (vscode, database: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceSwitchDatabase',
+        database,
+      );
+    }, database);
   }
 
   async function forceConnect(i: number) {
@@ -157,11 +167,31 @@ suite('Params panel testing', () => {
     await forceDisconnect();
     // This tries to add the params with the window prompts we cannot manipulate in the tests
     // but it will fail before showing those prompts because we are not connected to the database
-    void addParam();
+    void addParamWithInputBox();
     await waitUntilNotification(
       browser,
       'You need to be connected to neo4j to set parameters.',
     );
     await forceConnect(1);
+  });
+
+  test('Parameters cannot be set when connected to system', async function () {
+    await forceSwitchDatabase('system');
+    await clearParams();
+
+    void forceAddParam('a', '"charmander"');
+    void forceAddParam('b', '"caterpie"');
+    void forceAddParam('some param', '"pikachu"');
+    void forceAddParam('some-param', '"bulbasur"');
+
+    // to execute the file we need to be on the user database
+    await forceSwitchDatabase('neo4j');
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, async () => {
+      const text = await (await $('#query-error')).getText();
+      await expect(text).toContain(
+        'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b, some param, some-param',
+      );
+    });
   });
 });
