@@ -425,7 +425,6 @@
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
-    "typescript": "5.8.2",
     "vscode-languageserver-textdocument": "^1.0.12",
     "wdio-vscode-service": "^6.1.2",
     "wdio-wait-for": "^3.0.11"
