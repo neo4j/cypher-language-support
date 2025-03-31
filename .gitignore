@@ -1,6 +1,7 @@
 out
 build
 dist
+dist-cjs
 esm
 node_modules
 generated-parser

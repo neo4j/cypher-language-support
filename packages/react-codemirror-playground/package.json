@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist"
   },

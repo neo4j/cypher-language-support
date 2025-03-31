@@ -3,6 +3,10 @@
   "include": ["src", "vendored-dependencies"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    // needs to be set each time
+    // https://github.com/microsoft/TypeScript/issues/29172
+    "outDir": "dist",
+    "rootDir": "./src"
   }
 }

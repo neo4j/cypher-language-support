@@ -3,9 +3,9 @@
   "description": "Cypher language support",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "type": "module",
   "files": [
     "dist",
+    "dist-cjs",
     "src",
     "vendored-dependencies",
     "package.json",
@@ -21,10 +21,12 @@
     "highlighting"
   ],
   "version": "2.0.0-next.17",
-  "main": "./dist/index.js",
+  "main": "./dist-cjs/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "require": "./dist-cjs/index.cjs",
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
@@ -48,15 +50,16 @@
   },
   "scripts": {
     "gen-parser": "cross-env ANTLR4_TOOLS_ANTLR_VERSION=4.13.2 antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "build": "npm run gen-parser && npm run bundle-antlr4-c3 && tsc --project ./tsconfig.json && cp src/syntaxValidation/semanticAnalysis.js dist/syntaxValidation/semanticAnalysis.js",
+    "build": "npm run gen-parser && npm run bundle-antlr4-c3 && concurrently 'npm:build-esm' 'npm:build-commonjs'",
     "bundle-antlr4-c3": "mkdir -p vendored-dependencies/antlr4-c3 && cp -r ../../vendor/antlr4-c3/dist/esm/* vendored-dependencies/antlr4-c3",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist-cjs/index.cjs",
+    "build-esm": "tsc -b && cp src/syntaxValidation/semanticAnalysis.js dist/syntaxValidation/semanticAnalysis.js",
     "benchmark": "tsc --project tsconfig.benchmark.json && BENCHMARKING=true node dist/tests/benchmarks/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser,vendored-dependencies}",
     "test": "vitest run"
   },
   "devDependencies": {
     "@types/benchmark": "^2.1.5",
-    "benchmark": "^2.1.4",
-    "vitest": "^2.1.9"
+    "benchmark": "^2.1.4"
   }
 }

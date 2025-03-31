@@ -27,6 +27,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/consistent-type-exports': 'error',
     'no-console': ['warn', { allow: ['warn', 'error'] }],
+    /*  TODO
     'import/extensions': [
       'error',
       'never',
@@ -35,7 +36,6 @@ module.exports = {
         tsx: 'always',
       },
     ],
-    /*  TODO
     '@typescript-eslint/consistent-type-imports': [
       'error',
       {

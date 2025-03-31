@@ -25,7 +25,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "composite": true
+    "composite": true,
+    "noEmit": false
 
     // TODO list
 
