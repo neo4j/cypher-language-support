@@ -21,3 +21,4 @@ benchmarks.txt
 vite.config.ts.timestamp*
 .wdio-vscode-service
 packages/language-support/vendored-dependencies
+.devlog
