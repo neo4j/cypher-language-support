@@ -480,7 +480,8 @@ export type ParsedCommandNoPosition =
   | { type: 'welcome' }
   | { type: 'parse-error' }
   | { type: 'sysinfo' }
-  | { type: 'style'; operation?: 'reset' };
+  | { type: 'style'; operation?: 'reset' }
+  | { type: 'play' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -632,6 +633,11 @@ function parseToCommand(
           stop,
           operation: styleCmd.RESET() ? 'reset' : undefined,
         };
+      }
+
+      const playCmd = consoleCmd.playCmd();
+      if (playCmd) {
+        return { type: 'play', start, stop };
       }
 
       return { type: 'parse-error', start, stop };
