@@ -1,7 +1,7 @@
-import {
+import type {
   Neo4jConnectionSettings,
   Neo4jSettings,
-} from '@neo4j-cypher/language-server/src/types';
+} from '@neo4j-cypher/language-server/types';
 
 export class MockLanguageClient {
   async sendNotification(
