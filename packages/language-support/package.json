@@ -55,7 +55,7 @@
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist-cjs/index.cjs",
     "build-esm": "tsc -b && cp src/syntaxValidation/semanticAnalysis.js dist/syntaxValidation/semanticAnalysis.js",
     "benchmark": "tsc --project tsconfig.benchmark.json && BENCHMARKING=true node dist/tests/benchmarks/benchmark.js",
-    "clean": "rm -rf {dist,src/generated-parser,vendored-dependencies}",
+    "clean": "rm -rf {dist,src/generated-parser,vendored-dependencies,dist-cjs}",
     "test": "vitest run"
   },
   "devDependencies": {

@@ -17,7 +17,7 @@
     "build": "turbo run build",
     "build-vscode": "turbo run neo4j-for-vscode#build:dev",
     "release": "turbo run build && npx changeset publish",
-    "clean": "turbo run clean && find . -name 'tsconfig.tsbuildinfo' -delete",
+    "clean": "turbo run clean",
     "watch": "turbowatch ./turbowatch.ts",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",

@@ -5,6 +5,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "outDir": "dist-cjs",
+    "rootDir": ".",
     "module": "CommonJS",
     "moduleResolution": "node"
   }

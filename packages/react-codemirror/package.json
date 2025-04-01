@@ -23,7 +23,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --declaration --outDir dist/",
+    "build": "tsc",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
