@@ -105,7 +105,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 4; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(300);
+      await browser.pause(1000);
     }
 
     await checkResultsContent(workbench, async () => {
@@ -167,7 +167,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 2; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(300);
+      await browser.pause(1000);
     }
 
     await checkResultsContent(workbench, async () => {
@@ -206,7 +206,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 4; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(300);
+      await browser.pause(1000);
     }
 
     await checkResultsContent(workbench, async () => {
@@ -223,15 +223,15 @@ suite('Params panel testing', () => {
     await executeFile(workbench, 'params.cypher');
 
     // initial pop-up for param b
-    await browser.pause(300);
+    await browser.pause(1000);
     await browser.keys(['1', '2', Key.Enter]);
 
     // initial pop-up for param `some param`
-    await browser.pause(300);
+    await browser.pause(1000);
     await browser.keys(['f', 'a', 'l', 's', 'e', Key.Enter]);
 
     // initial pop-up for param `some-param`
-    await browser.pause(300);
+    await browser.pause(1000);
     await browser.keys(['5', Key.Enter]);
 
     await checkResultsContent(workbench, async () => {
