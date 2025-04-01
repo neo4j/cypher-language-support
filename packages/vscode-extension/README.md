@@ -104,16 +104,22 @@ datetime() // would set a datetime parameter
 [1,2,3] // would set a List parameter
 ```
 
-As a rule of thumb, any `expression` that can appear in a `RETURN expression` can be set as value.
+Any `expression` that can appear in a `RETURN expression` can be set as value.
 
-Parameters can be accessed from the code prepending them with a dollar sign `$`.
+Parameters can be accessed from in a query prepending them with a dollar sign `$`.
+
+Parameters can be edited / deleted hovering over them.
+
+![demo-param-editing](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-param-editing.png?raw=true)
+
+
 
 ## Executing a Cypher file
 
 Once you've written your desired query (for example `RETURN $a, $b`) you can execute it by either of:
 * Using the `Neo4j: Run cypher statements` command from the Command Palette.
 * Right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item.
-* Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the Windows key depending on your keyboard).
+* Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the `alt` key depending on your keyboard).
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 
