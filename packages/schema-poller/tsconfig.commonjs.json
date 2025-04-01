@@ -6,7 +6,7 @@
     "resolveJsonModule": true,
     "outDir": "dist-cjs",
     "rootDir": ".",
-    "module": "CommonJS",
-    "moduleResolution": "node"
+    "module": "Node16",
+    "moduleResolution": "node16"
   }
 }
