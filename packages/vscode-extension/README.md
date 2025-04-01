@@ -85,17 +85,17 @@ Clicking on an instance will automatically connect to it. You can also manage a 
 ![demo-connect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-connect.png?raw=true)
 ![demo-disconnect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-disconnect.png?raw=true)
 
-Once a connection is added, and a connection to your Neo4j instance is established, you will be able to use database aware features of the extension.
+Once a connection is added, and a connection to your Neo4j instance is established, you will be able to use database aware features of the extension. You can change the database you want to run queries against by clicking or right clicking (`Switch to database`) on it.
 
 You can store connections to different Neo4j instances.
 
-## Managing parameters
+## Managing parameters
 
 To add a new parameter, you can use the `Neo4j: Add parameter` command from the Command Palette or use the `+` on the Neo4j parameters pane:
 
 ![demo-add-parameter](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-add-parameter.png?raw=true)
 
-You'll be prompted for the name and value you want to use for that parameter. The type will be automatically recognized from the value you try and set. Some examples:
+You will be prompted for the name and value you want to use for that parameter. The type will be automatically recognized from the value. Some examples:
 
 ```
 "something" // would set a string parameter
@@ -104,13 +104,16 @@ datetime() // would set a datetime parameter
 [1,2,3] // would set a List parameter
 ```
 
-As a rule of thumb, any expression that can appear in a `RETURN expression` can be set as value.
+As a rule of thumb, any `expression` that can appear in a `RETURN expression` can be set as value.
 
 Parameters can be accessed from the code prepending them with a dollar sign `$`.
 
-## Executing a Cypher file
+## Executing a Cypher file
 
-Once you've written your desired query (for example `RETURN $a, $b`) you can execute it using the `Neo4j: Run cypher statements` command from the Command Palette, by right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item or by pressing the keyboard shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the Windows key depending on your keyboard).
+Once you've written your desired query (for example `RETURN $a, $b`) you can execute it by either of:
+* Using the `Neo4j: Run cypher statements` command from the Command Palette.
+* Right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item.
+* Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the Windows key depending on your keyboard).
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 
