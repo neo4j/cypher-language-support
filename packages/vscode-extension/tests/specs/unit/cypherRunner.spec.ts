@@ -6,7 +6,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { runCypher } from '../../../src/commandHandlers/connection';
 import * as connectionService from '../../../src/connectionService';
 import * as contextService from '../../../src/contextService';
-import CypherRunner from '../../../src/cypherRunner';
+import CypherRunner, { extractParameters } from '../../../src/cypherRunner';
 import { getMockConnection } from '../../helpers';
 
 suite('Cypher runner spec', () => {
@@ -58,5 +58,49 @@ MATCH (n) RETURN n`,
 
     // We check that the first line and the RETURN n from the last one have been concatenated correctly
     assert.equal(arg, 'CREATE (n:Person) RETURN n');
+  });
+});
+
+suite('Parameters extraction spec', () => {
+  test('extracts unique parameters from strings', () => {
+    const input = ['Hello $name, welcome to $place!'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, ['name', 'place']);
+  });
+
+  test('extracts parameters enclosed in backticks', () => {
+    const input = ['RETURN $`ja-123`, $notXoxo;'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, ['ja-123', 'notXoxo']);
+  });
+
+  test('ignores duplicate parameters', () => {
+    const input = ['$user logged in', '$user logged out'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, ['user']);
+  });
+
+  test('handles empty input', () => {
+    const input: string[] = [];
+    const output = extractParameters(input);
+    assert.deepEqual(output, []);
+  });
+
+  test('handles strings without parameters', () => {
+    const input = ['Just a normal string', 'Nothing to extract here'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, []);
+  });
+
+  test('extracts parameters from multiple strings', () => {
+    const input = ['Welcome $user', '$user is in $location', '$time is now'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, ['user', 'location', 'time']);
+  });
+
+  test('does not include special characters in extracted parameters', () => {
+    const input = ['$valid $!invalid $%wrong $correct'];
+    const output = extractParameters(input);
+    assert.deepEqual(output, ['valid', 'correct']);
   });
 });

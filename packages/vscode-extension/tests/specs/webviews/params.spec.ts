@@ -1,6 +1,7 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';
+import { Key } from 'webdriverio';
 import {
   checkResultsContent,
   executeFile,
@@ -100,10 +101,17 @@ suite('Params panel testing', () => {
     await clearParams();
 
     await executeFile(workbench, 'params.cypher');
+
+    // to close the automatic param add pop-ups
+    for (let i = 0; i < 4; i++) {
+      await browser.keys([Key.Escape]);
+      await browser.pause(300);
+    }
+
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
       await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b, some param, some-param',
+        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b, some param, some-param',
       );
     });
   });
@@ -155,10 +163,17 @@ suite('Params panel testing', () => {
     await forceDeleteParam('b');
 
     await executeFile(workbench, 'params.cypher');
+
+    // to close the automatic param add pop-ups
+    for (let i = 0; i < 2; i++) {
+      await browser.keys([Key.Escape]);
+      await browser.pause(300);
+    }
+
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
       await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b',
+        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b',
       );
     });
   });
@@ -187,11 +202,45 @@ suite('Params panel testing', () => {
     // to execute the file we need to be on the user database
     await forceSwitchDatabase('neo4j');
     await executeFile(workbench, 'params.cypher');
+
+    // to close the automatic param add pop-ups
+    for (let i = 0; i < 4; i++) {
+      await browser.keys([Key.Escape]);
+      await browser.pause(300);
+    }
+
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
       await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`:\nExpected parameter(s): a, b, some param, some-param',
+        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b',
       );
+    });
+  });
+
+  test('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
+    await clearParams();
+    await forceAddParam('a', '1998');
+    await executeFile(workbench, 'params.cypher');
+
+    // initial pop-up for param b
+    await browser.pause(300);
+    await browser.keys(['1', '2', Key.Enter]);
+
+    // initial pop-up for param `some param`
+    await browser.pause(300);
+    await browser.keys(['f', 'a', 'l', 's', 'e', Key.Enter]);
+
+    // initial pop-up for param `some-param`
+    await browser.pause(300);
+    await browser.keys(['5', Key.Enter]);
+
+    await checkResultsContent(workbench, async () => {
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('1998');
+      await expect(queryResult).toContain('12');
+      await expect(queryResult).toContain('false');
+      await expect(queryResult).toContain('5');
+      await expect(queryResult).toContain('2010');
     });
   });
 });
