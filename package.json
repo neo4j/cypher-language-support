@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "build": "turbo run build",
     "build-vscode": "turbo run neo4j-for-vscode#build:dev",
-    "build-intellij": "turbo run build:intellij",
+    "build-intellij": "turbo run neo4j-for-intellij#build",
     "release": "turbo run build && npx changeset publish",
     "clean": "turbo run clean",
     "watch": "turbowatch ./turbowatch.ts",

@@ -2,7 +2,7 @@
     <id>org.neo4j.intellij.lsp.neo4j-for-intellij</id>
 
     <!-- see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
-    <idea-version since-build="242.22855.74"/>
+    <idea-version since-build="242.23339"/>
 
     <name>Neo4j for IntelliJ</name>
 

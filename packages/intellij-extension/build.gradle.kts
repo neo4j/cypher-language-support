@@ -35,8 +35,41 @@ tasks {
         }
     }
 
-    runIde {
+    task("bundleServer") {
+        val outputFile = file("../language-server/dist/cypher-language-server.js")
+        val targetDir = file(".")
+
+        inputs.file(outputFile)
+        outputs.file(targetDir.resolve("cypher-language-server.js"))
+
+        doLast {
+            exec {
+                workingDir = file("../language-server")
+                commandLine = listOf("bash", "-c", "npm run bundle")
+            }
+
+            copy {
+                from(outputFile)
+                into(targetDir)
+            }
+        }
+    }
+
+    prepareSandbox {
+        dependsOn("bundleServer")
+
+        from(".") {
+            include("*.js")
+            into("neo4j-for-intellij")
+        }
+    }
+
+    buildPlugin {
         dependsOn(prepareSandbox)
+    }
+
+    runIde {
+        dependsOn(buildPlugin, prepareSandbox)
 
         debugOptions {
            enabled = false
@@ -44,18 +77,6 @@ tasks {
            server = true
            suspend = true
        }
-    }
-
-    prepareSandbox {
-        doFirst {
-            exec {
-                commandLine("bash", "-c", "cd ../.. && npx turbo build && cp packages/language-server/dist/cypher-language-server.js ./packages/intellij-extension")
-            }
-        }
-        from(".") {
-            include("*.js")
-            into("neo4j-for-intellij")
-        }
     }
 
     signPlugin {

@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "preview": true,
   "scripts": {
-    "build:intellij": "./gradlew buildPlugin",
-    "clean": "./gradlew clean",
-    "run:intellij": "./gradlew runIde"
+    "build": "./gradlew -q buildPlugin",
+    "clean": "./gradlew -q clean",
+    "runIde": "./gradlew -q runIde"
   }
 }

@@ -6,15 +6,6 @@
       "dependsOn": ["^build"],
       "outputMode": "new-only"
     },
-    "build:intellij": {
-      "dependsOn": ["build"],
-      "outputs": ["packages/intellij-extension/build/**"]
-    },
-    "run:intellij": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": ["build:intellij"]
-    },
     "@neo4j-cypher/language-support#build": {
       "outputs": ["src/generated-parser/**", "dist/**"],
       "dependsOn": ["antlr4-c3#build"]
@@ -49,6 +40,15 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "neo4j-for-intellij#build": {
+      "outputs": ["packages/intellij-extension/build/**"],
+      "dependsOn": ["@neo4j-cypher/language-server#build"]
+    },
+    "neo4j-for-intellij#runIde": {
+      "cache": false,
+      "outputs": [],
+      "dependsOn": ["neo4j-for-intellij#build"]
     },
     "benchmark": {
       "cache": false
