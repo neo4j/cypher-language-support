@@ -50,7 +50,7 @@
   },
   "scripts": {
     "gen-parser": "cross-env ANTLR4_TOOLS_ANTLR_VERSION=4.13.2 antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "build": "npm run gen-parser && npm run bundle-antlr4-c3 && concurrently 'npm:build-esm' 'npm:build-commonjs'",
+    "build": "concurrently 'npm:gen-parser' 'npm:bundle-antlr4-c3' && concurrently 'npm:build-esm' 'npm:build-commonjs'",
     "bundle-antlr4-c3": "mkdir -p vendored-dependencies/antlr4-c3 && cp -r ../../vendor/antlr4-c3/dist/esm/* vendored-dependencies/antlr4-c3",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist-cjs/index.cjs",
     "build-esm": "tsc -b && cp src/syntaxValidation/semanticAnalysis.js dist/syntaxValidation/semanticAnalysis.js",
