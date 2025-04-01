@@ -99,7 +99,7 @@ jobs:
       if: steps.git-check.outputs.modified == 'true'
       uses: peter-evans/create-pull-request@v7
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         branch: ${{ env.BRANCH_NAME }}
         base: main
         title: "Automated update of artifacts"
