@@ -2,52 +2,45 @@
   "compilerOptions": {
     "allowJs": false,
     "esModuleInterop": true,
-    // TODO not all have DOM ?
-    "lib": ["dom", "ESNext"],
-
-    // this tells typescript to look for files, like modern node would do it
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-
-    // we need .ts / .js extension with nodenext module resolution, so we write .ts ones and let ts rewrite them to .js
-    "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
-
     "skipLibCheck": true,
     "incremental": true,
+    "lib": ["dom", "ESNext"],
+    "target": "ESNext",
+    "module": "ESNext",
 
-    // setting up output
-    // needs to be set each time
-    // https://github.com/microsoft/TypeScript/issues/29172
-    "rootDir": ".",
-    "outDir": "dist",
+    // For ESM to work in node we want to set this
+    // "module": "NodeNext",
+    // "moduleResolution": "nodenext",
+    // this requires all imports to have .ts extension
+    // "allowImportingTsExtensions": true,
+    // for the built code we'd want it to be .js
+    // "rewriteRelativeImportExtensions": true,
+    // However, it's a big hastle to have to write .ts extensions everywhere (generated code and all)
+    // So for now we can use
+    "moduleResolution": "bundler",
+    // this has many of the benefits of nodenext, but you can't run it in node without bundling first
 
     // setting up composite modules
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "noEmit": false
+    "noEmit": false // default is true for composite projects
 
-    // TODO list
+    // TODO changes to tsconfig, that require code changes
 
-    // to use esm in node we want to set this
-    // "module": "NodeNext",
-    // "moduleResolution": "nodenext",
-
+    // "strict": true
     // this let's us have fewer bugs
-    // strict: true
 
+    // "isolatedModules": true
     // this means we can compile modules in parallel
-    // isolatedModules true
 
-    // this allows node to run our typescript files unchanged
     // "erasableSyntaxOnly": true,
+    // this allows node to run our typescript files unchanged
 
+    // "verbatimModuleSyntax": true,
     // this means we have to use type when importing types. this avoids edgecases when an import is dropped in the ts rewrite
     // https://www.typescriptlang.org/tsconfig/#verbatimModuleSyntax
-    // "verbatimModuleSyntax": true,
   },
   "exclude": ["node_modules", ".vscode-test", "dist"]
 }
