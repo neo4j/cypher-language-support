@@ -17,12 +17,10 @@
     "parser"
   ],
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/cjs/index.d.ts",
-  "module": "./dist/esm/index.js",
   "exports": {
     "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.js"
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/esm/index.d.ts"
   },
   "scripts": {
     "build": "npm run generate && npm run build-esm && npm run build-commonjs",

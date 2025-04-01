@@ -7,7 +7,7 @@
     "dev": "vite --open",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "repository": {
     "type": "git",

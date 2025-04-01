@@ -21,7 +21,11 @@
     "completions"
   ],
   "icon": "resources/images/logo.png",
-  "main": "./dist/extension.js",
+  "exports": {
+    ".": {
+      "require": "./dist/extension.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -397,7 +401,7 @@
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test:e2e": "npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
     "test:apiAndUnit": "npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
     "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"

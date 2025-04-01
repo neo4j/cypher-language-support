@@ -8,7 +8,7 @@
     { "path": "packages/react-codemirror" },
     { "path": "packages/react-codemirror-playground" },
     { "path": "packages/language-server" },
-    { "path": "packages/vscode-extension" },
-    { "path": "vendor/antlr4-c3" }
+    { "path": "packages/vscode-extension" }
+    // { "path": "vendor/antlr4-c3" } -> this one does not inherit from the root tsconfig.json
   ]
 }
