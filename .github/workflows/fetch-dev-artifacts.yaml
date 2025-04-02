@@ -20,7 +20,7 @@ jobs:
         id: check_skip
         run: |
           DAY=$(date +'%d')
-          if [ "$DAY" -ge 8 ] && [ "${{ github.event_name }}" == "schedule" ]; then
+          if [[ "$DAY" -ge 8 ]] && [[ "${{ github.event_name }}" == "schedule" ]]; then
             echo "Skipping fetch"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
