@@ -1,5 +1,5 @@
 import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
-import { DEBOUNCE_TIME } from '@neo4j-cypher/react-codemirror/src/constants';
+import { DEBOUNCE_TIME } from '@neo4j-cypher/react-codemirror';
 import {
   cypherDataToString,
   CypherDataType,
@@ -49,7 +49,7 @@ export function validateParamInput(
 const debouncedValidate = debounce(
   (paramValue: string, dbSchema: DbSchema) =>
     validateParamInput(paramValue, dbSchema),
-  DEBOUNCE_TIME,
+  DEBOUNCE_TIME * 5,
   { trailing: true },
 );
 
