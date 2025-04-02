@@ -4,34 +4,34 @@
 
 Run through the [prerequisites](../../CONTRIBUTING.md#building-the-project).
 
-You can choose to build the plugin via `gradle`:
+You can build the plugin from the project root using [`turbo`](https://turbo.build):
 
 ```
-intellij-extension$ ./gradlew buildPlugin
+$ npx turbo neo4j-for-intellij#build
 ```
 
-Or you can use [`turbo`](https://turbo.build) from the project root:
+`gradle` is also an option (and can be used from within IntelliJ):
 
 ```
-cypher-language-support$ npx turbo build:intellij
+$ cd packages/intellij-extension && ./gradlew buildPlugin
 ```
 
-## Manual testing
+## Develop and test
 
 If you want to test the plugin during a development workflow, you can spin up a temporary copy
-of IntelliJ right from within the project. Simply run either the gradle target directly:
+of IntelliJ that runs with a freshly built version enabled by default:
 
 ```
-intellij-extension$ ./gradlew runIde
+$ npx turbo neo4j-for-intellij#runIde
 ```
 
-Or, from the project root:
+...this target also exists in `gradle`:
 
 ```
-cypher-language-support$ npx turbo run:intellij
+$ cd packages/intellij-extension && ./gradlew runIde
 ```
 
-## Installing the plugin
+## Installing the plugin manually
 
 From IntelliJ, open Settings > Plugins > (cog icon) > Install Plugin from disk, and browse to the jar file
 located in `packages/intellij-extension/build/distributions`.
