@@ -282,6 +282,7 @@ export function lintCypherQuery(
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {
         if (current.cypherVersionError) return current.cypherVersionError;
 
+        const parameterErrors = errorOnUndeclaredParameters(current, dbSchema);
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
         const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
         const procedureWarnings = warningOnDeprecatedProcedure(
@@ -307,6 +308,7 @@ export function lintCypherQuery(
         return semanticDiagnostics
           .concat(
             labelWarnings,
+            parameterErrors,
             functionErrors,
             procedureErrors,
             functionWarnings,
@@ -375,6 +377,42 @@ function warningOnDeprecatedFunction(
     });
   }
   return warnings;
+}
+
+function errorOnUndeclaredParameters(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const errors: SyntaxDiagnostic[] = [];
+
+  if (parsingResult.collectedParameters) {
+    parsingResult.collectedParameters.forEach((parameter) => {
+      let isBackticked = false;
+      if (parameter.name.startsWith('$')) {
+        parameter.name = parameter.name.substring(1);
+      }
+      if (parameter.name.startsWith('`') && parameter.name.endsWith('`')) {
+        isBackticked = true;
+        parameter.name = parameter.name.substring(1, parameter.name.length - 1);
+      }
+      const parameterName = parameter.name;
+      const isParamExists = !!dbSchema.parameters?.[parameterName];
+      if (!isParamExists) {
+        errors.push(
+          generateSyntaxDiagnostic(
+            parameterName,
+            parameter,
+            DiagnosticSeverity.Error,
+            `Parameter $${
+              isBackticked ? `\`${parameterName}\`` : parameterName
+            } is not defined.`,
+          ),
+        );
+      }
+    });
+  }
+
+  return errors;
 }
 
 function errorOnUndeclaredFunctions(

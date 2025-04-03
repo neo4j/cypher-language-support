@@ -404,7 +404,11 @@ describe('Syntactic validation spec', () => {
     expect(
       getDiagnosticsForQuery({
         query,
-        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+        dbSchema: {
+          labels: ['Dog', 'Cat'],
+          relationshipTypes: ['Person'],
+          parameters: { value: 'mockedName' },
+        },
       }),
     ).toEqual([]);
   });

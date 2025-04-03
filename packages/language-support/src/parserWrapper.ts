@@ -12,6 +12,7 @@ import {
   FunctionNameContext,
   LabelNameContext,
   LabelOrRelTypeContext,
+  ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
   StatementOrCommandContext,
@@ -44,6 +45,7 @@ export interface ParsedStatement {
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
+  collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
   cypherVersion?: CypherVersion;
@@ -91,6 +93,17 @@ export type LabelOrRelType = {
   labelType: LabelType;
   labelText: string;
   couldCreateNewLabel: boolean;
+  line: number;
+  column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
+};
+
+export type ParsedParameter = {
+  name: string;
+  rawText: string;
   line: number;
   column: number;
   offsets: {
@@ -177,6 +190,7 @@ export function createParsingResult(
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
       const { parser, tokens } = statementScaffolding;
       const labelsCollector = new LabelAndRelTypesCollector();
+      const parameterFinder = new ParameterCollector();
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
@@ -186,6 +200,7 @@ export function createParsingResult(
       );
       parser._parseListeners = [
         labelsCollector,
+        parameterFinder,
         variableFinder,
         methodsFinder,
         cypherVersionCollector,
@@ -214,6 +229,7 @@ export function createParsingResult(
         stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
+        collectedParameters: parameterFinder.parameters,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
         cypherVersion: cypherVersionCollector.cypherVersion,
@@ -273,6 +289,37 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
           labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
           couldCreateNewLabel: couldCreateNewLabel(ctx),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
+    }
+  }
+}
+
+class ParameterCollector implements ParseTreeListener {
+  parameters: ParsedParameter[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof ParameterContext) {
+      const parameterName = ctx.parameterName().getText();
+      if (parameterName) {
+        this.parameters.push({
+          name: parameterName,
+          rawText: parameterName,
           line: ctx.start.line,
           column: ctx.start.column,
           offsets: {

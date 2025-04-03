@@ -2075,4 +2075,60 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       },
     ]);
   });
+
+  test('Shows errors for missing parameters', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
+      {
+        message: 'Parameter $missingParam is not defined.',
+        offsets: {
+          end: 46,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 45,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors for missing parameters correctly with backticked parameters', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.age = $`myParam` RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
+      {
+        message: 'Parameter $`missingParam` is not defined.',
+        offsets: {
+          end: 48,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 45,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });
