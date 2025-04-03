@@ -1223,6 +1223,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitParenthesizedPath = (ctx: ParenthesizedPathContext) => {
     this._visit(ctx.LPAREN());
+    this.addIndentation();
     this.avoidBreakBetween();
     const parenthesizedPathGrp = this.startGroup();
     this._visit(ctx.pattern());
@@ -1235,6 +1236,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(whereGrp);
     }
     this.endGroup(parenthesizedPathGrp);
+    this.removeIndentation();
     this._visit(ctx.RPAREN());
     this._visit(ctx.quantifier());
   };
