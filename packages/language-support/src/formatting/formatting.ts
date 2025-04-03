@@ -873,9 +873,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCreateClause = (ctx: CreateClauseContext) => {
     this._visit(ctx.CREATE());
+    this.addIndentation();
     const createClauseGrp = this.startNonPrettierGroupAlsoOnComment();
     this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
+    this.removeIndentation();
   };
 
   visitInsertClause = (ctx: InsertClauseContext) => {
@@ -1477,9 +1479,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineBefore(ctx);
     this.breakLine();
     this._visit(ctx.WHERE());
+    this.addIndentation();
     const whereClauseGrp = this.startGroup();
     this._visit(ctx.expression());
     this.endGroup(whereClauseGrp);
+    this.removeIndentation();
   };
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
@@ -1854,6 +1858,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const wholeMapGrp = this.startGroup();
     this.specialBreakBetween();
     this._visit(ctx.LCURLY());
+    this.addIndentation();
     this.avoidSpaceBetween();
     const mapGrp = this.startGroup();
     const n = ctx.expression_list().length;
@@ -1869,6 +1874,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
+    this.removeIndentation();
     this._visitTerminalRaw(ctx.RCURLY(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
