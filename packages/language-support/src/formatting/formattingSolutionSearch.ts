@@ -16,6 +16,7 @@ interface Split {
   splitType: ' ' | '' | '\n' | '\n\n';
   breakBeforeGrp?: Group;
   cost: number;
+  wantedToSplit?: boolean;
 }
 
 interface Choice {
@@ -149,7 +150,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const finalIndentation = getFinalIndentation(curr);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
   const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
-  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak);
+  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak || split.wantedToSplit);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -277,7 +278,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   }
 
   if (splits.length === 1) {
-    return splits;
+    return [{...splits[0], wantedToSplit: breakBeforeGrp !== undefined}];
   }
 
   if (breakBeforeGrp) {
