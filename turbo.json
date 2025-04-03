@@ -17,6 +17,10 @@
       ],
       "outputs": ["dist/**"]
     },
+    "neo4j-for-vscode#build": {
+      "dependsOn": ["@neo4j-cypher/language-server#build"],
+      "outputs": ["dist/**"]
+    },
     "clean": {
       "cache": false
     },

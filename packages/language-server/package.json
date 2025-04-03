@@ -18,18 +18,8 @@
   ],
   "version": "2.0.0-next.18",
   "type": "commonjs",
-  "exports": {
-    "./lintWorker": {
-      "require": "./dist/lintWorker.js",
-      "types": "./dist/lintWorker.d.ts"
-    },
-    "./types": {
-      "types": "./dist/types.d.ts"
-    },
-    ".": {
-      "require": "./dist/cypher-language-server.js"
-    }
-  },
+  "main": "./dist/server.js",
+  "types": "src/server.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"

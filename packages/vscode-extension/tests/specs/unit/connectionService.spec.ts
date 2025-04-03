@@ -1,4 +1,4 @@
-import type { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/types';
+import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
 import * as assert from 'assert';
 import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';

@@ -5,7 +5,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:import/typescript',
-    'plugin:node/recommended',
+    // todo 'plugin:node/recommended',
   ],
   env: {
     browser: true,
