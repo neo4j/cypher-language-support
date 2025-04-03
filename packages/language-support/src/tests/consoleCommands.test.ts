@@ -54,6 +54,7 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
+    expectParsedCommands(':play', [{ type: 'play' }]);
   });
 
   test('properly highlights simple commands', () => {
