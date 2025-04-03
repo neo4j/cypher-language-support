@@ -115,7 +115,7 @@ function getNextIndentationState(state: State, chunk: Chunk): [number, Indentati
   let newActive = [...state.activeIndents];
   let nextIndentation: number = state.indentation;
   for (const indent of chunk.indentation) {
-    if (indent.change === 1 && Math.abs(state.previousIndent - nextIndentation) < 2) {
+    if (indent.change === 1 && nextIndentation - state.previousIndent < 2) {
       newActive.push(indent);
       nextIndentation += INDENTATION_SPACES;
     }
@@ -441,6 +441,7 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation = 0;
+  let previousIndentation = 0;
   let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
@@ -448,7 +449,7 @@ export function buffersToFormattedString(
     const initialState: State = {
       activeGroups: [],
       activeIndents: [],
-      previousIndent: 0,
+      previousIndent: previousIndentation,
       column: 0,
       choiceIndex: 0,
       cost: 0,
