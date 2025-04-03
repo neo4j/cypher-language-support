@@ -1277,7 +1277,7 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
+          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported in Cypher 5.',
         offsets: {
           end: 28,
           start: 6,
@@ -1332,18 +1332,18 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
-          end: 37,
-          start: 6,
+          end: 19,
+          start: 7,
         },
         range: {
           end: {
-            character: 37,
+            character: 19,
             line: 0,
           },
           start: {
-            character: 6,
+            character: 7,
             line: 0,
           },
         },
@@ -1351,7 +1351,7 @@ Attempted to access graph other`,
       },
       {
         message:
-          'Assigning a path in a quantified path pattern is not yet supported.',
+          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
         offsets: {
           end: 19,
           start: 7,
