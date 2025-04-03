@@ -860,6 +860,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMatchClause = (ctx: MatchClauseContext) => {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.MATCH());
+    this.addIndentation();
     const matchClauseGrp = this.startNonPrettierGroupAlsoOnComment();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
@@ -868,6 +869,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this._visit(ctx.hint(i));
     }
+    this.removeIndentation();
     this._visit(ctx.whereClause());
   };
 
@@ -907,7 +909,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnClause = (ctx: ReturnClauseContext) => {
     this._visit(ctx.RETURN());
+    this.addIndentation();
     this._visit(ctx.returnBody());
+    this.removeIndentation();
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
@@ -1278,6 +1282,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LPAREN());
     this.avoidBreakBetween();
     const nodePatternGrp = this.startGroup();
+    this.addIndentation();
     if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
       let variableLabelGrp: number;
       if (ctx.variable() && ctx.labelExpression()) {
@@ -1297,6 +1302,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.WHERE());
       this._visit(ctx.expression());
     }
+    this.removeIndentation();
     this._visit(ctx.RPAREN());
     this.endGroup(nodePatternGrp);
   };
@@ -1311,6 +1317,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.variable());
       this.avoidBreakBetween();
       this._visit(ctx.EQ());
+      this.addIndentation();
     }
     const selectorAnonymousPatternGrp = this.startGroup();
     if (ctx.selector()) {
@@ -1322,6 +1329,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       nonPrettierStyle: true,
     });
     this._visit(ctx.anonymousPattern());
+    if (ctx.variable()) {
+      this.removeIndentation();
+    }
     this.endGroup(anonymousPatternGrp);
     this.endGroup(selectorAnonymousPatternGrp);
   };
