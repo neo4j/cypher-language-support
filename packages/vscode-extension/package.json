@@ -409,13 +409,12 @@
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test:e2e": "npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
     "test:apiAndUnit": "npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
     "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.18",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "^5.12.0",
@@ -437,7 +436,6 @@
     "mocha": "^10.2.0",
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
-    "typescript": "^4.9.5",
     "vscode-languageserver-textdocument": "^1.0.12",
     "wdio-vscode-service": "^6.1.2",
     "wdio-wait-for": "^3.0.11"

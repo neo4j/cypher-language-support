@@ -3,7 +3,7 @@
   "include": ["src"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true,
-    "module": "esnext"
+    "outDir": "dist",
+    "rootDir": "./src"
   }
 }

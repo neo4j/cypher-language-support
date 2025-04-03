@@ -17,12 +17,10 @@
     "parser"
   ],
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/cjs/index.d.ts",
-  "module": "./dist/esm/index.js",
   "exports": {
     "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.js"
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/esm/index.d.ts"
   },
   "scripts": {
     "build": "npm run generate && npm run build-esm && npm run build-commonjs",
@@ -46,7 +44,6 @@
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsdoc": "48.2.4",
     "eslint-plugin-prefer-arrow": "1.2.3",
-    "ts-node": "10.9.1",
-    "typescript": "^4.9.5"
+    "ts-node": "10.9.1"
   }
 }

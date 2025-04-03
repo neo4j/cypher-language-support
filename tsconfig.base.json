@@ -1,16 +1,46 @@
 {
   "compilerOptions": {
     "allowJs": false,
-    "declaration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "ESNext"],
-    "module": "commonjs",
-    "moduleResolution": "node",
     "skipLibCheck": true,
-    "sourceMap": true,
+    "incremental": true,
+    "lib": ["dom", "ESNext"],
     "target": "ESNext",
-    "outDir": "dist",
-    "incremental": true
+    "module": "ESNext",
+
+    // For ESM to work in node we want to set this
+    // "module": "NodeNext",
+    // "moduleResolution": "nodenext",
+    // this requires all imports to have .ts extension
+    // "allowImportingTsExtensions": true,
+    // for the built code we'd want it to be .js
+    // "rewriteRelativeImportExtensions": true,
+    // However, it's a big hastle to have to write .ts extensions everywhere (generated code and all)
+    // So for now we can use
+    "moduleResolution": "bundler",
+    // this has many of the benefits of nodenext, but you can't run it in node without bundling first
+
+    // setting up composite modules
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "noEmit": false // default is true for composite projects
+
+    // TODO changes to tsconfig, that require code changes
+
+    // "strict": true
+    // this let's us have fewer bugs
+
+    // "isolatedModules": true
+    // this means we can compile modules in parallel
+
+    // "erasableSyntaxOnly": true,
+    // this allows node to run our typescript files unchanged
+
+    // "verbatimModuleSyntax": true,
+    // this means we have to use type when importing types. this avoids edgecases when an import is dropped in the ts rewrite
+    // https://www.typescriptlang.org/tsconfig/#verbatimModuleSyntax
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "exclude": ["node_modules", ".vscode-test", "dist"]
 }

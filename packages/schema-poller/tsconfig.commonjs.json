@@ -4,7 +4,9 @@
   "compilerOptions": {
     "strict": true,
     "resolveJsonModule": true,
-    "outDir": "dist",
-    "rootDir": "."
+    "outDir": "dist-cjs",
+    "rootDir": ".",
+    "module": "Node16",
+    "moduleResolution": "node16"
   }
 }

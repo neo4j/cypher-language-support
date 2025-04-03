@@ -41,6 +41,9 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-typescript": "^4.3.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.5.0",
     "prettier": "^2.8.1",
@@ -48,7 +51,7 @@
     "semver": "^7.6.1",
     "turbo": "^1.13.4",
     "turbowatch": "^2.29.4",
-    "typescript": "4.9.5",
+    "typescript": "5.8.2",
     "vitest": "^2.1.9"
   }
 }

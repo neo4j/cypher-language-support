@@ -7,7 +7,7 @@ import { DbSchema, Registry } from '../dbSchema';
 import { CypherVersion, Neo4jFunction, Neo4jProcedure } from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
+import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
 export interface SemanticAnalysisResult {
