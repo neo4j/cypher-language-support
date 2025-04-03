@@ -17,16 +17,17 @@
     "language server"
   ],
   "version": "2.0.0-next.18",
+  "type": "commonjs",
   "exports": {
     "./lintWorker": {
-      "import": "./dist/lintWorker.js",
+      "require": "./dist/lintWorker.js",
       "types": "./dist/lintWorker.d.ts"
     },
     "./types": {
       "types": "./dist/types.d.ts"
     },
     ".": {
-      "import": "./dist/cypher-language-server.js"
+      "require": "./dist/cypher-language-server.js"
     }
   },
   "repository": {

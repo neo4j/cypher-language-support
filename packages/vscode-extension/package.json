@@ -21,11 +21,7 @@
     "completions"
   ],
   "icon": "resources/images/logo.png",
-  "exports": {
-    ".": {
-      "require": "./dist/extension.js"
-    }
-  },
+  "main": "./dist/extension.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -419,7 +415,6 @@
     "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.18",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "^5.12.0",

@@ -18,9 +18,7 @@ let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
   // The server is implemented in node
-  const runServer = context.asAbsolutePath(
-    path.join('dist', 'cypher-language-server.js'),
-  );
+  const runServer = context.asAbsolutePath(path.join('dist', ''));
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
@@ -29,7 +27,7 @@ export async function activate(context: ExtensionContext) {
   const serverOptions: ServerOptions = {
     run: { module: runServer, transport: TransportKind.ipc },
     debug: {
-      module: debugServer,
+      module: runServer,
       transport: TransportKind.ipc,
       options: { env: { CYPHER_25: 'true' } },
     },
