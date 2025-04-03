@@ -63,6 +63,8 @@ interface Result {
   cost: number;
   decisions: Decision[];
   indentation: number;
+  previousIndent: number;
+  activeIndents: IndentationModifier[];
 }
 
 interface FinalResultWithPos {
@@ -233,6 +235,8 @@ function reconstructBestPath(state: State): Result {
     cost: state.cost,
     decisions,
     indentation: state.indentation,
+    previousIndent: state.previousIndent,
+    activeIndents: state.activeIndents,
   };
 }
 
@@ -441,15 +445,16 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation = 0;
-  let previousIndentation = 0;
+  let previousIndent = 0;
+  let activeIndents: IndentationModifier[] = [];
   let cursorPos = 0;
   for (const chunkList of buffers) {
     const choices: Choice[] = chunkListToChoices(chunkList);
     // Indentation should carry over
     const initialState: State = {
       activeGroups: [],
-      activeIndents: [],
-      previousIndent: previousIndentation,
+      activeIndents: activeIndents,
+      previousIndent,
       column: 0,
       choiceIndex: 0,
       cost: 0,
@@ -459,6 +464,8 @@ export function buffersToFormattedString(
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
+    previousIndent = result.previousIndent;
+    activeIndents = result.activeIndents;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {
