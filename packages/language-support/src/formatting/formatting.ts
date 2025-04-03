@@ -1246,10 +1246,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.WHERE()) {
       const whereGrp = this.startGroup();
       this._visit(ctx.WHERE());
+      const indentId2 = this.addIndentation();
       const whereExprGrp = this.startGroup();
       this._visit(ctx.expression());
       this.endGroup(whereExprGrp);
       this.endGroup(whereGrp);
+      this.removeIndentation(indentId2);
     }
     this.endGroup(parenthesizedPathGrp);
     this.removeIndentation(indentId);
@@ -1976,8 +1978,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.WHERE()) {
       const whereGrp = this.startGroup();
       this._visit(ctx.WHERE());
+      const indentId = this.addIndentation();
       this._visit(ctx._whereExp);
       this.endGroup(whereGrp);
+      this.removeIndentation(indentId);
     }
     this.endGroup(listGrp);
     this.removeIndentation(indentId);
