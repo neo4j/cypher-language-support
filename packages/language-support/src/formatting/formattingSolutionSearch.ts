@@ -9,7 +9,6 @@ import {
 } from './formattingHelpers';
 
 const INDENTATION_SPACES = 2;
-const HALF_INDENTATION_SPACES = 1;
 const showGroups = false;
 
 interface Split {
@@ -33,8 +32,6 @@ export interface Group {
   dbgText: string;
   align: number; // USE ONLY FOR STATE KEY
   breakCost: number;
-  addsIndentationWhenBroken: boolean;
-  halfIndent?: true;
 }
 
 interface Decision {
@@ -126,7 +123,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr);
-  let nextIndentation =
+  const nextIndentation =
     curr.indentation + choice.left.indentation * INDENTATION_SPACES;
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
@@ -141,14 +138,8 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const grp = choice.left.groupsStarting[i];
-    const wouldAddIndentation = grp.addsIndentationWhenBroken;
-    const grpIndentation = grp.halfIndent
-      ? HALF_INDENTATION_SPACES
-      : INDENTATION_SPACES;
     // TODO this miiiight be slightly off because of indentation rules
-    const nextGrpStart = isBreak
-      ? curr.indentation + (wouldAddIndentation ? grpIndentation : 0)
-      : thisWordEnd;
+    const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
     const breaksAll =
       nextGrpStart + grp.size > MAX_COL || grp.id === split.breakBeforeGrp?.id;
     const newGroup = {
@@ -157,17 +148,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       breakCost: Math.pow(10, nextGroups.length + 1),
       breaksAll,
     };
-    if (choice.left.specialBreak) {
-      newGroup.addsIndentationWhenBroken = false;
-    }
-    if (
-      breaksAll &&
-      newGroup.addsIndentationWhenBroken &&
-      !choice.left.specialBreak
-    ) {
-      // Add finalindentation as well?
-      nextIndentation += grpIndentation;
-    }
     nextGroups.push(newGroup);
   }
 
@@ -179,16 +159,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       !nextGroups.some((group) => group.id === choice.left.groupsEnding[i].id)
     ) {
       throw new Error('Unexpected group ending');
-    }
-    const toBePopped = nextGroups.find(
-      (group) => group.id === choice.left.groupsEnding[i].id,
-    );
-    if (toBePopped.breaksAll && toBePopped.addsIndentationWhenBroken) {
-      const grpIndentation = toBePopped.halfIndent
-        ? HALF_INDENTATION_SPACES
-        : INDENTATION_SPACES;
-      // Remove finalindentation as well?
-      nextIndentation -= grpIndentation;
     }
     nextGroups = nextGroups.filter(
       (group) => group.id !== choice.left.groupsEnding[i].id,
