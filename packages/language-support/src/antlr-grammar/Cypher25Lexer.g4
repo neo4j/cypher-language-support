@@ -483,12 +483,23 @@ FIELDTERMINATOR
    : F I E L D T E R M I N A T O R
    ;
 
+FILTER
+   : F I L T E R
+   ;
+
 FINISH
    : F I N I S H
    ;
 
 FLOAT
    : F L O A T
+   ;
+
+FLOAT64
+   : F L O A T SIX FOUR
+   ;
+FLOAT32
+   : F L O A T THREE TWO
    ;
 
 FOR
@@ -595,8 +606,34 @@ INT
    : I N T
    ;
 
+INT64
+   : I N T SIX FOUR
+   ;
+INT32
+   : I N T THREE TWO
+   ;
+INT16
+   : I N T ONE SIX
+   ;
+INT8
+   : I N T EIGHT
+   ;
+
 INTEGER
    : I N T E G E R
+   ;
+
+INTEGER64
+   : I N T E G E R SIX FOUR
+   ;
+INTEGER32
+   : I N T E G E R THREE TWO
+   ;
+INTEGER16
+   : I N T E G E R ONE SIX
+   ;
+INTEGER8
+   : I N T E G E R EIGHT
    ;
 
 IS
@@ -645,6 +682,10 @@ LE
 
 LEADING
    : L E A D I N G
+   ;
+
+LET
+   : L E T
    ;
 
 LIMITROWS
@@ -955,6 +996,14 @@ REPLACE
    : R E P L A C E
    ;
 
+REPLICA
+   : R E P L I C A
+   ;
+
+REPLICAS
+   : R E P L I C A S
+   ;
+
 REPORT
    : R E P O R T
    ;
@@ -969,6 +1018,10 @@ REQUIRED
 
 RESTRICT
    : R E S T R I C T
+   ;
+
+RETRY
+   : R E T R Y
    ;
 
 RETURN
@@ -1049,6 +1102,14 @@ SETTING
 
 SETTINGS
    : S E T T I N G S
+   ;
+
+SHARD
+   : S H A R D
+   ;
+
+SHARDS
+   : S H A R D S
    ;
 
 SHORTEST_PATH
@@ -1405,6 +1466,46 @@ fragment Y
 
 fragment Z
    : [zZ]
+   ;
+
+fragment ZERO
+   : [0]
+   ;
+
+fragment ONE
+   : [1]
+   ;
+
+fragment TWO
+   : [2]
+   ;
+
+fragment THREE
+   : [3]
+   ;
+
+fragment FOUR
+   : [4]
+   ;
+
+fragment FIVE
+   : [5]
+   ;
+
+fragment SIX
+   : [16]
+   ;
+
+fragment SEVEN
+   : [7]
+   ;
+
+fragment EIGHT
+   : [8]
+   ;
+
+fragment NINE
+   : [9]
    ;
 
 // Should always be last in the file before modes
