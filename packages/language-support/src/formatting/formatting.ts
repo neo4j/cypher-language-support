@@ -1672,10 +1672,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.expression(0));
     const thenGrp = this.startGroup();
     this._visit(ctx.THEN());
-    this.removeIndentation(indentId2);
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression(1));
     this.removeIndentation(indentId3);
+    this.removeIndentation(indentId2);
     this.endGroup(thenGrp);
     this.endGroup(whenGrp);
     this.removeIndentation(indentId1);
@@ -1715,12 +1715,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.visit(ctx.COMMA(i));
       }
     }
-    this.removeIndentation(indentId2);
     const thenGrp = this.startGroup();
     this._visit(ctx.THEN());
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression());
     this.removeIndentation(indentId3);
+    this.removeIndentation(indentId2);
     this.endGroup(thenGrp);
     this.endGroup(whenGrp);
     this.removeIndentation(indentId);
