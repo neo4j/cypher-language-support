@@ -396,8 +396,8 @@ function errorOnUndeclaredParameters(
         parameter.name = parameter.name.substring(1, parameter.name.length - 1);
       }
       const parameterName = parameter.name;
-      const isParamExists = !!dbSchema.parameters?.[parameterName];
-      if (!isParamExists) {
+      const paramExists = !!dbSchema.parameters?.[parameterName];
+      if (!paramExists) {
         errors.push(
           generateSyntaxDiagnostic(
             parameterName,

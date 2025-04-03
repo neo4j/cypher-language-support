@@ -2131,4 +2131,40 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       },
     ]);
   });
+
+  test('Shows errors for missing parameters correctly with parameter names containing space', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+          parameters: {
+            'some param': 21,
+          },
+        },
+      }),
+    ).toEqual([
+      {
+        message: 'Parameter $`missing param` is not defined.',
+        offsets: {
+          end: 49,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 46,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });
