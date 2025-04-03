@@ -7,7 +7,7 @@
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
   "version": "1.9.0",
-  "preview": true,
+  "preview": false,
   "categories": [
     "Programming Languages",
     "Linters",
@@ -80,7 +80,7 @@
       },
       {
         "command": "neo4j.runCypher",
-        "title": "Neo4j: Run Cypher statements",
+        "title": "Run Cypher statements",
         "category": "Neo4j"
       },
       {
@@ -134,12 +134,12 @@
       "editor/context": [
         {
           "command": "neo4j.runCypher",
-          "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
+          "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
           "group": "z_commands"
         },
         {
           "command": "neo4j.cypherFileFromSelection",
-          "when": "editorHasSelection && (resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
+          "when": "editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
           "group": "z_commands"
         }
       ],

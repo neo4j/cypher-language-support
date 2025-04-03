@@ -6,14 +6,33 @@ permissions:
 
 on:
   schedule:
-    - cron: '10 4 1-7 * 5'
+    - cron: '10 4 * * FRI'
   workflow_dispatch:
   
 
 jobs:
+  check-day-of-month:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.check_skip.outputs.skip }}
+    steps:
+      - name: Check date if run on schedule
+        id: check_skip
+        run: |
+          DAY=$(date +'%d')
+          if [[ "$DAY" -ge 8 ]] && [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "Skipping fetch"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Running fetch"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
   fetch-artifacts:
    environment: aws-artifacts
    runs-on: ubuntu-latest
+   needs: check-day-of-month
+   if: ${{ needs.check-day-of-month.outputs.skip == 'false' }}
    steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -80,7 +99,15 @@ jobs:
         BRANCH_NAME="update-artifacts-$(date +%Y%m%d-%H%M%S)"
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
+    - name: Check for modified files
+      shell: bash
+      id: git-check
+      run: |
+        git update-index --refresh || true
+        echo modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi) >> $GITHUB_OUTPUT
+
     - name: Commit and Push Changes
+      if: steps.git-check.outputs.modified == 'true'
       run: |
         git add ./packages/language-support/src/antlr-grammar
         git add ./packages/language-support/src/syntaxValidation
@@ -88,9 +115,10 @@ jobs:
         git push origin HEAD:${{ env.BRANCH_NAME }}
 
     - name: Create Pull Request
+      if: steps.git-check.outputs.modified == 'true'
       uses: peter-evans/create-pull-request@v7
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         branch: ${{ env.BRANCH_NAME }}
         base: main
         title: "Automated update of artifacts"
