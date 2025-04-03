@@ -1500,10 +1500,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitParenthesizedExpression = (ctx: ParenthesizedExpressionContext) => {
     this._visit(ctx.LPAREN());
+    this.addIndentation();
     this.avoidBreakBetween();
     const parenthesizedExprGrp = this.startGroup();
     this._visit(ctx.expression());
     this.endGroup(parenthesizedExprGrp);
+    this.removeIndentation();
     this._visit(ctx.RPAREN());
   };
 
