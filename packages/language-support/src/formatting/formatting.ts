@@ -1947,7 +1947,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.endGroup(optionalWrappingGrp);
       }
     }
-    this.removeIndentation(indentId);
     this.endGroup(mapProjectionGrp);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RCURLY(), {
@@ -1955,6 +1954,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(mapWrappingGrp);
+    this.removeIndentation(indentId);
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -2008,11 +2008,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(listGrp);
     this.avoidSpaceBetween();
-    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RBRACKET(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
+    this.removeIndentation(indentId);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
