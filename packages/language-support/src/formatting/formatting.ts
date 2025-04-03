@@ -1851,11 +1851,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(allFunctionArgsGrp);
     this.endGroup(invocationGrp);
     this.avoidSpaceBetween();
+    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RPAREN(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
-    this.removeIndentation(indentId);
   };
 
   visitMergeClause = (ctx: MergeClauseContext) => {
@@ -1917,12 +1917,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
+    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RCURLY(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(wholeMapGrp);
-    this.removeIndentation(indentId);
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
@@ -1948,13 +1948,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.endGroup(mapProjectionGrp);
+    this.removeIndentation(indentId);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RCURLY(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(mapWrappingGrp);
-    this.removeIndentation(indentId);
   };
 
   visitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -2008,11 +2008,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(listGrp);
     this.avoidSpaceBetween();
+    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RBRACKET(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
-    this.removeIndentation(indentId);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {
@@ -2028,9 +2028,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this._visit(ctx.clause(i));
     }
+    this.removeIndentation(indentId);
     this.breakLine();
     this._visit(ctx.RPAREN());
-    this.removeIndentation(indentId);
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
@@ -2050,7 +2050,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(procedureNameGrp);
     const functionGrp = this.startGroup();
     const n = ctx.procedureArgument_list().length;
-    if (ctx.LPAREN()) {
+   if (ctx.LPAREN()) {
       this.avoidSpaceBetween();
       this.avoidBreakBetween();
       this._visit(ctx.LPAREN());
@@ -2076,6 +2076,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(argGrp);
     }
     this.endGroup(functionGrp);
+    this.removeIndentation(indentId2);
     if (ctx.RPAREN()) {
       this.avoidSpaceBetween();
       this._visitTerminalRaw(ctx.RPAREN(), {
@@ -2083,7 +2084,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         spacingChoice: 'SPACE_AFTER',
       });
     }
-    this.removeIndentation(indentId2);
     if (ctx.YIELD()) {
       const yieldGrp = this.startGroup();
       const m = ctx.procedureResultItem_list().length;

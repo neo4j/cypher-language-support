@@ -106,23 +106,18 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getFinalIndentation(state: State, chunk: Chunk): number {
+function getFinalIndentation(state: State): number {
   if (state.column !== 0) {
     return 0;
-  }
-  // TODO: Make this nicer
-  const endingHere = chunk.indentation.filter((i) => i.change === -1).filter((i) => state.activeIndents.some((j) => j.id === i.id));
-  if (endingHere.length > 0 && [')', ']', '}'].indexOf(chunk.text) !== -1) {
-    return state.indentation - INDENTATION_SPACES;
   }
   return state.indentation;
 }
 
-function getNextIndentationState(state: State, chunk: Chunk, previousIndent: number): [number, IndentationModifier[]] {
+function getNextIndentationState(state: State, chunk: Chunk, isBreak: boolean): [number, IndentationModifier[]] {
   let newActive = [...state.activeIndents];
   let nextIndentation: number = state.indentation;
   for (const indent of chunk.indentation) {
-    if (indent.change === 1 && nextIndentation - previousIndent < 2) {
+    if (indent.change === 1 && isBreak) {
       newActive.push(indent);
       nextIndentation += INDENTATION_SPACES;
     }
@@ -145,16 +140,16 @@ function stateToString(state: State) {
   return resultString;
 }
 
-function getNeighbourState(curr: State, choice: Choice, split: Split): State {
+function getNeighbourState(curr: State, choice: Choice, split: Split, isLast: boolean): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
-  const finalIndentation = getFinalIndentation(curr, choice.left);
+  const finalIndentation = getFinalIndentation(curr);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
   const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
-  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, previousIndent);
+  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak || isLast);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -361,8 +356,9 @@ function bestFirstSolnSearch(
       choice,
       choice.possibleSplitChoices,
     );
+    const isLast = state.choiceIndex === choiceList.length - 1
     for (const split of filteredSplits) {
-      const neighbourState = getNeighbourState(state, choice, split);
+      const neighbourState = getNeighbourState(state, choice, split, isLast);
       heap.push(neighbourState);
     }
   }
