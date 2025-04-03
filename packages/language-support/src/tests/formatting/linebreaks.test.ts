@@ -275,8 +275,7 @@ LIMIT "ZTWWLgIq"`.trimStart();
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`;
     const expected = `
 MATCH
-  p1 =
-    (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--(il:nodetyyyype {type: "58vomdG0"})
+  p1 = (i:tyyyype {keeeeeeeey: "1QwLfE5M"})--(il:nodetyyyype {type: "58vomdG0"})
 RETURN i, apoc.map.removeKeys(il, ["TT6hUzUE"]) AS props`.trimStart();
     verifyFormatting(query, expected);
   });
