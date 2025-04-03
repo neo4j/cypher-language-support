@@ -97,6 +97,7 @@ import {
   CommentChunk,
   findTargetToken,
   getParseTreeAndTokens,
+  IndentationModifier,
   isComment,
   RegularChunk,
   SyntaxErrorChunk,
@@ -136,6 +137,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   indentationSpaces = 2;
   targetToken?: number;
   cursorPos = 0;
+  indentId = 0;
+  indentStack: IndentationModifier[] = [];
   groupID = 0;
   groupStack: Group[] = [];
   previousTokenIndex: number = -1;
@@ -297,7 +300,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       doubleBreak: suffix.doubleBreak,
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
-      indentation: prefix.indentation + suffix.indentation,
+      indentation: prefix.indentation.concat(suffix.indentation),
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -441,19 +444,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   setIndentationProperty = (modifier: 'add' | 'remove') => {
     const idx = this.getFirstNonCommentIdx();
     const chunk = this.currentBuffer().at(idx);
-    if (modifier === 'add') {
-      chunk.indentation += 1;
-    } else {
-      chunk.indentation -= 1;
+    const indentId = this.indentId;
+    this.indentId++;
+    const indent: IndentationModifier = {
+      id: indentId,
+      change: modifier === 'add' ? 1 : -1,
     }
+    this.indentStack.push(indent)
+    chunk.indentation.push(indent);
+    return indentId;
   };
 
   addIndentation = () => {
-    this.setIndentationProperty('add');
+    return this.setIndentationProperty('add');
   };
 
-  removeIndentation = () => {
-    this.setIndentationProperty('remove');
+  removeIndentation = (id: number) => {
+    if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
+      throw new Error('wrong indent id on top of stack');
+    }
+    const idx = this.getFirstNonCommentIdx();
+    const chunk = this.currentBuffer().at(idx);
+    const indent = this.indentStack.pop();
+    chunk.indentation.push({
+      id: indent.id,
+      change: -1,
+    });
   };
 
   getBottomChild = (
@@ -532,7 +548,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: [],
         groupsEnding: [],
-        indentation: 0,
+        indentation: [],
       };
       this.currentBuffer().push(chunk);
       this.breakLine();
@@ -568,7 +584,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         text,
         groupsStarting: [],
         groupsEnding: [],
-        indentation: 0,
+        indentation: [],
       };
       this.currentBuffer().push(chunk);
     }
@@ -630,7 +646,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       text: combinedText,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: 0,
+      indentation: [],
     };
 
     this.currentBuffer().push(chunk);
@@ -860,7 +876,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMatchClause = (ctx: MatchClauseContext) => {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.MATCH());
-    this.addIndentation();
+    const id = this.addIndentation();
     const matchClauseGrp = this.startNonPrettierGroupAlsoOnComment();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
@@ -869,17 +885,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this._visit(ctx.hint(i));
     }
-    this.removeIndentation();
+    this.removeIndentation(id);
     this._visit(ctx.whereClause());
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
     this._visit(ctx.CREATE());
-    this.addIndentation();
+    const indentId = this.addIndentation();
     const createClauseGrp = this.startNonPrettierGroupAlsoOnComment();
     this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
-    this.removeIndentation();
+    this.removeIndentation(indentId);
   };
 
   visitInsertClause = (ctx: InsertClauseContext) => {
@@ -914,7 +930,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
     this._visit(ctx.DISTINCT());
-    this.addIndentation();
+    const indentId = this.addIndentation();
     const returnItemsGrp = this.startGroup();
     this._visit(ctx.returnItems());
     if (ctx.orderBy() || ctx.skip()) {
@@ -924,7 +940,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(orderSkipGrp);
     }
     this.endGroup(returnItemsGrp);
-    this.removeIndentation();
+    this.removeIndentation(indentId);
     this._visit(ctx.limit());
   };
 
@@ -1087,7 +1103,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: 0,
+      indentation: [],
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1131,7 +1147,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       node,
       groupsStarting: [],
       groupsEnding: [],
-      indentation: 0,
+      indentation: [],
     };
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
@@ -1971,7 +1987,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     this.specialBreakBetween();
     this._visit(ctx.LBRACKET());
-    this.addIndentation();
+    const indentId = this.addIndentation();
     const listGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
@@ -1987,7 +2003,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(listGrp);
     this.avoidSpaceBetween();
-    this.removeIndentation();
+    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RBRACKET(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',

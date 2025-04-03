@@ -3,6 +3,7 @@ import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
   Chunk,
   emptyChunk,
+  IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isCommentBreak,
   MAX_COL,
@@ -43,6 +44,8 @@ interface Decision {
 
 interface State {
   activeGroups: Group[];
+  activeIndents: IndentationModifier[];
+  previousIndent: number;
   column: number;
   choiceIndex: number;
   indentation: number;
@@ -108,6 +111,25 @@ function getFinalIndentation(state: State): number {
   return state.indentation;
 }
 
+function getNextIndentationState(state: State, chunk: Chunk): [number, IndentationModifier[]] {
+  let newActive = [...state.activeIndents];
+  let nextIndentation: number = state.indentation;
+  for (const indent of chunk.indentation) {
+    if (indent.change === 1 && Math.abs(state.previousIndent - nextIndentation) < 2) {
+      newActive.push(indent);
+      nextIndentation += INDENTATION_SPACES;
+    }
+    if (indent.change === -1) {
+      const index = newActive.findIndex((i) => i.id === indent.id);
+      if (index !== -1) {
+        newActive = newActive.filter((i) => i.id !== indent.id);
+        nextIndentation -= INDENTATION_SPACES;
+      }
+    }
+  }
+  return [nextIndentation, newActive];
+}
+
 // Very useful for debugging but not actually used in the code
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function stateToString(state: State) {
@@ -123,8 +145,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr);
-  const nextIndentation =
-    curr.indentation + choice.left.indentation * INDENTATION_SPACES;
+  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -176,8 +197,13 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     extraCost = -1;
   }
 
+  const indentationDecision = curr.column === 0 ? finalIndentation : 0;
+  const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
+
   return {
     activeGroups: nextGroups,
+    activeIndents: newActive,
+    previousIndent,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: curr.choiceIndex + 1,
     cost: curr.cost + extraCost,
@@ -421,6 +447,8 @@ export function buffersToFormattedString(
     // Indentation should carry over
     const initialState: State = {
       activeGroups: [],
+      activeIndents: [],
+      previousIndent: 0,
       column: 0,
       choiceIndex: 0,
       cost: 0,
