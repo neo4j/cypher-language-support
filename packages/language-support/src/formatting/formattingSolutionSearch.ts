@@ -106,9 +106,14 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getFinalIndentation(state: State): number {
+function getFinalIndentation(state: State, chunk: Chunk): number {
   if (state.column !== 0) {
     return 0;
+  }
+  // TODO: Make this nicer
+  const endingHere = chunk.indentation.filter((i) => i.change === -1).filter((i) => state.activeIndents.some((j) => j.id === i.id));
+  if (endingHere.length > 0 && [')', ']', '}'].indexOf(chunk.text) !== -1) {
+    return state.indentation - INDENTATION_SPACES;
   }
   return state.indentation;
 }
@@ -146,7 +151,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // active group and we decided to split within a line, the alignment of that group takes precedence
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
-  const finalIndentation = getFinalIndentation(curr);
+  const finalIndentation = getFinalIndentation(curr, choice.left);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
   const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
   const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, previousIndent);
