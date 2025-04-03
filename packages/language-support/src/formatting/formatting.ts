@@ -1667,25 +1667,28 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCaseAlternative = (ctx: CaseAlternativeContext) => {
+    const wholeAlternativeGrp = this.startGroup();
     const indentId1 = this.addIndentation();
     this._visit(ctx.WHEN());
     const indentId2 = this.addIndentation();
-    const whenGrp = this.startGroup();
+    const whenExprGrp = this.startGroup();
     this._visit(ctx.expression(0));
     const thenGrp = this.startGroup();
+    this.endGroup(whenExprGrp);
     this._visit(ctx.THEN());
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression(1));
     this.removeIndentation(indentId3);
     this.removeIndentation(indentId2);
     this.endGroup(thenGrp);
-    this.endGroup(whenGrp);
     this.removeIndentation(indentId1);
+    this.endGroup(wholeAlternativeGrp);
   };
 
   // Handled separately since cases want newlines
   visitCaseExpression = (ctx: CaseExpressionContext) => {
-    this.breakLine();
+    const wholeCaseGrp = this.startGroup();
+    this.mustBreakBetween();
     this.visit(ctx.CASE());
     const n = ctx.caseAlternative_list().length;
     for (let i = 0; i < n; i++) {
@@ -1693,23 +1696,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.caseAlternative(i));
     }
     if (ctx.ELSE()) {
+      const elseGrp = this.startGroup();
       const indent1 = this.addIndentation();
-      this.breakLine();
+      this.mustBreakBetween();
       this._visit(ctx.ELSE());
       const indent2 = this.addIndentation();
       this.avoidBreakBetween();
       this.visit(ctx.expression());
       this.removeIndentation(indent2);
       this.removeIndentation(indent1);
+      this.endGroup(elseGrp);
     }
-    this.breakLine();
+    this.mustBreakBetween();
     this.visit(ctx.END());
+    this.endGroup(wholeCaseGrp);
   };
 
   visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => { const indentId = this.addIndentation();
+    const wholeAlternativeGrp = this.startGroup();
     this._visit(ctx.WHEN());
     const indentId2 = this.addIndentation()
-    const whenGrp = this.startGroup();
+    const whenExprGrp = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.extendedWhen(i));
@@ -1718,19 +1725,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     const thenGrp = this.startGroup();
+    this.endGroup(whenExprGrp);
     this._visit(ctx.THEN());
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression());
     this.removeIndentation(indentId3);
     this.removeIndentation(indentId2);
     this.endGroup(thenGrp);
-    this.endGroup(whenGrp);
     this.removeIndentation(indentId);
+    this.endGroup(wholeAlternativeGrp);
   };
 
   visitExtendedCaseExpression = (ctx: ExtendedCaseExpressionContext) => {
-    const indentId1 = this.addIndentation();
-    this.breakLine();
+    const wholeCaseGrp = this.startGroup();
+    this.mustBreakBetween();
     this.visit(ctx.CASE());
     this.avoidBreakBetween();
     this._visit(ctx.expression(0));
@@ -1741,17 +1749,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.extendedCaseAlternative(i));
     }
     if (ctx.ELSE()) {
+      const elseGrp = this.startGroup();
       const indentId2 = this.addIndentation();
-      this.breakLine();
+      this.mustBreakBetween();
       this._visit(ctx.ELSE());
       const indentId3 = this.addIndentation();
       this.visit(ctx.expression(1));
       this.removeIndentation(indentId3);
       this.removeIndentation(indentId2);
+      this.endGroup(elseGrp);
     }
-    this.breakLine();
+    this.mustBreakBetween();
     this._visit(ctx.END());
-    this.removeIndentation(indentId1);
+    this.endGroup(wholeCaseGrp);
   };
 
   // Handled separately because it wants indentation and line breaks
@@ -1910,12 +1920,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       const keyValueGrp = this.startGroup();
       this._visit(ctx.propertyKeyName(i));
+      const indentId2 = this.addIndentation();
       this._visitTerminalRaw(ctx.COLON(i));
       this._visit(ctx.expression(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
       }
       this.endGroup(keyValueGrp);
+      this.removeIndentation(indentId2);
     }
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
