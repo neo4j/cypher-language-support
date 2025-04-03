@@ -1917,12 +1917,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(mapGrp);
     this.avoidSpaceBetween();
-    this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RCURLY(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(wholeMapGrp);
+    this.removeIndentation(indentId);
   };
 
   visitMapProjection = (ctx: MapProjectionContext) => {
