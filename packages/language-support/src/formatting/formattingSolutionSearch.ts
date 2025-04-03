@@ -140,7 +140,7 @@ function stateToString(state: State) {
   return resultString;
 }
 
-function getNeighbourState(curr: State, choice: Choice, split: Split, isLast: boolean): State {
+function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   // A state has indentation, which is applied after a hard line break. However, if it has an
   // active group and we decided to split within a line, the alignment of that group takes precedence
@@ -149,7 +149,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split, isLast: bo
   const finalIndentation = getFinalIndentation(curr);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
   const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
-  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak || isLast);
+  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -247,6 +247,9 @@ function getStateKey(state: State): string {
 }
 
 function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
+  if (choice.right === emptyChunk) {
+    return onlyBreakSplit;
+  }
   const nonSpace =
     (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
     doesNotWantSpace(choice.left, choice.right);
@@ -356,9 +359,8 @@ function bestFirstSolnSearch(
       choice,
       choice.possibleSplitChoices,
     );
-    const isLast = state.choiceIndex === choiceList.length - 1
     for (const split of filteredSplits) {
-      const neighbourState = getNeighbourState(state, choice, split, isLast);
+      const neighbourState = getNeighbourState(state, choice, split);
       heap.push(neighbourState);
     }
   }
