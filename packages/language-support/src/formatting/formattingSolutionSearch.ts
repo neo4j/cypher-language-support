@@ -113,11 +113,11 @@ function getFinalIndentation(state: State): number {
   return state.indentation;
 }
 
-function getNextIndentationState(state: State, chunk: Chunk): [number, IndentationModifier[]] {
+function getNextIndentationState(state: State, chunk: Chunk, previousIndent: number): [number, IndentationModifier[]] {
   let newActive = [...state.activeIndents];
   let nextIndentation: number = state.indentation;
   for (const indent of chunk.indentation) {
-    if (indent.change === 1 && nextIndentation - state.previousIndent < 2) {
+    if (indent.change === 1 && nextIndentation - previousIndent < 2) {
       newActive.push(indent);
       nextIndentation += INDENTATION_SPACES;
     }
@@ -147,7 +147,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   // over the base indentation.
   let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr);
-  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left);
+  const indentationDecision = curr.column === 0 ? finalIndentation : 0;
+  const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
+  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, previousIndent);
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -199,8 +201,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     extraCost = -1;
   }
 
-  const indentationDecision = curr.column === 0 ? finalIndentation : 0;
-  const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
 
   return {
     activeGroups: nextGroups,
