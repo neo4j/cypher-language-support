@@ -1,5 +1,4 @@
 import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
-import { DEBOUNCE_TIME } from '@neo4j-cypher/react-codemirror';
 import {
   cypherDataToString,
   CypherDataType,
@@ -9,7 +8,6 @@ import {
   Neo4jType,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/schema-poller';
-import { debounce } from 'lodash';
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
 import { DiagnosticSeverity } from 'vscode-languageclient';
@@ -46,12 +44,7 @@ export function validateParamInput(
   return undefined;
 }
 
-const debouncedValidate = debounce(
-  (paramValue: string, dbSchema: DbSchema) =>
-    validateParamInput(paramValue, dbSchema),
-  DEBOUNCE_TIME * 5,
-  { trailing: true },
-);
+const DEBOUNCE_TIME = 200;
 
 export async function addParameter(): Promise<void> {
   const connected = await isConnected();
@@ -75,6 +68,7 @@ export async function addParameter(): Promise<void> {
   }
   const schemaPoller = getSchemaPoller();
   const dbSchema = schemaPoller.metadata.dbSchema;
+  let timeout: NodeJS.Timeout;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
@@ -82,10 +76,9 @@ export async function addParameter(): Promise<void> {
     ignoreFocusOut: true,
     validateInput: (paramValue) => {
       return new Promise<string>((resolve) => {
-        debouncedValidate(paramValue, dbSchema);
-
-        setTimeout(() => {
-          const validationResult = debouncedValidate.flush();
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          const validationResult = validateParamInput(paramValue, dbSchema); //debouncedValidate.flush();
           resolve(validationResult);
         }, DEBOUNCE_TIME);
       });
