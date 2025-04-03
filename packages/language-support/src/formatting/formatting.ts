@@ -2024,13 +2024,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.BAR());
 
     const n = ctx.clause_list().length;
+    const indentId = this.addIndentation();
     for (let i = 0; i < n; i++) {
-      const indentId = this.addIndentation();
       this._visit(ctx.clause(i));
-      this.removeIndentation(indentId);
     }
     this.breakLine();
     this._visit(ctx.RPAREN());
+    this.removeIndentation(indentId);
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
