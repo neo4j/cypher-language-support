@@ -255,7 +255,9 @@ RETURN
     WHEN n.eyes = 'blue' THEN 1
     WHEN n.age < 40 THEN 2
     ELSE 3
-  END AS result, n.eyes, n.age`;
+  END AS result,
+  n.eyes,
+  n.age`;
     verifyFormatting(query, expected);
   });
 
