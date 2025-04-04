@@ -196,7 +196,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   fillInGroupSizes = () => {
     for (const chunkList of this.buffers) {
       let activeGroups: Group[] = [];
-      for (const chunk of chunkList) {
+      for (let i = 0; i < chunkList.length; i++) {
+        const chunk = chunkList[i];
+        const gettingRemoved = new Set<number>(
+          chunk.groupsEnding.map((g) => g.id),
+        );
         if (chunk.type === 'REGULAR') {
           for (const group of activeGroups) {
             if (!chunk.text) {
@@ -209,7 +213,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
               group.dbgText += ' ';
             }
             // TODO: If it is the last one in the group then it does not need to break
-            if (chunk.comment) {
+            if (chunk.comment && !gettingRemoved.has(group.id)) {
               group.breaksAll = true;
             }
           }
@@ -224,9 +228,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         for (const group of chunk.groupsStarting) {
           activeGroups.push(group);
         }
-        const gettingRemoved = new Set<number>(
-          chunk.groupsEnding.map((g) => g.id),
-        );
         const newActiveGroups: Group[] = [];
         for (const group of activeGroups) {
           if (!gettingRemoved.has(group.id)) {
