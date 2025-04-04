@@ -122,11 +122,12 @@ RETURN 1,
        // Second comment
        3`;
     const expected = `
-RETURN 1,
-       // Comment
-       2,
-       // Second comment
-       3`.trim();
+RETURN
+  1,
+  // Comment
+  2,
+  // Second comment
+  3`.trim();
     verifyFormatting(query, expected);
   });
 
@@ -221,9 +222,10 @@ with "Nc3yUa7F" as vessel_type_code /*This is a comment in an inconvenient place
 UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
 return *;`;
     const expected = `
-WITH "Nc3yUa7F" AS vessel_type_code, /*This is a comment in an inconvenient place */
-     // detail
-     ["AbQk1wMr", "PmA6udnt"] AS detail_seq
+WITH
+  "Nc3yUa7F" AS vessel_type_code, /*This is a comment in an inconvenient place */
+  // detail
+  ["AbQk1wMr", "PmA6udnt"] AS detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
 RETURN *;`.trim();
     verifyFormatting(bad, expected);
@@ -298,8 +300,9 @@ MATCH (a:Node) // first match
 WITH a, /* intermediate comment */ a.property AS prop
 RETURN prop; // final return`;
     const expected = `MATCH (a:Node) // first match
-WITH a, /* intermediate comment */
-     a.property AS prop
+WITH
+  a, /* intermediate comment */
+  a.property AS prop
 RETURN prop; // final return`;
     verifyFormatting(query, expected);
   });
@@ -343,9 +346,10 @@ WHERE p.price > 100 // price threshold for premium items
       p.discount > 0 // consider discounted products even if stock is high
 RETURN p.name, p.price, p.stock, p.discount;`;
     const expected = `MATCH (p:Product)
-WHERE p.price > 100 // price threshold for premium items
-      AND p.stock < 50 // low stock warning
-      OR p.discount > 0 // consider discounted products even if stock is high
+WHERE
+  p.price > 100 // price threshold for premium items
+  AND p.stock < 50 // low stock warning
+  OR p.discount > 0 // consider discounted products even if stock is high
 RETURN p.name, p.price, p.stock, p.discount;`;
     verifyFormatting(query, expected);
   });
