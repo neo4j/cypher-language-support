@@ -208,7 +208,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
               group.size++;
               group.dbgText += ' ';
             }
+            // TODO: If it is the last one in the group then it does not need to break
+            if (chunk.comment) {
+              group.breaksAll = true;
+            }
           }
+        } else if (chunk.type === 'COMMENT') {
+          // TODO: Is this reasonable ?????????
+          if (activeGroups.length > 0) {
+            activeGroups[0].breaksAll = true;
+          }
+        } else {
+          throw new Error('Unexpcted chunk type');
         }
         for (const group of chunk.groupsStarting) {
           activeGroups.push(group);
@@ -301,6 +312,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: prefix.indentation.concat(suffix.indentation),
+      // TODO: Maybe make the field an empty string instead
+      comment: (prefix.comment || '') + (suffix.comment || '') || undefined,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
@@ -449,7 +462,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const indent: IndentationModifier = {
       id: indentId,
       change: modifier === 'add' ? 1 : -1,
-    }
+    };
     this.indentStack.push(indent);
     chunk.indentation.push(indent);
     return indentId;
@@ -578,15 +591,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       includesComment = true;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
-      const chunk: CommentChunk = {
-        type: 'COMMENT',
-        breakBefore: nodeLine !== commentLine,
-        text,
-        groupsStarting: [],
-        groupsEnding: [],
-        indentation: [],
-      };
-      this.currentBuffer().push(chunk);
+      if (nodeLine === commentLine) {
+        // This does not necessarily have to be a regular? TODO: check this
+        const previousChunk = this.lastInCurrentBuffer();
+        previousChunk.comment = text;
+      } else {
+        const chunk: CommentChunk = {
+          type: 'COMMENT',
+          breakBefore: true,
+          text,
+          groupsStarting: [],
+          groupsEnding: [],
+          indentation: [],
+        };
+        this.currentBuffer().push(chunk);
+      }
     }
     // Account for the last comment having multiple newline after it, to remember explicit
     // newlines when we have e.g. [C, \n, \n]
@@ -1712,10 +1731,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(wholeCaseGrp);
   };
 
-  visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => { const indentId = this.addIndentation();
+  visitExtendedCaseAlternative = (ctx: ExtendedCaseAlternativeContext) => {
+    const indentId = this.addIndentation();
     const wholeAlternativeGrp = this.startGroup();
     this._visit(ctx.WHEN());
-    const indentId2 = this.addIndentation()
+    const indentId2 = this.addIndentation();
     const whenExprGrp = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
@@ -2066,7 +2086,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(procedureNameGrp);
     const functionGrp = this.startGroup();
     const n = ctx.procedureArgument_list().length;
-   if (ctx.LPAREN()) {
+    if (ctx.LPAREN()) {
       this.avoidSpaceBetween();
       this.avoidBreakBetween();
       this._visit(ctx.LPAREN());

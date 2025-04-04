@@ -27,6 +27,9 @@ export interface BaseChunk {
   groupsStarting: Group[];
   groupsEnding: Group[];
   indentation: IndentationModifier[];
+  // Comment that is attached to a chunk. Not to be confused with a comment
+  // that is in the chunklist (one with a newline before it.)
+  comment?: string;
 }
 
 // Regular chunk specific properties

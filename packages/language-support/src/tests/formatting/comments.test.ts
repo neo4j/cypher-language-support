@@ -234,8 +234,9 @@ RETURN *;`.trim();
 RETURN n.salary + // Add bonus value
        1000 AS totalCompensation;`;
     const expected = `MATCH (n)
-RETURN n.salary + // Add bonus value
-       1000 AS totalCompensation;`;
+RETURN 
+  n.salary + // Add bonus value
+  1000 AS totalCompensation;`;
     verifyFormatting(query, expected);
   });
 
@@ -261,8 +262,13 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 "asdfklsjdf")
 RETURN n`;
     const expected = `MATCH (n)
-WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-                                   "asdfklsjdf")
+WHERE
+  n.prop > 100000 AND
+  function(
+    1241241,
+    1241241, // Why is there a comment here?
+    "asdfklsjdf"
+  )
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -274,9 +280,14 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 "asdfklsjdf")
 RETURN n`;
     const expected = `MATCH (n)
-WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-      // This is a hard break comment
-      "asdfklsjdf")
+WHERE
+  n.prop > 100000 AND
+  function(
+    1241241,
+    1241241, // Why is there a comment here?
+    // This is a hard break comment
+    "asdfklsjdf"
+  )
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -309,12 +320,13 @@ AND post.likes >= 50
 RETURN user.username, post.title, post.likes;`;
     const expected = `// This query demonstrates inline and block comments during data retrieval.
 MATCH (user:User)-[:LIKES]->(post:Post)
-WHERE user.active = true
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      AND post.likes >= 50
+WHERE
+  user.active = true
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  AND post.likes >= 50
 /* The following block comment elaborates:
    - Posts with less than 50 likes are considered low impact.
    - Adjust the threshold based on campaign feedback.
@@ -423,13 +435,15 @@ OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)
                                       -[:BELONGS_TO]->(p)
 RETURN p.name AS projectName, user.username, task.name AS taskName;`;
     const expected = `
-MATCH (p:Project)-
-      // A project might have multiple owners
-      [:OWNED_BY]->(user:User)
+MATCH
+  (p:Project)-
+  // A project might have multiple owners
+  [:OWNED_BY]->(user:User)
 // The same user might be linked to tasks
-OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)-
-               // A single user can have multiple tasks in the same project
-               [:BELONGS_TO]->(p)
+OPTIONAL MATCH
+  (user)-[:ASSIGNED_TO]->(task:Task)-
+  // A single user can have multiple tasks in the same project
+  [:BELONGS_TO]->(p)
 RETURN p.name AS projectName, user.username, task.name AS taskName;`.trim();
     verifyFormatting(query, expected);
   });
@@ -447,9 +461,10 @@ s.format
     const expected = `MATCH (s:Item)-[r:\`REFERENCED_BY\`]->(t:Item)
 WHERE s.format = "LVDcQiqo" AND t.format = "h5dIgvA4"
 //SET r.flowType = 'BOOLEAN=>NUMBER'
-RETURN s.format,
-       //, s.formatMetadata
-       t.format;
+RETURN
+  s.format,
+  //, s.formatMetadata
+  t.format;
 //, t.formatMetadata;`;
     verifyFormatting(query, expected);
   });
@@ -523,8 +538,8 @@ UNWIND // Expands lists into multiple rows
   test('two comments after a clause should not break alignment', () => {
     const query = `
 MATCH // One comment.
-      // Another comment. Really?
-      (m)-[:RELATION]->(n)
+  // Another comment. Really?
+  (m)-[:RELATION]->(n)
 RETURN m, n`.trim();
     const expected = query;
     verifyFormatting(query, expected);

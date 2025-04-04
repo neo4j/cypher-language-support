@@ -505,8 +505,10 @@ WITH *, n.prop, // This comment should not disappear
      n.otherprop
 RETURN n`;
     const expected = `MATCH (n)
-WITH *, n.prop, // This comment should not disappear
-     n.otherprop
+WITH
+  *,
+  n.prop, // This comment should not disappear
+  n.otherprop
 RETURN n`;
     verifyFormatting(query, expected);
   });

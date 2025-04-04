@@ -114,7 +114,11 @@ function getFinalIndentation(state: State): number {
   return state.indentation;
 }
 
-function getNextIndentationState(state: State, chunk: Chunk, isBreak: boolean): [number, IndentationModifier[]] {
+function getNextIndentationState(
+  state: State,
+  chunk: Chunk,
+  isBreak: boolean,
+): [number, IndentationModifier[]] {
   let newActive = [...state.activeIndents];
   let nextIndentation: number = state.indentation;
   for (const indent of chunk.indentation) {
@@ -149,8 +153,13 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
-  const previousIndent = indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
-  const [nextIndentation, newActive] = getNextIndentationState(curr, choice.left, isBreak || split.wantedToSplit);
+  const previousIndent =
+    indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
+  const [nextIndentation, newActive] = getNextIndentationState(
+    curr,
+    choice.left,
+    isBreak || split.wantedToSplit,
+  );
 
   const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
@@ -167,7 +176,9 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     // TODO this miiiight be slightly off because of indentation rules
     const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
     const breaksAll =
-      nextGrpStart + grp.size > MAX_COL || grp.id === split.breakBeforeGrp?.id;
+      grp.breaksAll ||
+      nextGrpStart + grp.size > MAX_COL ||
+      grp.id === split.breakBeforeGrp?.id;
     const newGroup = {
       ...grp,
       align: actualColumn,
@@ -201,7 +212,6 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     // ones.
     extraCost = -1;
   }
-
 
   return {
     activeGroups: nextGroups,
@@ -271,14 +281,17 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   // TODO: There might be a better way to do this?
   let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
-    if (!lastSpecialBreak && group.size + nextStart > MAX_COL) {
+    if (
+      group.breaksAll ||
+      (!lastSpecialBreak && group.size + nextStart > MAX_COL)
+    ) {
       breakBeforeGrp = group;
       break;
     }
   }
 
   if (splits.length === 1) {
-    return [{...splits[0], wantedToSplit: breakBeforeGrp !== undefined}];
+    return [{ ...splits[0], wantedToSplit: breakBeforeGrp !== undefined }];
   }
 
   if (breakBeforeGrp) {
@@ -390,6 +403,14 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
       cursorPos = buffer.join('').length;
     }
     buffer.push(decision.left.text);
+    // TODO: should this live here? Should this method have this responsibility?
+    if (decision.left.type === 'REGULAR' && decision.left.comment) {
+      buffer.push(' ');
+      buffer.push(decision.left.comment);
+      if (decision.chosenSplit.splitType === '') {
+        buffer.push(' ');
+      }
+    }
     if (showGroups) addGroupEnd(buffer, decision);
     if (showGroups) addGroupStart(buffer, decision);
     buffer.push(decision.chosenSplit.splitType);
