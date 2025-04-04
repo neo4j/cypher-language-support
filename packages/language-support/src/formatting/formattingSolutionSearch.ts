@@ -277,17 +277,19 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   // TODO: There might be a better way to do this?
   let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
-    if (
-      group.breaksAll ||
-      group.size + nextStart > MAX_COL
-    ) {
+    if (group.breaksAll || group.size + nextStart > MAX_COL) {
       breakBeforeGrp = group;
       break;
     }
   }
 
   if (splits.length === 1) {
-    return [{ ...splits[0], wantedToSplit: breakBeforeGrp !== undefined }];
+    return [
+      {
+        ...splits[0],
+        wantedToSplit: breakBeforeGrp !== undefined || lastGrpBreaks,
+      },
+    ];
   }
 
   if (breakBeforeGrp) {
