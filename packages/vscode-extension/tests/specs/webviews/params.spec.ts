@@ -105,7 +105,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 4; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(1000);
+      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
     }
 
     await checkResultsContent(workbench, async () => {
@@ -167,7 +167,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 2; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(1000);
+      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
     }
 
     await checkResultsContent(workbench, async () => {
@@ -206,7 +206,7 @@ suite('Params panel testing', () => {
     // to close the automatic param add pop-ups
     for (let i = 0; i < 4; i++) {
       await browser.keys([Key.Escape]);
-      await browser.pause(1000);
+      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
     }
 
     await checkResultsContent(workbench, async () => {
