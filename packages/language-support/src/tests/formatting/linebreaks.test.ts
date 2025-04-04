@@ -417,10 +417,11 @@ MERGE
 
   test('function arguments should align', () => {
     const query = `CALL apoc.periodic.iterate("eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}) YIELD batches, total, timeTaken, committedOperations, failedOperations`;
-    const expected = `
-CALL
+    const expected = `CALL
   apoc.periodic.iterate(
-    "eZQB0P0q", "1p7EFkyE", {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}
+    "eZQB0P0q",
+    "1p7EFkyE",
+    {batchSize: "v0Ap5F8F", parallel: "UUc75lVg"}
   )
   YIELD batches, total, timeTaken, committedOperations, failedOperations`.trimStart();
     verifyFormatting(query, expected);
