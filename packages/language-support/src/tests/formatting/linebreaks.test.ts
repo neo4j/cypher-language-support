@@ -1699,4 +1699,20 @@ LIMIT "g68S0y7w";`;
   (m)`;
     verifyFormatting(query, expected);
   });
+  test('With clause should break as list', () => {
+    const query = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
+WITH n, collect(n) AS duplicates
+WHERE size(duplicates) > "zuEVCUOg"
+WITH
+  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
+RETURN deleteNodes`;
+    const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
+WITH n, collect(n) AS duplicates
+WHERE size(duplicates) > "zuEVCUOg"
+WITH
+  duplicates["2x5H4FCD"] AS keepNode,
+  duplicates["oMXseK4u" ..] AS deleteNodes
+RETURN deleteNodes`;
+    verifyFormatting(query, expected);
+  });
 });
