@@ -11,6 +11,7 @@ import {
   LabelOrRelType,
   LabelType,
   ParsedFunction,
+  ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
   parserWrapper,
@@ -56,7 +57,7 @@ function detectNonDeclaredLabel(
 
 function generateSyntaxDiagnostic(
   rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType,
+  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
@@ -387,25 +388,18 @@ function errorOnUndeclaredParameters(
 
   if (parsingResult.collectedParameters) {
     parsingResult.collectedParameters.forEach((parameter) => {
-      let isBackticked = false;
-      if (parameter.name.startsWith('$')) {
-        parameter.name = parameter.name.substring(1);
+      let parameterName = parameter.name;
+      if (parameterName.startsWith('`') && parameterName.endsWith('`')) {
+        parameterName = parameterName.substring(1, parameterName.length - 1);
       }
-      if (parameter.name.startsWith('`') && parameter.name.endsWith('`')) {
-        isBackticked = true;
-        parameter.name = parameter.name.substring(1, parameter.name.length - 1);
-      }
-      const parameterName = parameter.name;
       const paramExists = !!dbSchema.parameters?.[parameterName];
       if (!paramExists) {
         errors.push(
           generateSyntaxDiagnostic(
-            parameterName,
+            parameter.rawText,
             parameter,
             DiagnosticSeverity.Error,
-            `Parameter $${
-              isBackticked ? `\`${parameterName}\`` : parameterName
-            } is not defined.`,
+            `Parameter $${parameter.name} is not defined.`,
           ),
         );
       }

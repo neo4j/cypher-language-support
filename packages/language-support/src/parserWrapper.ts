@@ -89,39 +89,31 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
   }
 }
 
-export type LabelOrRelType = {
+export type HasPosition = {
+  line: number;
+  column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
+};
+
+export type LabelOrRelType = HasPosition & {
   labelType: LabelType;
   labelText: string;
   couldCreateNewLabel: boolean;
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
 };
 
-export type ParsedParameter = {
+export type ParsedParameter = HasPosition & {
   name: string;
   rawText: string;
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
 };
 
-export type ParsedFunction = {
+export type ParsedFunction = HasPosition & {
   name: string;
   rawText: string;
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
 };
+
 export type ParsedProcedure = ParsedFunction;
 
 export function createParsingScaffolding(query: string): ParsingScaffolding {
@@ -319,7 +311,7 @@ class ParameterCollector implements ParseTreeListener {
       if (parameterName) {
         this.parameters.push({
           name: parameterName,
-          rawText: parameterName,
+          rawText: ctx.getText(),
           line: ctx.start.line,
           column: ctx.start.column,
           offsets: {

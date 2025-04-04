@@ -2091,7 +2091,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         },
         range: {
           end: {
-            character: 45,
+            character: 46,
             line: 0,
           },
           start: {
@@ -2119,7 +2119,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         },
         range: {
           end: {
-            character: 45,
+            character: 48,
             line: 0,
           },
           start: {
@@ -2155,7 +2155,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         },
         range: {
           end: {
-            character: 46,
+            character: 49,
             line: 0,
           },
           start: {
