@@ -836,6 +836,93 @@ MERGE (a)-[:WROTE]->(b)
 RETURN a, b`;
     verifyFormatting(query, expected);
   });
+
+  /* TODO: this does not fully work yet since the parenthesized expr
+ * adds too much indentation. Really, it should be the CASE taking 
+ * responsibility for the indentation here. It's almost correct though.
+  test('avoidbreak and mustbreak should cooperate', () => {
+    const query = `MATCH (e:Employee)
+RETURN
+  e.name,
+  CASE
+    WHEN
+      e.salary > 150000 AND e.experience > 10
+      THEN
+        'Senior ' +
+        (
+          CASE
+            WHEN e.department = 'Engineering' THEN 'Engineer'
+            WHEN e.department = 'Sales' THEN 'Sales Leader'
+            ELSE 'Manager'
+          END)
+    WHEN
+      e.salary > 100000 AND e.experience > 7
+      THEN
+        'Experienced ' +
+        (
+          CASE
+            WHEN e.department = 'Engineering' THEN 'Developer'
+            WHEN e.department = 'HR' THEN 'HR Specialist'
+            ELSE 'Associate'
+          END)
+    WHEN
+      e.salary > 75000 AND e.experience > 5
+      THEN
+        'Mid-Level ' +
+        (
+          CASE
+            WHEN e.department = 'Engineering' THEN 'Engineer'
+            ELSE 'Professional'
+          END)
+    ELSE
+      'Junior ' +
+      (
+        CASE
+          WHEN e.department = 'Engineering' THEN 'Engineer'
+          ELSE 'Staff'
+        END)
+  END AS jobTitle`;
+    const expected = `
+MATCH (e:Employee)
+RETURN
+  e.name,
+  CASE
+    WHEN
+      e.salary > 150000 AND e.experience > 10
+      THEN
+        'Senior ' +
+        (CASE
+           WHEN e.department = 'Engineering' THEN 'Engineer'
+           WHEN e.department = 'Sales' THEN 'Sales Leader'
+           ELSE 'Manager'
+         END)
+    WHEN
+      e.salary > 100000 AND e.experience > 7
+      THEN
+        'Experienced ' +
+        (CASE
+           WHEN e.department = 'Engineering' THEN 'Developer'
+           WHEN e.department = 'HR' THEN 'HR Specialist'
+           ELSE 'Associate'
+         END)
+    WHEN
+      e.salary > 75000 AND e.experience > 5
+      THEN
+        'Mid-Level ' +
+        (CASE
+           WHEN e.department = 'Engineering' THEN 'Engineer'
+           ELSE 'Professional'
+         END)
+    ELSE
+      'Junior ' +
+      (CASE
+         WHEN e.department = 'Engineering' THEN 'Engineer'
+         ELSE 'Staff'
+       END)
+  END AS jobTitle`.trimStart();
+    verifyFormatting(query, expected);
+  })
+*/
 });
 
 describe('tests for respcecting user line breaks', () => {
