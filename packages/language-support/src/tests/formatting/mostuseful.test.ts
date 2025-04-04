@@ -135,7 +135,8 @@ MATCH
     (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
     (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
     (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
-RETURN pth ORDER BY length(pth) DESC
+RETURN pth
+ORDER BY length(pth) DESC
 LIMIT 10000;`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -346,7 +347,7 @@ RETURN DISTINCT
   lm.zxcvbnmasdfgh,
   lm.zxcvbnml,
   lm.lkjhgfdswert
-  ORDER BY lm.lkjhgfdswert ASC`;
+ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 

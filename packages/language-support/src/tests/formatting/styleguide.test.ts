@@ -103,7 +103,8 @@ RETURN person.name`;
 describe('other styleguide recommendations', () => {
   test('order by', () => {
     const query = `RETURN user.id ORDER BY potential_reach, like_count;`;
-    const expected = `RETURN user.id ORDER BY potential_reach, like_count;`;
+    const expected = `RETURN user.id
+ORDER BY potential_reach, like_count;`;
     verifyFormatting(query, expected);
   });
 
@@ -216,7 +217,8 @@ RETURN name, count(*) AS count ORDER BY count`;
   MATCH (m:Movie)
   RETURN m.title AS name
 }
-RETURN name, count(*) AS count ORDER BY count`;
+RETURN name, count(*) AS count
+ORDER BY count`;
     verifyFormatting(query, expected);
   });
 
@@ -238,7 +240,8 @@ RETURN name, count(*) AS count ORDER BY count`;
   MATCH (m:Movie)
   RETURN m.title AS name
 }
-RETURN name, count(*) AS count ORDER BY count`;
+RETURN name, count(*) AS count
+ORDER BY count`;
     verifyFormatting(query, expected);
   });
 
@@ -295,7 +298,8 @@ FOREACH (node2 IN [eventChain [i + 1]] |
 MERGE (node1)-[:NEXT_EVENT]->(node2))))`;
     const expected = `MATCH (u:User)
 MATCH (u)-[:USER_EVENT]->(e:Event)
-WITH u, e ORDER BY e ASC
+WITH u, e
+ORDER BY e ASC
 WITH u, collect(e) AS eventChain
 FOREACH (i IN range(0, size(eventChain) - 2) |
   FOREACH (node1 IN [eventChain[i]] |

@@ -264,11 +264,8 @@ MATCH
   (m:Movie)<-[:ACTED_IN]-
   (Kevin:Person {name: "HEZDAAhT"})
 WHERE p.name <> "nnwAPHJg"
-RETURN
-  p.name AS Name,
-  p.born AS BirthYear,
-  m.title AS MovieTitle
-  ORDER BY Name ASC
+RETURN p.name AS Name, p.born AS BirthYear, m.title AS MovieTitle
+ORDER BY Name ASC
 LIMIT "ZTWWLgIq"`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -483,7 +480,7 @@ RETURN DISTINCT
   lm.zxcvbnmasdfgh,
   lm.zxcvbnml,
   lm.lkjhgfdswert
-  ORDER BY lm.lkjhgfdswert ASC`;
+ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 
