@@ -1599,4 +1599,33 @@ RETURN x.to, left(j.node_STNAME, size(x.to))
 LIMIT "g68S0y7w";`;
     verifyFormatting(query, expected);
   });
+  test('long relationship pattern should indent', () => {
+    const query = `MATCH
+  (n)-
+    [r:\`BELONGS_TO\`
+    |\`BELONGS_TO\`
+    |\`CONTRIBUTES_TO\`
+    |\`CONTRIBUTES_TO\`
+    |\`DESCRIBED_BY\`
+    |\`DESCRIBED_BY\`
+    |\`HAS_FOOTNOTE\`
+    |\`HAS_FOOTNOTE\`
+    |\`REQUIRES_DNSH\`
+    |\`REQUIRES_DNSH\`]-
+  (m)`;
+    const expected = `MATCH
+  (n)-
+    [r:\`BELONGS_TO\`
+      |\`BELONGS_TO\`
+      |\`CONTRIBUTES_TO\`
+      |\`CONTRIBUTES_TO\`
+      |\`DESCRIBED_BY\`
+      |\`DESCRIBED_BY\`
+      |\`HAS_FOOTNOTE\`
+      |\`HAS_FOOTNOTE\`
+      |\`REQUIRES_DNSH\`
+      |\`REQUIRES_DNSH\`]-
+  (m)`;
+    verifyFormatting(query, expected);
+  });
 });

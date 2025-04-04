@@ -1285,10 +1285,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidSpaceBetween();
     }
     if (ctx.LBRACKET()) {
-      const bracketPatternGrp = this.startGroup();
       this._visit(ctx.LBRACKET());
+      const indentId = this.addIndentation();
+      const bracketPatternGrp = this.startGroup();
       this.avoidBreakBetween();
       this.handleInnerPatternContext(ctx);
+      this.removeIndentation(indentId);
       this._visit(ctx.RBRACKET());
       this.endGroup(bracketPatternGrp);
     }
