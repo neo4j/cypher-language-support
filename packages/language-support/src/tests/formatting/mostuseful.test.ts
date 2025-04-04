@@ -127,7 +127,9 @@ LIMIT 10000;`;
     const expected = `
 MATCH
   pth =
-    (u:User)-[:USER_EVENT]->(e:GeneratedQuery) (()--(:GeneratedQuery))* // Optionally successive
+    (u:User)-[:USER_EVENT]->
+    (e:GeneratedQuery)
+    (()--(:GeneratedQuery))* // Optionally successive
     (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
     (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
     (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
@@ -350,7 +352,8 @@ RETURN Alice123`;
 MATCH
   (Alice123:Person)-[FRND_REL:friendship]->
   (Bob:Indiv)-[COWORK_REL:colleagueRelationship]->
-  (Carla55:EmployeeType)-[PARTNR:partner_of]->(Dave:Short)
+  (Carla55:EmployeeType)-[PARTNR:partner_of]->
+  (Dave:Short)
 RETURN Alice123`.trimStart();
     verifyFormatting(query, expected);
   });

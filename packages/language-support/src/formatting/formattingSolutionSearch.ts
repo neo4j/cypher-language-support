@@ -29,7 +29,6 @@ interface Choice {
 export interface Group {
   id: number;
   breaksAll?: boolean;
-  nonPrettierStyle: boolean;
   size: number;
   dbgText: string;
   align: number; // USE ONLY FOR STATE KEY
@@ -270,8 +269,6 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     (g) => !endingIds.includes(g.id),
   );
   const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
-  const lastGrpNonPrettier =
-    activeGrps.length > 0 && activeGrps.at(-1).nonPrettierStyle;
   const newGroups = choice.left.groupsStarting;
   const nextStart = lastGrpBreaks
     ? state.indentation
@@ -298,7 +295,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return [{ splitType: '\n', cost: 0, breakBeforeGrp }];
   }
 
-  if (lastGrpBreaks && !lastGrpNonPrettier && !lastSpecialBreak) {
+  if (lastGrpBreaks && !lastSpecialBreak) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );

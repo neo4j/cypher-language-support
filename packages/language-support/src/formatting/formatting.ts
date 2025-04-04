@@ -119,14 +119,6 @@ interface RawTerminalOptions {
   dontConcatenate?: boolean;
 }
 
-interface GroupOptions {
-  nonPrettierStyle?: boolean;
-}
-
-const defaultGroupOptions: GroupOptions = {
-  nonPrettierStyle: false,
-};
-
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
@@ -403,11 +395,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
-  startGroup = (groupOptions: GroupOptions = defaultGroupOptions): number => {
+  startGroup = (): number => {
     const last = this.lastInCurrentBuffer();
     const newGroup: Group = {
       id: this.groupID,
-      nonPrettierStyle: groupOptions.nonPrettierStyle,
       dbgText: '',
       size: 0,
       align: 0, // Irrelevant here
@@ -419,15 +410,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.groupID - 1;
   };
 
-  startGroupAlsoOnComment = (
-    groupOptions: GroupOptions = defaultGroupOptions,
-  ): number => {
+  startGroupAlsoOnComment = (): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
       const target = this.currentBuffer().at(idx + 1);
       const newGroup: Group = {
         id: this.groupID,
-        nonPrettierStyle: groupOptions.nonPrettierStyle,
         dbgText: '',
         size: 0,
         align: 0, // Irrelevant here
@@ -438,19 +426,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.groupID++;
       return this.groupID - 1;
     }
-    return this.startGroup(groupOptions);
-  };
-
-  startNonPrettierGroup = (): number => {
-    return this.startGroup({
-      nonPrettierStyle: true,
-    });
-  };
-
-  startNonPrettierGroupAlsoOnComment = (): number => {
-    return this.startGroupAlsoOnComment({
-      nonPrettierStyle: true,
-    });
+    return this.startGroup();
   };
 
   setIndentationProperty = (modifier: 'add' | 'remove') => {
@@ -877,7 +853,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitUseClause = (ctx: UseClauseContext) => {
     this._visit(ctx.USE());
-    const useGrp = this.startGroupAlsoOnComment();
+    const useGrp = this.startGroup();
     this._visit(ctx.GRAPH());
     this._visit(ctx.graphReference());
     this.endGroup(useGrp);
@@ -885,7 +861,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitWithClause = (ctx: WithClauseContext) => {
     this._visit(ctx.WITH());
-    const withClauseGrp = this.startGroupAlsoOnComment({});
+    const withClauseGrp = this.startGroupAlsoOnComment();
     this._visit(ctx.returnBody());
     this.endGroup(withClauseGrp);
     this._visit(ctx.whereClause());
@@ -895,7 +871,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.MATCH());
     const id = this.addIndentation();
-    const matchClauseGrp = this.startNonPrettierGroupAlsoOnComment();
+    const matchClauseGrp = this.startGroup();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
     this.endGroup(matchClauseGrp);
@@ -910,7 +886,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCreateClause = (ctx: CreateClauseContext) => {
     this._visit(ctx.CREATE());
     const indentId = this.addIndentation();
-    const createClauseGrp = this.startNonPrettierGroupAlsoOnComment();
+    const createClauseGrp = this.startGroup();
     this._visit(ctx.patternList());
     this.endGroup(createClauseGrp);
     this.removeIndentation(indentId);
@@ -918,7 +894,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitInsertClause = (ctx: InsertClauseContext) => {
     this._visit(ctx.INSERT());
-    const insertClauseGrp = this.startGroupAlsoOnComment();
+    const insertClauseGrp = this.startGroup();
     this._visit(ctx.insertPatternList());
     this.endGroup(insertClauseGrp);
   };
@@ -930,7 +906,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
     }
     this._visit(ctx.DELETE());
-    const deleteClauseGrp = this.startGroupAlsoOnComment();
+    const deleteClauseGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.expression(i));
@@ -964,7 +940,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     this._visit(ctx.UNWIND());
-    const unwindClauseGrp = this.startGroupAlsoOnComment();
+    const unwindClauseGrp = this.startGroup();
     this._visit(ctx.expression());
     const asGrp = this.startGroup();
     this._visit(ctx.AS());
@@ -999,7 +975,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       commaIdx++;
     }
     for (let i = 0; i < n; i++) {
-      const returnItemGrp = this.startGroup({});
+      const returnItemGrp = this.startGroup();
       this._visit(ctx.returnItem(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(commaIdx));
@@ -1366,9 +1342,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.selector());
       this.endGroup(selectorGroup);
     }
-    const anonymousPatternGrp = this.startGroup({
-      nonPrettierStyle: true,
-    });
+    const anonymousPatternGrp = this.startGroup();
     this._visit(ctx.anonymousPattern());
     if (ctx.variable()) {
       this.removeIndentation(indentId);
@@ -1410,9 +1384,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     n: number,
   ): number => {
     let i = startIndex;
-    let nodeRelPatternGrp = this.startGroup({
-      nonPrettierStyle: true,
-    });
+    let nodeRelPatternGrp = this.startGroup();
 
     this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
     i++;
@@ -1432,9 +1404,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           i + 1 < n &&
           ctx.getChild(i + 1) instanceof RelationshipPatternContext
         ) {
-          nodeRelPatternGrp = this.startGroup({
-            nonPrettierStyle: true,
-          });
+          nodeRelPatternGrp = this.startGroup();
         }
         this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
         i++;
@@ -1451,9 +1421,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
-    const wholePatternListGrp = this.startGroup({});
+    const wholePatternListGrp = this.startGroup();
     for (let i = 0; i < n; i++) {
-      const patternListItemGrp = this.startGroup({});
+      const patternListItemGrp = this.startGroup();
       this._visit(ctx.pattern(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
@@ -1895,7 +1865,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMergeClause = (ctx: MergeClauseContext) => {
     this._visit(ctx.MERGE());
     const indentId = this.addIndentation();
-    const patternGrp = this.startGroupAlsoOnComment();
+    const patternGrp = this.startGroup();
     this._visit(ctx.pattern());
     this.removeIndentation(indentId);
     this.endGroup(patternGrp);
