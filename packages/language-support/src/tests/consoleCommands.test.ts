@@ -54,6 +54,7 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
+    expectParsedCommands(':play', [{ type: 'play' }]);
   });
 
   test('properly highlights simple commands', () => {
@@ -204,10 +205,26 @@ describe('sanity checks', () => {
     ]);
   });
 
+  expect(applySyntaxColouring(':play')).toEqual([
+    {
+      length: 1,
+      position: { line: 0, startCharacter: 0, startOffset: 0 },
+      token: ':',
+      tokenType: 'consoleCommand',
+    },
+    {
+      length: 4,
+      position: { line: 0, startCharacter: 1, startOffset: 1 },
+      token: 'play',
+      tokenType: 'consoleCommand',
+    },
+  ]);
+
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
       { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
@@ -252,7 +269,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
