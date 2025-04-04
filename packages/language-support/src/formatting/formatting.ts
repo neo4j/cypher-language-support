@@ -33,6 +33,7 @@ import {
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
+  Expression5Context,
   Expression6Context,
   Expression7Context,
   Expression8Context,
@@ -1566,14 +1567,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
+    const comparisonExprGrp = this.startGroup();
     this._visit(ctx.expression6());
     this.avoidBreakBetween();
-    const comparisonExprGrp = this.startGroup();
     this.visit(ctx.comparisonExpression6());
     this.endGroup(comparisonExprGrp);
   };
 
   visitExpression6 = (ctx: Expression6Context) => {
+    this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression5 = (ctx: Expression5Context) => {
     this.visitBinaryExpression(ctx);
   };
 
