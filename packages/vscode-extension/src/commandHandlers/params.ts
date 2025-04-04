@@ -44,6 +44,8 @@ export function validateParamInput(
   return undefined;
 }
 
+const DEBOUNCE_TIME = 200;
+
 export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
@@ -66,12 +68,21 @@ export async function addParameter(): Promise<void> {
   }
   const schemaPoller = getSchemaPoller();
   const dbSchema = schemaPoller.metadata.dbSchema;
+  let timeout: NodeJS.Timeout;
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
-    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
+    validateInput: (paramValue) => {
+      return new Promise<string>((resolve) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          const validationResult = validateParamInput(paramValue, dbSchema);
+          resolve(validationResult);
+        }, DEBOUNCE_TIME);
+      });
+    },
   });
 
   if (!paramValue) {
