@@ -363,7 +363,9 @@ RETURN p`;
     create_this1 {
       datetime:
         apoc.date.convertFormat(
-          toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g"
+          toString(create_this1.datetime),
+          "OZQvXyoU",
+          "EhpkDy8g"
         )
     }
   ) AS data`.trimStart();

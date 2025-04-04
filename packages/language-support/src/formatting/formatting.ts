@@ -1838,13 +1838,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
     const indentId = this.addIndentation();
-    const invocationGrp = this.startGroup();
     if (ctx.DISTINCT() || ctx.ALL()) {
       this.avoidSpaceBetween();
     }
     this._visit(ctx.ALL());
     this._visit(ctx.DISTINCT());
-    const allFunctionArgsGrp = this.startGroup();
     const n = ctx.functionArgument_list().length;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
@@ -1858,8 +1856,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(functionArgGrp);
     }
-    this.endGroup(allFunctionArgsGrp);
-    this.endGroup(invocationGrp);
     this.avoidSpaceBetween();
     this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RPAREN(), {
