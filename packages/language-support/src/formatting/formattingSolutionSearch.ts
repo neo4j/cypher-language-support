@@ -397,6 +397,7 @@ function addGroupEnd(buffer: string[], decision: Decision) {
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
   const buffer: string[] = [];
   let cursorPos = -1;
+  const pendingComments: string[] = [];
   decisions.forEach((decision) => {
     buffer.push(' '.repeat(decision.indentation));
     if (decision.left.isCursor) {
@@ -405,14 +406,20 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
     buffer.push(decision.left.text);
     // TODO: should this live here? Should this method have this responsibility?
     if (decision.left.type === 'REGULAR' && decision.left.comment) {
-      buffer.push(' ');
-      buffer.push(decision.left.comment);
-      if (decision.chosenSplit.splitType === '') {
-        buffer.push(' ');
-      }
+      pendingComments.push(decision.left.comment);
     }
     if (showGroups) addGroupEnd(buffer, decision);
     if (showGroups) addGroupStart(buffer, decision);
+    if (
+      decision.chosenSplit.splitType === '\n' ||
+      decision.chosenSplit.splitType === '\n\n'
+    ) {
+      for (const comment of pendingComments) {
+        buffer.push(' ');
+        buffer.push(comment);
+      }
+      pendingComments.length = 0;
+    }
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();

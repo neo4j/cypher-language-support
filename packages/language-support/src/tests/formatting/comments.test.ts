@@ -56,8 +56,9 @@ RETURN a.prop /* Return the property of 'a' */
 `;
     const expected = `MERGE (n) /* Ensuring the node exists */
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A)- /* Create or match 'a:A' */
-      [:T]->(b:B) /* Link 'a' to 'b' */
+MERGE
+  (a:A)-[:T]-> /* Create or match 'a:A' */
+  (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */`;
     verifyFormatting(inlinemultiline, expected);
   });
@@ -347,9 +348,9 @@ WHERE p.price > 100 // price threshold for premium items
 RETURN p.name, p.price, p.stock, p.discount;`;
     const expected = `MATCH (p:Product)
 WHERE
-  p.price > 100 // price threshold for premium items
-  AND p.stock < 50 // low stock warning
-  OR p.discount > 0 // consider discounted products even if stock is high
+  p.price > 100 AND // price threshold for premium items
+  p.stock < 50 OR // low stock warning
+  p.discount > 0 // consider discounted products even if stock is high
 RETURN p.name, p.price, p.stock, p.discount;`;
     verifyFormatting(query, expected);
   });
@@ -521,20 +522,13 @@ LIMIT "6pkMe6Kx"`;
 
   test('comment directly after outermost group should not break alignment for clauses', () => {
     const query = `
-USE // Specifies the graph or database to use
-    graph
-MATCH // Matches patterns in the graph
-      (m)-[:RELATION]->(n)
-MERGE // Ensures a pattern exists in the graph
-      (p:Person {name: "Alice"})
-CREATE // Creates new nodes or relationships
-       (q:Person {name: "Bob"})-[:KNOWS]->(p)
-DELETE // Deletes nodes or relationships
-       r
-WITH // Passes results to the next clause
-     p, q
-UNWIND // Expands lists into multiple rows
-       [1, 2, 3] AS num;`;
+USE graph // Specifies the graph or database to use
+MATCH (m)-[:RELATION]->(n) // Matches patterns in the graph
+MERGE (p:Person {name: "Alice"}) // Ensures a pattern exists in the graph
+CREATE (q:Person {name: "Bob"})-[:KNOWS]->(p) // Creates new nodes or relationships
+DELETE r // Deletes nodes or relationships
+WITH p, q // Passes results to the next clause
+UNWIND [1, 2, 3] AS num; // Expands lists into multiple rows`.trimStart();
     const expected = query.trim();
     verifyFormatting(query, expected);
   });

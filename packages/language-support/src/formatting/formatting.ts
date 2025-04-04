@@ -222,8 +222,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           if (activeGroups.length > 0) {
             activeGroups[0].breaksAll = true;
           }
-        } else {
-          throw new Error('Unexpcted chunk type');
         }
         for (const group of chunk.groupsStarting) {
           activeGroups.push(group);
