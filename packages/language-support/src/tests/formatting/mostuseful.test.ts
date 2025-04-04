@@ -201,8 +201,7 @@ RETURN
     .nationality,
     .birthdate,
     .gender
-  }
-  AS personInfo`;
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -223,8 +222,7 @@ RETURN
     .nationality,
     .birthdate,
     .gender
-  }
-  AS personInfo`;
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -453,8 +451,7 @@ WITH
     ' does not have an active status which is required for processing the requested operation. ' +
     'Please check the user account settings for further details.',
     [u.id, u.username]
-  )
-  AS validation
+  ) AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });

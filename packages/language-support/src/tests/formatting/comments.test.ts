@@ -237,7 +237,7 @@ RETURN *;`.trim();
 RETURN n.salary + // Add bonus value
        1000 AS totalCompensation;`;
     const expected = `MATCH (n)
-RETURN 
+RETURN
   n.salary + // Add bonus value
   1000 AS totalCompensation;`;
     verifyFormatting(query, expected);

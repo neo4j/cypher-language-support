@@ -543,8 +543,7 @@ WITH
     ' does not have an active status which is required for processing the requested operation. ' +
     'Please check the user account settings for further details.',
     [u.id, u.username]
-  )
-  AS validation
+  ) AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
@@ -561,8 +560,7 @@ WITH
     'verification process required for accessing premium features. ' +
     'Please review your verification email and follow the provided instructions to secure your account.',
     [userAccountInfo.accountUniqueIdentifier, userAccountInfo.emailAddress]
-  )
-  AS verificationStatus
+  ) AS verificationStatus
 RETURN userAccountInfo;`;
     const expected = query;
     verifyFormatting(query, expected);
@@ -597,8 +595,7 @@ WITH
     toString(inventoryRecord.criticalThresholdStock) +
     '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
     [inventoryRecord.productSKU, inventoryRecord.currentStock]
-  )
-  AS stockValidation
+  ) AS stockValidation
 RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
@@ -637,7 +634,7 @@ RETURN f`;
   test('map projections should line up like maps 1', () => {
     const query = `MATCH (p:Person {name: "Alice"})
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-       .birthdate, .gender} AS personInfo`;
+       .birthdate, .gender} AS persooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
 RETURN
   p {
@@ -650,8 +647,7 @@ RETURN
     .nationality,
     .birthdate,
     .gender
-  }
-  AS personInfo`;
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -672,8 +668,7 @@ RETURN
     .nationality,
     .birthdate,
     .gender
-  }
-  AS personInfo`;
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 

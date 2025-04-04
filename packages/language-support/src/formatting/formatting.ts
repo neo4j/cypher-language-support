@@ -958,9 +958,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.expression());
     if (ctx.AS() || ctx.variable()) {
       const asGrp = this.startGroup();
+      this.avoidBreakBetween();
+      const indentId = this.addIndentation();
       this._visit(ctx.AS());
       this._visit(ctx.variable());
       this.endGroup(asGrp);
+      this.removeIndentation(indentId);
     }
   };
 
