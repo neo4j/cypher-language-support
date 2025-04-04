@@ -1389,10 +1389,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
     i++;
     while (i < n && ctx.getChild(i) instanceof RelationshipPatternContext) {
+      const indentId = this.addIndentation();
       this.visitRelationshipPattern(
         ctx.getChild(i) as RelationshipPatternContext,
       );
       i++;
+      this.removeIndentation(indentId);
 
       if (i < n && ctx.getChild(i) instanceof QuantifierContext) {
         this.visitQuantifier(ctx.getChild(i) as QuantifierContext);

@@ -154,14 +154,18 @@ RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
     const expected = `
 MATCH
   (a:Account)-
-  // Starting at an account node
-  [:OWNED_BY]->(p:Person)<-
-  // The person who owns the account
-  [:SHARED_WITH]-(anotherAccount:Account)-
-  // Another account that is shared with the same person
-  [:HAS_TRANSACTIONS]->(t:Transaction)-
-  // Transactions belong to the second account
-  [:CATEGORY]->(c:Category)
+    // Starting at an account node
+    [:OWNED_BY]->
+  (p:Person)<-
+    // The person who owns the account
+    [:SHARED_WITH]-
+  (anotherAccount:Account)-
+    // Another account that is shared with the same person
+    [:HAS_TRANSACTIONS]->
+  (t:Transaction)-
+    // Transactions belong to the second account
+    [:CATEGORY]->
+  (c:Category)
 RETURN
   a.id AS accountId,
   anotherAccount.id AS sharedAccountId,
@@ -232,7 +236,8 @@ RETURN path`;
 MATCH
   path =
     (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-    [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+      [r:verylongrelationtypename]->
+    (m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(query, expected);
   });

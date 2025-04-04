@@ -50,14 +50,14 @@ RETURN n`;
   test('weird inline comments', () => {
     const inlinemultiline = `MERGE (n) /* Ensuring the node exists */ 
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A) /* Create or match 'a:A' */ 
+MERGE (a:A) /* Create or match 'a:A' */
   -[:T]-> (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */
 `;
     const expected = `MERGE (n) /* Ensuring the node exists */
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE
-  (a:A)-[:T]-> /* Create or match 'a:A' */
+MERGE 
+  (a:A)-[:T]-> // Create or match 'a:A' */
   (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */`;
     verifyFormatting(inlinemultiline, expected);
@@ -416,14 +416,18 @@ RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
     const expected = `
 MATCH
   (a:Account)-
-  // Starting at an account node
-  [:OWNED_BY]->(p:Person)<-
-  // The person who owns the account
-  [:SHARED_WITH]-(anotherAccount:Account)-
-  // Another account that is shared with the same person
-  [:HAS_TRANSACTIONS]->(t:Transaction)-
-  // Transactions belong to the second account
-  [:CATEGORY]->(c:Category)
+    // Starting at an account node
+    [:OWNED_BY]->
+  (p:Person)<-
+    // The person who owns the account
+    [:SHARED_WITH]-
+  (anotherAccount:Account)-
+    // Another account that is shared with the same person
+    [:HAS_TRANSACTIONS]->
+  (t:Transaction)-
+    // Transactions belong to the second account
+    [:CATEGORY]->
+  (c:Category)
 RETURN
   a.id AS accountId,
   anotherAccount.id AS sharedAccountId,
@@ -444,13 +448,16 @@ RETURN p.name AS projectName, user.username, task.name AS taskName;`;
     const expected = `
 MATCH
   (p:Project)-
-  // A project might have multiple owners
-  [:OWNED_BY]->(user:User)
+    // A project might have multiple owners
+    [:OWNED_BY]->
+  (user:User)
 // The same user might be linked to tasks
 OPTIONAL MATCH
-  (user)-[:ASSIGNED_TO]->(task:Task)-
-  // A single user can have multiple tasks in the same project
-  [:BELONGS_TO]->(p)
+  (user)-[:ASSIGNED_TO]->
+  (task:Task)-
+    // A single user can have multiple tasks in the same project
+    [:BELONGS_TO]->
+  (p)
 RETURN p.name AS projectName, user.username, task.name AS taskName;`.trim();
     verifyFormatting(query, expected);
   });

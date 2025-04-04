@@ -162,7 +162,8 @@ RETURN path`;
 MATCH
   path =
     (m1:loooooooongrelationtypename {code: "mFG66X9v"})-
-    [r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
+      [r:verylongrelationtypename]->
+    (m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
     verifyFormatting(q21, expected);
   });
