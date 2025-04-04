@@ -88,9 +88,11 @@ WHERE variable.property = "String"
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE
-  variable.property = "String" OR namespaced.function() = false
+  variable.property = "String" OR
+  namespaced.function() = false
   // comment
-  OR $parameter > 2
+  OR
+  $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
