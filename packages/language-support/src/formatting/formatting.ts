@@ -317,11 +317,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   setChunkProperty = (
     propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
   ): void => {
-    let idx = this.currentBuffer().length - 1;
-
-    while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
-      idx--;
-    }
+    const idx = this.getFirstNonCommentIdx();
     // After a comment we always hardBreak, so if the loop finds a comment
     // we should not also set mustBreak, it will cause breaking twice
     if (
@@ -335,7 +331,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
 
     const chunk = this.currentBuffer()[idx];
-    if (chunk.type !== 'REGULAR') {
+    if (chunk.type !== 'REGULAR' && chunk.type !== 'SYNTAX_ERROR') {
       throw new Error(`Internal formatter bug in setting ${propertyName}`);
     }
     chunk[propertyName] = true;
