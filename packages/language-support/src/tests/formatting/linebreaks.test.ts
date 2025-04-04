@@ -1574,4 +1574,29 @@ RETURN m;`.trimStart();
 }`;
     verifyFormatting(query, expected);
   });
+  test('exists should break its expressions', () => {
+    const query = `MATCH (i:Node)-[s:STREET ]->(j:Node)
+where s.TrafDir = "K8c0Ceds"
+and EXISTS {
+  (i)-[x]-(j)
+  where type(x) <> "laGrU2e1"
+}
+WITH i, j
+MATCH p=(i)-[x]->(j)
+where type(x) <> "vDCx6qeK"
+and not x.to = left(j.node_STNAME, size(x.to))
+return x.to,  left(j.node_STNAME, size(x.to))
+limit "g68S0y7w";`;
+    const expected = `MATCH (i:Node)-[s:STREET]->(j:Node)
+WHERE s.TrafDir = "K8c0Ceds" AND EXISTS {
+  (i)-[x]-(j)
+  WHERE type(x) <> "laGrU2e1"
+}
+WITH i, j
+MATCH p = (i)-[x]->(j)
+WHERE type(x) <> "vDCx6qeK" AND NOT x.to = left(j.node_STNAME, size(x.to))
+RETURN x.to, left(j.node_STNAME, size(x.to))
+LIMIT "g68S0y7w";`;
+    verifyFormatting(query, expected);
+  });
 });
