@@ -7,6 +7,7 @@ import {
 } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
+  AddPropContext,
   ArrowLineContext,
   BooleanLiteralContext,
   CallClauseContext,
@@ -30,6 +31,8 @@ import {
   CreateFulltextIndexContext,
   CreateIndex_Context,
   DeleteClauseContext,
+  DynamicPropertyContext,
+  DynamicPropertyExpressionContext,
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
@@ -83,6 +86,9 @@ import {
   ReturnItemContext,
   ReturnItemsContext,
   SetClauseContext,
+  SetDynamicPropContext,
+  SetPropContext,
+  SetPropsContext,
   ShowCommandYieldContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
@@ -1884,6 +1890,59 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const indentId = this.addIndentation();
     this.breakAndVisitChildren(ctx);
     this.removeIndentation(indentId);
+  };
+
+  visitSetProp = (ctx: SetPropContext) => {
+    this._visit(ctx.propertyExpression());
+    this.avoidBreakBetween();
+    this._visit(ctx.EQ());
+    const indentId = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(indentId);
+  };
+
+  visitSetDynamicProp = (ctx: SetDynamicPropContext) => {
+    this._visit(ctx.dynamicPropertyExpression());
+    this.avoidBreakBetween();
+    this._visit(ctx.EQ());
+    const indentId = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(indentId);
+  };
+
+  visitSetProps = (ctx: SetPropsContext) => {
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.EQ());
+    const indentId = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(indentId);
+  };
+
+  visitAddProp = (ctx: AddPropContext) => {
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.PLUSEQUAL());
+    const indentId = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(indentId);
+  };
+
+  visitDynamicPropertyExpression = (ctx: DynamicPropertyExpressionContext) => {
+    this._visit(ctx.expression1());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.dynamicProperty());
+  };
+
+  visitDynamicProperty = (ctx: DynamicPropertyContext) => {
+    const grp = this.startGroup();
+    this._visit(ctx.LBRACKET());
+    const indentId = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(indentId);
+    this._visit(ctx.RBRACKET());
+    this.endGroup(grp);
   };
 
   visitSetClause = (ctx: SetClauseContext) => {

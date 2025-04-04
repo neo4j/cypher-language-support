@@ -1412,4 +1412,48 @@ MATCH (n)
 RETURN m;`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('SET clause with equal sign should group the EQ', () => {
+    const query = `      CALL {
+        WITH connectedNodes, parentNodes
+        UNWIND parentNodes AS this7
+        UNWIND connectedNodes AS this7_sentence_connect0_node
+        MERGE
+          (this7)-[this7_sentence_connect0_relationship:resourceOf]->
+          (this7_sentence_connect0_node)
+        SET node[$aVeryLongProooooooooooooooooooopName] = $this7_sentence_connect0_relationship_namespace
+        SET this7_sentence_connect0_relationship.namespace
+        =
+        $this7_sentence_connect0_relationship_namespace
+        SET this7_sentence_connect0_relationship
+        =
+        $this7_sentence_connect0_relationship_locale
+        SET this7_sentence_connect0_relationship
+        +=
+        $this7_sentence_connect0_relationship_locale
+        RETURN count(*) AS _
+      }`;
+    const expected = `CALL {
+  WITH connectedNodes, parentNodes
+  UNWIND parentNodes AS this7
+  UNWIND connectedNodes AS this7_sentence_connect0_node
+  MERGE
+    (this7)-[this7_sentence_connect0_relationship:resourceOf]->
+    (this7_sentence_connect0_node)
+  SET
+    node[$aVeryLongProooooooooooooooooooopName] =
+      $this7_sentence_connect0_relationship_namespace
+  SET
+    this7_sentence_connect0_relationship.namespace =
+      $this7_sentence_connect0_relationship_namespace
+  SET
+    this7_sentence_connect0_relationship =
+      $this7_sentence_connect0_relationship_locale
+  SET
+    this7_sentence_connect0_relationship +=
+      $this7_sentence_connect0_relationship_locale
+  RETURN count(*) AS _
+}`;
+    verifyFormatting(query, expected);
+  });
 });
