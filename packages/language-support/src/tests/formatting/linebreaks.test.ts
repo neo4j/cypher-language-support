@@ -1025,6 +1025,123 @@ WHERE
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('SET clause with equal sign should group the EQ', () => {
+    const query = `      CALL {
+        WITH connectedNodes, parentNodes
+        UNWIND parentNodes AS this7
+        UNWIND connectedNodes AS this7_sentence_connect0_node
+        MERGE
+          (this7)-[this7_sentence_connect0_relationship:resourceOf]->
+          (this7_sentence_connect0_node)
+        SET node[$aVeryLongProooooooooooooooooooopName] = $this7_sentence_connect0_relationship_namespace
+        SET this7_sentence_connect0_relationship.namespace
+        =
+        $this7_sentence_connect0_relationship_namespace
+        SET this7_sentence_connect0_relationship
+        =
+        $this7_sentence_connect0_relationship_locale
+        SET this7_sentence_connect0_relationship
+        +=
+        $this7_sentence_connect0_relationship_locale
+        RETURN count(*) AS _
+      }`;
+    const expected = `CALL {
+  WITH connectedNodes, parentNodes
+  UNWIND parentNodes AS this7
+  UNWIND connectedNodes AS this7_sentence_connect0_node
+  MERGE
+    (this7)-[this7_sentence_connect0_relationship:resourceOf]->
+    (this7_sentence_connect0_node)
+  SET
+    node[$aVeryLongProooooooooooooooooooopName] =
+      $this7_sentence_connect0_relationship_namespace
+  SET
+    this7_sentence_connect0_relationship.namespace =
+      $this7_sentence_connect0_relationship_namespace
+  SET
+    this7_sentence_connect0_relationship =
+      $this7_sentence_connect0_relationship_locale
+  SET
+    this7_sentence_connect0_relationship +=
+      $this7_sentence_connect0_relationship_locale
+  RETURN count(*) AS _
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('exists should break its expressions', () => {
+    const query = `MATCH (i:Node)-[s:STREET ]->(j:Node)
+where s.TrafDir = "K8c0Ceds"
+and EXISTS {
+  (i)-[x]-(j)
+  where type(x) <> "laGrU2e1"
+}
+WITH i, j
+MATCH p=(i)-[x]->(j)
+where type(x) <> "vDCx6qeK"
+and not x.to = left(j.node_STNAME, size(x.to))
+return x.to,  left(j.node_STNAME, size(x.to))
+limit "g68S0y7w";`;
+    const expected = `MATCH (i:Node)-[s:STREET]->(j:Node)
+WHERE s.TrafDir = "K8c0Ceds" AND EXISTS {
+  (i)-[x]-(j)
+  WHERE type(x) <> "laGrU2e1"
+}
+WITH i, j
+MATCH p = (i)-[x]->(j)
+WHERE type(x) <> "vDCx6qeK" AND NOT x.to = left(j.node_STNAME, size(x.to))
+RETURN x.to, left(j.node_STNAME, size(x.to))
+LIMIT "g68S0y7w";`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long relationship pattern should indent', () => {
+    const query = `MATCH
+  (n)-
+    [r:\`BELONGS_TO\`
+    |\`BELONGS_TO\`
+    |\`CONTRIBUTES_TO\`
+    |\`CONTRIBUTES_TO\`
+    |\`DESCRIBED_BY\`
+    |\`DESCRIBED_BY\`
+    |\`HAS_FOOTNOTE\`
+    |\`HAS_FOOTNOTE\`
+    |\`REQUIRES_DNSH\`
+    |\`REQUIRES_DNSH\`]-
+  (m)`;
+    const expected = `MATCH
+  (n)-
+    [r:\`BELONGS_TO\`
+      |\`BELONGS_TO\`
+      |\`CONTRIBUTES_TO\`
+      |\`CONTRIBUTES_TO\`
+      |\`DESCRIBED_BY\`
+      |\`DESCRIBED_BY\`
+      |\`HAS_FOOTNOTE\`
+      |\`HAS_FOOTNOTE\`
+      |\`REQUIRES_DNSH\`
+      |\`REQUIRES_DNSH\`]-
+  (m)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('With clause should break as list', () => {
+    const query = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
+WITH n, collect(n) AS duplicates
+WHERE size(duplicates) > "zuEVCUOg"
+WITH
+  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
+RETURN deleteNodes`;
+    const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
+WITH n, collect(n) AS duplicates
+WHERE size(duplicates) > "zuEVCUOg"
+WITH
+  duplicates["2x5H4FCD"] AS keepNode,
+  duplicates["oMXseK4u" ..] AS deleteNodes
+RETURN deleteNodes`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
@@ -1599,123 +1716,6 @@ RETURN n;
 
 MATCH (n)
 RETURN m;`.trimStart();
-    verifyFormatting(query, expected);
-  });
-
-  test('SET clause with equal sign should group the EQ', () => {
-    const query = `      CALL {
-        WITH connectedNodes, parentNodes
-        UNWIND parentNodes AS this7
-        UNWIND connectedNodes AS this7_sentence_connect0_node
-        MERGE
-          (this7)-[this7_sentence_connect0_relationship:resourceOf]->
-          (this7_sentence_connect0_node)
-        SET node[$aVeryLongProooooooooooooooooooopName] = $this7_sentence_connect0_relationship_namespace
-        SET this7_sentence_connect0_relationship.namespace
-        =
-        $this7_sentence_connect0_relationship_namespace
-        SET this7_sentence_connect0_relationship
-        =
-        $this7_sentence_connect0_relationship_locale
-        SET this7_sentence_connect0_relationship
-        +=
-        $this7_sentence_connect0_relationship_locale
-        RETURN count(*) AS _
-      }`;
-    const expected = `CALL {
-  WITH connectedNodes, parentNodes
-  UNWIND parentNodes AS this7
-  UNWIND connectedNodes AS this7_sentence_connect0_node
-  MERGE
-    (this7)-[this7_sentence_connect0_relationship:resourceOf]->
-    (this7_sentence_connect0_node)
-  SET
-    node[$aVeryLongProooooooooooooooooooopName] =
-      $this7_sentence_connect0_relationship_namespace
-  SET
-    this7_sentence_connect0_relationship.namespace =
-      $this7_sentence_connect0_relationship_namespace
-  SET
-    this7_sentence_connect0_relationship =
-      $this7_sentence_connect0_relationship_locale
-  SET
-    this7_sentence_connect0_relationship +=
-      $this7_sentence_connect0_relationship_locale
-  RETURN count(*) AS _
-}`;
-    verifyFormatting(query, expected);
-  });
-
-  test('exists should break its expressions', () => {
-    const query = `MATCH (i:Node)-[s:STREET ]->(j:Node)
-where s.TrafDir = "K8c0Ceds"
-and EXISTS {
-  (i)-[x]-(j)
-  where type(x) <> "laGrU2e1"
-}
-WITH i, j
-MATCH p=(i)-[x]->(j)
-where type(x) <> "vDCx6qeK"
-and not x.to = left(j.node_STNAME, size(x.to))
-return x.to,  left(j.node_STNAME, size(x.to))
-limit "g68S0y7w";`;
-    const expected = `MATCH (i:Node)-[s:STREET]->(j:Node)
-WHERE s.TrafDir = "K8c0Ceds" AND EXISTS {
-  (i)-[x]-(j)
-  WHERE type(x) <> "laGrU2e1"
-}
-WITH i, j
-MATCH p = (i)-[x]->(j)
-WHERE type(x) <> "vDCx6qeK" AND NOT x.to = left(j.node_STNAME, size(x.to))
-RETURN x.to, left(j.node_STNAME, size(x.to))
-LIMIT "g68S0y7w";`;
-    verifyFormatting(query, expected);
-  });
-
-  test('long relationship pattern should indent', () => {
-    const query = `MATCH
-  (n)-
-    [r:\`BELONGS_TO\`
-    |\`BELONGS_TO\`
-    |\`CONTRIBUTES_TO\`
-    |\`CONTRIBUTES_TO\`
-    |\`DESCRIBED_BY\`
-    |\`DESCRIBED_BY\`
-    |\`HAS_FOOTNOTE\`
-    |\`HAS_FOOTNOTE\`
-    |\`REQUIRES_DNSH\`
-    |\`REQUIRES_DNSH\`]-
-  (m)`;
-    const expected = `MATCH
-  (n)-
-    [r:\`BELONGS_TO\`
-      |\`BELONGS_TO\`
-      |\`CONTRIBUTES_TO\`
-      |\`CONTRIBUTES_TO\`
-      |\`DESCRIBED_BY\`
-      |\`DESCRIBED_BY\`
-      |\`HAS_FOOTNOTE\`
-      |\`HAS_FOOTNOTE\`
-      |\`REQUIRES_DNSH\`
-      |\`REQUIRES_DNSH\`]-
-  (m)`;
-    verifyFormatting(query, expected);
-  });
-
-  test('With clause should break as list', () => {
-    const query = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
-WITH n, collect(n) AS duplicates
-WHERE size(duplicates) > "zuEVCUOg"
-WITH
-  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
-RETURN deleteNodes`;
-    const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
-WITH n, collect(n) AS duplicates
-WHERE size(duplicates) > "zuEVCUOg"
-WITH
-  duplicates["2x5H4FCD"] AS keepNode,
-  duplicates["oMXseK4u" ..] AS deleteNodes
-RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
 });
