@@ -778,8 +778,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCommandOptions = (ctx: CommandOptionsContext) => {
     this.breakLine();
     this.visit(ctx.OPTIONS());
+    const indentId = this.addIndentation();
     const optionsGrp = this.startGroup();
     this.visit(ctx.mapOrParameter());
+    this.removeIndentation(indentId);
     this.endGroup(optionsGrp);
   };
 
