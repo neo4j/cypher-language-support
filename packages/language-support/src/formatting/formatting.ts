@@ -108,6 +108,7 @@ import {
   findTargetToken,
   getParseTreeAndTokens,
   IndentationModifier,
+  INTERNAL_FORMAT_ERROR_MESSAGE,
   isComment,
   RegularChunk,
   SyntaxErrorChunk,
@@ -189,8 +190,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           `Unable to format query due to syntax error near ${this.firstUnParseableToken?.text} at line ${this.firstUnParseableToken?.line}`,
         );
       }
-      // TODO: reenable this
-      //throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     return resultString;
   };
@@ -214,13 +214,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
               group.size++;
               group.dbgText += ' ';
             }
-            // TODO: If it is the last one in the group then it does not need to break
             if (chunk.comment && !gettingRemoved.has(group.id)) {
               group.breaksAll = true;
             }
           }
         } else if (chunk.type === 'COMMENT') {
-          // TODO: Is this reasonable ?????????
+          // NOTE: This might not be entirely sound, but it seems to work flawlessly for comments
+          // so far.
           if (activeGroups.length > 0) {
             activeGroups[0].breaksAll = true;
           }
@@ -569,7 +569,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
       if (nodeLine === commentLine) {
-        // This does not necessarily have to be a regular? TODO: check this
         const previousChunk = this.lastInCurrentBuffer();
         previousChunk.comment = text;
       } else {
