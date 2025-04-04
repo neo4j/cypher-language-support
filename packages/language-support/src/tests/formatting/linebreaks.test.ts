@@ -923,6 +923,37 @@ RETURN
     verifyFormatting(query, expected);
   })
 */
+
+  test('NOT should stick together with the rest of the expr here', () => {
+    const query = `MATCH (this:GkXPMxPR)
+WHERE this.id = $param0
+
+SET this.id = $param1
+WITH this
+WHERE
+  apoc.util.validatePredicate(
+    NOT
+    ($paraaaaaaam3 = "6g4484AV" AND
+      ($paraaam4 IS NOT NULL AND this.id = $paraaam4)),
+    "QGo5iARQ",
+    ["NZnJjL3p"]
+  )
+RETURN collect(DISTINCT this {.id}) AS data`;
+    const expected = `MATCH (this:GkXPMxPR)
+WHERE this.id = $param0
+
+SET this.id = $param1
+WITH this
+WHERE
+  apoc.util.validatePredicate(
+    NOT ($paraaaaaaam3 = "6g4484AV" AND
+      ($paraaam4 IS NOT NULL AND this.id = $paraaam4)),
+    "QGo5iARQ",
+    ["NZnJjL3p"]
+  )
+RETURN collect(DISTINCT this {.id}) AS data`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

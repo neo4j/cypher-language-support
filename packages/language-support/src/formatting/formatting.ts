@@ -40,6 +40,7 @@ import {
   Expression6Context,
   Expression7Context,
   Expression8Context,
+  Expression9Context,
   ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
@@ -1562,6 +1563,21 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitExpression10 = (ctx: Expression10Context) => {
     this.visitBinaryExpression(ctx);
+  };
+
+  visitExpression9 = (ctx: Expression9Context) => {
+    const n = ctx.NOT_list().length;
+    if (n === 0) {
+      this.visitChildren(ctx);
+      return;
+    }
+    // Technically someome could have 10 NOTs in a row, in which case the avoidBreak
+    // could become problematic. But there's no real point in handling that...
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.NOT(i));
+      this.avoidBreakBetween();
+    }
+    this.visit(ctx.expression8());
   };
 
   visitExpression8 = (ctx: Expression8Context) => {
