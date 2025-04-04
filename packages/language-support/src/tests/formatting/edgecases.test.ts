@@ -972,6 +972,7 @@ RETURN
         ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
+  // TODO: the THEN below the EXISTS shuold get one more indentation step
     const expected = `MATCH (u:User)
 WITH
   u,
@@ -981,25 +982,30 @@ RETURN
   CASE
     WHEN EXISTS {
       MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-    } AND likeCount > 10 THEN
+    } AND likeCount > 10
+    THEN
       CASE p.name
-        WHEN size(interestList) > 3
-             THEN 'Active smartphone user with diverse interests: ' +
-                  toString(interestList)
-        ELSE 'Active smartphone user with few interests: ' +
-             toString(interestList)
+        WHEN
+          size(interestList) > 3
+          THEN
+            'Active smartphone user with diverse interests: ' +
+            toString(interestList)
+        ELSE
+          'Active smartphone user with few interests: ' + toString(interestList)
       END
     ELSE
       CASE
         WHEN NOT EXISTS {
           MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
         } AND likeCount <= 10
-        THEN 'Less active user without a smartphone, interests: ' +
-             toString(interestList)
-        ELSE 'User with moderate activity, ' +
-             toString(likeCount) +
-             ' likes and interests: ' +
-             toString(interestList)
+        THEN
+          'Less active user without a smartphone, interests: ' +
+          toString(interestList)
+        ELSE
+          'User with moderate activity, ' +
+          toString(likeCount) +
+          ' likes and interests: ' +
+          toString(interestList)
       END
   END AS userProfile;`;
     verifyFormatting(query, expected);
