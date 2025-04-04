@@ -182,15 +182,25 @@ CASE
 WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
 ELSE b.Description[.. "NHIwucAy"]
 END} AS endNode;`;
-    const expected = `RETURN {Node: p.Node, description:
-  CASE
-    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-    ELSE p.Description[.. "VM6fSkTL"]
-  END} AS node, r, {Node: b.Node, description:
-  CASE
-    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-    ELSE b.Description[.. "NHIwucAy"]
-  END} AS endNode;`;
+    const expected = `
+RETURN
+  {
+    Node: p.Node,
+    description:
+      CASE
+        WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+        ELSE p.Description[.. "VM6fSkTL"]
+      END
+  } AS node,
+  r,
+  {
+    Node: b.Node,
+    description:
+      CASE
+        WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+        ELSE b.Description[.. "NHIwucAy"]
+      END
+  } AS endNode;`.trimStart();
     verifyFormatting(query, expected);
   });
 

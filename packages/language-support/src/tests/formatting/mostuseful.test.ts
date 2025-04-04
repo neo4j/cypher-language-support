@@ -6,19 +6,21 @@ describe('useful tests for testing V3 linebreaks', () => {
     const expected = `CREATE CONSTRAINT aaaaaa
 FOR (aaaaaa:aaaaaa)
 REQUIRE (aaaaaa.aaaaaa) IS UNIQUE
-OPTIONS {
-  aaaaaa: "20z9vakp",
-  aaaaaa: {
-    aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
-    aaaaaa: ["WqAr9IvS", "j5fYJwuN"],
-    aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
-    aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
-    aaaaaa: ["zcBcWjoJ", "dz78begI"],
-    aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],
-    aaaaaa: ["Jmw0tXjZ", "ALiXrHno", "QRYTGYFd"],
-    aaaaaa: ["EEJJKZGC", "GGDt2msc"]
-  }
-}`;
+OPTIONS
+  {
+    aaaaaa: "20z9vakp",
+    aaaaaa:
+      {
+        aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
+        aaaaaa: ["WqAr9IvS", "j5fYJwuN"],
+        aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
+        aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
+        aaaaaa: ["zcBcWjoJ", "dz78begI"],
+        aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],
+        aaaaaa: ["Jmw0tXjZ", "ALiXrHno", "QRYTGYFd"],
+        aaaaaa: ["EEJJKZGC", "GGDt2msc"]
+      }
+  }`;
     verifyFormatting(query, expected);
   });
 
@@ -253,11 +255,12 @@ MERGE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN {
-  looooooooooooooooooooooongkey: value,
-  loooooooooooooooooooongkeeeyyyyyyyy: value2,
-  looooooooooooooongkeeey: value3
-}`.trimStart();
+RETURN
+  {
+    looooooooooooooooooooooongkey: value,
+    loooooooooooooooooooongkeeeyyyyyyyy: value2,
+    looooooooooooooongkeeey: value3
+  }`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -274,16 +277,18 @@ RETURN {
   looooooooooooooongkeeey: value3
 }`.trimStart();
     const expected = `
-RETURN {
-  map: {
+RETURN
+  {
+    map:
+      {
+        looooooooooooooooooooooongkey: value,
+        loooooooooooooooooooongkeeeyyyyyyyy: value2,
+        looooooooooooooongkeeey: value3
+      },
     looooooooooooooooooooooongkey: value,
     loooooooooooooooooooongkeeeyyyyyyyy: value2,
     looooooooooooooongkeeey: value3
-  },
-  looooooooooooooooooooooongkey: value,
-  loooooooooooooooooooongkeeeyyyyyyyy: value2,
-  looooooooooooooongkeeey: value3
-}`.trimStart();
+  }`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -297,7 +302,8 @@ RETURN p`;
     // Not fully correct right now but I think it's good enough
     const expected = `MATCH (p:Product)
 WHERE
-  p.article_number IN [
+  p.article_number IN
+  [
     "OCj0AswA",
     "dFRbj1s3",
     "oMbdvgm7",
@@ -463,21 +469,22 @@ RETURN u;`;
       "g7LjxbGD"]
 RETURN p`;
     const expected = `
-RETURN [
-  "OCj0AswA",
-  "dFRbj1s3",
-  "oMbdvgm7",
-  "L4Vey8xn",
-  "GNgeDIkA",
-  "pU4RE0lM",
-  "M6XNVJsO",
-  "NcdW0tuB",
-  "Pf6RIuP4",
-  "6tKStKwl",
-  "HfvahDu5",
-  "gJoq3HnU",
-  "g7LjxbGD"
-]
+RETURN
+  [
+    "OCj0AswA",
+    "dFRbj1s3",
+    "oMbdvgm7",
+    "L4Vey8xn",
+    "GNgeDIkA",
+    "pU4RE0lM",
+    "M6XNVJsO",
+    "NcdW0tuB",
+    "Pf6RIuP4",
+    "6tKStKwl",
+    "HfvahDu5",
+    "gJoq3HnU",
+    "g7LjxbGD"
+  ]
 RETURN p`.trimStart();
     verifyFormatting(query, expected);
   });

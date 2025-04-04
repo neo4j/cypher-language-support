@@ -273,14 +273,13 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   const nextStart = lastGrpBreaks
     ? state.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
-  const lastSpecialBreak = choice.left.specialBreak;
 
   // TODO: There might be a better way to do this?
   let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
     if (
       group.breaksAll ||
-      (!lastSpecialBreak && group.size + nextStart > MAX_COL)
+      group.size + nextStart > MAX_COL
     ) {
       breakBeforeGrp = group;
       break;
@@ -295,7 +294,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     return [{ splitType: '\n', cost: 0, breakBeforeGrp }];
   }
 
-  if (lastGrpBreaks && !lastSpecialBreak) {
+  if (lastGrpBreaks) {
     return splits.filter(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );

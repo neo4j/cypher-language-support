@@ -22,7 +22,6 @@ export const MAX_COL = 80;
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
-  specialBreak?: true;
   text: string;
   groupsStarting: Group[];
   groupsEnding: Group[];

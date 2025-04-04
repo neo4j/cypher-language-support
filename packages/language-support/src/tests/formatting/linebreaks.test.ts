@@ -199,11 +199,12 @@ WHERE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN {
-  looooooooooooooooooooooongkey: value,
-  loooooooooooooooooooongkeeeyyyyyyyy: value2,
-  looooooooooooooongkeeey: value3
-}`.trimStart();
+RETURN
+  {
+    looooooooooooooooooooooongkey: value,
+    loooooooooooooooooooongkeeeyyyyyyyy: value2,
+    looooooooooooooongkeeey: value3
+  }`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -216,7 +217,8 @@ WHERE p.article_number IN [
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE
-  p.article_number IN [
+  p.article_number IN
+  [
     "OCj0AswA",
     "dFRbj1s3",
     "oMbdvgm7",
@@ -319,7 +321,8 @@ RETURN p`;
 WHERE
   p.price > 1000 AND
   p.stock > 50 AND
-  p.category IN [
+  p.category IN
+  [
     'Electronics',
     'Home Appliances',
     'Garden Tools',
@@ -358,8 +361,7 @@ RETURN p`;
   });
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
-    const expected = `
-RETURN
+    const expected = `RETURN
   collect(
     create_this1 {
       datetime:
@@ -778,21 +780,22 @@ RETURN ["OCj0AswA",
        "g7LjxbGD"]
 RETURN p`;
     const expected = `
-RETURN [
-  "OCj0AswA",
-  "dFRbj1s3",
-  "oMbdvgm7",
-  "L4Vey8xn",
-  "GNgeDIkA",
-  "pU4RE0lM",
-  "M6XNVJsO",
-  "NcdW0tuB",
-  "Pf6RIuP4",
-  "6tKStKwl",
-  "HfvahDu5",
-  "gJoq3HnU",
-  "g7LjxbGD"
-]
+RETURN
+  [
+    "OCj0AswA",
+    "dFRbj1s3",
+    "oMbdvgm7",
+    "L4Vey8xn",
+    "GNgeDIkA",
+    "pU4RE0lM",
+    "M6XNVJsO",
+    "NcdW0tuB",
+    "Pf6RIuP4",
+    "6tKStKwl",
+    "HfvahDu5",
+    "gJoq3HnU",
+    "g7LjxbGD"
+  ]
 RETURN p`.trimStart();
     verifyFormatting(query, expected);
   });
