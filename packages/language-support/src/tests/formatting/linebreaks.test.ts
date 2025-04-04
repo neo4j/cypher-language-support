@@ -575,8 +575,7 @@ MATCH
     (:Station {name: 'Cheltenham Spa'})
     WHERE
       none(
-        stop
-        IN n[.. -1]
+        stop IN n[.. -1]
         WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ))
 RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
@@ -993,6 +992,37 @@ RETURN collect(DISTINCT this {.id}) AS data`;
       (TYPE(r) = "QXD44TwO" AND r.weight > "Overcxkc")
     | r
   ] AS relationships`;
+    verifyFormatting(query, expected);
+  });
+
+  test('pattern comprehensions should split in a resonable way if they have to split', () => {
+    const query = `MATCH (n)
+WHERE single(
+                  this12
+                  IN
+                  [
+                  (this11)<-
+                  [:REPRESENTS]-
+                  (this12:Identity)
+                  WHERE
+                  ($jwt.email IS NOT NULL AND this12.identity = $jwt.email)
+                  |
+                  "p4cI8VGS"]
+                  WHERE "JWvpHXXN"
+                )
+return n`;
+    const expected = `MATCH (n)
+WHERE
+  single(
+    this12 IN
+    [
+      (this11)<-[:REPRESENTS]-(this12:Identity)
+      WHERE ($jwt.email IS NOT NULL AND this12.identity = $jwt.email)
+      | "p4cI8VGS"
+    ]
+    WHERE "JWvpHXXN"
+  )
+RETURN n`;
     verifyFormatting(query, expected);
   });
 });

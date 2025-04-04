@@ -72,6 +72,7 @@ import {
   ParenthesizedExpressionContext,
   ParenthesizedPathContext,
   PathLengthContext,
+  PatternComprehensionContext,
   PatternContext,
   PatternElementContext,
   PatternListContext,
@@ -1449,6 +1450,39 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(wholePatternListGrp);
   };
 
+  visitPatternComprehension = (ctx: PatternComprehensionContext) => {
+    const patternComprehensionGrp = this.startGroup();
+    this._visit(ctx.LBRACKET());
+    const listIndent = this.addIndentation();
+    if (ctx.variable()) {
+      this._visit(ctx.variable());
+      this.avoidBreakBetween();
+      this._visit(ctx.EQ());
+    }
+    // Techinically this one is just like regular patterns, and should be grouped like them.
+    // But for some reason it is its own grammar? So just group it like this and call it a day...
+    const pathPatternGrp = this.startGroup();
+    this._visit(ctx.pathPatternNonEmpty());
+    this.endGroup(pathPatternGrp);
+    if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
+      this._visit(ctx.WHERE());
+      const whereIndent = this.addIndentation();
+      this._visit(ctx._whereExp);
+      this.removeIndentation(whereIndent);
+      this.endGroup(whereGrp);
+    }
+    this._visit(ctx.BAR());
+    this.avoidBreakBetween();
+    this.visit(ctx._barExp);
+    this.removeIndentation(listIndent);
+    this._visitTerminalRaw(ctx.RBRACKET(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(patternComprehensionGrp);
+  };
+
   // Handled separately because we never want to split within the quantifier.
   // So we fully concatenate it to ensure it's part of the same chunk.
   visitQuantifier = (ctx: QuantifierContext) => {
@@ -2076,6 +2110,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const listGrp = this.startGroup();
     this._visit(ctx.variable());
     const inExprGrp = this.startGroup();
+    this.avoidBreakBetween();
     this._visit(ctx.IN());
     this._visit(ctx._inExp);
     this.endGroup(inExprGrp);

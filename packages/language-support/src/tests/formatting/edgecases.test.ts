@@ -678,8 +678,7 @@ RETURN f`;
 WHERE
   f.value > "WhbRf4O4" AND
   ALL(
-    x
-    IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
+    x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
     WHERE f.value % x <> "5DOeV3TE"
   )
 SET f.prime = "zt01uZOH"
