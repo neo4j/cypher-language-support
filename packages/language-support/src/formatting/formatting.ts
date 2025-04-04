@@ -1936,6 +1936,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(wholeMapGrp);
   };
 
+  visitMapProjectionElement = (ctx: MapProjectionElementContext) => {
+    if (ctx.propertyKeyName()) {
+      const grp = this.startGroup()
+      this.visit(ctx.propertyKeyName())
+      this.visit(ctx.COLON())
+      const indentId = this.addIndentation()
+      this.visit(ctx.expression())
+      this.endGroup(grp)
+      this.removeIndentation(indentId)
+    } else {
+      this.visitChildren(ctx)
+    }
+  };
+
   visitMapProjection = (ctx: MapProjectionContext) => {
     const mapWrappingGrp = this.startGroup();
     this._visit(ctx.variable());
@@ -1946,16 +1960,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
-      let optionalWrappingGrp: number;
-      if (ctx.mapProjectionElement(i).COLON()) {
-        optionalWrappingGrp = this.startGroup();
-      }
       this._visit(ctx.mapProjectionElement(i));
       if (i < n - 1) {
         this._visit(ctx.COMMA(i));
-      }
-      if (ctx.mapProjectionElement(i).COLON()) {
-        this.endGroup(optionalWrappingGrp);
       }
     }
     this.endGroup(mapProjectionGrp);

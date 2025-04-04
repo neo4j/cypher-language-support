@@ -362,12 +362,12 @@ RETURN p`;
 RETURN
   collect(
     create_this1 {
-      datetime: apoc.date.convertFormat(
-        toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g"
+      datetime:
+        apoc.date.convertFormat(
+          toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g"
         )
     }
-  )
-  AS data`.trimStart();
+  ) AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
