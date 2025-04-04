@@ -26,7 +26,7 @@ export interface BaseChunk {
   text: string;
   groupsStarting: Group[];
   groupsEnding: Group[];
-  indentation: number;
+  indentation: IndentationModifier[];
 }
 
 // Regular chunk specific properties
@@ -51,12 +51,17 @@ export interface CommentChunk extends BaseChunk {
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
+export interface IndentationModifier {
+  id: number;
+  change: number;
+}
+
 export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
   groupsStarting: [],
   groupsEnding: [],
-  indentation: 0,
+  indentation: [],
 };
 
 const traillingCharacters = [
