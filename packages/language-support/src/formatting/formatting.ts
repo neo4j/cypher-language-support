@@ -1888,7 +1888,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitSetClause = (ctx: SetClauseContext) => {
     this._visit(ctx.SET());
-    this.avoidBreakBetween();
+    const indentId = this.addIndentation();
     const n = ctx.setItem_list().length;
     const setClauseGrp = this.startGroup();
     for (let i = 0; i < n; i++) {
@@ -1900,6 +1900,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(setItemGrp);
     }
     this.endGroup(setClauseGrp);
+    this.removeIndentation(indentId);
   };
 
   // Map has its own formatting rules, see:

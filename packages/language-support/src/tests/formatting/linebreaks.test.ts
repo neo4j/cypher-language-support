@@ -804,6 +804,38 @@ RETURN
 RETURN p`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('should indent and break ON CREAT SET clauses properly', () => {
+    const query = `MERGE (a:Author {name: 'J.K. Rowling'})
+  ON CREATE SET a.birthYear = 1965,
+  a.nationality = 'British',
+  a.booksWritten = 7,
+  a.netWorth = 1000000000,
+  a.genre = 'Fantasy'
+MERGE (b:Book {title: 'Harry Potter and the Sorcerers Stone'})
+  ON CREATE SET b.publishedYear = 1997,
+  b.sales = 120000000,
+  b.rating = 4.8,
+  b.genre = 'Fantasy'
+MERGE (a)-[:WROTE]->(b)
+RETURN a, b`;
+    const expected = `MERGE (a:Author {name: 'J.K. Rowling'})
+  ON CREATE SET
+    a.birthYear = 1965,
+    a.nationality = 'British',
+    a.booksWritten = 7,
+    a.netWorth = 1000000000,
+    a.genre = 'Fantasy'
+MERGE (b:Book {title: 'Harry Potter and the Sorcerers Stone'})
+  ON CREATE SET
+    b.publishedYear = 1997,
+    b.sales = 120000000,
+    b.rating = 4.8,
+    b.genre = 'Fantasy'
+MERGE (a)-[:WROTE]->(b)
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
