@@ -634,7 +634,7 @@ RETURN f`;
   test('map projections should line up like maps 1', () => {
     const query = `MATCH (p:Person {name: "Alice"})
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-       .birthdate, .gender} AS persooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonInfo`;
+       .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
 RETURN
   p {

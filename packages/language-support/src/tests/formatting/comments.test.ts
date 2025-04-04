@@ -56,8 +56,9 @@ RETURN a.prop /* Return the property of 'a' */
 `;
     const expected = `MERGE (n) /* Ensuring the node exists */
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE 
-  (a:A)-[:T]-> // Create or match 'a:A' */
+MERGE
+  (a:A)- /* Create or match 'a:A' */
+    [:T]->
   (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */`;
     verifyFormatting(inlinemultiline, expected);
