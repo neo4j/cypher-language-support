@@ -1645,6 +1645,7 @@ RETURN m;`.trimStart();
 }`;
     verifyFormatting(query, expected);
   });
+
   test('exists should break its expressions', () => {
     const query = `MATCH (i:Node)-[s:STREET ]->(j:Node)
 where s.TrafDir = "K8c0Ceds"
@@ -1670,6 +1671,7 @@ RETURN x.to, left(j.node_STNAME, size(x.to))
 LIMIT "g68S0y7w";`;
     verifyFormatting(query, expected);
   });
+
   test('long relationship pattern should indent', () => {
     const query = `MATCH
   (n)-
@@ -1699,6 +1701,7 @@ LIMIT "g68S0y7w";`;
   (m)`;
     verifyFormatting(query, expected);
   });
+
   test('With clause should break as list', () => {
     const query = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
 WITH n, collect(n) AS duplicates
