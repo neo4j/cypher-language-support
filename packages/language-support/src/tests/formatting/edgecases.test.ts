@@ -1030,4 +1030,16 @@ RETURN u.name, status;`.trimStart();
     const expected = `RETURN "<missing>"`;
     verifyFormatting(query, expected);
   });
+
+  test('should split this query between the ORs as per usual', () => {
+    // The WHERE EXPR is 79 long, which can be a tricky case to get right
+    const query = `MATCH (variable:Label)-[:REL_TYPE]->()
+WHERE
+  variable.property = "String" OR
+  namespaced.function() = false OR
+  $parameter > 2
+RETURN variable;`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
 });

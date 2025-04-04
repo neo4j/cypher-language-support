@@ -62,9 +62,10 @@ RETURN variable;`;
     const cursorPos = query.search('@');
     const result = formatQuery(query.replace('@', ''), cursorPos);
     const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
-WHERE variable.property = "String" OR
-      namespaced.function() = false OR
-      $para@meter > 2
+WHERE
+  variable.property = "String" OR
+  namespaced.function() = false OR
+  $para@meter > 2
 RETURN variable;`;
     expect(result.newCursorPos).toEqual(formated.search('@'));
   });

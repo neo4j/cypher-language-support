@@ -173,7 +173,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const grp = choice.left.groupsStarting[i];
     // TODO this miiiight be slightly off because of indentation rules
-    const nextGrpStart = isBreak ? curr.indentation : thisWordEnd;
+    const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
     const breaksAll =
       grp.breaksAll ||
       nextGrpStart + grp.size > MAX_COL ||
