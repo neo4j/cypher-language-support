@@ -55,6 +55,7 @@ import {
   LabelExpression4Context,
   LabelExpressionContext,
   LimitContext,
+  ListComprehensionContext,
   ListItemsPredicateContext,
   ListLiteralContext,
   MapContext,
@@ -2119,6 +2120,38 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
+  };
+
+  visitListComprehension = (ctx: ListComprehensionContext) => {
+    const listComprehensionGrp = this.startGroup();
+    this._visit(ctx.LBRACKET());
+    const listIndent = this.addIndentation();
+    const variableExprGrp = this.startGroup();
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(0));
+    this.endGroup(variableExprGrp);
+    if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
+      this._visit(ctx.WHERE());
+      const whereIndent = this.addIndentation();
+      this._visit(ctx._whereExp);
+      this.removeIndentation(whereIndent);
+      this.endGroup(whereGrp);
+    }
+    if (ctx.BAR()) {
+      this._visit(ctx.BAR());
+      this.avoidBreakBetween();
+      this._visit(ctx._barExp);
+    }
+    this.removeIndentation(listIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RBRACKET(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(listComprehensionGrp);
   };
 
   visitForeachClause = (ctx: ForeachClauseContext) => {

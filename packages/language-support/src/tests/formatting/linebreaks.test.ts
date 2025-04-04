@@ -954,6 +954,47 @@ WHERE
 RETURN collect(DISTINCT this {.id}) AS data`;
     verifyFormatting(query, expected);
   });
+
+  test('list comprehensions should split in a resonable way if they have to split', () => {
+    const query = `WITH
+  [
+  r
+  IN
+  relationships
+  WHERE
+  (TYPE(r) = "rkeOtT3d" AND
+    ANY(x IN labels(startNode(r)) WHERE x = "AeQQQ0q5") AND
+    ANY(x IN labels(endNode(r)) WHERE x = "WTogmsn8")) OR
+  (TYPE(r) = "ngSFntWa" AND
+    ANY(x IN labels(startNode(r)) WHERE x = "YWbcqb1r") AND
+    r.weight > "dbz3Z3ze") OR
+  (TYPE(r) = "oxX2TYVT" AND
+    ANY(x IN labels(endNode(r)) WHERE x = "kGlmMPOS") AND
+    r.weight > "Vt3CDfcZ") OR
+  ((startNode(r).id = p.id OR endNode(r).id = p.id) AND r.weight > "Glh7wLxH") OR
+  (TYPE(r) = "QXD44TwO" AND r.weight > "Overcxkc")
+  |
+  r] AS relationships`;
+    const expected = `WITH
+  [
+    r IN relationships
+    WHERE
+      (TYPE(r) = "rkeOtT3d" AND
+        ANY(x IN labels(startNode(r)) WHERE x = "AeQQQ0q5") AND
+        ANY(x IN labels(endNode(r)) WHERE x = "WTogmsn8")) OR
+      (TYPE(r) = "ngSFntWa" AND
+        ANY(x IN labels(startNode(r)) WHERE x = "YWbcqb1r") AND
+        r.weight > "dbz3Z3ze") OR
+      (TYPE(r) = "oxX2TYVT" AND
+        ANY(x IN labels(endNode(r)) WHERE x = "kGlmMPOS") AND
+        r.weight > "Vt3CDfcZ") OR
+      ((startNode(r).id = p.id OR endNode(r).id = p.id) AND
+        r.weight > "Glh7wLxH") OR
+      (TYPE(r) = "QXD44TwO" AND r.weight > "Overcxkc")
+    | r
+  ] AS relationships`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
