@@ -1351,8 +1351,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visitChildren(ctx);
       return;
     }
+    let wholePatternGrp: number;
     let indentId: number;
     if (ctx.variable()) {
+      wholePatternGrp = this.startGroup();
       this._visit(ctx.variable());
       this.avoidBreakBetween();
       this._visit(ctx.EQ());
@@ -1373,6 +1375,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(anonymousPatternGrp);
     this.endGroup(selectorAnonymousPatternGrp);
+    this.endGroup(wholePatternGrp);
   };
 
   visitPatternElement = (ctx: PatternElementContext) => {
