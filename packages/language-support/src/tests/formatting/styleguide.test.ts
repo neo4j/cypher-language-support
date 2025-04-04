@@ -271,7 +271,8 @@ WHEN > 1000 THEN "Immortal"
 ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
-RETURN n.name,
+RETURN
+  n.name,
   CASE n.age
     WHEN = 0, = 1, = 2 THEN "Baby"
     WHEN <= 13 THEN "Child"

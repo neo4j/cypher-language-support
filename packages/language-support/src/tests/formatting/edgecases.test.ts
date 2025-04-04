@@ -213,15 +213,24 @@ RETURN
     WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
     ELSE b.Description[.. "NHIwucAy"]
     END} AS endNode;`;
-    const expected = `RETURN {Node: p.Node, description:
-  CASE p.age
-    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-    ELSE p.Description[.. "VM6fSkTL"]
-  END} AS node, r, {Node: b.Node, description:
-  CASE p.age
-    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-    ELSE b.Description[.. "NHIwucAy"]
-  END} AS endNode;`;
+    const expected = `RETURN
+  {
+    Node: p.Node,
+    description:
+      CASE p.age
+        WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+        ELSE p.Description[.. "VM6fSkTL"]
+      END
+  } AS node,
+  r,
+  {
+    Node: b.Node,
+    description:
+      CASE p.age
+        WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+        ELSE b.Description[.. "NHIwucAy"]
+      END
+  } AS endNode;`;
     verifyFormatting(query, expected);
   });
 
@@ -282,37 +291,54 @@ TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(PK)" ELSE "" E
  AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE 
 AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE "" END
     }) as columns`;
-    const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
-  CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN
-      true AND true AND true AND true AND true AND true AND true AND true AND true
-      THEN "(PK)"
-    ELSE ""
-  END, fk:
-  CASE
-    WHEN
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true AND
-      true
-      THEN "(FK)"
-    ELSE ""
-  END}) AS columns`;
+    const expected = `WITH
+  s,
+  t.name AS tableName,
+  collect(
+    {
+      name: c.name,
+      pk:
+        CASE (NOT pk IS NULL AND $printKeyInfo)
+          WHEN
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true
+            THEN "(PK)"
+          ELSE ""
+        END,
+      fk:
+        CASE
+          WHEN
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true
+            THEN "(FK)"
+          ELSE ""
+        END
+    }
+  ) AS columns`;
     verifyFormatting(query, expected);
   });
 
@@ -354,27 +380,37 @@ RETURN p.name,
        END AS incomeCategory
 ORDER BY p.age DESC`;
     const expected = `MATCH (p:Person)
-RETURN p.name, p.age, p.occupation,
+RETURN
+  p.name,
+  p.age,
+  p.occupation,
   CASE
     WHEN p.age < 18 THEN 'Minor'
-    WHEN p.age >= 18 AND p.age < 65 THEN
-      CASE
-        WHEN p.occupation = 'Student' THEN 'Student (Adult)'
-        WHEN p.occupation = 'Engineer' THEN
-          CASE
-            WHEN p.experienceYears < 5 THEN 'Junior Engineer'
-            WHEN p.experienceYears >= 5 AND p.experienceYears < 10
-              THEN 'Mid-level Engineer'
-            ELSE 'Senior Engineer'
-          END
-        WHEN p.occupation = 'Doctor' THEN
-          CASE
-            WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
-            WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
-            ELSE 'Medical Doctor'
-          END
-        ELSE 'Working Adult'
-      END
+    WHEN
+      p.age >= 18 AND p.age < 65
+      THEN
+        CASE
+          WHEN p.occupation = 'Student' THEN 'Student (Adult)'
+          WHEN
+            p.occupation = 'Engineer'
+            THEN
+              CASE
+                WHEN p.experienceYears < 5 THEN 'Junior Engineer'
+                WHEN
+                  p.experienceYears >= 5 AND p.experienceYears < 10
+                  THEN 'Mid-level Engineer'
+                ELSE 'Senior Engineer'
+              END
+          WHEN
+            p.occupation = 'Doctor'
+            THEN
+              CASE
+                WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
+                WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
+                ELSE 'Medical Doctor'
+              END
+          ELSE 'Working Adult'
+        END
     ELSE 'Senior'
   END AS status,
   CASE
@@ -386,7 +422,8 @@ RETURN p.name, p.age, p.occupation,
         WHEN p.salary >= 75000 AND p.salary < 150000 THEN 'Upper Middle Income'
         ELSE 'High Income'
       END
-  END AS incomeCategory ORDER BY p.age DESC`;
+  END AS incomeCategory
+ORDER BY p.age DESC`;
     verifyFormatting(query, expected);
   });
 

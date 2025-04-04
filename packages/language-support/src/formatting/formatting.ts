@@ -1667,10 +1667,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const indentId1 = this.addIndentation();
     this._visit(ctx.WHEN());
     const indentId2 = this.addIndentation();
-    const whenExprGrp = this.startGroup();
     this._visit(ctx.expression(0));
     const thenGrp = this.startGroup();
-    this.endGroup(whenExprGrp);
     this._visit(ctx.THEN());
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression(1));
@@ -1713,7 +1711,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const wholeAlternativeGrp = this.startGroup();
     this._visit(ctx.WHEN());
     const indentId2 = this.addIndentation();
-    const whenExprGrp = this.startGroup();
     const n = ctx.extendedWhen_list().length;
     for (let i = 0; i < n; i++) {
       this.visit(ctx.extendedWhen(i));
@@ -1722,7 +1719,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     const thenGrp = this.startGroup();
-    this.endGroup(whenExprGrp);
     this._visit(ctx.THEN());
     const indentId3 = this.addIndentation();
     this._visit(ctx.expression());
@@ -1937,15 +1933,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitMapProjectionElement = (ctx: MapProjectionElementContext) => {
     if (ctx.propertyKeyName()) {
-      const grp = this.startGroup()
-      this.visit(ctx.propertyKeyName())
-      this.visit(ctx.COLON())
-      const indentId = this.addIndentation()
-      this.visit(ctx.expression())
-      this.endGroup(grp)
-      this.removeIndentation(indentId)
+      const grp = this.startGroup();
+      this.visit(ctx.propertyKeyName());
+      this.visit(ctx.COLON());
+      const indentId = this.addIndentation();
+      this.visit(ctx.expression());
+      this.endGroup(grp);
+      this.removeIndentation(indentId);
     } else {
-      this.visitChildren(ctx)
+      this.visitChildren(ctx);
     }
   };
 
