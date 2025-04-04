@@ -78,7 +78,7 @@ export async function addParameter(): Promise<void> {
       return new Promise<string>((resolve) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-          const validationResult = validateParamInput(paramValue, dbSchema); //debouncedValidate.flush();
+          const validationResult = validateParamInput(paramValue, dbSchema);
           resolve(validationResult);
         }, DEBOUNCE_TIME);
       });
