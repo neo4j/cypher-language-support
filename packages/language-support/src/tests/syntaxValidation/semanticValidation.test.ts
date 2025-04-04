@@ -1271,24 +1271,49 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
-  test('Shows errors about semantic features not enabled yet in the product', () => {
-    const query = 'MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
+  test('Shows errors about semantic features not enabled in Cypher 5', () => {
+    const query = 'CYPHER 5 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
           'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported in Cypher 5.',
         offsets: {
-          end: 28,
-          start: 6,
+          end: 37,
+          start: 15,
         },
         range: {
           end: {
-            character: 28,
+            character: 37,
             line: 0,
           },
           start: {
-            character: 6,
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors about semantic features not enabled yet in Cypher 25', () => {
+    const query = 'CYPHER 25 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: `Match modes such as \`DIFFERENT RELATIONSHIPS\` are not supported yet.`,
+        offsets: {
+          end: 38,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 38,
+            line: 0,
+          },
+          start: {
+            character: 16,
             line: 0,
           },
         },
