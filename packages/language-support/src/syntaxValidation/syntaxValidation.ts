@@ -11,6 +11,7 @@ import {
   LabelOrRelType,
   LabelType,
   ParsedFunction,
+  ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
   parserWrapper,
@@ -56,7 +57,7 @@ function detectNonDeclaredLabel(
 
 function generateSyntaxDiagnostic(
   rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType,
+  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
@@ -282,6 +283,7 @@ export function lintCypherQuery(
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {
         if (current.cypherVersionError) return current.cypherVersionError;
 
+        const parameterErrors = errorOnUndeclaredParameters(current, dbSchema);
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
         const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
         const procedureWarnings = warningOnDeprecatedProcedure(
@@ -307,6 +309,7 @@ export function lintCypherQuery(
         return semanticDiagnostics
           .concat(
             labelWarnings,
+            parameterErrors,
             functionErrors,
             procedureErrors,
             functionWarnings,
@@ -375,6 +378,35 @@ function warningOnDeprecatedFunction(
     });
   }
   return warnings;
+}
+
+function errorOnUndeclaredParameters(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const errors: SyntaxDiagnostic[] = [];
+
+  if (parsingResult.collectedParameters) {
+    parsingResult.collectedParameters.forEach((parameter) => {
+      let parameterName = parameter.name;
+      if (parameterName.startsWith('`') && parameterName.endsWith('`')) {
+        parameterName = parameterName.substring(1, parameterName.length - 1);
+      }
+      const paramExists = !!dbSchema.parameters?.[parameterName];
+      if (!paramExists) {
+        errors.push(
+          generateSyntaxDiagnostic(
+            parameter.rawText,
+            parameter,
+            DiagnosticSeverity.Error,
+            `Parameter $${parameter.name} is not defined.`,
+          ),
+        );
+      }
+    });
+  }
+
+  return errors;
 }
 
 function errorOnUndeclaredFunctions(
