@@ -7,6 +7,9 @@ describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
     parameters: {
       stringParam: 'something',
+      '@param': 'wow',
+      'param.1': 5000,
+      '100param': 'great',
       intParam: 1337,
       mapParam: {
         property: 'value',
@@ -41,6 +44,21 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           kind: CompletionItemKind.Variable,
           insertText: '`some param`',
         },
+        {
+          label: '$@param',
+          kind: CompletionItemKind.Variable,
+          insertText: '`@param`',
+        },
+        {
+          label: '$100param',
+          kind: CompletionItemKind.Variable,
+          insertText: '100param',
+        },
+        {
+          label: '$param.1',
+          kind: CompletionItemKind.Variable,
+          insertText: '`param.1`',
+        },
       ],
     });
   });
@@ -68,6 +86,20 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           kind: CompletionItemKind.Variable,
           insertText: '$`some param`',
         },
+        {
+          label: '$@param',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`@param`',
+        },
+        {
+          label: '$100param',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$param.1',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`param.1`',
+        },
       ],
     });
   });
@@ -85,6 +117,20 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           label: '$some param',
           kind: CompletionItemKind.Variable,
           insertText: '$`some param`',
+        },
+        {
+          label: '$@param',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`@param`',
+        },
+        {
+          label: '$100param',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$param.1',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`param.1`',
         },
       ],
     });
@@ -116,6 +162,21 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           kind: CompletionItemKind.Variable,
           insertText: '`some param`',
         },
+        {
+          label: '$@param',
+          kind: CompletionItemKind.Variable,
+          insertText: '`@param`',
+        },
+        {
+          label: '$100param',
+          kind: CompletionItemKind.Variable,
+          insertText: '100param',
+        },
+        {
+          label: '$param.1',
+          kind: CompletionItemKind.Variable,
+          insertText: '`param.1`',
+        },
       ],
     });
   });
@@ -133,6 +194,20 @@ describe('Completes parameters outside of databases, roles, user names', () => {
           label: '$some param',
           kind: CompletionItemKind.Variable,
           insertText: '$`some param`',
+        },
+        {
+          label: '$@param',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`@param`',
+        },
+        {
+          label: '$100param',
+          kind: CompletionItemKind.Variable,
+        },
+        {
+          label: '$param.1',
+          kind: CompletionItemKind.Variable,
+          insertText: '$`param.1`',
         },
       ],
     });
