@@ -2018,6 +2018,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.expression());
       this.endGroup(grp);
       this.removeIndentation(indentId);
+    } else if (ctx.DOT()) {
+      this._visit(ctx.DOT());
+      this._visit(ctx.TIMES());
+      this.concatenate();
     } else {
       this.visitChildren(ctx);
     }

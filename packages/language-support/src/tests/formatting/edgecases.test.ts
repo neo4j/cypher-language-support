@@ -972,7 +972,7 @@ RETURN
         ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
-  // TODO: the THEN below the EXISTS shuold get one more indentation step
+    // TODO: the THEN below the EXISTS shuold get one more indentation step
     const expected = `MATCH (u:User)
 WITH
   u,
@@ -1055,6 +1055,31 @@ WHERE
   $parameter > 2
 RETURN variable;`;
     const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('DOT STAR should stick together in map projections', () => {
+    const query = `WITH
+  mission {
+    .
+    *,
+    triggerRoute: triggerRoute,
+    studentMissionTrackers: COALESCE(missionTrackers, []),
+    topic: topic
+  } AS missions,
+  levels,
+  levelTracker,
+  planet`;
+    const expected = `WITH
+  mission {
+    .*,
+    triggerRoute: triggerRoute,
+    studentMissionTrackers: COALESCE(missionTrackers, []),
+    topic: topic
+  } AS missions,
+  levels,
+  levelTracker,
+  planet`;
     verifyFormatting(query, expected);
   });
 });
