@@ -101,7 +101,7 @@ jobs:
         run: pnpm build
 
       - name: Install Playwright Browsers
-        run: pnpx playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode

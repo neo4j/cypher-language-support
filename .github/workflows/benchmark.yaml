@@ -35,7 +35,7 @@ jobs:
         run: pnpm build
 
       - name: Install Playwright Browsers
-        run: pnpx playwright install --with-deps
+        run: pnpx exec playwright install --with-deps
 
       - name: Benchmark
         run: pnpm benchmark --concurrency=1
