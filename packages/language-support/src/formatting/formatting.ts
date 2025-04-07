@@ -337,7 +337,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: prefix.indentation.concat(suffix.indentation),
-      // TODO: Maybe make the field an empty string instead
       comment: (prefix.comment || '') + (suffix.comment || '') || undefined,
       ...(hasCursor && { isCursor: true }),
     };
