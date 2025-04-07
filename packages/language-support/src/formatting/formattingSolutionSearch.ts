@@ -34,7 +34,7 @@ export interface Group {
   breaksAll?: boolean;
   size: number;
   dbgText: string;
-  align: number; // USE ONLY FOR STATE KEY
+  align: number;
   breakCost: number;
 }
 
