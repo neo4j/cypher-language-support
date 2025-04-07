@@ -174,11 +174,11 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const grp = choice.left.groupsStarting[i];
-    // TODO this miiiight be slightly off because of indentation rules
     const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
     const breaksAll =
       grp.breaksAll ||
       nextGrpStart + grp.size > MAX_COL ||
+      // TODO: v3 tech debt; breaking before should be handled differently
       grp.id === split.breakBeforeGrp?.id;
     const newGroup = {
       ...grp,
@@ -276,7 +276,8 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
     ? state.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
 
-  // TODO: There might be a better way to do this?
+  // TODO: v3 tech debt; groups should include the clause keywords which would allow us to
+  // skip this logic
   let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
     if (group.breaksAll || group.size + nextStart > MAX_COL) {
@@ -360,13 +361,6 @@ function bestFirstSolnSearch(
       }
       return reconstructBestPath(state);
     }
-    // TODO: REMOVE THIS
-    const stateString = state.choiceIndex > 0 ? stateToString(state) : '';
-    if (stateString === 'hej hopp') {
-      throw new Error(
-        'error to make sure the above does not have eslint errors',
-      );
-    }
     const choice = choiceList[state.choiceIndex];
     const filteredSplits = filterSplits(
       state,
@@ -404,7 +398,9 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
       cursorPos = buffer.join('').length;
     }
     buffer.push(decision.left.text);
-    // TODO: should this live here? Should this method have this responsibility?
+    // NOTE: Arguably this method should not have the responsibility of handling
+    // inline comments at all, since now it has too many responsibilities.
+    // But there is currently no better place for it.
     if (decision.left.type === 'REGULAR' && decision.left.comment) {
       pendingComments.push(decision.left.comment);
     }
