@@ -2,7 +2,7 @@ import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import assert from 'assert';
 import { validateParamInput } from '../../../src/commandHandlers/params';
 
-suite.only('Parameter validation spec', () => {
+suite('Parameter validation spec', () => {
   const dbSchema: DbSchema = {
     functions: {
       'CYPHER 5': {

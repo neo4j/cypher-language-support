@@ -184,7 +184,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
     };
     nextGroups.push(newGroup);
   }
-
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);

@@ -81,7 +81,6 @@ import {
   QuantifierContext,
   RangePostfixContext,
   ReduceExpressionContext,
-  RegularQueryContext,
   RelationshipPatternContext,
   RelTypeContext,
   ReturnBodyContext,
@@ -96,6 +95,7 @@ import {
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   TrimFunctionContext,
+  UnionContext,
   UnwindClauseContext,
   UseClauseContext,
   WhereClauseContext,
@@ -676,6 +676,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: [],
     };
 
+    this.startGroupCounter = 0;
     this.currentBuffer().push(chunk);
   };
 
@@ -1887,7 +1888,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   // Handled separately because UNION wants to look a certain way
-  visitRegularQuery = (ctx: RegularQueryContext) => {
+  visitUnion = (ctx: UnionContext) => {
     this._visit(ctx.singleQuery(0));
     const n = ctx.singleQuery_list().length - 1;
     for (let i = 0; i < n; i++) {

@@ -1271,24 +1271,49 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([]);
   });
 
-  test('Shows errors about semantic features not enabled yet in the product', () => {
-    const query = 'MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
+  test('Shows errors about semantic features not enabled in Cypher 5', () => {
+    const query = 'CYPHER 5 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported yet.',
+          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported in Cypher 5.',
         offsets: {
-          end: 28,
-          start: 6,
+          end: 37,
+          start: 15,
         },
         range: {
           end: {
-            character: 28,
+            character: 37,
             line: 0,
           },
           start: {
-            character: 6,
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors about semantic features not enabled yet in Cypher 25', () => {
+    const query = 'CYPHER 25 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: `Match modes such as \`DIFFERENT RELATIONSHIPS\` are not supported yet.`,
+        offsets: {
+          end: 38,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 38,
+            line: 0,
+          },
+          start: {
+            character: 16,
             line: 0,
           },
         },
@@ -1332,18 +1357,18 @@ Attempted to access graph other`,
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
-          end: 37,
-          start: 6,
+          end: 19,
+          start: 7,
         },
         range: {
           end: {
-            character: 37,
+            character: 19,
             line: 0,
           },
           start: {
-            character: 6,
+            character: 7,
             line: 0,
           },
         },
@@ -1351,7 +1376,7 @@ Attempted to access graph other`,
       },
       {
         message:
-          'Assigning a path in a quantified path pattern is not yet supported.',
+          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
         offsets: {
           end: 19,
           start: 7,
@@ -2072,6 +2097,98 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           },
         },
         severity: 2,
+      },
+    ]);
+  });
+
+  test('Shows errors for missing parameters', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
+      {
+        message: 'Parameter $missingParam is not defined.',
+        offsets: {
+          end: 46,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 46,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors for missing parameters correctly with backticked parameters', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.age = $`myParam` RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
+      {
+        message: 'Parameter $`missingParam` is not defined.',
+        offsets: {
+          end: 48,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 48,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors for missing parameters correctly with parameter names containing space', () => {
+    const query =
+      'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+          parameters: {
+            'some param': 21,
+          },
+        },
+      }),
+    ).toEqual([
+      {
+        message: 'Parameter $`missing param` is not defined.',
+        offsets: {
+          end: 49,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 49,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
       },
     ]);
   });

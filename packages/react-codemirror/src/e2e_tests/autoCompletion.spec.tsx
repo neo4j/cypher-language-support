@@ -33,7 +33,7 @@ RETURN n;`}
   await textField.press('Control+ ');
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
-  await page.locator('.cm-tooltip-autocomplete').getByText('WHERE').click();
+  await page.locator('.cm-tooltip-autocomplete').getByText('WHERE', {exact: true}).click();
 
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
