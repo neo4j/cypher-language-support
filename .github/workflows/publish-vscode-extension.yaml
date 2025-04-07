@@ -20,9 +20,15 @@ jobs:
         with:
           lfs: true
 
-      - uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
