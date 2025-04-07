@@ -492,7 +492,7 @@ ORDER BY lm.lkjhgfdswert ASC`;
     verifyFormatting(query, expected);
   });
 
-  test('should break after distinct but not the alphabet', () => {
+  test('should break after distinct and the long alphabet', () => {
     const query = `return distinct
   a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w`;
     const expected = `
