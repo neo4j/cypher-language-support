@@ -233,7 +233,7 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     edge: {
       prevState: curr,
       decision: {
-        indentation: curr.column === 0 ? finalIndentation : 0,
+        indentation: finalIndentation,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
