@@ -1502,7 +1502,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this._visit(ctx.EQ());
     }
-    // Techinically this one is just like regular patterns, and should be grouped like them.
+    // Technically this one is just like regular patterns, and should be grouped like them.
     // But for some reason it is its own grammar? So just group it like this and call it a day...
     const pathPatternGrp = this.startGroup();
     this._visit(ctx.pathPatternNonEmpty());
