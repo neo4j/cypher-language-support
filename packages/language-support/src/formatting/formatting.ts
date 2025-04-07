@@ -365,7 +365,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
     const chunk = this.currentBuffer()[idx];
     if (chunk.type !== 'REGULAR' && chunk.type !== 'SYNTAX_ERROR') {
-      throw new Error(`Internal formatter bug in setting ${propertyName}`);
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     chunk[propertyName] = true;
   };
