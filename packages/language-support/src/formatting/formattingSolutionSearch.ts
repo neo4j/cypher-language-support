@@ -1,7 +1,7 @@
 import { Heap } from 'heap-js';
-import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
   Chunk,
+  doesNotWantSpace,
   emptyChunk,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
@@ -78,8 +78,6 @@ interface FinalResultWithPos {
 
 type FinalResult = string | FinalResultWithPos;
 
-const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
-
 const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
   { splitType: '\n', cost: 1 },
@@ -100,15 +98,6 @@ const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
 const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
 const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
-
-export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    nextChunk?.type !== 'COMMENT' &&
-    chunk.type === 'REGULAR' &&
-    (chunk.noSpace ||
-      (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
-  );
-}
 
 function getNextIndentationState(
   state: State,
