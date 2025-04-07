@@ -5,7 +5,7 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
-import { doesNotWantSpace, Group } from './formattingSolutionSearch';
+import { Group } from './formattingSolutionSearch';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
