@@ -71,6 +71,7 @@ jobs:
       - name: Builds and run tests
         # Tests with the same flags that VSCode does
         run: |
+          pnpm build
           pnpm test
 
   e2e-test:
