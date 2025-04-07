@@ -357,6 +357,9 @@ function bestFirstSolnSearch(
       return reconstructBestPath(state);
     }
     const choice = choiceList[state.choiceIndex];
+    // TODO: v3 tech debt; rather than "filtering out splits", we should ever only have one
+    // possible split type at any moment. This is true right now; if you throw an error if
+    // filteredSplits.length > 1, nothing happens.
     const filteredSplits = filterSplits(
       state,
       choice,
