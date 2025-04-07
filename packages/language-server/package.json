@@ -50,7 +50,6 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9",
-    "esbuild": "^0.25.1"
+    "@types/lodash.debounce": "^4.0.9"
   }
 }
