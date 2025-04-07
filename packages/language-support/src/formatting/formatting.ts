@@ -417,12 +417,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.currentBuffer().at(idx).groupsEnding.push(group);
   };
 
-  endAllExceptBaseGroup = () => {
-    while (this.groupStack.length > 1) {
-      this.endGroup(this.groupStack.at(-1).id);
-    }
-  };
-
   startGroup = (): number => {
     const lastChunk = this.lastInCurrentBuffer();
     const newGroup: Group = {
@@ -436,25 +430,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.groupStack.push(newGroup);
     this.groupID++;
     return this.groupID - 1;
-  };
-
-  startGroupAlsoOnComment = (): number => {
-    if (this.lastInCurrentBuffer().type === 'COMMENT') {
-      const idx = this.getFirstNonCommentIdx();
-      const commentChunk = this.currentBuffer().at(idx + 1);
-      const newGroup: Group = {
-        id: this.groupID,
-        dbgText: '',
-        size: 0,
-        align: 0, // Irrelevant here
-        breakCost: 0,
-      };
-      commentChunk.groupsStarting.push(newGroup);
-      this.groupStack.push(newGroup);
-      this.groupID++;
-      return this.groupID - 1;
-    }
-    return this.startGroup();
   };
 
   _addIndentationModifier = (modifier: IndentationModifier) => {
