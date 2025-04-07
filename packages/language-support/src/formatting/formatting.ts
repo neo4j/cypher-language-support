@@ -106,21 +106,20 @@ import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   Chunk,
   CommentChunk,
+  fillInRegularChunkGroupSizes,
   findTargetToken,
+  getActiveGroups,
   getParseTreeAndTokens,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isComment,
   RegularChunk,
   SyntaxErrorChunk,
+  verifyGroupSizes,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import {
-  buffersToFormattedString,
-  doesNotWantSpace,
-  Group,
-} from './formattingSolutionSearch';
+import { buffersToFormattedString, Group } from './formattingSolutionSearch';
 
 const MISSING = '<missing';
 
@@ -197,66 +196,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return resultString;
   };
 
-  // These three are helpers for the fillInGroupSizes method to make it more manageable
-  _fillInRegularChunkGroupSizes = (
-    chunk: RegularChunk,
-    activeGroups: Group[],
-    groupsEnding: Set<number>,
-  ) => {
-    for (const group of activeGroups) {
-      if (!chunk.text) {
-        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-      }
-      group.size += chunk.text.length;
-      // PERF: Right now we include dbgText always, even though it's only used for debugging.
-      // It does not seem to have any significant performance downsides, but only doing so
-      // when e.g. a flag is set might be a more prudent choice.
-      group.dbgText += chunk.text;
-      if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
-        group.size++;
-        group.dbgText += ' ';
-      }
-      if (chunk.comment && !groupsEnding.has(group.id)) {
-        group.breaksAll = true;
-      }
-    }
-  };
-
-  _getActiveGroups = (
-    activeGroups: Group[],
-    groupsEnding: Set<number>,
-    chunk: Chunk,
-  ) => {
-    for (const group of chunk.groupsStarting) {
-      activeGroups.push(group);
-    }
-    const newActiveGroups: Group[] = [];
-    for (const group of activeGroups) {
-      if (!groupsEnding.has(group.id)) {
-        newActiveGroups.push(group);
-      } else {
-        // Trim trailling spaces from groups that are ending
-        if (group.dbgText.at(-1) === ' ') {
-          group.size--;
-          group.dbgText = group.dbgText.slice(0, -1);
-        }
-      }
-    }
-    return newActiveGroups;
-  };
-
-  _verifyGroupSizes = () => {
-    for (const chunkList of this.buffers) {
-      for (const chunk of chunkList) {
-        for (const group of chunk.groupsStarting) {
-          if (group.size !== group.dbgText.length) {
-            throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-          }
-        }
-      }
-    }
-  };
-
   fillInGroupSizes = () => {
     for (const chunkList of this.buffers) {
       let activeGroups: Group[] = [];
@@ -266,7 +205,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           chunk.groupsEnding.map((g) => g.id),
         );
         if (chunk.type === 'REGULAR') {
-          this._fillInRegularChunkGroupSizes(chunk, activeGroups, groupsEnding);
+          fillInRegularChunkGroupSizes(chunk, activeGroups, groupsEnding);
         } else if (chunk.type === 'COMMENT') {
           // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
           // the groups it is a part of will always break.
@@ -276,11 +215,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             activeGroups[0].breaksAll = true;
           }
         }
-        activeGroups = this._getActiveGroups(activeGroups, groupsEnding, chunk);
+        activeGroups = getActiveGroups(activeGroups, groupsEnding, chunk);
       }
     }
     // If we made an error when calculating the group sizes, that counts as an internal bug.
-    this._verifyGroupSizes();
+    verifyGroupSizes(this.buffers);
   };
 
   currentBuffer = () => this.buffers.at(-1);

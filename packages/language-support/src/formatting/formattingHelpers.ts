@@ -5,7 +5,7 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
-import { Group } from './formattingSolutionSearch';
+import { doesNotWantSpace, Group } from './formattingSolutionSearch';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -150,4 +150,64 @@ export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
     chunk.type === 'COMMENT' ||
     (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
   );
+}
+
+// These three are helpers for the fillInGroupSizes method to make it more manageable
+export function fillInRegularChunkGroupSizes(
+  chunk: RegularChunk,
+  activeGroups: Group[],
+  groupsEnding: Set<number>,
+) {
+  for (const group of activeGroups) {
+    if (!chunk.text) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    group.size += chunk.text.length;
+    // PERF: Right now we include dbgText always, even though it's only used for debugging.
+    // It does not seem to have any significant performance downsides, but only doing so
+    // when e.g. a flag is set might be a more prudent choice.
+    group.dbgText += chunk.text;
+    if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
+      group.size++;
+      group.dbgText += ' ';
+    }
+    if (chunk.comment && !groupsEnding.has(group.id)) {
+      group.breaksAll = true;
+    }
+  }
+}
+
+export function getActiveGroups(
+  activeGroups: Group[],
+  groupsEnding: Set<number>,
+  chunk: Chunk,
+) {
+  for (const group of chunk.groupsStarting) {
+    activeGroups.push(group);
+  }
+  const newActiveGroups: Group[] = [];
+  for (const group of activeGroups) {
+    if (!groupsEnding.has(group.id)) {
+      newActiveGroups.push(group);
+    } else {
+      // Trim trailling spaces from groups that are ending
+      if (group.dbgText.at(-1) === ' ') {
+        group.size--;
+        group.dbgText = group.dbgText.slice(0, -1);
+      }
+    }
+  }
+  return newActiveGroups;
+}
+
+export function verifyGroupSizes(buffers: Chunk[][]) {
+  for (const chunkList of buffers) {
+    for (const chunk of chunkList) {
+      for (const group of chunk.groupsStarting) {
+        if (group.size !== group.dbgText.length) {
+          throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+        }
+      }
+    }
+  }
 }
