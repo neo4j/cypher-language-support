@@ -14,6 +14,9 @@ const showGroups = false;
 
 interface Split {
   splitType: ' ' | '' | '\n' | '\n\n';
+  // TODO: v3 tech debt; the split keeps track of whether the group wants a break before itself.
+  // Ideally this should be handled in a more sound way, such as including the clause word in the
+  // group itself.
   breakBeforeGrp?: Group;
   cost: number;
   wantedToSplit?: boolean;
