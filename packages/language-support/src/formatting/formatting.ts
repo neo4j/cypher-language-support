@@ -676,7 +676,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: [],
     };
 
-    this.startGroupCounter = 0;
     this.currentBuffer().push(chunk);
   };
 
