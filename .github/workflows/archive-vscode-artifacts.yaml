@@ -40,7 +40,7 @@ jobs:
       - name: Generate VSCode plugin package
         run: |
           cd packages/vscode-extension
-          npx vsce package --pre-release
+          pnpx vsce package --pre-release
 
       - uses: actions/upload-artifact@v4
         if: always()

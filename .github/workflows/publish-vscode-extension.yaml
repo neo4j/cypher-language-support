@@ -44,12 +44,12 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           cd packages/vscode-extension
-          npx vsce package
-          npx vsce publish
+          pnpx vsce package
+          pnpx vsce publish
 
       - name: Publish to OpenVSX
         env:
           VSX_PAT: ${{ secrets.VSX_PAT }}
         run: |
           cd packages/vscode-extension
-          npx ovsx publish -p $VSX_PAT
+          pnpx ovsx publish -p $VSX_PAT
