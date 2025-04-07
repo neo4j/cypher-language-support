@@ -523,7 +523,7 @@ RETURN DISTINCT
     verifyFormatting(query, expected);
   });
 
-  test('should not  break after distinct', () => {
+  test('should not break after distinct', () => {
     const query = `return distinct
   a, b, c, d, e, f`;
     const expected = `RETURN DISTINCT a, b, c, d, e, f`;
