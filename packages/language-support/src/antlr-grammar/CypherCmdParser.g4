@@ -19,6 +19,7 @@ consoleCommand: COLON (
     | welcomeCmd
     | sysInfoCmd
     | styleCmd
+    | playCmd
 );
 
 paramsCmd: PARAM paramsArgs?;
@@ -46,6 +47,8 @@ sysInfoCmd: SYSINFO;
 styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
+
+playCmd: PLAY;
 
 // These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 

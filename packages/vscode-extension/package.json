@@ -40,7 +40,7 @@
         "command": "neo4j.editConnection",
         "category": "Neo4j",
         "title": "Edit connection",
-        "icon": "$(add)"
+        "icon": "$(pencil)"
       },
       {
         "command": "neo4j.createConnection",
@@ -61,7 +61,8 @@
       {
         "command": "neo4j.deleteConnection",
         "title": "Delete connection...",
-        "category": "Neo4j"
+        "category": "Neo4j",
+        "icon": "$(trash)"
       },
       {
         "command": "neo4j.refreshConnections",
@@ -214,6 +215,16 @@
           "command": "neo4j.deleteConnection",
           "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
           "group": "01_management@2"
+        },
+        {
+          "command": "neo4j.editConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "inline"
+        },
+        {
+          "command": "neo4j.deleteConnection",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "inline"
         },
         {
           "command": "neo4j.switchDatabase",
