@@ -155,6 +155,8 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const [nextIndentation, newActive] = getNextIndentationState(
     state,
     choice.left,
+    // We should apply the indentation also if it was a group that would want to split, but wasn't
+    // allowed to (because of avoidBreakBetween() in the visitor).
     isBreak || split.wantedToSplit,
   );
 
