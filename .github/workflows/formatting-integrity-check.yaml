@@ -21,8 +21,18 @@ jobs:
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
 
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies with frozen lock file
+        run: pnpm install --frozen-lockfile
 
       - name: Build Project
         run: pnpm build

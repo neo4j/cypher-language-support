@@ -30,8 +30,8 @@ jobs:
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
 
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
+      - name: Install dependencies with frozen lock file
+        run: pnpm install --frozen-lockfile
 
       - name: Build and release canary package to npm
         run: node ./release-canary.js
@@ -59,8 +59,8 @@ jobs:
       - name: Setup antlr4
         uses: ./.github/actions/setup-antlr4
 
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
+      - name: Install dependencies with frozen lock file
+        run: pnpm install --frozen-lockfile
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
