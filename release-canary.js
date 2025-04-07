@@ -55,14 +55,14 @@ function replaceDependency(package, dependency, newVersion) {
 function updateVersion(package, version) {
   exec(`
     cd ${wd}/${package} &&
-    npm version ${version}
+    pnpm version ${version}
   `);
 }
 
 function publishCanaryVersion(package) {
   exec(`
     cd ${wd}/${package} &&
-    npm publish --tag canary
+    pnpm publish --tag canary
   `);
 }
 

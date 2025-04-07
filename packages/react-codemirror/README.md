@@ -1,6 +1,6 @@
 # React Codemirror
 
-This package can be built with `pnpm build` and then published to npm with `npm publish`.
+This package can be built with `pnpm build` and then published to npm with `pnpm publish`.
 
 ## Usage
 
