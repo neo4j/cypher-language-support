@@ -475,7 +475,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   removeIndentation = (id: number) => {
     if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
-      throw new Error('wrong indent id on top of stack');
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     const idx = this.getFirstNonCommentIdx();
     const chunk = this.currentBuffer().at(idx);
