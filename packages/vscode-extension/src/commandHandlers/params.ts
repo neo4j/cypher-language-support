@@ -44,8 +44,6 @@ export function validateParamInput(
   return undefined;
 }
 
-const DEBOUNCE_TIME = 200;
-
 export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
@@ -80,7 +78,7 @@ export async function addParameter(): Promise<void> {
         timeout = setTimeout(() => {
           const validationResult = validateParamInput(paramValue, dbSchema);
           resolve(validationResult);
-        }, DEBOUNCE_TIME);
+        }, 200);
       });
     },
   });
