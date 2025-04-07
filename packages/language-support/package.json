@@ -60,6 +60,7 @@
   },
   "devDependencies": {
     "@types/benchmark": "^2.1.5",
+    "@types/semver": "^7.7.0",
     "benchmark": "^2.1.4"
   }
 }
