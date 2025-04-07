@@ -219,15 +219,23 @@ suite('Params panel testing', () => {
     await executeFile(workbench, 'params.cypher');
 
     // initial pop-up for param b
-    await browser.pause(1000);
-    await browser.keys(['1', '2', Key.Enter]);
+    let inputBox = await browser.$('.quick-input-widget input');
+
+    await inputBox.setValue('12');
+    await browser.keys([Key.Enter]);
 
     // initial pop-up for param `some param`
-    await browser.pause(1000);
+    inputBox = await browser.$('.quick-input-widget input');
+
+    await inputBox.setValue('false');
+    await browser.keys([Key.Enter]);
     await browser.keys(['f', 'a', 'l', 's', 'e', Key.Enter]);
 
     // initial pop-up for param `some-param`
-    await browser.pause(1000);
+    inputBox = await browser.$('.quick-input-widget input');
+
+    await inputBox.setValue('5');
+    await browser.keys([Key.Enter]);
     await browser.keys(['5', Key.Enter]);
 
     await checkResultsContent(workbench, async () => {
