@@ -1086,4 +1086,15 @@ RETURN variable;`;
   planet`;
     verifyFormatting(query, expected);
   });
+
+  test('where clause with pathPatternNonEmpty should be idempotent', () => {
+    const query = `MATCH ( aaaaaa : aaaaaa ) //FJLwtvNCTBNmVNTdqCHVhotQBSdfwCtnxaNztnAEey
+WHERE ( aaaaaa ) - [ : aaaaaa | aaaaaa ] - ( aaaaaa ) //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
+OR ( aaaaaa ) < - [ : aaaaaa ] - ( : aaaaaa ) - [ : aaaaaa ] - > ( aaaaaa ) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
+    const expected = `MATCH (aaaaaa:aaaaaa) //FJLwtvNCTBNmVNTdqCHVhotQBSdfwCtnxaNztnAEey
+WHERE
+  (aaaaaa)-[:aaaaaa|aaaaaa]-(aaaaaa) OR //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
+  (aaaaaa)<-[:aaaaaa]-(:aaaaaa)-[:aaaaaa]->(aaaaaa) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
+    verifyFormatting(query, expected);
+  });
 });

@@ -72,6 +72,7 @@ import {
   ParenthesizedExpressionContext,
   ParenthesizedPathContext,
   PathLengthContext,
+  PathPatternNonEmptyContext,
   PatternComprehensionContext,
   PatternContext,
   PatternElementContext,
@@ -1284,6 +1285,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.quantifier());
   };
 
+  visitPathPatternNonEmpty = (ctx: PathPatternNonEmptyContext) => {
+    if (ctx.getChildCount() === 1) {
+      this.visitChildren(ctx);
+      return;
+    }
+    const wrappingGrp = this.startGroup();
+    this.visitChildren(ctx);
+    this.endGroup(wrappingGrp);
+  };
+
   visitArrowLine = (ctx: ArrowLineContext) => {
     this._visitTerminalRaw(ctx.MINUS());
     this._visitTerminalRaw(ctx.ARROW_LINE());
@@ -1477,8 +1488,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this._visit(ctx.EQ());
     }
-    // Technically this one is just like regular patterns, and should be grouped like them.
-    // But for some reason it is its own grammar? So just group it like this and call it a day...
     const pathPatternGrp = this.startGroup();
     this._visit(ctx.pathPatternNonEmpty());
     this.endGroup(pathPatternGrp);
