@@ -1142,6 +1142,37 @@ WITH
 RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
+  test('reduce expression should not break on each line', () => {
+    const query = `WITH
+  customerId,
+  intervalos,
+  REDUCE
+  (
+  maxFreq
+  =
+  "Hxhyz2TI",
+  f
+  IN
+  freqList
+  |
+  CASE
+    WHEN f.freq > maxFreq THEN f.freq
+    ELSE maxFreq
+  END) AS maxFreq, // Acha frequência máxima
+  freqList`;
+    const expected = `WITH
+  customerId,
+  intervalos,
+  REDUCE(
+    maxFreq = "Hxhyz2TI",
+    f IN freqList |
+      CASE
+        WHEN f.freq > maxFreq THEN f.freq
+        ELSE maxFreq
+      END) AS maxFreq, // Acha frequência máxima
+  freqList`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
