@@ -194,6 +194,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return resultString;
   };
 
+  // These three are helpers for the fillInGroupSizes method to make it more manageable
   _fillInRegularChunkGroupSizes = (
     chunk: RegularChunk,
     activeGroups: Group[],
