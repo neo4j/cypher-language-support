@@ -155,9 +155,6 @@ function stateToString(state: State) {
 
 function getNeighbourState(curr: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
-  // A state has indentation, which is applied after a hard line break. However, if it has an
-  // active group and we decided to split within a line, the alignment of that group takes precedence
-  // over the base indentation.
   let nextGroups = [...curr.activeGroups];
   const finalIndentation = getFinalIndentation(curr);
   const indentationDecision = curr.column === 0 ? finalIndentation : 0;
