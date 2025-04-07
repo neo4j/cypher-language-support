@@ -682,7 +682,6 @@ RETURN person.name AS name`;
     const expected = query;
     verifyFormatting(query, expected);
   });
-
   test('count expression with regular query', () => {
     const query = `MATCH (person:Person)
 RETURN person.name AS name, COUNT {
@@ -1145,6 +1144,7 @@ WITH
 RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
+
   test('reduce expression should not break on each line', () => {
     const query = `WITH
   customerId,
