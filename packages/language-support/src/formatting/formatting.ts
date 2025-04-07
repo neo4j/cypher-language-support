@@ -294,6 +294,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // NOTE: Groups do not translate between line breaks. In some cases (primarily CASE and EXISTS)
     // groups might be active when breakLine() is called, but it does not make sense to keeep them active
     // so clear all groups when this happens.
+    // TODO: v3 tech debt; we should not end groups between breakLine() calls.
     this.removeAllPendingGroups();
 
     if (this.currentBuffer().length > 0) {
