@@ -455,35 +455,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return this.startGroup();
   };
 
-  setIndentationProperty = (modifier: 'add' | 'remove') => {
+  _addIndentationModifier = (modifier: IndentationModifier) => {
     const idx = this.getFirstNonCommentIdx();
     const chunk = this.currentBuffer().at(idx);
-    const indentId = this.indentId;
-    this.indentId++;
-    const indent: IndentationModifier = {
-      id: indentId,
-      change: modifier === 'add' ? 1 : -1,
-    };
-    this.indentStack.push(indent);
-    chunk.indentation.push(indent);
-    return indentId;
+    chunk.indentation.push(modifier);
   };
 
   addIndentation = () => {
-    return this.setIndentationProperty('add');
+    const indentId = this.indentId;
+    this.indentId++;
+    const modifier: IndentationModifier = {
+      id: indentId,
+      change: 1,
+    };
+    this.indentStack.push(modifier);
+    this._addIndentationModifier(modifier);
+    return indentId;
   };
 
   removeIndentation = (id: number) => {
     if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
-    const idx = this.getFirstNonCommentIdx();
-    const chunk = this.currentBuffer().at(idx);
-    const indent = this.indentStack.pop();
-    chunk.indentation.push({
-      id: indent.id,
+    const modifier: IndentationModifier = {
+      ...this.indentStack.pop(),
       change: -1,
-    });
+    };
+    this._addIndentationModifier(modifier);
   };
 
   getBottomChild = (
