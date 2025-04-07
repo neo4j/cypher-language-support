@@ -422,7 +422,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   startGroup = (): number => {
-    const last = this.lastInCurrentBuffer();
+    const lastChunk = this.lastInCurrentBuffer();
     const newGroup: Group = {
       id: this.groupID,
       dbgText: '',
@@ -430,7 +430,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       align: 0, // Irrelevant here
       breakCost: 0,
     };
-    last.groupsStarting.push(newGroup);
+    lastChunk.groupsStarting.push(newGroup);
     this.groupStack.push(newGroup);
     this.groupID++;
     return this.groupID - 1;
