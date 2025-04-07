@@ -141,8 +141,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   targetToken?: number;
   cursorPos = 0;
   indentId = 0;
-  indentStack: IndentationModifier[] = [];
+  // Indentation that has been added but not yet ended
+  pendingIndents: IndentationModifier[] = [];
   groupID = 0;
+  // Groups that have been started but not yet ended
   groupStack: Group[] = [];
   previousTokenIndex: number = -1;
   unParseable: string = '';
@@ -468,17 +470,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       id: indentId,
       change: 1,
     };
-    this.indentStack.push(modifier);
+    this.pendingIndents.push(modifier);
     this._addIndentationModifier(modifier);
     return indentId;
   };
 
   removeIndentation = (id: number) => {
-    if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
+    if (
+      this.pendingIndents.length === 0 ||
+      this.pendingIndents.at(-1).id !== id
+    ) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     const modifier: IndentationModifier = {
-      ...this.indentStack.pop(),
+      ...this.pendingIndents.pop(),
       change: -1,
     };
     this._addIndentationModifier(modifier);
