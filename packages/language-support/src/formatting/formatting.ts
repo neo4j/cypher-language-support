@@ -243,14 +243,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
 
-    // Verify the sizes of all the groups
+    // Verifies the sizes of all the groups
     for (const chunkList of this.buffers) {
       for (const chunk of chunkList) {
         for (const group of chunk.groupsStarting) {
           if (group.size !== group.dbgText.length) {
-            throw new Error(
-              `Group size mismatch: ${group.size} !== ${group.dbgText.length}`,
-            );
+            throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
           }
         }
       }
