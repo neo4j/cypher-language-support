@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     neo4j-driver:
-      specifier: ^5.12.0
-      version: 5.28.1
+      specifier: 5.12.0
+      version: 5.12.0
 
 importers:
 
@@ -76,7 +76,7 @@ importers:
         version: 4.0.8
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.28.1
+        version: 5.12.0
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -293,7 +293,7 @@ importers:
         version: 8.17.1
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.28.1
+        version: 5.12.0
     devDependencies:
       '@types/node':
         specifier: ^22.14.0
@@ -318,7 +318,7 @@ importers:
         version: 2.16.23(@heroicons/react@2.0.18(react@18.3.1))(@lezer/common@1.2.1)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.28.1
+        version: 5.12.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -5206,14 +5206,14 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  neo4j-driver-bolt-connection@5.28.1:
-    resolution: {integrity: sha512-nY8GBhjOW7J0rDtpiyJn6kFdk2OiNVZZhZrO8//mwNXnf5VQJ6HqZQTDthH/9pEaX0Jvbastz1xU7ZL8xzqY0w==}
+  neo4j-driver-bolt-connection@5.12.0:
+    resolution: {integrity: sha512-dlYbFsfT0HopGItitG5uDK4nAkcqSPNtRqMz318qy//7fb/7OXVLGYikj57Ve1toJiJD8IIVErt/dVuEUHVxGA==}
 
-  neo4j-driver-core@5.28.1:
-    resolution: {integrity: sha512-14vN8TlxC0JvJYfjWic5PwjsZ38loQLOKFTXwk4fWLTbCk6VhrhubB2Jsy9Rz+gM6PtTor4+6ClBEFDp1q/c8g==}
+  neo4j-driver-core@5.12.0:
+    resolution: {integrity: sha512-xBRi5oezysDUvtvBiIgBchzumkDZxvR9ol9sUtA9PBgVENeSmPH3CncitY8S979CFELS6wH7kydcjPLB4QMOzA==}
 
-  neo4j-driver@5.28.1:
-    resolution: {integrity: sha512-jbyBwyM0a3RLGcP43q3hIxPUPxA+1bE04RovOKdNAS42EtBMVCKcPSeOvWiHxgXp1ZFd0a8XqK+7LtguInOLUg==}
+  neo4j-driver@5.12.0:
+    resolution: {integrity: sha512-T2Vz63XDkL9TomM16dBusuXbo7d9SIGw2g3VR/rmrWTdbl1V1LYFx/u1P7AwBsFuX08oncKHfZwHGsWrCvdMyA==}
 
   netmask@2.0.2:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
@@ -13100,18 +13100,18 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  neo4j-driver-bolt-connection@5.28.1:
+  neo4j-driver-bolt-connection@5.12.0:
     dependencies:
       buffer: 6.0.3
-      neo4j-driver-core: 5.28.1
+      neo4j-driver-core: 5.12.0
       string_decoder: 1.3.0
 
-  neo4j-driver-core@5.28.1: {}
+  neo4j-driver-core@5.12.0: {}
 
-  neo4j-driver@5.28.1:
+  neo4j-driver@5.12.0:
     dependencies:
-      neo4j-driver-bolt-connection: 5.28.1
-      neo4j-driver-core: 5.28.1
+      neo4j-driver-bolt-connection: 5.12.0
+      neo4j-driver-core: 5.12.0
       rxjs: 7.8.1
 
   netmask@2.0.2: {}

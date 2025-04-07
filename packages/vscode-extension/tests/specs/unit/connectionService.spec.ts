@@ -1,4 +1,5 @@
 import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
 import * as assert from 'assert';
 import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';
@@ -823,7 +824,7 @@ suite('Connection service spec', () => {
           connect: connectFake,
           persistentConnect: persistentConnectFake,
           disconnect: () => void 0,
-        };
+        } as unknown as Neo4jSchemaPoller;
 
         sandbox
           .stub(contextService, 'getSchemaPoller')
@@ -900,7 +901,7 @@ suite('Connection service spec', () => {
           connect: connectFake,
           persistentConnect: persistentConnectFake,
           disconnect: () => void 0,
-        };
+        } as unknown as Neo4jSchemaPoller;
 
         sandbox
           .stub(contextService, 'getSchemaPoller')

@@ -104,7 +104,7 @@ export class Neo4jConnection {
   async runSdkQuery<T>(
     { query, queryConfig }: ExecuteQueryArgs<T>,
     { queryType, abortSignal }: SdkQueryArgs,
-  ) {
+  ): Promise<T> {
     // we'd like to use the drivers `executeQuery` method, but it doesn't support transaction metadata or cancelations yet
     const session = this.driver.session({
       database: queryConfig?.database ?? this.currentDb,
@@ -138,7 +138,7 @@ export class Neo4jConnection {
     try {
       await this.driver.verifyConnectivity({ database: this.currentDb });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
