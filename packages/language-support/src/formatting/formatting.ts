@@ -171,7 +171,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
-    // There may be some trailling groups that are left to achieve indentation
     this.removeAllPendingGroups();
     this.fillInGroupSizes();
     const result = buffersToFormattedString(this.buffers);
@@ -202,7 +201,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ) => {
     for (const group of activeGroups) {
       if (!chunk.text) {
-        throw new Error('Expected text, got' + chunk.text);
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
       group.size += chunk.text.length;
       group.dbgText += chunk.text;
@@ -229,6 +228,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (!groupsEnding.has(group.id)) {
         newActiveGroups.push(group);
       } else {
+        // Trim trailling spaces from groups that are ending
         if (group.dbgText.at(-1) === ' ') {
           group.size--;
           group.dbgText = group.dbgText.slice(0, -1);
