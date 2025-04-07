@@ -559,6 +559,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     );
     for (const commentToken of commentTokens) {
       const text = commentToken.text.trim();
+      // Comments before the first token always become chunks
+      // (as opposed to the ones in addCommentsAfter)
       const chunk: CommentChunk = {
         type: 'COMMENT',
         breakBefore: false,
@@ -595,10 +597,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       includesComment = true;
       const text = commentToken.text.trim();
       const commentLine = commentToken.line;
+      // Inline comments (ones on the same line as, but after the node) get attached to the chunk.
+      // They are then appended to the line that that chunk is put on later (see decisionsToFormatted)
       if (nodeLine === commentLine) {
         const previousChunk = this.lastInCurrentBuffer();
         previousChunk.comment = text;
       } else {
+        // Comments on their own line become chunks in the chunkList however.
         const chunk: CommentChunk = {
           type: 'COMMENT',
           breakBefore: true,
