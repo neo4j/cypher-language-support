@@ -112,13 +112,6 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function getFinalIndentation(state: State): number {
-  if (state.column !== 0) {
-    return 0;
-  }
-  return state.indentation;
-}
-
 function getNextIndentationState(
   state: State,
   chunk: Chunk,
@@ -153,20 +146,19 @@ function stateToString(state: State) {
   return resultString;
 }
 
-function getNeighbourState(curr: State, choice: Choice, split: Split): State {
+function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
-  let nextGroups = [...curr.activeGroups];
-  const finalIndentation = getFinalIndentation(curr);
-  const indentationDecision = curr.column === 0 ? finalIndentation : 0;
+  let nextGroups = [...state.activeGroups];
+  const indentationDecision = state.column === 0 ? state.indentation : 0;
   const previousIndent =
-    indentationDecision !== 0 ? indentationDecision : curr.previousIndent;
+    indentationDecision !== 0 ? indentationDecision : state.previousIndent;
   const [nextIndentation, newActive] = getNextIndentationState(
-    curr,
+    state,
     choice.left,
     isBreak || split.wantedToSplit,
   );
 
-  const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
+  const actualColumn = state.column === 0 ? indentationDecision : state.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
   // We don't consider comments nor an empty space as overflowing
@@ -223,14 +215,14 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
     activeIndents: newActive,
     previousIndent,
     column: isBreak ? 0 : thisWordEnd,
-    choiceIndex: curr.choiceIndex + 1,
-    cost: curr.cost + extraCost,
-    overflowingCount: curr.overflowingCount + overflowingCount,
+    choiceIndex: state.choiceIndex + 1,
+    cost: state.cost + extraCost,
+    overflowingCount: state.overflowingCount + overflowingCount,
     indentation: nextIndentation,
     edge: {
-      prevState: curr,
+      prevState: state,
       decision: {
-        indentation: finalIndentation,
+        indentation: indentationDecision,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
