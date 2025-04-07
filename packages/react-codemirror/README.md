@@ -1,6 +1,6 @@
 # React Codemirror
 
-This package can be built with `npm run build` and then published to npm with `npm publish`.
+This package can be built with `pnpm build` and then published to npm with `npm publish`.
 
 ## Usage
 
@@ -27,7 +27,8 @@ For a full example, see the [react-codemirror-playground](https://github.com/neo
 Currently we only support using the codemirror editor via the react wrapper, but we plan to release the codemirror extensions separately as well.
 
 ## Learning codemirror
-It can take a little time to get into the CodeMirror6 ways of thinking, Trevor Harmon has a [great blog post](https://thetrevorharmon.com/blog/learning-codemirror/) explaining the cm6 "primitives". He also has a demo on how to integrate ANTLR4 with codemirror over [here](https://github.com/thetrevorharmon/zephyr-demo). 
+
+It can take a little time to get into the CodeMirror6 ways of thinking, Trevor Harmon has a [great blog post](https://thetrevorharmon.com/blog/learning-codemirror/) explaining the cm6 "primitives". He also has a demo on how to integrate ANTLR4 with codemirror over [here](https://github.com/thetrevorharmon/zephyr-demo).
 
 ### Completion Icons
 

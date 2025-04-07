@@ -26,14 +26,14 @@ jobs:
       - name: Build project
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npm run build
+        run: pnpm build
 
       - name: Check there are no linting errors
-        run: npm run lint
+        run: pnpm lint
 
       - name: List files that have not been formatted properly
         run: |
-          npm run format
+          pnpm format
           (git diff-index --name-status HEAD | grep ".*\.ts" && exit 1) || echo "\n\nAll Typescript files are correctly formatted"
 
   unit-test:
@@ -67,7 +67,7 @@ jobs:
         run: npm ci
 
       - name: Build project
-        run: npm run build
+        run: pnpm build
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
@@ -75,7 +75,7 @@ jobs:
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode
         # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
-        run: xvfb-run -a npm run test:e2e
+        run: xvfb-run -a pnpm test:e2e
 
       - uses: actions/upload-artifact@v4
         if: always()

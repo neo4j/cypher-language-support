@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Build Project
-        run: npm run build
+        run: pnpm build
 
       - name: Run formatting check
-        run: npm run test:formattingIntegrity
+        run: pnpm test:formattingIntegrity

@@ -25,10 +25,10 @@
     "require": "./dist/cjs/index.js"
   },
   "scripts": {
-    "build": "npm run generate && npm run build-esm && npm run build-commonjs",
+    "build": "pnpm generate && pnpm build-esm && pnpm build-commonjs",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
-    "prepublishOnly": "npm run generate && npm run test",
+    "prepublishOnly": "pnpm generate && pnpm test",
     "test": "vitest run",
     "generate": "cd tests && sh generate.sh",
     "eslint": "eslint .",

@@ -412,18 +412,18 @@
   },
   "scripts": {
     "gen-textmate": "node ./genTextMate.js",
-    "vscode:prepublish": "npm run build",
-    "bundle-language-server": "cd ../language-server && npm run bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && npm run bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
+    "vscode:prepublish": "pnpm build",
+    "bundle-language-server": "cd ../language-server && pnpm bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && pnpm bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild-extension.js --production",
     "update-ndl-css": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
     "bundle-extension:dev": "node ./esbuild-extension.js",
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
-    "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
-    "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
+    "build": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
+    "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension:dev && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "clean": "rm -rf dist",
-    "test:e2e": "npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
-    "test:apiAndUnit": "npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
+    "test:e2e": "pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
+    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
+    "test:webviews": "pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",

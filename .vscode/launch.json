@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run dev-codemirror",
+      "command": "pnpm dev-codemirror",
       "name": "Codemirror Playground",
       "request": "launch",
       "type": "node-terminal",

@@ -17,7 +17,7 @@
       "group": "build",
       "problemMatcher": [],
       "label": "npm: build-vscode",
-      "detail": "npm run build-vscode"
+      "detail": "pnpm build-vscode"
     }
   ]
 }

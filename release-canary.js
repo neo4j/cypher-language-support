@@ -71,7 +71,7 @@ function buildProject() {
   exec(`
     cd ${wd} &&
     npm i &&
-    npm run build -- --filter=react-codemirror --filter=language-support
+    pnpm build -- --filter=react-codemirror --filter=language-support
   `);
 }
 
