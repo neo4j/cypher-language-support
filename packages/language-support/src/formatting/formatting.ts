@@ -439,7 +439,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   startGroupAlsoOnComment = (): number => {
     if (this.lastInCurrentBuffer().type === 'COMMENT') {
       const idx = this.getFirstNonCommentIdx();
-      const target = this.currentBuffer().at(idx + 1);
+      const commentChunk = this.currentBuffer().at(idx + 1);
       const newGroup: Group = {
         id: this.groupID,
         dbgText: '',
@@ -447,7 +447,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         align: 0, // Irrelevant here
         breakCost: 0,
       };
-      target.groupsStarting.push(newGroup);
+      commentChunk.groupsStarting.push(newGroup);
       this.groupStack.push(newGroup);
       this.groupID++;
       return this.groupID - 1;
