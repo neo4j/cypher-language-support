@@ -15,6 +15,14 @@ suite('Params panel testing', () => {
     workbench = await browser.getWorkbench();
   });
 
+  async function escapeModal(count: number) {
+    for (let i = 0; i < count; i++) {
+      await browser.pause(500);
+      await browser.keys([Key.Escape]);
+      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
+    }
+  }
+
   async function addParamWithInputBox() {
     await browser.executeWorkbench(async (vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -102,11 +110,7 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
 
-    // to close the automatic param add pop-ups
-    for (let i = 0; i < 4; i++) {
-      await browser.keys([Key.Escape]);
-      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
-    }
+    await escapeModal(4);
 
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
@@ -164,11 +168,7 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
 
-    // to close the automatic param add pop-ups
-    for (let i = 0; i < 2; i++) {
-      await browser.keys([Key.Escape]);
-      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
-    }
+    await escapeModal(2);
 
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();
@@ -203,11 +203,7 @@ suite('Params panel testing', () => {
     await forceSwitchDatabase('neo4j');
     await executeFile(workbench, 'params.cypher');
 
-    // to close the automatic param add pop-ups
-    for (let i = 0; i < 4; i++) {
-      await browser.keys([Key.Escape]);
-      await waitUntilNotification(browser, 'Parameter value cannot be empty.');
-    }
+    await escapeModal(4);
 
     await checkResultsContent(workbench, async () => {
       const text = await (await $('#query-error')).getText();

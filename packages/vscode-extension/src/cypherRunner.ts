@@ -1,31 +1,19 @@
-import { parseStatementsStrs } from '@neo4j-cypher/language-support';
+import {
+  createParsingResult,
+  parseStatementsStrs,
+} from '@neo4j-cypher/language-support';
 import { Uri } from 'vscode';
 import { addParameter } from './commandHandlers/params';
 import { Connection } from './connectionService';
 import { getDeserializedParams } from './parameterService';
 import ResultWindow from './webviews/resultWindow';
 
-export function extractParameters(strings: string[]): string[] {
-  const paramSet = new Set<string>();
-
-  strings.forEach((str) => {
-    const matches = str.match(/\$`([^`]+)`|\$(\w+)/g);
-    if (matches) {
-      matches.forEach((match) => {
-        // Remove the '$'
-        const param = match.slice(1);
-        if (param.startsWith('`') && param.endsWith('`')) {
-          // Remove the backticks
-          paramSet.add(param.slice(1, -1));
-        } else {
-          paramSet.add(param);
-        }
-      });
-    }
-  });
-
-  return Array.from(paramSet);
-}
+const getClearParamName = (name: string): string => {
+  if (name.startsWith('`') && name.endsWith('`')) {
+    return name.slice(1, -1);
+  }
+  return name;
+};
 
 export default class CypherRunner {
   private results: Map<string, ResultWindow> = new Map();
@@ -34,9 +22,17 @@ export default class CypherRunner {
 
   async run(connection: Connection, uri: Uri, input: string) {
     const statements = parseStatementsStrs(input);
+    const parsingResult = createParsingResult(input, false);
     const filePath = uri.toString();
     const parameters = getDeserializedParams();
-    const statementParams = extractParameters(statements);
+
+    const statementParams = [
+      ...new Set(
+        parsingResult.statementsParsing.flatMap((statement) =>
+          statement.collectedParameters.map((p) => getClearParamName(p.name)),
+        ),
+      ),
+    ];
 
     for (const param of statementParams) {
       if (parameters[param] === undefined) {
