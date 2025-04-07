@@ -31,6 +31,8 @@ interface Choice {
 
 export interface Group {
   id: number;
+  // Should this group break in the "Prettier" fashion, breaking between
+  // all of its children?
   breaksAll?: boolean;
   size: number;
   dbgText: string;
