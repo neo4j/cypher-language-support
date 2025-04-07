@@ -2053,11 +2053,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Map has its own formatting rules, see:
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-spacing
   visitMap = (ctx: MapContext) => {
-    const wholeMapGrp = this.startGroup();
+    const mapGrp = this.startGroup();
     this._visit(ctx.LCURLY());
     const indentId = this.addIndentation();
     this.avoidSpaceBetween();
-    const mapGrp = this.startGroup();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
       const keyValueGrp = this.startGroup();
@@ -2071,14 +2070,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.endGroup(keyValueGrp);
       this.removeIndentation(indentId2);
     }
-    this.endGroup(mapGrp);
     this.avoidSpaceBetween();
     this.removeIndentation(indentId);
     this._visitTerminalRaw(ctx.RCURLY(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
     });
-    this.endGroup(wholeMapGrp);
+    this.endGroup(mapGrp);
   };
 
   visitMapProjectionElement = (ctx: MapProjectionElementContext) => {
