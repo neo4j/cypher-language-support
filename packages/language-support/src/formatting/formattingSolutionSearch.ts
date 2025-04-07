@@ -35,6 +35,7 @@ export interface Group {
   // all of its children?
   breaksAll?: boolean;
   size: number;
+  // The full text of the group (used for debugging only)
   dbgText: string;
   align: number;
   breakCost: number;
