@@ -128,6 +128,8 @@ function getNextIndentationState(
       nextIndentation += INDENTATION_SPACES;
     }
     if (indent.change === -1) {
+      // PERF: This is O(n) twice and doesn't neccesarily have to be. Might be worth optimizing if profiling
+      // shows that it is actually a perf sink.
       const index = newActive.findIndex((i) => i.id === indent.id);
       if (index !== -1) {
         newActive = newActive.filter((i) => i.id !== indent.id);
