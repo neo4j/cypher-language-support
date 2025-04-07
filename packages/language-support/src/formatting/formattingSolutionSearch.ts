@@ -51,7 +51,6 @@ interface Decision {
 interface State {
   activeGroups: Group[];
   activeIndents: IndentationModifier[];
-  previousIndent: number;
   column: number;
   choiceIndex: number;
   indentation: number;
@@ -69,7 +68,6 @@ interface Result {
   cost: number;
   decisions: Decision[];
   indentation: number;
-  previousIndent: number;
   activeIndents: IndentationModifier[];
 }
 
@@ -152,8 +150,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   let nextGroups = [...state.activeGroups];
   const indentationDecision = state.column === 0 ? state.indentation : 0;
-  const previousIndent =
-    indentationDecision !== 0 ? indentationDecision : state.previousIndent;
   const [nextIndentation, newActive] = getNextIndentationState(
     state,
     choice.left,
@@ -218,7 +214,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
   return {
     activeGroups: nextGroups,
     activeIndents: newActive,
-    previousIndent,
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: state.choiceIndex + 1,
     cost: state.cost + extraCost,
@@ -248,7 +243,6 @@ function reconstructBestPath(state: State): Result {
     cost: state.cost,
     decisions,
     indentation: state.indentation,
-    previousIndent: state.previousIndent,
     activeIndents: state.activeIndents,
   };
 }
@@ -474,7 +468,6 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentation = 0;
-  let previousIndent = 0;
   let activeIndents: IndentationModifier[] = [];
   let cursorPos = 0;
   for (const chunkList of buffers) {
@@ -483,7 +476,6 @@ export function buffersToFormattedString(
     const initialState: State = {
       activeGroups: [],
       activeIndents: activeIndents,
-      previousIndent,
       column: 0,
       choiceIndex: 0,
       cost: 0,
@@ -493,7 +485,6 @@ export function buffersToFormattedString(
     };
     const result = bestFirstSolnSearch(initialState, choices);
     indentation = result.indentation;
-    previousIndent = result.previousIndent;
     activeIndents = result.activeIndents;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
