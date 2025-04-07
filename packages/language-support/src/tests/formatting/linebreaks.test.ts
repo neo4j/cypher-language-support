@@ -1173,6 +1173,40 @@ RETURN deleteNodes`;
   freqList`;
     verifyFormatting(query, expected);
   });
+
+  test('test when reduce expression has long list', () => {
+    const query = `RETURN
+  reduce(
+    alongsssssssssssssssstring = '',
+    word
+    IN
+    [
+      'Hello', ' ', 'World', ' ', 'World', ' ', 'World', 'World', ' ', 'World', ' ', 'World'
+    ]
+    |
+      alongsssssssssssssssstring + word) AS sentence`;
+    const expected = `
+RETURN
+  reduce(
+    alongsssssssssssssssstring = '',
+    word IN
+    [
+      'Hello',
+      ' ',
+      'World',
+      ' ',
+      'World',
+      ' ',
+      'World',
+      'World',
+      ' ',
+      'World',
+      ' ',
+      'World'
+    ] |
+      alongsssssssssssssssstring + word) AS sentence`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

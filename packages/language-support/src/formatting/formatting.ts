@@ -1038,13 +1038,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.expression(0));
     this._visitTerminalRaw(ctx.COMMA());
     this.endGroup(firstArgumentGrp);
-    const inGrp = this.startGroup();
     const secondArgumentGrp = this.startGroup();
+    const inGrp = this.startGroup();
     this._visit(ctx.variable(1));
     this._visit(ctx.IN());
-    this._visit(ctx.expression(1));
-    this._visit(ctx.BAR());
     this.endGroup(inGrp);
+    this._visit(ctx.expression(1));
+    this.avoidBreakBetween();
+    this._visit(ctx.BAR());
     const expressionGrp = this.startGroup();
     const indentId2 = this.addIndentation();
     this._visit(ctx.expression(2));
