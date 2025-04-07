@@ -406,6 +406,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   endGroup = (id: number) => {
+    // TODO: v3 tech debt; it probably should not be possible for this to happen
     if (this.groupStack.length === 0 || this.groupStack.at(-1).id !== id) {
       return;
     }
