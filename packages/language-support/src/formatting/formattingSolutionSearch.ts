@@ -125,6 +125,9 @@ function getNextIndentationState(
   isBreak: boolean,
 ): [number, IndentationModifier[]] {
   let newActive = [...state.activeIndents];
+  // The "indentation" number is the actual amount of indentation at the current state,
+  // but it should not be confused with the entire indentation state. The entire indentation state
+  // also includes the indentation modifiers, that keep track of when this number should change
   let nextIndentation: number = state.indentation;
   for (const indent of chunk.indentation) {
     if (indent.change === 1 && isBreak) {
