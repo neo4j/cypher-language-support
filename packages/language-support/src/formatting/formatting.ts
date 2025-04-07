@@ -195,55 +195,50 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     return resultString;
   };
 
-  fillInGroupSizes = () => {
-    for (const chunkList of this.buffers) {
-      let activeGroups: Group[] = [];
-      for (let i = 0; i < chunkList.length; i++) {
-        const chunk = chunkList[i];
-        const gettingRemoved = new Set<number>(
-          chunk.groupsEnding.map((g) => g.id),
-        );
-        if (chunk.type === 'REGULAR') {
-          for (const group of activeGroups) {
-            if (!chunk.text) {
-              throw new Error('Expected text, got' + chunk.text);
-            }
-            group.size += chunk.text.length;
-            group.dbgText += chunk.text;
-            if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
-              group.size++;
-              group.dbgText += ' ';
-            }
-            if (chunk.comment && !gettingRemoved.has(group.id)) {
-              group.breaksAll = true;
-            }
-          }
-        } else if (chunk.type === 'COMMENT') {
-          // NOTE: This might not be entirely sound, but it seems to work flawlessly for comments
-          // so far.
-          if (activeGroups.length > 0) {
-            activeGroups[0].breaksAll = true;
-          }
-        }
-        for (const group of chunk.groupsStarting) {
-          activeGroups.push(group);
-        }
-        const newActiveGroups: Group[] = [];
-        for (const group of activeGroups) {
-          if (!gettingRemoved.has(group.id)) {
-            newActiveGroups.push(group);
-          } else {
-            if (group.dbgText.at(-1) === ' ') {
-              group.size--;
-              group.dbgText = group.dbgText.slice(0, -1);
-            }
-          }
-        }
-        activeGroups = newActiveGroups;
+  _fillInRegularChunkGroupSizes = (
+    chunk: RegularChunk,
+    activeGroups: Group[],
+    groupsEnding: Set<number>,
+  ) => {
+    for (const group of activeGroups) {
+      if (!chunk.text) {
+        throw new Error('Expected text, got' + chunk.text);
+      }
+      group.size += chunk.text.length;
+      group.dbgText += chunk.text;
+      if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
+        group.size++;
+        group.dbgText += ' ';
+      }
+      if (chunk.comment && !groupsEnding.has(group.id)) {
+        group.breaksAll = true;
       }
     }
+  };
 
-    // Verifies the sizes of all the groups
+  _getActiveGroups = (
+    activeGroups: Group[],
+    groupsEnding: Set<number>,
+    chunk: Chunk,
+  ) => {
+    for (const group of chunk.groupsStarting) {
+      activeGroups.push(group);
+    }
+    const newActiveGroups: Group[] = [];
+    for (const group of activeGroups) {
+      if (!groupsEnding.has(group.id)) {
+        newActiveGroups.push(group);
+      } else {
+        if (group.dbgText.at(-1) === ' ') {
+          group.size--;
+          group.dbgText = group.dbgText.slice(0, -1);
+        }
+      }
+    }
+    return newActiveGroups;
+  };
+
+  _verifyGroupSizes = () => {
     for (const chunkList of this.buffers) {
       for (const chunk of chunkList) {
         for (const group of chunk.groupsStarting) {
@@ -253,6 +248,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         }
       }
     }
+  };
+
+  fillInGroupSizes = () => {
+    for (const chunkList of this.buffers) {
+      let activeGroups: Group[] = [];
+      for (let i = 0; i < chunkList.length; i++) {
+        const chunk = chunkList[i];
+        const groupsEnding = new Set<number>(
+          chunk.groupsEnding.map((g) => g.id),
+        );
+        if (chunk.type === 'REGULAR') {
+          this._fillInRegularChunkGroupSizes(chunk, activeGroups, groupsEnding);
+        } else if (chunk.type === 'COMMENT') {
+          // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
+          // the groups it is a part of will always break.
+          // NOTE: This might not be entirely sound, but it seems to work flawlessly for comments
+          // so far.
+          if (activeGroups.length > 0) {
+            activeGroups[0].breaksAll = true;
+          }
+        }
+        activeGroups = this._getActiveGroups(activeGroups, groupsEnding, chunk);
+      }
+    }
+    // If we made an error when calculating the group sizes, that counts as an internal bug.
+    this._verifyGroupSizes();
   };
 
   currentBuffer = () => this.buffers.at(-1);
