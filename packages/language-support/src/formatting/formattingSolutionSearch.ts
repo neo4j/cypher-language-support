@@ -196,8 +196,9 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
     if (
       !nextGroups.some((group) => group.id === choice.left.groupsEnding[i].id)
     ) {
-      throw new Error('Unexpected group ending');
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
+    // PERF: This is O(n), might be worth optimizing if profiling says so.
     nextGroups = nextGroups.filter(
       (group) => group.id !== choice.left.groupsEnding[i].id,
     );
