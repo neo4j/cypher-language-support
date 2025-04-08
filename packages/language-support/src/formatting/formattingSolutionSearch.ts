@@ -55,12 +55,6 @@ interface State {
   indentationState: IndentationState;
   column: number;
   choiceIndex: number;
-  edge: StateEdge;
-}
-
-interface StateEdge {
-  prevState: State;
-  decision: Decision;
 }
 
 interface Result {
@@ -124,13 +118,17 @@ function getNextIndentationState(
 
 // Very useful for debugging but not actually used in the code
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function stateToString(state: State) {
+/* function stateToString(state: State) {
   const result = reconstructBestPath(state);
   const resultString = decisionsToFormatted(result.decisions);
   return resultString;
-}
+} */
 
-function getNextState(state: State, choice: Choice, split: Split): State {
+function createStateTransition(
+  state: State,
+  choice: Choice,
+  split: Split,
+): { nextState: State; decision: Decision } {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   let nextGroups = [...state.activeGroups];
   const indentationDecision =
@@ -180,26 +178,25 @@ function getNextState(state: State, choice: Choice, split: Split): State {
   }
 
   return {
-    activeGroups: nextGroups,
-    indentationState: {
-      indentation: nextIndentation,
-      activeIndents: nextActiveIndents,
-    },
-    column: isBreak ? 0 : thisWordEnd,
-    choiceIndex: state.choiceIndex + 1,
-    edge: {
-      prevState: state,
-      decision: {
-        indentation: indentationDecision,
-        left: choice.left,
-        right: choice.right,
-        chosenSplit: split,
+    nextState: {
+      activeGroups: nextGroups,
+      indentationState: {
+        indentation: nextIndentation,
+        activeIndents: nextActiveIndents,
       },
+      column: isBreak ? 0 : thisWordEnd,
+      choiceIndex: state.choiceIndex + 1,
+    },
+    decision: {
+      indentation: indentationDecision,
+      left: choice.left,
+      right: choice.right,
+      chosenSplit: split,
     },
   };
 }
 
-function reconstructBestPath(state: State): Result {
+/* function reconstructBestPath(state: State): Result {
   const decisions: Decision[] = [];
   let currentState: State = state;
   while (currentState.edge != null) {
@@ -211,7 +208,7 @@ function reconstructBestPath(state: State): Result {
     decisions,
     indentationState: state.indentationState,
   };
-}
+} */
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
@@ -298,12 +295,18 @@ function computeFormattingDecisions(
   choiceList: Choice[],
 ): Result {
   let state = startingState;
+  const decisions: Decision[] = [];
   while (state.choiceIndex < choiceList.length) {
     const choice = choiceList[state.choiceIndex];
     const split = determineSplit(state, choice, choice.possibleSplitChoices);
-    state = getNextState(state, choice, split);
+    const { nextState, decision } = createStateTransition(state, choice, split);
+    state = nextState;
+    decisions.push(decision);
   }
-  return reconstructBestPath(state);
+  return {
+    decisions,
+    indentationState: state.indentationState,
+  };
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -388,7 +391,6 @@ export function buffersToFormattedString(
       indentationState,
       column: 0,
       choiceIndex: 0,
-      edge: null,
     };
     const result = computeFormattingDecisions(initialState, choices);
     indentationState = result.indentationState;
