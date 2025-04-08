@@ -290,14 +290,14 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
       (split) => split.splitType === ' ' || split.splitType === '',
     );
   }
-  throw new Error('Reached the end of determineSplit?');
+  throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
 }
 
 function computeFormattingDecisions(
   startingState: State,
   choiceList: Choice[],
 ): Result {
-  let state: State = startingState;
+  let state = startingState;
   while (state.choiceIndex < choiceList.length) {
     const choice = choiceList[state.choiceIndex];
     const split = determineSplit(state, choice, choice.possibleSplitChoices);
