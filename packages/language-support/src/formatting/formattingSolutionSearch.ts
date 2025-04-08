@@ -166,35 +166,30 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
       : thisWordEnd - splitLength;
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
-  for (let i = 0; i < choice.left.groupsStarting.length; i++) {
-    const grp = choice.left.groupsStarting[i];
+  for (const group of choice.left.groupsStarting) {
     const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
     const breaksAll =
-      grp.breaksAll ||
-      nextGrpStart + grp.size > MAX_COL ||
+      group.breaksAll ||
+      nextGrpStart + group.size > MAX_COL ||
       // TODO: v3 tech debt; breaking before should be handled differently
-      grp.id === split.breakBeforeGrp?.id;
+      group.id === split.breakBeforeGrp?.id;
     const newGroup = {
-      ...grp,
+      ...group,
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
       breaksAll,
     };
     nextGroups.push(newGroup);
   }
-  for (let i = 0; i < choice.left.groupsEnding.length; i++) {
+  for (const group of choice.left.groupsEnding) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
-    if (
-      !nextGroups.some((group) => group.id === choice.left.groupsEnding[i].id)
-    ) {
+    if (!nextGroups.some((nextGroup) => nextGroup.id === group.id)) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     // PERF: This is O(n), might be worth optimizing if profiling says so.
-    nextGroups = nextGroups.filter(
-      (group) => group.id !== choice.left.groupsEnding[i].id,
-    );
+    nextGroups = nextGroups.filter((nextGroup) => nextGroup.id !== group.id);
   }
 
   let extraCost = 0;
