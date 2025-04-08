@@ -1,4 +1,3 @@
-import { Heap } from 'heap-js';
 import {
   Chunk,
   doesNotWantSpace,
@@ -18,7 +17,6 @@ interface Split {
   // Ideally this should be handled in a more sound way, such as including the clause word in the
   // group itself.
   breakBeforeGrp?: Group;
-  cost: number;
   wantedToSplit?: boolean;
 }
 
@@ -58,8 +56,6 @@ interface State {
   indentationState: IndentationState;
   column: number;
   choiceIndex: number;
-  cost: number;
-  overflowingCount: number;
   edge: StateEdge;
 }
 
@@ -69,7 +65,6 @@ interface StateEdge {
 }
 
 interface Result {
-  cost: number;
   decisions: Decision[];
   indentationState: IndentationState;
 }
@@ -81,26 +76,20 @@ interface FinalResultWithPos {
 
 type FinalResult = string | FinalResultWithPos;
 
-const standardSplits: Split[] = [
-  { splitType: ' ', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
+const standardSplits: Split[] = [{ splitType: ' ' }, { splitType: '\n' }];
 const doubleBreakStandardSplits: Split[] = [
-  { splitType: ' ', cost: 0 },
-  { splitType: '\n\n', cost: 1 },
+  { splitType: ' ' },
+  { splitType: '\n\n' },
 ];
-const noSpaceSplits: Split[] = [
-  { splitType: '', cost: 0 },
-  { splitType: '\n', cost: 1 },
-];
+const noSpaceSplits: Split[] = [{ splitType: '' }, { splitType: '\n' }];
 const noSpaceDoubleBreakSplits: Split[] = [
-  { splitType: '', cost: 0 },
-  { splitType: '\n\n', cost: 1 },
+  { splitType: '' },
+  { splitType: '\n\n' },
 ];
-const noBreakSplit: Split[] = [{ splitType: ' ', cost: 0 }];
-const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
-const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
-const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
+const noBreakSplit: Split[] = [{ splitType: ' ' }];
+const noSpaceNoBreakSplit: Split[] = [{ splitType: '' }];
+const onlyBreakSplit: Split[] = [{ splitType: '\n' }];
+const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n' }];
 
 function getNextIndentationState(
   state: State,
@@ -160,11 +149,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const splitLength = !isBreak ? split.splitType.length : 0;
   const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
   // We don't consider comments nor an empty space as overflowing
-  const endWithoutCommentAndSplit =
-    choice.left.type === 'COMMENT'
-      ? actualColumn - 1
-      : thisWordEnd - splitLength;
-  const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const grp = choice.left.groupsStarting[i];
@@ -197,17 +181,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
     );
   }
 
-  let extraCost = 0;
-  if (isBreak && nextGroups.length > 0) {
-    extraCost = nextGroups.at(-1).breakCost;
-  } else if (isBreak) {
-    extraCost = 1;
-  } else {
-    // Incentivize not breaking to avoid cases where we have longer lines after short
-    // ones.
-    extraCost = -1;
-  }
-
   return {
     activeGroups: nextGroups,
     indentationState: {
@@ -216,8 +189,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
     },
     column: isBreak ? 0 : thisWordEnd,
     choiceIndex: state.choiceIndex + 1,
-    cost: state.cost + extraCost,
-    overflowingCount: state.overflowingCount + overflowingCount,
     edge: {
       prevState: state,
       decision: {
@@ -239,21 +210,14 @@ function reconstructBestPath(state: State): Result {
   }
   decisions.reverse();
   return {
-    cost: state.cost,
     decisions,
     indentationState: state.indentationState,
   };
 }
 
-function getStateKey(state: State): string {
-  return `${state.column}-${state.choiceIndex}-${
-    state.activeGroups.at(-1)?.align
-  }`;
-}
-
-function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
+function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   if (choice.right === emptyChunk) {
-    return onlyBreakSplit;
+    return onlyBreakSplit[0];
   }
   const nonSpace =
     (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
@@ -280,95 +244,40 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   }
 
   if (splits.length === 1) {
-    return [
-      {
-        ...splits[0],
-        wantedToSplit: breakBeforeGrp !== undefined || lastGrpBreaks,
-      },
-    ];
+    return {
+      ...splits[0],
+      wantedToSplit: breakBeforeGrp !== undefined || lastGrpBreaks,
+    };
   }
 
   if (breakBeforeGrp) {
-    return [{ splitType: '\n', cost: 0, breakBeforeGrp }];
+    return { splitType: '\n', breakBeforeGrp };
   }
 
   if (lastGrpBreaks) {
-    return splits.filter(
+    return splits.find(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
   }
   if (!lastGrpBreaks) {
-    return splits.filter(
+    return splits.find(
       (split) => split.splitType === ' ' || split.splitType === '',
     );
   }
-  return splits;
+  throw new Error('Reached the end of determineSplit?');
 }
 
 function bestFirstSolnSearch(
   startingState: State,
   choiceList: Choice[],
 ): Result {
-  const heap = new Heap<State>((a, b) => {
-    /**
-     * Best-first sorting logic:
-     *
-     * We want to find the solution with the lowest cost that overflows
-     * as little as possible.
-     *
-     * - We always prefer a solution that doesn't overflow to one that does,
-     *   regardless of its cost. Given these two states:
-     *
-     *   - A: cost 1000000000000, overflowingCount 0
-     *   - B: cost 0, overflowingCount 1
-     *
-     *   we would always pick A over B, despite B being significantly cheaper.
-     *
-     *  - Breaking lines increases the cost of a state, while not breaking
-     *    decreases it by one (see variable extraCost in getNeighbourState).
-     *     - If we choose to not break too many times, we might go out of
-     *       bounds however, which is always worse.
-     */
-    if (a.overflowingCount !== b.overflowingCount) {
-      return a.overflowingCount - b.overflowingCount;
-    }
-    return a.cost - b.cost;
-  });
-  heap.push(startingState);
-  const seenStates = new Set<string>();
-  while (heap.size() > 0) {
-    const state = heap.pop();
-    // NOTE: This memoization is not perfect and can lead to suboptimal solutions.
-    // It's crucial for performance however.
-    const stateKey = getStateKey(state);
-    if (seenStates.has(stateKey)) {
-      continue;
-    }
-    seenStates.add(stateKey);
-
-    // We found a solution. Since we do best first, it has to be the best
-    // solution, so reconstruct that path of decisions
-    if (state.choiceIndex === choiceList.length) {
-      if (state.activeGroups.length > 0) {
-        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-      }
-      return reconstructBestPath(state);
-    }
+  let state: State = startingState;
+  while (state.choiceIndex < choiceList.length) {
     const choice = choiceList[state.choiceIndex];
-    // TODO: v3 tech debt; rather than "filtering out splits", we should ever only have one
-    // possible split type at any moment. This is true right now; if you throw an error if
-    // filteredSplits.length > 1, nothing happens.
-    const filteredSplits = filterSplits(
-      state,
-      choice,
-      choice.possibleSplitChoices,
-    );
-    for (const split of filteredSplits) {
-      const neighbourState = getNeighbourState(state, choice, split);
-      heap.push(neighbourState);
-    }
+    const split = determineSplit(state, choice, choice.possibleSplitChoices);
+    state = getNeighbourState(state, choice, split);
   }
-  throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+  return reconstructBestPath(state);
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -481,8 +390,6 @@ export function buffersToFormattedString(
       indentationState,
       column: 0,
       choiceIndex: 0,
-      cost: 0,
-      overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
