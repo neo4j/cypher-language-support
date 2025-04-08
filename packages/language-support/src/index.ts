@@ -8,8 +8,8 @@ export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
-  createParsingResult,
   parse,
+  parseParameters,
   parserWrapper,
   parseStatementsStrs,
 } from './parserWrapper';
