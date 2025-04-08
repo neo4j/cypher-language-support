@@ -196,20 +196,6 @@ function createStateTransition(
   };
 }
 
-/* function reconstructBestPath(state: State): Result {
-  const decisions: Decision[] = [];
-  let currentState: State = state;
-  while (currentState.edge != null) {
-    decisions.push(currentState.edge.decision);
-    currentState = currentState.edge.prevState;
-  }
-  decisions.reverse();
-  return {
-    decisions,
-    indentationState: state.indentationState,
-  };
-} */
-
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
   if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
     return noSpaceNoBreakSplit;
@@ -296,8 +282,7 @@ function computeFormattingDecisions(
 ): Result {
   let state = startingState;
   const decisions: Decision[] = [];
-  while (state.choiceIndex < choiceList.length) {
-    const choice = choiceList[state.choiceIndex];
+  for (const choice of choiceList) {
     const split = determineSplit(state, choice, choice.possibleSplitChoices);
     const { nextState, decision } = createStateTransition(state, choice, split);
     state = nextState;
@@ -305,6 +290,7 @@ function computeFormattingDecisions(
   }
   return {
     decisions,
+    // TODO: IndentationState will not be needed after moving to one chunkList
     indentationState: state.indentationState,
   };
 }
