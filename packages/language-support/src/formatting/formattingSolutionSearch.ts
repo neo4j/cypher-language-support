@@ -121,7 +121,6 @@ function createStateTransition(
   split: Split,
 ): { nextState: State; decision: Decision } {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
-  let nextGroups = [...state.activeGroups];
   const indentationDecision =
     state.column === 0 ? state.indentationState.indentation : 0;
   const { indentation: nextIndentation, activeIndents: nextActiveIndents } =
@@ -137,40 +136,9 @@ function createStateTransition(
   const splitLength = !isBreak ? split.splitType.length : 0;
   const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
 
-  for (let i = 0; i < choice.left.groupsStarting.length; i++) {
-    const grp = choice.left.groupsStarting[i];
-    const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
-    const breaksAll =
-      grp.breaksAll ||
-      nextGrpStart + grp.size > MAX_COL ||
-      // TODO: v3 tech debt; breaking before should be handled differently
-      grp.id === split.breakBeforeGrp?.id;
-    const newGroup = {
-      ...grp,
-      align: actualColumn,
-      breakCost: Math.pow(10, nextGroups.length + 1),
-      breaksAll,
-    };
-    nextGroups.push(newGroup);
-  }
-  for (let i = 0; i < choice.left.groupsEnding.length; i++) {
-    if (nextGroups.length === 0) {
-      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-    }
-    if (
-      !nextGroups.some((group) => group.id === choice.left.groupsEnding[i].id)
-    ) {
-      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-    }
-    // PERF: This is O(n), might be worth optimizing if profiling says so.
-    nextGroups = nextGroups.filter(
-      (group) => group.id !== choice.left.groupsEnding[i].id,
-    );
-  }
-
   return {
     nextState: {
-      activeGroups: nextGroups,
+      activeGroups: state.activeGroups,
       indentationState: {
         indentation: nextIndentation,
         activeIndents: nextActiveIndents,
@@ -219,52 +187,72 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   if (choice.right === emptyChunk) {
     return onlyBreakSplit[0];
   }
+  endGroups(state, choice);
   const nonSpace =
     (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
     doesNotWantSpace(choice.left, choice.right);
 
-  const endingIds = choice.left.groupsEnding.map((g) => g.id);
-  const activeGrps = state.activeGroups.filter(
-    (g) => !endingIds.includes(g.id),
-  );
+  const endingHere = choice.left.groupsEnding.map((g) => g.id);
+  const activeGrps = state.activeGroups;
   const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
   const newGroups = choice.left.groupsStarting;
   const nextStart = lastGrpBreaks
     ? state.indentationState.indentation
     : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
 
-  // TODO: v3 tech debt; groups should include the clause keywords which would allow us to
-  // skip this logic
-  let breakBeforeGrp: Group = undefined;
+  let breakBefore = false;
   for (const group of newGroups) {
     if (group.breaksAll || group.size + nextStart > MAX_COL) {
-      breakBeforeGrp = group;
-      break;
+      breakBefore = true;
+      group.breaksAll = true;
+    }
+    if (!endingHere.includes(group.id)) {
+      state.activeGroups.push(group);
     }
   }
+
+  const shouldBreak = lastGrpBreaks || breakBefore;
 
   if (splits.length === 1) {
     return {
       ...splits[0],
-      wantedToSplit: breakBeforeGrp !== undefined || lastGrpBreaks,
+      wantedToSplit: shouldBreak,
     };
   }
 
-  if (breakBeforeGrp) {
-    return { splitType: '\n', breakBeforeGrp };
-  }
-
-  if (lastGrpBreaks) {
+  if (shouldBreak) {
     return splits.find(
       (split) => split.splitType === '\n' || split.splitType === '\n\n',
     );
-  }
-  if (!lastGrpBreaks) {
+  } else {
     return splits.find(
       (split) => split.splitType === ' ' || split.splitType === '',
     );
   }
-  throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+}
+
+function endGroups(state: State, choice: Choice) {
+  const startingHere = choice.left.groupsStarting.map((g) => g.id);
+  for (let i = 0; i < choice.left.groupsEnding.length; i++) {
+    const grp = choice.left.groupsEnding[i];
+    if (startingHere.includes(grp.id)) {
+      continue;
+    }
+    if (state.activeGroups.length === 0) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    if (
+      !state.activeGroups.some(
+        (group) => group.id === choice.left.groupsEnding[i].id,
+      )
+    ) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    // PERF: This is O(n), might be worth optimizing if profiling says so.
+    state.activeGroups = state.activeGroups.filter(
+      (group) => group.id !== choice.left.groupsEnding[i].id,
+    );
+  }
 }
 
 function computeFormattingDecisions(
