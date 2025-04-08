@@ -116,14 +116,6 @@ function getNextIndentationState(
   return { indentation: nextIndentation, activeIndents: newActiveIndents };
 }
 
-// Very useful for debugging but not actually used in the code
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/* function stateToString(state: State) {
-  const result = reconstructBestPath(state);
-  const resultString = decisionsToFormatted(result.decisions);
-  return resultString;
-} */
-
 function createStateTransition(
   state: State,
   choice: Choice,
