@@ -213,6 +213,34 @@ function reconstructBestPath(state: State): Result {
   };
 }
 
+function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
+  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+    return noSpaceNoBreakSplit;
+  }
+  if (isCommentBreak(chunk, nextChunk)) {
+    return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
+  }
+
+  if (chunk.type === 'REGULAR') {
+    if (chunk.mustBreak) {
+      return onlyBreakSplit;
+    }
+    const noSpace = doesNotWantSpace(chunk, nextChunk);
+
+    if (noSpace) {
+      if (chunk.noBreak) {
+        return noSpaceNoBreakSplit;
+      }
+      return chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
+    }
+    if (chunk.noBreak) {
+      return noBreakSplit;
+    }
+  }
+
+  return chunk.doubleBreak ? doubleBreakStandardSplits : standardSplits;
+}
+
 function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   if (choice.right === emptyChunk) {
     return onlyBreakSplit[0];
@@ -331,34 +359,6 @@ function decisionsToFormatted(decisions: Decision[]): FinalResult {
   }
   // Return appropriate result type based on cursor presence
   return cursorPos === -1 ? result : { formattedString: result, cursorPos };
-}
-
-function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
-    return noSpaceNoBreakSplit;
-  }
-  if (isCommentBreak(chunk, nextChunk)) {
-    return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
-  }
-
-  if (chunk.type === 'REGULAR') {
-    if (chunk.mustBreak) {
-      return onlyBreakSplit;
-    }
-    const noSpace = doesNotWantSpace(chunk, nextChunk);
-
-    if (noSpace) {
-      if (chunk.noBreak) {
-        return noSpaceNoBreakSplit;
-      }
-      return chunk.doubleBreak ? noSpaceDoubleBreakSplits : noSpaceSplits;
-    }
-    if (chunk.noBreak) {
-      return noBreakSplit;
-    }
-  }
-
-  return chunk.doubleBreak ? doubleBreakStandardSplits : standardSplits;
 }
 
 function chunkListToChoices(chunkList: Chunk[]): Choice[] {
