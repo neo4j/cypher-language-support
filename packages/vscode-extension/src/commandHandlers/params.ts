@@ -11,11 +11,12 @@ import {
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
 import { DiagnosticSeverity } from 'vscode-languageclient';
+import { CONSTANTS } from '../constants';
 import { getSchemaPoller } from '../contextService';
 import {
   clearParameters,
   deleteParameter,
-  getParameter,
+  getParameterByKey,
   setParameter,
 } from '../parameterService';
 import {
@@ -23,7 +24,7 @@ import {
   parametersTreeDataProvider,
 } from '../treeviews/parametersTreeDataProvider';
 
-export async function isConnected(): Promise<boolean> {
+async function isConnected(): Promise<boolean> {
   const schemaPoller = getSchemaPoller();
   return schemaPoller.connection?.healthcheck();
 }
@@ -48,9 +49,7 @@ export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
-    await window.showErrorMessage(
-      'You need to be connected to neo4j to set parameters.',
-    );
+    await window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_PARAMS);
     return;
   }
 
@@ -61,11 +60,11 @@ export async function addParameter(): Promise<void> {
     ignoreFocusOut: true,
   });
   if (!paramName) {
-    await window.showErrorMessage('Parameter name cannot be empty.');
+    await window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAMETER);
     return;
   }
   const schemaPoller = getSchemaPoller();
-  const dbSchema = schemaPoller.metadata.dbSchema;
+  const dbSchema = schemaPoller.metadata?.dbSchema ?? {};
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     placeHolder:
@@ -90,7 +89,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     );
     return;
   }
-  const existingParam = getParameter(paramItem.id);
+  const existingParam = getParameterByKey(paramItem.id);
   if (!existingParam) {
     return;
   }
