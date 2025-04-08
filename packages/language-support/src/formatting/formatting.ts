@@ -363,7 +363,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       id: this.groupID,
       dbgText: '',
       size: 0,
-      align: 0, // Irrelevant here
     };
     lastChunk.groupsStarting.push(newGroup);
     this.groupStack.push(newGroup);

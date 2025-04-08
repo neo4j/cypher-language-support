@@ -35,7 +35,6 @@ export interface Group {
   size: number;
   // The full text of the group (used for debugging only)
   dbgText: string;
-  align: number;
 }
 
 interface Decision {
