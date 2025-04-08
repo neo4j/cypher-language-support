@@ -688,24 +688,22 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_symbolicAliasName) {
-        const aliasCompletion = completeAliasName({
+        return completeAliasName({
           candidateRule,
           dbSchema,
           tokens,
           parsingResult,
         });
-        return aliasCompletion;
       }
 
       if (ruleNumber === CypherParser.RULE_commandNameExpression) {
-        const symbolicCompletions = completeSymbolicName({
+        return completeSymbolicName({
           candidateRule,
           dbSchema,
           previousToken,
           tokens,
           parsingResult,
         });
-        return symbolicCompletions;
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
