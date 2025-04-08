@@ -130,7 +130,7 @@ function stateToString(state: State) {
   return resultString;
 }
 
-function getNeighbourState(state: State, choice: Choice, split: Split): State {
+function getNextState(state: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
   let nextGroups = [...state.activeGroups];
   const indentationDecision =
@@ -147,7 +147,6 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const actualColumn = state.column === 0 ? indentationDecision : state.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
-  // We don't consider comments nor an empty space as overflowing
 
   for (let i = 0; i < choice.left.groupsStarting.length; i++) {
     const grp = choice.left.groupsStarting[i];
@@ -266,7 +265,7 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   throw new Error('Reached the end of determineSplit?');
 }
 
-function bestFirstSolnSearch(
+function computeFormattingDecisions(
   startingState: State,
   choiceList: Choice[],
 ): Result {
@@ -274,7 +273,7 @@ function bestFirstSolnSearch(
   while (state.choiceIndex < choiceList.length) {
     const choice = choiceList[state.choiceIndex];
     const split = determineSplit(state, choice, choice.possibleSplitChoices);
-    state = getNeighbourState(state, choice, split);
+    state = getNextState(state, choice, split);
   }
   return reconstructBestPath(state);
 }
@@ -391,7 +390,7 @@ export function buffersToFormattedString(
       choiceIndex: 0,
       edge: null,
     };
-    const result = bestFirstSolnSearch(initialState, choices);
+    const result = computeFormattingDecisions(initialState, choices);
     indentationState = result.indentationState;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
