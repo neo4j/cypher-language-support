@@ -2184,7 +2184,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const procedureNameGrp = this.startGroup();
     this._visit(ctx.procedureName());
     this.endGroup(procedureNameGrp);
-    const functionGrp = this.startGroup();
     const n = ctx.procedureArgument_list().length;
     if (ctx.LPAREN()) {
       this.avoidSpaceBetween();
@@ -2206,7 +2205,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(procedureArgumentGrp);
     }
-    this.endGroup(functionGrp);
     this.removeIndentation(indentId2);
     if (ctx.RPAREN()) {
       this.avoidSpaceBetween();
