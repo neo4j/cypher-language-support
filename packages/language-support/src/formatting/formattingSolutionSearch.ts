@@ -104,11 +104,11 @@ export function buffersToFormattedString(
 
   for (let i = 0; i < chunkList.length; i++) {
     const chunk = chunkList[i];
-    if (chunk.isCursor) {
-      cursorPos = formatted.length;
-    }
     if (formatted.endsWith('\n')) {
       formatted += ' '.repeat(indentation);
+    }
+    if (chunk.isCursor) {
+      cursorPos = formatted.length;
     }
     handleGroups(activeGroups, chunkList[i], calculateColumn(formatted));
     formatted += chunk.text;
