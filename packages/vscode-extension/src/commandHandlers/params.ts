@@ -68,6 +68,7 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
   }
   const schemaPoller = getSchemaPoller();
   const dbSchema = schemaPoller.metadata.dbSchema;
+  let timeout: NodeJS.Timeout;
   const paramValue = await window.showInputBox({
     prompt: defaultParamName
       ? `Parameter value for the parameter ${defaultParamName}`
@@ -75,7 +76,15 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
-    validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
+    validateInput: (paramValue) => {
+      return new Promise<string>((resolve) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          const validationResult = validateParamInput(paramValue, dbSchema);
+          resolve(validationResult);
+        }, 200);
+      });
+    },
   });
 
   if (!paramValue) {

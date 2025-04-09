@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.18
+
+### Patch Changes
+
+- 1b971aa: adding support for :play command
+- 07ac90f: adding semantic validation for missing paramters
+
 ## 2.0.0-next.17
 
 ### Minor Changes
