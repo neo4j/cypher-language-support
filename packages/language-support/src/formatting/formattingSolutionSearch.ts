@@ -4,7 +4,6 @@ import {
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   MAX_COL,
-  shouldBreak,
 } from './formattingHelpers';
 
 const INDENTATION_SPACES = 2;
@@ -34,52 +33,55 @@ export interface Group {
   dbgText: string;
 }
 
-function updateActiveGroups(
-  activeGroups: Group[],
-  chunk: Chunk,
-  column: number,
-): void {
+function shouldBreak(chunk: Chunk, state: State): boolean {
+  if (chunk.type === 'COMMENT') return true;
+
+  if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
+    return false;
+  }
+
+  return (
+    chunk.mustBreak || chunk.doubleBreak || state.activeGroups.at(-1)?.breaksAll
+  );
+}
+
+function updateActiveGroups(state: State, chunk: Chunk): void {
   for (const group of chunk.groupsStarting) {
-    const breaksAll = column + group.size > MAX_COL || group.breaksAll;
-    activeGroups.push({ ...group, breaksAll });
+    const breaksAll = state.column + group.size > MAX_COL || group.breaksAll;
+    state.activeGroups.push({ ...group, breaksAll });
   }
   for (const group of chunk.groupsEnding) {
-    const indexToRemove = activeGroups.findIndex(
+    const indexToRemove = state.activeGroups.findIndex(
       (item) => item.id === group.id,
     );
 
     if (indexToRemove !== -1) {
-      activeGroups.splice(indexToRemove, 1);
+      state.activeGroups.splice(indexToRemove, 1);
     } else {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
   }
 }
 
-function updateIndentationState(
-  activeIndentations: IndentationModifier[],
-  chunk: Chunk,
-  indentation: number,
-): number {
+function updateIndentationState(state: State, chunk: Chunk) {
   for (const indent of chunk.indentation) {
     if (indent.change === 1) {
-      activeIndentations.push(indent);
-      indentation += INDENTATION_SPACES;
+      state.activeIndentations.push(indent);
+      state.indentation += INDENTATION_SPACES;
     }
     if (indent.change === -1) {
-      const indexToRemove = activeIndentations.findIndex(
+      const indexToRemove = state.activeIndentations.findIndex(
         (item) => item.id === indent.id,
       );
       // Remove the item if found
       if (indexToRemove !== -1) {
-        activeIndentations.splice(indexToRemove, 1);
-        indentation -= INDENTATION_SPACES;
+        state.activeIndentations.splice(indexToRemove, 1);
+        state.indentation -= INDENTATION_SPACES;
       } else {
         throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }
-  return indentation;
 }
 export function buffersToFormattedString(
   chunkList: Chunk[],
@@ -92,18 +94,13 @@ export function buffersToFormattedString(
 
     applyIndentationIfNeeded(state);
     checkAndSetCursorPosition(state, chunk);
-    updateActiveGroups(state.activeGroups, chunk, state.column);
+    updateActiveGroups(state, chunk);
     appendChunkText(state, chunk);
-
-    state.indentation = updateIndentationState(
-      state.activeIndentations,
-      chunk,
-      state.indentation,
-    );
+    updateIndentationState(state, chunk);
 
     handleComments(state, chunk);
 
-    if (shouldBreak(chunk, state.activeGroups)) {
+    if (shouldBreak(chunk, state)) {
       processLineBreak(state, chunk, nextChunk);
       continue;
     }

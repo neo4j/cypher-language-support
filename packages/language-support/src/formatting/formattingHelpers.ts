@@ -184,13 +184,3 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
     nextChunk?.type === 'SYNTAX_ERROR'
   );
 }
-
-export function shouldBreak(chunk: Chunk, activeGroups: Group[]): boolean {
-  if (chunk.type === 'COMMENT') return true;
-
-  if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
-    return false;
-  }
-
-  return chunk.mustBreak || chunk.doubleBreak || activeGroups.at(-1)?.breaksAll;
-}
