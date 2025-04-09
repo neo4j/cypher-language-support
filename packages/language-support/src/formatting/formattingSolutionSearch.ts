@@ -323,7 +323,6 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
 export function buffersToFormattedString(
   chunkList: Chunk[],
 ): FinalResultWithPos {
-  let formatted = '';
   let cursorPos = 0;
   const choices: Choice[] = chunkListToChoices(chunkList);
   const initialState: State = {
@@ -337,12 +336,13 @@ export function buffersToFormattedString(
   };
   const decisions = computeFormattingDecisions(initialState, choices);
   const formattingResult = decisionsToFormatted(decisions);
+  let formatted = '';
   // Cursor is not in this chunkList
-  if (typeof formattingResult === 'string') {
-    formatted += formattingResult + '\n';
-  } else {
+  if (typeof formattingResult !== 'string') {
     cursorPos = formatted.length + formattingResult.cursorPos;
-    formatted += formattingResult.formattedString + '\n';
+    formatted = formattingResult.formattedString;
+  } else {
+    formatted = formattingResult;
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
