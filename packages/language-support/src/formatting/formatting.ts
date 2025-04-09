@@ -473,7 +473,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         indentation: [],
       };
       this.getChunkList().push(chunk);
-      this.breakLine();
     }
   };
 
