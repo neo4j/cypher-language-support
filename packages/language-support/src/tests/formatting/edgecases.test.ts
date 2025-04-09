@@ -976,7 +976,8 @@ RETURN
         ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
-    // TODO: the THEN below the EXISTS shuold get one more indentation step
+    // TODO: the THENs below the EXISTS should get put on the next line (?) and get extra indentation.
+    // This doesn't work yet because we haven't moved to a single chunkList yet.
     const expected = `MATCH (u:User)
 WITH
   u,
@@ -986,8 +987,7 @@ RETURN
   CASE
     WHEN EXISTS {
       MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-    } AND likeCount > 10
-    THEN
+    } AND likeCount > 10 THEN
       CASE p.name
         WHEN
           size(interestList) > 3
@@ -1001,8 +1001,7 @@ RETURN
       CASE
         WHEN NOT EXISTS {
           MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-        } AND likeCount <= 10
-        THEN
+        } AND likeCount <= 10 THEN
           'Less active user without a smartphone, interests: ' +
           toString(interestList)
         ELSE

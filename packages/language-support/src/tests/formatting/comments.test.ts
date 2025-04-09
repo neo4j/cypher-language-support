@@ -325,6 +325,8 @@ AND post.likes >= 50
    - Adjust the threshold based on campaign feedback.
 */
 RETURN user.username, post.title, post.likes;`;
+    // TODO: It would be nice if the AND here moved up to the previous line, like we do when
+    // there are inline comments. We just haven't implemented it for hard-break ones just yet.
     const expected = `// This query demonstrates inline and block comments during data retrieval.
 MATCH (user:User)-[:LIKES]->(post:Post)
 WHERE
@@ -333,7 +335,8 @@ WHERE
   // Inline comment: Only consider posts with significant engagement
   // Inline comment: Only consider posts with significant engagement
   // Inline comment: Only consider posts with significant engagement
-  AND post.likes >= 50
+  AND
+  post.likes >= 50
 /* The following block comment elaborates:
    - Posts with less than 50 likes are considered low impact.
    - Adjust the threshold based on campaign feedback.
