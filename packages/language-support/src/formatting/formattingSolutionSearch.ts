@@ -117,7 +117,7 @@ export function buffersToFormattedString(
       continue;
     }
 
-    if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
+    if (doesNotWantSpace(chunk, chunkList[i + 1])) {
       formatted += '';
       continue;
     }
