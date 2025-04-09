@@ -49,7 +49,9 @@ export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
-    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_PARAMS);
+    void window.showErrorMessage(
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS,
+    );
     return;
   }
 
@@ -60,7 +62,7 @@ export async function addParameter(): Promise<void> {
     ignoreFocusOut: true,
   });
   if (!paramName) {
-    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAMETER);
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_NAME);
     return;
   }
   const schemaPoller = getSchemaPoller();
@@ -83,7 +85,7 @@ export async function addParameter(): Promise<void> {
   });
 
   if (!paramValue) {
-    void window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE);
     return;
   }
 
@@ -94,7 +96,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
   const connected = await isConnected();
   if (!connected) {
     void window.showErrorMessage(
-      'You need to be connected to neo4j to edit parameters.',
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EDIT_PARAMS,
     );
     return;
   }
@@ -103,7 +105,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     return;
   }
   const schemaPoller = getSchemaPoller();
-  const dbSchema = schemaPoller.metadata.dbSchema;
+  const dbSchema = schemaPoller?.metadata?.dbSchema ?? {};
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     value: existingParam.evaluatedStatement,
@@ -111,7 +113,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
-    void window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE);
     return;
   }
 
@@ -150,7 +152,7 @@ export async function evaluateParam(
 
     if (db.type === 'system') {
       void window.showErrorMessage(
-        'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+        CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION_SYSTEM_DB,
       );
       return;
     }
@@ -160,7 +162,7 @@ export async function evaluateParam(
     });
     const [record] = result.records;
     if (record === undefined) {
-      void window.showErrorMessage('Parameter evaluation failed.');
+      void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION);
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
