@@ -49,7 +49,7 @@ export async function addParameter(): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
-    await window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_PARAMS);
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_PARAMS);
     return;
   }
 
@@ -60,7 +60,7 @@ export async function addParameter(): Promise<void> {
     ignoreFocusOut: true,
   });
   if (!paramName) {
-    await window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAMETER);
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAMETER);
     return;
   }
   const schemaPoller = getSchemaPoller();
@@ -83,7 +83,7 @@ export async function addParameter(): Promise<void> {
   });
 
   if (!paramValue) {
-    await window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage('Parameter value cannot be empty.');
     return;
   }
 
@@ -93,7 +93,7 @@ export async function addParameter(): Promise<void> {
 export async function editParameter(paramItem: ParameterItem): Promise<void> {
   const connected = await isConnected();
   if (!connected) {
-    await window.showErrorMessage(
+    void window.showErrorMessage(
       'You need to be connected to neo4j to edit parameters.',
     );
     return;
@@ -111,7 +111,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
-    await window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage('Parameter value cannot be empty.');
     return;
   }
 
@@ -149,7 +149,7 @@ export async function evaluateParam(
     const db = getCurrentDatabase();
 
     if (db.type === 'system') {
-      await window.showErrorMessage(
+      void window.showErrorMessage(
         'Parameters cannot be evaluated against a system database. Please connect to a user database.',
       );
       return;
@@ -160,7 +160,7 @@ export async function evaluateParam(
     });
     const [record] = result.records;
     if (record === undefined) {
-      await window.showErrorMessage('Parameter evaluation failed.');
+      void window.showErrorMessage('Parameter evaluation failed.');
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
@@ -185,7 +185,7 @@ export async function evaluateParam(
     if (e instanceof Neo4jError) {
       //If we can get past linting-check with invalid query but still have failing query
       //when executing, we catch here as a backup
-      await window.showErrorMessage(
+      void window.showErrorMessage(
         'Failed to evaluate parameter: ' + e.message,
       );
     } else {

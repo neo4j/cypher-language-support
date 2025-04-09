@@ -196,7 +196,7 @@ export async function runCypher(): Promise<void> {
     const activeConnection = getActiveConnection();
 
     if (!activeConnection) {
-      await window.showErrorMessage(
+      void window.showErrorMessage(
         `You need to be connected to Neo4j to run queries`,
       );
 
