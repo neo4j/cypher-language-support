@@ -142,6 +142,9 @@ export function buffersToFormattedString(
       } */
       formatted += chunk.text;
       formatted += '\n';
+      if (chunk.doubleBreak) {
+        formatted += '\n';
+      }
       formatted += ' '.repeat(indentation);
     } else if (chunk.type === 'SYNTAX_ERROR') {
       formatted += chunk.text;
