@@ -1900,15 +1900,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const mergeGrp = this.startGroup();
     this._visit(ctx.MERGE());
     const mergeClauseIndent = this.addIndentation();
-    const patternGrp = this.startGroup();
     this._visit(ctx.pattern());
     this.removeIndentation(mergeClauseIndent);
-    this.endGroup(patternGrp);
+    this.endGroup(mergeGrp);
     const n = ctx.mergeAction_list().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.mergeAction(i));
     }
-    this.endGroup(mergeGrp);
   };
 
   // Handled separately because it wants indentation
