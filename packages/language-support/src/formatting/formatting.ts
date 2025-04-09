@@ -1899,10 +1899,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitMergeClause = (ctx: MergeClauseContext) => {
-    const mergeGrp = this.startGroup();
+    const patternGrp = this.startGroup();
     this._visit(ctx.MERGE());
     const mergeClauseIndent = this.addIndentation();
-    const patternGrp = this.startGroup();
     this._visit(ctx.pattern());
     this.removeIndentation(mergeClauseIndent);
     this.endGroup(patternGrp);
@@ -1910,14 +1909,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this._visit(ctx.mergeAction(i));
     }
-    this.endGroup(mergeGrp);
   };
 
   // Handled separately because it wants indentation
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitMergeAction = (ctx: MergeActionContext) => {
     const mergeActionIndent = this.addIndentation();
+    const mergeActionGrp = this.startGroup();
     this.breakAndVisitChildren(ctx);
+    this.endGroup(mergeActionGrp);
     this.removeIndentation(mergeActionIndent);
   };
 
