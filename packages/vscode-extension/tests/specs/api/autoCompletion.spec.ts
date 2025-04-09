@@ -11,6 +11,7 @@ import {
   openDocument,
   tagsToString,
 } from '../../helpers';
+import { connectDefault } from '../../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | vscode.Uri;
@@ -19,6 +20,14 @@ type InclusionTestArgs = {
 };
 
 const { functions, procedures } = testData.mockSchema;
+
+function labelToString(label: string | vscode.CompletionItemLabel) {
+  if (typeof label === 'string') {
+    return label;
+  } else {
+    return label.label;
+  }
+}
 
 export async function testCompletionContains({
   textFile,
@@ -51,7 +60,9 @@ export async function testCompletionContains({
       assert.equal(
         found !== undefined,
         true,
-        `Expected item not found by kind and label`,
+        `Expected item not found by kind ${expectedItem.kind.toString()} and label ${labelToString(
+          expectedItem.label,
+        )}`,
       );
       assert.equal(
         found.detail,
@@ -279,10 +290,7 @@ suite('Auto completion spec', () => {
       expected: expecations,
     });
 
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
-      0,
-    );
+    await connectDefault();
   });
 
   test('Parameters are backticked correctly', async () => {
