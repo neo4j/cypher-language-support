@@ -279,7 +279,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: prefix.indentation.concat(suffix.indentation),
-      comment: (prefix.comment || '') + (suffix.comment || '') || undefined,
+      comment: (prefix.comment || '') + (suffix.comment || '') || null,
       ...(hasCursor && { isCursor: true }),
     };
     this.currentBuffer()[indices[1]] = chunk;
