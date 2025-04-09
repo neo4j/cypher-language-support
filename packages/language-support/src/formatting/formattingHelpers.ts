@@ -156,8 +156,8 @@ export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
 export function fillInRegularChunkGroupSizes(
   chunk: RegularChunk,
   activeGroups: Group[],
-  groupsEnding: Set<number>,
 ) {
+  const groupsEnding = new Set<number>(chunk.groupsEnding.map((g) => g.id));
   for (const group of activeGroups) {
     if (!chunk.text) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);

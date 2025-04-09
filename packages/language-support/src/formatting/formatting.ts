@@ -202,14 +202,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       let activeGroups: Group[] = [];
       for (let i = 0; i < chunkList.length; i++) {
         const chunk = chunkList[i];
-        const groupsEnding = new Set<number>(
-          chunk.groupsEnding.map((g) => g.id),
-        );
-        for (const group of chunk.groupsStarting) {
-          activeGroups.push(group);
-        }
+        activeGroups = activeGroups.concat(chunk.groupsStarting);
+
         if (chunk.type === 'REGULAR') {
-          fillInRegularChunkGroupSizes(chunk, activeGroups, groupsEnding);
+          fillInRegularChunkGroupSizes(chunk, activeGroups);
         } else if (chunk.type === 'COMMENT') {
           // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
           // the groups it is a part of will always break.
@@ -217,13 +213,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
             group.breaksAll = true;
           });
         }
-        for (const group of chunk.groupsEnding) {
+        chunk.groupsEnding.forEach((group) => {
           if (group.dbgText.at(-1) === ' ') {
             group.size--;
             group.dbgText = group.dbgText.slice(0, -1);
           }
+          // PERF: this is O(n) and doesn't really need to be.
           activeGroups = activeGroups.filter((g) => g.id !== group.id);
-        }
+        });
       }
     }
     // If we made an error when calculating the group sizes, that counts as an internal bug.
