@@ -728,9 +728,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCommandOptions = (ctx: CommandOptionsContext) => {
     this.breakLine();
+    const optionsGrp = this.startGroup();
     this.visit(ctx.OPTIONS());
     const optionIndent = this.addIndentation();
-    const optionsGrp = this.startGroup();
     this.visit(ctx.mapOrParameter());
     this.removeIndentation(optionIndent);
     this.endGroup(optionsGrp);
