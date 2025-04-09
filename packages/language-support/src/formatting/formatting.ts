@@ -459,7 +459,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // (as opposed to the ones in addCommentsAfter)
       const chunk: CommentChunk = {
         type: 'COMMENT',
-        breakBefore: false,
         text,
         groupsStarting: [],
         groupsEnding: [],
@@ -501,7 +500,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         // Comments on their own line become chunks in the chunkList however.
         const chunk: CommentChunk = {
           type: 'COMMENT',
-          breakBefore: true,
           text,
           groupsStarting: [],
           groupsEnding: [],

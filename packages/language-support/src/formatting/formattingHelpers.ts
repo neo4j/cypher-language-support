@@ -29,15 +29,15 @@ export interface BaseChunk {
   // Comment that is attached to a chunk. Not to be confused with a comment
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
+  noSpace?: boolean;
+  noBreak?: boolean;
+  mustBreak?: boolean;
 }
 
 // Regular chunk specific properties
 export interface RegularChunk extends BaseChunk {
   type: 'REGULAR';
   node?: TerminalNode;
-  noSpace?: boolean;
-  noBreak?: boolean;
-  mustBreak?: boolean;
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
@@ -48,7 +48,6 @@ export interface SyntaxErrorChunk extends BaseChunk {
 // Comment chunk specific properties
 export interface CommentChunk extends BaseChunk {
   type: 'COMMENT';
-  breakBefore: boolean;
 }
 
 // Union type for all chunk types
@@ -144,13 +143,6 @@ export function findTargetToken(
     }
   }
   return false;
-}
-
-export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    chunk.type === 'COMMENT' ||
-    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
-  );
 }
 
 // These three are helpers for the fillInGroupSizes method to make it more manageable
