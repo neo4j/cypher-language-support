@@ -859,9 +859,6 @@ RETURN
     verifyFormatting(query, expected);
   });
 
-  /**
-   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
-   * (though it is close.)
   test('extremely complex expressions with nested exist and case', () => {
     const query = `
 MATCH (n)
@@ -898,59 +895,71 @@ END
 END`.trimStart();
     const expected = `
 MATCH (n)
-RETURN 5 +
+RETURN
+  5 +
   CASE
-    WHEN (n)--() THEN
-      CASE
-        WHEN EXISTS {
-          MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris'
-          WITH dog
-          WHERE dog.name = 'Ozzy'
-        } THEN 'Relationship'
-        WHEN (n {prop: 42}) THEN
-          CASE
-            WHEN
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--()
-              THEN 'Relationship'
-            WHEN (n {prop: 42}) THEN
+    WHEN
+      (n)--()
+      THEN
+        CASE
+          WHEN
+            EXISTS {
+              MATCH (person)-[:HAS_DOG]->(dog:Dog)
+              WHERE
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris'
+              WITH dog
+              WHERE dog.name = 'Ozzy'
+            }
+            THEN 'Relationship'
+          WHEN
+            (n {prop: 42})
+            THEN
               CASE
-                WHEN EXISTS {
-                  MATCH (person)-[:HAS_DOG]->(dog:Dog)
-                  WHERE person.name = 'Chris'
-                  WITH dog
-                  WHERE dog.name = 'Ozzy'
-                } THEN 'Relationship'
-                WHEN (n {prop: 42}) THEN 'Node'
+                WHEN
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--()
+                  THEN 'Relationship'
+                WHEN
+                  (n {prop: 42})
+                  THEN
+                    CASE
+                      WHEN
+                        EXISTS {
+                          MATCH (person)-[:HAS_DOG]->(dog:Dog)
+                          WHERE person.name = 'Chris'
+                          WITH dog
+                          WHERE dog.name = 'Ozzy'
+                        }
+                        THEN 'Relationship'
+                      WHEN (n {prop: 42}) THEN 'Node'
+                    END
               END
-          END
-      END
-    WHEN (n {prop: 42}) THEN
-      CASE
-        WHEN (n)--() THEN 'Relationship'
-        WHEN (n {prop: 42}) THEN 'Node'
-      END
+        END
+    WHEN
+      (n {prop: 42})
+      THEN
+        CASE
+          WHEN (n)--() THEN 'Relationship'
+          WHEN (n {prop: 42}) THEN 'Node'
+        END
   END`.trimStart();
     verifyFormatting(query, expected);
   });
-  */
 
   test('else statements for CASE needs to align its expression', () => {
     const query = `MATCH (u:User)
