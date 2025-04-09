@@ -29,13 +29,13 @@ export interface BaseChunk {
   // Comment that is attached to a chunk. Not to be confused with a comment
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
+  mustBreak?: boolean;
 }
 
 // Regular chunk specific properties
 export interface RegularChunk extends BaseChunk {
   noSpace?: boolean;
   noBreak?: boolean;
-  mustBreak?: boolean;
   type: 'REGULAR';
   node?: TerminalNode;
 }
