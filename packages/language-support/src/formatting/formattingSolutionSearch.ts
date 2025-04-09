@@ -137,9 +137,9 @@ export function buffersToFormattedString(
       }
     } else if (chunk.type === 'COMMENT') {
       // formatted += '\n';
-      /*    if (chunk.breakBefore) {
+      /* if (chunk.breakBefore) {
         formatted += '\n';
-        } */
+      } */
       formatted += chunk.text;
       formatted += '\n';
       formatted += ' '.repeat(indentation);
