@@ -125,7 +125,10 @@ function createStateTransition(
       choice.left,
       // We should apply the indentation also if it was a group that would want to split, but wasn't
       // allowed to (because of avoidBreakBetween() in the visitor).
-      isBreak || split.wantedToSplit,
+      isBreak ||
+        split.wantedToSplit ||
+        // For syntax errors
+        choice.right.text.startsWith('\n'),
     );
 
   const actualColumn = state.column === 0 ? indentationDecision : state.column;
