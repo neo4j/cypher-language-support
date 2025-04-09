@@ -1073,7 +1073,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.getText().startsWith(MISSING)) {
       return;
     }
-    if (this.chunkList.length === 1 && this.getChunkList().length === 0) {
+    if (this.chunkList.length === 0) {
       this.addCommentsBefore(node);
     }
     if (node.symbol.type === CypherCmdLexer.EOF) {
@@ -1114,7 +1114,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.getText().startsWith(MISSING)) {
       return;
     }
-    if (this.chunkList.length === 1 && this.getChunkList().length === 0) {
+    if (this.chunkList.length === 0) {
       this.addCommentsBefore(node);
     }
     let text = node.getText();
