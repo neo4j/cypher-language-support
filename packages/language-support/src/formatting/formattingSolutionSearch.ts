@@ -54,7 +54,6 @@ interface State {
 
 interface Result {
   decisions: Decision[];
-  indentationState: IndentationState;
 }
 
 interface FinalResultWithPos {
@@ -251,10 +250,14 @@ function computeFormattingDecisions(
     state = nextState;
     decisions.push(decision);
   }
+  if (
+    state.indentationState.indentation !== 0 ||
+    state.indentationState.activeIndents.length > 0
+  ) {
+    throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+  }
   return {
     decisions,
-    // TODO: IndentationState will not be needed after moving to one chunkList
-    indentationState: state.indentationState,
   };
 }
 
@@ -327,21 +330,18 @@ export function buffersToFormattedString(
   chunkList: Chunk[],
 ): FinalResultWithPos {
   let formatted = '';
-  let indentationState: IndentationState = {
-    indentation: 0,
-    activeIndents: [],
-  };
   let cursorPos = 0;
   const choices: Choice[] = chunkListToChoices(chunkList);
-  // Indentation should carry over
   const initialState: State = {
     activeGroups: [],
-    indentationState,
+    indentationState: {
+      indentation: 0,
+      activeIndents: [],
+    },
     column: 0,
     choiceIndex: 0,
   };
   const result = computeFormattingDecisions(initialState, choices);
-  indentationState = result.indentationState;
   const formattingResult = decisionsToFormatted(result.decisions);
   // Cursor is not in this chunkList
   if (typeof formattingResult === 'string') {
@@ -349,12 +349,6 @@ export function buffersToFormattedString(
   } else {
     cursorPos = formatted.length + formattingResult.cursorPos;
     formatted += formattingResult.formattedString + '\n';
-  }
-  if (
-    indentationState.indentation !== 0 ||
-    indentationState.activeIndents.length > 0
-  ) {
-    throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };
 }
