@@ -52,20 +52,19 @@ function handleGroups(
   chunk: Chunk,
   column: number,
 ): void {
-  if (chunk.type === 'REGULAR') {
-    for (const group of chunk.groupsStarting) {
-      const breaksAll = column + group.size > MAX_COL || group.breaksAll;
-      activeGroups.push({ ...group, breaksAll });
-    }
-    for (const group of chunk.groupsEnding) {
-      const indexToRemove = activeGroups.findIndex(
-        (item) => item.id === group.id,
-      );
+  for (const group of chunk.groupsStarting) {
+    const breaksAll = column + group.size > MAX_COL || group.breaksAll;
+    activeGroups.push({ ...group, breaksAll });
+  }
+  for (const group of chunk.groupsEnding) {
+    const indexToRemove = activeGroups.findIndex(
+      (item) => item.id === group.id,
+    );
 
-      // Remove the item if found
-      if (indexToRemove !== -1) {
-        activeGroups.splice(indexToRemove, 1);
-      }
+    if (indexToRemove !== -1) {
+      activeGroups.splice(indexToRemove, 1);
+    } else {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
   }
 }
@@ -88,6 +87,8 @@ function handleIndentations(
       if (indexToRemove !== -1) {
         activeIndentations.splice(indexToRemove, 1);
         indentation -= INDENTATION_SPACES;
+      } else {
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }
@@ -143,6 +144,9 @@ export function buffersToFormattedString(
   }
 
   if (indentation !== 0 || activeIndentations.length > 0) {
+    throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+  }
+  if (activeGroups.length > 0) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
   return { formattedString: formatted.trimEnd(), cursorPos: cursorPos };

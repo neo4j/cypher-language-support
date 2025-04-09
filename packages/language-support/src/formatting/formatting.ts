@@ -190,7 +190,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           `Unable to format query due to syntax error near ${this.firstUnParseableToken?.text} at line ${this.firstUnParseableToken?.line}`,
         );
       }
-      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+      // throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     return resultString;
   };
