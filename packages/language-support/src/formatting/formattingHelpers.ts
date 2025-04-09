@@ -58,14 +58,6 @@ export interface IndentationModifier {
   change: 1 | -1;
 }
 
-export const emptyChunk: RegularChunk = {
-  type: 'REGULAR',
-  text: '',
-  groupsStarting: [],
-  groupsEnding: [],
-  indentation: [],
-};
-
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
   CypherCmdLexer.COMMA,
