@@ -152,7 +152,10 @@ function createStateTransition(
 }
 
 function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
-  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+  if (chunk.type === 'SYNTAX_ERROR') {
+    return chunk.mustBreak ? onlyBreakSplit : noSpaceNoBreakSplit;
+  }
+  if (nextChunk?.type === 'SYNTAX_ERROR') {
     return noSpaceNoBreakSplit;
   }
   if (isCommentBreak(chunk, nextChunk)) {
