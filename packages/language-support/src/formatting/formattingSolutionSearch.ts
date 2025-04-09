@@ -73,7 +73,7 @@ function updateIndentationState(state: State, chunk: Chunk) {
       const indexToRemove = state.activeIndentations.findIndex(
         (item) => item.id === indent.id,
       );
-      // Remove the item if found
+
       if (indexToRemove !== -1) {
         state.activeIndentations.splice(indexToRemove, 1);
         state.indentation -= INDENTATION_SPACES;
@@ -120,9 +120,6 @@ export function buffersToFormattedString(
   };
 }
 
-/**
- * Creates the initial state object for formatting process
- */
 function createInitialState(): State {
   return {
     formatted: '',
@@ -135,9 +132,6 @@ function createInitialState(): State {
   };
 }
 
-/**
- * Applies appropriate indentation after a newline
- */
 function applyIndentationIfNeeded(state: State) {
   if (state.formatted.endsWith('\n')) {
     state.formatted += ' '.repeat(state.indentation);
@@ -145,35 +139,23 @@ function applyIndentationIfNeeded(state: State) {
   }
 }
 
-/**
- * Sets the cursor position if this chunk is a cursor
- */
 function checkAndSetCursorPosition(state: State, chunk: Chunk) {
   if (chunk.isCursor) {
     state.cursorPos = state.formatted.length;
   }
 }
 
-/**
- * Appends the chunk text to the formatted string
- */
 function appendChunkText(state: State, chunk: Chunk) {
   state.formatted += chunk.text;
   state.column += chunk.text.length;
 }
 
-/**
- * Handles comments in the current chunk
- */
 function handleComments(state: State, chunk: Chunk) {
   if (chunk.comment) {
     state.pendingComments.push(chunk.comment);
   }
 }
 
-/**
- * Processes line breaks and handles pending comments
- */
 function processLineBreak(state: State, chunk: Chunk, nextChunk?: Chunk) {
   appendPendingComments(state);
 
@@ -186,9 +168,6 @@ function processLineBreak(state: State, chunk: Chunk, nextChunk?: Chunk) {
   }
 }
 
-/**
- * Appends all pending comments and clears the list
- */
 function appendPendingComments(state: State) {
   for (const comment of state.pendingComments) {
     state.formatted += ' ';
@@ -197,18 +176,12 @@ function appendPendingComments(state: State) {
   state.pendingComments.length = 0;
 }
 
-/**
- * Appends State remaining comments at the end of processing
- */
 function appendRemainingComments(state: State) {
   for (const comment of state.pendingComments) {
     state.formatted += comment;
   }
 }
 
-/**
- * Validates the final state to ensure no errors
- */
 function validateFinalState(state: State) {
   if (state.indentation !== 0 || state.activeIndentations.length > 0) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
