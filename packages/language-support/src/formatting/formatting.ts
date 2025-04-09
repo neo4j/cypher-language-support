@@ -282,19 +282,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   setChunkProperty = (
     propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
   ): void => {
-    const idx = this.getFirstNonCommentIdx();
-    // After a comment we always hardBreak, so if the loop finds a comment
-    // we should not also set mustBreak, it will cause breaking twice
-    if (propertyName === 'mustBreak' && this.chunkList.length - 1 !== idx) {
+    if (this.chunkList.length === 0) {
       return;
     }
-    if (idx < 0) {
+    const chunk = this.lastInChunkList();
+    if (chunk.type === 'COMMENT') {
       return;
-    }
-
-    const chunk = this.chunkList[idx];
-    if (chunk.type !== 'REGULAR' && chunk.type !== 'SYNTAX_ERROR') {
-      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     chunk[propertyName] = true;
   };
