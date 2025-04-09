@@ -187,31 +187,16 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   if (choice.right === emptyChunk) {
     return onlyBreakSplit[0];
   }
-  endGroups(state, choice);
-  const nonSpace =
-    (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
-    doesNotWantSpace(choice.left, choice.right);
 
-  const endingHere = choice.left.groupsEnding.map((g) => g.id);
-  const activeGrps = state.activeGroups;
-  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
-  const newGroups = choice.left.groupsStarting;
-  const nextStart = lastGrpBreaks
-    ? state.indentationState.indentation
-    : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
-
-  let breakBefore = false;
-  for (const group of newGroups) {
-    if (group.breaksAll || group.size + nextStart > MAX_COL) {
-      breakBefore = true;
+  for (const group of choice.left.groupsStarting) {
+    if (group.size + state.column > MAX_COL) {
       group.breaksAll = true;
     }
-    if (!endingHere.includes(group.id)) {
-      state.activeGroups.push(group);
-    }
+    state.activeGroups.push(group);
   }
-
-  const shouldBreak = lastGrpBreaks || breakBefore;
+  endGroups(state, choice);
+  const shouldBreak =
+    state.activeGroups.length > 0 && state.activeGroups.at(-1).breaksAll;
 
   if (splits.length === 1) {
     return {
@@ -232,12 +217,7 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
 }
 
 function endGroups(state: State, choice: Choice) {
-  const startingHere = choice.left.groupsStarting.map((g) => g.id);
   for (let i = 0; i < choice.left.groupsEnding.length; i++) {
-    const grp = choice.left.groupsEnding[i];
-    if (startingHere.includes(grp.id)) {
-      continue;
-    }
     if (state.activeGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
