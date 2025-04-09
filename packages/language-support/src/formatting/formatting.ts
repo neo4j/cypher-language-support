@@ -134,7 +134,7 @@ type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   root: StatementsOrCommandsContext;
   query: string;
-  buffers: Chunk[][] = [];
+  chunkList: Chunk[] = [];
   indentation = 0;
   indentationSpaces = 2;
   targetToken?: number;
@@ -162,7 +162,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     super();
     this.root = root;
     this.query = query;
-    this.buffers.push([]);
     if (unParseable) {
       this.unParseable = unParseable;
     }
@@ -176,7 +175,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(this.root);
     this.removeAllPendingGroups();
     this.fillInGroupSizes();
-    const result = buffersToFormattedString(this.buffers);
+    const result = buffersToFormattedString(this.chunkList);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
     const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
@@ -198,38 +197,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   fillInGroupSizes = () => {
-    for (const chunkList of this.buffers) {
-      let activeGroups: Group[] = [];
-      for (let i = 0; i < chunkList.length; i++) {
-        const chunk = chunkList[i];
-        activeGroups = activeGroups.concat(chunk.groupsStarting);
+    let activeGroups: Group[] = [];
+    for (let i = 0; i < this.chunkList.length; i++) {
+      const chunk = this.chunkList[i];
+      activeGroups = activeGroups.concat(chunk.groupsStarting);
 
-        if (chunk.type === 'REGULAR') {
-          fillInRegularChunkGroupSizes(chunk, activeGroups);
-        } else if (chunk.type === 'COMMENT') {
-          // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
-          // the groups it is a part of will always break.
-          activeGroups.forEach((group) => {
-            group.breaksAll = true;
-          });
-        }
-        chunk.groupsEnding.forEach((group) => {
-          if (group.dbgText.at(-1) === ' ') {
-            group.size--;
-            group.dbgText = group.dbgText.slice(0, -1);
-          }
-          // PERF: this is O(n) and doesn't really need to be.
-          activeGroups = activeGroups.filter((g) => g.id !== group.id);
+      if (chunk.type === 'REGULAR') {
+        fillInRegularChunkGroupSizes(chunk, activeGroups);
+      } else if (chunk.type === 'COMMENT') {
+        // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
+        // the groups it is a part of will always break.
+        activeGroups.forEach((group) => {
+          group.breaksAll = true;
         });
       }
+      chunk.groupsEnding.forEach((group) => {
+        if (group.dbgText.at(-1) === ' ') {
+          group.size--;
+          group.dbgText = group.dbgText.slice(0, -1);
+        }
+        // PERF: this is O(n) and doesn't really need to be.
+        activeGroups = activeGroups.filter((g) => g.id !== group.id);
+      });
     }
     // If we made an error when calculating the group sizes, that counts as an internal bug.
-    verifyGroupSizes(this.buffers);
+    verifyGroupSizes(this.chunkList);
   };
 
-  currentBuffer = () => this.buffers.at(-1);
-
-  lastInCurrentBuffer = () => this.currentBuffer().at(-1);
+  lastInChunkList = () => this.chunkList.at(-1);
 
   removeAllPendingGroups = () => {
     while (this.groupStack.length > 0) {
@@ -241,11 +236,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // groups might be active when breakLine() is called, but it does not make sense to keeep them active
     // so clear all groups when this happens.
     // TODO: v3 tech debt; we should not end groups between breakLine() calls.
-    this.removeAllPendingGroups();
-
-    if (this.currentBuffer().length > 0) {
-      this.buffers.push([]);
-    }
+    this.mustBreakBetween();
   };
 
   // If two tokens should never be split, concatenate them into one chunk
@@ -253,8 +244,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // Loop since we might have multiple comments or special chunks anywhere, e.g. [b, C, C, a, C]
     // but we should still be able to concatenate a, b to ba
     const indices: number[] = [];
-    for (let i = this.currentBuffer().length - 1; i >= 0; i--) {
-      if (!(this.currentBuffer()[i].type === 'COMMENT')) {
+    for (let i = this.chunkList.length - 1; i >= 0; i--) {
+      if (!(this.chunkList[i].type === 'COMMENT')) {
         indices.push(i);
         if (indices.length === 2) {
           break;
@@ -265,13 +256,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     if (
-      this.currentBuffer()[indices[0]].type !== 'REGULAR' ||
-      this.currentBuffer()[indices[1]].type !== 'REGULAR'
+      this.chunkList[indices[0]].type !== 'REGULAR' ||
+      this.chunkList[indices[1]].type !== 'REGULAR'
     ) {
       return;
     }
-    const suffix = this.currentBuffer().splice(indices[0], 1)[0];
-    const prefix = this.currentBuffer()[indices[1]];
+    const suffix = this.chunkList.splice(indices[0], 1)[0];
+    const prefix = this.chunkList[indices[1]];
     const hasCursor = prefix.isCursor || suffix.isCursor;
     if (suffix.isCursor) {
       this.cursorPos += prefix.text.length;
@@ -286,7 +277,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       comment: (prefix.comment || '') + (suffix.comment || '') || undefined,
       ...(hasCursor && { isCursor: true }),
     };
-    this.currentBuffer()[indices[1]] = chunk;
+    this.chunkList[indices[1]] = chunk;
   };
 
   /**
@@ -299,17 +290,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const idx = this.getFirstNonCommentIdx();
     // After a comment we always hardBreak, so if the loop finds a comment
     // we should not also set mustBreak, it will cause breaking twice
-    if (
-      propertyName === 'mustBreak' &&
-      this.currentBuffer().length - 1 !== idx
-    ) {
+    if (propertyName === 'mustBreak' && this.chunkList.length - 1 !== idx) {
       return;
     }
     if (idx < 0) {
       return;
     }
 
-    const chunk = this.currentBuffer()[idx];
+    const chunk = this.chunkList[idx];
     if (chunk.type !== 'REGULAR' && chunk.type !== 'SYNTAX_ERROR') {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
@@ -329,23 +317,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   doubleBreakBetween = (): void => {
-    if (this.currentBuffer().length > 0) {
-      this.lastInCurrentBuffer().doubleBreak = true;
+    if (this.chunkList.length > 0) {
+      this.lastInChunkList().doubleBreak = true;
     }
   };
 
   doubleBreakBetweenNonComment = (): void => {
     if (
-      this.currentBuffer().length > 0 &&
-      this.lastInCurrentBuffer().type !== 'COMMENT'
+      this.chunkList.length > 0 &&
+      this.lastInChunkList().type !== 'COMMENT'
     ) {
-      this.lastInCurrentBuffer().doubleBreak = true;
+      this.lastInChunkList().doubleBreak = true;
     }
   };
 
   getFirstNonCommentIdx = (): number => {
-    let idx = this.currentBuffer().length - 1;
-    while (idx >= 0 && this.currentBuffer()[idx].type === 'COMMENT') {
+    let idx = this.chunkList.length - 1;
+    while (idx >= 0 && this.chunkList[idx].type === 'COMMENT') {
       idx--;
     }
     return idx;
@@ -358,7 +346,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const idx = this.getFirstNonCommentIdx();
     const group = this.groupStack.pop();
-    this.currentBuffer().at(idx).groupsEnding.push(group);
+    this.chunkList.at(idx).groupsEnding.push(group);
   };
 
   startGroup = (): number => {
@@ -375,7 +363,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   _addIndentationModifier = (modifier: IndentationModifier) => {
     const idx = this.getFirstNonCommentIdx();
-    const chunk = this.currentBuffer().at(idx);
+    const chunk = this.chunkList.at(idx);
     chunk.indentation.push(modifier);
   };
 
@@ -482,7 +470,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         groupsEnding: [],
         indentation: [],
       };
-      this.currentBuffer().push(chunk);
+      this.chunkList.push(chunk);
       this.breakLine();
     }
   };
@@ -513,7 +501,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       // Inline comments (ones on the same line as, but after the node) get attached to the chunk.
       // They are then appended to the line that that chunk is put on later (see decisionsToFormatted)
       if (nodeLine === commentLine) {
-        const previousChunk = this.lastInCurrentBuffer();
+        const previousChunk = this.lastInChunkList();
         previousChunk.comment = text;
       } else {
         // Comments on their own line become chunks in the chunkList however.
@@ -525,7 +513,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           groupsEnding: [],
           indentation: [],
         };
-        this.currentBuffer().push(chunk);
+        this.chunkList.push(chunk);
       }
     }
     // Account for the last comment having multiple newline after it, to remember explicit
@@ -589,7 +577,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       indentation: [],
     };
 
-    this.currentBuffer().push(chunk);
+    this.chunkList.push(chunk);
   };
 
   breakAndVisitChildren = (ctx: ParserRuleContext) => {
@@ -602,8 +590,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     for (let i = 0; i < n; i++) {
       this._visit(ctx.statementOrCommand(i));
       if (i < n - 1 || ctx.SEMICOLON(i)) {
-        if (this.lastInCurrentBuffer().text === '\n') {
-          this.currentBuffer().pop();
+        if (this.lastInChunkList().text === '\n') {
+          this.chunkList.pop();
         }
         this._visit(ctx.SEMICOLON(i));
         this.preserveExplicitNewlineAfter(ctx.SEMICOLON(i));
@@ -1058,7 +1046,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.getText().startsWith(MISSING)) {
       return;
     }
-    if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
+    if (this.chunkList.length === 0) {
       this.addCommentsBefore(node);
     }
     if (node.symbol.type === CypherCmdLexer.EOF) {
@@ -1080,7 +1068,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.symbol.tokenIndex === this.targetToken) {
       chunk.isCursor = true;
     }
-    this.currentBuffer().push(chunk);
+    this.chunkList.push(chunk);
     if (wantsToBeConcatenated(node)) {
       this.concatenate();
     }
@@ -1099,7 +1087,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.getText().startsWith(MISSING)) {
       return;
     }
-    if (this.buffers.length === 1 && this.currentBuffer().length === 0) {
+    if (this.chunkList.length === 0) {
       this.addCommentsBefore(node);
     }
     let text = node.getText();
@@ -1126,7 +1114,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       chunk.isCursor = true;
     }
 
-    this.currentBuffer().push(chunk);
+    this.chunkList.push(chunk);
     if (!options?.spacingChoice) {
       this.avoidSpaceBetween();
     }
