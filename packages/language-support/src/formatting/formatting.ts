@@ -858,11 +858,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(deleteClauseGrp);
   };
 
+  // Separate the return items from the return body so that ORDER BY and LIMIT can be
+  // excluded from the whole RETURN group.
+  _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
+    if (ctx.orderBy() || ctx.skip()) {
+      const orderSkipGrp = this.startGroup();
+      this.breakLine();
+      this._visit(ctx.orderBy());
+      this._visit(ctx.skip());
+      this.endGroup(orderSkipGrp);
+    }
+    this._visit(ctx.limit());
+  };
+
   visitReturnClause = (ctx: ReturnClauseContext) => {
     const returnGrp = this.startGroup();
     this._visit(ctx.RETURN());
-    this._visit(ctx.returnBody());
+    const returnBody = ctx.returnBody();
+    if (returnBody.DISTINCT()) {
+      this.avoidBreakBetween();
+      this._visit(returnBody.DISTINCT());
+    }
+    const returnItemsIndent = this.addIndentation();
+    this._visit(returnBody.returnItems());
+    this.removeIndentation(returnItemsIndent);
     this.endGroup(returnGrp);
+    this._visitReturnBodyNotItems(ctx.returnBody());
   };
 
   visitReturnBody = (ctx: ReturnBodyContext) => {
