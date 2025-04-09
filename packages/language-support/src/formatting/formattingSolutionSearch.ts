@@ -4,6 +4,7 @@ import {
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   MAX_COL,
+  shouldBreak,
 } from './formattingHelpers';
 
 const INDENTATION_SPACES = 2;
@@ -116,13 +117,7 @@ export function buffersToFormattedString(
     if (chunk.comment) {
       pendingComments.push(chunk.comment);
     }
-    if (
-      (chunk.mustBreak ||
-        activeGroups[activeGroups.length - 1]?.breaksAll ||
-        chunk.doubleBreak ||
-        chunk.type === 'COMMENT') &&
-      !chunk.noBreak
-    ) {
+    if (shouldBreak(chunk, activeGroups)) {
       for (const comment of pendingComments) {
         formatted += ' ';
         formatted += comment;
@@ -134,11 +129,14 @@ export function buffersToFormattedString(
       if (chunk.doubleBreak) {
         formatted += '\n';
       }
-    } else if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
-      formatted += '';
-    } else {
-      formatted += ' ';
+      continue;
     }
+
+    if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
+      formatted += '';
+      continue;
+    }
+    formatted += ' ';
   }
   for (const comment of pendingComments) {
     formatted += comment;
