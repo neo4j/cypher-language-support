@@ -652,7 +652,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCreateConstraint = (ctx: CreateConstraintContext) => {
     this.visit(ctx.CONSTRAINT());
-    this.avoidBreakBetween();
     this._visit(ctx.symbolicNameOrStringParameter());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
