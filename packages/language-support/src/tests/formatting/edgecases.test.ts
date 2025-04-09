@@ -810,16 +810,18 @@ END`;
 MATCH (n)
 RETURN
   CASE
-    WHEN EXISTS {
-      MATCH (person)-[:HAS_DOG]->(dog:Dog)
-      WHERE person.name = 'Chris'
-      WITH dog
-      RETURN
-        CASE
-          WHEN dog.name = 'Ozzy' THEN true
-          ELSE false
-        END
-    } THEN 'Relationship'
+    WHEN
+      EXISTS {
+        MATCH (person)-[:HAS_DOG]->(dog:Dog)
+        WHERE person.name = 'Chris'
+        WITH dog
+        RETURN
+          CASE
+            WHEN dog.name = 'Ozzy' THEN true
+            ELSE false
+          END
+      }
+      THEN 'Relationship'
   END`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -841,16 +843,18 @@ END
 MATCH (n)
 RETURN
   CASE
-    WHEN EXISTS {
-      MATCH (person)-[:HAS_DOG]->(dog:Dog)
-      WHERE person.name = 'Chris'
-      WITH dog
-      RETURN
-        CASE
-          WHEN dog.name = 'Ozzy' THEN true
-          ELSE false
-        END
-    } THEN 'Relationship'
+    WHEN
+      EXISTS {
+        MATCH (person)-[:HAS_DOG]->(dog:Dog)
+        WHERE person.name = 'Chris'
+        WITH dog
+        RETURN
+          CASE
+            WHEN dog.name = 'Ozzy' THEN true
+            ELSE false
+          END
+      }
+      THEN 'Relationship'
   END`.trimStart();
     verifyFormatting(query, expected);
   });
