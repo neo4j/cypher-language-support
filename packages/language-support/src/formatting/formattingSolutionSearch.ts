@@ -187,9 +187,11 @@ function determineSplit(state: State, choice: Choice, splits: Split[]): Split {
   if (choice.right === emptyChunk) {
     return onlyBreakSplit[0];
   }
+  const addedIndent =
+    state.column === 0 ? state.indentationState.indentation : 0;
 
   for (const group of choice.left.groupsStarting) {
-    if (group.size + state.column > MAX_COL) {
+    if (group.size + state.column + addedIndent > MAX_COL) {
       group.breaksAll = true;
     }
     state.activeGroups.push(group);
