@@ -212,7 +212,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           // NOTE: This might not be entirely sound, but it seems to work flawlessly for comments
           // so far.
           if (activeGroups.length > 0) {
-            activeGroups[0].breaksAll = true;
+            activeGroups[0].shouldBreak = true;
           }
         }
         activeGroups = getActiveGroups(activeGroups, groupsEnding, chunk);

@@ -33,7 +33,7 @@ export interface Group {
   id: number;
   // Should this group break in the "Prettier" fashion, breaking between
   // all of its children?
-  breaksAll?: boolean;
+  shouldBreak?: boolean;
   size: number;
   // The full text of the group (used for debugging only)
   dbgText: string;
@@ -168,16 +168,16 @@ function getNeighbourState(state: State, choice: Choice, split: Split): State {
 
   for (const group of choice.left.groupsStarting) {
     const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
-    const breaksAll =
-      group.breaksAll ||
+    const shouldBreak =
+      group.shouldBreak ||
       nextGrpStart + group.size > MAX_COL ||
       // TODO: v3 tech debt; breaking before should be handled differently
       group.id === split.breakBeforeGrp?.id;
-    const newGroup = {
+    const newGroup: Group = {
       ...group,
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-      breaksAll,
+      shouldBreak,
     };
     nextGroups.push(newGroup);
   }
@@ -258,7 +258,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   const activeGrps = state.activeGroups.filter(
     (g) => !endingIds.includes(g.id),
   );
-  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).breaksAll;
+  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).shouldBreak;
   const newGroups = choice.left.groupsStarting;
   const nextStart = lastGrpBreaks
     ? state.indentationState.indentation
@@ -268,7 +268,7 @@ function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
   // skip this logic
   let breakBeforeGrp: Group = undefined;
   for (const group of newGroups) {
-    if (group.breaksAll || group.size + nextStart > MAX_COL) {
+    if (group.shouldBreak || group.size + nextStart > MAX_COL) {
       breakBeforeGrp = group;
       break;
     }
