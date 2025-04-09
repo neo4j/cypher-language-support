@@ -29,13 +29,13 @@ export interface BaseChunk {
   // Comment that is attached to a chunk. Not to be confused with a comment
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
-  noSpace?: boolean;
-  noBreak?: boolean;
-  mustBreak?: boolean;
 }
 
 // Regular chunk specific properties
 export interface RegularChunk extends BaseChunk {
+  noSpace?: boolean;
+  noBreak?: boolean;
+  mustBreak?: boolean;
   type: 'REGULAR';
   node?: TerminalNode;
 }
@@ -186,14 +186,11 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 }
 
 export function shouldBreak(chunk: Chunk, activeGroups: Group[]): boolean {
-  if (chunk.noBreak) {
+  if (chunk.type === 'COMMENT') return true;
+
+  if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
     return false;
   }
 
-  return (
-    chunk.mustBreak ||
-    activeGroups.at(-1)?.breaksAll ||
-    chunk.doubleBreak ||
-    chunk.type === 'COMMENT'
-  );
+  return chunk.mustBreak || chunk.doubleBreak || activeGroups.at(-1)?.breaksAll;
 }
