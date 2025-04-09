@@ -235,6 +235,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   breakLine = () => {
+    // If there are active groups currently (such as when breakLine is called in EXISTS or
+    // CASE statements), they should all break.
+    this.groupStack.forEach((group) => {
+      group.breaksAll = true;
+    });
     this.mustBreakBetween();
   };
 
@@ -874,8 +879,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
     if (ctx.orderBy() || ctx.skip()) {
-      const orderSkipGrp = this.startGroup();
       this.breakLine();
+      const orderSkipGrp = this.startGroup();
       this._visit(ctx.orderBy());
       this._visit(ctx.skip());
       this.endGroup(orderSkipGrp);
