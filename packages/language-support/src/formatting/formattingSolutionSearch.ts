@@ -24,29 +24,6 @@ export interface Group {
   dbgText: string;
 }
 
-function calculateColumn(text: string): number {
-  // Handle empty string case
-  if (!text) {
-    return 0;
-  }
-
-  // If the last character is a newline, return 0
-  if (text.charAt(text.length - 1) === '\n') {
-    return 0;
-  }
-
-  // Find the last newline character
-  const lastNewlineIndex = text.lastIndexOf('\n');
-
-  // If no newline found, column is the length of the entire string
-  if (lastNewlineIndex === -1) {
-    return text.length;
-  }
-
-  // Return the length of the text after the last newline
-  return text.length - lastNewlineIndex - 1;
-}
-
 function updateActiveGroups(
   activeGroups: Group[],
   chunk: Chunk,
@@ -100,6 +77,7 @@ export function buffersToFormattedString(
   let formatted = '';
   let cursorPos = 0;
   let indentation = 0;
+  let column = 0;
   const activeGroups: Group[] = [];
   const activeIndentations: IndentationModifier[] = [];
   const pendingComments: string[] = [];
@@ -108,12 +86,14 @@ export function buffersToFormattedString(
     const chunk = chunkList[i];
     if (formatted.endsWith('\n')) {
       formatted += ' '.repeat(indentation);
+      column = indentation;
     }
     if (chunk.isCursor) {
       cursorPos = formatted.length;
     }
-    updateActiveGroups(activeGroups, chunkList[i], calculateColumn(formatted));
+    updateActiveGroups(activeGroups, chunkList[i], column);
     formatted += chunk.text;
+    column += chunk.text.length;
     indentation = updateIndentationState(
       activeIndentations,
       chunk,
@@ -142,6 +122,7 @@ export function buffersToFormattedString(
       continue;
     }
     formatted += ' ';
+    column++;
   }
   for (const comment of pendingComments) {
     formatted += comment;
