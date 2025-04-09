@@ -573,10 +573,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
       text: combinedText,
-      groupsStarting: [],
+      groupsStarting: this.pendingGroups,
       groupsEnding: [],
       indentation: [],
     };
+    this.pendingGroups = [];
 
     this.getChunkList().push(chunk);
   };
