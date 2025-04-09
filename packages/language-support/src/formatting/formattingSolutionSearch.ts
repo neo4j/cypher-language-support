@@ -47,7 +47,7 @@ function calculateColumn(text: string): number {
   return text.length - lastNewlineIndex - 1;
 }
 
-function handleGroups(
+function updateActiveGroups(
   activeGroups: Group[],
   chunk: Chunk,
   column: number,
@@ -69,7 +69,7 @@ function handleGroups(
   }
 }
 
-function handleIndentations(
+function updateIndentationState(
   activeIndentations: IndentationModifier[],
   chunk: Chunk,
   indentation: number,
@@ -112,9 +112,13 @@ export function buffersToFormattedString(
     if (chunk.isCursor) {
       cursorPos = formatted.length;
     }
-    handleGroups(activeGroups, chunkList[i], calculateColumn(formatted));
+    updateActiveGroups(activeGroups, chunkList[i], calculateColumn(formatted));
     formatted += chunk.text;
-    indentation = handleIndentations(activeIndentations, chunk, indentation);
+    indentation = updateIndentationState(
+      activeIndentations,
+      chunk,
+      indentation,
+    );
     if (chunk.comment) {
       pendingComments.push(chunk.comment);
     }
