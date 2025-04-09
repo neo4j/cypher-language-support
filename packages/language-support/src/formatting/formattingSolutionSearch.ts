@@ -107,12 +107,15 @@ export function buffersToFormattedString(
     if (chunk.isCursor) {
       cursorPos = formatted.length;
     }
+    if (formatted.endsWith('\n')) {
+      formatted += ' '.repeat(indentation);
+    }
     handleGroups(activeGroups, chunkList[i], calculateColumn(formatted));
+    formatted += chunk.text;
     indentation = handleIndentations(activeIndentations, chunk, indentation);
     if (chunk.comment) {
       pendingComments.push(chunk.comment);
     }
-    formatted += chunk.text;
     if (
       (chunk.mustBreak ||
         activeGroups[activeGroups.length - 1]?.breaksAll ||
@@ -125,11 +128,12 @@ export function buffersToFormattedString(
         formatted += comment;
       }
       pendingComments.length = 0;
-      formatted += '\n';
+      if (!chunkList[i + 1]?.text.startsWith('\n')) {
+        formatted += '\n';
+      }
       if (chunk.doubleBreak) {
         formatted += '\n';
       }
-      formatted += ' '.repeat(indentation);
     } else if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
       formatted += '';
     } else {
