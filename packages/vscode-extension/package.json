@@ -421,9 +421,9 @@
     "build": "tsc -b && npm run gen-textmate && npm run bundle-extension && npm run bundle-language-server && npm run bundle-webview-controllers",
     "build:dev": "tsc -b && npm run gen-textmate && npm run bundle-extension:dev && npm run bundle-language-server && npm run bundle-webview-controllers",
     "clean": "rm -rf dist",
-    "test:e2e": "npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
-    "test:apiAndUnit": "npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
+    "test:e2e": "DEBUG_VSCODE_TESTS=false && npm run build:dev && npm run test:apiAndUnit && npm run test:webviews",
+    "test:apiAndUnit": "DEBUG_VSCODE_TESTS=false && npm run build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
+    "test:webviews": "DEBUG_VSCODE_TESTS=false && npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "2.0.0-next.19",
