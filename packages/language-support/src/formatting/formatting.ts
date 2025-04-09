@@ -2172,7 +2172,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.removeIndentation(clauseIndent);
     this.breakLine();
-    this._visit(ctx.RPAREN());
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
   };
 
   visitProcedureName = (ctx: ProcedureNameContext) => {
