@@ -186,11 +186,14 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
 }
 
 export function shouldBreak(chunk: Chunk, activeGroups: Group[]): boolean {
+  if (chunk.noBreak) {
+    return false;
+  }
+
   return (
-    (chunk.mustBreak ||
-      activeGroups[activeGroups.length - 1]?.breaksAll ||
-      chunk.doubleBreak ||
-      chunk.type === 'COMMENT') &&
-    !chunk.noBreak
+    chunk.mustBreak ||
+    activeGroups.at(-1)?.breaksAll ||
+    chunk.doubleBreak ||
+    chunk.type === 'COMMENT'
   );
 }
