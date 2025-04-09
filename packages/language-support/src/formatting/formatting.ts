@@ -108,7 +108,6 @@ import {
   CommentChunk,
   fillInRegularChunkGroupSizes,
   findTargetToken,
-  getActiveGroups,
   getParseTreeAndTokens,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
@@ -206,7 +205,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         const groupsEnding = new Set<number>(
           chunk.groupsEnding.map((g) => g.id),
         );
-        activeGroups = getActiveGroups(activeGroups, groupsEnding, chunk);
+        for (const group of chunk.groupsStarting) {
+          activeGroups.push(group);
+        }
         if (chunk.type === 'REGULAR') {
           fillInRegularChunkGroupSizes(chunk, activeGroups, groupsEnding);
         } else if (chunk.type === 'COMMENT') {
@@ -217,6 +218,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
           if (activeGroups.length > 0) {
             activeGroups[0].breaksAll = true;
           }
+        }
+        for (const group of chunk.groupsEnding) {
+          if (group.dbgText.at(-1) === ' ') {
+            group.size--;
+            group.dbgText = group.dbgText.slice(0, -1);
+          }
+          activeGroups = activeGroups.filter((g) => g.id !== group.id);
         }
       }
     }

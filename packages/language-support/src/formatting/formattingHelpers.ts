@@ -177,29 +177,6 @@ export function fillInRegularChunkGroupSizes(
   }
 }
 
-export function getActiveGroups(
-  activeGroups: Group[],
-  groupsEnding: Set<number>,
-  chunk: Chunk,
-) {
-  for (const group of chunk.groupsStarting) {
-    activeGroups.push(group);
-  }
-  const newActiveGroups: Group[] = [];
-  for (const group of activeGroups) {
-    if (!groupsEnding.has(group.id)) {
-      newActiveGroups.push(group);
-    } else {
-      // Trim trailling spaces from groups that are ending
-      if (group.dbgText.at(-1) === ' ') {
-        group.size--;
-        group.dbgText = group.dbgText.slice(0, -1);
-      }
-    }
-  }
-  return newActiveGroups;
-}
-
 export function verifyGroupSizes(buffers: Chunk[][]) {
   for (const chunkList of buffers) {
     for (const chunk of chunkList) {
