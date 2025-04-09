@@ -173,7 +173,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
-    this.removeAllPendingGroups();
     this.fillInGroupSizes();
     const result = buffersToFormattedString(this.chunkList);
     this.cursorPos += result.cursorPos;
@@ -227,12 +226,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   getChunkList = () => this.chunkList;
 
   lastInChunkList = () => this.getChunkList().at(-1);
-
-  removeAllPendingGroups = () => {
-    while (this.groupStack.length > 0) {
-      this.endGroup(this.groupStack.at(-1).id);
-    }
-  };
 
   breakLine = () => {
     // If there are active groups currently (such as when breakLine is called in EXISTS or
