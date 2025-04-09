@@ -269,6 +269,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       groupsStarting: prefix.groupsStarting.concat(suffix.groupsStarting),
       groupsEnding: prefix.groupsEnding.concat(suffix.groupsEnding),
       indentation: prefix.indentation.concat(suffix.indentation),
+      mustBreak: prefix.mustBreak || suffix.mustBreak,
       comment: (prefix.comment || '') + (suffix.comment || '') || undefined,
       ...(hasCursor && { isCursor: true }),
     };
