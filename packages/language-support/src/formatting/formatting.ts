@@ -806,7 +806,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMatchClause = (ctx: MatchClauseContext) => {
     const matchClauseGrp = this.startGroup();
     this._visit(ctx.OPTIONAL());
-    this.avoidBreakBetween();
+    if (ctx.OPTIONAL()) {
+      this.avoidBreakBetween();
+    }
     this._visit(ctx.MATCH());
     const matchIndent = this.addIndentation();
     const patternListGrp = this.startGroup();
@@ -906,7 +908,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.expression());
     if (ctx.AS() || ctx.variable()) {
       const asGrp = this.startGroup();
-      this.avoidBreakBetween();
+      if (ctx.AS()) {
+        this.avoidBreakBetween();
+      }
       const asIndent = this.addIndentation();
       this._visit(ctx.AS());
       this._visit(ctx.variable());
