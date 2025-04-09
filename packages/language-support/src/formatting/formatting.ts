@@ -800,8 +800,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitWithClause = (ctx: WithClauseContext) => {
     const withGrp = this.startGroup();
     this._visit(ctx.WITH());
-    this._visit(ctx.returnBody());
+    this._visitReturnBodyReturnItems(ctx.returnBody());
     this.endGroup(withGrp);
+    this._visitReturnBodyNotItems(ctx.returnBody());
     this._visit(ctx.whereClause());
   };
 
@@ -860,6 +861,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // Separate the return items from the return body so that ORDER BY and LIMIT can be
   // excluded from the whole RETURN group.
+  // Used by returnClause and withClause
+  _visitReturnBodyReturnItems = (ctx: ReturnBodyContext) => {
+    if (ctx.DISTINCT()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.DISTINCT());
+    }
+    const returnItemsIndent = this.addIndentation();
+    this._visit(ctx.returnItems());
+    this.removeIndentation(returnItemsIndent);
+  };
+
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
     if (ctx.orderBy() || ctx.skip()) {
       const orderSkipGrp = this.startGroup();
@@ -874,14 +886,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitReturnClause = (ctx: ReturnClauseContext) => {
     const returnGrp = this.startGroup();
     this._visit(ctx.RETURN());
-    const returnBody = ctx.returnBody();
-    if (returnBody.DISTINCT()) {
-      this.avoidBreakBetween();
-      this._visit(returnBody.DISTINCT());
-    }
-    const returnItemsIndent = this.addIndentation();
-    this._visit(returnBody.returnItems());
-    this.removeIndentation(returnItemsIndent);
+    this._visitReturnBodyReturnItems(ctx.returnBody());
     this.endGroup(returnGrp);
     this._visitReturnBodyNotItems(ctx.returnBody());
   };
