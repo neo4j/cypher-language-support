@@ -83,7 +83,7 @@ function updateIndentationState(state: State, chunk: Chunk) {
     }
   }
 }
-export function buffersToFormattedString(
+export function chunksToFormattedString(
   chunkList: Chunk[],
 ): FinalResultWithPos {
   const state = createInitialState();

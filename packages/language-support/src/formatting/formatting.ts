@@ -118,7 +118,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { buffersToFormattedString, Group } from './formattingSolutionSearch';
+import { chunksToFormattedString, Group } from './lineFormatter';
 
 const MISSING = '<missing';
 
@@ -174,7 +174,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   format = () => {
     this._visit(this.root);
     this.fillInGroupSizes();
-    const result = buffersToFormattedString(this.chunkList);
+    const result = chunksToFormattedString(this.chunkList);
     this.cursorPos += result.cursorPos;
     const resultString = result.formattedString + this.unParseable;
     const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
