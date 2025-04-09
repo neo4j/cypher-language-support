@@ -824,8 +824,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.MATCH());
     const matchIndent = this.addIndentation();
+    const patternListGrp = this.startGroup();
     this._visit(ctx.matchMode());
     this._visit(ctx.patternList());
+    this.endGroup(patternListGrp);
     this.endGroup(matchClauseGrp);
     const n = ctx.hint_list().length;
     for (let i = 0; i < n; i++) {
