@@ -112,41 +112,30 @@ export function buffersToFormattedString(
     if (chunk.comment) {
       pendingComments.push(chunk.comment);
     }
-    if (chunk.type === 'REGULAR') {
-      formatted += chunk.text;
-      if (
-        (chunk.mustBreak ||
-          activeGroups[activeGroups.length - 1]?.breaksAll ||
-          chunk.doubleBreak) &&
-        !chunk.noBreak
-      ) {
-        for (const comment of pendingComments) {
-          formatted += ' ';
-          formatted += comment;
-        }
-        pendingComments.length = 0;
-        formatted += '\n';
-        if (chunk.doubleBreak) {
-          formatted += '\n';
-        }
-        formatted += ' '.repeat(indentation);
-      } else if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
-        formatted += '';
-      } else {
+    formatted += chunk.text;
+    if (
+      (chunk.mustBreak ||
+        activeGroups[activeGroups.length - 1]?.breaksAll ||
+        chunk.doubleBreak ||
+        chunk.type === 'COMMENT') &&
+      !chunk.noBreak
+    ) {
+      for (const comment of pendingComments) {
         formatted += ' ';
+        formatted += comment;
       }
-    } else if (chunk.type === 'COMMENT') {
-      // formatted += '\n';
-      /* if (chunk.breakBefore) {
-        formatted += '\n';
-      } */
-      formatted += chunk.text;
+      pendingComments.length = 0;
       formatted += '\n';
       if (chunk.doubleBreak) {
         formatted += '\n';
       }
       formatted += ' '.repeat(indentation);
-    } else if (chunk.type === 'SYNTAX_ERROR') {
+    } else if (chunk.noSpace || doesNotWantSpace(chunk, chunkList[i + 1])) {
+      formatted += '';
+    } else {
+      formatted += ' ';
+    }
+    if (chunk.type === 'SYNTAX_ERROR') {
       formatted += chunk.text;
     }
   }
