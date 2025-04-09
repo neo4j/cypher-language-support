@@ -135,9 +135,6 @@ export function buffersToFormattedString(
     } else {
       formatted += ' ';
     }
-    if (chunk.type === 'SYNTAX_ERROR') {
-      formatted += chunk.text;
-    }
   }
   for (const comment of pendingComments) {
     formatted += comment;
