@@ -52,10 +52,6 @@ interface State {
   choiceIndex: number;
 }
 
-interface Result {
-  decisions: Decision[];
-}
-
 interface FinalResultWithPos {
   formattedString: string;
   cursorPos: number;
@@ -241,7 +237,7 @@ function endGroups(state: State, choice: Choice) {
 function computeFormattingDecisions(
   startingState: State,
   choiceList: Choice[],
-): Result {
+): Decision[] {
   let state = startingState;
   const decisions: Decision[] = [];
   for (const choice of choiceList) {
@@ -256,9 +252,7 @@ function computeFormattingDecisions(
   ) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
-  return {
-    decisions,
-  };
+  return decisions;
 }
 
 // Used for debugging only; it's very convenient to know where groups start and end
@@ -341,8 +335,8 @@ export function buffersToFormattedString(
     column: 0,
     choiceIndex: 0,
   };
-  const result = computeFormattingDecisions(initialState, choices);
-  const formattingResult = decisionsToFormatted(result.decisions);
+  const decisions = computeFormattingDecisions(initialState, choices);
+  const formattingResult = decisionsToFormatted(decisions);
   // Cursor is not in this chunkList
   if (typeof formattingResult === 'string') {
     formatted += formattingResult + '\n';
