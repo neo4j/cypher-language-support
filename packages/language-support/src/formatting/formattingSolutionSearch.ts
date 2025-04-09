@@ -161,7 +161,7 @@ function determineSplits(chunk: Chunk, nextChunk: Chunk): Split[] {
 
   if (chunk.type === 'REGULAR') {
     if (chunk.mustBreak) {
-      return onlyBreakSplit;
+      return chunk.doubleBreak ? onlyDoubleBreakSplit : onlyBreakSplit;
     }
     const noSpace = doesNotWantSpace(chunk, nextChunk);
 
@@ -318,7 +318,7 @@ function chunkListToChoices(chunkList: Chunk[]): Choice[] {
 }
 
 export function buffersToFormattedString(
-  buffers: Chunk[][],
+  chunkList: Chunk[],
 ): FinalResultWithPos {
   let formatted = '';
   let indentationState: IndentationState = {
@@ -326,25 +326,23 @@ export function buffersToFormattedString(
     activeIndents: [],
   };
   let cursorPos = 0;
-  for (const chunkList of buffers) {
-    const choices: Choice[] = chunkListToChoices(chunkList);
-    // Indentation should carry over
-    const initialState: State = {
-      activeGroups: [],
-      indentationState,
-      column: 0,
-      choiceIndex: 0,
-    };
-    const result = computeFormattingDecisions(initialState, choices);
-    indentationState = result.indentationState;
-    const formattingResult = decisionsToFormatted(result.decisions);
-    // Cursor is not in this chunkList
-    if (typeof formattingResult === 'string') {
-      formatted += formattingResult + '\n';
-    } else {
-      cursorPos = formatted.length + formattingResult.cursorPos;
-      formatted += formattingResult.formattedString + '\n';
-    }
+  const choices: Choice[] = chunkListToChoices(chunkList);
+  // Indentation should carry over
+  const initialState: State = {
+    activeGroups: [],
+    indentationState,
+    column: 0,
+    choiceIndex: 0,
+  };
+  const result = computeFormattingDecisions(initialState, choices);
+  indentationState = result.indentationState;
+  const formattingResult = decisionsToFormatted(result.decisions);
+  // Cursor is not in this chunkList
+  if (typeof formattingResult === 'string') {
+    formatted += formattingResult + '\n';
+  } else {
+    cursorPos = formatted.length + formattingResult.cursorPos;
+    formatted += formattingResult.formattedString + '\n';
   }
   if (
     indentationState.indentation !== 0 ||

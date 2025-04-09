@@ -177,13 +177,11 @@ export function fillInRegularChunkGroupSizes(
   }
 }
 
-export function verifyGroupSizes(buffers: Chunk[][]) {
-  for (const chunkList of buffers) {
-    for (const chunk of chunkList) {
-      for (const group of chunk.groupsStarting) {
-        if (group.size !== group.dbgText.length) {
-          throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-        }
+export function verifyGroupSizes(chunkList: Chunk[]) {
+  for (const chunk of chunkList) {
+    for (const group of chunk.groupsStarting) {
+      if (group.size !== group.dbgText.length) {
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }

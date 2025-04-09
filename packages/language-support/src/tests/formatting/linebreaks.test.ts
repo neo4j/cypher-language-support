@@ -670,11 +670,13 @@ WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
 
   test('test that clause under collect gets properly indented', () => {
     const query = `MATCH (person:Person)
-RETURN person.name AS name, COLLECT {
-  MATCH (person)-[r:HAS_DOG]->(dog:Dog)
-  WHERE r.since > 2017
-  RETURN dog.name
-} AS youngDogs`;
+RETURN
+  person.name AS name,
+  COLLECT {
+    MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+    WHERE r.since > 2017
+    RETURN dog.name
+  } AS youngDogs`;
     const expected = query;
     verifyFormatting(query, expected);
   });
@@ -688,13 +690,15 @@ RETURN person.name AS name`;
   });
   test('count expression with regular query', () => {
     const query = `MATCH (person:Person)
-RETURN person.name AS name, COUNT {
-  MATCH (person)-[:HAS_DOG]->(dog:Dog)
-  RETURN dog.name AS petName
-    UNION
-  MATCH (person)-[:HAS_CAT]->(cat:Cat)
-  RETURN cat.name AS petName
-} AS numPets`;
+RETURN
+  person.name AS name,
+  COUNT {
+    MATCH (person)-[:HAS_DOG]->(dog:Dog)
+    RETURN dog.name AS petName
+      UNION
+    MATCH (person)-[:HAS_CAT]->(cat:Cat)
+    RETURN cat.name AS petName
+  } AS numPets`;
     const expected = query;
     verifyFormatting(query, expected);
   });
