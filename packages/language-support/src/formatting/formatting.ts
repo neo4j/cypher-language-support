@@ -2063,7 +2063,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
     const mapProjectionIndent = this.addIndentation();
     this.avoidSpaceBetween();
-    const mapProjectionGrp = this.startGroup();
     const n = ctx.mapProjectionElement_list().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.mapProjectionElement(i));
@@ -2071,7 +2070,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this._visit(ctx.COMMA(i));
       }
     }
-    this.endGroup(mapProjectionGrp);
     this.removeIndentation(mapProjectionIndent);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RCURLY(), {
