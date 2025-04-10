@@ -17,6 +17,7 @@ The project comprises several packages:
 - [language-support](./packages/language-support/README.md) - The core library implementing the language support features.
 - [language-server](./packages/language-server/README.md) - The language server wrapper for the `language-support` package.
 - [vscode-extension](./packages/vscode-extension/README.md) - The Neo4j VS Code extension which bundles the `language-server`
+- [intellij-extension](./packages/intellij-extension/README.md) - The Neo4j Intellij plugin which bundles the `language-server`
 - [react-codemirror](./packages/react-codemirror/README.md) - A set of [codemirror6](https://codemirror.net/) cypher language support plugins and a react wrapper.
 - [react-codemirror-playground](./packages/react-codemirror-playground/README.md) - A playground for the codemirror integration.
 - [schema-poller](./packages/schema-poller/README.md) - An internal package we use to manage the Neo4j connection and keep the schema (procedure names, labels, database names, etc.) up to date in the language server.

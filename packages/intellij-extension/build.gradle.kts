@@ -35,21 +35,48 @@ tasks {
         }
     }
 
-    prepareSandbox {
-        doFirst {
+    task("bundleServer") {
+        val outputFile = file("../language-server/dist/cypher-language-server.js")
+        val targetDir = file(".")
+
+        inputs.file(outputFile)
+        outputs.file(targetDir.resolve("cypher-language-server.js"))
+
+        doLast {
             exec {
-                commandLine("bash", "-c", "cd ../.. && npm run build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
+                workingDir = file("../language-server")
+                commandLine = listOf("bash", "-c", "npm run bundle")
             }
-        }
-        from(".") {
-            include("*.js")
-            into("cypher-lsp-support")
+
+            copy {
+                from(outputFile)
+                into(targetDir)
+            }
         }
     }
 
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("242.*")
+    prepareSandbox {
+        dependsOn("bundleServer")
+
+        from(".") {
+            include("*.js")
+            into("neo4j-for-intellij")
+        }
+    }
+
+    buildPlugin {
+        dependsOn(prepareSandbox)
+    }
+
+    runIde {
+        dependsOn(buildPlugin, prepareSandbox)
+
+        debugOptions {
+           enabled = false
+           port = 8000
+           server = true
+           suspend = true
+       }
     }
 
     signPlugin {
