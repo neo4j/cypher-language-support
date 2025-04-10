@@ -1,1 +1,1 @@
-RETURN $a, $b, $`some param`, $`some-param`
+RETURN $a, $b, $`some param`, $`some-param`, $a + $b;

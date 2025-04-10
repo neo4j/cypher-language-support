@@ -1,6 +1,11 @@
-import { parseStatementsStrs } from '@neo4j-cypher/language-support';
+import {
+  parseParameters,
+  parseStatementsStrs,
+} from '@neo4j-cypher/language-support';
 import { Uri } from 'vscode';
+import { addParameter } from './commandHandlers/params';
 import { Connection } from './connectionService';
+import { getDeserializedParams } from './parameterService';
 import ResultWindow from './webviews/resultWindow';
 
 export default class CypherRunner {
@@ -10,7 +15,15 @@ export default class CypherRunner {
 
   async run(connection: Connection, uri: Uri, input: string) {
     const statements = parseStatementsStrs(input);
+    const statementParams = parseParameters(input, false);
     const filePath = uri.toString();
+    const parameters = getDeserializedParams();
+
+    for (const param of statementParams) {
+      if (parameters[param] === undefined) {
+        await addParameter(param);
+      }
+    }
 
     if (this.results.has(filePath)) {
       const resultWindow = this.results.get(filePath);
