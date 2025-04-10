@@ -40,6 +40,8 @@ export const CONSTANTS = {
     ERROR_PARAM_EVALUATION: 'Parameter evaluation failed.',
     ERROR_PARAM_EVALUATION_SYSTEM_DB:
       'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+    ERROR_DISCONNECTED_EXECUTION:
+      'You need to be connected to Neo4j to run queries',
     PARAMETER_SET: (key: string) => `Parameter '${key}' set.`,
     PARAMETER_DELETED: (key: string) => `Parameter \`${key}\` deleted.`,
   },
