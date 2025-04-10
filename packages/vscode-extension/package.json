@@ -176,6 +176,10 @@
         {
           "command": "neo4j.editParameter",
           "when": "false"
+        },
+        {
+          "command": "neo4j.switchDatabase",
+          "when": "false"
         }
       ],
       "view/title": [
