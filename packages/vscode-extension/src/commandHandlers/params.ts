@@ -45,7 +45,7 @@ export function validateParamInput(
   return undefined;
 }
 
-export async function addParameter(): Promise<void> {
+export async function addParameter(defaultParamName?: string): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
@@ -55,12 +55,14 @@ export async function addParameter(): Promise<void> {
     return;
   }
 
-  const paramName = await window.showInputBox({
-    prompt: 'Parameter name',
-    placeHolder:
-      'The name you want to store your parameter with, for example: param, p, `my parameter`',
-    ignoreFocusOut: true,
-  });
+  const paramName =
+    defaultParamName ??
+    (await window.showInputBox({
+      prompt: 'Parameter name',
+      placeHolder:
+        'The name you want to store your parameter with, for example: param, p, `my parameter`',
+      ignoreFocusOut: true,
+    }));
   if (!paramName) {
     void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_NAME);
     return;
@@ -69,7 +71,9 @@ export async function addParameter(): Promise<void> {
   const dbSchema = schemaPoller?.metadata?.dbSchema ?? {};
   let timeout: NodeJS.Timeout;
   const paramValue = await window.showInputBox({
-    prompt: 'Parameter value',
+    prompt: defaultParamName
+      ? `Parameter value for the parameter ${defaultParamName}`
+      : 'Parameter value',
     placeHolder:
       'The value for your parameter (anything you could evaluate in a RETURN), for example: 1234, "some string", datetime(), {a: 1, b: "some string"}',
     ignoreFocusOut: true,
