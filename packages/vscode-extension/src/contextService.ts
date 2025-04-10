@@ -6,7 +6,7 @@ import {
   Neo4jSchemaPoller,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import { Config, Driver } from 'neo4j-driver';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
 
@@ -18,6 +18,7 @@ type LanguageClient = {
 };
 
 type SchemaPoller = {
+  driver?: Driver;
   connection?: Neo4jConnection;
   metadata?: MetadataPoller;
   events: EventEmitter;
@@ -66,6 +67,10 @@ export function setContext(
   _languageClient = languageClient;
   _schemaPoller = new Neo4jSchemaPoller();
   _queryRunner = new CypherRunner();
+}
+
+export function setLanguageClient(languageClient: LanguageClient) {
+  _languageClient = languageClient;
 }
 
 /**
