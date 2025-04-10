@@ -39,5 +39,3 @@ jobs:
 
       - name: Benchmark
         run: pnpm benchmark --concurrency=1
-        env:
-          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
