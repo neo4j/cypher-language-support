@@ -547,9 +547,11 @@ MERGE // Ensures a pattern exists in the graph
 CREATE // Creates new nodes or relationships
   (q:Person {name: "Bob"})-[:KNOWS]->(p)
 DELETE // Deletes nodes or relationships
-  r
-WITH // Passes results to the next clause 
-  p, q
+  r,
+  a
+WITH // Passes results to the next clause
+  p,
+  q
 UNWIND // Expands lists into multiple rows
   [1, 2, 3] AS num;`.trimStart();
     const expected = query.trim();
