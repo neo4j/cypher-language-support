@@ -128,9 +128,9 @@ function createInitialState(): State {
     cursorPos: 0,
     indentation: 0,
     column: 0,
-    activeGroups: [] as Group[],
-    activeIndentations: [] as IndentationModifier[],
-    pendingComments: [] as string[],
+    activeGroups: [],
+    activeIndentations: [],
+    pendingComments: [],
   };
 }
 
