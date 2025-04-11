@@ -236,6 +236,24 @@ export function createParsingResult(
   return parsingResult;
 }
 
+const getClearParamName = (name: string): string => {
+  if (name.startsWith('`') && name.endsWith('`')) {
+    return name.slice(1, -1);
+  }
+  return name;
+};
+
+export function parseParameters(
+  query: string,
+  consoleCommandsEnabled: boolean,
+): string[] {
+  const parsingResult = createParsingResult(query, consoleCommandsEnabled);
+  const parameters = parsingResult.statementsParsing.flatMap((statement) =>
+    statement.collectedParameters.map((param) => getClearParamName(param.name)),
+  );
+  return [...new Set(parameters)];
+}
+
 // This listener collects all labels and relationship types
 class LabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];

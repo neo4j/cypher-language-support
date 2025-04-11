@@ -392,8 +392,7 @@ function errorOnUndeclaredParameters(
       if (parameterName.startsWith('`') && parameterName.endsWith('`')) {
         parameterName = parameterName.substring(1, parameterName.length - 1);
       }
-      const paramExists = !!dbSchema.parameters?.[parameterName];
-      if (!paramExists) {
+      if (dbSchema.parameters?.[parameterName] === undefined) {
         errors.push(
           generateSyntaxDiagnostic(
             parameter.rawText,

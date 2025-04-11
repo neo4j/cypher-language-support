@@ -176,6 +176,10 @@
         {
           "command": "neo4j.editParameter",
           "when": "false"
+        },
+        {
+          "command": "neo4j.switchDatabase",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -461,6 +465,7 @@
     "sinon": "^18.0.0",
     "vscode-languageserver-textdocument": "^1.0.12",
     "wdio-vscode-service": "^6.1.2",
-    "wdio-wait-for": "^3.0.11"
+    "wdio-wait-for": "^3.0.11",
+    "webdriverio": "^8.41.0"
   }
 }
