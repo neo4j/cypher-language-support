@@ -139,7 +139,7 @@ RETURN n`;
 
   test('incomplete MERGE clause', () => {
     const query = `merge (n:Person {name:'Alice'`;
-    const expected = `MERGE (n:Person {name:'Alice'`;
+    const expected = `MERGE (n:Person {name: 'Alice'`;
     verifyFormatting(query, expected);
   });
 
@@ -186,7 +186,7 @@ WITH n EXTRA return n;`;
   test('missing ending brace/parenthesis and missing alias', () => {
     const query = `merge (n:Person {name:'Alice'
 return n as;`;
-    const expected = `MERGE (n:Person {name:'Alice'
+    const expected = `MERGE (n:Person {name: 'Alice'
 RETURN n AS;`;
     verifyFormatting(query, expected);
   });

@@ -1,10 +1,9 @@
 import { Heap } from 'heap-js';
-import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import {
-  AlignIndentationOptions,
   Chunk,
-  ChunkIndentation,
+  doesNotWantSpace,
   emptyChunk,
+  IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isCommentBreak,
   MAX_COL,
@@ -15,7 +14,12 @@ const showGroups = false;
 
 interface Split {
   splitType: ' ' | '' | '\n' | '\n\n';
+  // TODO: v3 tech debt; the split keeps track of whether the group wants a break before itself.
+  // Ideally this should be handled in a more sound way, such as including the clause word in the
+  // group itself.
+  breakBeforeGrp?: Group;
   cost: number;
+  wantedToSplit?: boolean;
 }
 
 interface Choice {
@@ -25,7 +29,14 @@ interface Choice {
   possibleSplitChoices: Split[];
 }
 
-interface Group {
+export interface Group {
+  id: number;
+  // Should this group break in the "Prettier" fashion, breaking between
+  // all of its children?
+  shouldBreak?: boolean;
+  size: number;
+  // The full text of the group (used for debugging only)
+  dbgText: string;
   align: number;
   breakCost: number;
 }
@@ -37,11 +48,16 @@ interface Decision {
   chosenSplit: Split;
 }
 
+interface IndentationState {
+  indentation: number;
+  activeIndents: IndentationModifier[];
+}
+
 interface State {
   activeGroups: Group[];
+  indentationState: IndentationState;
   column: number;
   choiceIndex: number;
-  indentationState: IndentationState;
   cost: number;
   overflowingCount: number;
   edge: StateEdge;
@@ -55,7 +71,7 @@ interface StateEdge {
 interface Result {
   cost: number;
   decisions: Decision[];
-  indentation: IndentationState;
+  indentationState: IndentationState;
 }
 
 interface FinalResultWithPos {
@@ -63,15 +79,7 @@ interface FinalResultWithPos {
   cursorPos: number;
 }
 
-interface IndentationState {
-  base: number;
-  special: number;
-  align: number[];
-}
-
 type FinalResult = string | FinalResultWithPos;
-
-const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
 const standardSplits: Split[] = [
   { splitType: ' ', cost: 0 },
@@ -94,98 +102,36 @@ const noSpaceNoBreakSplit: Split[] = [{ splitType: '', cost: 0 }];
 const onlyBreakSplit: Split[] = [{ splitType: '\n', cost: 0 }];
 const onlyDoubleBreakSplit: Split[] = [{ splitType: '\n\n', cost: 0 }];
 
-function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    nextChunk?.type !== 'COMMENT' &&
-    chunk.type === 'REGULAR' &&
-    (chunk.noSpace ||
-      (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
-  );
-}
-
-function deriveNextIndentationState(
-  chunkIndentation: ChunkIndentation,
-  indentationState: IndentationState,
-  activeGroups: Group[],
-): IndentationState {
-  const align = [...indentationState.align];
-  // Align indentation, used for EXISTS, COUNT, COLLECT
-  // Pushes base groups alignment to list to be used later
-  // for closing bracket
-  if (chunkIndentation.align === AlignIndentationOptions.Add) {
-    align.push(activeGroups.at(0).align);
-  }
-  if (chunkIndentation.align === AlignIndentationOptions.Remove) {
-    align.pop();
-  }
-
-  return {
-    base: indentationState.base + chunkIndentation.base * INDENTATION_SPACES,
-    special:
-      indentationState.special + chunkIndentation.special * INDENTATION_SPACES,
-    align: align,
-  };
-}
-
-function getFinalIndentation(
+function getNextIndentationState(
   state: State,
   chunk: Chunk,
-  nextIndentationState: IndentationState,
-): number {
-  // Case 0:  When not at the start of a line, no indentation
-  if (state.column !== 0) {
-    return 0;
+  isBreak: boolean,
+): IndentationState {
+  let newActiveIndents = [...state.indentationState.activeIndents];
+  // The "indentation" number is the actual amount of indentation at the current state,
+  // but it should not be confused with the entire indentation state. The entire indentation state
+  // also includes the indentation modifiers, that keep track of when this number should change
+  let nextIndentation = state.indentationState.indentation;
+  for (const indent of chunk.indentation) {
+    if (indent.change === 1 && isBreak) {
+      newActiveIndents.push(indent);
+      nextIndentation += INDENTATION_SPACES;
+    }
+    if (indent.change === -1) {
+      // PERF: This is O(n) twice and doesn't neccesarily have to be. Might be worth optimizing if profiling
+      // shows that it is actually a perf sink.
+      const index = newActiveIndents.findIndex(
+        (activeIndent) => activeIndent.id === indent.id,
+      );
+      if (index !== -1) {
+        newActiveIndents = newActiveIndents.filter(
+          (activeIndent) => activeIndent.id !== indent.id,
+        );
+        nextIndentation -= INDENTATION_SPACES;
+      }
+    }
   }
-
-  // Case 1: Active groups, prioritize lining up on these
-  if (state.activeGroups.length > 0) {
-    return state.activeGroups.at(-1).align;
-  }
-
-  // Case 2: This happens if align.pop() was done in deriveNextIndentationState
-  // Also means we are on a closing brackets and should align
-  // on what was the last element in align, however because we popped it before
-  // we need to fetch it from the state where it still exists
-  if (state.indentationState.align.length > nextIndentationState.align.length) {
-    return state.indentationState.align.at(-1);
-  }
-
-  // Case 3: Hard-break comments align on base indentation if
-  // no active groups. Uses nextIndentationState because remove indentation
-  // is attached on same chunk as the comment, Therefore we need to use
-  // the next calculated indentation state directly
-  if (chunk.type === 'COMMENT' && chunk.breakBefore) {
-    return nextIndentationState.base;
-  }
-
-  // Case 4: Special indentation, used with CASE
-  // If align indentation is present
-  // Meaning inside EXIST, COUNT or COLLECT, add one
-  // more indentation per nesting to better differentiate
-  if (state.indentationState.special !== 0) {
-    return (
-      state.indentationState.special +
-      INDENTATION_SPACES * state.indentationState.align.length +
-      state.indentationState.base
-    );
-  }
-
-  // Case 5: If there are active alignment groups
-  // (typically for EXISTS, COLLECT, COUNT),
-  // calculate the final indentation by combining:
-  //   - the last alignment value,
-  //   - an extra unit of spacing, and
-  //   - the base indentation.
-  if (state.indentationState.align.length > 0) {
-    return (
-      nextIndentationState.align.at(-1) +
-      INDENTATION_SPACES +
-      state.indentationState.base
-    );
-  }
-
-  // Default case
-  return state.indentationState.base;
+  return { indentation: nextIndentation, activeIndents: newActiveIndents };
 }
 
 // Very useful for debugging but not actually used in the code
@@ -196,24 +142,21 @@ function stateToString(state: State) {
   return resultString;
 }
 
-function getNeighbourState(curr: State, choice: Choice, split: Split): State {
+function getNeighbourState(state: State, choice: Choice, split: Split): State {
   const isBreak = split.splitType === '\n' || split.splitType === '\n\n';
-  // A state has indentation, which is applied after a hard line break. However, if it has an
-  // active group and we decided to split within a line, the alignment of that group takes precedence
-  // over the base indentation.
-  const nextGroups = [...curr.activeGroups];
-  const nextIndentationState = deriveNextIndentationState(
-    choice.left.indentation,
-    curr.indentationState,
-    nextGroups,
-  );
-  const finalIndentation = getFinalIndentation(
-    curr,
-    choice.left,
-    nextIndentationState,
-  );
+  let nextGroups = [...state.activeGroups];
+  const indentationDecision =
+    state.column === 0 ? state.indentationState.indentation : 0;
+  const { indentation: nextIndentation, activeIndents: nextActiveIndents } =
+    getNextIndentationState(
+      state,
+      choice.left,
+      // We should apply the indentation also if it was a group that would want to split, but wasn't
+      // allowed to (because of avoidBreakBetween() in the visitor).
+      isBreak || split.wantedToSplit,
+    );
 
-  const actualColumn = curr.column === 0 ? finalIndentation : curr.column;
+  const actualColumn = state.column === 0 ? indentationDecision : state.column;
   const splitLength = !isBreak ? split.splitType.length : 0;
   const thisWordEnd = actualColumn + choice.left.text.length + splitLength;
   // We don't consider comments nor an empty space as overflowing
@@ -223,17 +166,30 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
       : thisWordEnd - splitLength;
   const overflowingCount = Math.max(0, endWithoutCommentAndSplit - MAX_COL);
 
-  for (let i = 0; i < choice.left.groupsStarting; i++) {
-    nextGroups.push({
+  for (const group of choice.left.groupsStarting) {
+    const nextGrpStart = isBreak ? nextIndentation : thisWordEnd;
+    const shouldBreak =
+      group.shouldBreak ||
+      nextGrpStart + group.size > MAX_COL ||
+      // TODO: v3 tech debt; breaking before should be handled differently
+      group.id === split.breakBeforeGrp?.id;
+    const newGroup: Group = {
+      ...group,
       align: actualColumn,
       breakCost: Math.pow(10, nextGroups.length + 1),
-    });
+      shouldBreak,
+    };
+    nextGroups.push(newGroup);
   }
-  for (let i = 0; i < choice.left.groupsEnding; i++) {
+  for (const group of choice.left.groupsEnding) {
     if (nextGroups.length === 0) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
-    nextGroups.pop();
+    if (!nextGroups.some((nextGroup) => nextGroup.id === group.id)) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    // PERF: This is O(n), might be worth optimizing if profiling says so.
+    nextGroups = nextGroups.filter((nextGroup) => nextGroup.id !== group.id);
   }
 
   let extraCost = 0;
@@ -249,15 +205,18 @@ function getNeighbourState(curr: State, choice: Choice, split: Split): State {
 
   return {
     activeGroups: nextGroups,
+    indentationState: {
+      indentation: nextIndentation,
+      activeIndents: nextActiveIndents,
+    },
     column: isBreak ? 0 : thisWordEnd,
-    choiceIndex: curr.choiceIndex + 1,
-    cost: curr.cost + extraCost,
-    overflowingCount: curr.overflowingCount + overflowingCount,
-    indentationState: nextIndentationState,
+    choiceIndex: state.choiceIndex + 1,
+    cost: state.cost + extraCost,
+    overflowingCount: state.overflowingCount + overflowingCount,
     edge: {
-      prevState: curr,
+      prevState: state,
       decision: {
-        indentation: finalIndentation,
+        indentation: indentationDecision,
         left: choice.left,
         right: choice.right,
         chosenSplit: split,
@@ -277,7 +236,7 @@ function reconstructBestPath(state: State): Result {
   return {
     cost: state.cost,
     decisions,
-    indentation: state.indentationState,
+    indentationState: state.indentationState,
   };
 }
 
@@ -285,6 +244,60 @@ function getStateKey(state: State): string {
   return `${state.column}-${state.choiceIndex}-${
     state.activeGroups.at(-1)?.align
   }`;
+}
+
+function filterSplits(state: State, choice: Choice, splits: Split[]): Split[] {
+  if (choice.right === emptyChunk) {
+    return onlyBreakSplit;
+  }
+  const nonSpace =
+    (choice.left.type === 'REGULAR' && choice.left.noSpace) ||
+    doesNotWantSpace(choice.left, choice.right);
+
+  const endingIds = choice.left.groupsEnding.map((g) => g.id);
+  const activeGrps = state.activeGroups.filter(
+    (g) => !endingIds.includes(g.id),
+  );
+  const lastGrpBreaks = activeGrps.length > 0 && activeGrps.at(-1).shouldBreak;
+  const newGroups = choice.left.groupsStarting;
+  const nextStart = lastGrpBreaks
+    ? state.indentationState.indentation
+    : state.column + choice.left.text.length + (nonSpace ? 0 : 1);
+
+  // TODO: v3 tech debt; groups should include the clause keywords which would allow us to
+  // skip this logic
+  let breakBeforeGrp: Group = undefined;
+  for (const group of newGroups) {
+    if (group.shouldBreak || group.size + nextStart > MAX_COL) {
+      breakBeforeGrp = group;
+      break;
+    }
+  }
+
+  if (splits.length === 1) {
+    return [
+      {
+        ...splits[0],
+        wantedToSplit: breakBeforeGrp !== undefined || lastGrpBreaks,
+      },
+    ];
+  }
+
+  if (breakBeforeGrp) {
+    return [{ splitType: '\n', cost: 0, breakBeforeGrp }];
+  }
+
+  if (lastGrpBreaks) {
+    return splits.filter(
+      (split) => split.splitType === '\n' || split.splitType === '\n\n',
+    );
+  }
+  if (!lastGrpBreaks) {
+    return splits.filter(
+      (split) => split.splitType === ' ' || split.splitType === '',
+    );
+  }
+  return splits;
 }
 
 function bestFirstSolnSearch(
@@ -337,7 +350,15 @@ function bestFirstSolnSearch(
       return reconstructBestPath(state);
     }
     const choice = choiceList[state.choiceIndex];
-    for (const split of choice.possibleSplitChoices) {
+    // TODO: v3 tech debt; rather than "filtering out splits", we should ever only have one
+    // possible split type at any moment. This is true right now; if you throw an error if
+    // filteredSplits.length > 1, nothing happens.
+    const filteredSplits = filterSplits(
+      state,
+      choice,
+      choice.possibleSplitChoices,
+    );
+    for (const split of filteredSplits) {
       const neighbourState = getNeighbourState(state, choice, split);
       heap.push(neighbourState);
     }
@@ -347,13 +368,13 @@ function bestFirstSolnSearch(
 
 // Used for debugging only; it's very convenient to know where groups start and end
 function addGroupStart(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsStarting; i++) {
+  for (let i = 0; i < decision.left.groupsStarting.length; i++) {
     buffer.push('[');
   }
 }
 
 function addGroupEnd(buffer: string[], decision: Decision) {
-  for (let i = 0; i < decision.left.groupsEnding; i++) {
+  for (let i = 0; i < decision.left.groupsEnding.length; i++) {
     buffer.push(']');
   }
 }
@@ -361,14 +382,31 @@ function addGroupEnd(buffer: string[], decision: Decision) {
 function decisionsToFormatted(decisions: Decision[]): FinalResult {
   const buffer: string[] = [];
   let cursorPos = -1;
+  const pendingComments: string[] = [];
   decisions.forEach((decision) => {
     buffer.push(' '.repeat(decision.indentation));
     if (decision.left.isCursor) {
       cursorPos = buffer.join('').length;
     }
-    if (showGroups) addGroupStart(buffer, decision);
     buffer.push(decision.left.text);
+    // NOTE: Arguably this method should not have the responsibility of handling
+    // inline comments at all, since now it has too many responsibilities.
+    // But there is currently no better place for it.
+    if (decision.left.type === 'REGULAR' && decision.left.comment) {
+      pendingComments.push(decision.left.comment);
+    }
     if (showGroups) addGroupEnd(buffer, decision);
+    if (showGroups) addGroupStart(buffer, decision);
+    if (
+      decision.chosenSplit.splitType === '\n' ||
+      decision.chosenSplit.splitType === '\n\n'
+    ) {
+      for (const comment of pendingComments) {
+        buffer.push(' ');
+        buffer.push(comment);
+      }
+      pendingComments.length = 0;
+    }
     buffer.push(decision.chosenSplit.splitType);
   });
   let result = buffer.join('').trimEnd();
@@ -426,9 +464,8 @@ export function buffersToFormattedString(
 ): FinalResultWithPos {
   let formatted = '';
   let indentationState: IndentationState = {
-    align: [],
-    base: 0,
-    special: 0,
+    indentation: 0,
+    activeIndents: [],
   };
   let cursorPos = 0;
   for (const chunkList of buffers) {
@@ -436,15 +473,15 @@ export function buffersToFormattedString(
     // Indentation should carry over
     const initialState: State = {
       activeGroups: [],
+      indentationState,
       column: 0,
       choiceIndex: 0,
       cost: 0,
-      indentationState: indentationState,
       overflowingCount: 0,
       edge: null,
     };
     const result = bestFirstSolnSearch(initialState, choices);
-    indentationState = result.indentation;
+    indentationState = result.indentationState;
     const formattingResult = decisionsToFormatted(result.decisions);
     // Cursor is not in this chunkList
     if (typeof formattingResult === 'string') {
@@ -455,9 +492,8 @@ export function buffersToFormattedString(
     }
   }
   if (
-    indentationState.base !== 0 ||
-    indentationState.special !== 0 ||
-    indentationState.align.length !== 0
+    indentationState.indentation !== 0 ||
+    indentationState.activeIndents.length > 0
   ) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
