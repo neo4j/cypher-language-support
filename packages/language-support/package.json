@@ -6,6 +6,7 @@
   "files": [
     "dist",
     "src",
+    "!src/tests/**",
     "package.json",
     "README.md",
     "LICENSE.md",
