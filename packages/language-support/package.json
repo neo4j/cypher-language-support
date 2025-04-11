@@ -24,13 +24,13 @@
   "version": "2.0.0-next.19",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
-  "types": "./dist/types/index.d.js",
+  "types": "./dist/types/src/index.d.js",
   "exports": {
     ".": {
       "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/index.mjs",
       "default": "./dist/cjs/index.cjs",
-      "types": "./dist/types/index.d.ts"
+      "types": "./dist/types/src/index.d.ts"
     }
   },
   "repository": {
