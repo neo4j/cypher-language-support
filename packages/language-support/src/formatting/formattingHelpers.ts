@@ -157,7 +157,7 @@ export function fillInRegularChunkGroupSizes(
       group.dbgText += ' ';
     }
     if (chunk.comment && !groupsEnding.has(group.id)) {
-      group.breaksAll = true;
+      group.shouldBreak = true;
     }
   }
 }
@@ -185,31 +185,6 @@ export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-// These three are helpers for the fillInGroupSizes method to make it more manageable
-export function fillInRegularChunkGroupSizes(
-  chunk: RegularChunk,
-  activeGroups: Group[],
-  groupsEnding: Set<number>,
-) {
-  for (const group of activeGroups) {
-    if (!chunk.text) {
-      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-    }
-    group.size += chunk.text.length;
-    // PERF: Right now we include dbgText always, even though it's only used for debugging.
-    // It does not seem to have any significant performance downsides, but only doing so
-    // when e.g. a flag is set might be a more prudent choice.
-    group.dbgText += chunk.text;
-    if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
-      group.size++;
-      group.dbgText += ' ';
-    }
-    if (chunk.comment && !groupsEnding.has(group.id)) {
-      group.shouldBreak = true;
-    }
-  }
-}
-
 export function getActiveGroups(
   activeGroups: Group[],
   groupsEnding: Set<number>,
@@ -231,27 +206,4 @@ export function getActiveGroups(
     }
   }
   return newActiveGroups;
-}
-
-export function verifyGroupSizes(buffers: Chunk[][]) {
-  for (const chunkList of buffers) {
-    for (const chunk of chunkList) {
-      for (const group of chunk.groupsStarting) {
-        if (group.size !== group.dbgText.length) {
-          throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
-        }
-      }
-    }
-  }
-}
-
-const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
-
-export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    nextChunk?.type !== 'COMMENT' &&
-    chunk.type === 'REGULAR' &&
-    (chunk.noSpace ||
-      (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
-  );
 }

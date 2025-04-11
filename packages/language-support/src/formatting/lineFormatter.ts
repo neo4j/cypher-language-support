@@ -27,7 +27,7 @@ export interface Group {
   id: number;
   // Should this group break in the "Prettier" fashion, breaking between
   // all of its children?
-  breaksAll?: boolean;
+  shouldBreak?: boolean;
   size: number;
   // The full text of the group (used for debugging only)
   dbgText: string;
@@ -41,14 +41,16 @@ function shouldBreak(chunk: Chunk, state: State): boolean {
   }
 
   return (
-    chunk.mustBreak || chunk.doubleBreak || state.activeGroups.at(-1)?.breaksAll
+    chunk.mustBreak ||
+    chunk.doubleBreak ||
+    state.activeGroups.at(-1)?.shouldBreak
   );
 }
 
 function updateActiveGroups(state: State, chunk: Chunk): void {
   for (const group of chunk.groupsStarting) {
-    const breaksAll = state.column + group.size > MAX_COL || group.breaksAll;
-    state.activeGroups.push({ ...group, breaksAll });
+    const breaksAll = state.column + group.size > MAX_COL || group.shouldBreak;
+    state.activeGroups.push({ ...group, shouldBreak: breaksAll });
   }
   for (const group of chunk.groupsEnding) {
     const indexToRemove = state.activeGroups.findIndex(

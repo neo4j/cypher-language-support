@@ -859,9 +859,6 @@ RETURN
     verifyFormatting(query, expected);
   });
 
-  /**
-   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
-   * (though it is close.)
   test('extremely complex expressions with nested exist and case', () => {
     const query = `
 MATCH (n)
