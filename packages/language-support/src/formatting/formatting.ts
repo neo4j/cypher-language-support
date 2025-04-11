@@ -195,10 +195,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   fillInGroupSizes = () => {
     let activeGroups: Group[] = [];
-    for (let i = 0; i < this.chunkList.length; i++) {
-      const chunk = this.chunkList[i];
+    for (const chunk of this.chunkList) {
       activeGroups = activeGroups.concat(chunk.groupsStarting);
-
       if (chunk.type === 'REGULAR') {
         fillInRegularChunkGroupSizes(chunk, activeGroups);
       } else if (chunk.type === 'COMMENT') {
