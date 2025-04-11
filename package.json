@@ -4,6 +4,7 @@
   "license": "Apache",
   "version": "1.0.0",
   "categories": [],
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/neo4j/cypher-language-support.git"
