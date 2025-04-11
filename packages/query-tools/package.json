@@ -1,6 +1,5 @@
 {
-  "name": "@neo4j-cypher/schema-poller",
-  "private": true,
+  "name": "@neo4j-cypher/query-tools",
   "description": "",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",

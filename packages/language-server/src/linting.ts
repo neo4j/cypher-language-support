@@ -1,5 +1,5 @@
 import { _internalFeatureFlags } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';

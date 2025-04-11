@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
-    "@neo4j-cypher/schema-poller": "workspace:*",
+    "@neo4j-cypher/query-tools": "workspace:*",
     "lodash.debounce": "^4.0.8",
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "^8.1.0",

@@ -171,4 +171,4 @@
 
 - Updated dependencies [5819f6385]
   - @neo4j-cypher/language-support@2.0.0-next.0
-  - @neo4j-cypher/schema-poller@2.0.0-next.0
+  - @neo4j-cypher/query-tools@2.0.0-next.0

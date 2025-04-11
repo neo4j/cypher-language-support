@@ -1,4 +1,4 @@
-import { Database } from '@neo4j-cypher/schema-poller';
+import { Database } from '@neo4j-cypher/query-tools';
 import path from 'path';
 import {
   Event,

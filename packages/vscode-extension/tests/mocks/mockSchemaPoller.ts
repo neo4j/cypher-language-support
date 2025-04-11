@@ -2,7 +2,7 @@
 import {
   ConnnectionResult,
   Neo4jSchemaPoller,
-} from '@neo4j-cypher/schema-poller';
+} from '@neo4j-cypher/query-tools';
 import EventEmitter from 'events';
 import { Config } from 'neo4j-driver';
 

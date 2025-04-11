@@ -65,9 +65,9 @@ importers:
       '@neo4j-cypher/language-support':
         specifier: workspace:*
         version: link:../language-support
-      '@neo4j-cypher/schema-poller':
+      '@neo4j-cypher/query-tools':
         specifier: workspace:*
-        version: link:../schema-poller
+        version: link:../query-tools
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
@@ -109,6 +109,22 @@ importers:
       '@types/semver':
         specifier: ^7.7.0
         version: 7.7.0
+
+  packages/query-tools:
+    dependencies:
+      '@neo4j-cypher/language-support':
+        specifier: workspace:*
+        version: link:../language-support
+      ajv:
+        specifier: ^8.12.0
+        version: 8.17.1
+      neo4j-driver:
+        specifier: 'catalog:'
+        version: 5.12.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22.14.0
+        version: 22.14.0
 
   packages/react-codemirror:
     dependencies:
@@ -268,22 +284,6 @@ importers:
         specifier: ^4.5.10
         version: 4.5.11(@types/node@22.14.0)
 
-  packages/schema-poller:
-    dependencies:
-      '@neo4j-cypher/language-support':
-        specifier: workspace:*
-        version: link:../language-support
-      ajv:
-        specifier: ^8.12.0
-        version: 8.17.1
-      neo4j-driver:
-        specifier: 'catalog:'
-        version: 5.12.0
-    devDependencies:
-      '@types/node':
-        specifier: ^22.14.0
-        version: 22.14.0
-
   packages/vscode-extension:
     dependencies:
       '@neo4j-cypher/language-server':
@@ -292,9 +292,9 @@ importers:
       '@neo4j-cypher/language-support':
         specifier: workspace:*
         version: link:../language-support
-      '@neo4j-cypher/schema-poller':
+      '@neo4j-cypher/query-tools':
         specifier: workspace:*
-        version: link:../schema-poller
+        version: link:../query-tools
       '@neo4j-ndl/base':
         specifier: ^2.12.3
         version: 2.12.13
@@ -2144,9 +2144,6 @@ packages:
 
   '@types/node@22.14.0':
     resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
-
-  '@types/node@22.5.4':
-    resolution: {integrity: sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -6610,9 +6607,6 @@ packages:
   underscore@1.13.7:
     resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
 
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
@@ -9197,7 +9191,7 @@ snapshots:
   '@types/dockerode@3.3.31':
     dependencies:
       '@types/docker-modem': 3.0.6
-      '@types/node': 16.18.59
+      '@types/node': 22.14.0
       '@types/ssh2': 1.15.1
 
   '@types/eslint@8.56.12':
@@ -9253,10 +9247,6 @@ snapshots:
   '@types/node@22.14.0':
     dependencies:
       undici-types: 6.21.0
-
-  '@types/node@22.5.4':
-    dependencies:
-      undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -9314,11 +9304,11 @@ snapshots:
 
   '@types/workerpool@6.4.7':
     dependencies:
-      '@types/node': 16.18.59
+      '@types/node': 22.14.0
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 16.18.59
+      '@types/node': 22.14.0
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -9734,7 +9724,7 @@ snapshots:
   '@wdio/mocha-framework@8.40.3':
     dependencies:
       '@types/mocha': 10.0.7
-      '@types/node': 22.5.4
+      '@types/node': 22.14.0
       '@wdio/logger': 8.38.0
       '@wdio/types': 8.40.3
       '@wdio/utils': 8.40.3
@@ -9750,7 +9740,7 @@ snapshots:
 
   '@wdio/reporter@8.40.3':
     dependencies:
-      '@types/node': 22.5.4
+      '@types/node': 22.14.0
       '@wdio/logger': 8.38.0
       '@wdio/types': 8.40.3
       diff: 5.2.0
@@ -9787,7 +9777,7 @@ snapshots:
 
   '@wdio/types@8.40.3':
     dependencies:
-      '@types/node': 22.5.4
+      '@types/node': 22.14.0
 
   '@wdio/types@8.41.0':
     dependencies:
@@ -14597,8 +14587,6 @@ snapshots:
       through: 2.3.8
 
   underscore@1.13.7: {}
-
-  undici-types@6.19.8: {}
 
   undici-types@6.21.0: {}
 

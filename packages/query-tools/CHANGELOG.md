@@ -1,4 +1,4 @@
-# @neo4j-cypher/schema-poller
+# @neo4j-cypher/query-tools
 
 ## 2.0.0-next.18
 
