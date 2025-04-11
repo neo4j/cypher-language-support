@@ -34,10 +34,10 @@ export interface BaseChunk {
 
 // Regular chunk specific properties
 export interface RegularChunk extends BaseChunk {
-  noSpace?: boolean;
-  noBreak?: boolean;
   type: 'REGULAR';
   node?: TerminalNode;
+  noSpace?: boolean;
+  noBreak?: boolean;
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
