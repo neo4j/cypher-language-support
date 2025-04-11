@@ -99,7 +99,6 @@ export function chunksToFormattedString(
     updateActiveGroups(state, chunk);
     appendChunkText(state, chunk);
     updateIndentationState(state, chunk);
-
     handleComments(state, chunk);
 
     if (shouldBreak(chunk, state)) {
