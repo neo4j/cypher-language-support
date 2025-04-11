@@ -85,41 +85,6 @@ function updateIndentationState(state: State, chunk: Chunk) {
     }
   }
 }
-export function chunksToFormattedString(
-  chunkList: Chunk[],
-): FinalResultWithPos {
-  const state = createInitialState();
-
-  for (let i = 0; i < chunkList.length; i++) {
-    const chunk = chunkList[i];
-    const nextChunk = chunkList[i + 1];
-
-    applyIndentationIfNeeded(state);
-    checkAndSetCursorPosition(state, chunk);
-    updateActiveGroups(state, chunk);
-    appendChunkText(state, chunk);
-    updateIndentationState(state, chunk);
-    handleComments(state, chunk);
-
-    if (shouldBreak(chunk, state)) {
-      processLineBreak(state, chunk, nextChunk);
-      continue;
-    }
-
-    if (shouldAddSpace(chunk, nextChunk)) {
-      state.formatted += ' ';
-      state.column++;
-    }
-  }
-
-  appendRemainingComments(state);
-  validateFinalState(state);
-
-  return {
-    formatted: state.formatted.trimEnd(),
-    cursorPos: state.cursorPos,
-  };
-}
 
 function createInitialState(): State {
   return {
@@ -190,4 +155,40 @@ function validateFinalState(state: State) {
   if (state.activeGroups.length > 0) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
+}
+
+export function chunksToFormattedString(
+  chunkList: Chunk[],
+): FinalResultWithPos {
+  const state = createInitialState();
+
+  for (let i = 0; i < chunkList.length; i++) {
+    const chunk = chunkList[i];
+    const nextChunk = chunkList[i + 1];
+
+    applyIndentationIfNeeded(state);
+    checkAndSetCursorPosition(state, chunk);
+    updateActiveGroups(state, chunk);
+    appendChunkText(state, chunk);
+    updateIndentationState(state, chunk);
+    handleComments(state, chunk);
+
+    if (shouldBreak(chunk, state)) {
+      processLineBreak(state, chunk, nextChunk);
+      continue;
+    }
+
+    if (shouldAddSpace(chunk, nextChunk)) {
+      state.formatted += ' ';
+      state.column++;
+    }
+  }
+
+  appendRemainingComments(state);
+  validateFinalState(state);
+
+  return {
+    formatted: state.formatted.trimEnd(),
+    cursorPos: state.cursorPos,
+  };
 }
