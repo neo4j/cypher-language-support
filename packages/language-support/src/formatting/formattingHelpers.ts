@@ -175,14 +175,18 @@ export function verifyGroupSizes(chunkList: Chunk[]) {
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
 export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    (nextChunk?.type !== 'COMMENT' &&
-      chunk.type === 'REGULAR' &&
-      (chunk.noSpace ||
-        (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))) ||
-    chunk.type === 'SYNTAX_ERROR' ||
-    nextChunk?.type === 'SYNTAX_ERROR'
-  );
+  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+    return true;
+  }
+  if (chunk.type === 'REGULAR') {
+    if (chunk.noSpace) {
+      return true;
+    }
+    if (chunk.node && openingCharacters.includes(chunk.node.symbol.type)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function getActiveGroups(
