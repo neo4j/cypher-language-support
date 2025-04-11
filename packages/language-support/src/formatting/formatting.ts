@@ -174,7 +174,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.fillInGroupSizes();
     const result = chunksToFormattedString(this.chunkList);
     this.cursorPos += result.cursorPos;
-    const resultString = result.formattedString + this.unParseable;
+    const resultString = result.formatted + this.unParseable;
     const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
     const formattedNonWhitespaceCount = resultString.replace(/\s/g, '').length;
 

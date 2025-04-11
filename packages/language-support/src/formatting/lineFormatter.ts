@@ -9,7 +9,7 @@ import {
 const INDENTATION_SPACES = 2;
 
 interface FinalResultWithPos {
-  formattedString: string;
+  formatted: string;
   cursorPos: number;
 }
 
@@ -117,7 +117,7 @@ export function chunksToFormattedString(
   validateFinalState(state);
 
   return {
-    formattedString: state.formatted.trimEnd(),
+    formatted: state.formatted.trimEnd(),
     cursorPos: state.cursorPos,
   };
 }
