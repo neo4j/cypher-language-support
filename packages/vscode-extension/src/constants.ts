@@ -31,5 +31,18 @@ export const CONSTANTS = {
     CONNECTION_VALIDATION_MESSAGE: 'Please fill in all required fields.',
     SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE: 'Switched to database',
     ERROR_SWITCHING_DATABASE_MESSAGE: 'Error switching to database',
+    ERROR_DISCONNECTED_SET_PARAMS:
+      'You need to be connected to neo4j to set parameters.',
+    ERROR_DISCONNECTED_EDIT_PARAMS:
+      'You need to be connected to neo4j to edit parameters.',
+    ERROR_EMPTY_PARAM_NAME: 'Parameter name cannot be empty.',
+    ERROR_EMPTY_PARAM_VALUE: 'Parameter value cannot be empty.',
+    ERROR_PARAM_EVALUATION: 'Parameter evaluation failed.',
+    ERROR_PARAM_EVALUATION_SYSTEM_DB:
+      'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+    ERROR_DISCONNECTED_EXECUTION:
+      'You need to be connected to Neo4j to run queries',
+    PARAMETER_SET: (key: string) => `Parameter '${key}' set.`,
+    PARAMETER_DELETED: (key: string) => `Parameter \`${key}\` deleted.`,
   },
 };

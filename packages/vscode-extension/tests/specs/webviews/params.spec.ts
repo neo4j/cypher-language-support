@@ -2,6 +2,7 @@ import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
+import { CONSTANTS } from '../../../src/constants';
 import {
   checkResultsContent,
   executeFile,
@@ -185,7 +186,7 @@ suite('Params panel testing', () => {
     void addParamWithInputBox();
     await waitUntilNotification(
       browser,
-      'You need to be connected to neo4j to set parameters.',
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS,
     );
     await forceConnect(1);
   });
