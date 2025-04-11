@@ -1,0 +1,40 @@
+name: 'Build project'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Setup antlr
+      shell: bash
+      run: |
+        curl https://www.antlr.org/download/antlr-4.13.0-complete.jar --output antlr4.jar
+        mkdir -p $HOME/.local/bin
+        echo -e "#bin/bash\njava -jar $PWD/antlr4.jar \$@" > $HOME/.local/bin/antlr4
+        chmod a+x $HOME/.local/bin/antlr4
+
+    - name: Setup pnpm
+      shell: bash
+      run: |
+        curl -fsSL https://pnpm.io/install.sh | sh
+        
+    - name: Setup pnpm
+       uses: pnpm/action-setup@v4
+
+    - name: Setup node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'pnpm'
+        registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies with frozen lock file
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: pnpm build
+

@@ -30,30 +30,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Build project
+        uses: ./.github/actions/build-project
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
-
-      - name: Build project
-        run: pnpm build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

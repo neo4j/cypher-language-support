@@ -15,28 +15,8 @@ jobs:
     name: Run eslint and check formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
-
       - name: Build project
-        env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
-        run: pnpm build
+        uses: ./.github/actions/build-project
 
       - name: Check there are no linting errors
         run: pnpm lint
@@ -50,29 +30,8 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
-
-      - name: Builds and run tests
-        # Tests with the same flags that VSCode does
-        run: |
-          pnpm build
-          pnpm test
+      - name: Run tests
+        run: pnpm test
 
   e2e-test:
     name: E2E tests
@@ -81,27 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
-
-      - name: Build project
-        run: pnpm build
-
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpx playwright install --with-deps
 
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode

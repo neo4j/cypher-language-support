@@ -14,24 +14,8 @@ jobs:
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
+      - name: Build project
+        uses: ./.github/actions/build-project
 
       - name: Build and release canary package to npm
         run: pnpm release-snapshot
@@ -43,25 +27,6 @@ jobs:
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
-
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@3de3850952bec538fde60aac71731376e57b9b57 # v1.4.8
