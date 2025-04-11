@@ -810,16 +810,18 @@ END`;
 MATCH (n)
 RETURN
   CASE
-    WHEN EXISTS {
-      MATCH (person)-[:HAS_DOG]->(dog:Dog)
-      WHERE person.name = 'Chris'
-      WITH dog
-      RETURN
-        CASE
-          WHEN dog.name = 'Ozzy' THEN true
-          ELSE false
-        END
-    } THEN 'Relationship'
+    WHEN
+      EXISTS {
+        MATCH (person)-[:HAS_DOG]->(dog:Dog)
+        WHERE person.name = 'Chris'
+        WITH dog
+        RETURN
+          CASE
+            WHEN dog.name = 'Ozzy' THEN true
+            ELSE false
+          END
+      }
+      THEN 'Relationship'
   END`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -841,23 +843,22 @@ END
 MATCH (n)
 RETURN
   CASE
-    WHEN EXISTS {
-      MATCH (person)-[:HAS_DOG]->(dog:Dog)
-      WHERE person.name = 'Chris'
-      WITH dog
-      RETURN
-        CASE
-          WHEN dog.name = 'Ozzy' THEN true
-          ELSE false
-        END
-    } THEN 'Relationship'
+    WHEN
+      EXISTS {
+        MATCH (person)-[:HAS_DOG]->(dog:Dog)
+        WHERE person.name = 'Chris'
+        WITH dog
+        RETURN
+          CASE
+            WHEN dog.name = 'Ozzy' THEN true
+            ELSE false
+          END
+      }
+      THEN 'Relationship'
   END`.trimStart();
     verifyFormatting(query, expected);
   });
 
-  /**
-   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
-   * (though it is close.)
   test('extremely complex expressions with nested exist and case', () => {
     const query = `
 MATCH (n)
@@ -894,59 +895,71 @@ END
 END`.trimStart();
     const expected = `
 MATCH (n)
-RETURN 5 +
+RETURN
+  5 +
   CASE
-    WHEN (n)--() THEN
-      CASE
-        WHEN EXISTS {
-          MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris' OR
-            person.name = 'Chris'
-          WITH dog
-          WHERE dog.name = 'Ozzy'
-        } THEN 'Relationship'
-        WHEN (n {prop: 42}) THEN
-          CASE
-            WHEN
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--() OR
-              (n)--()
-              THEN 'Relationship'
-            WHEN (n {prop: 42}) THEN
+    WHEN
+      (n)--()
+      THEN
+        CASE
+          WHEN
+            EXISTS {
+              MATCH (person)-[:HAS_DOG]->(dog:Dog)
+              WHERE
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris' OR
+                person.name = 'Chris'
+              WITH dog
+              WHERE dog.name = 'Ozzy'
+            }
+            THEN 'Relationship'
+          WHEN
+            (n {prop: 42})
+            THEN
               CASE
-                WHEN EXISTS {
-                  MATCH (person)-[:HAS_DOG]->(dog:Dog)
-                  WHERE person.name = 'Chris'
-                  WITH dog
-                  WHERE dog.name = 'Ozzy'
-                } THEN 'Relationship'
-                WHEN (n {prop: 42}) THEN 'Node'
+                WHEN
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--() OR
+                  (n)--()
+                  THEN 'Relationship'
+                WHEN
+                  (n {prop: 42})
+                  THEN
+                    CASE
+                      WHEN
+                        EXISTS {
+                          MATCH (person)-[:HAS_DOG]->(dog:Dog)
+                          WHERE person.name = 'Chris'
+                          WITH dog
+                          WHERE dog.name = 'Ozzy'
+                        }
+                        THEN 'Relationship'
+                      WHEN (n {prop: 42}) THEN 'Node'
+                    END
               END
-          END
-      END
-    WHEN (n {prop: 42}) THEN
-      CASE
-        WHEN (n)--() THEN 'Relationship'
-        WHEN (n {prop: 42}) THEN 'Node'
-      END
+        END
+    WHEN
+      (n {prop: 42})
+      THEN
+        CASE
+          WHEN (n)--() THEN 'Relationship'
+          WHEN (n {prop: 42}) THEN 'Node'
+        END
   END`.trimStart();
     verifyFormatting(query, expected);
   });
-  */
 
   test('else statements for CASE needs to align its expression', () => {
     const query = `MATCH (u:User)
@@ -976,7 +989,7 @@ RETURN
         ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
-    // TODO: the THEN below the EXISTS shuold get one more indentation step
+    // TODO: should perhaps the likeCount > 10 part remain on the same line?
     const expected = `MATCH (u:User)
 WITH
   u,
@@ -984,27 +997,32 @@ WITH
   collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
-    WHEN EXISTS {
-      MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-    } AND likeCount > 10
-    THEN
-      CASE p.name
-        WHEN
-          size(interestList) > 3
-          THEN
-            'Active smartphone user with diverse interests: ' +
+    WHEN
+      EXISTS {
+        MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+      } AND
+      likeCount > 10
+      THEN
+        CASE p.name
+          WHEN
+            size(interestList) > 3
+            THEN
+              'Active smartphone user with diverse interests: ' +
+              toString(interestList)
+          ELSE
+            'Active smartphone user with few interests: ' +
             toString(interestList)
-        ELSE
-          'Active smartphone user with few interests: ' + toString(interestList)
-      END
+        END
     ELSE
       CASE
-        WHEN NOT EXISTS {
-          MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-        } AND likeCount <= 10
-        THEN
-          'Less active user without a smartphone, interests: ' +
-          toString(interestList)
+        WHEN
+          NOT EXISTS {
+            MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
+          } AND
+          likeCount <= 10
+          THEN
+            'Less active user without a smartphone, interests: ' +
+            toString(interestList)
         ELSE
           'User with moderate activity, ' +
           toString(likeCount) +

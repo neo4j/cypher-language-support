@@ -22,10 +22,11 @@ RETURN a.prop`;
     const query = `MATCH (a:A) WHERE EXISTS {MATCH (a)-->(b:B) WHERE b.prop = 'yellow'} RETURN a.foo`;
 
     const expected = `MATCH (a:A)
-WHERE EXISTS {
-  MATCH (a)-->(b:B)
-  WHERE b.prop = 'yellow'
-}
+WHERE
+  EXISTS {
+    MATCH (a)-->(b:B)
+    WHERE b.prop = 'yellow'
+  }
 RETURN a.foo`;
     verifyFormatting(query, expected);
   });
@@ -332,9 +333,10 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 
 ;`;
     const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
-WHERE NOT EXISTS {
-  MATCH (c)-[:TRANSFIERE]->(c2)
-}
+WHERE
+  NOT EXISTS {
+    MATCH (c)-[:TRANSFIERE]->(c2)
+  }
 WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
 LIMIT 1000
 CALL (c, c2, trxs, avgTrx, totalSum) {

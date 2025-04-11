@@ -45,8 +45,10 @@ CALL {
   MATCH (target:object)
   WHERE target.id = $id2
   @MATCH path = (source)-[*1..10]->(target)
-  WITH path, REDUCE (weight = 0, r IN relationships(path) | weight + r.weight)
-             AS Weight ORDER BY Weight LIMIT 3
+  WITH 
+    path, 
+    REDUCE(weight = 0, r IN relationships(path) | weight + r.weight) AS Weight 
+  ORDER BY Weight LIMIT 3
   RETURN length(path) AS l, Weight
 }
 RETURN count(*)`;
