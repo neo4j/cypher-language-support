@@ -1205,7 +1205,7 @@ RETURN
     verifyFormatting(query, expected);
   });
 
-  test('reduce function should not break between name and left paranthesis', () => {
+  test('reduce function should not break between name and left parenthesis', () => {
     const query = `
 UNWIND range(1, 100) AS _
 CALL {
