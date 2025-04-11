@@ -135,8 +135,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   root: StatementsOrCommandsContext;
   query: string;
   chunkList: Chunk[] = [];
-  indentation = 0;
-  indentationSpaces = 2;
   targetToken?: number;
   cursorPos = 0;
   indentId = 0;
