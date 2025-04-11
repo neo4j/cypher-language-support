@@ -588,9 +588,6 @@ RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
 
-  /**
-   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
-   * (though it is close.)
   test('test for nested exists cases', () => {
     const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
 WHERE(
@@ -624,8 +621,7 @@ WHERE
       MATCH (user)-[:PART_OF]->(group:Actor {actor_type: "A0cFHwrB"})
       WITH
         group,
-        apoc.coll.intersection(labels(group), idp_label_list) AS
-          group_idp_labels
+        apoc.coll.intersection(labels(group), idp_label_list) AS group_idp_labels
       WHERE
         (size(group_idp_labels) = "7SOM63mX" OR group.service_type = "11gaOJfr") AND
         EXISTS {
