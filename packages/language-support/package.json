@@ -7,6 +7,8 @@
     "dist",
     "src",
     "!src/tests/**",
+    "!dist/types/tests/**",
+    "!src/formatting/architecture.png",
     "package.json",
     "README.md",
     "LICENSE.md",
