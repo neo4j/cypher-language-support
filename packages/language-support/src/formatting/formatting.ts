@@ -118,7 +118,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { chunksToFormattedString, Group } from './lineFormatter';
+import { chunksToFormattedString, Group } from './layoutEngine';
 
 const MISSING = '<missing';
 
