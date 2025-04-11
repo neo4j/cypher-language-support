@@ -10,6 +10,8 @@ describe('Can complete database names', () => {
       'movies',
       'financial reports',
       'neo4j_server',
+      'periodEnd.',
+      'dashEnd-',
     ],
     aliasNames: [
       'myMovies',
@@ -17,6 +19,10 @@ describe('Can complete database names', () => {
       'a.b.c.d',
       'panama papers1',
       'office-db',
+      'periodAlias.',
+      'dashAlias-',
+      'db@',
+      '1db',
     ],
     parameters: {
       param1: 'something',
@@ -55,6 +61,26 @@ describe('Can complete database names', () => {
           kind: CompletionItemKind.Variable,
           insertText: '$`param 4`',
         },
+        {
+          label: 'periodEnd.',
+          kind: CompletionItemKind.Value,
+          insertText: '`periodEnd.`',
+        },
+        {
+          label: 'dashEnd-',
+          kind: CompletionItemKind.Value,
+          insertText: '`dashEnd-`',
+        },
+        {
+          label: 'periodAlias.',
+          kind: CompletionItemKind.Value,
+          insertText: '`periodAlias.`',
+        },
+        {
+          label: 'dashAlias-',
+          kind: CompletionItemKind.Value,
+          insertText: '`dashAlias-`',
+        },
       ],
     });
   });
@@ -80,6 +106,26 @@ describe('Can complete database names', () => {
           label: '$param 4',
           kind: CompletionItemKind.Variable,
           insertText: '$`param 4`',
+        },
+        {
+          label: 'periodAlias.',
+          kind: CompletionItemKind.Value,
+          insertText: '`periodAlias.`',
+        },
+        {
+          label: 'dashAlias-',
+          kind: CompletionItemKind.Value,
+          insertText: '`dashAlias-`',
+        },
+        {
+          label: 'db@',
+          kind: CompletionItemKind.Value,
+          insertText: '`db@`',
+        },
+        {
+          label: '1db',
+          kind: CompletionItemKind.Value,
+          insertText: '`1db`',
         },
       ],
     });

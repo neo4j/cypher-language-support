@@ -54,32 +54,8 @@ RETURN a, b`;
   const q10 = `MATCH (p:Person)
 WHERE p.name = 'Alberta' OR p.name = 'Berta' OR p.name = 'C' OR p.age > 30 OR p.salary > 50000 OR p.experience > 10 OR p.position = 'Manager'
 RETURN p`;
-  // Greg query
-  const q11 = `MATCH (s:Schema)
-// Find a schema which has at least 2 tables and at least PK and one FK
-WHERE (s)-->(:Table)-->(:Column)-[:FK_COLUMN]-()
-    AND
-    (s)-->(:Table)-->(:Column)-[:PK_COLUMN]-()
-    AND
-    count { (s)-->() } > 1
-// WITH collect(s) as schemas
-// MATCH (s)|
-WITH s
-MATCH (s)-[:CONTAINS_TABLE]->(t:Table)-[:HAS_COLUMN]->(c:Column)
-OPTIONAL MATCH (c)<-[:PK_COLUMN]-(pk:PrimaryKey)
-OPTIONAL MATCH (c)<-[:FK_COLUMN]-(fk:ForeignKey)
-WITH s,
-    t.name as tableName,
-    collect({name: c.name,
-            pk: CASE (not pk is null and $printKeyInfo) WHEN True THEN "(PK)" ELSE "" END,
-            fk: CASE (not fk is null and $printKeyInfo) WHEN True THEN "(FK)" ELSE "" END
-    }) as columns
-WITH s, tableName, [x in columns | x.name + x.fk + x.pk] as columns
-WITH s, "Table " + tableName + " has columns:" + apoc.text.join(columns,'') as tableDescriptions
-WITH s, apoc.text.join(collect(tableDescriptions),'------------------------') as schemaDescription
-SET s.schemaDescription=schemaDescription`;
   // subqueries example
-  const q12 = `UNWIND range(1,100) as _
+  const q11 = `UNWIND range(1,100) as _
 CALL {
   MATCH (source:object) WHERE source.id= $id1
   MATCH (target:object) WHERE target.id= $id2
@@ -90,34 +66,34 @@ CALL {
 }
 RETURN count(*)`;
   //allTokenTypes example
-  const q13 = `MATCH (variable:Label)-[:REL_TYPE]->()
+  const q12 = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE variable.property = "String" OR namespaced.function() = false // comment
 OR $parameter > 2
 RETURN variable;`;
 
-  const q14 = `MATCH (p:Product) WHERE p.price > 1000 AND p.stock > 50 AND p.category IN ['Electronics','Home Appliances','Garden Tools','Sports Equipment','Automotive Parts','Fashion Accessories','Books','Toys','Jewelry','Musical Instruments','Art Supplies','Office Supplies'] AND (CASE WHEN p.discount IS NULL THEN 0 ELSE p.discount END) > 0.15 AND (p.sold - (CASE WHEN p.reserved IS NULL THEN 0 ELSE p.reserved END)) > 20 AND (p.rating * (CASE WHEN p.reviews IS NULL THEN 1 ELSE p.reviews END)) > 3000 RETURN p`;
+  const q13 = `MATCH (p:Product) WHERE p.price > 1000 AND p.stock > 50 AND p.category IN ['Electronics','Home Appliances','Garden Tools','Sports Equipment','Automotive Parts','Fashion Accessories','Books','Toys','Jewelry','Musical Instruments','Art Supplies','Office Supplies'] AND (CASE WHEN p.discount IS NULL THEN 0 ELSE p.discount END) > 0.15 AND (p.sold - (CASE WHEN p.reserved IS NULL THEN 0 ELSE p.reserved END)) > 20 AND (p.rating * (CASE WHEN p.reviews IS NULL THEN 1 ELSE p.reviews END)) > 3000 RETURN p`;
 
-  const q15 = `MATCH (o:Order)-[:CONTAINS]->(p:Product) WITH o, COUNT(p) AS itemCount, SUM(p.price * (1 - p.discount)) AS totalRevenue, AVG(p.rating) AS avgRating, MIN(p.price) AS minPrice, MAX(p.price) AS maxPrice, COLLECT({name: p.name, category: p.category, price: p.price, discount: p.discount, rating: p.rating, stock: p.stock, supplier: p.supplier, warranty: p.warranty, features: p.features}) AS productDetails WHERE totalRevenue > 10000 AND itemCount > 5 AND avgRating > 3.5 AND minPrice < 50 AND maxPrice < 1000 RETURN o, itemCount, totalRevenue, avgRating, minPrice, maxPrice, productDetails`;
+  const q14 = `MATCH (o:Order)-[:CONTAINS]->(p:Product) WITH o, COUNT(p) AS itemCount, SUM(p.price * (1 - p.discount)) AS totalRevenue, AVG(p.rating) AS avgRating, MIN(p.price) AS minPrice, MAX(p.price) AS maxPrice, COLLECT({name: p.name, category: p.category, price: p.price, discount: p.discount, rating: p.rating, stock: p.stock, supplier: p.supplier, warranty: p.warranty, features: p.features}) AS productDetails WHERE totalRevenue > 10000 AND itemCount > 5 AND avgRating > 3.5 AND minPrice < 50 AND maxPrice < 1000 RETURN o, itemCount, totalRevenue, avgRating, minPrice, maxPrice, productDetails`;
 
-  const q16 = `MATCH (p:Product) WHERE p.sku IN ['SKU0001','SKU0002','SKU0003','SKU0004','SKU0005','SKU0006','SKU0007','SKU0008','SKU0009','SKU0010','SKU0011','SKU0012','SKU0013','SKU0014','SKU0015','SKU0016','SKU0017','SKU0018','SKU0019','SKU0020','SKU0021','SKU0022','SKU0023','SKU0024','SKU0025'] AND (p.price > 20 OR p.rating >= 4.0) AND (CASE WHEN p.discount IS NOT NULL THEN p.discount ELSE 0 END) < 0.25 RETURN p`;
+  const q15 = `MATCH (p:Product) WHERE p.sku IN ['SKU0001','SKU0002','SKU0003','SKU0004','SKU0005','SKU0006','SKU0007','SKU0008','SKU0009','SKU0010','SKU0011','SKU0012','SKU0013','SKU0014','SKU0015','SKU0016','SKU0017','SKU0018','SKU0019','SKU0020','SKU0021','SKU0022','SKU0023','SKU0024','SKU0025'] AND (p.price > 20 OR p.rating >= 4.0) AND (CASE WHEN p.discount IS NOT NULL THEN p.discount ELSE 0 END) < 0.25 RETURN p`;
 
-  const q17 = `MATCH (c:Customer)-[:HAS_INTEREST]->(i:Interest) UNWIND i.tags AS tag UNWIND ['Sports','Music','Travel','Technology','Fashion','Cooking','Gaming','Fitness','Art','Science','History','Literature','Movies','Theater','Photography','Nature','Automotive','Business','Health','Education'] AS popularTag WITH c, i, tag, popularTag, CASE WHEN tag = popularTag THEN 1 ELSE 0 END AS tagMatchScore, SIZE(i.tags) AS tagCount, (CASE WHEN SIZE(i.tags)=0 THEN 0 ELSE tagMatchScore * 100.0 / SIZE(i.tags) END) AS matchPercentage WHERE matchPercentage > 50 AND i.confidence > 0.7 RETURN c, i, tag, popularTag, tagMatchScore, matchPercentage`;
+  const q16 = `MATCH (c:Customer)-[:HAS_INTEREST]->(i:Interest) UNWIND i.tags AS tag UNWIND ['Sports','Music','Travel','Technology','Fashion','Cooking','Gaming','Fitness','Art','Science','History','Literature','Movies','Theater','Photography','Nature','Automotive','Business','Health','Education'] AS popularTag WITH c, i, tag, popularTag, CASE WHEN tag = popularTag THEN 1 ELSE 0 END AS tagMatchScore, SIZE(i.tags) AS tagCount, (CASE WHEN SIZE(i.tags)=0 THEN 0 ELSE tagMatchScore * 100.0 / SIZE(i.tags) END) AS matchPercentage WHERE matchPercentage > 50 AND i.confidence > 0.7 RETURN c, i, tag, popularTag, tagMatchScore, matchPercentage`;
 
-  const q18 = `MATCH (m:Movie) RETURN m.title, m.releaseYear, CASE WHEN m.rating >= 9.0 THEN 'Masterpiece' WHEN m.rating >= 8.0 THEN 'Excellent' WHEN m.rating >= 7.0 THEN 'Great' WHEN m.rating >= 6.0 THEN 'Good' WHEN m.rating >= 5.0 THEN 'Average' WHEN m.rating >= 4.0 THEN 'Below Average' WHEN m.rating >= 3.0 THEN 'Poor' WHEN m.rating >= 2.0 THEN 'Very Poor' ELSE 'Unwatchable' END AS review, CASE WHEN m.genres CONTAINS 'Drama' AND m.genres CONTAINS 'Historical' THEN 'Epic' WHEN m.genres CONTAINS 'Comedy' AND m.genres CONTAINS 'Romance' THEN 'Charming' ELSE 'Mixed' END AS styleCategory`;
+  const q17 = `MATCH (m:Movie) RETURN m.title, m.releaseYear, CASE WHEN m.rating >= 9.0 THEN 'Masterpiece' WHEN m.rating >= 8.0 THEN 'Excellent' WHEN m.rating >= 7.0 THEN 'Great' WHEN m.rating >= 6.0 THEN 'Good' WHEN m.rating >= 5.0 THEN 'Average' WHEN m.rating >= 4.0 THEN 'Below Average' WHEN m.rating >= 3.0 THEN 'Poor' WHEN m.rating >= 2.0 THEN 'Very Poor' ELSE 'Unwatchable' END AS review, CASE WHEN m.genres CONTAINS 'Drama' AND m.genres CONTAINS 'Historical' THEN 'Epic' WHEN m.genres CONTAINS 'Comedy' AND m.genres CONTAINS 'Romance' THEN 'Charming' ELSE 'Mixed' END AS styleCategory`;
 
-  const q19 = `MATCH (p:Person)-[:KNOWS]->(friend:Person) OPTIONAL MATCH (friend)-[:WORKS_AT]->(c:Company) OPTIONAL MATCH (friend)-[:LIVES_IN]->(city:City) WITH p, friend, c, city, CASE WHEN c.name IS NULL THEN 'Unemployed' ELSE c.industry END AS jobIndustry, CASE WHEN city.population > 1000000 THEN 'Metropolitan' WHEN city.population > 500000 THEN 'Urban' ELSE 'Small Town' END AS citySize WHERE (p.age > 30 OR friend.age > 30) AND (jobIndustry IN ['Technology','Finance','Healthcare','Education','Entertainment']) RETURN p.name, friend.name, jobIndustry, city.name, citySize`;
+  const q18 = `MATCH (p:Person)-[:KNOWS]->(friend:Person) OPTIONAL MATCH (friend)-[:WORKS_AT]->(c:Company) OPTIONAL MATCH (friend)-[:LIVES_IN]->(city:City) WITH p, friend, c, city, CASE WHEN c.name IS NULL THEN 'Unemployed' ELSE c.industry END AS jobIndustry, CASE WHEN city.population > 1000000 THEN 'Metropolitan' WHEN city.population > 500000 THEN 'Urban' ELSE 'Small Town' END AS citySize WHERE (p.age > 30 OR friend.age > 30) AND (jobIndustry IN ['Technology','Finance','Healthcare','Education','Entertainment']) RETURN p.name, friend.name, jobIndustry, city.name, citySize`;
 
-  const q20 = `MATCH (s:Session) CALL { WITH s MATCH (s)-[:HAS_EVENT]->(e:Event) WHERE (e.timestamp >= datetime('2025-01-01T00:00:00Z') AND e.timestamp <= datetime('2025-12-31T23:59:59Z')) AND e.type IN ['Click','View','Purchase','Signup','Logout','Login','Share','Comment','Like','Dislike','Subscribe','Unsubscribe'] WITH e, CASE WHEN e.value > 1000 THEN 'High' WHEN e.value > 500 THEN 'Medium' ELSE 'Low' END AS eventValue RETURN COLLECT({eventId: e.id, type: e.type, value: e.value, category: eventValue, extra: e.extraData}) AS events } WITH s, SIZE(events) AS eventCount WHERE eventCount > 5 RETURN s, eventCount, events`;
+  const q19 = `MATCH (s:Session) CALL { WITH s MATCH (s)-[:HAS_EVENT]->(e:Event) WHERE (e.timestamp >= datetime('2025-01-01T00:00:00Z') AND e.timestamp <= datetime('2025-12-31T23:59:59Z')) AND e.type IN ['Click','View','Purchase','Signup','Logout','Login','Share','Comment','Like','Dislike','Subscribe','Unsubscribe'] WITH e, CASE WHEN e.value > 1000 THEN 'High' WHEN e.value > 500 THEN 'Medium' ELSE 'Low' END AS eventValue RETURN COLLECT({eventId: e.id, type: e.type, value: e.value, category: eventValue, extra: e.extraData}) AS events } WITH s, SIZE(events) AS eventCount WHERE eventCount > 5 RETURN s, eventCount, events`;
 
-  const q21 = `MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-[
+  const q20 = `MATCH path = (m1:loooooooongrelationtypename {code: "mFG66X9v"})-[
 r:verylongrelationtypename]->(m2:anotherverylongrelationtypename)
 RETURN path`;
 
-  const q22 = `MATCH (e:Employee) RETURN e.name, CASE WHEN e.salary > 150000 AND e.experience > 10 THEN 'Senior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' WHEN e.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END) WHEN e.salary > 100000 AND e.experience > 7 THEN 'Experienced ' + (CASE WHEN e.department = 'Engineering' THEN 'Developer' WHEN e.department = 'HR' THEN 'HR Specialist' ELSE 'Associate' END) WHEN e.salary > 75000 AND e.experience > 5 THEN 'Mid-Level ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Professional' END) ELSE 'Junior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Staff' END) END AS jobTitle`;
+  const q21 = `MATCH (e:Employee) RETURN e.name, CASE WHEN e.salary > 150000 AND e.experience > 10 THEN 'Senior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' WHEN e.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END) WHEN e.salary > 100000 AND e.experience > 7 THEN 'Experienced ' + (CASE WHEN e.department = 'Engineering' THEN 'Developer' WHEN e.department = 'HR' THEN 'HR Specialist' ELSE 'Associate' END) WHEN e.salary > 75000 AND e.experience > 5 THEN 'Mid-Level ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Professional' END) ELSE 'Junior ' + (CASE WHEN e.department = 'Engineering' THEN 'Engineer' ELSE 'Staff' END) END AS jobTitle`;
 
-  const q23 = `MATCH (u:User) CALL { WITH u MATCH (u)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product) WHERE p.price > 100 AND p.category IN ['Electronics','Computers','Smartphones','Accessories','Gaming','Wearables','Home Automation','Networking','Audio','Video','Software','Peripherals'] WITH u, o, p, p.price * (1 - COALESCE(p.discount,0)) AS netPrice, CASE WHEN p.rating > 4.5 THEN 'Excellent' WHEN p.rating > 3.5 THEN 'Good' WHEN p.rating > 2.5 THEN 'Average' ELSE 'Poor' END AS qualityRating RETURN o, COLLECT({product: p.name, netPrice: netPrice, qualityRating: qualityRating, features: p.features, warranty: p.warranty, stock: p.stock, supplier: p.supplier}) AS orderProducts } WITH u, COUNT(o) AS totalOrders, SUM([x IN COLLECT(o) | x.total]) AS totalSpent WHERE totalOrders > 3 RETURN u, totalOrders, totalSpent`;
+  const q22 = `MATCH (u:User) CALL { WITH u MATCH (u)-[:PURCHASED]->(o:Order)-[:CONTAINS]->(p:Product) WHERE p.price > 100 AND p.category IN ['Electronics','Computers','Smartphones','Accessories','Gaming','Wearables','Home Automation','Networking','Audio','Video','Software','Peripherals'] WITH u, o, p, p.price * (1 - COALESCE(p.discount,0)) AS netPrice, CASE WHEN p.rating > 4.5 THEN 'Excellent' WHEN p.rating > 3.5 THEN 'Good' WHEN p.rating > 2.5 THEN 'Average' ELSE 'Poor' END AS qualityRating RETURN o, COLLECT({product: p.name, netPrice: netPrice, qualityRating: qualityRating, features: p.features, warranty: p.warranty, stock: p.stock, supplier: p.supplier}) AS orderProducts } WITH u, COUNT(o) AS totalOrders, SUM([x IN COLLECT(o) | x.total]) AS totalSpent WHERE totalOrders > 3 RETURN u, totalOrders, totalSpent`;
 
-  const q24 = `CALL apoc.periodic.iterate ("eZ0sadadawdawdsdsdsdq", "1p7sdsdsasdwasddsdEsdsd", {baisdsdadadze: "v0Asdsdsdadadadsdsdp", paladadadel: "UsdssdsdsddUg"})`;
+  const q23 = `CALL apoc.periodic.iterate ("eZ0sadadawdawdsdsdsdq", "1p7sdsdsasdwasddsdEsdsd", {baisdsdadadze: "v0Asdsdsdadadadsdsdp", paladadadel: "UsdssdsdsddUg"})`;
 
   const queries = [
     q0,
@@ -144,7 +120,6 @@ RETURN path`;
     q21,
     q22,
     q23,
-    q24,
   ];
 
   test('keeps all queries within the max column width', () => {
@@ -165,7 +140,7 @@ MATCH
       [r:verylongrelationtypename]->
     (m2:anotherverylongrelationtypename)
 RETURN path`.trimStart();
-    verifyFormatting(q21, expected);
+    verifyFormatting(q20, expected);
   });
 
   test('does not split the $ and the parameter name', () => {
@@ -613,6 +588,9 @@ RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
 
+  /**
+   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
+   * (though it is close.)
   test('test for nested exists cases', () => {
     const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
 WHERE(

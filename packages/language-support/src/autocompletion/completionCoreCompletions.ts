@@ -41,20 +41,29 @@ const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 const versions = () =>
   _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
 
-export function backtickIfNeeded(e: string): string | undefined {
-  if (e == null || e == '') {
-    return undefined;
-  } else if (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
-    return `\`${e}\``;
-  } else {
-    return undefined;
-  }
-}
+type BacktickVariant = 'label' | 'propertyKey' | 'relType' | 'dbName' | 'param';
 
-function backtickDbNameIfNeeded(e: string): string | undefined {
+export function backtickIfNeeded(
+  e: string,
+  variant: BacktickVariant,
+): string | undefined {
   if (e == null || e == '') {
     return undefined;
-  } else if (/[^\p{L}\p{N}_.]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
+  } else if (
+    (variant === 'label' ||
+      variant === 'propertyKey' ||
+      variant === 'relType') &&
+    (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0]))
+  ) {
+    return `\`${e}\``;
+  } else if (
+    variant === 'dbName' &&
+    (/[^\p{L}\p{N}_.]/u.test(e) ||
+      /[^\p{L}_]/u.test(e[0]) ||
+      /[^\p{L}\p{N}_]/u.test(e.at(-1)))
+  ) {
+    return `\`${e}\``;
+  } else if (variant === 'param' && /[^\p{L}\p{N}_]/u.test(e)) {
     return `\`${e}\``;
   } else {
     return undefined;
@@ -81,7 +90,7 @@ const cypherVersionCompletions = () =>
 
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
-    const backtickedName = backtickIfNeeded(labelName);
+    const backtickedName = backtickIfNeeded(labelName, 'label');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -96,7 +105,7 @@ const labelCompletions = (dbSchema: DbSchema) =>
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
   dbSchema.relationshipTypes?.map((relType) => {
-    const backtickedName = backtickIfNeeded(relType);
+    const backtickedName = backtickIfNeeded(relType, 'relType');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -342,7 +351,7 @@ const parameterCompletions = (
       isExpectedParameterType(expectedType, paramType),
     )
     .map(([paramName]) => {
-      const backtickedName = backtickIfNeeded(paramName);
+      const backtickedName = backtickIfNeeded(paramName, 'param');
       let maybeInsertText = backtickedName
         ? { insertText: `$${backtickedName}` }
         : {};
@@ -370,7 +379,7 @@ const parameterCompletions = (
 
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
-    const backtickedName = backtickIfNeeded(propertyKey);
+    const backtickedName = backtickIfNeeded(propertyKey, 'propertyKey');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -841,7 +850,7 @@ function completeAliasName({
     )
   ) {
     return (dbSchema.aliasNames ?? []).map((aliasName) => {
-      const backtickedName = backtickDbNameIfNeeded(aliasName);
+      const backtickedName = backtickIfNeeded(aliasName, 'dbName');
       const maybeInsertText = backtickedName
         ? { insertText: backtickedName }
         : {};
@@ -857,7 +866,7 @@ function completeAliasName({
   return (dbSchema.databaseNames ?? [])
     .concat(dbSchema.aliasNames ?? [])
     .map((databaseName) => {
-      const backtickedName = backtickDbNameIfNeeded(databaseName);
+      const backtickedName = backtickIfNeeded(databaseName, 'dbName');
       const maybeInsertText = backtickedName
         ? { insertText: backtickedName }
         : {};

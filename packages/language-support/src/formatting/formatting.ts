@@ -108,6 +108,7 @@ import {
   CommentChunk,
   fillInRegularChunkGroupSizes,
   findTargetToken,
+  getActiveGroups,
   getParseTreeAndTokens,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
@@ -926,6 +927,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       const asIndent = this.addIndentation();
       this._visit(ctx.AS());
+      this.avoidBreakBetween();
       this._visit(ctx.variable());
       this.endGroup(asGrp);
       this.removeIndentation(asIndent);
@@ -2137,6 +2139,44 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(listGrp);
+    this.avoidSpaceBetween();
+    this.removeIndentation(listIndent);
+    this._visitTerminalRaw(ctx.RBRACKET(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+  };
+
+  visitListComprehension = (ctx: ListComprehensionContext) => {
+    const listComprehensionGrp = this.startGroup();
+    this._visit(ctx.LBRACKET());
+    const listIndent = this.addIndentation();
+    const variableExprGrp = this.startGroup();
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(0));
+    this.endGroup(variableExprGrp);
+    if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
+      this._visit(ctx.WHERE());
+      const whereIndent = this.addIndentation();
+      this._visit(ctx._whereExp);
+      this.removeIndentation(whereIndent);
+      this.endGroup(whereGrp);
+    }
+    if (ctx.BAR()) {
+      this._visit(ctx.BAR());
+      this.avoidBreakBetween();
+      this._visit(ctx._barExp);
+    }
+    this.removeIndentation(listIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RBRACKET(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(listComprehensionGrp);
   };
 
   visitListComprehension = (ctx: ListComprehensionContext) => {

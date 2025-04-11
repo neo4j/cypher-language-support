@@ -176,6 +176,10 @@
         {
           "command": "neo4j.editParameter",
           "when": "false"
+        },
+        {
+          "command": "neo4j.switchDatabase",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -426,7 +430,7 @@
     "test:webviews": "npm run build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
-    "@neo4j-cypher/language-server": "2.0.0-next.18",
+    "@neo4j-cypher/language-server": "2.0.0-next.19",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "^5.12.0",

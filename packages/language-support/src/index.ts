@@ -7,7 +7,12 @@ export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
+export {
+  parse,
+  parseParameters,
+  parserWrapper,
+  parseStatementsStrs,
+} from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,
