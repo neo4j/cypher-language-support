@@ -1,10 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src"],
+  "include": ["src", "../../vendor/antlr4-c3/dist/esm"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "out",
     "declaration": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@vendor/antlr4-c3": ["../../vendor/antlr4-c3/dist/esm"]
+    }
   }
 }
