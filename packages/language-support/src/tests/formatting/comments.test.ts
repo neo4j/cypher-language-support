@@ -538,13 +538,20 @@ LIMIT "6pkMe6Kx"`;
 
   test('comment directly after outermost group should not break alignment for clauses', () => {
     const query = `
-USE graph // Specifies the graph or database to use
-MATCH (m)-[:RELATION]->(n) // Matches patterns in the graph
-MERGE (p:Person {name: "Alice"}) // Ensures a pattern exists in the graph
-CREATE (q:Person {name: "Bob"})-[:KNOWS]->(p) // Creates new nodes or relationships
-DELETE r // Deletes nodes or relationships
-WITH p, q // Passes results to the next clause
-UNWIND [1, 2, 3] AS num; // Expands lists into multiple rows`.trimStart();
+USE // Specifies the graph or database to use
+  graph
+MATCH // Matches patterns in the graph
+  (m)-[:RELATION]->(n)
+MERGE // Ensures a pattern exists in the graph
+  (p:Person {name: "Alice"})
+CREATE // Creates new nodes or relationships
+  (q:Person {name: "Bob"})-[:KNOWS]->(p)
+DELETE // Deletes nodes or relationships
+  r
+WITH // Passes results to the next clause 
+  p, q
+UNWIND // Expands lists into multiple rows
+  [1, 2, 3] AS num;`.trimStart();
     const expected = query.trim();
     verifyFormatting(query, expected);
   });
