@@ -1,10 +1,9 @@
 {
-  "name": "@neo4j-cypher/schema-poller",
-  "private": true,
+  "name": "@neo4j-cypher/query-tools",
   "description": "",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.18",
+  "version": "2.0.0-next.19",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "exports": {
@@ -26,14 +25,17 @@
     "node": ">=18.18.2"
   },
   "dependencies": {
-    "@neo4j-cypher/language-support": "2.0.0-next.18",
+    "@neo4j-cypher/language-support": "workspace:*",
     "ajv": "^8.12.0",
-    "neo4j-driver": "^5.12.0"
+    "neo4j-driver": "catalog:"
   },
   "scripts": {
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
     "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0"
   }
 }

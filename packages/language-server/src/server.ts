@@ -13,10 +13,10 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
-  syntaxColouringLegend,
   _internalFeatureFlags,
+  syntaxColouringLegend,
 } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument } from './linting';

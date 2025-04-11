@@ -5,7 +5,7 @@ This folder contains the source code and some support files of unit tests for th
 You can easily regenerate the parser and lexers by running:
 
 ```bash
-npm run-script generate
+pnpm run-script generate
 ```
 
-from the root folder of the module. It requires the `antlr4ts` node module, which is installed when you run `npm install` first.
+from the root folder of the module. It requires the `antlr4ts` node module, which is installed when you run `pnpm install` first.

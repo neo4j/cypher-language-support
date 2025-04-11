@@ -10,7 +10,7 @@ import {
   isPoint,
   isRelationship,
   isTime,
-} from 'neo4j-driver-core';
+} from 'neo4j-driver';
 
 import type {
   CypherDataType,

@@ -1,7 +1,7 @@
 import {
   CypherDataTypeName,
   deserializeTypeAnnotations,
-} from '@neo4j-cypher/schema-poller';
+} from '@neo4j-cypher/query-tools';
 import * as vscode from 'vscode';
 import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';

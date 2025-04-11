@@ -7,7 +7,7 @@ import {
   getCypherTypeName,
   Neo4jType,
   serializeTypeAnnotations,
-} from '@neo4j-cypher/schema-poller';
+} from '@neo4j-cypher/query-tools';
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
 import { DiagnosticSeverity } from 'vscode-languageclient';

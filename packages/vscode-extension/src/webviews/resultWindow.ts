@@ -1,4 +1,4 @@
-import type { QueryResultWithLimit } from '@neo4j-cypher/schema-poller';
+import type { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
 import path from 'path';
 import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';

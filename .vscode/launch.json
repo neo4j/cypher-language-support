@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run dev-codemirror",
+      "command": "pnpm dev-codemirror",
       "name": "Codemirror Playground",
       "request": "launch",
       "type": "node-terminal",
@@ -20,7 +20,7 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/query-tools/**/*.js",
         "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,
@@ -39,7 +39,7 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/query-tools/**/*.js",
         "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,

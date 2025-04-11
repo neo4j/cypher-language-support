@@ -7,7 +7,7 @@ import type {
   LocalTime,
   Point,
   Time,
-} from 'neo4j-driver-core';
+} from 'neo4j-driver';
 
 /** 
       The neo4j driver type mapping - https://neo4j.com/docs/javascript-manual/current/cypher-workflow/#js-driver-type-mapping

@@ -1,4 +1,4 @@
-import { Database } from '@neo4j-cypher/schema-poller';
+import { Database } from '@neo4j-cypher/query-tools';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';

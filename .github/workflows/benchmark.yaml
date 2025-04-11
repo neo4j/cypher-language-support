@@ -13,21 +13,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
+      - name: Build project
+        uses: ./.github/actions/build-project
 
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies with frozen lock file
+        run: pnpm install --frozen-lockfile
 
       - name: Build project
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: npm run build
+        run: pnpm build
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: pnpx exec playwright install --with-deps
 
       - name: Benchmark
-        run: npm run benchmark --concurrency=1
-        env:
-          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+        run: pnpm benchmark --concurrency=1

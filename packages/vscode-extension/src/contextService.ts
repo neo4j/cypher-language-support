@@ -1,12 +1,5 @@
 import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
-import {
-  ConnnectionResult,
-  MetadataPoller,
-  Neo4jConnection,
-  Neo4jSchemaPoller,
-} from '@neo4j-cypher/schema-poller';
-import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
 
@@ -17,40 +10,9 @@ type LanguageClient = {
   ) => Promise<void>;
 };
 
-type SchemaPoller = {
-  connection?: Neo4jConnection;
-  metadata?: MetadataPoller;
-  events: EventEmitter;
-  connect(
-    url: string,
-    credentials: {
-      username: string;
-      password: string;
-    },
-    config: {
-      driverConfig?: Config;
-      appName: string;
-    },
-    database?: string,
-  ): Promise<ConnnectionResult>;
-  persistentConnect(
-    url: string,
-    credentials: {
-      username: string;
-      password: string;
-    },
-    config: {
-      driverConfig?: Config;
-      appName: string;
-    },
-    database?: string,
-  ): Promise<ConnnectionResult>;
-  disconnect(): void;
-};
-
 let _context: ExtensionContext | undefined;
 let _languageClient: LanguageClient | undefined;
-let _schemaPoller: SchemaPoller | undefined;
+let _schemaPoller: Neo4jSchemaPoller | undefined;
 let _queryRunner: CypherRunner | undefined;
 
 /**
@@ -91,7 +53,7 @@ export function getLanguageClient(): LanguageClient {
 /**
  * @returns The global schema poller.
  */
-export function getSchemaPoller(): SchemaPoller {
+export function getSchemaPoller(): Neo4jSchemaPoller {
   if (!_schemaPoller) {
     _schemaPoller = new Neo4jSchemaPoller();
   }
