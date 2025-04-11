@@ -15,6 +15,7 @@
     "build-vscode": "pnpm --filter='neo4j-for-vscode...' build",
     "dev-codemirror": "pnpm --filter='...@neo4j-cypher/react-codemirror-playground' build && pnpm --filter='@neo4j-cypher/react-codemirror-playground' dev",
     "release": "pnpm build && npx changeset publish",
+    "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish --registry http://localhost:4873 -r --tag canary --no-git-checks",
     "clean": "pnpm --recursive --parallel clean",
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
