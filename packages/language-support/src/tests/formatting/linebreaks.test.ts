@@ -1081,8 +1081,7 @@ limit "g68S0y7w";`;
 WHERE
   s.TrafDir = "K8c0Ceds" AND
   EXISTS {
-    (i)-[x]-
-    (j)
+    (i)-[x]-(j)
     WHERE type(x) <> "laGrU2e1"
   }
 WITH i, j

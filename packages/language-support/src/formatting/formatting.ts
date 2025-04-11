@@ -1413,10 +1413,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitPatternList = (ctx: PatternListContext) => {
     const n = ctx.pattern_list().length;
-    if (n === 1) {
-      this.visitChildren(ctx);
-      return;
-    }
     const wholePatternListGrp = this.startGroup();
     for (let i = 0; i < n; i++) {
       const patternListItemGrp = this.startGroup();
@@ -1526,7 +1522,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because where is not a clause (it is a subclause)
   visitWhereClause = (ctx: WhereClauseContext) => {
     this.preserveExplicitNewlineBefore(ctx);
-    this.breakLine();
+    this.mustBreakBetween();
     const whereClauseGrp = this.startGroup();
     this._visit(ctx.WHERE());
     const whereIndent = this.addIndentation();
@@ -1657,6 +1653,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     if (ctx.regularQuery()) {
+      this.breakLine();
       const queryIndent = this.addIndentation();
       this._visit(ctx.regularQuery());
       this.removeIndentation(queryIndent);
@@ -1664,7 +1661,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.RCURLY());
     } else if (ctx.whereClause()) {
       const whereIndent = this.addIndentation();
-      this.mustBreakBetween();
+      this.breakLine();
       this._visit(ctx.matchMode());
       this.mustBreakBetween();
       this._visit(ctx.patternList());
