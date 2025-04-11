@@ -5,7 +5,6 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
-import { Group } from './layoutEngine';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -18,6 +17,16 @@ https://github.com/neo4j/cypher-language-support.`.trim();
  * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
  */
 export const MAX_COL = 80;
+
+export interface Group {
+  id: number;
+  // Should this group break in the "Prettier" fashion, breaking between
+  // all of its children?
+  shouldBreak?: boolean;
+  size: number;
+  // The full text of the group (used for debugging only)
+  dbgText: string;
+}
 
 export interface BaseChunk {
   isCursor?: boolean;

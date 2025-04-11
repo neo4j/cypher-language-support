@@ -109,6 +109,7 @@ import {
   fillInRegularChunkGroupSizes,
   findTargetToken,
   getParseTreeAndTokens,
+  Group,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isComment,
@@ -118,7 +119,7 @@ import {
   wantsToBeConcatenated,
   wantsToBeUpperCase,
 } from './formattingHelpers';
-import { chunksToFormattedString, Group } from './layoutEngine';
+import { chunksToFormattedString } from './layoutEngine';
 
 const MISSING = '<missing';
 

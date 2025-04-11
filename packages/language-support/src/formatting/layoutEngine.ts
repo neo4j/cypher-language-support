@@ -1,5 +1,6 @@
 import {
   Chunk,
+  Group,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   MAX_COL,
@@ -21,16 +22,6 @@ interface State {
   activeGroups: Group[];
   activeIndentations: IndentationModifier[];
   pendingComments: string[];
-}
-
-export interface Group {
-  id: number;
-  // Should this group break in the "Prettier" fashion, breaking between
-  // all of its children?
-  shouldBreak?: boolean;
-  size: number;
-  // The full text of the group (used for debugging only)
-  dbgText: string;
 }
 
 function shouldBreak(chunk: Chunk, state: State): boolean {
