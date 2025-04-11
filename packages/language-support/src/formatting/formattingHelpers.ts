@@ -152,7 +152,7 @@ export function fillInRegularChunkGroupSizes(
     // It does not seem to have any significant performance downsides, but only doing so
     // when e.g. a flag is set might be a more prudent choice.
     group.dbgText += chunk.text;
-    if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
+    if (!chunk.noSpace && shouldAddSpace(chunk, chunk)) {
       group.size++;
       group.dbgText += ' ';
     }
@@ -174,19 +174,19 @@ export function verifyGroupSizes(chunkList: Chunk[]) {
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
-export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
-    return true;
+    return false;
   }
   if (chunk.type === 'REGULAR') {
     if (chunk.noSpace) {
-      return true;
+      return false;
     }
     if (chunk.node && openingCharacters.includes(chunk.node.symbol.type)) {
-      return true;
+      return false;
     }
   }
-  return false;
+  return true;
 }
 
 export function getActiveGroups(

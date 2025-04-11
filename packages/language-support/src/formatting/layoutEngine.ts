@@ -1,9 +1,9 @@
 import {
   Chunk,
-  doesNotWantSpace,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   MAX_COL,
+  shouldAddSpace,
 } from './formattingHelpers';
 
 const INDENTATION_SPACES = 2;
@@ -106,7 +106,7 @@ export function chunksToFormattedString(
       continue;
     }
 
-    if (!doesNotWantSpace(chunk, nextChunk)) {
+    if (shouldAddSpace(chunk, nextChunk)) {
       state.formatted += ' ';
       state.column++;
     }
