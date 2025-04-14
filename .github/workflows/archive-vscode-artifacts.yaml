@@ -12,6 +12,10 @@ jobs:
     name: Archives VSCode artifacts
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
       - name: Build project
         uses: ./.github/actions/build-project
 

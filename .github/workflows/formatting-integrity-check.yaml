@@ -16,6 +16,8 @@ jobs:
     name: Formatter integrity check
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Build project
         uses: ./.github/actions/build-project
 
