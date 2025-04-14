@@ -30,6 +30,9 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
+      - name: Build project
+        uses: ./.github/actions/build-project
+
       - name: Run tests
         run: pnpm test
 
@@ -38,7 +41,8 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Build project
+        uses: ./.github/actions/build-project
 
       - name: Install Playwright Browsers
         run: pnpx playwright install --with-deps
