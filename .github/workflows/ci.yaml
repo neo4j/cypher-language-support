@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/actions/build-project
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --only-shell --with-deps firefox chromium
+        run: pnpm exec playwright install --only-shell --with-deps
         working-directory: packages/react-codemirror
 
       - name: Run e2e test
