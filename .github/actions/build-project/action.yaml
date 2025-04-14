@@ -15,7 +15,7 @@ runs:
       shell: bash
       run: |
         curl -fsSL https://pnpm.io/install.sh | sh
-        
+
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
 
@@ -26,11 +26,10 @@ runs:
         cache: 'pnpm'
         registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies with frozen lock file
-        run: pnpm install --frozen-lockfile
+    - name: Install dependencies with frozen lock file
+      run: pnpm install --frozen-lockfile
 
-      - name: Build project
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: pnpm build
-
+    - name: Build project
+      env:
+        NODE_OPTIONS: '--max_old_space_size=4096'
+      run: pnpm build
