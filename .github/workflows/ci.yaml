@@ -51,7 +51,8 @@ jobs:
         uses: ./.github/actions/build-project
 
       - name: Install Playwright Browsers
-        run: pnpx playwright install --only-shell --with-deps chromium firefox
+        run: pnpx playwright install --only-shell --with-deps
+        working-directory: packages/react-codemirror
 
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode
