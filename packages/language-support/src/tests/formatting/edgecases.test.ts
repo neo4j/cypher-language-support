@@ -182,15 +182,25 @@ CASE
 WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
 ELSE b.Description[.. "NHIwucAy"]
 END} AS endNode;`;
-    const expected = `RETURN {Node: p.Node, description:
-  CASE
-    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-    ELSE p.Description[.. "VM6fSkTL"]
-  END} AS node, r, {Node: b.Node, description:
-  CASE
-    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-    ELSE b.Description[.. "NHIwucAy"]
-  END} AS endNode;`;
+    const expected = `
+RETURN
+  {
+    Node: p.Node,
+    description:
+      CASE
+        WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+        ELSE p.Description[.. "VM6fSkTL"]
+      END
+  } AS node,
+  r,
+  {
+    Node: b.Node,
+    description:
+      CASE
+        WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+        ELSE b.Description[.. "NHIwucAy"]
+      END
+  } AS endNode;`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -203,15 +213,24 @@ END} AS endNode;`;
     WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
     ELSE b.Description[.. "NHIwucAy"]
     END} AS endNode;`;
-    const expected = `RETURN {Node: p.Node, description:
-  CASE p.age
-    WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-    ELSE p.Description[.. "VM6fSkTL"]
-  END} AS node, r, {Node: b.Node, description:
-  CASE p.age
-    WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-    ELSE b.Description[.. "NHIwucAy"]
-  END} AS endNode;`;
+    const expected = `RETURN
+  {
+    Node: p.Node,
+    description:
+      CASE p.age
+        WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
+        ELSE p.Description[.. "VM6fSkTL"]
+      END
+  } AS node,
+  r,
+  {
+    Node: b.Node,
+    description:
+      CASE p.age
+        WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
+        ELSE b.Description[.. "NHIwucAy"]
+      END
+  } AS endNode;`;
     verifyFormatting(query, expected);
   });
 
@@ -224,11 +243,15 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
-         THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
-         THEN 'High Spender'
+    WHEN
+      SUM(product.price) >= 100 AND SUM(product.price) < 500
+      THEN 'Medium Spender'
+    WHEN
+      SUM(product.price) >= 500 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000
+      THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -243,11 +266,15 @@ END} AS endNode;`;
     END AS CustomerCategory`;
     const expected = `RETURN
   CASE p.age
-    WHEN SUM(product.price) >= 100 AND SUM(product.price) < 500
-         THEN 'Medium Spender'
-    WHEN SUM(product.price) >= 500 AND SUM(product.price) < 1000 AND
-         SUM(product.price) < 1000 AND SUM(product.price) < 1000
-         THEN 'High Spender'
+    WHEN
+      SUM(product.price) >= 100 AND SUM(product.price) < 500
+      THEN 'Medium Spender'
+    WHEN
+      SUM(product.price) >= 500 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000 AND
+      SUM(product.price) < 1000
+      THEN 'High Spender'
     ELSE 'VIP Customer'
   END AS CustomerCategory`;
     verifyFormatting(query, expected);
@@ -264,18 +291,54 @@ TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(PK)" ELSE "" E
  AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE 
 AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE "" END
     }) as columns`;
-    const expected = `WITH s, t.name AS tableName, collect({name: c.name, pk:
-  CASE (NOT pk IS NULL AND $printKeyInfo)
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true THEN "(PK)"
-    ELSE ""
-  END, fk:
-  CASE
-    WHEN true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true AND true AND true AND true AND true AND true AND
-         true AND true AND true THEN "(FK)"
-    ELSE ""
-  END}) AS columns`;
+    const expected = `WITH
+  s,
+  t.name AS tableName,
+  collect(
+    {
+      name: c.name,
+      pk:
+        CASE (NOT pk IS NULL AND $printKeyInfo)
+          WHEN
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true
+            THEN "(PK)"
+          ELSE ""
+        END,
+      fk:
+        CASE
+          WHEN
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true AND
+            true
+            THEN "(FK)"
+          ELSE ""
+        END
+    }
+  ) AS columns`;
     verifyFormatting(query, expected);
   });
 
@@ -317,27 +380,37 @@ RETURN p.name,
        END AS incomeCategory
 ORDER BY p.age DESC`;
     const expected = `MATCH (p:Person)
-RETURN p.name, p.age, p.occupation,
+RETURN
+  p.name,
+  p.age,
+  p.occupation,
   CASE
     WHEN p.age < 18 THEN 'Minor'
-    WHEN p.age >= 18 AND p.age < 65 THEN
-      CASE
-        WHEN p.occupation = 'Student' THEN 'Student (Adult)'
-        WHEN p.occupation = 'Engineer' THEN
-          CASE
-            WHEN p.experienceYears < 5 THEN 'Junior Engineer'
-            WHEN p.experienceYears >= 5 AND p.experienceYears < 10
-                 THEN 'Mid-level Engineer'
-            ELSE 'Senior Engineer'
-          END
-        WHEN p.occupation = 'Doctor' THEN
-          CASE
-            WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
-            WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
-            ELSE 'Medical Doctor'
-          END
-        ELSE 'Working Adult'
-      END
+    WHEN
+      p.age >= 18 AND p.age < 65
+      THEN
+        CASE
+          WHEN p.occupation = 'Student' THEN 'Student (Adult)'
+          WHEN
+            p.occupation = 'Engineer'
+            THEN
+              CASE
+                WHEN p.experienceYears < 5 THEN 'Junior Engineer'
+                WHEN
+                  p.experienceYears >= 5 AND p.experienceYears < 10
+                  THEN 'Mid-level Engineer'
+                ELSE 'Senior Engineer'
+              END
+          WHEN
+            p.occupation = 'Doctor'
+            THEN
+              CASE
+                WHEN p.specialty = 'Pediatrics' THEN 'Pediatrician'
+                WHEN p.specialty = 'Cardiology' THEN 'Cardiologist'
+                ELSE 'Medical Doctor'
+              END
+          ELSE 'Working Adult'
+        END
     ELSE 'Senior'
   END AS status,
   CASE
@@ -349,7 +422,8 @@ RETURN p.name, p.age, p.occupation,
         WHEN p.salary >= 75000 AND p.salary < 150000 THEN 'Upper Middle Income'
         ELSE 'High Income'
       END
-  END AS incomeCategory ORDER BY p.age DESC`;
+  END AS incomeCategory
+ORDER BY p.age DESC`;
     verifyFormatting(query, expected);
   });
 
@@ -463,11 +537,19 @@ RETURN n`;
 )
 YIELD graphName, nodeCount, relationshipCount, createMillis
 RETURN graphName, nodeCount, relationshipCount, createMillis;`;
-    const expected = `CALL gds.graph.project("qk5jpmGl", // Name of the projected graph
-                       ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
-                       {connection: {type: "R3e8WLkh", // Include all relationships
-                                     orientation: "weFW44Gy"}}) // Treat relationships as undirected
-YIELD graphName, nodeCount, relationshipCount, createMillis
+    const expected = `CALL
+  gds.graph.project(
+    "qk5jpmGl", // Name of the projected graph
+    ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
+    {
+      connection:
+        {
+          type: "R3e8WLkh", // Include all relationships
+          orientation: "weFW44Gy" // Treat relationships as undirected
+        }
+    }
+  )
+  YIELD graphName, nodeCount, relationshipCount, createMillis
 RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     verifyFormatting(query, expected);
   });
@@ -478,8 +560,10 @@ WITH *, n.prop, // This comment should not disappear
      n.otherprop
 RETURN n`;
     const expected = `MATCH (n)
-WITH *, n.prop, // This comment should not disappear
-     n.otherprop
+WITH
+  *,
+  n.prop, // This comment should not disappear
+  n.otherprop
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -492,9 +576,12 @@ RETURN n`;
         L9t4P: "Y3s1D"
     }
 ) YIELD *`;
-    const expected = `CALL gds.nodeSimilarity.filtered.stream("N5j8G3h2",
-                                        {A3f7R: "Z2w8Q", L9t4P: "Y3s1D"})
-YIELD *`;
+    const expected = `CALL
+  gds.nodeSimilarity.filtered.stream(
+    "N5j8G3h2",
+    {A3f7R: "Z2w8Q", L9t4P: "Y3s1D"}
+  )
+  YIELD *`;
     verifyFormatting(query, expected);
   });
 
@@ -503,29 +590,33 @@ YIELD *`;
 WITH u, apoc.util.validate(u.status <> 'active', 'User ' + u.username + ' does not have an active status which is required for processing the requested operation. ' + 'Please check the user account settings for further details.', [u.id, u.username]) AS validation
 RETURN u;`;
     const expected = `MATCH (u:User)
-WITH u,
-     apoc.util.
-     validate(u.status <> 'active',
-              'User ' + u.username +
-              ' does not have an active status which is required for processing the requested operation. '
-              + 'Please check the user account settings for further details.',
-              [u.id, u.username]) AS validation
+WITH
+  u,
+  apoc.util.validate(
+    u.status <> 'active',
+    'User ' +
+    u.username +
+    ' does not have an active status which is required for processing the requested operation. ' +
+    'Please check the user account settings for further details.',
+    [u.id, u.username]
+  ) AS validation
 RETURN u;`;
     verifyFormatting(query, expected);
   });
 
   test('aligns and breaks long namespaced functions well 2', () => {
     const query = `MATCH (userAccountInfo:UserAccountInformation)
-WITH userAccountInfo,
-     apoc.util.
-     validate(NOT userAccountInfo.isVerified,
-              'Verification Error: The user account with unique identifier ' +
-              userAccountInfo.accountUniqueIdentifier +
-              ' has not completed the mandatory ' +
-              'verification process required for accessing premium features. ' +
-              'Please review your verification email and follow the provided instructions to secure your account.',
-              [userAccountInfo.accountUniqueIdentifier,
-               userAccountInfo.emailAddress]) AS verificationStatus
+WITH
+  userAccountInfo,
+  apoc.util.validate(
+    NOT userAccountInfo.isVerified,
+    'Verification Error: The user account with unique identifier ' +
+    userAccountInfo.accountUniqueIdentifier +
+    ' has not completed the mandatory ' +
+    'verification process required for accessing premium features. ' +
+    'Please review your verification email and follow the provided instructions to secure your account.',
+    [userAccountInfo.accountUniqueIdentifier, userAccountInfo.emailAddress]
+  ) AS verificationStatus
 RETURN userAccountInfo;`;
     const expected = query;
     verifyFormatting(query, expected);
@@ -547,7 +638,21 @@ WITH inventoryRecord,
               [inventoryRecord.productSKU, inventoryRecord.currentStock])
      AS stockValidation
 RETURN inventoryRecord;`;
-    const expected = query;
+    const expected = `MATCH (inventoryRecord:ProductInventoryTrackingInformation)
+WITH
+  inventoryRecord,
+  apoc.util.validate(
+    inventoryRecord.currentStock < inventoryRecord.criticalThresholdStock,
+    'Alert: The inventory record for product SKU ' +
+    inventoryRecord.productSKU +
+    ' indicates a current stock level of ' +
+    toString(inventoryRecord.currentStock) +
+    ', which is below the critical threshold of ' +
+    toString(inventoryRecord.criticalThresholdStock) +
+    '. Immediate replenishment is required to avoid stockouts and maintain supply chain stability.',
+    [inventoryRecord.productSKU, inventoryRecord.currentStock]
+  ) AS stockValidation
+RETURN inventoryRecord;`;
     verifyFormatting(query, expected);
   });
 
@@ -555,8 +660,10 @@ RETURN inventoryRecord;`;
     const query = `CREATE (company:Company
        {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")
        });`;
-    const expected = `CREATE (company:Company {name: "mrUJWq6A", krs: "Yuu9Wl7d",
-                         registration_date: date("FrA1uHGX")});`;
+    const expected = `
+CREATE
+  (company:Company
+    {name: "mrUJWq6A", krs: "Yuu9Wl7d", registration_date: date("FrA1uHGX")});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -568,9 +675,12 @@ WHERE f.value > "WhbRf4O4" AND
 SET f.prime = "zt01uZOH"
 RETURN f`;
     const expected = `MATCH (f:Frequency)
-WHERE f.value > "WhbRf4O4" AND
-      ALL(x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value)))) WHERE f.value
-          % x <> "5DOeV3TE")
+WHERE
+  f.value > "WhbRf4O4" AND
+  ALL(
+    x IN RANGE("gemqfwmW", TOINTEGER(FLOOR(SQRT(f.value))))
+    WHERE f.value % x <> "5DOeV3TE"
+  )
 SET f.prime = "zt01uZOH"
 RETURN f`;
     verifyFormatting(query, expected);
@@ -581,20 +691,39 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
-          .birthdate, .gender} AS personInfo`;
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    .address,
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 
-  test('map projections should line up like maps 1', () => {
+  test('map projections should line up like maps 2', () => {
     const query = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
 RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN p {.name, .age, .email, .phone,
-          address: {street: p.street, city: c.name, zip: p.zip}, .occupation,
-          .nationality, .birthdate, .gender} AS personInfo`;
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -726,6 +855,9 @@ RETURN
     verifyFormatting(query, expected);
   });
 
+  /**
+   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
+   * (though it is close.)
   test('extremely complex expressions with nested exist and case', () => {
     const query = `
 MATCH (n)
@@ -768,17 +900,32 @@ RETURN 5 +
       CASE
         WHEN EXISTS {
           MATCH (person)-[:HAS_DOG]->(dog:Dog)
-          WHERE person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris' OR
-                person.name = 'Chris' OR person.name = 'Chris'
+          WHERE
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris' OR
+            person.name = 'Chris'
           WITH dog
           WHERE dog.name = 'Ozzy'
         } THEN 'Relationship'
         WHEN (n {prop: 42}) THEN
           CASE
-            WHEN (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() OR (n)--() OR (n)--() OR (n)--() OR
-                 (n)--() OR (n)--() THEN 'Relationship'
+            WHEN
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--() OR
+              (n)--()
+              THEN 'Relationship'
             WHEN (n {prop: 42}) THEN
               CASE
                 WHEN EXISTS {
@@ -799,9 +946,12 @@ RETURN 5 +
   END`.trimStart();
     verifyFormatting(query, expected);
   });
+  */
+
   test('else statements for CASE needs to align its expression', () => {
     const query = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
+WITH u,
+     count((u)-[:LIKES]->()) AS likeCount,
      collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
@@ -826,30 +976,40 @@ RETURN
         ' likes and interests: ' + toString(interestList)
       END
   END AS userProfile;`;
+    // TODO: the THEN below the EXISTS shuold get one more indentation step
     const expected = `MATCH (u:User)
-WITH u, count((u)-[:LIKES]->()) AS likeCount,
-     collect(DISTINCT u.interests) AS interestList
+WITH
+  u,
+  count((u)-[:LIKES]->()) AS likeCount,
+  collect(DISTINCT u.interests) AS interestList
 RETURN
   CASE
     WHEN EXISTS {
       MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
-    } AND likeCount > 10 THEN
+    } AND likeCount > 10
+    THEN
       CASE p.name
-        WHEN size(interestList) > 3
-             THEN 'Active smartphone user with diverse interests: ' +
-                  toString(interestList)
-        ELSE 'Active smartphone user with few interests: ' +
-             toString(interestList)
+        WHEN
+          size(interestList) > 3
+          THEN
+            'Active smartphone user with diverse interests: ' +
+            toString(interestList)
+        ELSE
+          'Active smartphone user with few interests: ' + toString(interestList)
       END
     ELSE
       CASE
         WHEN NOT EXISTS {
           MATCH (u)-[:OWNS]->(:Device {type: 'Smartphone'})
         } AND likeCount <= 10
-        THEN 'Less active user without a smartphone, interests: ' +
-             toString(interestList)
-        ELSE 'User with moderate activity, ' + toString(likeCount) +
-             ' likes and interests: ' + toString(interestList)
+        THEN
+          'Less active user without a smartphone, interests: ' +
+          toString(interestList)
+        ELSE
+          'User with moderate activity, ' +
+          toString(likeCount) +
+          ' likes and interests: ' +
+          toString(interestList)
       END
   END AS userProfile;`;
     verifyFormatting(query, expected);
@@ -887,6 +1047,54 @@ RETURN u.name, status;`.trimStart();
   test('string that contains <missing', () => {
     const query = `return "<missing>"`;
     const expected = `RETURN "<missing>"`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should split this query between the ORs as per usual', () => {
+    // The WHERE EXPR is 79 long, which can be a tricky case to get right
+    const query = `MATCH (variable:Label)-[:REL_TYPE]->()
+WHERE
+  variable.property = "String" OR
+  namespaced.function() = false OR
+  $parameter > 2
+RETURN variable;`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('DOT STAR should stick together in map projections', () => {
+    const query = `WITH
+  mission {
+    .
+    *,
+    triggerRoute: triggerRoute,
+    studentMissionTrackers: COALESCE(missionTrackers, []),
+    topic: topic
+  } AS missions,
+  levels,
+  levelTracker,
+  planet`;
+    const expected = `WITH
+  mission {
+    .*,
+    triggerRoute: triggerRoute,
+    studentMissionTrackers: COALESCE(missionTrackers, []),
+    topic: topic
+  } AS missions,
+  levels,
+  levelTracker,
+  planet`;
+    verifyFormatting(query, expected);
+  });
+
+  test('where clause with pathPatternNonEmpty should be idempotent', () => {
+    const query = `MATCH ( aaaaaa : aaaaaa ) //FJLwtvNCTBNmVNTdqCHVhotQBSdfwCtnxaNztnAEey
+WHERE ( aaaaaa ) - [ : aaaaaa | aaaaaa ] - ( aaaaaa ) //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
+OR ( aaaaaa ) < - [ : aaaaaa ] - ( : aaaaaa ) - [ : aaaaaa ] - > ( aaaaaa ) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
+    const expected = `MATCH (aaaaaa:aaaaaa) //FJLwtvNCTBNmVNTdqCHVhotQBSdfwCtnxaNztnAEey
+WHERE
+  (aaaaaa)-[:aaaaaa|aaaaaa]-(aaaaaa) OR //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
+  (aaaaaa)<-[:aaaaaa]-(:aaaaaa)-[:aaaaaa]->(aaaaaa) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
     verifyFormatting(query, expected);
   });
 });

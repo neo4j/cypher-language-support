@@ -50,14 +50,16 @@ RETURN n`;
   test('weird inline comments', () => {
     const inlinemultiline = `MERGE (n) /* Ensuring the node exists */ 
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A) /* Create or match 'a:A' */ 
+MERGE (a:A) /* Create or match 'a:A' */
   -[:T]-> (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */
 `;
     const expected = `MERGE (n) /* Ensuring the node exists */
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A)- /* Create or match 'a:A' */
-      [:T]->(b:B) /* Link 'a' to 'b' */
+MERGE
+  (a:A)- /* Create or match 'a:A' */
+    [:T]->
+  (b:B) /* Link 'a' to 'b' */
 RETURN a.prop /* Return the property of 'a' */`;
     verifyFormatting(inlinemultiline, expected);
   });
@@ -122,11 +124,12 @@ RETURN 1,
        // Second comment
        3`;
     const expected = `
-RETURN 1,
-       // Comment
-       2,
-       // Second comment
-       3`.trim();
+RETURN
+  1,
+  // Comment
+  2,
+  // Second comment
+  3`.trim();
     verifyFormatting(query, expected);
   });
 
@@ -173,30 +176,31 @@ describe('tests for line breaks with comments', () => {
 (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
 (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`;
     const expected = `
-CREATE (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
-       (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
-       (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
-       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
-       (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
-       (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
-       (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
+CREATE
+  (qwer_tyuiopa_zxcvbnmasdfg)-[:abcdefgh]->(qwertyu),
+  (qwertyu)-[:HIJKLMN_OP]->(asdfghj_klzxcvbnmop),
+  (asdfghj_klzxcvbnmop)-[:QRSTUVWX]->(qazwsxedc_rfvgt),
+  (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(qwertyu),
+  (mnbvcxzasdfghj_poiuytrewq)-[:GHIJKLMN]->(zxcvbnmlkjhgfd_asdfjkl),
+  (zxcvbnmlkjhgfd_asdfjkl)-[:OPQRS_TU]->(qwertyu),
+  (qwert_yuiopasdfg)-[:OPQRS_TU]->(qwertyu),
 
-       // this is a loooooooooooooooooooong comment
-       (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
-       (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
-       (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
-       (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
-       (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
-       (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+  // this is a loooooooooooooooooooong comment
+  (hjklmno)-[:OPQRS_TU]->(zxcvbn_mnb_lkjhgfdsa),
+  (zxcvbn_mnb_lkjhgfdsa)-[:OPQRS_TU]->(poiuzxcv),
+  (poiuzxcv)-[:OPQRS_TU]->(asdfghjk_qwe),
+  (asdfghjk_qwe)-[:OPQRS_TU]->(zxcvbnmop),
+  (zxcvbnmop)-[:OPQRS_TU]->(qwertyu),
+  (zxcvbnmop)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
 
-       // this is a loooooooooooooooooooong comment
-       (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
-       (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
+  // this is a loooooooooooooooooooong comment
+  (mnbvcxzlkj)-[:VWXYZABC]->(asdfg_hjkltyui),
+  (mnbvcxzlkj)-[:VWXYZABC]->(qwertyuiopa_sdfghjklz),
 
-       // this is a loooooooooooooooooooong comment
-       (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
-       (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
-       (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
+  // this is a loooooooooooooooooooong comment
+  (mnbvcxzasdfghj_poiuytrewq)-[:YZABCDF]->(asdfghj_klzxcvbnmop),
+  (mnbvcxzasdfghj_poiuytrewq)-[:DEFHIJKL]->(qazwsxedc_rfvgt),
+  (mnbvcxzasdfghj_poiuytrewq)-[:MNOPQRST]->(qwert_yuiopasdfg);`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -220,9 +224,10 @@ with "Nc3yUa7F" as vessel_type_code /*This is a comment in an inconvenient place
 UNWIND range("P4zZV7Fe", size(detail_seq)-"7MZn3aLx") AS idx
 return *;`;
     const expected = `
-WITH "Nc3yUa7F" AS vessel_type_code, /*This is a comment in an inconvenient place */
-     // detail
-     ["AbQk1wMr", "PmA6udnt"] AS detail_seq
+WITH
+  "Nc3yUa7F" AS vessel_type_code, /*This is a comment in an inconvenient place */
+  // detail
+  ["AbQk1wMr", "PmA6udnt"] AS detail_seq
 UNWIND range("P4zZV7Fe", size(detail_seq) - "7MZn3aLx") AS idx
 RETURN *;`.trim();
     verifyFormatting(bad, expected);
@@ -233,8 +238,9 @@ RETURN *;`.trim();
 RETURN n.salary + // Add bonus value
        1000 AS totalCompensation;`;
     const expected = `MATCH (n)
-RETURN n.salary + // Add bonus value
-       1000 AS totalCompensation;`;
+RETURN
+  n.salary + // Add bonus value
+  1000 AS totalCompensation;`;
     verifyFormatting(query, expected);
   });
 
@@ -246,9 +252,12 @@ WHERE variable.property = "String"
     OR $parameter > 2
 RETURN variable;`;
     const expected = `MATCH (variable:Label)-[:REL_TYPE]->()
-WHERE variable.property = "String" OR namespaced.function() = false
-      // comment
-      OR $parameter > 2
+WHERE
+  variable.property = "String" OR
+  namespaced.function() = false
+  // comment
+  OR
+  $parameter > 2
 RETURN variable;`;
     verifyFormatting(query, expected);
   });
@@ -259,8 +268,13 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 "asdfklsjdf")
 RETURN n`;
     const expected = `MATCH (n)
-WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-                                   "asdfklsjdf")
+WHERE
+  n.prop > 100000 AND
+  function(
+    1241241,
+    1241241, // Why is there a comment here?
+    "asdfklsjdf"
+  )
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -272,9 +286,14 @@ WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment h
 "asdfklsjdf")
 RETURN n`;
     const expected = `MATCH (n)
-WHERE n.prop > 100000 AND function(1241241, 1241241, // Why is there a comment here?
-      // This is a hard break comment
-      "asdfklsjdf")
+WHERE
+  n.prop > 100000 AND
+  function(
+    1241241,
+    1241241, // Why is there a comment here?
+    // This is a hard break comment
+    "asdfklsjdf"
+  )
 RETURN n`;
     verifyFormatting(query, expected);
   });
@@ -285,8 +304,9 @@ MATCH (a:Node) // first match
 WITH a, /* intermediate comment */ a.property AS prop
 RETURN prop; // final return`;
     const expected = `MATCH (a:Node) // first match
-WITH a, /* intermediate comment */
-     a.property AS prop
+WITH
+  a, /* intermediate comment */
+  a.property AS prop
 RETURN prop; // final return`;
     verifyFormatting(query, expected);
   });
@@ -307,12 +327,13 @@ AND post.likes >= 50
 RETURN user.username, post.title, post.likes;`;
     const expected = `// This query demonstrates inline and block comments during data retrieval.
 MATCH (user:User)-[:LIKES]->(post:Post)
-WHERE user.active = true
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      // Inline comment: Only consider posts with significant engagement
-      AND post.likes >= 50
+WHERE
+  user.active = true
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  // Inline comment: Only consider posts with significant engagement
+  AND post.likes >= 50
 /* The following block comment elaborates:
    - Posts with less than 50 likes are considered low impact.
    - Adjust the threshold based on campaign feedback.
@@ -329,9 +350,10 @@ WHERE p.price > 100 // price threshold for premium items
       p.discount > 0 // consider discounted products even if stock is high
 RETURN p.name, p.price, p.stock, p.discount;`;
     const expected = `MATCH (p:Product)
-WHERE p.price > 100 // price threshold for premium items
-      AND p.stock < 50 // low stock warning
-      OR p.discount > 0 // consider discounted products even if stock is high
+WHERE
+  p.price > 100 AND // price threshold for premium items
+  p.stock < 50 OR // low stock warning
+  p.discount > 0 // consider discounted products even if stock is high
 RETURN p.name, p.price, p.stock, p.discount;`;
     verifyFormatting(query, expected);
   });
@@ -346,13 +368,15 @@ RETURN p.name, p.price, p.stock, p.discount;`;
                                          ->(c:Person {name: 'CleopatraTheQueen'
                                            });`;
     const expected = `
-CREATE (a:Person {name: 'AlexanderTheGreat'})-->
-       // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
-       /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
-       (b:Person {name: 'DariusIII'}), (b:Person {name: 'DariusIII'})-->
-       // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
-       /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
-       (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
+CREATE
+  (a:Person {name: 'AlexanderTheGreat'})-->
+  // This is a very long comment that explains the dash here is used to initiate a relationship operator and deliberately stretches well beyond the usual 80 characters to test the formatter's wrapping capabilities.
+  /* The following arrow operator [ :CONQUERED_BY ] is annotated with an equally verbose comment that spans multiple lines to provide historical context, detail ancient battles, and ensure that every nuance of the relationship is captured in excess of the typical line length. */
+  (b:Person {name: 'DariusIII'}),
+  (b:Person {name: 'DariusIII'})-->
+  // Additional comment indicating that the relationship continues with further details on historical events, legacies, and the long-lasting impact of conquests that also exceeds standard line width.
+  /* Note: The relationship type [ :RESPECTED_BY ] implies admiration and acknowledgement that is historically documented and critically analyzed by historians, with commentary that is purposefully overextended to challenge the formatter. */
+  (c:Person {name: 'CleopatraTheQueen'});`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -366,11 +390,16 @@ CREATE (a:Person {name: 'AlexanderTheGreat'})-->
 RETURN pth ORDER BY length(pth) DESC
 LIMIT 10000;`;
     const expected = `
-MATCH pth = (u:User)-[:USER_EVENT]->(e:GeneratedQuery) (()--(:GeneratedQuery))* // Optionally successive
-            (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
-            (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
-            (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
-RETURN pth ORDER BY length(pth) DESC
+MATCH
+  pth =
+    (u:User)-[:USER_EVENT]->
+    (e:GeneratedQuery)
+    (()--(:GeneratedQuery))* // Optionally successive
+    (()-->(:RanCommand)-->(:RanCypher))+ // One or more chains of RanCommand + RanCypher
+    (()-->(:GeneratedQuery))+ // Optionally successive repeated calls of GeneratedQuery
+    (()-->(:RanCommand)-->(:RanCypher))* // One or more chains of RanCommand + RanCypher
+RETURN pth
+ORDER BY length(pth) DESC
 LIMIT 10000;`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -389,17 +418,25 @@ MATCH (a:Account)
 RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
        c.name AS category;`;
     const expected = `
-MATCH (a:Account)-
-      // Starting at an account node
-      [:OWNED_BY]->(p:Person)<-
-      // The person who owns the account
-      [:SHARED_WITH]-(anotherAccount:Account)-
-      // Another account that is shared with the same person
-      [:HAS_TRANSACTIONS]->(t:Transaction)-
-      // Transactions belong to the second account
-      [:CATEGORY]->(c:Category)
-RETURN a.id AS accountId, anotherAccount.id AS sharedAccountId, t.amount,
-       c.name AS category;`.trimStart();
+MATCH
+  (a:Account)-
+    // Starting at an account node
+    [:OWNED_BY]->
+  (p:Person)<-
+    // The person who owns the account
+    [:SHARED_WITH]-
+  (anotherAccount:Account)-
+    // Another account that is shared with the same person
+    [:HAS_TRANSACTIONS]->
+  (t:Transaction)-
+    // Transactions belong to the second account
+    [:CATEGORY]->
+  (c:Category)
+RETURN
+  a.id AS accountId,
+  anotherAccount.id AS sharedAccountId,
+  t.amount,
+  c.name AS category;`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -413,13 +450,18 @@ OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)
                                       -[:BELONGS_TO]->(p)
 RETURN p.name AS projectName, user.username, task.name AS taskName;`;
     const expected = `
-MATCH (p:Project)-
-      // A project might have multiple owners
-      [:OWNED_BY]->(user:User)
+MATCH
+  (p:Project)-
+    // A project might have multiple owners
+    [:OWNED_BY]->
+  (user:User)
 // The same user might be linked to tasks
-OPTIONAL MATCH (user)-[:ASSIGNED_TO]->(task:Task)-
-               // A single user can have multiple tasks in the same project
-               [:BELONGS_TO]->(p)
+OPTIONAL MATCH
+  (user)-[:ASSIGNED_TO]->
+  (task:Task)-
+    // A single user can have multiple tasks in the same project
+    [:BELONGS_TO]->
+  (p)
 RETURN p.name AS projectName, user.username, task.name AS taskName;`.trim();
     verifyFormatting(query, expected);
   });
@@ -437,9 +479,10 @@ s.format
     const expected = `MATCH (s:Item)-[r:\`REFERENCED_BY\`]->(t:Item)
 WHERE s.format = "LVDcQiqo" AND t.format = "h5dIgvA4"
 //SET r.flowType = 'BOOLEAN=>NUMBER'
-RETURN s.format,
-       //, s.formatMetadata
-       t.format;
+RETURN
+  s.format,
+  //, s.formatMetadata
+  t.format;
 //, t.formatMetadata;`;
     verifyFormatting(query, expected);
   });
@@ -492,20 +535,13 @@ LIMIT "6pkMe6Kx"`;
 
   test('comment directly after outermost group should not break alignment for clauses', () => {
     const query = `
-USE // Specifies the graph or database to use
-    graph
-MATCH // Matches patterns in the graph
-      (m)-[:RELATION]->(n)
-MERGE // Ensures a pattern exists in the graph
-      (p:Person {name: "Alice"})
-CREATE // Creates new nodes or relationships
-       (q:Person {name: "Bob"})-[:KNOWS]->(p)
-DELETE // Deletes nodes or relationships
-       r
-WITH // Passes results to the next clause
-     p, q
-UNWIND // Expands lists into multiple rows
-       [1, 2, 3] AS num;`;
+USE graph // Specifies the graph or database to use
+MATCH (m)-[:RELATION]->(n) // Matches patterns in the graph
+MERGE (p:Person {name: "Alice"}) // Ensures a pattern exists in the graph
+CREATE (q:Person {name: "Bob"})-[:KNOWS]->(p) // Creates new nodes or relationships
+DELETE r // Deletes nodes or relationships
+WITH p, q // Passes results to the next clause
+UNWIND [1, 2, 3] AS num; // Expands lists into multiple rows`.trimStart();
     const expected = query.trim();
     verifyFormatting(query, expected);
   });
@@ -513,8 +549,8 @@ UNWIND // Expands lists into multiple rows
   test('two comments after a clause should not break alignment', () => {
     const query = `
 MATCH // One comment.
-      // Another comment. Really?
-      (m)-[:RELATION]->(n)
+  // Another comment. Really?
+  (m)-[:RELATION]->(n)
 RETURN m, n`.trim();
     const expected = query;
     verifyFormatting(query, expected);

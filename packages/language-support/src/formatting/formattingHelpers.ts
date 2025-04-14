@@ -5,6 +5,7 @@ import CypherCmdParser, {
   UnescapedSymbolicNameString_Context,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+import { Group } from './formattingSolutionSearch';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -18,25 +19,16 @@ https://github.com/neo4j/cypher-language-support.`.trim();
  */
 export const MAX_COL = 80;
 
-export enum AlignIndentationOptions {
-  Add = 1,
-  Remove = -1,
-  Maintain = 0,
-}
-
-export interface ChunkIndentation {
-  base: number;
-  special: number;
-  align: AlignIndentationOptions;
-}
-
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
-  groupsStarting: number;
-  groupsEnding: number;
-  indentation: ChunkIndentation;
+  groupsStarting: Group[];
+  groupsEnding: Group[];
+  indentation: IndentationModifier[];
+  // Comment that is attached to a chunk. Not to be confused with a comment
+  // that is in the chunklist (one with a newline before it.)
+  comment?: string;
 }
 
 // Regular chunk specific properties
@@ -61,18 +53,17 @@ export interface CommentChunk extends BaseChunk {
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
-export const initialIndentation: ChunkIndentation = {
-  base: 0,
-  special: 0,
-  align: AlignIndentationOptions.Maintain,
-};
+export interface IndentationModifier {
+  id: number;
+  change: 1 | -1;
+}
 
 export const emptyChunk: RegularChunk = {
   type: 'REGULAR',
   text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
-  indentation: { ...initialIndentation },
+  groupsStarting: [],
+  groupsEnding: [],
+  indentation: [],
 };
 
 const traillingCharacters = [
@@ -158,5 +149,76 @@ export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
   return (
     chunk.type === 'COMMENT' ||
     (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
+  );
+}
+
+// These three are helpers for the fillInGroupSizes method to make it more manageable
+export function fillInRegularChunkGroupSizes(
+  chunk: RegularChunk,
+  activeGroups: Group[],
+  groupsEnding: Set<number>,
+) {
+  for (const group of activeGroups) {
+    if (!chunk.text) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    group.size += chunk.text.length;
+    // PERF: Right now we include dbgText always, even though it's only used for debugging.
+    // It does not seem to have any significant performance downsides, but only doing so
+    // when e.g. a flag is set might be a more prudent choice.
+    group.dbgText += chunk.text;
+    if (!chunk.noSpace && !doesNotWantSpace(chunk, chunk)) {
+      group.size++;
+      group.dbgText += ' ';
+    }
+    if (chunk.comment && !groupsEnding.has(group.id)) {
+      group.shouldBreak = true;
+    }
+  }
+}
+
+export function getActiveGroups(
+  activeGroups: Group[],
+  groupsEnding: Set<number>,
+  chunk: Chunk,
+) {
+  for (const group of chunk.groupsStarting) {
+    activeGroups.push(group);
+  }
+  const newActiveGroups: Group[] = [];
+  for (const group of activeGroups) {
+    if (!groupsEnding.has(group.id)) {
+      newActiveGroups.push(group);
+    } else {
+      // Trim trailling spaces from groups that are ending
+      if (group.dbgText.at(-1) === ' ') {
+        group.size--;
+        group.dbgText = group.dbgText.slice(0, -1);
+      }
+    }
+  }
+  return newActiveGroups;
+}
+
+export function verifyGroupSizes(buffers: Chunk[][]) {
+  for (const chunkList of buffers) {
+    for (const chunk of chunkList) {
+      for (const group of chunk.groupsStarting) {
+        if (group.size !== group.dbgText.length) {
+          throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+        }
+      }
+    }
+  }
+}
+
+const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
+
+export function doesNotWantSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+  return (
+    nextChunk?.type !== 'COMMENT' &&
+    chunk.type === 'REGULAR' &&
+    (chunk.noSpace ||
+      (chunk.node && openingCharacters.includes(chunk.node.symbol.type)))
   );
 }
