@@ -125,10 +125,10 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
 }
 
 export async function removeParameter(paramItem: ParameterItem): Promise<void> {
-  await removeParameterWithKey(paramItem.id);
+  await removeParameterByKey(paramItem.id);
 }
 
-export async function removeParameterWithKey(key: string) {
+export async function removeParameterByKey(key: string) {
   await deleteParameter(key);
   parametersTreeDataProvider.refresh();
 }

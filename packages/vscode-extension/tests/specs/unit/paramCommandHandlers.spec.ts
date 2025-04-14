@@ -7,7 +7,7 @@ import {
   addParameter,
   clearAllParameters,
   editParameter,
-  removeParameterWithKey,
+  removeParameterByKey,
 } from '../../../src/commandHandlers/params';
 import { CONSTANTS } from '../../../src/constants';
 import { parametersTreeDataProvider } from '../../../src/treeviews/parametersTreeDataProvider';
@@ -125,12 +125,38 @@ suite('Parameters command handlers spec', () => {
     );
   });
 
-  test('Adding parameters should fail if the name of the parameter is empty', async () => {
+  test('Adding parameters should fail if the name of the parameter is undefined (Esc key pressed)', async () => {
     sandbox.stub(window, 'showInputBox').resolves(undefined);
+
     await addParameter();
     sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
       CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_NAME,
+    );
+  });
+
+  test('Adding parameters should fail if the name of the parameter is empty', async () => {
+    sandbox.stub(window, 'showInputBox').resolves('');
+
+    await addParameter();
+    sandbox.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_NAME,
+    );
+  });
+
+  test('Adding parameters should fail if the value of the parameter is undefined (Esc key pressed)', async () => {
+    sandbox
+      .stub(window, 'showInputBox')
+      .onFirstCall()
+      .resolves('a')
+      .onSecondCall()
+      .resolves(undefined);
+
+    await addParameter();
+    sandbox.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE,
     );
   });
 
@@ -140,7 +166,7 @@ suite('Parameters command handlers spec', () => {
       .onFirstCall()
       .resolves('a')
       .onSecondCall()
-      .resolves(undefined);
+      .resolves('');
 
     await addParameter();
     sandbox.assert.calledOnceWithExactly(
@@ -204,6 +230,28 @@ suite('Parameters command handlers spec', () => {
       .onSecondCall()
       .resolves('"charmander"')
       .onThirdCall()
+      .resolves('');
+
+    await addParameter();
+
+    const param = parametersTreeDataProvider
+      .getChildren()
+      .find((param) => param.id === 'a');
+    await editParameter(param);
+    sandbox.assert.calledOnceWithExactly(
+      showErrorMessageStub,
+      CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE,
+    );
+  });
+
+  test('Editing parameters should fail if the new value is undefined (Esc key pressed)', async () => {
+    sandbox
+      .stub(window, 'showInputBox')
+      .onFirstCall()
+      .resolves('a')
+      .onSecondCall()
+      .resolves('"charmander"')
+      .onThirdCall()
       .resolves(undefined);
 
     await addParameter();
@@ -226,7 +274,7 @@ suite('Parameters command handlers spec', () => {
       .onSecondCall()
       .resolves('"charmander"')
       .onThirdCall()
-      .resolves(undefined);
+      .resolves('');
 
     await addParameter();
 
@@ -281,7 +329,7 @@ suite('Parameters command handlers spec', () => {
 
   test('Removing a single parameter should notify the language server', async () => {
     await setParameters({ spiesCleanUp: true });
-    await removeParameterWithKey('a');
+    await removeParameterByKey('a');
 
     sandbox.assert.calledOnceWithExactly(
       sendNotificationSpy,
@@ -292,7 +340,7 @@ suite('Parameters command handlers spec', () => {
 
   test('Removing a single parameter should refresh the VSCode parameters panel', async () => {
     await setParameters({ spiesCleanUp: true });
-    await removeParameterWithKey('a');
+    await removeParameterByKey('a');
 
     const parameters = getParametersTreeItems();
     sandbox.assert.calledOnce(refreshParameterTreeSpy);

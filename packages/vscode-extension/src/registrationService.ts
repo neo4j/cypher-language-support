@@ -18,7 +18,7 @@ import {
   editParameter,
   evaluateParam,
   removeParameter,
-  removeParameterWithKey,
+  removeParameterByKey,
 } from './commandHandlers/params';
 import { CONSTANTS } from './constants';
 import {
@@ -112,7 +112,7 @@ export function registerDisposables(): Disposable[] {
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.FORCE_DELETE_PARAMETER,
-      removeParameterWithKey,
+      removeParameterByKey,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
