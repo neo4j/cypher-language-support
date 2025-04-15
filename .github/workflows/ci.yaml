@@ -53,8 +53,8 @@ jobs:
         run: |
           npm test
 
-  e2e-test:
-    name: E2E tests
+  vscode-e2e-tests:
+    name: VSCode E2E tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -75,8 +75,60 @@ jobs:
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode
         # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
-        run: xvfb-run -a npm run test:e2e
+        run: |
+          cd packages/vscode-extension
+          xvfb-run -a npm run test:apiAndUnit
 
+  vscode-webview-tests:
+    name: VSCode Webview tests
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run e2e test
+        # We need a graphics server to run integration tests with VSCode
+        # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
+        run: |
+          cd packages/vscode-extension
+          xvfb-run -a npm run test:webviews
+  
+  codemirror-e2e-tests:
+    name: Codemirror E2E tests
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup antlr4
+        uses: ./.github/actions/setup-antlr4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run e2e test
+        run: |
+          cd packages/react-codemirror
+          npm run test:e2e
+ 
       - uses: actions/upload-artifact@v4
         if: always()
         with:

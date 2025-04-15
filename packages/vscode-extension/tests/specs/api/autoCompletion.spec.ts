@@ -11,6 +11,7 @@ import {
   openDocument,
   tagsToString,
 } from '../../helpers';
+import { connectDefault } from '../../suiteSetup';
 
 type InclusionTestArgs = {
   textFile: string | vscode.Uri;
@@ -279,10 +280,7 @@ suite('Auto completion spec', () => {
       expected: expecations,
     });
 
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
-      0,
-    );
+    await connectDefault();
   });
 
   test('Parameters are backticked correctly', async () => {
