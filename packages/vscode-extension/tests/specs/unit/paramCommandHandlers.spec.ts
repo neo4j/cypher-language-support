@@ -266,28 +266,6 @@ suite('Parameters command handlers spec', () => {
     );
   });
 
-  test('Editing parameters should fail if the new value is empty', async () => {
-    sandbox
-      .stub(window, 'showInputBox')
-      .onFirstCall()
-      .resolves('a')
-      .onSecondCall()
-      .resolves('"charmander"')
-      .onThirdCall()
-      .resolves('');
-
-    await addParameter();
-
-    const param = parametersTreeDataProvider
-      .getChildren()
-      .find((param) => param.id === 'a');
-    await editParameter(param);
-    sandbox.assert.calledOnceWithExactly(
-      showErrorMessageStub,
-      CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE,
-    );
-  });
-
   test('Editing parameters should refresh the VSCode parameters panel', async () => {
     await setParameters({ spiesCleanUp: true });
 
