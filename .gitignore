@@ -17,6 +17,11 @@ generated
 *.tsbuildinfo
 *.npmrc
 benchmarks.txt
-.idea/
 vite.config.ts.timestamp*
-.wdio-vscode-service
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+.intellijPlatform
