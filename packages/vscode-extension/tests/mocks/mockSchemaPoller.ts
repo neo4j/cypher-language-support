@@ -5,9 +5,10 @@ import {
   Neo4jConnection,
 } from '@neo4j-cypher/schema-poller';
 import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import { Config, Driver } from 'neo4j-driver';
 
 export class MockSchemaPoller {
+  driver?: Driver;
   connection?: Neo4jConnection;
   events: EventEmitter = new EventEmitter();
   metadata?: MetadataPoller;

@@ -3,6 +3,7 @@ import {
   ConnectionError,
   ConnnectionResult,
   Database,
+  getVersion,
 } from '@neo4j-cypher/schema-poller';
 import { commands } from 'vscode';
 import { CONSTANTS } from './constants';
@@ -139,6 +140,8 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
     state: connection.state === 'inactive' ? 'activating' : 'inactive',
   };
 
+  //connection.state === 'activating' ?
+
   await disconnectAllDatabaseConnections();
   await saveConnection(connection);
 
@@ -147,6 +150,57 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
   );
 
   return { result, connection };
+}
+
+// function getLatestSupportedLanguageServerVersion(neo4jServerVersion: string) {
+//   const versionMap : Record<string, string> = { //basically map like - neo release on langserver x -> x
+//     '5.13': "2",
+//     '5.15': "3",
+//     '5.16': "4",
+//     '5.17': "5",
+//     '5.18': "6",
+//     '5.19': "7",
+//     '5.21': "8",
+//     '5.23': "9",
+//     '5.24': "10",
+//     '5.25': "12",
+//     '5.26': "19",
+//     '5.26.2': "8",
+//     '5.26.4': "15",
+//     '5.27-aura': "17"
+
+//   }
+//   for (const c of Object.keys(versionMap)) {
+//     if (compareVersions(c, neo4jServerVersion)) {
+
+//     }
+//   }
+// }
+
+export async function checkNeo4jServerVersion(): Promise<void> {
+  const { query: versionQuery, queryConfig: versionQueryConfig } = getVersion();
+  const poller = getSchemaPoller();
+  const driver = poller.driver;
+  if (driver) {
+    const { serverVersion } = await driver.executeQuery(
+      versionQuery,
+      {},
+      versionQueryConfig,
+    );
+
+    //Note this is not very accurate, just testing
+    const versionMap: Record<string, string> = {
+      '5.26.2': '8',
+      '5.26.4': '19',
+      '5.27-aura': '8',
+    };
+
+    if (versionMap[serverVersion]) {
+      return;
+      //await setClient(versionMap[serverVersion]);
+      //console.log("Found a corresponding npm file")
+    }
+  }
 }
 
 /**
@@ -416,10 +470,6 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
-  result.success
-    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
-    : await sendNotificationToLanguageClient('connectionDisconnected');
-
   await saveConnection({
     ...connection,
     state: state,
@@ -428,6 +478,15 @@ async function connectToDatabaseAndNotifyLanguageClient(
         ? undefined
         : connection.database,
   });
+
+  result.success
+    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
+    : await sendNotificationToLanguageClient('connectionDisconnected');
+
+  if (result.success) {
+    await checkNeo4jServerVersion();
+    await sendNotificationToLanguageClient('connectionUpdated', settings);
+  }
 
   return result;
 }

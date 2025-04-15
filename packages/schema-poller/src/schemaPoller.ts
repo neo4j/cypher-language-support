@@ -28,7 +28,7 @@ export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
-  private driver?: Driver;
+  public driver?: Driver;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
