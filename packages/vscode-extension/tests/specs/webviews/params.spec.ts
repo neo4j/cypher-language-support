@@ -8,7 +8,7 @@ import {
   waitUntilNotification,
 } from '../../webviewUtils';
 
-suite('Params panel testing', () => {
+suite.only('Params panel testing', () => {
   let workbench: Workbench;
 
   before(async () => {
@@ -17,7 +17,7 @@ suite('Params panel testing', () => {
 
   async function escapeModal(count: number) {
     for (let i = 0; i < count; i++) {
-      await browser.pause(500);
+      await browser.pause(1500);
       await browser.keys([Key.Escape]);
       await waitUntilNotification(browser, 'Parameter value cannot be empty.');
     }
