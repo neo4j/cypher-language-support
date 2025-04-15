@@ -588,9 +588,6 @@ RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
 
-  /**
-   * TODO: v3 Nested EXISTS / CASE expressions do not get entirely correct indentation yet
-   * (though it is close.)
   test('test for nested exists cases', () => {
     const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
 WHERE(
@@ -617,39 +614,54 @@ WHERE approval.status<>"granted"
 }AND user.last_login>datetime()-duration({days:30})
 )`;
     const expected = `MATCH (user:Actor {actor_type: "EFXxFHob"})
-WHERE ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR"
-        OR user.service_type = "UlAAMmmD") AND NOT EXISTS {
-        MATCH (user)-[:PART_OF]->(group:Actor {actor_type: "A0cFHwrB"})
-        WITH group, apoc.coll.intersection(labels(group), idp_label_list)
-                    AS group_idp_labels
-        WHERE (size(group_idp_labels) = "7SOM63mX" OR
-               group.service_type = "11gaOJfr") AND EXISTS {
-                MATCH (group)-[:HAS_ACCESS]->(resource:Resource)
-                WHERE resource.sensitivity > 7 AND NOT EXISTS {
-                        MATCH (resource)-[:PROTECTED_BY]->(policy:Policy)
-                        WHERE policy.enforcement = "strict"
-                      } AND resource.type IN ["confidential", "restricted"]
-              } OR group.created_at < datetime("2023-01-01") OR
-              group.created_at < datetime("2023-01-01") OR
-              group.created_at < datetime("2023-01-01")
-      }) OR (user.active = true AND EXISTS {
-        MATCH (user)-[:HAS_ROLE]->(role:Role)
-        WHERE role.type IN role_types AND NOT EXISTS {
-                MATCH (role)-[:REQUIRES]->(approval:Approval)
-                WHERE approval.status <> "granted"
-              } AND (role.expiry_date > datetime() OR role.permanent = true)
-      } AND user.last_login > datetime() - duration({days: 30}))`;
+WHERE
+  ((size(apoc.coll.intersection(labels(user), idp_label_list)) = "3INQ6teR" OR
+      user.service_type = "UlAAMmmD") AND
+    NOT EXISTS {
+      MATCH (user)-[:PART_OF]->(group:Actor {actor_type: "A0cFHwrB"})
+      WITH
+        group,
+        apoc.coll.intersection(labels(group), idp_label_list) AS group_idp_labels
+      WHERE
+        (size(group_idp_labels) = "7SOM63mX" OR group.service_type = "11gaOJfr") AND
+        EXISTS {
+          MATCH (group)-[:HAS_ACCESS]->(resource:Resource)
+          WHERE
+            resource.sensitivity > 7 AND
+            NOT EXISTS {
+              MATCH (resource)-[:PROTECTED_BY]->(policy:Policy)
+              WHERE policy.enforcement = "strict"
+            } AND
+            resource.type IN ["confidential", "restricted"]
+        } OR
+        group.created_at < datetime("2023-01-01") OR
+        group.created_at < datetime("2023-01-01") OR
+        group.created_at < datetime("2023-01-01")
+    }) OR
+  (user.active = true AND
+    EXISTS {
+      MATCH (user)-[:HAS_ROLE]->(role:Role)
+      WHERE
+        role.type IN role_types AND
+        NOT EXISTS {
+          MATCH (role)-[:REQUIRES]->(approval:Approval)
+          WHERE approval.status <> "granted"
+        } AND
+        (role.expiry_date > datetime() OR role.permanent = true)
+    } AND
+    user.last_login > datetime() - duration({days: 30}))`;
     verifyFormatting(query, expected);
   });
-   */
 
   test('test that clause under collect gets properly indented', () => {
     const query = `MATCH (person:Person)
-RETURN person.name AS name, COLLECT {
-  MATCH (person)-[r:HAS_DOG]->(dog:Dog)
-  WHERE r.since > 2017
-  RETURN dog.name
-} AS youngDogs`;
+RETURN
+  person.name AS name,
+  COLLECT {
+    MATCH (person)-[r:HAS_DOG]->(dog:Dog)
+    WHERE r.since > 2017
+    RETURN dog.name
+  } AS youngDogs`;
     const expected = query;
     verifyFormatting(query, expected);
   });
@@ -663,13 +675,15 @@ RETURN person.name AS name`;
   });
   test('count expression with regular query', () => {
     const query = `MATCH (person:Person)
-RETURN person.name AS name, COUNT {
-  MATCH (person)-[:HAS_DOG]->(dog:Dog)
-  RETURN dog.name AS petName
-    UNION
-  MATCH (person)-[:HAS_CAT]->(cat:Cat)
-  RETURN cat.name AS petName
-} AS numPets`;
+RETURN
+  person.name AS name,
+  COUNT {
+    MATCH (person)-[:HAS_DOG]->(dog:Dog)
+    RETURN dog.name AS petName
+      UNION
+    MATCH (person)-[:HAS_CAT]->(cat:Cat)
+    RETURN cat.name AS petName
+  } AS numPets`;
     const expected = query;
     verifyFormatting(query, expected);
   });
@@ -1050,7 +1064,6 @@ RETURN n`;
 }`;
     verifyFormatting(query, expected);
   });
-
   test('exists should break its expressions', () => {
     const query = `MATCH (i:Node)-[s:STREET ]->(j:Node)
 where s.TrafDir = "K8c0Ceds"
@@ -1065,10 +1078,12 @@ and not x.to = left(j.node_STNAME, size(x.to))
 return x.to,  left(j.node_STNAME, size(x.to))
 limit "g68S0y7w";`;
     const expected = `MATCH (i:Node)-[s:STREET]->(j:Node)
-WHERE s.TrafDir = "K8c0Ceds" AND EXISTS {
-  (i)-[x]-(j)
-  WHERE type(x) <> "laGrU2e1"
-}
+WHERE
+  s.TrafDir = "K8c0Ceds" AND
+  EXISTS {
+    (i)-[x]-(j)
+    WHERE type(x) <> "laGrU2e1"
+  }
 WITH i, j
 MATCH p = (i)-[x]->(j)
 WHERE type(x) <> "vDCx6qeK" AND NOT x.to = left(j.node_STNAME, size(x.to))
@@ -1190,46 +1205,23 @@ RETURN
     verifyFormatting(query, expected);
   });
 
-  test("formats Greg's query in a reasonable way", () => {
+  test('reduce function should not break between name and left parenthesis', () => {
     const query = `
-MATCH (s:Schema)
-// Find a schema which has at least 2 tables and at least PK and one FK
-WHERE
-  (s)-->(:Table)-->(:Column)-[:FK_COLUMN]-() AND
-  (s)-->(:Table)-->(:Column)-[:PK_COLUMN]-() AND
-  COUNT { (s)-->() } > 1
-// WITH collect(s) as schemas
-// MATCH (s)|
-WITH s
-MATCH (s)-[:CONTAINS_TABLE]->(t:Table)-[:HAS_COLUMN]->(c:Column)
-OPTIONAL MATCH (c)<-[:PK_COLUMN]-(pk:PrimaryKey)
-OPTIONAL MATCH (c)<-[:FK_COLUMN]-(fk:ForeignKey)
-WITH
-  s,
-  t.name AS tableName,
-  collect(
-    {
-      name: c.name,
-      pk:
-        CASE (NOT pk IS NULL AND $printKeyInfo)
-          WHEN true THEN "(PK)"
-          ELSE ""
-        END,
-      fk:
-        CASE (NOT fk IS NULL AND $printKeyInfo)
-          WHEN true THEN "(FK)"
-          ELSE ""
-        END
-    }
-  ) AS columns
-WITH s, tableName, [x IN columns | x.name + x.fk + x.pk] AS columns
-WITH
-  s,
-  "Table " + tableName + " has columns:" + apoc.text.join(columns, '') AS tableDescriptions
-WITH
-  s,
-  apoc.text.join(collect(tableDescriptions), '------------------------') AS schemaDescription
-SET s.schemaDescription = schemaDescription`.trimStart();
+UNWIND range(1, 100) AS _
+CALL {
+  MATCH (source:object)
+  WHERE source.id = $id1
+  MATCH (target:object)
+  WHERE target.id = $id2
+  MATCH path = (source)-[*1..10]->(target)
+  WITH
+    path,
+    REDUCE(weight = 0, r IN relationships(path) | weight + r.weight) AS Weight
+  ORDER BY Weight
+  LIMIT 3
+  RETURN length(path) AS l, Weight
+}
+RETURN count(*)`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
