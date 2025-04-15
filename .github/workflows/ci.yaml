@@ -69,9 +69,6 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode
         # https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
@@ -94,9 +91,6 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
 
       - name: Run e2e test
         # We need a graphics server to run integration tests with VSCode
