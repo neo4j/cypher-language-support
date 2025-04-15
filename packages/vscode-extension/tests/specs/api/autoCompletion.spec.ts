@@ -247,42 +247,6 @@ suite('Auto completion spec', () => {
     });
   });
 
-  test('Parameters are available in completions even when disconnected from neo4j', async () => {
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
-      'a',
-      '"charmander"',
-    );
-
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
-      'b',
-      '"pikachu"',
-    );
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
-    );
-    const textDocument = await newUntitledFileWithContent(`RETURN `);
-    const position = new vscode.Position(0, 7);
-    const expecations: vscode.CompletionItem[] = [
-      {
-        label: '$a',
-        kind: vscode.CompletionItemKind.Variable,
-      },
-      {
-        label: '$b',
-        kind: vscode.CompletionItemKind.Variable,
-      },
-    ];
-    await testCompletionContains({
-      textFile: textDocument.uri,
-      position: position,
-      expected: expecations,
-    });
-
-    await connectDefault();
-  });
-
   test('Parameters are backticked correctly', async () => {
     await vscode.commands.executeCommand(
       CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
@@ -330,5 +294,41 @@ suite('Auto completion spec', () => {
         },
       ],
     });
+  });
+
+  test('Parameters are available in completions even when disconnected from neo4j', async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'a',
+      '"charmander"',
+    );
+
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'b',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
+    );
+    const textDocument = await newUntitledFileWithContent(`RETURN `);
+    const position = new vscode.Position(0, 7);
+    const expecations: vscode.CompletionItem[] = [
+      {
+        label: '$a',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+      {
+        label: '$b',
+        kind: vscode.CompletionItemKind.Variable,
+      },
+    ];
+    await testCompletionContains({
+      textFile: textDocument.uri,
+      position: position,
+      expected: expecations,
+    });
+
+    await connectDefault();
   });
 });
