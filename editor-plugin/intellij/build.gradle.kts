@@ -38,7 +38,7 @@ tasks {
     prepareSandbox {
         doFirst {
             exec {
-                commandLine("bash", "-c", "cd ../.. && npm run build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
+                commandLine("bash", "-c", "cd ../.. && pnpm build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
             }
         }
         from(".") {

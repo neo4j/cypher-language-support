@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.19
+
+### Patch Changes
+
+- 88e4930: Fixes backticking of parameters and dbNames/aliases
+- 5bfdac2: restructure packages as part of move to pnpm
+
 ## 2.0.0-next.18
 
 ### Patch Changes

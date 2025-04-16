@@ -1,10 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src", "tests"],
-  "compilerOptions": { "outDir": "dist", "jsx": "react-jsx" },
-  "types": [
-    "@wdio/mocha-framework",
-    "expect-webdriverio",
-    "wdio-vscode-service"
-  ]
+  "compilerOptions": {
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "types": [
+      "@wdio/mocha-framework",
+      "wdio-vscode-service",
+      "@wdio/globals/types",
+      "@wdio/types"
+    ],
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"]
+  }
 }

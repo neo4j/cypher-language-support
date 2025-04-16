@@ -1,11 +1,5 @@
-import type { Node, Path, Point, Relationship } from 'neo4j-driver-core';
-import {
-  isInt,
-  isNode,
-  isPath,
-  isPoint,
-  isRelationship,
-} from 'neo4j-driver-core';
+import type { Node, Path, Point, Relationship } from 'neo4j-driver';
+import { isInt, isNode, isPath, isPoint, isRelationship } from 'neo4j-driver';
 
 import type {
   CypherDataType,

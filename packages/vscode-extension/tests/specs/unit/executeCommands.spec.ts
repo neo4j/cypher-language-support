@@ -1,4 +1,4 @@
-import { FRIENDLY_ERROR_MESSAGES } from '@neo4j-cypher/schema-poller';
+import { FRIENDLY_ERROR_MESSAGES } from '@neo4j-cypher/query-tools';
 import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';

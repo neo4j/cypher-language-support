@@ -3,7 +3,7 @@ import {
   ConnectionError,
   ConnnectionResult,
   Database,
-} from '@neo4j-cypher/schema-poller';
+} from '@neo4j-cypher/query-tools';
 import { commands } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
