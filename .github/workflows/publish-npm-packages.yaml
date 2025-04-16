@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/build-project
 
       - name: Build and release canary package to npm
-        run: pnpm release-snapshot
+        run: pnpm snapshot-release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
