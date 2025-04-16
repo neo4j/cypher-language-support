@@ -426,8 +426,8 @@
     "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension:dev && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "clean": "rm -rf dist",
     "test:e2e": "pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
-    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
+    "test:apiAndUnit": "rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
+    "test:webviews": "wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",
