@@ -5,6 +5,10 @@ export { backtickIfNeeded } from './autocompletion/completionCoreCompletions';
 export type { DbSchema } from './dbSchema';
 export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
+export * from './generated-parser/CypherCmdLexer';
+export * from './generated-parser/CypherCmdParser';
+export * from './generated-parser/CypherCmdParserListener';
+export * from './generated-parser/CypherCmdParserVisitor';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
@@ -32,6 +36,3 @@ export type {
   Neo4jProcedure,
 } from './types';
 export { cypher25Supported } from './version';
-export { CypherLexer, CypherParser };
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser from './generated-parser/CypherCmdParser';
