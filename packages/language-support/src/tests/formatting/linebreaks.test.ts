@@ -861,6 +861,25 @@ RETURN p`.trimStart();
     verifyFormatting(query, expected);
   });
 
+  test('test for a list in a function invocation as argument', () => {
+    const query = `MATCH (p:Person)
+WHERE
+  p.name IN
+  apoc.coll.shuffle([
+    'John',
+    'Sarah',
+    'Michael',
+    'Emma',
+    'Sarah',
+    'Michael',
+    'Emma'
+  ])
+RETURN p.name, p.age
+LIMIT 2`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
   test('should indent and break ON CREAT SET clauses properly', () => {
     const query = `MERGE (a:Author {name: 'J.K. Rowling'})
   ON CREATE SET a.birthYear = 1965,
