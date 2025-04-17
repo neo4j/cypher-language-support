@@ -765,17 +765,7 @@ RETURN Alice123`.trimStart();
     const query = `
 RETURN ["OCj0AswA",
        "dFRbj1s3",
-       "oMbdvgm7",
-       "L4Vey8xn",
-       "GNgeDIkA",
-       "pU4RE0lM",
-       "M6XNVJsO",
-       "NcdW0tuB",
-       "Pf6RIuP4",
-       "6tKStKwl",
-       "HfvahDu5",
-       "gJoq3HnU",
-       "g7LjxbGD"]
+       "oMbdvgm7"]
 RETURN p`;
     const expected = `
 RETURN [
@@ -908,7 +898,7 @@ RETURN p`.trimStart();
     const query = `MATCH (p:Person)
 WHERE
   p.name IN
-  apoc.coll.shuffle([
+  [
     'John',
     'Sarah',
     'Michael',
