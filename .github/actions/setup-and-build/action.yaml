@@ -1,0 +1,69 @@
+name: 'Setup and build project'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup antlr
+      shell: bash
+      run: |
+        curl https://www.antlr.org/download/antlr-4.13.0-complete.jar --output antlr4.jar
+        mkdir -p $HOME/.local/bin
+        echo -e "#bin/bash\njava -jar $PWD/antlr4.jar \$@" > $HOME/.local/bin/antlr4
+        chmod a+x $HOME/.local/bin/antlr4
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Setup node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'pnpm'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install dependencies with frozen lock file
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Check for cached build
+      id: restore-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          # Build artifacts only (not node_modules), based on .gitignore
+          # Generaged parsers from us and vendor
+          **/generated-parser
+          **/generated
+          # Build outputs
+          **/*.vsix
+          **/*.tsbuildinfo
+          **/dist
+          **/build
+          **/out
+
+        key: build-${{ github.sha }}
+        restore-keys: |
+          build-${{ github.sha }}
+
+    - name: Setup and build project
+      if: steps.restore-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        NODE_OPTIONS: '--max_old_space_size=4096'
+      run: pnpm build
+
+    - name: Cache build output
+      if: steps.restore-cache.outputs.cache-hit != 'true'
+      uses: actions/cache@v4
+      with:
+        # Same paths as above
+        path: |
+          **/generated-parser
+          **/generated
+          **/*.vsix
+          **/*.tsbuildinfo
+          **/dist
+          **/build
+          **/out
+
+        key: build-${{ github.sha }}

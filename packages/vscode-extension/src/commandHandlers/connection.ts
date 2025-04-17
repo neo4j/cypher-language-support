@@ -226,9 +226,10 @@ export async function cypherFileFromSelection(): Promise<void> {
 
 export async function forceDisconnect(): Promise<void> {
   const activeConnection = getActiveConnection();
-  const { result, connection } =
-    await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
-  displayMessageForConnectionResult(connection, result);
+
+  await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
+
+  void window.showInformationMessage(CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE);
 }
 
 export async function forceConnect(i: number): Promise<void> {

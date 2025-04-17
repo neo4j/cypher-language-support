@@ -2,9 +2,9 @@ import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
-import { CONSTANTS } from '../../../src/constants';
 import {
   checkResultsContent,
+  ensureNotificationsAreDismissed,
   executeFile,
   waitUntilNotification,
 } from '../../webviewUtils';
@@ -69,10 +69,11 @@ suite('Params panel testing', () => {
   }
 
   async function forceDisconnect() {
-    await browser.executeWorkbench(async (vscode) => {
+    void browser.executeWorkbench((vscode) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
+      void vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
     });
+    await waitUntilNotification(browser, 'Disconnected from Neo4j.');
   }
 
   async function forceSwitchDatabase(database: string) {
@@ -83,13 +84,15 @@ suite('Params panel testing', () => {
         database,
       );
     }, database);
+    await waitUntilNotification(browser, `Switched to database '${database}'.`);
   }
 
   async function forceConnect(i: number) {
-    await browser.executeWorkbench(async (vscode, i) => {
+    void browser.executeWorkbench((vscode, i) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
+      void vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
     }, i);
+    await waitUntilNotification(browser, 'Connected to Neo4j.');
   }
 
   test('Should correctly set and clear cypher parameters', async function () {
@@ -119,6 +122,31 @@ suite('Params panel testing', () => {
         'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b, some param, some-param',
       );
     });
+  });
+
+  test('Cannot set parameters when disconnected from the database', async function () {
+    await ensureNotificationsAreDismissed(browser);
+    await forceDisconnect();
+    // This tries to add the params with the window prompts we cannot manipulate in the tests
+    // but it will fail before showing those prompts because we are not connected to the database
+    void addParamWithInputBox();
+    await waitUntilNotification(
+      browser,
+      'You need to be connected to neo4j to set parameters.',
+    );
+
+    await ensureNotificationsAreDismissed(browser);
+    await forceConnect(1);
+  });
+
+  test('Parameters cannot be set when connected to system', async function () {
+    await forceSwitchDatabase('system');
+    void addParamWithInputBox();
+    await waitUntilNotification(
+      browser,
+      'Parameters cannot be added when on the system database. Please connect to a user database.',
+    );
+    await forceSwitchDatabase('neo4j');
   });
 
   test('Should correctly modify cypher parameters', async function () {
@@ -179,38 +207,30 @@ suite('Params panel testing', () => {
     });
   });
 
-  test('Cannot set parameters when disconnected from the database', async function () {
-    await forceDisconnect();
-    // This tries to add the params with the window prompts we cannot manipulate in the tests
-    // but it will fail before showing those prompts because we are not connected to the database
-    void addParamWithInputBox();
-    await waitUntilNotification(
-      browser,
-      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS,
-    );
-    await forceConnect(1);
-  });
-
-  test('Parameters cannot be set when connected to system', async function () {
-    await forceSwitchDatabase('system');
+  test('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
     await clearParams();
-
-    void forceAddParam('a', '"charmander"');
-    void forceAddParam('b', '"caterpie"');
-    void forceAddParam('some param', '"pikachu"');
-    void forceAddParam('some-param', '"bulbasur"');
-
-    // to execute the file we need to be on the user database
-    await forceSwitchDatabase('neo4j');
+    await forceAddParam('a', '1998');
     await executeFile(workbench, 'params.cypher');
 
-    await escapeModal(4);
+    // initial pop-up for param b
+    await browser.pause(1000);
+    await browser.keys(['1', '2', Key.Enter]);
+
+    // initial pop-up for param `some param`
+    await browser.pause(1000);
+    await browser.keys(['f', 'a', 'l', 's', 'e', Key.Enter]);
+
+    // initial pop-up for param `some-param`
+    await browser.pause(1000);
+    await browser.keys(['5', Key.Enter]);
 
     await checkResultsContent(workbench, async () => {
-      const text = await (await $('#query-error')).getText();
-      await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b',
-      );
+      const queryResult = await (await $('#query-result')).getText();
+      await expect(queryResult).toContain('1998');
+      await expect(queryResult).toContain('12');
+      await expect(queryResult).toContain('false');
+      await expect(queryResult).toContain('5');
+      await expect(queryResult).toContain('2010');
     });
   });
 
