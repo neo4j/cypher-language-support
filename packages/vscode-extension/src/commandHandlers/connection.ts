@@ -1,4 +1,4 @@
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import { commands, Selection, TextEditor, window, workspace } from 'vscode';
 import {
   Connection,

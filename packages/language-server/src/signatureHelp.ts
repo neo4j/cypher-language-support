@@ -5,7 +5,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {

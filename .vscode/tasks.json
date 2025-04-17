@@ -13,36 +13,11 @@
     },
     {
       "type": "npm",
-      "script": "watch",
-      "isBackground": true,
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "never"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.*)(npm ERR!)(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "turbo run build",
-          "endsPattern": "Time: "
-        }
-      }
-    },
-    {
-      "type": "npm",
       "script": "build-vscode",
       "group": "build",
       "problemMatcher": [],
       "label": "npm: build-vscode",
-      "detail": "npm run build-vscode"
+      "detail": "pnpm build-vscode"
     }
   ]
 }
