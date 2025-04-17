@@ -22,7 +22,7 @@ jobs:
       - name: Generate VSCode plugin package
         run: |
           cd packages/vscode-extension
-          pnpx vsce package --pre-release
+          pnpm package
 
       - uses: actions/upload-artifact@v4
         if: always()
