@@ -169,7 +169,7 @@ export function fillInRegularChunkGroupSizes(
       group.dbgText += ' ';
     }
     if (chunk.comment && !groupsEnding.has(group.id)) {
-      group.commentBreak = true;
+      group.shouldBreak = true;
     }
   }
 }

@@ -34,7 +34,9 @@ function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
   if (
     nextChunk?.specialSplit &&
     chunk.oneItem &&
-    !state.activeGroups.at(-1)?.commentBreak
+    nextChunk.groupsStarting.some(
+      (group) => state.column + group.size > MAX_COL || group.shouldBreak,
+    )
   ) {
     return false;
   }
@@ -42,8 +44,7 @@ function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
   return (
     chunk.mustBreak ||
     chunk.doubleBreak ||
-    state.activeGroups.at(-1)?.shouldBreak ||
-    state.activeGroups.at(-1)?.commentBreak
+    state.activeGroups.at(-1)?.shouldBreak
   );
 }
 
