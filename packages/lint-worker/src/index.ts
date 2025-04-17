@@ -1,0 +1,1 @@
+export { WorkerURL } from './lintWorker?worker&url';

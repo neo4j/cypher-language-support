@@ -5,6 +5,8 @@ import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from './lintWorker';
 import WorkerURL from './lintWorker?worker&url';
+// import lintWorker from '@neo4j-cypher/lint-worker';
+//import lintWorker from '../../node_modules/@neo4j-cypher/lint-worker'
 
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,

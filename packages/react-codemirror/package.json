@@ -42,6 +42,7 @@
     "node": ">=18.18.2"
   },
   "dependencies": {
+    "@neo4j-cypher/lint-worker": "workspace:*",
     "@codemirror/autocomplete": "^6.17.0",
     "@codemirror/commands": "^6.6.0",
     "@codemirror/language": "^6.10.2",
