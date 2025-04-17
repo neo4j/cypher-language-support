@@ -196,8 +196,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   fillInGroupSizes = () => {
     let activeGroups: Group[] = [];
+    const indentationToRemove: number[] = [];
     for (const chunk of this.chunkList) {
       activeGroups = activeGroups.concat(chunk.groupsStarting);
+      chunk.indentation.forEach((modifier) => {
+        if (modifier.remove) {
+          indentationToRemove.push(modifier.id);
+        }
+      });
+      chunk.indentation = chunk.indentation.filter(
+        (modifier) => !indentationToRemove.includes(modifier.id),
+      );
       if (chunk.type === 'REGULAR') {
         fillInRegularChunkGroupSizes(chunk, activeGroups);
       } else if (chunk.type === 'COMMENT') {
@@ -359,6 +368,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const modifier: IndentationModifier = {
       id: indentId,
       change: 1,
+      remove: false,
     };
     this.indentStack.push(modifier);
     this._addIndentationModifier(modifier);
@@ -2116,6 +2126,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitListLiteral = (ctx: ListLiteralContext) => {
     const listGrp = this.startGroup();
+    if (this.lastInChunkList().oneItem) {
+      this.lastInChunkList().indentation[0].remove = true;
+    }
     this._visit(ctx.LBRACKET());
     this.lastInChunkList().specialSplit = true;
     const listIndent = this.addIndentation();

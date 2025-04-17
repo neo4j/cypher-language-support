@@ -67,6 +67,7 @@ export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 export interface IndentationModifier {
   id: number;
   change: 1 | -1;
+  remove: boolean;
 }
 
 const traillingCharacters = [

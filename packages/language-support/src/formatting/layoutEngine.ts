@@ -60,9 +60,9 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
   }
 }
 
-function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
+function updateIndentationState(state: State, chunk: Chunk) {
   for (const indent of chunk.indentation) {
-    if (indent.change === 1 && !(nextChunk?.specialSplit && chunk.oneItem)) {
+    if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
     }
@@ -75,7 +75,7 @@ function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
         state.activeIndentations.splice(indexToRemove, 1);
         state.indentation -= INDENTATION_SPACES;
       } else {
-        // throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }
@@ -165,7 +165,7 @@ export function chunksToFormattedString(
     checkAndSetCursorPosition(state, chunk);
     updateActiveGroups(state, chunk);
     appendChunkText(state, chunk);
-    updateIndentationState(state, chunk, nextChunk);
+    updateIndentationState(state, chunk);
     handleComments(state, chunk);
 
     if (shouldBreak(chunk, nextChunk, state)) {
