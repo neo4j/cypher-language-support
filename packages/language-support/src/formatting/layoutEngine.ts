@@ -75,7 +75,7 @@ function updateIndentationState(state: State, lastChunk: Chunk, chunk: Chunk) {
         state.activeIndentations.splice(indexToRemove, 1);
         state.indentation -= INDENTATION_SPACES;
       } else {
-        // throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }

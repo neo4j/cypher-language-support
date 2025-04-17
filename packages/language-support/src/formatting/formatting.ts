@@ -1891,6 +1891,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.ALL());
     this._visit(ctx.DISTINCT());
     const n = ctx.functionArgument_list().length;
+    this.lastInChunkList().oneItem = n === 1;
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
       if (i == 0 && !ctx.DISTINCT() && !ctx.ALL()) {
