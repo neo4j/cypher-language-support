@@ -293,8 +293,7 @@ RETURN p`;
 WHERE
   p.price > 1000 AND
   p.stock > 50 AND
-  p.category IN
-  [
+  p.category IN [
     'Electronics',
     'Home Appliances',
     'Garden Tools',
@@ -349,17 +348,16 @@ RETURN p`;
 
   test('should not forget about alignment for unwind clause', () => {
     const query = `UNWIND [{_id:"MiltPFxk", properties:{name:"5nIou0gC", id:"ha44MrBy", value:"6o5lzHd6"}}, {_id:"2uMA2cW8", properties:{name:"WOsBC4Ks", id:"bP526OzE", value:"WhYP4dxd"}}] AS row RETURN row`;
-    const expected = `UNWIND
-  [
-    {
-      _id: "MiltPFxk",
-      properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}
-    },
-    {
-      _id: "2uMA2cW8",
-      properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}
-    }
-  ] AS row
+    const expected = `UNWIND [
+  {
+    _id: "MiltPFxk",
+    properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}
+  },
+  {
+    _id: "2uMA2cW8",
+    properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}
+  }
+] AS row
 RETURN row`.trimStart();
     verifyFormatting(query, expected);
   });
