@@ -20,6 +20,14 @@ type InclusionTestArgs = {
 
 const { functions, procedures } = testData.mockSchema;
 
+function labelToString(label: string | vscode.CompletionItemLabel) {
+  if (typeof label === 'string') {
+    return label;
+  } else {
+    return label.label;
+  }
+}
+
 export async function testCompletionContains({
   textFile,
   position,
@@ -51,7 +59,9 @@ export async function testCompletionContains({
       assert.equal(
         found !== undefined,
         true,
-        `Expected item not found by kind and label`,
+        `Expected item not found by kind ${expectedItem.kind.toString()} and label ${labelToString(
+          expectedItem.label,
+        )}`,
       );
       assert.equal(
         found.detail,

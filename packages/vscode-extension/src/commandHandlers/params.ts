@@ -11,11 +11,12 @@ import {
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
 import { DiagnosticSeverity } from 'vscode-languageclient';
+import { CONSTANTS } from '../constants';
 import { getSchemaPoller } from '../contextService';
 import {
   clearParameters,
   deleteParameter,
-  getParameter,
+  getParameterByKey,
   setParameter,
 } from '../parameterService';
 import {
@@ -23,7 +24,7 @@ import {
   parametersTreeDataProvider,
 } from '../treeviews/parametersTreeDataProvider';
 
-export async function isConnected(): Promise<boolean> {
+async function isConnected(): Promise<boolean> {
   const schemaPoller = getSchemaPoller();
   return schemaPoller.connection?.healthcheck();
 }
@@ -48,8 +49,8 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
-    await window.showErrorMessage(
-      'You need to be connected to neo4j to set parameters.',
+    void window.showErrorMessage(
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS,
     );
     return;
   }
@@ -71,11 +72,11 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
       ignoreFocusOut: true,
     }));
   if (!paramName) {
-    await window.showErrorMessage('Parameter name cannot be empty.');
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_NAME);
     return;
   }
   const schemaPoller = getSchemaPoller();
-  const dbSchema = schemaPoller.metadata.dbSchema;
+  const dbSchema = schemaPoller?.metadata?.dbSchema ?? {};
   let timeout: NodeJS.Timeout;
   const paramValue = await window.showInputBox({
     prompt: defaultParamName
@@ -96,7 +97,7 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
   });
 
   if (!paramValue) {
-    void window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE);
     return;
   }
 
@@ -106,8 +107,8 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
 export async function editParameter(paramItem: ParameterItem): Promise<void> {
   const connected = await isConnected();
   if (!connected) {
-    await window.showErrorMessage(
-      'You need to be connected to neo4j to edit parameters.',
+    void window.showErrorMessage(
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EDIT_PARAMS,
     );
     return;
   }
@@ -120,12 +121,12 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     return;
   }
 
-  const existingParam = getParameter(paramItem.id);
+  const existingParam = getParameterByKey(paramItem.id);
   if (!existingParam) {
     return;
   }
   const schemaPoller = getSchemaPoller();
-  const dbSchema = schemaPoller.metadata.dbSchema;
+  const dbSchema = schemaPoller?.metadata?.dbSchema ?? {};
   const paramValue = await window.showInputBox({
     prompt: 'Parameter value',
     value: existingParam.evaluatedStatement,
@@ -133,7 +134,7 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     validateInput: (paramValue) => validateParamInput(paramValue, dbSchema),
   });
   if (!paramValue) {
-    await window.showErrorMessage('Parameter value cannot be empty.');
+    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_EMPTY_PARAM_VALUE);
     return;
   }
 
@@ -141,10 +142,10 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
 }
 
 export async function removeParameter(paramItem: ParameterItem): Promise<void> {
-  await removeParameterWithKey(paramItem.id);
+  await removeParameterByKey(paramItem.id);
 }
 
-export async function removeParameterWithKey(key: string) {
+export async function removeParameterByKey(key: string) {
   await deleteParameter(key);
   parametersTreeDataProvider.refresh();
 }
@@ -172,7 +173,7 @@ export async function evaluateParam(
 
     if (db.type === 'system') {
       void window.showErrorMessage(
-        'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+        CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION_SYSTEM_DB,
       );
       return;
     }
@@ -182,7 +183,7 @@ export async function evaluateParam(
     });
     const [record] = result.records;
     if (record === undefined) {
-      await window.showErrorMessage('Parameter evaluation failed.');
+      void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION);
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
