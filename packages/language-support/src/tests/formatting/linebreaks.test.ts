@@ -1229,7 +1229,7 @@ RETURN count(*)`.trimStart();
   test('should keep the ORDER BY parts together', () => {
     // Right now this works because ORDER BY doesn't have a group at all.
     // This should be fine since we wouldn't want to break it anyway, but might break if we decide
-    // to start e.g. putting ASC/DESCENDING on a new line and indented.
+    // to start e.g. putting ASC/DESCENDING on a new line and indent them.
     const query = `MATCH (n)
 WITH n
 ORDER BY n.priiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiice ASC
