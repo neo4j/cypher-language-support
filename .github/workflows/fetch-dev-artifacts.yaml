@@ -89,7 +89,7 @@ jobs:
         run: rm -f grammar.zip && rm -f semantic-analysis-js.zip
 
       - name: Build project
-        uses: ./.github/actions/build-project
+        uses: ./.github/actions/setup-and-build-project
       
       - name: Create New Branch Name
         run: |
