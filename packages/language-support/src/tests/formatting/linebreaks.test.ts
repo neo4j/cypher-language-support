@@ -293,7 +293,8 @@ RETURN p`;
 WHERE
   p.price > 1000 AND
   p.stock > 50 AND
-  p.category IN [
+  p.category IN
+  [
     'Electronics',
     'Home Appliances',
     'Garden Tools',
