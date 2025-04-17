@@ -1225,6 +1225,38 @@ RETURN count(*)`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
+
+  test('should keep the ORDER BY parts together', () => {
+    // Right now this works because ORDER BY doesn't have a group at all.
+    // This should be fine since we wouldn't want to break it anyway, but might break if we decide
+    // to start e.g. putting ASC/DESCENDING on a new line and indent them.
+    const query = `MATCH (n)
+WITH n
+ORDER BY n.priiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiice ASC
+LIMIT 100
+RETURN n`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('SKIP that needs to break should handle it gracefully', () => {
+    const query = `MATCH (n)
+WITH n
+SKIP CASE WHEN n.department = 'Engineering' THEN 'Engineer' WHEN n.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END
+LIMIT 100
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n
+SKIP
+  CASE
+    WHEN n.department = 'Engineering' THEN 'Engineer'
+    WHEN n.department = 'Sales' THEN 'Sales Leader'
+    ELSE 'Manager'
+  END
+LIMIT 100
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

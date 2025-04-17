@@ -93,6 +93,7 @@ import {
   SetPropContext,
   SetPropsContext,
   ShowCommandYieldContext,
+  SkipContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
   TrimFunctionContext,
@@ -847,6 +848,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(deleteClauseGrp);
   };
 
+  visitSkip = (ctx: SkipContext) => {
+    const skipGrp = this.startGroup();
+    this._visit(ctx.OFFSET());
+    this._visit(ctx.SKIPROWS());
+    const skipIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(skipIndent);
+    this.endGroup(skipGrp);
+  };
+
   // Separate the return items from the return body so that ORDER BY and LIMIT can be
   // excluded from the whole RETURN group.
   // Used by returnClause and withClause
@@ -863,10 +874,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
     if (ctx.orderBy() || ctx.skip()) {
       this.breakLine();
-      const orderSkipGrp = this.startGroup();
       this._visit(ctx.orderBy());
+      this.breakLine();
       this._visit(ctx.skip());
-      this.endGroup(orderSkipGrp);
     }
     this._visit(ctx.limit());
   };
@@ -888,11 +898,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.returnItems());
     this.removeIndentation(returnItemsIndent);
     if (ctx.orderBy() || ctx.skip()) {
-      const orderSkipGrp = this.startGroup();
       this.breakLine();
       this._visit(ctx.orderBy());
+      this.breakLine();
       this._visit(ctx.skip());
-      this.endGroup(orderSkipGrp);
     }
     this._visit(ctx.limit());
   };

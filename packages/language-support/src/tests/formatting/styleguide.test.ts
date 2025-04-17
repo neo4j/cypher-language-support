@@ -346,4 +346,19 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 } IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS;`;
     verifyFormatting(query, expected);
   });
+
+  test('should put SKIP on a newline, similarly to LIMIT and ORDER BY', () => {
+    const query = `MATCH (n)
+WITH n
+ORDER BY n.price ASC SKIP 10
+LIMIT 100
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n
+ORDER BY n.price ASC
+SKIP 10
+LIMIT 100
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
