@@ -54,6 +54,14 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
     return;
   }
 
+  const db = getCurrentDatabase();
+  if (db.type === 'system') {
+    void window.showErrorMessage(
+      'Parameters cannot be added when on the system database. Please connect to a user database.',
+    );
+    return;
+  }
+
   const paramName =
     defaultParamName ??
     (await window.showInputBox({
@@ -103,6 +111,15 @@ export async function editParameter(paramItem: ParameterItem): Promise<void> {
     );
     return;
   }
+
+  const db = getCurrentDatabase();
+  if (db.type === 'system') {
+    void window.showErrorMessage(
+      'Parameters cannot be edited when on the system database. Please connect to a user database.',
+    );
+    return;
+  }
+
   const existingParam = getParameter(paramItem.id);
   if (!existingParam) {
     return;
