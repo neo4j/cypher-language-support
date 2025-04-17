@@ -31,14 +31,19 @@ function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
     return false;
   }
 
-  if (nextChunk?.specialSplit && chunk.oneItem) {
+  if (
+    nextChunk?.specialSplit &&
+    chunk.oneItem &&
+    !state.activeGroups.at(-1)?.commentBreak
+  ) {
     return false;
   }
 
   return (
     chunk.mustBreak ||
     chunk.doubleBreak ||
-    state.activeGroups.at(-1)?.shouldBreak
+    state.activeGroups.at(-1)?.shouldBreak ||
+    state.activeGroups.at(-1)?.commentBreak
   );
 }
 

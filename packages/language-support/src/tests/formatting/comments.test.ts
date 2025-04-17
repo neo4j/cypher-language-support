@@ -554,7 +554,6 @@ WITH // Passes results to the next clause
   q
 UNWIND // Expands lists into multiple rows
   [1, 2, 3] AS num;
-  
 RETURN // Expands lists into multiple rows
   [1, 2, 3] AS num;`.trimStart();
     const expected = query.trim();

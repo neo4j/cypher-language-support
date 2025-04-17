@@ -23,6 +23,7 @@ export interface Group {
   // Should this group break in the "Prettier" fashion, breaking between
   // all of its children?
   shouldBreak?: boolean;
+  commentBreak?: boolean;
   size: number;
   // The full text of the group (used for debugging only)
   dbgText: string;
@@ -168,7 +169,7 @@ export function fillInRegularChunkGroupSizes(
       group.dbgText += ' ';
     }
     if (chunk.comment && !groupsEnding.has(group.id)) {
-      group.shouldBreak = true;
+      group.commentBreak = true;
     }
   }
 }

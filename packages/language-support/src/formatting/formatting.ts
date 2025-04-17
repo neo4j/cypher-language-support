@@ -204,7 +204,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         // If we have a hard-break comment, i.e. one that is on its own line (and thus part of the chunkList)
         // the groups it is a part of will always break.
         activeGroups.forEach((group) => {
-          group.shouldBreak = true;
+          group.commentBreak = true;
         });
       }
       chunk.groupsEnding.forEach((group) => {
