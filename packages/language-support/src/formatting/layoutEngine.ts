@@ -24,10 +24,14 @@ interface State {
   pendingComments: string[];
 }
 
-function shouldBreak(chunk: Chunk, state: State): boolean {
+function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
   if (chunk.type === 'COMMENT') return true;
 
   if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
+    return false;
+  }
+
+  if (chunk.oneItem && nextChunk.text === '[') {
     return false;
   }
 
@@ -164,7 +168,7 @@ export function chunksToFormattedString(
     updateIndentationState(state, chunk);
     handleComments(state, chunk);
 
-    if (shouldBreak(chunk, state)) {
+    if (shouldBreak(chunk, nextChunk, state)) {
       processLineBreak(state, chunk, nextChunk);
       continue;
     }

@@ -939,6 +939,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
+    this.lastInChunkList().oneItem = n === 1;
     let commaIdx = 0;
     if (ctx.TIMES() && n > 0) {
       this._visit(ctx.COMMA(commaIdx));
