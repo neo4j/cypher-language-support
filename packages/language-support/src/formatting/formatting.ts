@@ -900,6 +900,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     const unwindClauseGrp = this.startGroup();
     this._visit(ctx.UNWIND());
+    this.lastInChunkList().oneItem = true;
     const unwindIndent = this.addIndentation();
     this._visit(ctx.expression());
     const asGrp = this.startGroup();

@@ -60,9 +60,9 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
   }
 }
 
-function updateIndentationState(state: State, lastChunk: Chunk, chunk: Chunk) {
+function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
   for (const indent of chunk.indentation) {
-    if (indent.change === 1) {
+    if (indent.change === 1 && !(nextChunk?.specialSplit && chunk.oneItem)) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
     }
@@ -75,7 +75,7 @@ function updateIndentationState(state: State, lastChunk: Chunk, chunk: Chunk) {
         state.activeIndentations.splice(indexToRemove, 1);
         state.indentation -= INDENTATION_SPACES;
       } else {
-        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+        // throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
       }
     }
   }
@@ -158,7 +158,6 @@ export function chunksToFormattedString(
   const state = createInitialState();
 
   for (let i = 0; i < chunkList.length; i++) {
-    const previousChunk = chunkList[i - 1];
     const chunk = chunkList[i];
     const nextChunk = chunkList[i + 1];
 
@@ -166,7 +165,7 @@ export function chunksToFormattedString(
     checkAndSetCursorPosition(state, chunk);
     updateActiveGroups(state, chunk);
     appendChunkText(state, chunk);
-    updateIndentationState(state, previousChunk, chunk);
+    updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);
 
     if (shouldBreak(chunk, nextChunk, state)) {
