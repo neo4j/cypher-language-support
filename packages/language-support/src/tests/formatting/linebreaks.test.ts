@@ -192,8 +192,7 @@ WHERE p.article_number IN [
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE
-  p.article_number IN
-  [
+  p.article_number IN [
     "OCj0AswA",
     "dFRbj1s3",
     "oMbdvgm7",

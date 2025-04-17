@@ -94,6 +94,7 @@ import {
   SetPropsContext,
   ShowCommandYieldContext,
   StatementsOrCommandsContext,
+  StringAndListComparisonContext,
   SubqueryClauseContext,
   TrimFunctionContext,
   UnionContext,
@@ -2264,6 +2265,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(callGrp);
     this.removeIndentation(callIndent);
+  };
+
+  visitStringAndListComparison = (ctx: StringAndListComparisonContext) => {
+    this._visit(ctx.REGEQ());
+    this._visit(ctx.STARTS());
+    this._visit(ctx.ENDS());
+    this._visit(ctx.WITH());
+    this._visit(ctx.CONTAINS());
+    this._visit(ctx.IN());
+    this.lastInChunkList().oneItem = true;
+    this._visit(ctx.expression6());
   };
 }
 
