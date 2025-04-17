@@ -25,7 +25,11 @@ export async function waitUntilNotification(
         await found.notification.dismiss();
         return true;
       } else {
-        return false;
+        throw new Error(
+          `Notification ${notification} not found. Found: \n${notificationsAndMsgs
+            .map((n) => n.msg)
+            .join('\n')}`,
+        );
       }
     },
     { timeout: 20000 },
@@ -211,4 +215,19 @@ export async function executeFile(
 ) {
   await openFixtureFile(browser, fileName, opts);
   await workbench.executeCommand('neo4j.runCypher');
+}
+
+export async function ensureNotificationsAreDismissed(
+  browser: WebdriverIO.Browser,
+): Promise<void> {
+  const wb = await browser.getWorkbench();
+  const notifications = await wb.getNotifications();
+  for (const notification of notifications) {
+    await notification.dismiss();
+  }
+
+  const remainingNotifications = await wb.getNotifications();
+  if (remainingNotifications.length > 0) {
+    return ensureNotificationsAreDismissed(browser);
+  }
 }
