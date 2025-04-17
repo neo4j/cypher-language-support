@@ -2117,6 +2117,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     const listGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
+    this.lastInChunkList().specialSplit = true;
     const listIndent = this.addIndentation();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {

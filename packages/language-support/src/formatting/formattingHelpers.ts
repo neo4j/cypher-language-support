@@ -39,6 +39,7 @@ export interface BaseChunk {
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
   mustBreak?: boolean;
+  specialSplit?: boolean;
   oneItem?: boolean;
 }
 
