@@ -10,7 +10,7 @@ import {
   autocomplete,
   shouldAutoCompleteYield,
 } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function doAutoCompletion(
