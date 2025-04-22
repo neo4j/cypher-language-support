@@ -981,6 +981,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const inGrp = this.startGroup();
     this._visit(ctx.variable(1));
     this._visit(ctx.IN());
+    this.lastInChunkList().oneItem = true;
     this.endGroup(inGrp);
     this._visit(ctx.expression(1));
     this.avoidBreakBetween();
