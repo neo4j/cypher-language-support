@@ -31,13 +31,7 @@ function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
     return false;
   }
 
-  if (
-    nextChunk?.specialSplit &&
-    chunk.oneItem &&
-    nextChunk.groupsStarting.some(
-      (group) => state.column + group.size > MAX_COL || group.shouldBreak,
-    )
-  ) {
+  if (applySpecialBreak(state, chunk, nextChunk)) {
     return false;
   }
 
@@ -68,14 +62,8 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
 
 function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
   for (const indent of chunk.indentation) {
-    if (
-      nextChunk?.specialSplit &&
-      chunk.oneItem &&
-      nextChunk.groupsStarting.some(
-        (group) => state.column + group.size > MAX_COL || group.shouldBreak,
-      )
-    ) {
-      indent.removeIndentation.appliedIndentation = true;
+    if (applySpecialBreak(state, chunk, nextChunk)) {
+      indent.removeIndentation.appliedIndentation = false;
     } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
@@ -168,6 +156,16 @@ function validateFinalState(state: State) {
   if (state.activeGroups.length > 0) {
     throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
   }
+}
+
+function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
+  return (
+    nextChunk?.specialSplit &&
+    chunk.oneItem &&
+    nextChunk.groupsStarting.some(
+      (group) => state.column + group.size > MAX_COL || group.shouldBreak,
+    )
+  );
 }
 
 export function chunksToFormattedString(
