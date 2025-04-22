@@ -64,7 +64,7 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --only-shell --with-deps
+        run: pnpm exec playwright install --only-shell --with-deps ${{matrix.browser}}
         working-directory: packages/react-codemirror
 
       - name: Run e2e test
