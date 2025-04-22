@@ -33,6 +33,7 @@
       "types": "./dist/esm/project/language-support/src/index.d.ts"
     }
   },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
