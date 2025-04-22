@@ -35,3 +35,8 @@ export { cypher25Supported } from './version';
 export { CypherLexer, CypherParser };
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';
+
+export * from './generated-parser/CypherCmdLexer';
+export * from './generated-parser/CypherCmdParser';
+export * from './generated-parser/CypherCmdParserListener';
+export * from './generated-parser/CypherCmdParserVisitor';
