@@ -164,7 +164,8 @@ function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
     chunk.oneItem &&
     nextChunk.groupsStarting.some(
       (group) => state.column + group.size > MAX_COL || group.shouldBreak,
-    )
+    ) &&
+    !chunk.comment
   );
 }
 
