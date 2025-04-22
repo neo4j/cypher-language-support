@@ -1910,6 +1910,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this.removeIndentation(argsIndent);
+    if (n === 1) {
+      this.avoidBreakBetween();
+    }
     this._visitTerminalRaw(ctx.RPAREN(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
