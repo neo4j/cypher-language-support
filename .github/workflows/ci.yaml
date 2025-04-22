@@ -60,10 +60,24 @@ jobs:
         browser: [firefox, chromium]
     steps:
       - uses: actions/checkout@v4
+      
       - uses: ./.github/actions/setup-and-build
-      - uses: ./.github/actions/codemirror-e2e-tests
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --only-shell --with-deps
+        working-directory: packages/react-codemirror
+
+      - name: Run e2e test
+        shell: bash
+        run: pnpm --filter react-codemirror test:e2e --project=${{ matrix.browser }}
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
-          browser: ${{ matrix.browser }}
+          name: playwright-report-${{ matrix.browser }}
+          path: packages/react-codemirror/playwright-report/
+          retention-days: 30
 
   vscode-webview-test:
     name: VSCode Webview tests
