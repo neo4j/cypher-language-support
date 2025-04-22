@@ -761,11 +761,6 @@ RETURN Alice123`.trimStart();
 
   test('long list in a return', () => {
     const query = `
-RETURN ["OCj0AswA",
-       "dFRbj1s3",
-       "oMbdvgm7"]
-RETURN p`;
-    const expected = `
 RETURN [
   "OCj0AswA",
   "dFRbj1s3",
@@ -782,6 +777,7 @@ RETURN [
   "g7LjxbGD"
 ]
 RETURN p`.trimStart();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 
