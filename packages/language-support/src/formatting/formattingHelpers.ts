@@ -52,7 +52,6 @@ export interface RegularChunk extends BaseChunk {
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
-  mustBreak?: boolean;
   type: 'SYNTAX_ERROR';
 }
 
