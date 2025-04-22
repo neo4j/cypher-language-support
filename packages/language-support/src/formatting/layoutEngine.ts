@@ -66,9 +66,17 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
   }
 }
 
-function updateIndentationState(state: State, chunk: Chunk) {
+function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
   for (const indent of chunk.indentation) {
-    if (indent.change === 1) {
+    if (
+      nextChunk?.specialSplit &&
+      chunk.oneItem &&
+      nextChunk.groupsStarting.some(
+        (group) => state.column + group.size > MAX_COL || group.shouldBreak,
+      )
+    ) {
+      indent.removeIndentation.appliedIndentation = true;
+    } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
     }
@@ -76,6 +84,10 @@ function updateIndentationState(state: State, chunk: Chunk) {
       const indexToRemove = state.activeIndentations.findIndex(
         (item) => item.id === indent.id,
       );
+
+      if (!state.activeIndentations[indexToRemove]?.appliedIndentation) {
+        continue;
+      }
 
       if (indexToRemove !== -1) {
         state.activeIndentations.splice(indexToRemove, 1);
@@ -171,7 +183,7 @@ export function chunksToFormattedString(
     checkAndSetCursorPosition(state, chunk);
     updateActiveGroups(state, chunk);
     appendChunkText(state, chunk);
-    updateIndentationState(state, chunk);
+    updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);
 
     if (shouldBreak(chunk, nextChunk, state)) {

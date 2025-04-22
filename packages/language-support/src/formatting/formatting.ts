@@ -360,6 +360,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const modifier: IndentationModifier = {
       id: indentId,
       change: 1,
+      appliedIndentation: true,
     };
     this.indentStack.push(modifier);
     this._addIndentationModifier(modifier);
@@ -370,10 +371,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
+    const lastModifier = this.indentStack.pop();
     const modifier: IndentationModifier = {
-      ...this.indentStack.pop(),
+      ...lastModifier,
       change: -1,
     };
+    lastModifier.removeIndentation = modifier;
     this._addIndentationModifier(modifier);
   };
 
