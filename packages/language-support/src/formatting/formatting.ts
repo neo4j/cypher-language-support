@@ -2022,6 +2022,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMap = (ctx: MapContext) => {
     const mapGrp = this.startGroup();
     this._visit(ctx.LCURLY());
+    this.lastInChunkList().specialSplit = true;
     const mapIndent = this.addIndentation();
     this.avoidSpaceBetween();
     const n = ctx.expression_list().length;
@@ -2067,6 +2068,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMapProjection = (ctx: MapProjectionContext) => {
     const mapWrappingGrp = this.startGroup();
     this._visit(ctx.variable());
+    this.lastInChunkList().specialSplit = true;
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const mapProjectionIndent = this.addIndentation();
