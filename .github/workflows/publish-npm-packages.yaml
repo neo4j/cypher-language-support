@@ -1,8 +1,11 @@
 name: Publish packages to npm
 
 on:
-  push:
+  workflow_run:
+    workflows: ['ci']
     branches: ['main']
+    types:
+      - completed
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
@@ -29,6 +32,9 @@ jobs:
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@3de3850952bec538fde60aac71731376e57b9b57 # v1.4.8
