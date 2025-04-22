@@ -159,14 +159,7 @@ function validateFinalState(state: State) {
 }
 
 function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
-  return (
-    nextChunk?.specialSplit &&
-    chunk.oneItem &&
-    nextChunk.groupsStarting.some(
-      (group) => state.column + group.size > MAX_COL || group.shouldBreak,
-    ) &&
-    !chunk.comment
-  );
+  return nextChunk?.specialSplit && chunk.oneItem && !chunk.comment;
 }
 
 export function chunksToFormattedString(
