@@ -174,12 +174,11 @@ WHERE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN
-  {
-    looooooooooooooooooooooongkey: value,
-    loooooooooooooooooooongkeeeyyyyyyyy: value2,
-    looooooooooooooongkeeey: value3
-  }`.trimStart();
+RETURN {
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -332,16 +331,14 @@ RETURN p`;
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
     const expected = `RETURN
-  collect(
-    create_this1 {
-      datetime:
-        apoc.date.convertFormat(
-          toString(create_this1.datetime),
-          "OZQvXyoU",
-          "EhpkDy8g"
-        )
-    }
-  ) AS data`.trimStart();
+  collect(create_this1 {
+    datetime:
+      apoc.date.convertFormat(
+        toString(create_this1.datetime),
+        "OZQvXyoU",
+        "EhpkDy8g"
+      )
+  }) AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -885,6 +882,56 @@ RETURN
     "g7LjxbGD"
   ]
 RETURN p`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('two map projections in a return', () => {
+    const query = `
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo,
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('two map:s in a return', () => {
+    const query = `
+RETURN
+  {
+    name: "Graph Database",
+    created: 2023,
+    isActive: true,
+    tags: ["database", "graph", "nosql"],
+    metrics: {performance: "high", scalability: "excellent"}
+  },
+  {
+    name: "Graph Database",
+    created: 2023,
+    isActive: true,
+    tags: ["database", "graph", "nosql"],
+    metrics: {performance: "high", scalability: "excellent"}
+  }`.trimStart();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 
