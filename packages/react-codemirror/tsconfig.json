@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src"],
+  "exclude": ["src/e2e_tests"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": true,
