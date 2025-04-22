@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "../../vendor/antlr4-c3/dist/esm", "vitest.config.mts"],
+  "include": ["src", "../../vendor/antlr4-c3/dist/esm"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
-    "outDir": "out",
+    "outDir": "dist",
     "declaration": true,
     "esModuleInterop": true,
     "types": ["vitest/globals"],
