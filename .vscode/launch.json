@@ -51,6 +51,9 @@
       "type": "node",
       "request": "launch",
       "args": ["./packages/vscode-extension/dist/tests/runWebviewTests.js"],
+      "env": {
+        "DEBUG_VSCODE_TESTS": "true"
+      },
       "cwd": "${workspaceFolder}",
       "autoAttachChildProcesses": true,
       "program": "${workspaceRoot}/node_modules/@wdio/cli/bin/wdio.js",

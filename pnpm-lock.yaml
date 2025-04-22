@@ -381,8 +381,8 @@ importers:
         specifier: ^1.0.12
         version: 1.0.12
       wdio-vscode-service:
-        specifier: ^6.1.2
-        version: 6.1.2(webdriverio@8.41.0)
+        specifier: ^6.1.3
+        version: 6.1.3(webdriverio@8.41.0)
       wdio-wait-for:
         specifier: ^3.0.11
         version: 3.0.11
@@ -6850,8 +6850,8 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  wdio-vscode-service@6.1.2:
-    resolution: {integrity: sha512-qOXpu8SwxPuBUPaZ+1d5j/RKU5JiZQeu5Kcp5iAxwaCj05h4v7TJhexeNYAhHgKqL/7C0uEFzjYWcB3afmDGpw==}
+  wdio-vscode-service@6.1.3:
+    resolution: {integrity: sha512-gBS5JyQYe4GEO4ja9MgMy3M2QkOpFnECz38eIO5g6AkEPtg+5rfq8HvnC5qnKaDg/i5rbtU+AKluLgHVwDKFOA==}
     engines: {node: ^16.13 || >=18}
     peerDependencies:
       webdriverio: ^8.32.2
@@ -14809,7 +14809,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  wdio-vscode-service@6.1.2(webdriverio@8.41.0):
+  wdio-vscode-service@6.1.3(webdriverio@8.41.0):
     dependencies:
       '@fastify/cors': 9.0.1
       '@fastify/static': 7.0.4

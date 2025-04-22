@@ -425,9 +425,9 @@
     "build": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension:dev && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "clean": "rm -rf dist",
-    "test:e2e": "pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
-    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
+    "test:e2e": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
+    "test:apiAndUnit": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
+    "test:webviews": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",
@@ -464,7 +464,7 @@
     "ovsx": "^0.9.1",
     "sinon": "^18.0.0",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "wdio-vscode-service": "^6.1.2",
+    "wdio-vscode-service": "^6.1.3",
     "wdio-wait-for": "^3.0.11",
     "webdriverio": "^8.41.0"
   }

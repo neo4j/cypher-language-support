@@ -17,8 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build project
-        uses: ./.github/actions/build-project
+      # todo verify caching works well here too
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
 
       - name: Publish to VSCode Marketplace
         env:
