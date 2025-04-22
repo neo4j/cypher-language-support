@@ -6,9 +6,6 @@
     "outDir": "dist",
     "declaration": true,
     "esModuleInterop": true,
-    "types": ["vitest/globals"],
-    "paths": {
-      "@vendor/antlr4-c3": ["../../vendor/antlr4-c3/dist/esm"]
-    }
+    "types": ["vitest/globals"]
   }
 }
