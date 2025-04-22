@@ -33,7 +33,7 @@
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
     "@types/node": "^22.14.0"
