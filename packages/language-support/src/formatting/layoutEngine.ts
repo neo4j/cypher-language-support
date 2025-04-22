@@ -24,7 +24,7 @@ interface State {
   pendingComments: string[];
 }
 
-function shouldBreak(chunk: Chunk, nextChunk: Chunk, state: State): boolean {
+function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
   if (chunk.type === 'COMMENT') return true;
 
   if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
@@ -60,7 +60,7 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
   }
 }
 
-function updateIndentationState(state: State, chunk: Chunk, nextChunk?: Chunk) {
+function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
   for (const indent of chunk.indentation) {
     if (applySpecialBreak(state, chunk, nextChunk)) {
       indent.removeIndentation.appliedIndentation = false;
@@ -175,7 +175,7 @@ export function chunksToFormattedString(
 
   for (let i = 0; i < chunkList.length; i++) {
     const chunk = chunkList[i];
-    const nextChunk = chunkList[i + 1];
+    const nextChunk: Chunk = chunkList[i + 1];
 
     applyIndentationIfNeeded(state);
     checkAndSetCursorPosition(state, chunk);
@@ -184,7 +184,7 @@ export function chunksToFormattedString(
     updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);
 
-    if (shouldBreak(chunk, nextChunk, state)) {
+    if (shouldBreak(state, chunk, nextChunk)) {
       processLineBreak(state, chunk, nextChunk);
       continue;
     }
