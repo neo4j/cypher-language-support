@@ -27,7 +27,7 @@ jobs:
         run: |
           cd packages/vscode-extension
           pnpm package
-          pnpx vsce publish
+          pnpm vsce publish
 
       - name: Publish to OpenVSX
         env:
