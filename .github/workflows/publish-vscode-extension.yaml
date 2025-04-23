@@ -27,11 +27,11 @@ jobs:
         run: |
           cd packages/vscode-extension
           pnpm package
-          pnpm vsce publish
+          pnpm vsce publish --no-dependencies
 
       - name: Publish to OpenVSX
         env:
           VSX_PAT: ${{ secrets.VSX_PAT }}
         run: |
           cd packages/vscode-extension
-          pnpx ovsx publish -p $VSX_PAT
+          pnpm ovsx publish -p $VSX_PAT --no-dependencies
