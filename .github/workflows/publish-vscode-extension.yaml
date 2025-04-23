@@ -26,8 +26,8 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           cd packages/vscode-extension
-          pnpx vsce package
-          pnpx vsce publish
+          pnpm package
+          pnpm vsce publish
 
       - name: Publish to OpenVSX
         env:
