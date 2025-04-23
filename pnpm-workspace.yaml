@@ -1,0 +1,6 @@
+packages:
+  - 'packages/*'
+  - 'vendor/*'
+
+catalog:
+  'neo4j-driver': '5.12.0'

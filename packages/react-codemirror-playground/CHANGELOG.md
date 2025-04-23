@@ -4,7 +4,9 @@
 
 ### Patch Changes
 
+- 5bfdac2: restructure packages as part of move to pnpm
 - Updated dependencies [88e4930]
+- Updated dependencies [5bfdac2]
   - @neo4j-cypher/language-support@2.0.0-next.19
   - @neo4j-cypher/react-codemirror@2.0.0-next.22
 

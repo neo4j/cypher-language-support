@@ -4,6 +4,8 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": true,
-    "module": "esnext"
+    "module": "esnext",
+    "rootDir": "src",
+    "outDir": "dist"
   }
 }

@@ -6,7 +6,7 @@
     "@neo4j-cypher/language-support": "1.0.0",
     "@neo4j-cypher/react-codemirror": "1.0.0",
     "@neo4j-cypher/react-codemirror-playground": "1.0.0",
-    "@neo4j-cypher/schema-poller": "1.0.0",
+    "@neo4j-cypher/query-tools": "1.0.0",
     "antlr4": "4.13.1",
     "antlr4-c3": "3.0.1",
     "neo4j-for-vscode": "1.2.2"
@@ -68,6 +68,7 @@
     "stale-donkeys-grow",
     "stale-peas-warn",
     "strong-squids-relax",
+    "stupid-coins-itch",
     "thirty-bats-pay",
     "twelve-cycles-call",
     "unlucky-dragons-tickle",

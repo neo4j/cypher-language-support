@@ -1,6 +1,6 @@
+import type { CandidateRule, CandidatesCollection } from '@vendor/antlr4-c3';
+import { CodeCompletionCore } from '@vendor/antlr4-c3';
 import { Token } from 'antlr4';
-import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
-import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -511,7 +511,7 @@ export function completionCoreCompletion(
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
   // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
-  // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
+  // The need for this caret movement is outlined in the documentation of vendor/antlr4-c3 in the section about caret position
   // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1];

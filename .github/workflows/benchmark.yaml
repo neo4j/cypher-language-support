@@ -13,21 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - name: Install dependencies with frozen lock file and generate parser
-        run: npm ci
-
-      - name: Build project
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        run: npm run build
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install --only-shell --with-deps
+        working-directory: packages/react-codemirror
 
       - name: Benchmark
-        run: npm run benchmark --concurrency=1
-        env:
-          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
+        run: pnpm benchmark --concurrency=1

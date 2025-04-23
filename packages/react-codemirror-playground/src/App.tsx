@@ -1,7 +1,7 @@
 import {
+  _internalFeatureFlags,
   DbSchema,
   testData,
-  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useRef, useState } from 'react';
@@ -44,7 +44,7 @@ export function App() {
   const [commandRanCount, setCommandRanCount] = useState(0);
   const [darkMode, setDarkMode] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches,
-  );  
+  );
   const [schema, setSchema] = useState<DbSchema>(testData.mockSchema);
   const [schemaText, setSchemaText] = useState<string>(
     JSON.stringify(testData.mockSchema, undefined, 2),
