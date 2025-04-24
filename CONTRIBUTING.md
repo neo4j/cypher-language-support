@@ -16,7 +16,6 @@ Pre-requisites:
 
 - Node.js LTS (18.x)
 - [pnpm](https://pnpm.io/installation#using-corepack)
-- [Git LFS](https://git-lfs.github.com/) easiest to install via package manager (e.g. `brew install git-lfs` on macOS)
 - [antlr4-tools](https://github.com/antlr/antlr4-tools) easiest to install with `pip install antlr4-tools` (python3 required)
 - Java (e.g. `brew install java` on macOS)
 
