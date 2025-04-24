@@ -421,7 +421,7 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.ALL_SHORTEST_PATHS]: 'allShortestPaths',
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',
-  [CypherLexer.SKIPROWS]: 'SKIP',
+  [CypherLexer.SKIPROWS]: 'skip313',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;

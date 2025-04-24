@@ -1,6 +1,7 @@
 const esbuild = require('esbuild');
 
 const production = process.argv.includes('--production');
+const watch = process.argv.includes('--watch');
 
 async function main() {
   const ctx = await esbuild.context({
@@ -16,7 +17,11 @@ async function main() {
     logLevel: 'silent',
     conditions: ['require'],
   });
-  await ctx.rebuild();
+  if (watch) {
+    await ctx.watch();
+  } else {
+    await ctx.rebuild();
+  }
   await ctx.dispose();
 }
 

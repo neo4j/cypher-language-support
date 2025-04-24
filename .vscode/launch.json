@@ -6,8 +6,7 @@
       "command": "pnpm dev-codemirror",
       "name": "Codemirror Playground",
       "request": "launch",
-      "type": "node-terminal",
-      "preLaunchTask": "npm: watch"
+      "type": "node-terminal"
     },
     {
       "type": "extensionHost",
@@ -25,7 +24,7 @@
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
-      "preLaunchTask": "npm: build-vscode"
+      "preLaunchTask": "npm: dev-vscode"
     },
     {
       "type": "extensionHost",
