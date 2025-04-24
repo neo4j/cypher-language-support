@@ -1,6 +1,3 @@
-import type { CandidateRule, CandidatesCollection } from '@vendor/antlr4-c3';
-import { CodeCompletionCore } from '@vendor/antlr4-c3';
-import { Token } from 'antlr4';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -27,6 +24,12 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
+import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import {
+  CandidatesCollection,
+  CodeCompletionCore,
+  Token,
+} from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
