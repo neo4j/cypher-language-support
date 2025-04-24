@@ -23,7 +23,3 @@ RESET: R E S E T;
 PLAY: P L A Y;
 
 ACCESSMODE: A C C E S S '-' M O D E;
-
-READ: R E A D;
-
-WRITE: W R I T E;

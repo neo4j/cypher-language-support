@@ -203,25 +203,26 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-  });
 
-  expect(applySyntaxColouring(':play')).toEqual([
-    {
-      length: 1,
-      position: { line: 0, startCharacter: 0, startOffset: 0 },
-      token: ':',
-      tokenType: 'consoleCommand',
-    },
-    {
-      length: 4,
-      position: { line: 0, startCharacter: 1, startOffset: 1 },
-      token: 'play',
-      tokenType: 'consoleCommand',
-    },
-  ]);
+    expect(applySyntaxColouring(':play')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'play',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+  });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
+      { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
       { kind: 23, label: 'play' },
@@ -269,7 +270,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of play, style, sysinfo, welcome, disconnect, connect, param, history, clear, access-mode, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -800,6 +801,88 @@ describe('style', () => {
   test('parses style reset', () => {
     expectParsedCommands(':style reset', [
       { type: 'style', operation: 'reset' },
+    ]);
+  });
+});
+
+describe('access-mode', () => {
+  let consoleCommands: boolean;
+
+  beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
+    _internalFeatureFlags.consoleCommands = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = consoleCommands;
+  });
+
+  test('basic access-mode usage', () => {
+    expectParsedCommands(':access-mode read', [
+      { type: 'access-mode', operation: 'read' },
+    ]);
+
+    expectParsedCommands(':access-mode write', [
+      { type: 'access-mode', operation: 'write' },
+    ]);
+  });
+
+  test('highlights :access-mode properly', () => {
+    expect(applySyntaxColouring(':access-mode')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':access-mode read')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 13, startOffset: 13 },
+        token: 'read',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':access-mode write')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 13, startOffset: 13 },
+        token: 'write',
+        tokenType: 'consoleCommand',
+      },
     ]);
   });
 });

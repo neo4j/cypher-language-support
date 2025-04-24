@@ -53,9 +53,9 @@ playCmd: PLAY;
 
 accessModeCompletionRule: ACCESSMODE;
 
-accessModeCmdArgs: (READ | WRITE);
+accessModeArgs: (readCompletionRule | writeCompletionRule);
 
-accessModeCmd: accessModeCompletionRule accessModeCmdArgs;
+accessModeCmd: accessModeCompletionRule accessModeArgs;
 
 // These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
@@ -63,6 +63,10 @@ listCompletionRule: LIST;
 useCompletionRule: USE;
 
 serverCompletionRule: SERVER;
+
+readCompletionRule: READ;
+
+writeCompletionRule: WRITE;
 
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
 unescapedSymbolicNameString: 

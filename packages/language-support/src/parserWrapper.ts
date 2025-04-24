@@ -699,9 +699,9 @@ function parseToCommand(
       }
 
       const accessModeCmd = consoleCmd.accessModeCmd();
-      const accessModeArgs = accessModeCmd?.accessModeCmdArgs();
+      const accessModeArgs = accessModeCmd?.accessModeArgs();
       if (accessModeCmd && accessModeArgs) {
-        const read = accessModeArgs.READ();
+        const read = accessModeArgs.readCompletionRule()?.READ();
         if (read) {
           return {
             type: 'access-mode',
@@ -711,7 +711,7 @@ function parseToCommand(
           };
         }
 
-        const write = accessModeArgs.WRITE();
+        const write = accessModeArgs.writeCompletionRule()?.WRITE();
         if (write) {
           return {
             type: 'access-mode',

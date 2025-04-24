@@ -548,6 +548,8 @@ export function completionCoreCompletion(
           CypherParser.RULE_listCompletionRule,
           CypherParser.RULE_serverCompletionRule,
           CypherParser.RULE_accessModeCompletionRule,
+          CypherParser.RULE_readCompletionRule,
+          CypherParser.RULE_writeCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -747,6 +749,14 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_accessModeCompletionRule) {
         return [{ label: 'access-mode', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_readCompletionRule) {
+        return [{ label: 'read', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
+        return [{ label: 'write', kind: CompletionItemKind.Event }];
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
