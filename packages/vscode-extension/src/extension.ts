@@ -24,27 +24,6 @@ import { registerDisposables } from './registrationService';
 let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
-  const watcher = workspace.createFileSystemWatcher(
-    new RelativePattern(
-      Uri.file(
-        '/Users/oskardamkjaer/cypher-language-support/packages/vscode-extension/dist/',
-      ),
-      'extension.js',
-    ),
-  );
-
-  watcher.onDidChange(() => {
-    void window.showInformationMessage('Extension rebuilt 3, reloading...');
-    void commands
-      .executeCommand<void>('workbench.action.restartExtensionHost')
-      .then(() => {
-        void window.showInformationMessage('successs');
-      });
-  });
-  // TODO needs to stop watching. Also the star4tup is slow (parallel build is odd.)
-  // also
-
-  // watch
   // The server is implemented in node
   const runServer = context.asAbsolutePath(
     path.join('dist', 'cypher-language-server.js'),
@@ -84,7 +63,7 @@ export async function activate(context: ExtensionContext) {
 
   // Register disposables
   // Command handlers and view registrations
-  context.subscriptions.push(...registerDisposables(), watcher);
+  context.subscriptions.push(...registerDisposables());
 
   // Start the client. This will also launch the server
   await client.start();
@@ -92,6 +71,29 @@ export async function activate(context: ExtensionContext) {
   // Handle any sequence events for activation
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
+
+  // console.
+  void window.showInformationMessage(context.asAbsolutePath('dist'));
+
+  // in developement mode, we implement hot reloading of the extension.
+  if (process.env.watch === 'true') {
+    // todo path is wrong
+    const watcher = workspace.createFileSystemWatcher(
+      new RelativePattern(
+        Uri.file(context.asAbsolutePath('dist')),
+        'extension.js',
+      ),
+    );
+
+    watcher.onDidChange(() => {
+      void window.showInformationMessage('Extension rebuilt, reloading...');
+      void commands.executeCommand<void>(
+        'workbench.action.restartExtensionHost',
+      );
+    });
+
+    context.subscriptions.push(watcher);
+  }
 }
 
 export async function deactivate(): Promise<void> | undefined {

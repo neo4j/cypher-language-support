@@ -13,6 +13,9 @@
       "request": "launch",
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
+      "env": {
+        "watch": "true"
+      },
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
       ],
