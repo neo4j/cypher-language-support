@@ -539,7 +539,7 @@ export type ParsedCommandNoPosition =
   | { type: 'sysinfo' }
   | { type: 'style'; operation?: 'reset' }
   | { type: 'play' }
-  | { type: 'access-mode'; operation: string };
+  | { type: 'access-mode'; operation?: string };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -700,7 +700,17 @@ function parseToCommand(
 
       const accessModeCmd = consoleCmd.accessModeCmd();
       const accessModeArgs = accessModeCmd?.accessModeArgs();
-      if (accessModeCmd && accessModeArgs) {
+
+      if (accessModeCmd && !accessModeArgs) {
+        return {
+          type: 'access-mode',
+          operation: undefined,
+          start,
+          stop,
+        };
+      }
+
+      if (accessModeArgs) {
         const read = accessModeArgs.readCompletionRule()?.READ();
         if (read) {
           return {

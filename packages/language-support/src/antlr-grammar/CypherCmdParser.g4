@@ -51,11 +51,9 @@ welcomeCmd: WELCOME;
 
 playCmd: PLAY;
 
-accessModeCompletionRule: ACCESSMODE;
-
 accessModeArgs: (readCompletionRule | writeCompletionRule);
 
-accessModeCmd: accessModeCompletionRule accessModeArgs;
+accessModeCmd: ACCESSMODE accessModeArgs?;
 
 // These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 

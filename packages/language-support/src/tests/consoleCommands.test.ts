@@ -222,9 +222,9 @@ describe('sanity checks', () => {
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
-      { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
       { kind: 23, label: 'style reset' },
@@ -270,7 +270,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of play, style, sysinfo, welcome, disconnect, connect, param, history, clear, access-mode, server or use',
+      'Expected any of access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -818,6 +818,10 @@ describe('access-mode', () => {
   });
 
   test('basic access-mode usage', () => {
+    expectParsedCommands(':access-mode', [
+      { type: 'access-mode', operation: undefined },
+    ]);
+
     expectParsedCommands(':access-mode read', [
       { type: 'access-mode', operation: 'read' },
     ]);
@@ -884,5 +888,50 @@ describe('access-mode', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+  });
+
+  test('autocompletes read operation', () => {
+    const mapCompletions = autocomplete(':access-mode r', {
+      functions: {
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
+        },
+      },
+    });
+
+    const expected = [{ kind: 23, label: 'read' }];
+
+    expected.forEach((completion) => {
+      expect(mapCompletions).toContainEqual(completion);
+    });
+  });
+
+  test('autocompletes write operation', () => {
+    const mapCompletions = autocomplete(':access-mode w', {
+      functions: {
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
+        },
+      },
+    });
+
+    const expected = [{ kind: 23, label: 'write' }];
+
+    expected.forEach((completion) => {
+      expect(mapCompletions).toContainEqual(completion);
+    });
+  });
+
+  test('incorrect usage of :access-mode', () => {
+    expectErrorMessage(
+      ':access-mode xyz',
+      "Expected any of ';', read or write",
+    );
   });
 });

@@ -423,6 +423,7 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',
   [CypherLexer.SKIPROWS]: 'SKIP',
+  [CypherLexer.ACCESSMODE]: 'access-mode',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;
