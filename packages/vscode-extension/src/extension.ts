@@ -72,12 +72,8 @@ export async function activate(context: ExtensionContext) {
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
 
-  // console.
-  void window.showInformationMessage(context.asAbsolutePath('dist'));
-
-  // in developement mode, we implement hot reloading of the extension.
+  // in developement mode, we manually reload the extension.
   if (process.env.watch === 'true') {
-    // todo path is wrong
     const watcher = workspace.createFileSystemWatcher(
       new RelativePattern(
         Uri.file(context.asAbsolutePath('dist')),

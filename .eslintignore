@@ -2,14 +2,6 @@ out/
 dist/
 esm/
 packages/language-support/src/generated-parser/*
-vitest.config.ts
-vitest.config.mts
-rollup.config.js
 index.html
 packages/language-support/src/highlighting/semanticAnalysis.js
-.eslintrc.js
 vendor/*
-packages/vscode-extension/genTextMate.js
-packages/vscode-extension/esbuild.js
-modify-semantic-analysis.js
-packages/vscode-extension/esbuild-extension.js
