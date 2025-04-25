@@ -1,0 +1,9 @@
+{
+  "include": ["./esbuild-extension.mts"],
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true
+  }
+}

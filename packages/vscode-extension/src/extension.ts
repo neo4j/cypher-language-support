@@ -1,5 +1,12 @@
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import {
+  commands,
+  ExtensionContext,
+  RelativePattern,
+  Uri,
+  window,
+  workspace,
+} from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -64,6 +71,29 @@ export async function activate(context: ExtensionContext) {
   // Handle any sequence events for activation
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
+
+  // console.
+  void window.showInformationMessage(context.asAbsolutePath('dist'));
+
+  // in developement mode, we implement hot reloading of the extension.
+  if (process.env.watch === 'true') {
+    // todo path is wrong
+    const watcher = workspace.createFileSystemWatcher(
+      new RelativePattern(
+        Uri.file(context.asAbsolutePath('dist')),
+        'extension.js',
+      ),
+    );
+
+    watcher.onDidChange(() => {
+      void window.showInformationMessage('Extension rebuilt, reloading...');
+      void commands.executeCommand<void>(
+        'workbench.action.restartExtensionHost',
+      );
+    });
+
+    context.subscriptions.push(watcher);
+  }
 }
 
 export async function deactivate(): Promise<void> | undefined {

@@ -12,3 +12,4 @@ vendor/*
 packages/vscode-extension/genTextMate.js
 packages/vscode-extension/esbuild.js
 modify-semantic-analysis.js
+packages/vscode-extension/esbuild-extension.js

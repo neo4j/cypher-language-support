@@ -27,10 +27,10 @@
   "types": "./dist/esm/project/language-support/src/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/esm/project/language-support/src/index.d.ts",
       "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/project/language-support/src/index.js",
-      "default": "./dist/cjs/index.cjs",
-      "types": "./dist/esm/project/language-support/src/index.d.ts"
+      "default": "./dist/cjs/index.cjs"
     }
   },
   "sideEffects": false,
@@ -55,6 +55,7 @@
     "build": "cd ../../vendor/antlr4-c3/ && pnpm build && cd - && pnpm gen-parser && concurrently 'npm:build-esm-and-types' 'npm:build-commonjs'",
     "build-esm-and-types": "tsc --module esnext --outDir dist/esm/project/language-support && cp src/syntaxValidation/semanticAnalysis.js dist/esm/project/language-support/src/syntaxValidation/semanticAnalysis.js && mkdir -p dist/esm/vendor/antlr4-c3/dist/ && cp -r ../../vendor/antlr4-c3/dist/esm  dist/esm/vendor/antlr4-c3/dist/",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
+    "dev": "pnpm build && concurrently 'tsc --module esnext --outDir dist/esm/project/language-support --watch' 'npm:build-commonjs -- --watch'",
     "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",
     "test": "vitest run"
