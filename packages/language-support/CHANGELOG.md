@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.20
+
+### Patch Changes
+
+- 013e4ff: Adds support for the access-mode console command to the grammar
+
 ## 2.0.0-next.19
 
 ### Patch Changes
