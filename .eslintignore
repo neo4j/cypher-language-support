@@ -2,6 +2,8 @@ out/
 dist/
 esm/
 packages/language-support/src/generated-parser/*
-index.html
-packages/language-support/src/highlighting/semanticAnalysis.js
+semanticAnalysis.js
 vendor/*
+node_modules/*
+packages/vscode-extension/tests/fixtures/textmate/simple-match.js
+packages/react-codemirror/playwright/index.tsx

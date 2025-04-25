@@ -22,8 +22,8 @@
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
     "test:formattingIntegrity": "ts-node ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
-    "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --fix --ext .ts",
+    "lint": "eslint . --ext .ts,.tsx,.js,.mts",
+    "lint-fix": "pnpm lint --fix",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write",
     "benchmark": "pnpm --recursive benchmark --concurrency=1"
   },
