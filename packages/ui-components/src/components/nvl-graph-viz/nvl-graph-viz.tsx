@@ -113,14 +113,11 @@ export const NvlGraphViz = (currentGraph: {
   return (
     <div
       className={cx(
-        'border-palette-neutral-border-weak flex w-full flex-row overflow-hidden rounded-lg border bg-palette-neutral-bg-weak',
+        'border-palette-neutral-border-weak flex w-full flex-row overflow-hidden rounded-lg border bg-palette-neutral-bg-weak text-palette-neutral-text-default',
         currentGraph.fullscreen === true ? '' : 'h-[500px]',
       )}
     >
-      <div
-        style={{ height: 500 }}
-        className="cursor relative w-full min-w-[325px] bg-palette-neutral-bg-default"
-      >
+      <div className="cursor relative w-full min-w-[325px] bg-palette-neutral-bg-default">
         <InteractiveNvlWrapper
           nodes={currentNvlGraphNodesWithSelected}
           rels={currentNvlGraphRelationshipsWithSelected}

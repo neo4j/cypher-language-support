@@ -66,6 +66,7 @@ export function setAllTabsToLoading(
   webview: Webview,
   script: string,
   ndlCssUri: string,
+  nvlStylesCssUri: string,
 ): string {
   const nonce = getNonce();
 
@@ -111,6 +112,7 @@ export function setAllTabsToLoading(
       }
       </style>
       <link href="${ndlCssUri.toString()}" rel="stylesheet">
+      <link href="${nvlStylesCssUri.toString()}" rel="stylesheet">
       </head>
       <body>
           <div id="resultDiv"></div> 
@@ -198,12 +200,27 @@ export default class ResultWindow {
       ),
     );
 
+    const nvlStylesCssPath = Uri.file(
+      path.join(
+        extensionContext.extensionPath,
+        'resources',
+        'styles',
+        'nvl-styles.css',
+      ),
+    );
+
     const resultTabsJs = webview.asWebviewUri(resultTabsJsPath).toString();
     const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
+    const nvlStylesCssUri = webview.asWebviewUri(nvlStylesCssPath).toString();
 
     // Set all the tabs to loading
 
-    webview.html = setAllTabsToLoading(webview, resultTabsJs, ndlCssUri);
+    webview.html = setAllTabsToLoading(
+      webview,
+      resultTabsJs,
+      ndlCssUri,
+      nvlStylesCssUri,
+    );
 
     // Listener para recibir mensajes desde la webview
     webview.onDidReceiveMessage(

@@ -26,6 +26,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
     "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui",
+    "build": "pnpm build:css && pnpm postbuild:css",
+    "build:css": "npx tailwindcss -i ./src/components/nvl-graph-viz/nvl-styles.css -o ./dist/nvl-styles.css --minify",
+    "postbuild:css": "cp ./dist/nvl-styles.css ../vscode-extension/resources/styles/nvl-styles.css",
     "benchmark": "BENCHMARKING=true npx playwright test -c playwright-ct.config.ts -g \"benchmarking & performance test session\""
   },
   "repository": {

@@ -82,7 +82,7 @@ export const PropertiesTableNvl = ({
             >
               {key}
             </Typography>
-            <div className={`ml-2 flex-1 whitespace-pre-wrap`}>
+            <div className="ml-2 flex-1 whitespace-pre-wrap">
               <ExpandableValue value={value} width={paneWidth} type={type} />
             </div>
             <div className="flex justify-end">
