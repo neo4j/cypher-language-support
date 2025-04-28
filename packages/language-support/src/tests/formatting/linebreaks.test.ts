@@ -1320,6 +1320,20 @@ RETURN *`;
     verifyFormatting(query, expected);
   });
 
+  test('CALL with arguments', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (x, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    const expected = `MATCH (x)-[z:QWERTY]-(y)
+CALL (x, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    verifyFormatting(query, expected);
+  });
+
   test('CALL with long arguments that need to break', () => {
     const query = `MATCH (x)-[z:QWERTY]-(y)
 CALL (looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongarg, z, y) {
