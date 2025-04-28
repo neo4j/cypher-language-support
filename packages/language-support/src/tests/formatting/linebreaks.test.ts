@@ -1319,6 +1319,30 @@ WITH
 RETURN *`;
     verifyFormatting(query, expected);
   });
+
+  test('CALL with long arguments that need to break', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongarg, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+  RETURN pqrstu, vwxyza, q
+  UNION
+  RETURN x AS pqrstu, y AS vwxyza, z AS q
+}
+RETURN x`;
+    const expected = `MATCH (x)-[z:QWERTY]-(y)
+CALL (
+  looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongarg,
+  z,
+  y
+) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+  RETURN pqrstu, vwxyza, q
+    UNION
+  RETURN x AS pqrstu, y AS vwxyza, z AS q
+}
+RETURN x`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

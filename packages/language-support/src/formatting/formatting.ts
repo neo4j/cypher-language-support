@@ -96,6 +96,7 @@ import {
   SkipContext,
   StatementsOrCommandsContext,
   SubqueryClauseContext,
+  SubqueryScopeContext,
   TrimFunctionContext,
   UnionContext,
   UnwindClauseContext,
@@ -1830,6 +1831,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.breakLine();
     this._visit(ctx.RCURLY());
     this._visit(ctx.subqueryInTransactionsParameters());
+  };
+
+  visitSubqueryScope = (ctx: SubqueryScopeContext) => {
+    this.avoidBreakBetween();
+    const subqueryScopeGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const subqueryScopeIndent = this.addIndentation();
+    if (ctx.TIMES()) {
+      this._visit(ctx.TIMES());
+    } else {
+      const n = ctx.variable_list().length;
+      for (let i = 0; i < n; i++) {
+        const functionArgGrp = this.startGroup();
+        this._visit(ctx.variable(i));
+        if (i < n - 1) {
+          this._visit(ctx.COMMA(i));
+        }
+        this.endGroup(functionArgGrp);
+      }
+    }
+    this.avoidSpaceBetween();
+    this.removeIndentation(subqueryScopeIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(subqueryScopeGrp);
   };
 
   // Handled separately because UNION wants to look a certain way
