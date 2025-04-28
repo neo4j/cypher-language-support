@@ -1829,7 +1829,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.CALL());
     this._visit(ctx.subqueryScope());
-    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
     this.breakLine();
