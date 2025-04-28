@@ -1,3 +1,4 @@
+import { NvlGraphViz } from '@neo4j-cypher/ui-components';
 import { Tabs } from '@neo4j-ndl/react';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -26,9 +27,9 @@ export type ResultsTabMessage = {
 function renderRow(keys: any[], row: Record<string, unknown>) {
   return (
     <tr>
-      {keys.map((key) => {
+      {keys.map((key, i) => {
         return (
-          <td>
+          <td key={i}>
             <pre>
               {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -51,8 +52,8 @@ function renderTable(rows: ResultRows) {
     <table>
       <thead>
         <tr>
-          {Object.keys(rows[0]).map((key) => (
-            <th>{key.toString()}</th>
+          {Object.keys(rows[0]).map((key, i) => (
+            <th key={i}>{key.toString()}</th>
           ))}
         </tr>
       </thead>
@@ -66,24 +67,41 @@ function renderTable(rows: ResultRows) {
   );
 }
 
-export function getResultContent(statement: string, result: Result) {
+export function getResultContent(
+  statement: string,
+  result: Result,
+  visualizationEnabled: boolean,
+) {
   return (
     <div id="query-result">
       <details>
         <summary>Query Details</summary>
         <pre>{statement}</pre>
       </details>
-      {renderTable(result.rows)}
-      <div id="query-summary">
-        {result.querySummary.map((str) => (
-          <p>{str}</p>
-        ))}
-      </div>
+      {visualizationEnabled ? (
+        <NvlGraphViz
+          nodes={result.nodes}
+          relationships={result.relationships}
+        />
+      ) : (
+        <>
+          {renderTable(result.rows)}
+          <div id="query-summary">
+            {result.querySummary.map((str, i) => (
+              <p key={i}>{str}</p>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function renderStatementResult(value: number, result: ResultState) {
+function renderStatementResult(
+  value: number,
+  result: ResultState,
+  visualizationEnabled: boolean,
+) {
   return result.map((r, i) => {
     if (r.state === 'executing') {
       return (
@@ -91,6 +109,7 @@ function renderStatementResult(value: number, result: ResultState) {
           className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
           value={value}
           tabId={i}
+          key={i}
         >
           <div id="query-executing">
             <p>Executing query {r.statement}</p>
@@ -103,6 +122,7 @@ function renderStatementResult(value: number, result: ResultState) {
           className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
           value={value}
           tabId={i}
+          key={i}
         >
           <div id="query-error">
             <p>Error executing query {r.statement}: </p>
@@ -116,8 +136,9 @@ function renderStatementResult(value: number, result: ResultState) {
           className="n-flex n-flex-col n-gap-token-4 n-p-token-6"
           value={value}
           tabId={i}
+          key={i}
         >
-          {getResultContent(r.statement, r.state.result)}
+          {getResultContent(r.statement, r.state.result, visualizationEnabled)}
         </Tabs.TabPanel>
       );
     }
@@ -133,6 +154,8 @@ function truncateTabName(statement: string) {
 
 export function ResultTabs() {
   const [statementResults, setStatementResults] = useState<ResultState>([]);
+  const [visualizationEnabled, setVisualizationEnabled] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -164,6 +187,8 @@ export function ResultTabs() {
           };
           return newState;
         });
+      } else if (message.type === 'configInit') {
+        setVisualizationEnabled(Boolean(message.config.enableVisualization));
       }
     };
 
@@ -185,11 +210,13 @@ export function ResultTabs() {
       <Tabs value={value} onChange={handleChange} className="label">
         {statementResults.map((result, i) => {
           return (
-            <Tabs.Tab tabId={i}>{truncateTabName(result.statement)}</Tabs.Tab>
+            <Tabs.Tab key={i} tabId={i}>
+              {truncateTabName(result.statement)}
+            </Tabs.Tab>
           );
         })}
       </Tabs>
-      {renderStatementResult(value, statementResults)}
+      {renderStatementResult(value, statementResults, visualizationEnabled)}
     </div>
   );
 }

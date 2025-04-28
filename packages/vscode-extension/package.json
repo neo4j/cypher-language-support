@@ -435,6 +435,7 @@
     "@neo4j-cypher/language-server": "workspace:*",
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
+    "@neo4j-cypher/ui-components": "0.0.1",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
     "neo4j-driver": "catalog:",

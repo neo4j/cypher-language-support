@@ -1,0 +1,51 @@
+{
+  "name": "@neo4j-cypher/ui-components",
+  "private": true,
+  "license": "Apache-2.0",
+  "files": [
+    "dist",
+    "src",
+    "package.json",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "react",
+    "components",
+    "visualization"
+  ],
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite",
+    "devs": "HTTPS_ENABLED=1 vite",
+    "prod": "vite preview",
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "test": "vitest run",
+    "test:e2e": "playwright test -c playwright-ct.config.ts",
+    "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui",
+    "benchmark": "BENCHMARKING=true npx playwright test -c playwright-ct.config.ts -g \"benchmarking & performance test session\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
+  },
+  "dependencies": {
+    "@neo4j-ndl/base": "^3.4.1",
+    "@neo4j-ndl/react": "^3.5.3",
+    "@neo4j-nvl/base": "0.3.8",
+    "@neo4j-nvl/react": "0.3.8",
+    "@tailwindcss/vite": "^4.1.4",
+    "neo4j-driver": "^5.28.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

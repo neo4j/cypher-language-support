@@ -1,6 +1,15 @@
 import type { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
+import { BasicNode, BasicRelationship } from '@neo4j-cypher/ui-components';
+import { isNode, Node, QueryResult } from 'neo4j-driver';
 import path from 'path';
-import { Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
+import {
+  Uri,
+  ViewColumn,
+  Webview,
+  WebviewPanel,
+  window,
+  workspace,
+} from 'vscode';
 import { Connection } from '../connectionService';
 import { getExtensionContext, getSchemaPoller } from '../contextService';
 import { getNonce } from '../getNonce';
@@ -115,6 +124,8 @@ export type ResultRows = Record<string, unknown>[];
 
 export type Result = {
   rows: ResultRows;
+  nodes: BasicNode[];
+  relationships: BasicRelationship[];
   querySummary: string[];
 };
 
@@ -127,6 +138,10 @@ export type ResultMessage =
       index: number;
       result: Result;
       type: 'success';
+    }
+  | {
+      config: Record<string, unknown>;
+      type: 'configInit';
     }
   | {
       index: number;
@@ -149,6 +164,15 @@ export default class ResultWindow {
       ViewColumn.Two,
       { retainContextWhenHidden: true, enableScripts: true },
     );
+
+    // Get the visualization setting
+    const config = workspace.getConfiguration('neo4j.features');
+    const enableVisualization = config.get('enableVisualization', false);
+    const message = {
+      type: 'configInit',
+      config: { enableVisualization },
+    };
+    void this.panel.webview.postMessage(message);
 
     window.registerWebviewPanelSerializer;
   }
@@ -249,15 +273,91 @@ export default class ResultWindow {
       const resultRecords = result.records.map((record) =>
         toNativeTypes(record.toObject()),
       );
+      const resultNodes: BasicNode[] = this.extractBasicNodes(result.records);
+
+      // const resultRelations: BasicRelationship[] = result.records.map(
+      //   (record) => {
+      //     const result: Record<string, unknown> = {};
+      //     const relationship: Record<string, unknown> = (
+      //       record.get('segments') as Record<string, unknown>
+      //     ).relationship as Record<string, unknown>;
+      //     result['id'] = relationship.elementId ?? '';
+      //     result['from'] = relationship.startNodeElementId ?? '';
+      //     result['to'] = relationship.endNodeElementId ?? '';
+      //     result['type'] = relationship.type ?? '';
+      //     result['properties'] = relationship.properties ?? {};
+      //     result['propertyTypes'] = relationship.propertyTypes ?? {};
+
+      //     return result as BasicRelationship;
+      //   },
+      // );
       message = {
         type: 'success',
         index: index,
         result: {
           rows: resultRecords,
+          nodes: resultNodes,
+          relationships: [], // resultRelations,
           querySummary: querySummary(result),
         },
       };
     }
     await webview.postMessage(message);
+  }
+
+  private extractBasicNodes(records: QueryResult['records']): BasicNode[] {
+    if (records.length === 0) {
+      return [];
+    }
+
+    const items = new Set<unknown>();
+
+    for (const record of records) {
+      for (const key of record.keys) {
+        items.add(record.get(key));
+      }
+    }
+
+    const nodeMap = new Map<string, Node>();
+
+    function addNode(n: Node) {
+      const id = n.identity.toString();
+      if (!nodeMap.has(id)) {
+        nodeMap.set(id, n);
+      }
+    }
+
+    const findAllEntities = (item: unknown) => {
+      if (typeof item !== 'object' || !item) {
+        return;
+      }
+
+      if (isNode(item)) {
+        addNode(item);
+      } else {
+        Object.values(item).forEach(findAllEntities);
+      }
+    };
+
+    findAllEntities(Array.from(items));
+
+    const nodes = Array.from(nodeMap.values()).map((item) => {
+      return {
+        id: item.identity.toString(),
+        elementId: item.elementId,
+        labels: item.labels,
+        properties: Object.entries(item.properties).reduce(
+          (res: Record<string, unknown>, [currKey, currVal]) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+            res[currKey] = currVal.toString();
+            return res;
+          },
+          {},
+        ),
+        propertyTypes: {},
+      } as BasicNode;
+    });
+
+    return nodes;
   }
 }

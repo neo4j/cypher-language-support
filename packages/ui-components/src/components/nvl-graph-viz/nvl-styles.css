@@ -1,0 +1,10 @@
+@import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nvlResizable {
+  /* expected max width or available space after 325px(min nvl graph viz) for smaller screen */
+  max-width: min(66%, calc(100% - 325px)) !important;
+}
