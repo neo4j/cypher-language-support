@@ -12,7 +12,10 @@ import {
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
-export default new URL('./lintWorker.ts?worker', import.meta.url).href;
+export function returnFive() {
+  return 5;
+}
+export const WorkerURL = new URL('./lintWorker.ts?worker', import.meta.url).href;
 
 function lintCypherQuery(
   query: string,

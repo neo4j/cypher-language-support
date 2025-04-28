@@ -5,6 +5,7 @@ import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from './lintWorker';
 import WorkerURL from './lintWorker?worker&url';
+import {returnFive} from '@neo4j-cypher/lint-worker';
 
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
@@ -16,6 +17,7 @@ let lastSemanticJob: LinterTask | undefined;
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter(async (view) => {
+    console.log("Calling imported method: ", returnFive())
     if (!config.lint) {
       return [];
     }

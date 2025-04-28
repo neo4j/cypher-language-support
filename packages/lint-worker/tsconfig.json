@@ -3,9 +3,10 @@
   "include": ["src"],
   "exclude": [],
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dist",
     "declaration": true,
     "esModuleInterop": true,
-    "module": "esnext"
+    "module": "esnext",
+    "moduleResolution": "node"
   }
 }
