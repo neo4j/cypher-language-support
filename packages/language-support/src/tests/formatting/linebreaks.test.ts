@@ -1320,6 +1320,16 @@ RETURN *`;
     verifyFormatting(query, expected);
   });
 
+  test('CALL with star', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (*) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
   test('CALL with arguments', () => {
     const query = `MATCH (x)-[z:QWERTY]-(y)
 CALL (x, z, y) {
