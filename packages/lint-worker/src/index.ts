@@ -1,2 +1,2 @@
 export * from './lintWorker';
-export { WorkerURL } from './lintWorker';
+export const WorkerURL = new URL('./index', import.meta.url).href;

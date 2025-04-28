@@ -15,7 +15,6 @@ import workerpool from 'workerpool';
 export function returnFive() {
   return 5;
 }
-export const WorkerURL = new URL('./lintWorker.ts?worker', import.meta.url).href;
 
 function lintCypherQuery(
   query: string,

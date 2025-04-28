@@ -14,8 +14,7 @@ import {
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
-import { WorkerURL } from '@neo4j-cypher/lint-worker'
-import { returnFive } from '@neo4j-cypher/lint-worker'
+import { returnFive, WorkerURL } from '@neo4j-cypher/lint-worker'
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {

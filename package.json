@@ -16,7 +16,7 @@
     "dev-codemirror": "pnpm --filter='...@neo4j-cypher/react-codemirror-playground' build && pnpm --filter='@neo4j-cypher/react-codemirror-playground' dev",
     "release": "pnpm build && pnpm publish -r --tag next --access=public",
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
-    "deep-clean": "rimraf -g **/{node_modules,dist}",
+    "deep-clean": "pnpm clean && rimraf -g **/{node_modules,dist}",
     "clean": "pnpm --recursive --parallel clean",
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
