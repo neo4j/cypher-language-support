@@ -1638,13 +1638,20 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitIndexPostfix = (ctx: IndexPostfixContext) => {
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const indexPostfixGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
     this._visit(ctx.expression());
     this.avoidSpaceBetween();
     this._visit(ctx.RBRACKET());
+    this.endGroup(indexPostfixGrp);
   };
 
   visitRangePostfix = (ctx: RangePostfixContext) => {
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const rangePostfixGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
     if (ctx._fromExp) {
       this._visit(ctx.expression(0));
@@ -1659,6 +1666,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this._visit(ctx.RBRACKET());
+    this.endGroup(rangePostfixGrp);
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
