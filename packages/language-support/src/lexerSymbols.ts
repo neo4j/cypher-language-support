@@ -394,6 +394,7 @@ export const lexerConsoleCmds = [
   CypherLexer.STYLE,
   CypherLexer.RESET,
   CypherLexer.PLAY,
+  CypherLexer.ACCESSMODE,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
@@ -422,6 +423,7 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',
   [CypherLexer.SKIPROWS]: 'SKIP',
+  [CypherLexer.ACCESSMODE]: 'access-mode',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;

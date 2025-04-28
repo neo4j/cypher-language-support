@@ -14,6 +14,7 @@ async function main() {
     outfile: 'dist/extension.js',
     external: ['vscode'],
     logLevel: 'silent',
+    conditions: ['require'],
   });
   await ctx.rebuild();
   await ctx.dispose();

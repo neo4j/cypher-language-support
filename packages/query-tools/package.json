@@ -3,7 +3,7 @@
   "description": "",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.19",
+  "version": "2.0.0-next.20",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "exports": {
@@ -33,7 +33,7 @@
     "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
     "@types/node": "^22.14.0"

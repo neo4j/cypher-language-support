@@ -32,6 +32,14 @@ export type {
   Neo4jProcedure,
 } from './types';
 export { cypher25Supported } from './version';
-export { CypherLexer, CypherParser };
+export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
+
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';
+import CypherParserListener from './generated-parser/CypherCmdParserListener';
+import CypherParserVisitor from './generated-parser/CypherCmdParserVisitor';
+
+export * from './generated-parser/CypherCmdLexer';
+export * from './generated-parser/CypherCmdParser';
+export * from './generated-parser/CypherCmdParserListener';
+export * from './generated-parser/CypherCmdParserVisitor';

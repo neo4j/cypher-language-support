@@ -44,5 +44,14 @@ export default defineConfig({
   // Glob patterns or regular expressions that match test files.
   testMatch: '**/*.spec.tsx',
 
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+  ],
 });

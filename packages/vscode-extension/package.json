@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.9.0",
+  "version": "1.10.1",
   "preview": false,
   "categories": [
     "Programming Languages",
@@ -22,6 +22,7 @@
   ],
   "icon": "resources/images/logo.png",
   "main": "./dist/extension.js",
+  "activationEvents": [],
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -424,7 +425,8 @@
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension:dev && pnpm bundle-language-server && pnpm bundle-webview-controllers",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
+    "package": "pnpm vsce package --pre-release --no-dependencies",
     "test:e2e": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
     "test:apiAndUnit": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
     "test:webviews": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
@@ -450,7 +452,7 @@
     "@types/sinon": "^17.0.3",
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^2.29.0",
+    "@vscode/vsce": "^3.3.2",
     "@wdio/cli": "^8.41.0",
     "@wdio/globals": "^8.41.0",
     "@wdio/local-runner": "^8.41.0",
