@@ -1257,6 +1257,68 @@ LIMIT 100
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('CALL should not break between CALL and the left brace', () => {
+    const query = `MATCH
+  u0 =
+    (v3:mn:op:tuv {xy: fghij})-[s1:abc {m1: "x"}]->
+    (w2 {n5: [-8392754106, 517362948, 2073946581]})
+WITH
+  u0,
+  COLLECT {
+    MATCH x1 = (y0)
+    CALL
+    {
+      WITH w2, s1, u0
+      MATCH
+        c2 =
+          (w2)<-[t2:defg]-
+          (:wx:tuv:mn:yz:op:ab:cd:ef:gh)--
+          (z1)-[:hij*..8]->
+          (:mn:ij:ab {m1: "y"})--
+          (w2)-[:klm {pqr: 714026583}]->
+          (a5:ij {xy: fghij})
+      CALL
+      {
+        WITH w2, t2, u0, c2
+        OPTIONAL MATCH (:wx)
+        RETURN w2 AS b6
+      }
+      RETURN s1 AS e5, c2 AS d3
+    }
+    RETURN e5.stu
+  } AS uvwxyz
+RETURN *`;
+    const expected = `MATCH
+  u0 =
+    (v3:mn:op:tuv {xy: fghij})-[s1:abc {m1: "x"}]->
+    (w2 {n5: [-8392754106, 517362948, 2073946581]})
+WITH
+  u0,
+  COLLECT {
+    MATCH x1 = (y0)
+    CALL {
+      WITH w2, s1, u0
+      MATCH
+        c2 =
+          (w2)<-[t2:defg]-
+          (:wx:tuv:mn:yz:op:ab:cd:ef:gh)--
+          (z1)-[:hij*..8]->
+          (:mn:ij:ab {m1: "y"})--
+          (w2)-[:klm {pqr: 714026583}]->
+          (a5:ij {xy: fghij})
+      CALL {
+        WITH w2, t2, u0, c2
+        OPTIONAL MATCH (:wx)
+        RETURN w2 AS b6
+      }
+      RETURN s1 AS e5, c2 AS d3
+    }
+    RETURN e5.stu
+  } AS uvwxyz
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
