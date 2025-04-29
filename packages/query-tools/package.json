@@ -3,7 +3,7 @@
   "description": "",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.19",
+  "version": "2.0.0-next.20",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "exports": {

@@ -1,7 +1,7 @@
 {
   "name": "@neo4j-cypher/react-codemirror-playground",
   "private": true,
-  "version": "2.0.0-next.22",
+  "version": "2.0.0-next.23",
   "type": "module",
   "scripts": {
     "dev": "vite --open",
