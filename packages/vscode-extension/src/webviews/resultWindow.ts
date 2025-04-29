@@ -1,6 +1,14 @@
 import type { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
 import { BasicNode, BasicRelationship } from '@neo4j-cypher/ui-components';
-import { isNode, Node, QueryResult } from 'neo4j-driver';
+import {
+  isNode,
+  Node,
+  Relationship,
+  QueryResult,
+  isRelationship,
+  isPath,
+  Path,
+} from 'neo4j-driver';
 import path from 'path';
 import {
   Uri,
@@ -290,7 +298,9 @@ export default class ResultWindow {
       const resultRecords = result.records.map((record) =>
         toNativeTypes(record.toObject()),
       );
-      const resultNodes: BasicNode[] = this.extractBasicNodes(result.records);
+      const { nodes, relations } = this.extractBasicNodesAndRels(
+        result.records,
+      );
 
       // const resultRelations: BasicRelationship[] = result.records.map(
       //   (record) => {
@@ -313,8 +323,8 @@ export default class ResultWindow {
         index: index,
         result: {
           rows: resultRecords,
-          nodes: resultNodes,
-          relationships: [], // resultRelations,
+          nodes: nodes,
+          relationships: relations,
           querySummary: querySummary(result),
         },
       };
@@ -322,9 +332,12 @@ export default class ResultWindow {
     await webview.postMessage(message);
   }
 
-  private extractBasicNodes(records: QueryResult['records']): BasicNode[] {
+  private extractBasicNodesAndRels(records: QueryResult['records']): {
+    nodes: BasicNode[];
+    relations: BasicRelationship[];
+  } {
     if (records.length === 0) {
-      return [];
+      return { nodes: [], relations: [] };
     }
 
     const items = new Set<unknown>();
@@ -335,12 +348,20 @@ export default class ResultWindow {
       }
     }
 
+    const paths: Path[] = [];
     const nodeMap = new Map<string, Node>();
-
     function addNode(n: Node) {
       const id = n.identity.toString();
       if (!nodeMap.has(id)) {
         nodeMap.set(id, n);
+      }
+    }
+
+    const relMap = new Map<string, Relationship>();
+    function addRel(r: Relationship) {
+      const id = r.identity.toString();
+      if (!relMap.has(id)) {
+        relMap.set(id, r);
       }
     }
 
@@ -349,14 +370,30 @@ export default class ResultWindow {
         return;
       }
 
-      if (isNode(item)) {
+      if (isRelationship(item)) {
+        addRel(item);
+      } else if (isNode(item)) {
         addNode(item);
+      } else if (isPath(item)) {
+        paths.push(item);
+      } else if (Array.isArray(item)) {
+        item.forEach(findAllEntities);
       } else {
         Object.values(item).forEach(findAllEntities);
       }
     };
 
     findAllEntities(Array.from(items));
+
+    for (const path of paths) {
+      addNode(path.start);
+      addNode(path.end);
+      for (const segment of path.segments) {
+        addNode(segment.start);
+        addNode(segment.end);
+        addRel(segment.relationship);
+      }
+    }
 
     const nodes = Array.from(nodeMap.values()).map((item) => {
       return {
@@ -375,6 +412,32 @@ export default class ResultWindow {
       } as BasicNode;
     });
 
-    return nodes;
+    const relations = Array.from(relMap.values())
+      .filter((item) => {
+        // keepDanglingRels ?
+        const start = item.start.toString();
+        const end = item.end.toString();
+        return nodeMap.has(start) && nodeMap.has(end);
+      })
+      .map((item) => {
+        return {
+          id: item.identity.toString(),
+          elementId: item.elementId,
+          from: item.start.toString(),
+          to: item.end.toString(),
+          type: item.type,
+          properties: Object.entries(item.properties).reduce(
+            (res: Record<string, unknown>, [currKey, currVal]) => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+              res[currKey] = currVal.toString();
+              return res;
+            },
+            {},
+          ),
+          propertyTypes: {},
+        } as BasicRelationship;
+      });
+
+    return { nodes, relations };
   }
 }
