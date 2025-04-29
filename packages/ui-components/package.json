@@ -48,14 +48,16 @@
     "@neo4j-nvl/base": "0.3.8",
     "@neo4j-nvl/react": "0.3.8",
     "@tailwindcss/vite": "^4.1.4",
+    "classnames": "2.5.1",
     "neo4j-driver": "catalog:",
-    "tailwindcss": "^3.4.17",
+    "re-resizable": "6.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "re-resizable": "6.11.2"
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11"
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^3.1.0"
   }
 }
