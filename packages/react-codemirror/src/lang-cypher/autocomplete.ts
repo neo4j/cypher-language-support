@@ -14,7 +14,7 @@ import {
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
-import { returnFive, WorkerURL } from '@neo4j-cypher/lint-worker'
+import { WorkerURL } from '@neo4j-cypher/lint-worker'
 
 const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   const map: Record<CompletionItemKind, CompletionItemIcons> = {
@@ -61,7 +61,6 @@ export const completionStyles: (
 
 export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
-    console.log("calling test method", returnFive())
     console.log("getting url", WorkerURL)
     const documentText = context.state.doc.toString();
     const offset = context.pos;
