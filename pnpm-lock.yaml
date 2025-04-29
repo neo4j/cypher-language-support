@@ -113,11 +113,8 @@ importers:
   packages/lint-worker:
     dependencies:
       '@neo4j-cypher/language-support':
-        specifier: 2.0.0-next.4
-        version: 2.0.0-next.4
-      '@neo4j-cypher/language-support-new':
-        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.19
-        version: '@neo4j-cypher/language-support@2.0.0-next.19'
+        specifier: workspace:*
+        version: link:../language-support
       workerpool:
         specifier: ^9.0.4
         version: 9.0.4
@@ -1371,14 +1368,6 @@ packages:
   '@neo4j-cypher/editor-support@1.0.2':
     resolution: {integrity: sha512-XdlGB5p1vI+f+Mh8NlALayoHWSjBms3aXGFYEaNqF7e75cOWu3q804x+MQk1U+zp0+UqvF82gryqwwgU5s6LUg==}
     engines: {node: '>=14.0.0'}
-
-  '@neo4j-cypher/language-support@2.0.0-next.19':
-    resolution: {integrity: sha512-+I+zxL3IWEa+Ai01JPwfZ2fuBUIGiNS8ZegN6WZaYMCgR0Ss9us6m0izUgiRHjy69JfeEIhMS/v6icZeP20hHQ==}
-    engines: {node: '>=18.18.2'}
-
-  '@neo4j-cypher/language-support@2.0.0-next.4':
-    resolution: {integrity: sha512-Ae7d2BScuLSrz/vdEy7gQH1ix1NN2iyvqaIikSBgYE2ktKO5b8N3YLSXV+fMy6vUiFeSJIFaBwesGrJjvaEgSg==}
-    engines: {node: '>=18.18.2'}
 
   '@neo4j-cypher/react-codemirror@1.0.4':
     resolution: {integrity: sha512-3hLsnd+BS3uYDvcsfQb+dZ2Y/uKJ4x07gA3XGd+2DGjJ59S6dilIfO10Ww6W0nBbq/Y5wSgaSURBjB4sQw8Csg==}
@@ -2648,9 +2637,6 @@ packages:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
     engines: {node: '>=12'}
 
-  antlr4-c3@3.4.4:
-    resolution: {integrity: sha512-ixp1i17ypbRzZnffdarIfCVEXJwPydtDt61SHMGkc+UCD7rrbfvHESTMTgx8jFhUgKAgcHyt9060kQ8nU3vlxA==}
-
   antlr4@4.10.1:
     resolution: {integrity: sha512-fmxidcOwmktzHUD+tz8y/zKLI/NfVAB0+MOvnFUBzo8ToFnphK8JY88oOJeRdhnTrAhjtu45bvxddzbb8nMeIA==}
     engines: {node: '>=14'}
@@ -2658,9 +2644,6 @@ packages:
   antlr4@4.13.2:
     resolution: {integrity: sha512-QiVbZhyy4xAZ17UPEuG3YTOt8ZaoeOR1CvEAqrEsDBsOqINslaB147i9xqljZqoyf5S+EUlGStaj+t22LT9MOg==}
     engines: {node: '>=16'}
-
-  antlr4ng@3.0.16:
-    resolution: {integrity: sha512-DQuJkC7kX3xunfF4K2KsWTSvoxxslv+FQp/WHQZTJSsH2Ec3QfFmrxC3Nky2ok9yglXn6nHM4zUaVDxcN5f6kA==}
 
   any-promise@1.3.0:
     resolution: {integrity: sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==}
@@ -8128,19 +8111,6 @@ snapshots:
       lodash.find: 4.6.0
       lodash.includes: 4.3.0
 
-  '@neo4j-cypher/language-support@2.0.0-next.19':
-    dependencies:
-      antlr4: 4.13.2
-      fastest-levenshtein: 1.0.16
-      vscode-languageserver-types: 3.17.5
-
-  '@neo4j-cypher/language-support@2.0.0-next.4':
-    dependencies:
-      antlr4: 4.13.2
-      antlr4-c3: 3.4.4
-      fastest-levenshtein: 1.0.16
-      vscode-languageserver-types: 3.17.5
-
   '@neo4j-cypher/react-codemirror@1.0.4(@lezer/common@1.2.1)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.27.0
@@ -10047,15 +10017,9 @@ snapshots:
 
   ansi-styles@6.2.1: {}
 
-  antlr4-c3@3.4.4:
-    dependencies:
-      antlr4ng: 3.0.16
-
   antlr4@4.10.1: {}
 
   antlr4@4.13.2: {}
-
-  antlr4ng@3.0.16: {}
 
   any-promise@1.3.0: {}
 

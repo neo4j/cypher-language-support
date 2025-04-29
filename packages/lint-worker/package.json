@@ -33,7 +33,7 @@
     "workerpool": "^9.0.4"
   },
   "scripts": {
-    "build": "pnpm build-types && esbuild ./src/lintWorker.ts --bundle --platform=node --outfile=dist/lintWorker.mjs --format=esm --minify",
+    "build": "pnpm build-types && esbuild ./src/lintWorker.ts --bundle --platform=node --conditions=require --outfile=dist/lintWorker.mjs --format=esm --minify",
     "clean": "rm -rf dist",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types"
   },
