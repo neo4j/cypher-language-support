@@ -302,22 +302,6 @@ export default class ResultWindow {
         result.records,
       );
 
-      // const resultRelations: BasicRelationship[] = result.records.map(
-      //   (record) => {
-      //     const result: Record<string, unknown> = {};
-      //     const relationship: Record<string, unknown> = (
-      //       record.get('segments') as Record<string, unknown>
-      //     ).relationship as Record<string, unknown>;
-      //     result['id'] = relationship.elementId ?? '';
-      //     result['from'] = relationship.startNodeElementId ?? '';
-      //     result['to'] = relationship.endNodeElementId ?? '';
-      //     result['type'] = relationship.type ?? '';
-      //     result['properties'] = relationship.properties ?? {};
-      //     result['propertyTypes'] = relationship.propertyTypes ?? {};
-
-      //     return result as BasicRelationship;
-      //   },
-      // );
       message = {
         type: 'success',
         index: index,
@@ -332,6 +316,7 @@ export default class ResultWindow {
     await webview.postMessage(message);
   }
 
+  // TODO: Handle the dangling relationships and limit hits
   private extractBasicNodesAndRels(records: QueryResult['records']): {
     nodes: BasicNode[];
     relations: BasicRelationship[];
@@ -414,7 +399,6 @@ export default class ResultWindow {
 
     const relations = Array.from(relMap.values())
       .filter((item) => {
-        // keepDanglingRels ?
         const start = item.start.toString();
         const end = item.end.toString();
         return nodeMap.has(start) && nodeMap.has(end);

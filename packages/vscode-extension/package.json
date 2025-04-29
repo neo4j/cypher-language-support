@@ -440,12 +440,9 @@
     "@neo4j-cypher/ui-components": "workspace:*",
     "@neo4j-ndl/base": "^2.12.3",
     "@neo4j-ndl/react": "^2.16.5",
-    "autoprefixer": "^10.4.14",
     "neo4j-driver": "catalog:",
-    "postcss": "^8.4.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tailwindcss": "^4.1.4",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

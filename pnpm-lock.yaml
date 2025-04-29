@@ -344,24 +344,15 @@ importers:
       '@neo4j-ndl/react':
         specifier: ^2.16.5
         version: 2.16.23(@heroicons/react@2.1.5(react@18.3.1))(@lezer/common@1.2.1)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      autoprefixer:
-        specifier: ^10.4.14
-        version: 10.4.20(postcss@8.5.3)
       neo4j-driver:
         specifier: 'catalog:'
         version: 5.12.0
-      postcss:
-        specifier: ^8.4.23
-        version: 8.5.3
       react:
         specifier: ^18.2.0
         version: 18.3.1
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
-      tailwindcss:
-        specifier: ^4.1.4
-        version: 4.1.4
       vscode-languageclient:
         specifier: ^8.1.0
         version: 8.1.0
@@ -12285,16 +12276,6 @@ snapshots:
       normalize-range: 0.1.2
       picocolors: 1.1.1
       postcss: 8.4.45
-      postcss-value-parser: 4.2.0
-
-  autoprefixer@10.4.20(postcss@8.5.3):
-    dependencies:
-      browserslist: 4.23.3
-      caniuse-lite: 1.0.30001658
-      fraction.js: 4.3.7
-      normalize-range: 0.1.2
-      picocolors: 1.1.1
-      postcss: 8.5.3
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
