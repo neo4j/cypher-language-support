@@ -29,8 +29,7 @@
     "node": ">=18.18.2"
   },
   "dependencies": {
-    "@neo4j-cypher/language-support": "2.0.0-next.4",
-    "@neo4j-cypher/language-support-new": "npm:@neo4j-cypher/language-support@2.0.0-next.19",
+    "@neo4j-cypher/language-support": "workspace:*",
     "workerpool": "^9.0.4"
   },
   "scripts": {
