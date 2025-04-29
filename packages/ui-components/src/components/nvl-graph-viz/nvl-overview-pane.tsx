@@ -1,4 +1,3 @@
-import { Typography } from '@neo4j-ndl/react';
 import React, { useMemo } from 'react';
 import {
   getLabelStats,
@@ -24,20 +23,8 @@ type OverviewPaneNvlProps = {
 export function NvlOverviewPane({
   nodes,
   relationships,
-  limitHit,
   graphStyling,
 }: OverviewPaneNvlProps): JSX.Element {
-  // const currentScope = useCurrentScope();
-  // let appScope: SettingsScope | undefined = undefined;
-  // switch (currentScope) {
-  //   case APP_SCOPE.query:
-  //     appScope = APP_SCOPE.query;
-  //     break;
-  //   default:
-  //     appScope = undefined;
-  // }
-  // const { toggleSettingsSidebar } = useScopedSettingsSidebar(appScope);
-
   const labelsSorted = useMemo(() => {
     const labelStats = getLabelStats(nodes);
     return Object.entries(labelStats).sort((a, b) =>
@@ -64,26 +51,9 @@ export function NvlOverviewPane({
               <div className="flex items-center justify-between text-sm">
                 <span>Nodes{` (${nodes.length.toLocaleString()})`}</span>
               </div>
-              {limitHit && (
-                <div className="flex items-center gap-1">
-                  {/* <StatusIcon statusType="warning" /> */}
-                  <Typography
-                    variant="body-small"
-                    className="text-palette-warning-text"
-                  >
-                    Display limit hit at {nodes.length.toLocaleString()} nodes.
-                  </Typography>
-                  {/* {appScope === APP_SCOPE.query && (
-                      <Typography variant="body-small">
-                        <a className="cursor-pointer underline" onClick={() => toggleSettingsSidebar('maxVizNodes')}>
-                          Edit settings
-                        </a>
-                        .
-                      </Typography>
-                    )} */}
-                </div>
-              )}
-
+              {
+                // TODO: Add limit hit message
+              }
               <div className="flex flex-row flex-wrap gap-x-1.5 gap-y-1 leading-tight">
                 <ShowAll initiallyShown={OVERVIEW_STEP_SIZE} isButtonGroup>
                   {labelsSorted.map(
@@ -119,6 +89,7 @@ export function NvlOverviewPane({
                       key={relType}
                       label={relType}
                       count={count}
+                      tabIndex={-1}
                       graphStyling={graphStyling}
                     />
                   ))}

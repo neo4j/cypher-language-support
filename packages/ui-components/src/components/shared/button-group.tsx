@@ -1,7 +1,6 @@
 import React, { cloneElement, useEffect, useRef, useState } from 'react';
 
 export function ButtonGroup({ children }: { children: React.ReactNode }) {
-  // const selectedIndex = useRef(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const parentRef = useRef<HTMLUListElement>(null);
 
@@ -33,7 +32,6 @@ export function ButtonGroup({ children }: { children: React.ReactNode }) {
         React.Children.count(children);
       setSelectedIndex(newIndx);
     }
-    // set focus to new button
     focusElement(newIndx);
   };
 
@@ -48,13 +46,11 @@ export function ButtonGroup({ children }: { children: React.ReactNode }) {
           return null;
         }
 
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const clonedElement = cloneElement(child, {
           tabIndex: selectedIndex === index ? 0 : -1,
         } as React.HTMLAttributes<HTMLElement>);
 
-        // oxlint-disable-next-line jsx-key
-        return <li>{clonedElement}</li>;
+        return <li key={index}>{clonedElement}</li>;
       })}
     </ul>
   );

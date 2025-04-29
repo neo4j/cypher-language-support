@@ -183,24 +183,21 @@ type CalcOptions = {
   chromaMin?: number;
 };
 
+// TODO: Implement this function to calculate the colors
 export function calculateDefaultNodeColors(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   nodeLabel: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   config?: CalcOptions,
 ): {
   backgroundColor: string;
   borderColor: string;
   textColor: string;
 } {
-  // eslint-disable-next-line no-console
-  console.log('calculateDefaultNodeColors', nodeLabel, config);
-  // const bkg = calcWordColor(nodeLabel, config);
-  // const border = shadeColor(bkg, -20);
-  // const text = mostReadable(bkg, ['#2A2C34', '#FFFFFF']);
-
   return {
-    backgroundColor: '#ff0000', // bkg,
-    borderColor: '#00ff00', // border,
-    textColor: '#000000', //text,
+    backgroundColor: '#cd32a0',
+    borderColor: '#8a226c',
+    textColor: '#2A2C34',
   };
 }
 

@@ -3,6 +3,7 @@ import { GraphLabel } from '@neo4j-ndl/react';
 import React from 'react';
 import { GraphStyling } from '../../utils/styling-types';
 
+// TODO: Make this function to return calculated node color using word-color
 const getChipBackgroundColor = (
   type: string,
   chipType: 'node' | 'relationship' | 'propertyKey',
@@ -25,8 +26,6 @@ const getChipBackgroundColor = (
   }
 
   return undefined;
-
-  // return calculateDefaultNodeColors(type).backgroundColor;
 };
 
 type GraphChipProps = {

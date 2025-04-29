@@ -7,7 +7,6 @@ import { ButtonGroup } from './button-group';
 
 type ShowAllProps = {
   initiallyShown: number;
-  /* pass thunk to enable rendering only shown components */
   children: ((() => ReactNode) | ReactNode)[];
   isButtonGroup?: boolean;
   ariaLabel?: string;

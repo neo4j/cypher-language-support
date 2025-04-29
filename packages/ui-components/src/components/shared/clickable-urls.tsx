@@ -21,16 +21,13 @@ function ClickableUrlsComponent({ text }: ClickableUrlsProps): JSX.Element {
         return (
           <React.Fragment key={`clickable-url-${index}`}>
             {t}
-            {
-              // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-              urls[index] && (
-                // Should be safe from XSS.
-                // Ref: https://mathiasbynens.github.io/rel-noopener/
-                <a href={urls[index]} target="_blank" rel="noopener noreferrer">
-                  {urls[index]}
-                </a>
-              )
-            }
+            {urls[index] && (
+              // Should be safe from XSS.
+              // Ref: https://mathiasbynens.github.io/rel-noopener/
+              <a href={urls[index]} target="_blank" rel="noopener noreferrer">
+                {urls[index]}
+              </a>
+            )}
           </React.Fragment>
         );
       })}

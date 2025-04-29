@@ -33,13 +33,6 @@ export const NvlGraphViz = (currentGraph: {
     }
   };
 
-  const handleNodeDoubleClick = (nodeIds: string | string[]) => {
-    const id = Array.isArray(nodeIds) ? nodeIds[0] : nodeIds;
-    if (id !== undefined) {
-      // void expandNodeNeighbors(id);
-    }
-  };
-
   const handleRelationshipClick = (relationshipIds: string | string[]) => {
     const id = Array.isArray(relationshipIds)
       ? relationshipIds[0]
@@ -137,75 +130,23 @@ export const NvlGraphViz = (currentGraph: {
             onNodeClick: (clickedNode) => {
               handleNodeClick(clickedNode.id);
             },
-            onNodeDoubleClick: (clickedNode) => {
-              handleNodeDoubleClick(clickedNode.id);
-            },
             onRelationshipClick: (clickedRelationship) => {
               handleRelationshipClick(clickedRelationship.id);
             },
-            // onRelationshipRightClick: (clickedRelationship, _, event) => {
-            //   handleRelationRightClick({
-            //     id: clickedRelationship.id,
-            //     pointer: {
-            //       DOM: {
-            //         x: event.x,
-            //         y: event.y,
-            //       },
-            //     },
-            //   });
-            // },
-            // onNodeRightClick: (clickedNode, _, event) => {
-            //   handleNodeRightClick({
-            //     id: clickedNode.id,
-            //     pointer: {
-            //       DOM: {
-            //         x: event.x,
-            //         y: event.y,
-            //       },
-            //     },
-            //   });
-            // },
+            // TODO: add onNodeDoubleClick, onRelationshipRightClick, onNodeRightClick, and onCanvasRightClick
             onCanvasClick: () => {
               resetSelection();
             },
-            // onCanvasRightClick: (event: MouseEvent) => {
-            //   handleCanvasRightClick({
-            //     pointer: {
-            //       DOM: {
-            //         x: event.x,
-            //         y: event.y,
-            //       },
-            //     },
-            //   });
-            // },
             onPan: true,
             onZoom: true,
             onDrag: true,
           }}
-          nvlCallbacks={{
-            onLayoutComputing(isComputing) {
-              if (!isComputing) {
-                // nvlRef.current?.fit(
-                //   nodes.map((neighbors) => neighbors.id),
-                //   { noPan: true },
-                // );
-              }
-            },
-          }}
+          // TODO: add nvlCallbacks
           ref={nvlRef}
         />
       </div>
-      <NvlSidePanel
-        open={
-          true //isSidePanelOpen
-        }
-        defaultWidth={
-          150 //sidePanelDefaultWidth
-        }
-        // onResizeStop={(_e, _dir, ref) => {
-        //   //handleSidePanelResize(ref)
-        // }}
-      >
+      {/* TODO: add UI controls and controlling the sidebar resize */}
+      <NvlSidePanel open={true} defaultWidth={150}>
         {selectedItem !== undefined ? (
           <NvlDetailsPanel
             inspectedItem={selectedItem}

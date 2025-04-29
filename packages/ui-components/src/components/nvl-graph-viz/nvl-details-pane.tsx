@@ -46,8 +46,6 @@ export function NvlDetailsPanel({
     return [];
   }, [inspectedItem]);
 
-  // const graphStyling = useGraphStyling();
-
   return (
     <>
       <NvlSidePanel.Title>
