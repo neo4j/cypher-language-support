@@ -26,8 +26,8 @@
     "build": "tsc --declaration --outDir dist/",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run",
-    "test:e2e": "playwright test -c playwright-ct.config.ts",
-    "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui",
+    "test:e2e": "NODE_OPTIONS=--max-old-space-size=8192 playwright test -c playwright-ct.config.ts",
+    "test:e2e-ui": "NODE_OPTIONS=--max-old-space-size=8192 playwright test -c playwright-ct.config.ts --ui",
     "benchmark": "BENCHMARKING=true playwright test -c playwright-ct.config.ts -g \"benchmarking & performance test session\""
   },
   "repository": {
@@ -39,7 +39,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=22.15.0"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.17.0",
