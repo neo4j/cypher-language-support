@@ -1927,8 +1927,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this.removeIndentation(argsIndent);
-    // Check for right paranthesis
-    // Should not avoid break if paranthesis is missing
+    // Check for right parenthesis
+    // Should not avoid break if parenthesis is missing
     // See test 'incomplete function call'
     if (n === 1 && ctx.RPAREN()) {
       this.avoidBreakBetween();
