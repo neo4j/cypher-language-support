@@ -39,7 +39,10 @@ export interface BaseChunk {
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
   mustBreak?: boolean;
+  // If the chunk wants to special split
+  // Opening bracket in list e.g.
   specialSplit?: boolean;
+  // If Chunk only has one child, therefore can allow a special split
   oneItem?: boolean;
 }
 
