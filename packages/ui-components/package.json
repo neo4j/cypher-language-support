@@ -40,8 +40,8 @@
     "node": ">=18.18.2"
   },
   "dependencies": {
-    "@neo4j-ndl/base": "^3.4.1",
-    "@neo4j-ndl/react": "^3.5.3",
+    "@neo4j-ndl/base": "catalog:",
+    "@neo4j-ndl/react": "catalog:",
     "@neo4j-nvl/base": "0.3.8",
     "@neo4j-nvl/react": "0.3.8",
     "@tailwindcss/vite": "^4.1.4",

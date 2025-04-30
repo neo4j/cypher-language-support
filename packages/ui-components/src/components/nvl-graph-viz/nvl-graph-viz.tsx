@@ -12,6 +12,14 @@ import { NvlDetailsPanel } from './nvl-details-pane';
 import { NvlOverviewPane } from './nvl-overview-pane';
 import { NvlSidePanel } from './nvl-side-panel';
 import './nvl-styles.css';
+import { IconButtonArray, Tooltip, IconButton } from '@neo4j-ndl/react';
+import {
+  FitToScreenIcon,
+  MagnifyingGlassMinusIconOutline,
+  MagnifyingGlassPlusIconOutline,
+  SidebarLineRightIcon,
+} from '@neo4j-ndl/react/icons';
+import { DownloadButton } from '../shared/download-button';
 
 const graphStyling = { node: {}, relationship: {}, stylingPrecedence: [] };
 
@@ -25,6 +33,28 @@ export const NvlGraphViz = (currentGraph: {
   const [selected, setSelected] = useState<
     { type: 'node' | 'relationship'; id: string } | undefined
   >(undefined);
+  // TODO: store the last setting
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
+
+  const handleZoomIn = () => {
+    nvlRef.current?.setZoom(nvlRef.current.getScale() * 1.3);
+  };
+
+  const handleZoomOut = () => {
+    nvlRef.current?.setZoom(nvlRef.current.getScale() * 0.7);
+  };
+
+  const handleZoomToFit = () => {
+    nvlRef.current?.fit(
+      currentNvlGraph.nodes.map((node) => node.id),
+      {},
+    );
+  };
+
+  const handleSidePanelToggle = () => {
+    const newIsSidePanelOpen = !isSidePanelOpen;
+    setIsSidePanelOpen(newIsSidePanelOpen);
+  };
 
   const handleNodeClick = (nodeIds: string | string[]) => {
     const id = Array.isArray(nodeIds) ? nodeIds[0] : nodeIds;
@@ -103,6 +133,13 @@ export const NvlGraphViz = (currentGraph: {
     );
   }, [selected, currentGraph]);
 
+  const downloadables = [
+    {
+      title: 'Download as PNG',
+      download: () => nvlRef.current?.saveToFile({}),
+    },
+  ];
+
   return (
     <div
       className={cx(
@@ -144,9 +181,87 @@ export const NvlGraphViz = (currentGraph: {
           // TODO: add nvlCallbacks
           ref={nvlRef}
         />
+
+        <div className="absolute right-2 top-[10px] z-10 flex flex-row gap-2">
+          <DownloadButton
+            downloadables={downloadables}
+            floating
+            buttonClassName="bg-palette-neutral-bg-weak"
+          />
+          <Tooltip placement="bottom" type="simple">
+            <Tooltip.Trigger hasButtonWrapper>
+              <IconButton
+                size="small"
+                onClick={handleSidePanelToggle}
+                isFloating
+                ariaLabel="Toggle node properties panel"
+                className="bg-palette-neutral-bg-weak"
+                htmlAttributes={{
+                  'aria-pressed': isSidePanelOpen,
+                }}
+              >
+                <SidebarLineRightIcon className="text-palette-neutral-text-weak" />
+              </IconButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content className="n-body-small">
+              {isSidePanelOpen ? 'Close panel' : 'Open panel'}
+            </Tooltip.Content>
+          </Tooltip>
+        </div>
+
+        <IconButtonArray
+          orientation="vertical"
+          isFloating
+          className="absolute bottom-2 right-2"
+        >
+          <Tooltip placement="left" type="simple">
+            <Tooltip.Trigger hasButtonWrapper>
+              <IconButton
+                ariaLabel="Zoom in"
+                size="small"
+                isClean
+                isGrouped
+                onClick={handleZoomIn}
+              >
+                <MagnifyingGlassPlusIconOutline />
+              </IconButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content className="n-body-small">Zoom in</Tooltip.Content>
+          </Tooltip>
+          <Tooltip placement="left" type="simple">
+            <Tooltip.Trigger hasButtonWrapper>
+              <IconButton
+                ariaLabel="Zoom out"
+                size="small"
+                isClean
+                isGrouped
+                onClick={handleZoomOut}
+              >
+                <MagnifyingGlassMinusIconOutline />
+              </IconButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content className="n-body-small">Zoom out</Tooltip.Content>
+          </Tooltip>
+          <Tooltip placement="left" type="simple">
+            <Tooltip.Trigger hasButtonWrapper>
+              <IconButton
+                ariaLabel="Zoom to fit"
+                size="small"
+                isClean
+                isGrouped
+                onClick={handleZoomToFit}
+              >
+                <FitToScreenIcon />
+              </IconButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content className="n-body-small">
+              Zoom to fit
+            </Tooltip.Content>
+          </Tooltip>
+        </IconButtonArray>
       </div>
-      {/* TODO: add UI controls and controlling the sidebar resize */}
-      <NvlSidePanel open={true} defaultWidth={150}>
+      {/* TODO: store the sidebar resize value */}
+      <NvlSidePanel open={isSidePanelOpen} defaultWidth={150}>
         {selectedItem !== undefined ? (
           <NvlDetailsPanel
             inspectedItem={selectedItem}

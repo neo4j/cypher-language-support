@@ -34,6 +34,40 @@ export const tokens = {
     '5xl': '20px',
     full: '9999px',
   },
+  breakpointNextOne: {
+    xs: {
+      min: '320px',
+      med: '360px',
+      max: '375px',
+    },
+    sm: {
+      min: '512px',
+      med: '768px',
+      max: '864px',
+    },
+    md: {
+      min: '1024px',
+      med: '1280px',
+      max: '1440px',
+    },
+    lg: {
+      min: '1680px',
+      max: '1920px',
+    },
+  },
+  breakpointNextTwo: {
+    '5xs': '320px',
+    '4xs': '360px',
+    '3xs': '375px',
+    '2xs': '512px',
+    xs: '768px',
+    sm: '864px',
+    md: '1024px',
+    lg: '1280px',
+    xl: '1440px',
+    '2xl': '1680px',
+    '3xl': '1920px',
+  },
   breakpoints: {
     xs: '450px',
     sm: '640px',
@@ -254,6 +288,13 @@ export const tokens = {
       yellow: '#FAFF00',
       periwinkle: '#6A82FF',
     },
+  },
+  contentMaxWidthNext: {
+    extraLight: '768px',
+    light: '1024px',
+    heavy: '1680px',
+    max: '1920px',
+    full: '100%',
   },
   theme: {
     dark: {

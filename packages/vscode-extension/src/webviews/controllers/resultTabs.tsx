@@ -74,8 +74,8 @@ export function getResultContent(
 ) {
   return (
     <div id="query-result">
-      <details>
-        <summary>Query Details</summary>
+      <details style={{ border: 'none' }}>
+        <summary style={{ border: 'none' }}>Query Details</summary>
         <pre>{statement}</pre>
       </details>
       {visualizationEnabled ? (
