@@ -373,7 +373,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const modifier: IndentationModifier = {
       id: indentId,
       change: 1,
-      appliedIndentation: true,
+      isApplied: true,
     };
     this.indentStack.push(modifier);
     this._addIndentationModifier(modifier);
@@ -389,7 +389,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       ...lastModifier,
       change: -1,
     };
-    lastModifier.removeIndentation = modifier;
+    // Adds reference of removeModifier to addModifier
+    // This allows addModifier to tell removeModifier if it has been applied
+    lastModifier.removeReference = modifier;
     this._addIndentationModifier(modifier);
   };
 

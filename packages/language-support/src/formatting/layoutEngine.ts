@@ -63,7 +63,7 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
 function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
   for (const indent of chunk.indentation) {
     if (applySpecialBreak(state, chunk, nextChunk)) {
-      indent.removeIndentation.appliedIndentation = false;
+      indent.removeReference.isApplied = false;
     } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
@@ -73,7 +73,7 @@ function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
         (item) => item.id === indent.id,
       );
 
-      if (!state.activeIndentations[indexToRemove]?.appliedIndentation) {
+      if (!state.activeIndentations[indexToRemove]?.isApplied) {
         continue;
       }
 
