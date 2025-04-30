@@ -279,7 +279,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Skips any preceding comments or special chunks we did not expect.
    */
   setChunkProperty = (
-    propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
+    propertyName: 'noSpace' | 'noBreak' | 'mustBreak' | 'specialSplit',
   ): void => {
     if (this.chunkList.length === 0) {
       return;
@@ -293,6 +293,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   avoidSpaceBetween = (): void => {
     this.setChunkProperty('noSpace');
+  };
+
+  setSpecialSplit = (): void => {
+    this.setChunkProperty('specialSplit');
   };
 
   avoidBreakBetween = (): void => {
@@ -2025,7 +2029,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMap = (ctx: MapContext) => {
     const mapGrp = this.startGroup();
     this._visit(ctx.LCURLY());
-    this.lastInChunkList().specialSplit = true;
+    this.setSpecialSplit();
     const mapIndent = this.addIndentation();
     this.avoidSpaceBetween();
     const n = ctx.expression_list().length;
@@ -2071,7 +2075,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMapProjection = (ctx: MapProjectionContext) => {
     const mapWrappingGrp = this.startGroup();
     this._visit(ctx.variable());
-    this.lastInChunkList().specialSplit = true;
+    this.setSpecialSplit();
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const mapProjectionIndent = this.addIndentation();
@@ -2130,7 +2134,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     const listGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
-    this.lastInChunkList().specialSplit = true;
+    this.setSpecialSplit();
     const listIndent = this.addIndentation();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
