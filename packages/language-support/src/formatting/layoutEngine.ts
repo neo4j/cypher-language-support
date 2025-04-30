@@ -159,6 +159,11 @@ function validateFinalState(state: State) {
 }
 
 function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
+  // First, check if the next chunk is a special split
+  // because that one includes the allowance of special split, opening bracket e.g.
+  // Current chunk has oneItem set only if it has one child
+  // Lastly we should not special split if the chunk contains comment
+  // as it might cause the comment to refer to the wrong thing
   return nextChunk?.specialSplit && chunk.oneItem && !chunk.comment;
 }
 
