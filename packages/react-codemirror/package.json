@@ -39,7 +39,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=22.15.0"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.17.0",
