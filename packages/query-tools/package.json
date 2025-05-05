@@ -22,7 +22,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=22.15.0"
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
@@ -36,6 +36,6 @@
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0"
+    "@types/node": "^22.15.0"
   }
 }

@@ -44,7 +44,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=22.15.0"
   },
   "dependencies": {
     "antlr4": "4.13.2",
