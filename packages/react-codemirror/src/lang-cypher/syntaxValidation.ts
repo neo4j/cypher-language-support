@@ -4,7 +4,8 @@ import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
-import {WorkerURL} from '@neo4j-cypher/lint-worker'
+
+const WorkerURL = new URL('./lintWorker', import.meta.url).href;
 
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
