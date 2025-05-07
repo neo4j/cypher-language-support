@@ -5,7 +5,7 @@ import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
-const WorkerURL = new URL('./lintWorker', import.meta.url).href;
+const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
@@ -24,6 +24,8 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (query.length === 0) {
       return [];
     }
+
+    console.log(WorkerURL)
 
     try {
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
