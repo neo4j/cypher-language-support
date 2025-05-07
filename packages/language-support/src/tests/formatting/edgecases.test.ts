@@ -189,7 +189,7 @@ RETURN
     description:
       CASE
         WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-        ELSE p.Description[.. "VM6fSkTL"]
+        ELSE p.Description[.."VM6fSkTL"]
       END
   } AS node,
   r,
@@ -198,7 +198,7 @@ RETURN
     description:
       CASE
         WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-        ELSE b.Description[.. "NHIwucAy"]
+        ELSE b.Description[.."NHIwucAy"]
       END
   } AS endNode;`.trimStart();
     verifyFormatting(query, expected);
@@ -219,7 +219,7 @@ RETURN
     description:
       CASE p.age
         WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-        ELSE p.Description[.. "VM6fSkTL"]
+        ELSE p.Description[.."VM6fSkTL"]
       END
   } AS node,
   r,
@@ -228,7 +228,7 @@ RETURN
     description:
       CASE p.age
         WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-        ELSE b.Description[.. "NHIwucAy"]
+        ELSE b.Description[.."NHIwucAy"]
       END
   } AS endNode;`;
     verifyFormatting(query, expected);
@@ -1113,6 +1113,54 @@ OR ( aaaaaa ) < - [ : aaaaaa ] - ( : aaaaaa ) - [ : aaaaaa ] - > ( aaaaaa ) //IK
 WHERE
   (aaaaaa)-[:aaaaaa|aaaaaa]-(aaaaaa) OR //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
   (aaaaaa)<-[:aaaaaa]-(:aaaaaa)-[:aaaaaa]->(aaaaaa) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
+    verifyFormatting(query, expected);
+  });
+
+  test('postfix after a collect', () => {
+    const query = `WITH DISTINCT
+  COLLECT {
+    MATCH (p)-[:XYZ_ABCD12]->(q)
+    RETURN q.blnk
+  }
+  [
+  "Ab12Cd34"] AS sdflkjl52_2462,
+  qwer1["Bc34Df56"] AS ftgy3_hjkl_pqr23,
+  qwer1["Gh78Ij90"] AS zxcv5_bnmd_qwe45,
+  qwer1["Kl12Mn34"] AS rtyu6_asdf_ghj67,
+  qwer1
+
+RETURN *`;
+    const expected = `WITH DISTINCT
+  COLLECT {
+    MATCH (p)-[:XYZ_ABCD12]->(q)
+    RETURN q.blnk
+  }["Ab12Cd34"] AS sdflkjl52_2462,
+  qwer1["Bc34Df56"] AS ftgy3_hjkl_pqr23,
+  qwer1["Gh78Ij90"] AS zxcv5_bnmd_qwe45,
+  qwer1["Kl12Mn34"] AS rtyu6_asdf_ghj67,
+  qwer1
+
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('range postfix after a collect', () => {
+    const query = `MATCH (n)
+RETURN
+  COLLECT {
+    MATCH (n)
+    RETURN n
+  }
+  [
+  1
+  ..
+  10]`;
+    const expected = `MATCH (n)
+RETURN
+  COLLECT {
+    MATCH (n)
+    RETURN n
+  }[1..10]`;
     verifyFormatting(query, expected);
   });
 });
