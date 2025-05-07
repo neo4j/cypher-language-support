@@ -553,6 +553,8 @@ WITH // Passes results to the next clause
   p,
   q
 UNWIND // Expands lists into multiple rows
+  [1, 2, 3] AS num;
+RETURN // Expands lists into multiple rows
   [1, 2, 3] AS num;`.trimStart();
     const expected = query.trim();
     verifyFormatting(query, expected);
@@ -564,6 +566,28 @@ MATCH // One comment.
   // Another comment. Really?
   (m)-[:RELATION]->(n)
 RETURN m, n`.trim();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('long list in a return with comment', () => {
+    const query = `
+RETURN // test
+  [
+    "OCj0AswA",
+    "dFRbj1s3",
+    "oMbdvgm7",
+    "L4Vey8xn",
+    "GNgeDIkA",
+    "pU4RE0lM",
+    "M6XNVJsO",
+    "NcdW0tuB",
+    "Pf6RIuP4",
+    "6tKStKwl",
+    "HfvahDu5",
+    "gJoq3HnU",
+    "g7LjxbGD"
+  ]
+RETURN p`.trimStart();
     const expected = query;
     verifyFormatting(query, expected);
   });
