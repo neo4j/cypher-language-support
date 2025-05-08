@@ -1,6 +1,6 @@
 # neo4j-for-vscode
 
-## 1.10.2
+## 1.11.0
 
 - Adds support for the access-mode console command
 - Updates grammar and semantic analysis
