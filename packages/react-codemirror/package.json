@@ -18,13 +18,12 @@
     "codemirror 6"
   ],
   "version": "2.0.0-next.23",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --declaration --outDir dist/ && pnpm copy-lint-worker",
-    "copy-lint-worker": "copyfiles -u 4 ../lint-worker/dist/esm/lintWorker.mjs dist/src/lang-cypher",
+    "build": "tsc --declaration --outDir dist/",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
@@ -55,13 +54,11 @@
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/lint-worker": "workspace:*",
     "@types/prismjs": "^1.26.3",
-    "@types/workerpool": "^6.4.7",
     "fastest-levenshtein": "^1.0.16",
     "lodash.debounce": "^4.0.8",
     "prismjs": "^1.29.0",
     "style-mod": "^4.1.2",
-    "vscode-languageserver-types": "^3.17.3",
-    "workerpool": "^9.0.4"
+    "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
     "@neo4j-ndl/base": "^3.2.10",
@@ -71,7 +68,6 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.3.1",
-    "copyfiles": "^2.4.1",
     "jsdom": "^24.1.1",
     "lodash": "^4.17.21",
     "playwright": "^1.51.1",

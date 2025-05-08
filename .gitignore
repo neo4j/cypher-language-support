@@ -20,3 +20,4 @@ benchmarks.txt
 .idea/
 vite.config.ts.timestamp*
 .wdio-vscode-service
+stats.html

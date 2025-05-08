@@ -1,17 +1,13 @@
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Extension } from '@codemirror/state';
+import {
+  pool,
+  WorkerCancellationError,
+  type LinterTask,
+  type LintWorker,
+} from '@neo4j-cypher/lint-worker';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
-import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
-import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
-
-const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
-
-const pool = workerpool.pool(WorkerURL, {
-  minWorkers: 2,
-  workerOpts: { type: 'module' },
-  workerTerminateTimeout: 2000,
-});
 
 let lastSemanticJob: LinterTask | undefined;
 
@@ -24,8 +20,6 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (query.length === 0) {
       return [];
     }
-
-    console.log(WorkerURL)
 
     try {
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
@@ -57,7 +51,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       });
       return a;
     } catch (err) {
-      if (!(err instanceof workerpool.Promise.CancellationError)) {
+      if (!(err instanceof WorkerCancellationError)) {
         console.error(String(err) + ' ' + query);
       }
     }

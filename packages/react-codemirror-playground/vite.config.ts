@@ -9,7 +9,7 @@ export default defineConfig({
     visualizer({
       include: [{ file: '*/**/*.js' }, { file: '*/**/*.mjs' }],
       exclude: { file: '**/node_modules/**/*' },
-    }) as PluginOption,
+    }) as unknown as PluginOption,
   ],
   base: './',
 });
