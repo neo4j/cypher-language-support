@@ -23,7 +23,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --declaration --outDir dist/ && pnpm copy-lint-worker",
+    "build": "pnpm copy-lint-worker && tsc --declaration --outDir dist/",
     "copy-lint-worker": "copyfiles -u 4 ../lint-worker/dist/esm/lintWorker.mjs dist/src/lang-cypher",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run",
