@@ -897,7 +897,7 @@ meaning that it expects at least 1 argument of type ANY
     ).toEqual([
       {
         message:
-          "The query used a deprecated field from a procedure. ('nodes' returned by 'apoc.meta.graphSample' is deprecated.)",
+          "The procedure has a deprecated field. ('nodes' returned by 'apoc.meta.graphSample' is deprecated.)",
         offsets: {
           end: 30,
           start: 0,
