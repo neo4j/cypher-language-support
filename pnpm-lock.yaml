@@ -124,10 +124,6 @@ importers:
       neo4j-driver:
         specifier: 'catalog:'
         version: 5.12.0
-    devDependencies:
-      '@types/node':
-        specifier: ^22.15.0
-        version: 22.15.3
 
   packages/react-codemirror:
     dependencies:
