@@ -1,16 +1,14 @@
 import { _internalFeatureFlags } from '@neo4j-cypher/language-support';
+import {
+  pool,
+  WorkerCancellationError,
+  type LinterTask,
+  type LintWorker,
+} from '@neo4j-cypher/lint-worker';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
-import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import workerpool from 'workerpool';
-import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
-
-const pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
-  minWorkers: 2,
-  workerTerminateTimeout: 2000,
-});
 
 let lastSemanticJob: LinterTask | undefined;
 
@@ -41,7 +39,7 @@ async function rawLintDocument(
 
     sendDiagnostics(result);
   } catch (err) {
-    if (!(err instanceof workerpool.Promise.CancellationError)) {
+    if (!(err instanceof WorkerCancellationError)) {
       console.error(err);
     }
   }

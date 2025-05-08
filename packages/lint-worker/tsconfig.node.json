@@ -7,5 +7,5 @@
     "esModuleInterop": true,
     "allowJs": true
   },
-  "include": ["*.config.ts"]
+  "include": ["*.config.ts", "vite.config.node.ts"]
 }

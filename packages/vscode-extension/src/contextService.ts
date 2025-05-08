@@ -1,4 +1,4 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import type { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/types';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';

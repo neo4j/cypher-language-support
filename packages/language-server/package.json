@@ -17,8 +17,6 @@
     "language server"
   ],
   "version": "2.0.0-next.21",
-  "main": "./dist/server.js",
-  "types": "src/server.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -40,18 +38,27 @@
     "lodash.debounce": "^4.0.8",
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "^8.1.0",
-    "vscode-languageserver-textdocument": "^1.0.8",
-    "workerpool": "^9.0.4"
+    "vscode-languageserver-textdocument": "^1.0.8"
   },
   "scripts": {
-    "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm bundle-worker",
-    "bundle-worker": "copyfiles -u 4 ../lint-worker/dist/cjs/lintWorker.cjs dist/",
-    "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require",
+    "build": "tsc -b && pnpm bundle && pnpm make-executable",
+    "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require --metafile=meta.json",
     "make-executable": "cd dist && echo '#!/usr/bin/env node' > cypher-language-server && cat cypher-language-server.js >> cypher-language-server",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9",
-    "copyfiles": "^2.4.1"
+    "@types/lodash.debounce": "^4.0.9"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "require": "./dist/server.js",
+      "import": "./dist/server.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "require": "./dist/types.js",
+      "import": "./dist/types.js"
+    }
   }
 }

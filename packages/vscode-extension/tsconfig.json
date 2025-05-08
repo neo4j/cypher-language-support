@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "jsx": "react-jsx",
-    "types": ["@wdio/globals/types"]
+    "types": ["@wdio/globals/types"],
+    "moduleResolution": "bundler"
   }
 }
