@@ -5,6 +5,9 @@ inputs:
     required: true
     default: 'chromium'
 
+env:
+  NODE_OPTIONS: '--max_old_space_size=8192'
+
 runs:
   using: 'composite'
   steps:

@@ -1,0 +1,62 @@
+{
+  "name": "@neo4j-cypher/lint-worker",
+  "description": "Cypher Lint Worker",
+  "author": "Neo4j Inc.",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "files": [
+    "./dist",
+    "./src",
+    "package.json",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "lint worker"
+  ],
+  "version": "2025.4.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18.18.2"
+  },
+  "dependencies": {
+    "@neo4j-cypher/language-support": "workspace:*",
+    "workerpool": "^9.0.4"
+  },
+  "scripts": {
+    "build": "concurrently 'pnpm build-cjs' 'pnpm build-esm' 'pnpm build-types'",
+    "build-cjs": "esbuild ./src/nodeEntrypoint.ts ./src/lintWorker.ts --bundle --platform=node --conditions=require --outdir=dist/cjs --format=cjs --minify --out-extension:.js=.cjs",
+    "build-esm": "vite build",
+    "clean": "rm -rf dist",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types"
+  },
+  "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
+    "vite": "^4.5.10"
+  },
+  "types": "./dist/types/webEntrypoint.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/webEntrypoint.d.ts",
+      "require": "./dist/cjs/nodeEntrypoint.cjs",
+      "import": "./dist/esm/lint-worker-web.mjs",
+      "default": "./dist/esm/lint-worker-web.mjs"
+    },
+    "./lintWorker": {
+      "types": "./dist/types/lintWorker.d.ts",
+      "require": "./dist/cjs/lintWorker.cjs",
+      "import": "./dist/esm/lintWorker.mjs",
+      "default": "./dist/esm/lintWorker.mjs"
+    }
+  }
+}
