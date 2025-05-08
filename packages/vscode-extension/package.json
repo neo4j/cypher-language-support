@@ -418,7 +418,7 @@
   "scripts": {
     "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "pnpm build",
-    "bundle-language-server": "cd ../language-server && pnpm bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && pnpm bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
+    "bundle-language-server": "cd ../language-server && pnpm bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && pnpm bundle-worker && cp dist/lintWorker.cjs ../vscode-extension/dist/",
     "bundle-extension": "node ./esbuild-extension.js --production",
     "update-ndl-css": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
     "bundle-extension:dev": "node ./esbuild-extension.js",
