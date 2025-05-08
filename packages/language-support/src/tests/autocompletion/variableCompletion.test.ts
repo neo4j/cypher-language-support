@@ -138,7 +138,7 @@ describe('unscoped variable completions', () => {
 
   test('does not suggest existing variables in expressions that create variables', () => {
     const cases = ['reduce(', 'all(', 'any(', 'none(', 'single('];
-    const base = 'WITH 1 as a RETURN ';
+    const base = 'WITH 1 as a MATCH (n) WHERE (';
 
     cases.forEach((c) => {
       testCompletions({
