@@ -24,6 +24,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc --declaration --outDir dist/",
+    "dev": "tsc --watch",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",

@@ -30,12 +30,10 @@
     "neo4j-driver": "catalog:"
   },
   "scripts": {
-    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build": "concurrently 'npm:build-esm' 'npm:build-commonjs'",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
+    "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.0"
   }
 }
