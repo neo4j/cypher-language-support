@@ -1,5 +1,11 @@
 # neo4j-for-vscode
 
+## 1.11.0
+
+- Adds support for the access-mode console command
+- Updates grammar and semantic analysis
+- Updates formatter handling of CALL
+
 ## 1.10.0
 
 - Adds new version of the Cypher formatting
