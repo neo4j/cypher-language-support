@@ -19,7 +19,7 @@ jobs:
       - name: Check date if run on schedule
         id: check_skip
         run: |
-          DAY=$(date +'%d')
+          DAY=$(date +'%-d')
           if [[ "$DAY" -ge 8 ]] && [[ "${{ github.event_name }}" == "schedule" ]]; then
             echo "Skipping fetch"
             echo "skip=true" >> $GITHUB_OUTPUT
@@ -89,7 +89,7 @@ jobs:
         run: rm -f grammar.zip && rm -f semantic-analysis-js.zip
 
       - name: Build project
-        uses: ./.github/actions/setup-and-build-project
+        uses: ./.github/actions/setup-and-build
       
       - name: Create New Branch Name
         run: |

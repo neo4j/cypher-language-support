@@ -47,6 +47,8 @@
     "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm bundle-worker",
     "bundle-worker": "copyfiles -u 4 ../lint-worker/dist/cjs/lintWorker.cjs dist/",
     "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require",
+    "bundle-worker": "esbuild ./src/lintWorker.ts --bundle --format=cjs --platform=node --conditions=require --outfile=dist/lintWorker.js --minify",
+    "dev": "tsc --watch",
     "make-executable": "cd dist && echo '#!/usr/bin/env node' > cypher-language-server && cat cypher-language-server.js >> cypher-language-server",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },

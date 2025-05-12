@@ -1,11 +1,11 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
+  _internalFeatureFlags,
   cypher25Supported,
   cypherVersions,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
-  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';

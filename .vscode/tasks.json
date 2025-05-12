@@ -13,11 +13,12 @@
     },
     {
       "type": "npm",
-      "script": "build-vscode",
+      "script": "dev-vscode",
       "group": "build",
-      "problemMatcher": [],
-      "label": "npm: build-vscode",
-      "detail": "pnpm build-vscode"
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "label": "npm: dev-vscode",
+      "detail": "pnpm dev-vscode"
     }
   ]
 }
