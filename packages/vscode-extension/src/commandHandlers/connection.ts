@@ -205,6 +205,9 @@ export async function runCypher(): Promise<void> {
 
     const selectedText = getSelectedText(editor);
     const documentUri = editor.document.uri;
+
+    await commands.executeCommand('neo4jQueryDetails.focus');
+
     await cypherRunner.run(activeConnection, documentUri, selectedText);
   }
 }

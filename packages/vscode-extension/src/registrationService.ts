@@ -1,4 +1,4 @@
-import { commands, Disposable, window } from 'vscode';
+import { commands, Disposable, ExtensionContext, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
@@ -28,15 +28,25 @@ import {
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvider';
+import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetails';
+import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualization';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
  * @returns An array of disposables.
  */
-export function registerDisposables(): Disposable[] {
+export function registerDisposables(context: ExtensionContext): Disposable[] {
   const disposables = Array<Disposable>();
 
   disposables.push(
+    window.registerWebviewViewProvider(
+      'neo4jQueryDetails',
+      new Neo4jQueryDetailsProvider(context),
+    ),
+    window.registerWebviewViewProvider(
+      'neo4jQueryVisualization',
+      new Neo4jQueryVisualizationProvider(context),
+    ),
     window.registerTreeDataProvider(
       'neo4jConnections',
       connectionTreeDataProvider,
