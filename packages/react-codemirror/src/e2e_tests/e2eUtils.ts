@@ -110,9 +110,9 @@ export class CypherEditorPage {
     });
     if (!hasExpectedMessage) {
       throw new Error(
-        'Expected linting to contain:\n' +
+        'Expected linting to contain:\n\t' +
           expectedMsg +
-          '\nbut got:\n' +
+          '\nbut got:\n\t' +
           tooltipTexts.toString(),
       );
     }
