@@ -104,7 +104,7 @@ export class CypherEditorPage {
     let hasExpectedMessage = false;
 
     tooltipTexts.forEach((tooltip) => {
-      if (tooltip.includes(expectedMsg)) {
+      if (tooltip && tooltip.includes(expectedMsg)) {
         hasExpectedMessage = true;
       }
     });
