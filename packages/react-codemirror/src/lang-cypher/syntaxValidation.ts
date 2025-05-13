@@ -25,8 +25,6 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       return [];
     }
 
-    console.log(WorkerURL)
-
     try {
       if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
         void lastSemanticJob.cancel();
@@ -36,7 +34,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       lastSemanticJob = proxyWorker.lintCypherQuery(
         query,
         config.schema ?? {},
-        //config.featureFlags ?? {},
+        config.featureFlags ?? {},
       );
       const result = await lastSemanticJob;
 
