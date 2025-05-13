@@ -182,6 +182,22 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
   );
 });
 
+test('Syntax highlighting works as expected with multiple separate linting messages', async ( {
+  page,
+  mount
+}) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `MATCH (n)--(m) CALL (n) {RETURN id(n) AS b} RETURN apoc.create.uuid(), a`;
+
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+  await expect(
+    editorPage.page.locator('.cm-deprecated-element').last(),
+  ).toBeVisible({ timeout: 10000 });
+  await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
+  await editorPage.checkWarningMessage('apoc.create.uuid', 'Function apoc.create.uuid is deprecated.');
+  await editorPage.checkErrorMessage('a', 'Variable `a` not defined');
+})
+
 test('Strikethroughs are shown for deprecated functions', async ({
   page,
   mount,
