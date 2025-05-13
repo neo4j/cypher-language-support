@@ -97,7 +97,6 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         'queryDetails.js',
       ),
     );
-
     const ndlCssPath = Uri.file(
       path.join(
         extensionContext.extensionPath,
@@ -106,11 +105,22 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         'ndl.css',
       ),
     );
+    const queryDetailsCssPath = Uri.file(
+      path.join(
+        extensionContext.extensionPath,
+        'resources',
+        'styles',
+        'queryDetails.css',
+      ),
+    );
 
     const queryDetailsContainerJs = webview
       .asWebviewUri(queryDetailsContainerJsPath)
       .toString();
     const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
+    const queryDetailsCssUri = webview
+      .asWebviewUri(queryDetailsCssPath)
+      .toString();
 
     const nonce = getNonce();
 
@@ -144,20 +154,11 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
             --text: #ccc;
             --error: #bbb;
           }
-    
-          table{border-collapse:collapse; width: 100%}
-          table,td,th{border:1px solid var(--border); padding:5px; vertical-align: top}
-          th {font-weight: bold}
-          details {margin-bottom: 24px; padding: 12px; border: 1px solid var(--border)}
-          details summary {border-bottom: 1px solid var(--border); padding: 6px}
-          pre {
-            max-height: 280px;
-            overflow: auto;
-          }
           </style>
           <link href="${ndlCssUri.toString()}" rel="stylesheet">
+          <link href="${queryDetailsCssUri.toString()}" rel="stylesheet">
           </head>
-          <body>
+          <body style="margin: 0; padding: 0;">
           <div id="queryDetails"></div> 
           <script nonce="${nonce}" src="${queryDetailsContainerJs}"></script>
           </body>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Result, ResultMessage } from '../resultWindow';
+import { Collapsible } from '../../components/collapsible';
 
 interface vscode {
   postMessage(message: ResultsTabMessage): void;
@@ -22,6 +23,11 @@ export type ResultsTabMessage = {
 
 export function QueryDetails() {
   const [statementResults, setStatementResults] = useState<ResultState>([]);
+  const [openStatement, setOpenStatement] = useState<string>(null);
+
+  const handleCollapsibleToggle = (statement: string) => {
+    setOpenStatement((prev) => (prev === statement ? null : statement));
+  };
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -68,10 +74,25 @@ export function QueryDetails() {
     <div>
       {statementResults.length > 0 ? (
         statementResults.map((statements, i) => (
-          <p key={i}>{statements.statement}</p>
+          <Collapsible
+            key={i}
+            title={statements.statement}
+            isOpen={openStatement === statements.statement}
+            onToggle={() => handleCollapsibleToggle(statements.statement)}
+          >
+            {statements.state === 'executing' && 'Executing...'}
+            {statements.state != 'executing' &&
+              statements.state.type === 'error' &&
+              statements.state.errorMessage}
+            {statements.state != 'executing' &&
+              statements.state.type === 'success' &&
+              statements.state.result.querySummary}
+          </Collapsible>
         ))
       ) : (
-        <p className="n-mt-2">Run a Cypher query to see the details</p>
+        <div className="n-px-token-5 n-py-token-4">
+          Run a Cypher query to see the details
+        </div>
       )}
     </div>
   );
