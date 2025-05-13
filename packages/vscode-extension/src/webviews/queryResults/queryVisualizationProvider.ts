@@ -3,11 +3,7 @@ import { WebviewViewProvider, ExtensionContext, WebviewView } from 'vscode';
 export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
   constructor(private readonly context: ExtensionContext) {}
 
-  resolveWebviewView(
-    webviewView: WebviewView,
-    // context: WebviewViewResolveContext,
-    // _token: CancellationToken,
-  ) {
+  resolveWebviewView(webviewView: WebviewView) {
     webviewView.webview.options = {
       enableScripts: true,
     };

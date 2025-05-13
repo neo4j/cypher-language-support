@@ -28,8 +28,8 @@ import {
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvider';
-import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetails';
-import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualization';
+import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetailsProvider';
+import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualizationProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -37,11 +37,12 @@ import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVi
  */
 export function registerDisposables(context: ExtensionContext): Disposable[] {
   const disposables = Array<Disposable>();
+  const queryDetailsProvider = new Neo4jQueryDetailsProvider(context);
 
   disposables.push(
     window.registerWebviewViewProvider(
       'neo4jQueryDetails',
-      new Neo4jQueryDetailsProvider(context),
+      queryDetailsProvider,
     ),
     window.registerWebviewViewProvider(
       'neo4jQueryVisualization',
@@ -93,7 +94,11 @@ export function registerDisposables(context: ExtensionContext): Disposable[] {
         databaseInformationTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, runCypher),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () =>
+      runCypher(async (statements: string[]) => {
+        await queryDetailsProvider.executeStatements(statements);
+      }),
+    ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),

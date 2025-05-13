@@ -13,7 +13,12 @@ export default class CypherRunner {
 
   constructor() {}
 
-  async run(connection: Connection, uri: Uri, input: string) {
+  async run(
+    connection: Connection,
+    uri: Uri,
+    input: string,
+    resultsCallback: (statements: string[]) => Promise<void>,
+  ) {
     const statements = parseStatementsStrs(input);
     const statementParams = parseParameters(input, false);
     const filePath = uri.toString();
@@ -33,7 +38,10 @@ export default class CypherRunner {
       */
       resultWindow.statements = statements;
       resultWindow.connection = connection;
+      // todo, check the flag and execute one of them.
       await resultWindow.executeStatements();
+
+      await resultsCallback(statements);
     } else {
       // This path is platfom independent according to VSCode documentation
       const shortFileName = uri.path.split('/').pop();
@@ -48,6 +56,7 @@ export default class CypherRunner {
       // Remove on close
       resultWindow.panel.onDidDispose(() => this.results.delete(filePath));
 
+      await resultsCallback(statements);
       return resultWindow.run();
     }
   }
