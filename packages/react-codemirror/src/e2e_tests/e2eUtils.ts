@@ -82,7 +82,7 @@ export class CypherEditorPage {
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
       timeout: 10000,
     });
-    await expect(this.page.getByText(expectedMsg)).toBeVisible();
+    await this.checkHoverMessage(expectedMsg);
     /* Return the mouse to the beginning of the query and
        This is because if for example we have an overlay with a 
        first interaction that covers the element we want to perform
@@ -93,5 +93,15 @@ export class CypherEditorPage {
     await expect(
       this.page.locator('.cm-tooltip-hover').last(),
     ).not.toBeVisible();
+  }
+
+  private async checkHoverMessage(expectedMsg: string) {
+    const tooltips = await this.page.locator('.cm-tooltip-hover').all();
+
+    const tooltipTexts = await Promise.all(
+      tooltips.map((t) => t.textContent()),
+    );
+
+    expect(tooltipTexts).toContain(expectedMsg);
   }
 }
