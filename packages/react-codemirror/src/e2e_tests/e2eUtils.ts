@@ -101,13 +101,10 @@ export class CypherEditorPage {
     const tooltipTexts = await Promise.all(
       tooltips.map((t) => t.textContent()),
     );
-    let hasExpectedMessage = false;
+    const hasExpectedMessage = tooltipTexts.some(
+      (tooltip) => tooltip !== null && tooltip.includes(expectedMsg),
+    );
 
-    tooltipTexts.forEach((tooltip) => {
-      if (tooltip && tooltip.includes(expectedMsg)) {
-        hasExpectedMessage = true;
-      }
-    });
     if (!hasExpectedMessage) {
       throw new Error(
         'Expected linting to contain:\n\t' +
