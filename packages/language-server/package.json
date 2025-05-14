@@ -44,8 +44,8 @@
     "workerpool": "^9.0.4"
   },
   "scripts": {
-    "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm bundle-worker",
-    "bundle-worker": "copyfiles -u 4 ../lint-worker/dist/cjs/lintWorker.cjs dist/",
+    "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm copy-lint-worker",
+    "copy-lint-worker": "copyfiles -u 4 ../lint-worker/dist/cjs/lintWorker.cjs dist/",
     "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require",
     "dev": "tsc --watch",
     "make-executable": "cd dist && echo '#!/usr/bin/env node' > cypher-language-server && cat cypher-language-server.js >> cypher-language-server",

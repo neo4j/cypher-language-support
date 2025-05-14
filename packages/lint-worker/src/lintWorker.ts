@@ -6,7 +6,7 @@ import {
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
-export function lintCypherQuery(
+function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
   featureFlags: { consoleCommands?: boolean; cypher25?: boolean } = {},
