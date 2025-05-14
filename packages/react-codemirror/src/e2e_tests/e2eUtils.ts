@@ -82,7 +82,7 @@ export class CypherEditorPage {
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
       timeout: 10000,
     });
-    await this.checkHoverMessage(expectedMsg);
+    await this.checkHoverMessage(expectedMsg, type);
     /* Return the mouse to the beginning of the query and
        This is because if for example we have an overlay with a 
        first interaction that covers the element we want to perform
@@ -95,23 +95,19 @@ export class CypherEditorPage {
     ).not.toBeVisible();
   }
 
-  private async checkHoverMessage(expectedMsg: string) {
-    const tooltips = await this.page.locator('.cm-tooltip-hover').all();
+  private async checkHoverMessage(
+    expectedMsg: string,
+    type: 'error' | 'warning',
+  ) {
+    const locator =
+      type === 'error'
+        ? 'li.cm-diagnostic.cm-diagnostic-error'
+        : 'li.cm-diagnostic.cm-diagnostic-warning';
+    const tooltips = await this.page.locator(locator).all(); //('.cm-tooltip-hover').all();
 
     const tooltipTexts = await Promise.all(
       tooltips.map((t) => t.textContent()),
     );
-    const hasExpectedMessage = tooltipTexts.some(
-      (tooltip) => tooltip !== null && tooltip.includes(expectedMsg),
-    );
-
-    if (!hasExpectedMessage) {
-      throw new Error(
-        'Expected linting to contain:\n\t' +
-          expectedMsg +
-          '\nbut got:\n\t' +
-          tooltipTexts.toString(),
-      );
-    }
+    expect(tooltipTexts).toContain(expectedMsg);
   }
 }
