@@ -138,7 +138,7 @@ test('Semantic errors are correctly accumulated', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
 
@@ -153,12 +153,12 @@ test('Multiline errors are correctly placed', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'MATCH (n)',
-    'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+    'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
   );
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
 
@@ -178,7 +178,7 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
 
@@ -229,7 +229,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is deprecated.',
+    "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
   );
 });
 
@@ -250,13 +250,13 @@ test('Syntax validation depends on the Cypher version', async ({
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is deprecated.',
+    "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
   );
 
   await textField.fill('CYPHER 25 CALL apoc.create.uuids(5)');
 
   await editorPage.checkErrorMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is not present in the database.',
+    `Procedure apoc.create.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   );
 });
