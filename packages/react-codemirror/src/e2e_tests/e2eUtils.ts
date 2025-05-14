@@ -103,7 +103,7 @@ export class CypherEditorPage {
       type === 'error'
         ? 'li.cm-diagnostic.cm-diagnostic-error'
         : 'li.cm-diagnostic.cm-diagnostic-warning';
-    const tooltips = await this.page.locator(locator).all(); //('.cm-tooltip-hover').all();
+    const tooltips = await this.page.locator(locator).all();
 
     const tooltipTexts = await Promise.all(
       tooltips.map((t) => t.textContent()),
