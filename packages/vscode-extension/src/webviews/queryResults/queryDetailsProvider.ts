@@ -12,6 +12,7 @@ import { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
 import { getDeserializedParams } from '../../parameterService';
 import { toNativeTypes } from '../../typeUtils';
 import { ResultMessage, querySummary } from '../resultWindow';
+import { QueryResultsMessage, views } from './viewRegistry';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
@@ -20,10 +21,19 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
 
   resolveWebviewView(webviewView: WebviewView) {
     this.view = webviewView;
+    views.detailsView = webviewView;
+
     webviewView.webview.options = {
       enableScripts: true,
     };
-    webviewView.webview.html = this.renderQueryDetails(webviewView.webview); // `<html><body><h1>Hello from the panel!</h1></body></html>`;
+
+    webviewView.webview.html = this.renderQueryDetails();
+
+    webviewView.webview.onDidReceiveMessage((msg: QueryResultsMessage) => {
+      if (msg.to === 'visualizationView' && msg.type === 'statementSelect') {
+        void views.visualizationView.webview.postMessage(msg);
+      }
+    });
   }
 
   async executeStatements(statements: string[]) {
@@ -65,6 +75,11 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       };
     }
     await webview.postMessage(message);
+    await views.visualizationView.webview.postMessage({
+      type: 'executionUpdate',
+      result: message,
+      to: 'visualizationView',
+    });
   }
 
   private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
@@ -87,7 +102,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     }
   }
 
-  private renderQueryDetails(webview: WebviewView['webview']) {
+  private renderQueryDetails() {
     const extensionContext = getExtensionContext();
     const queryDetailsContainerJsPath = Uri.file(
       path.join(
@@ -114,11 +129,11 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       ),
     );
 
-    const queryDetailsContainerJs = webview
+    const queryDetailsContainerJs = this.view.webview
       .asWebviewUri(queryDetailsContainerJsPath)
       .toString();
-    const ndlCssUri = webview.asWebviewUri(ndlCssPath).toString();
-    const queryDetailsCssUri = webview
+    const ndlCssUri = this.view.webview.asWebviewUri(ndlCssPath).toString();
+    const queryDetailsCssUri = this.view.webview
       .asWebviewUri(queryDetailsCssPath)
       .toString();
 
@@ -134,7 +149,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
             and only allow scripts that have a specific nonce.
             -->
             <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
-              webview.cspSource
+              this.view.webview.cspSource
             }; script-src 'nonce-${nonce}';">
           <script nonce="${nonce}">
             const vscode = acquireVsCodeApi();

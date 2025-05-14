@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Result, ResultMessage } from '../resultWindow';
 import { Collapsible } from '../../components/collapsible';
+import { QueryResultsMessage } from '../queryResults/viewRegistry';
 
 interface vscode {
-  postMessage(message: ResultsTabMessage): void;
+  postMessage(message: QueryResultsMessage): void;
 }
 
 declare const vscode: vscode;
@@ -16,10 +17,6 @@ type ResultState = {
     | { type: 'error'; errorMessage: string }
     | { type: 'success'; result: Result };
 }[];
-
-export type ResultsTabMessage = {
-  type: 'resultsWindowLoaded';
-};
 
 export function QueryDetails() {
   const [statementResults, setStatementResults] = useState<ResultState>([]);
@@ -63,12 +60,27 @@ export function QueryDetails() {
     };
 
     window.addEventListener('message', handleMessage);
-    vscode.postMessage({ type: 'resultsWindowLoaded' });
-
     return () => {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
+
+  useEffect(() => {
+    if (statementResults.length > 0) {
+      const lastStatement = statementResults[statementResults.length - 1];
+      setOpenStatement(lastStatement.statement);
+    }
+  }, [statementResults]);
+
+  useEffect(() => {
+    if (openStatement !== null) {
+      vscode.postMessage({
+        type: 'statementSelect',
+        statement: openStatement,
+        to: 'visualizationView',
+      });
+    }
+  }, [openStatement]);
 
   return (
     <div>

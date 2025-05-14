@@ -43,10 +43,16 @@ export function registerDisposables(context: ExtensionContext): Disposable[] {
     window.registerWebviewViewProvider(
       'neo4jQueryDetails',
       queryDetailsProvider,
+      {
+        webviewOptions: { retainContextWhenHidden: true },
+      },
     ),
     window.registerWebviewViewProvider(
       'neo4jQueryVisualization',
       new Neo4jQueryVisualizationProvider(context),
+      {
+        webviewOptions: { retainContextWhenHidden: true },
+      },
     ),
     window.registerTreeDataProvider(
       'neo4jConnections',
