@@ -260,7 +260,8 @@
         {
           "id": "neo4jQueryResults",
           "title": "Query Results",
-          "icon": "resources/images/neo4j.png"
+          "icon": "resources/images/neo4j.png",
+          "when": "neo4j:showBottomPanel"
         }
       ],
       "activitybar": [
@@ -277,13 +278,15 @@
           "type": "webview",
           "id": "neo4jQueryDetails",
           "name": "Query Details",
-          "initialSize": 1
+          "initialSize": 1,
+          "when": "neo4j:showBottomPanel"
         },
         {
           "type": "webview",
           "id": "neo4jQueryVisualization",
           "name": "Visualization",
-          "initialSize": 4
+          "initialSize": 4,
+          "when": "neo4j:showBottomPanel"
         }
       ],
       "neo4j-explorer": [

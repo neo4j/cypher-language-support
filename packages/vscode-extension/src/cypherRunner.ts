@@ -2,7 +2,7 @@ import {
   parseParameters,
   parseStatementsStrs,
 } from '@neo4j-cypher/language-support';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { addParameter } from './commandHandlers/params';
 import { Connection } from './connectionService';
 import { getDeserializedParams } from './parameterService';
@@ -23,11 +23,18 @@ export default class CypherRunner {
     const statementParams = parseParameters(input, false);
     const filePath = uri.toString();
     const parameters = getDeserializedParams();
+    const config = workspace.getConfiguration('neo4j.features');
+    const enableBottomPanel = config.get('showBottomPanel', false);
 
     for (const param of statementParams) {
       if (parameters[param] === undefined) {
         await addParameter(param);
       }
+    }
+
+    if (enableBottomPanel) {
+      await resultsCallback(statements);
+      return;
     }
 
     if (this.results.has(filePath)) {
@@ -38,10 +45,7 @@ export default class CypherRunner {
       */
       resultWindow.statements = statements;
       resultWindow.connection = connection;
-      // todo, check the flag and execute one of them.
       await resultWindow.executeStatements();
-
-      await resultsCallback(statements);
     } else {
       // This path is platfom independent according to VSCode documentation
       const shortFileName = uri.path.split('/').pop();
@@ -55,8 +59,6 @@ export default class CypherRunner {
       this.results.set(filePath, resultWindow);
       // Remove on close
       resultWindow.panel.onDidDispose(() => this.results.delete(filePath));
-
-      await resultsCallback(statements);
       return resultWindow.run();
     }
   }
