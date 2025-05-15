@@ -4,6 +4,8 @@ import {
   WebviewView,
   Uri,
   commands,
+  window,
+  ColorThemeKind,
 } from 'vscode';
 import { getExtensionContext, getSchemaPoller } from '../../contextService';
 import path from 'path';
@@ -11,8 +13,21 @@ import { getNonce } from '../../getNonce';
 import { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
 import { getDeserializedParams } from '../../parameterService';
 import { toNativeTypes } from '../../typeUtils';
-import { ResultMessage, querySummary } from '../resultWindow';
+import { querySummary } from '../resultWindow';
 import { QueryResultsMessage, views } from './viewRegistry';
+import {
+  Node as NvlNode,
+  Relationship as NvlRelationship,
+} from '@neo4j-nvl/base';
+import {
+  isNode,
+  isPath,
+  isRelationship,
+  Node as Neo4jNode,
+  Path,
+  Record as Neo4jRecord,
+  Relationship as Neo4jRelationship,
+} from 'neo4j-driver';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
@@ -39,7 +54,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     webviewView.webview.html = this.renderQueryDetails();
 
     webviewView.webview.onDidReceiveMessage((msg: QueryResultsMessage) => {
-      if (msg.to === 'visualizationView' && msg.type === 'statementSelect') {
+      if (msg.to === 'visualizationView') {
         void views.visualizationView.webview.postMessage(msg);
       }
     });
@@ -50,46 +65,200 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     this.view ?? (await this.viewReadyPromise);
     const webview = this.view.webview;
 
-    const message: ResultMessage = {
-      type: 'executing',
-      statements: statements,
+    const message: QueryResultsMessage = {
+      type: 'executionStart',
+      result: [...statements].map((s) => ({
+        statement: s,
+        type: 'executing',
+      })),
+      to: 'detailsView',
     };
+
     await webview.postMessage(message);
-    for (const [index, statement] of statements.entries()) {
-      await this.executeStatement(statement, index);
+    for (const statement of statements) {
+      await this.executeStatement(statement);
     }
   }
 
-  private async executeStatement(statement: string, index: number) {
+  private async executeStatement(statement: string) {
     const webview = this.view.webview;
     const result = await this.runQuery(statement);
-    let message: ResultMessage;
+    const message: QueryResultsMessage = {
+      type: 'executionUpdate',
+      to: 'detailsView',
+      result: {
+        statement: statement,
+        type: 'executing',
+      },
+    };
 
     if (result instanceof Error) {
-      message = {
+      message.result = {
+        ...message.result,
         type: 'error',
         errorMessage: result.message,
-        index: index,
       };
     } else {
       const resultRecords = result.records.map((record) =>
         toNativeTypes(record.toObject()),
       );
-      message = {
+      const { nodes, relationships } = this.extractUniqueNodesAndRels(
+        result.records,
+      );
+      message.result = {
+        ...message.result,
         type: 'success',
-        index: index,
-        result: {
-          rows: resultRecords,
-          querySummary: querySummary(result),
-        },
+        rows: resultRecords,
+        nodes: nodes,
+        relationships: relationships,
+        querySummary: querySummary(result),
       };
     }
     await webview.postMessage(message);
     await views.visualizationView.webview.postMessage({
-      type: 'executionUpdate',
-      result: message,
+      ...message,
       to: 'visualizationView',
     });
+  }
+
+  private extractUniqueNodesAndRels(
+    records: Neo4jRecord[],
+    {
+      nodeLimit,
+      keepDanglingRels = false,
+    }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
+  ): {
+    nodes: NvlNode[];
+    relationships: NvlRelationship[];
+    limitHit: boolean;
+  } {
+    let limitHit = false;
+    if (records.length === 0) {
+      return { nodes: [], relationships: [], limitHit };
+    }
+
+    const items = new Set<unknown>();
+
+    for (const record of records) {
+      for (const key of record.keys) {
+        items.add(record.get(key));
+      }
+    }
+
+    const paths: Path[] = [];
+
+    const nodeMap = new Map<string, Neo4jNode>();
+    function addNode(n: Neo4jNode) {
+      if (!limitHit) {
+        const id = n.identity.toString();
+        if (!nodeMap.has(id)) {
+          nodeMap.set(id, n);
+        }
+        if (typeof nodeLimit === 'number' && nodeMap.size === nodeLimit) {
+          limitHit = true;
+        }
+      }
+    }
+
+    const relMap = new Map<string, Neo4jRelationship>();
+    function addRel(r: Neo4jRelationship) {
+      const id = r.identity.toString();
+      if (!relMap.has(id)) {
+        relMap.set(id, r);
+      }
+    }
+
+    const findAllEntities = (item: unknown) => {
+      if (typeof item !== 'object' || !item) {
+        return;
+      }
+
+      if (isRelationship(item)) {
+        addRel(item);
+      } else if (isNode(item)) {
+        addNode(item);
+      } else if (isPath(item)) {
+        paths.push(item);
+      } else if (Array.isArray(item)) {
+        item.forEach(findAllEntities);
+      } else {
+        Object.values(item).forEach(findAllEntities);
+      }
+    };
+
+    findAllEntities(Array.from(items));
+
+    for (const path of paths) {
+      addNode(path.start);
+      addNode(path.end);
+      for (const segment of path.segments) {
+        addNode(segment.start);
+        addNode(segment.end);
+        addRel(segment.relationship);
+      }
+    }
+
+    const nodes = Array.from(nodeMap.values()).map((item) => {
+      return {
+        id: item.identity.toString(),
+        elementId: item.elementId,
+        labels: item.labels,
+        properties: this.mapValues(item.properties, (p: unknown) => {
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          p.toString();
+        }),
+        propertyTypes: this.mapValues(item.properties, () => {
+          return 'Unknown';
+        }),
+      } as NvlNode;
+    });
+
+    const relationships = Array.from(relMap.values())
+      .filter((item) => {
+        if (keepDanglingRels) {
+          return true;
+        }
+
+        // We'd get dangling relationships from
+        // match ()-[a:ACTED_IN]->() return a;
+        // or from hitting the node limit
+        const start = item.start.toString();
+        const end = item.end.toString();
+        return nodeMap.has(start) && nodeMap.has(end);
+      })
+      .map((item) => {
+        return {
+          id: item.identity.toString(),
+          elementId: item.elementId,
+          startNodeId: item.start.toString(),
+          from: item.start.toString(),
+          endNodeId: item.end.toString(),
+          to: item.end.toString(),
+          type: item.type,
+          properties: this.mapValues(item.properties, (p: unknown) => {
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
+            p.toString();
+          }),
+          propertyTypes: this.mapValues(item.properties, () => {
+            return 'Unknown';
+          }),
+        } as NvlRelationship;
+      });
+
+    return { nodes, relationships, limitHit };
+  }
+
+  private mapValues<A, B>(
+    object: Record<string, A>,
+    mapper: (val: A) => B,
+  ): Record<string, B> {
+    return Object.entries(object).reduce(
+      (res: Record<string, B>, [currKey, currVal]) => {
+        res[currKey] = mapper(currVal);
+        return res;
+      },
+      {},
+    );
   }
 
   private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
@@ -149,9 +318,13 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
 
     const nonce = getNonce();
 
+    const isDarkTheme =
+      window.activeColorTheme.kind === ColorThemeKind.Dark ||
+      window.activeColorTheme.kind === ColorThemeKind.HighContrast;
+
     return `
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="en"${isDarkTheme ? ' class="ndl-theme-dark"' : ''}>
           <head>
             <meta charset="UTF-8">
             <!--

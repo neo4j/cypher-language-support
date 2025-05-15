@@ -3,6 +3,8 @@ import {
   ExtensionContext,
   WebviewView,
   Uri,
+  window,
+  ColorThemeKind,
 } from 'vscode';
 import { getExtensionContext } from '../../contextService';
 import path from 'path';
@@ -24,9 +26,9 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
     webviewView.webview.html = this.renderQueryVisualization();
 
     webviewView.webview.onDidReceiveMessage((msg: QueryResultsMessage) => {
-      if (msg.type === 'statementSelect') {
-        webviewView.title = msg.statement
-          ? `Visualization: ${msg.statement}`
+      if (msg.type === 'visualizationUpdate') {
+        webviewView.title = msg.result.statement
+          ? `Visualization: ${msg.result.statement}`
           : `Visualization`;
       }
     });
@@ -42,6 +44,14 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
         'queryVisualization.js',
       ),
     );
+    const queryVisualizationCssPath = Uri.file(
+      path.join(
+        extensionContext.extensionPath,
+        'resources',
+        'styles',
+        'queryVisualization.css',
+      ),
+    );
     const ndlCssPath = Uri.file(
       path.join(
         extensionContext.extensionPath,
@@ -50,15 +60,22 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
         'ndl.css',
       ),
     );
+    const queryVizCssUri = this.view.webview
+      .asWebviewUri(queryVisualizationCssPath)
+      .toString();
     const ndlCssUri = this.view.webview.asWebviewUri(ndlCssPath).toString();
     const queryVizContainerJs = this.view.webview
       .asWebviewUri(queryVizContainerJsPath)
       .toString();
     const nonce = getNonce();
 
+    const isDarkTheme =
+      window.activeColorTheme.kind === ColorThemeKind.Dark ||
+      window.activeColorTheme.kind === ColorThemeKind.HighContrast;
+
     return `
         <!DOCTYPE html>
-        <html lang="en">
+        <html lang="en"${isDarkTheme ? ' class="ndl-theme-dark"' : ''}>
           <head>
             <meta charset="UTF-8">
             <!--
@@ -88,6 +105,7 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
           }
           </style>
           <link href="${ndlCssUri.toString()}" rel="stylesheet">
+          <link href="${queryVizCssUri.toString()}" rel="stylesheet">
           </head>
           <body style="margin: 0; padding: 0;">
           <div id="queryVisualization"></div> 

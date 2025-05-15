@@ -1,3 +1,9 @@
+import { IconButton } from '@neo4j-ndl/react';
+import {
+  ChevronDownIconOutline,
+  ChevronRightIconOutline,
+  ExploreIcon,
+} from '@neo4j-ndl/react/icons';
 import React from 'react';
 
 type CollapsibleProps = {
@@ -13,15 +19,44 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
   onToggle,
   children,
 }) => {
+  const [expanded, setExpanded] = React.useState(false);
+
   return (
     <div className="collapsible">
-      <div className="collapsible-header" onClick={onToggle} data-open={isOpen}>
-        <div className="collapsible-icon" aria-hidden="true">
-          {isOpen ? '>' : '>'}
-        </div>
-        <p className="collapsible-title">{title}</p>
+      <div className="collapsible-header" data-expanded={expanded}>
+        <IconButton
+          isClean
+          ariaLabel={expanded ? 'Collapse statement' : 'Expand statement'}
+          htmlAttributes={{
+            'aria-expanded': expanded,
+            title: expanded ? 'Collapse statement' : 'Expand statement',
+          }}
+          onClick={() => {
+            setExpanded((e) => !e);
+          }}
+          size="small"
+        >
+          {expanded ? (
+            <ChevronDownIconOutline className="text-palette-neutral-text-weak" />
+          ) : (
+            <ChevronRightIconOutline className="text-palette-neutral-text-weak" />
+          )}
+        </IconButton>
+
+        <span className="collapsible-title" onClick={onToggle}>
+          <p className="collapsible-title-text">{title}</p>
+          <IconButton
+            isClean
+            ariaLabel="Show visualization"
+            size="small"
+            className="collapsible-title-icon"
+            isActive={isOpen}
+          >
+            <ExploreIcon />
+          </IconButton>
+        </span>
       </div>
-      {isOpen && <div className="collapsible-content">{children}</div>}
+      {expanded && <div className="collapsible-content">{children}</div>}
     </div>
   );
 };

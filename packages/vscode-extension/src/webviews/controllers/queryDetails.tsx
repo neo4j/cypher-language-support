@@ -1,59 +1,65 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Result, ResultMessage } from '../resultWindow';
 import { Collapsible } from '../../components/collapsible';
-import { QueryResultsMessage } from '../queryResults/viewRegistry';
+import {
+  QueryResult,
+  QueryResults,
+  QueryResultsMessage,
+} from '../queryResults/viewRegistry';
+import { ColorThemeKind } from 'vscode';
 
 interface vscode {
   postMessage(message: QueryResultsMessage): void;
+  window: {
+    activeColorTheme: {
+      kind: ColorThemeKind;
+    };
+  };
 }
 
 declare const vscode: vscode;
 
-type ResultState = {
-  statement: string;
-  state:
-    | 'executing'
-    | { type: 'error'; errorMessage: string }
-    | { type: 'success'; result: Result };
-}[];
+const renderCollapsibleContent = (result: QueryResult) => {
+  if (result.type === 'executing') {
+    return 'Executing...';
+  }
+  if (result.type === 'error') {
+    return result.errorMessage;
+  }
+  if (result.type === 'success') {
+    return result.querySummary;
+  }
+  return null;
+};
 
 export function QueryDetails() {
-  const [statementResults, setStatementResults] = useState<ResultState>([]);
+  const [statementResults, setStatementResults] = useState<QueryResults>([]);
   const [openStatement, setOpenStatement] = useState<string>(null);
 
   const handleCollapsibleToggle = (statement: string) => {
-    setOpenStatement((prev) => (prev === statement ? null : statement));
+    setOpenStatement(statement);
   };
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const message = event.data as ResultMessage;
+      const message = event.data as QueryResultsMessage;
 
-      if (message.type === 'executing') {
-        const resultState: ResultState = message.statements.map((statement) => {
-          return {
-            statement: statement,
-            state: 'executing',
-          };
-        });
-        setStatementResults(resultState);
-      } else if (message.type === 'success') {
+      if (message.to !== 'detailsView') {
+        return;
+      }
+
+      if (message.type === 'executionStart') {
+        setStatementResults(message.result);
+      } else if (message.type === 'executionUpdate') {
         setStatementResults((prev) => {
-          const i = message.index;
           const newState = [...prev];
-          newState[i].state = { type: 'success', result: message.result };
-          return newState;
-        });
-      } else if (message.type === 'error') {
-        setStatementResults((prev) => {
-          const i = message.index;
-          const newState = [...prev];
-          newState[i].state = {
-            type: 'error',
-            errorMessage: message.errorMessage,
-          };
+          const index = newState.findIndex(
+            (s) => s.statement === message.result.statement,
+          );
+          if (index !== -1) {
+            newState[index] = message.result;
+          }
           return newState;
         });
       }
@@ -74,31 +80,30 @@ export function QueryDetails() {
 
   useEffect(() => {
     if (openStatement !== null) {
-      vscode.postMessage({
-        type: 'statementSelect',
-        statement: openStatement,
-        to: 'visualizationView',
-      });
+      const selectedResult: QueryResult = statementResults.find(
+        (result) => result.statement === openStatement,
+      );
+      if (selectedResult) {
+        vscode.postMessage({
+          type: 'visualizationUpdate',
+          result: selectedResult,
+          to: 'visualizationView',
+        });
+      }
     }
-  }, [openStatement]);
+  }, [openStatement, statementResults]);
 
   return (
     <div>
       {statementResults.length > 0 ? (
-        statementResults.map((statements, i) => (
+        statementResults.map((result, i) => (
           <Collapsible
             key={i}
-            title={statements.statement}
-            isOpen={openStatement === statements.statement}
-            onToggle={() => handleCollapsibleToggle(statements.statement)}
+            title={result.statement}
+            isOpen={openStatement === result.statement}
+            onToggle={() => handleCollapsibleToggle(result.statement)}
           >
-            {statements.state === 'executing' && 'Executing...'}
-            {statements.state != 'executing' &&
-              statements.state.type === 'error' &&
-              statements.state.errorMessage}
-            {statements.state != 'executing' &&
-              statements.state.type === 'success' &&
-              statements.state.result.querySummary}
+            {renderCollapsibleContent(result)}
           </Collapsible>
         ))
       ) : (

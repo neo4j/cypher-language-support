@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryResultsMessage } from '../queryResults/viewRegistry';
+import { QueryResultsMessage, QueryResult } from '../queryResults/viewRegistry';
+import { VizWrapper } from '../../components/viz-wrapper';
 
 interface vscode {
   postMessage(message: QueryResultsMessage): void;
@@ -8,26 +9,41 @@ interface vscode {
 
 declare const vscode: vscode;
 
+const renderContent = (result: QueryResult) => {
+  if (result.type === 'executing') {
+    return 'Executing...';
+  }
+  if (result.type === 'error') {
+    return result.errorMessage;
+  }
+  if (result.type === 'success') {
+    return (
+      <VizWrapper
+        key={result.statement}
+        rows={result.rows}
+        nodes={result.nodes}
+        relationships={result.relationships}
+      />
+    );
+  }
+  return null;
+};
+
 export function QueryVisualization() {
-  //   const [statementResults, setStatementResults] = useState<ResultRows>(null);
+  const [statementResult, setStatementResult] = useState<QueryResult>(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const message = event.data as QueryResultsMessage;
 
-      if (
-        message.to === 'visualizationView' &&
-        message.type === 'statementSelect'
-      ) {
-        // passing the message(high likely from queryDetails) to the visualization view
-        vscode.postMessage(message);
+      if (message.to !== 'visualizationView') {
+        return;
       }
 
-      if (message.type === 'executionUpdate') {
-        console.log('Execution update message received:', message);
-        // handle execution update messages
-        // setStatementResults(message.result);
+      if (message.type === 'visualizationUpdate') {
+        // passing the message(high likely from queryDetails) to the visualization view
+        vscode.postMessage(message);
+        setStatementResult(message.result);
       }
     };
 
@@ -37,7 +53,17 @@ export function QueryVisualization() {
     };
   }, []);
 
-  return <div>Query viz should come here</div>;
+  return (
+    <div>
+      {statementResult ? (
+        renderContent(statementResult)
+      ) : (
+        <div className="n-px-token-5 n-py-token-4">
+          Please select a statement to see query results.
+        </div>
+      )}
+    </div>
+  );
 }
 
 createRoot(document.getElementById('queryVisualization')).render(

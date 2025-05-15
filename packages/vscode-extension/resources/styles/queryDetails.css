@@ -1,49 +1,51 @@
 body {
-  background-color: var(--vscode-panelSectionHeader-background);
+  background-color: rgb(var(--theme-palette-neutral-bg-default));
+  color: rgb(var(--theme-palette-neutral-text-default));
   font-size: var(--vscode-editor-font-size);
 }
 
 .collapsible:not(:last-child) {
-  border-bottom: 1px solid var(--vscode-editor-background);
+  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
   background-color: transparent;
 }
 
 .collapsible-header {
-  cursor: pointer;
   display: flex;
   align-items: flex-start;
-  padding: 0 12px;
+  padding: 2px 4px;
+  gap: 4px;
   border: 1px solid transparent;
 }
 
 .collapsible-header:hover {
-  background-color: var(--vscode-panelSectionHeader-background);
-}
-
-.collapsible-header[data-open='true'] {
-  background-color: var(--vscode-list-activeSelectionBackground);
-  color: var(--vscode-list-activeSelectionForeground);
-  border: 1px solid var(--vscode-list-focusOutline);
-}
-
-.collapsible-icon {
-  display: inline-block;
-  color: var(--vscode-icon-foreground);
-}
-
-.collapsible-header[data-open='true'] .collapsible-icon {
-  rotate: 90deg;
+  background-color: rgb(var(--theme-palette-neutral-hover));
 }
 
 .collapsible-title {
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  width: 100%;
+  border: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: rgb(var(--theme-palette-neutral-bg-weak));
+  align-items: center;
+}
+
+.collapsible-title-text {
   padding-left: 6px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.collapsible-header[data-open='true'] .collapsible-title {
+.collapsible-header[data-expanded='true'] .collapsible-title-text {
   white-space: normal;
+}
+
+.collapsible-title-icon {
+  margin-left: auto;
 }
 
 .collapsible-content {
