@@ -40,6 +40,7 @@ runs:
           **/dist
           **/build
           **/out
+          **/lintWorker.mjs
 
         key: build-${{ github.sha }}
         restore-keys: |

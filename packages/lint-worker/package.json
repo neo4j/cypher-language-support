@@ -1,0 +1,55 @@
+{
+  "name": "@neo4j-cypher/lint-worker",
+  "description": "Cypher Lint Worker",
+  "author": "Neo4j Inc.",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "files": [
+    "./dist",
+    "./src",
+    "package.json",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "neo4j",
+    "cypher",
+    "lint worker"
+  ],
+  "version": "2025.4.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "dependencies": {
+    "@neo4j-cypher/language-support": "workspace:*",
+    "workerpool": "^9.0.4"
+  },
+  "scripts": {
+    "build": "pnpm build-types && pnpm build-esm && pnpm build-commonjs",
+    "build-commonjs": "esbuild ./src/lintWorker.ts --bundle --platform=node --conditions=require --outfile=dist/cjs/lintWorker.cjs --format=cjs --minify",
+    "build-esm": "esbuild ./src/lintWorker.ts --bundle --platform=node --conditions=require --outfile=dist/esm/lintWorker.mjs --format=esm --minify",
+    "clean": "rm -rf dist",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types"
+  },
+  "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9"
+  },
+  "types": "./dist/types/src/lintWorker.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/src/lintWorker.d.ts",
+      "require": "./dist/cjs/lintWorker.cjs",
+      "import": "./dist/esm/lintWorker.mjs",
+      "default": "./dist/esm/lintWorker.mjs"
+    }
+  }
+}

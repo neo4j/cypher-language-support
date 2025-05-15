@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
+    "@neo4j-cypher/lint-worker": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
     "lodash.debounce": "^4.0.8",
     "neo4j-driver": "catalog:",
@@ -43,14 +44,15 @@
     "workerpool": "^9.0.4"
   },
   "scripts": {
-    "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm bundle-worker",
+    "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm copy-lint-worker",
+    "copy-lint-worker": "copyfiles -u 4 ../lint-worker/dist/cjs/lintWorker.cjs dist/",
     "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require",
-    "bundle-worker": "esbuild ./src/lintWorker.ts --bundle --format=cjs --platform=node --conditions=require --outfile=dist/lintWorker.js --minify",
     "dev": "tsc --watch",
     "make-executable": "cd dist && echo '#!/usr/bin/env node' > cypher-language-server && cat cypher-language-server.js >> cypher-language-server",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9"
+    "@types/lodash.debounce": "^4.0.9",
+    "copyfiles": "^2.4.1"
   }
 }
