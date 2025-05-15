@@ -16,12 +16,21 @@ import { QueryResultsMessage, views } from './viewRegistry';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
+  private viewReadyResolver!: (view: WebviewView) => void;
+  private viewReadyPromise: Promise<WebviewView>;
   schemaPoller = getSchemaPoller();
-  constructor(private readonly context: ExtensionContext) {}
+
+  constructor(private readonly context: ExtensionContext) {
+    this.viewReadyPromise = new Promise((resolve) => {
+      this.viewReadyResolver = resolve;
+    });
+  }
 
   resolveWebviewView(webviewView: WebviewView) {
     this.view = webviewView;
     views.detailsView = webviewView;
+
+    this.viewReadyResolver(webviewView);
 
     webviewView.webview.options = {
       enableScripts: true,
@@ -38,6 +47,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
 
   async executeStatements(statements: string[]) {
     await commands.executeCommand('neo4jQueryDetails.focus');
+    this.view ?? (await this.viewReadyPromise);
     const webview = this.view.webview;
 
     const message: ResultMessage = {
