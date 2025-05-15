@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: pnpm exec playwright install --only-shell --with-deps ${{ inputs.browser }}
       working-directory: packages/react-codemirror
-    
+
     - name: Run e2e test
       shell: bash
       run: pnpm --filter react-codemirror test:e2e --project=${{ inputs.browser }}
