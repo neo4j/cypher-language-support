@@ -18,6 +18,8 @@ export function verifyFormatting(
     );
   }
   // Idempotency check
-  const formattedTwice = formatQuery(formatted);
+  const formattedTwice = formattingOptions
+    ? formatQuery(query, formattingOptions).formattedString
+    : formatQuery(query);
   expect(formattedTwice).toEqual(formatted);
 }

@@ -2281,7 +2281,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
 interface FormattingResultWithCursor {
   formattedString: string;
-  newCursorPos: number;
+  newCursorPos?: number;
 }
 
 export interface FormattingOptions {
@@ -2311,10 +2311,14 @@ export function formatQuery(
     unParseable,
     firstUnParseableToken,
   );
+  if (!formattingOptions) return visitor.format();
 
   const cursorPosition = formattingOptions?.cursorPosition;
-
-  if (cursorPosition === undefined) return visitor.format();
+  if (cursorPosition === undefined) {
+    return {
+      formattedString: visitor.format(),
+    };
+  }
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
     const result = visitor.format();

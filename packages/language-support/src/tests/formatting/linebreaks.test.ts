@@ -1265,7 +1265,8 @@ describe('tests for line breaks with non-default max column width', () => {
 RETURN u`;
     const expected = `
 MATCH
-  (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+  (u:User)-[r:IS_AA_MEMBER_OF]->
+  (g:Group)
 RETURN u`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 40 });
   });
