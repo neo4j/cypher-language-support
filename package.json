@@ -17,7 +17,7 @@
     "dev-vscode": "pnpm --recursive --parallel --filter='neo4j-for-vscode...' dev",
     "release": "pnpm build && pnpm publish -r --tag next --access=public",
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
-    "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig.tsbuildinfo}",
+    "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig.tsbuildinfo} && pnpm clean",
     "clean": "pnpm --recursive --parallel clean",
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",

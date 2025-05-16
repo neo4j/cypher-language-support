@@ -264,6 +264,14 @@
       ]
     },
     "viewsContainers": {
+      "panel": [
+        {
+          "id": "neo4jQueryResults",
+          "title": "Query Results",
+          "icon": "resources/images/neo4j.png",
+          "when": "neo4j:showBottomPanel"
+        }
+      ],
       "activitybar": [
         {
           "id": "neo4j-explorer",
@@ -273,6 +281,22 @@
       ]
     },
     "views": {
+      "neo4jQueryResults": [
+        {
+          "type": "webview",
+          "id": "neo4jQueryDetails",
+          "name": "Query Details",
+          "initialSize": 1,
+          "when": "neo4j:showBottomPanel"
+        },
+        {
+          "type": "webview",
+          "id": "neo4jQueryVisualization",
+          "name": "Visualization",
+          "initialSize": 7,
+          "when": "neo4j:showBottomPanel"
+        }
+      ],
       "neo4j-explorer": [
         {
           "type": "tree",
@@ -444,8 +468,10 @@
     "@neo4j-cypher/language-server": "workspace:*",
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
-    "@neo4j-ndl/base": "^2.12.3",
-    "@neo4j-ndl/react": "^2.16.5",
+    "@neo4j-ndl/base": "3.4.2",
+    "@neo4j-ndl/react": "3.5.5",
+    "@neo4j-nvl/base": "0.3.8",
+    "@neo4j-nvl/react": "0.3.8",
     "neo4j-driver": "catalog:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
