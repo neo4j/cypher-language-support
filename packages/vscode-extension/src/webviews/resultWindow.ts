@@ -92,10 +92,10 @@ export function setAllTabsToLoading(
       }
 
       table{border-collapse:collapse; width: 100%}
-      table,td,th{border:1px solid var(--border); padding:5px; vertical-align: top}
-      th {font-weight: bold}
-      details {margin-bottom: 24px; padding: 12px; border: 1px solid var(--border)}
-      details summary {border-bottom: 1px solid var(--border); padding: 6px}
+      table,td,th{border:0; padding:5px; vertical-align: top}
+      th {font-weight: bold;}
+      details {margin-bottom: 24px; padding: 12px; border: 0}
+      details summary {border-bottom: 0; padding: 6px}
       pre {
         max-height: 280px;
         overflow: auto;
