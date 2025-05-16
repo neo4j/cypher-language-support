@@ -285,7 +285,7 @@
           "type": "webview",
           "id": "neo4jQueryVisualization",
           "name": "Visualization",
-          "initialSize": 4,
+          "initialSize": 7,
           "when": "neo4j:showBottomPanel"
         }
       ],

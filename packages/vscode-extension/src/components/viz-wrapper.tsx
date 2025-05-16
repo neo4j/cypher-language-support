@@ -84,30 +84,32 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
         {selectedView === 'table' ? (
           renderTable(rows)
         ) : (
-          <InteractiveNvlWrapper
-            nodes={nodes}
-            rels={relationships}
-            layout="d3Force"
-            style={{
-              height: 'calc(100vh - 20px)',
-            }}
-            nvlOptions={{
-              useWebGL: false,
-              disableWebGL: true,
-              minZoom: 0.05,
-              maxZoom: 3,
-              relationshipThreshold: 0.55,
-              disableTelemetry: true,
-            }}
-            interactionOptions={{
-              selectOnClick: true,
-            }}
-            mouseEventCallbacks={{
-              onPan: true,
-              onZoom: true,
-              onDrag: true,
-            }}
-          />
+          <div className="vizWrapper-graph">
+            <InteractiveNvlWrapper
+              nodes={nodes}
+              rels={relationships}
+              layout="d3Force"
+              style={{
+                height: 'calc(100vh - 20px)',
+              }}
+              nvlOptions={{
+                useWebGL: false,
+                disableWebGL: true,
+                minZoom: 0.05,
+                maxZoom: 3,
+                relationshipThreshold: 0.55,
+                disableTelemetry: true,
+              }}
+              interactionOptions={{
+                selectOnClick: true,
+              }}
+              mouseEventCallbacks={{
+                onPan: true,
+                onZoom: true,
+                onDrag: true,
+              }}
+            />
+          </div>
         )}
       </div>
     </div>
