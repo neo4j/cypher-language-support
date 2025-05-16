@@ -107,6 +107,7 @@ import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   Chunk,
   CommentChunk,
+  DEFAULT_MAX_COL,
   fillInRegularChunkGroupSizes,
   findTargetToken,
   getParseTreeAndTokens,
@@ -134,6 +135,7 @@ interface RawTerminalOptions {
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
+  formattingOptions: FormattingOptions;
   root: StatementsOrCommandsContext;
   query: string;
   chunkList: Chunk[] = [];
@@ -153,6 +155,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   firstUnParseableToken: Token | undefined;
 
   constructor(
+    formattingOptions: FormattingOptions,
     private tokenStream: CommonTokenStream,
     root: StatementsOrCommandsContext,
     query: string,
@@ -160,6 +163,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     firstUnParseableToken: Token | undefined,
   ) {
     super();
+    this.formattingOptions = formattingOptions;
     this.root = root;
     this.query = query;
     if (unParseable) {
@@ -174,7 +178,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   format = () => {
     this._visit(this.root);
     this.fillInGroupSizes();
-    const result = chunksToFormattedString(this.chunkList);
+    const maxColumn = this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL;
+    const result = chunksToFormattedString(this.chunkList, maxColumn);
     this.cursorPos += result.cursorPos;
     const resultString = result.formatted + this.unParseable;
     const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
@@ -2279,26 +2284,35 @@ interface FormattingResultWithCursor {
   newCursorPos: number;
 }
 
+export interface FormattingOptions {
+  // Not a hard limit, see comment on DEFAULT_MAX_COL
+  maxColumn?: number;
+  cursorPosition?: number;
+}
+
 export function formatQuery(query: string): string;
 export function formatQuery(
   query: string,
-  cursorPosition: number,
+  formattingOptions?: FormattingOptions,
 ): FormattingResultWithCursor;
 export function formatQuery(
   query: string,
-  cursorPosition?: number,
+  formattingOptions?: FormattingOptions,
 ): string | FormattingResultWithCursor {
   const { tree, tokens, unParseable, firstUnParseableToken } =
     getParseTreeAndTokens(query);
 
   tokens.fill();
   const visitor = new TreePrintVisitor(
+    formattingOptions,
     tokens,
     tree,
     query,
     unParseable,
     firstUnParseableToken,
   );
+
+  const cursorPosition = formattingOptions?.cursorPosition;
 
   if (cursorPosition === undefined) return visitor.format();
 

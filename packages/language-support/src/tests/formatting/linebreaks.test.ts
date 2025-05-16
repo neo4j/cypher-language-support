@@ -1,5 +1,5 @@
 import { formatQuery } from '../../formatting/formatting';
-import { MAX_COL } from '../../formatting/formattingHelpers';
+import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers';
 import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
@@ -127,7 +127,7 @@ RETURN path`;
       const formatted = formatQuery(query);
       const lines = formatted.split('\n');
       lines.forEach((line) => {
-        expect(line.length).toBeLessThanOrEqual(MAX_COL);
+        expect(line.length).toBeLessThanOrEqual(DEFAULT_MAX_COL);
       });
     });
   });
@@ -1256,6 +1256,18 @@ SKIP
 LIMIT 100
 RETURN n`;
     verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for line breaks with non-default max column width', () => {
+  test('should keep this node pattern within 40 columns', () => {
+    const query = `MATCH (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+RETURN u`;
+    const expected = `
+MATCH
+  (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+RETURN u`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 40 });
   });
 });
 
