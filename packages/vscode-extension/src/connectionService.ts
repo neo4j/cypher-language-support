@@ -12,6 +12,9 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
+import { getVersion } from '@neo4j-cypher/query-tools';
+import { join } from 'path';
+import { compareVersions } from '@neo4j-cypher/language-support';
 
 export type Scheme =
   | 'neo4j'
@@ -397,6 +400,39 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 }
 
 /**
+ * Notifies the language client it should switch linter
+ */
+export async function switchWorkerOnLanguageServer(linterPath: string) {
+  await sendNotificationToLanguageClient('updateLintWorker', {
+    lintWorkerPath: linterPath,
+  });
+}
+
+export async function checkNeo4jServerVersion(): Promise<void> {
+  const { query: versionQuery, queryConfig: versionQueryConfig } = getVersion();
+  const poller = getSchemaPoller();
+  const driver = poller.driver;
+  if (driver) {
+    const { serverVersion } = await driver.executeQuery(
+      versionQuery,
+      {},
+      versionQueryConfig,
+    );
+    if (compareVersions('5.27.0', serverVersion) <= 0) {
+      const linterPath = join(
+        __dirname,
+        '..',
+        '..',
+        'language-server',
+        'dist',
+        '15lintWorker.cjs',
+      );
+      await switchWorkerOnLanguageServer(linterPath);
+    }
+  }
+}
+
+/**
  * Attempts to establish a connection to the database and notifies the language client that the connection has been updated.
  * If the connection is successful, the Connection's state will be set to 'connected'.
  * If the connection is not successful, the Connection's state will either be set to 'error' if the error is retriable, or disconnected if not.
@@ -416,6 +452,10 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
+  if (result.success) {
+    await checkNeo4jServerVersion();
+  }
+
   result.success
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)
     : await sendNotificationToLanguageClient('connectionDisconnected');
@@ -428,6 +468,10 @@ async function connectToDatabaseAndNotifyLanguageClient(
         ? undefined
         : connection.database,
   });
+
+  if (result.success) {
+    await checkNeo4jServerVersion();
+  }
 
   return result;
 }
