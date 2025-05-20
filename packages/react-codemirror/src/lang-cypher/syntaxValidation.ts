@@ -3,8 +3,9 @@ import { Extension } from '@codemirror/state';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
-import type { LinterTask, LintWorker } from './lintWorker';
-import WorkerURL from './lintWorker?worker&url';
+import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+
+const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
