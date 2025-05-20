@@ -7,12 +7,23 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
 import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
-const pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
+let pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
 
+export let workerPath = join(__dirname, 'lintWorker.cjs');
 let lastSemanticJob: LinterTask | undefined;
+
+export async function setLintWorker(lintWorkerPath: string) {
+  await cleanupWorkers();
+  workerPath = lintWorkerPath;
+  (pool = workerpool.pool(workerPath)),
+    {
+      minWorkers: 2,
+      workerTerminateTimeout: 2000,
+    };
+}
 
 async function rawLintDocument(
   document: TextDocument,
@@ -56,6 +67,6 @@ export const lintDocument: typeof rawLintDocument = debounce(
   },
 );
 
-export const cleanupWorkers = () => {
-  void pool.terminate();
+export const cleanupWorkers = async () => {
+  await pool.terminate();
 };
