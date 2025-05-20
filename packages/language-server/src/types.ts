@@ -5,6 +5,7 @@ export type Neo4jConnectionSettings = {
   password?: string;
   connectURL?: string;
   database?: string;
+  lintWorkerPath?: string;
 };
 
 export type Neo4jSettings = {

@@ -19,3 +19,4 @@ export type { Database } from './queries/databases';
 export { Neo4jSchemaPoller } from './schemaPoller';
 export type { ConnnectionResult } from './schemaPoller';
 export type { CypherDataType } from './types/cypher-data-types';
+export { getVersion } from './queries/version';

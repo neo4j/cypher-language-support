@@ -19,7 +19,7 @@ import {
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
-import { cleanupWorkers, lintDocument } from './linting';
+import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import {
@@ -128,6 +128,14 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onNotification(
+  'updateLintWorker',
+  (connectionSettings: Neo4jConnectionSettings) => {
+    const lintWorkerPath = connectionSettings.lintWorkerPath;
+    void (async () => await setLintWorker(lintWorkerPath))();
+  },
+);
+
+connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jConnectionSettings) => {
     changeConnection(connectionSettings);
@@ -154,7 +162,7 @@ documents.listen(connection);
 connection.listen();
 
 connection.onExit(() => {
-  cleanupWorkers();
+  void cleanupWorkers();
 });
 
 const changeConnection = (connectionSettings: Neo4jConnectionSettings) => {
