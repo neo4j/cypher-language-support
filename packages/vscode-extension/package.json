@@ -149,7 +149,7 @@
       "editor/title": [
         {
           "command": "neo4j.runCypher",
-          "when": "resourceExtname == .cypher",
+          "when": "resourceLangId == cypher",
           "group": "navigation"
         }
       ],
