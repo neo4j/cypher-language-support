@@ -52,7 +52,7 @@ MATCH (n) RETURN n`,
     sandbox
       .stub(connectionService, 'getActiveConnection')
       .returns(getMockConnection());
-    await runCypher();
+    await runCypher(async () => {});
 
     const arg = runMethod.firstCall.args.at(2) as string;
 

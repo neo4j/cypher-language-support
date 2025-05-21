@@ -186,7 +186,9 @@ function getSelectedText(editor: TextEditor): string {
   return text;
 }
 
-export async function runCypher(): Promise<void> {
+export async function runCypher(
+  callback: (statements: string[]) => Promise<void>,
+): Promise<void> {
   const cypherRunner = getQueryRunner();
 
   // Get the active text editor
@@ -205,7 +207,13 @@ export async function runCypher(): Promise<void> {
 
     const selectedText = getSelectedText(editor);
     const documentUri = editor.document.uri;
-    await cypherRunner.run(activeConnection, documentUri, selectedText);
+
+    await cypherRunner.run(
+      activeConnection,
+      documentUri,
+      selectedText,
+      callback,
+    );
   }
 }
 
