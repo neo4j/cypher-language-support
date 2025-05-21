@@ -35,27 +35,7 @@ tasks {
         }
     }
 
-    task("bundleServer") {
-        val outputFile = file("../language-server/dist/cypher-language-server.js")
-        val targetDir = file(".")
-
-        inputs.file(outputFile)
-        outputs.file(targetDir.resolve("cypher-language-server.js"))
-
-        doLast {
-            exec {
-                commandLine("bash", "-c", "cd ../.. && pnpm build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
-            }
-
-            copy {
-                from(outputFile)
-                into(targetDir)
-            }
-        }
-    }
-
     prepareSandbox {
-        dependsOn("bundleServer")
 
         from(".") {
             include("*.js")

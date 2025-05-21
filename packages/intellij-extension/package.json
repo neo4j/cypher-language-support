@@ -7,8 +7,14 @@
   "license": "Apache-2.0",
   "preview": true,
   "scripts": {
-    "build": "./gradlew -q buildPlugin",
+    "build": "copyfiles -u 3 ../language-server/dist/cypher-language-server.js . && ./gradlew -q buildPlugin",
     "clean": "./gradlew -q clean",
     "runIde": "./gradlew -q runIde"
+  },
+  "dependencies": {
+    "@neo4j-cypher/language-server": "workspace:*"
+  },
+  "devDependencies": {
+    "copyfiles": "catalog:"
   }
 }
