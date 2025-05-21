@@ -83,7 +83,8 @@
       {
         "command": "neo4j.runCypher",
         "title": "Run Cypher statements",
-        "category": "Neo4j"
+        "category": "Neo4j",
+        "icon": "$(play)"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
@@ -143,6 +144,13 @@
           "command": "neo4j.cypherFileFromSelection",
           "when": "editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
           "group": "z_commands"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "neo4j.runCypher",
+          "when": "resourceLangId == cypher",
+          "group": "navigation"
         }
       ],
       "commandPalette": [
