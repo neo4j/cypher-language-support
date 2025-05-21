@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/language-support/src/formatting/**'
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/language-support/src/formatting/**'
+
+jobs:
+  formatting-integrity-check:
+    name: Formatter integrity check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
+
+      - name: Run formatting check
+        run: pnpm test:formattingIntegrity

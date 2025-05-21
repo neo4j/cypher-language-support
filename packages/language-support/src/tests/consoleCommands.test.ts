@@ -54,6 +54,7 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
+    expectParsedCommands(':play', [{ type: 'play' }]);
   });
 
   test('properly highlights simple commands', () => {
@@ -202,12 +203,29 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+
+    expect(applySyntaxColouring(':play')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'play',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'access-mode' },
+      { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
       { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
@@ -252,7 +270,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -784,5 +802,136 @@ describe('style', () => {
     expectParsedCommands(':style reset', [
       { type: 'style', operation: 'reset' },
     ]);
+  });
+});
+
+describe('access-mode', () => {
+  let consoleCommands: boolean;
+
+  beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
+    _internalFeatureFlags.consoleCommands = true;
+  });
+
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = consoleCommands;
+  });
+
+  test('basic access-mode usage', () => {
+    expectParsedCommands(':access-mode', [
+      { type: 'access-mode', operation: undefined },
+    ]);
+
+    expectParsedCommands(':access-mode read', [
+      { type: 'access-mode', operation: 'read' },
+    ]);
+
+    expectParsedCommands(':access-mode write', [
+      { type: 'access-mode', operation: 'write' },
+    ]);
+  });
+
+  test('highlights :access-mode properly', () => {
+    expect(applySyntaxColouring(':access-mode')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':access-mode read')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 13, startOffset: 13 },
+        token: 'read',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+
+    expect(applySyntaxColouring(':access-mode write')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 11,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'access-mode',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 13, startOffset: 13 },
+        token: 'write',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+  });
+
+  test('autocompletes read operation', () => {
+    const mapCompletions = autocomplete(':access-mode r', {
+      functions: {
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
+        },
+      },
+    });
+
+    const expected = [{ kind: 23, label: 'read' }];
+
+    expected.forEach((completion) => {
+      expect(mapCompletions).toContainEqual(completion);
+    });
+  });
+
+  test('autocompletes write operation', () => {
+    const mapCompletions = autocomplete(':access-mode w', {
+      functions: {
+        'CYPHER 5': {
+          'duration.inSeconds': {
+            ...testData.emptyFunction,
+            name: 'duration.inSeconds',
+          },
+        },
+      },
+    });
+
+    const expected = [{ kind: 23, label: 'write' }];
+
+    expected.forEach((completion) => {
+      expect(mapCompletions).toContainEqual(completion);
+    });
+  });
+
+  test('incorrect usage of :access-mode', () => {
+    expectErrorMessage(
+      ':access-mode xyz',
+      "Expected any of ';', read or write",
+    );
   });
 });

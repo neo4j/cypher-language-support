@@ -1,6 +1,7 @@
 import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 
 import {
+  AccessModeArgsContext,
   ArrowLineContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
@@ -288,6 +289,26 @@ class SyntaxHighlighter extends CypherParserListener {
         list.symbol,
         CypherTokenType.consoleCommand,
         list.getText(),
+      );
+    }
+  };
+
+  exitAccessModeArgs = (ctx: AccessModeArgsContext) => {
+    const read = ctx.readCompletionRule()?.READ();
+    if (read) {
+      this.addToken(
+        read.symbol,
+        CypherTokenType.consoleCommand,
+        read.getText(),
+      );
+    }
+
+    const write = ctx.writeCompletionRule()?.WRITE();
+    if (write) {
+      this.addToken(
+        write.symbol,
+        CypherTokenType.consoleCommand,
+        write.getText(),
       );
     }
   };

@@ -15,18 +15,18 @@ Occasionally, we might also have logistical, commercial, or legal reasons why we
 Pre-requisites:
 
 - Node.js LTS (18.x)
-- [Git LFS](https://git-lfs.github.com/) easiest to install via package manager (e.g. `brew install git-lfs` on macOS)
+- [pnpm](https://pnpm.io/installation#using-corepack)
 - [antlr4-tools](https://github.com/antlr/antlr4-tools) easiest to install with `pip install antlr4-tools` (python3 required)
 - Java (e.g. `brew install java` on macOS)
 
 In the root folder of the project run:
 
-- `npm install`
-- `npm run build`
+- `pnpm install`
+- `pnpm run build`
 
 From here you can start the `react-codemirror-playground` with:
 
-`npm run dev-codemirror`
+`pnpm dev-codemirror`
 
 To run the VS Code extension, choose `VSCode Playground` in the `Run & Debug` menu in VS Code.
 
@@ -35,12 +35,12 @@ To run the VS Code extension, choose `VSCode Playground` in the `Run & Debug` me
 Unit tests:
 
 ```
-npm run test
+pnpm test
 ```
 
 End to end tests:
 
 ```
-npx playwright install // Only the first time that you need to run these
-npm run test:e2e
+pnpm exec playwright install // Only the first time that you need to run these
+pnpm test:e2e
 ```

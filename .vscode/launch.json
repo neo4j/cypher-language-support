@@ -3,29 +3,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run dev-codemirror",
+      "command": "pnpm dev-codemirror",
       "name": "Codemirror Playground",
       "request": "launch",
-      "type": "node-terminal",
-      "preLaunchTask": "npm: watch"
+      "type": "node-terminal"
     },
     {
       "type": "extensionHost",
       "request": "launch",
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
+      "env": {
+        "watch": "true"
+      },
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
       ],
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/query-tools/**/*.js",
         "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,
-      "preLaunchTask": "npm: build-vscode"
+      "preLaunchTask": "npm: dev-vscode"
     },
     {
       "type": "extensionHost",
@@ -39,7 +41,7 @@
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
-        "${workspaceRoot}/packages/schema-poller/**/*.js",
+        "${workspaceRoot}/packages/query-tools/**/*.js",
         "${workspaceRoot}/packages/language-server/**/*.js"
       ],
       "autoAttachChildProcesses": true,
@@ -51,6 +53,9 @@
       "type": "node",
       "request": "launch",
       "args": ["./packages/vscode-extension/dist/tests/runWebviewTests.js"],
+      "env": {
+        "DEBUG_VSCODE_TESTS": "true"
+      },
       "cwd": "${workspaceFolder}",
       "autoAttachChildProcesses": true,
       "program": "${workspaceRoot}/node_modules/@wdio/cli/bin/wdio.js",

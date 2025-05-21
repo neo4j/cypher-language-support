@@ -1,0 +1,13 @@
+{
+  "include": [
+    "./esbuild-extension.mts",
+    "./genTextMate.js",
+    "./tests/fixtures/textmate/simple-match.js"
+  ],
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true
+  }
+}

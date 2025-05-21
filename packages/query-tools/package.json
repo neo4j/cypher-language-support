@@ -1,0 +1,39 @@
+{
+  "name": "@neo4j-cypher/query-tools",
+  "description": "",
+  "author": "Neo4j Inc.",
+  "license": "Apache-2.0",
+  "version": "2.0.0-next.20",
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/src/index.js",
+      "import": "./dist/esm/src/index.js",
+      "default": "./dist/cjs/src/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "dependencies": {
+    "@neo4j-cypher/language-support": "workspace:*",
+    "ajv": "^8.12.0",
+    "neo4j-driver": "catalog:"
+  },
+  "scripts": {
+    "build": "concurrently 'npm:build-esm' 'npm:build-commonjs'",
+    "build-esm": "tsc --module esnext --outDir dist/esm",
+    "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
+    "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
+  }
+}

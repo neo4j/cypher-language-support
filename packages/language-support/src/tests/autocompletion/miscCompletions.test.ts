@@ -265,4 +265,16 @@ describe('Inserts correct text when symbolic name is not display name', () => {
       ],
     });
   });
+
+  test('completes numeric types correctly', () => {
+    testCompletions({
+      query: 'RETURN [1] IS :: VECTOR<',
+      expected: [
+        { kind: 14, label: 'FLOAT64' },
+        { kind: 14, label: 'FLOAT32' },
+        { kind: 14, label: 'INTEGER32' },
+        { kind: 14, label: 'INTEGER64' },
+      ],
+    });
+  });
 });

@@ -7,7 +7,12 @@ export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parserWrapper, parseStatementsStrs } from './parserWrapper';
+export {
+  parse,
+  parseParameters,
+  parserWrapper,
+  parseStatementsStrs,
+} from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,
@@ -27,6 +32,14 @@ export type {
   Neo4jProcedure,
 } from './types';
 export { cypher25Supported } from './version';
-export { CypherLexer, CypherParser };
+export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
+
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';
+import CypherParserListener from './generated-parser/CypherCmdParserListener';
+import CypherParserVisitor from './generated-parser/CypherCmdParserVisitor';
+
+export * from './generated-parser/CypherCmdLexer';
+export * from './generated-parser/CypherCmdParser';
+export * from './generated-parser/CypherCmdParserListener';
+export * from './generated-parser/CypherCmdParserVisitor';

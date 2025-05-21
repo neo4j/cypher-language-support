@@ -22,10 +22,11 @@ RETURN a.prop`;
     const query = `MATCH (a:A) WHERE EXISTS {MATCH (a)-->(b:B) WHERE b.prop = 'yellow'} RETURN a.foo`;
 
     const expected = `MATCH (a:A)
-WHERE EXISTS {
-        MATCH (a)-->(b:B)
-        WHERE b.prop = 'yellow'
-      }
+WHERE
+  EXISTS {
+    MATCH (a)-->(b:B)
+    WHERE b.prop = 'yellow'
+  }
 RETURN a.foo`;
     verifyFormatting(query, expected);
   });
@@ -103,7 +104,8 @@ RETURN person.name`;
 describe('other styleguide recommendations', () => {
   test('order by', () => {
     const query = `RETURN user.id ORDER BY potential_reach, like_count;`;
-    const expected = `RETURN user.id ORDER BY potential_reach, like_count;`;
+    const expected = `RETURN user.id
+ORDER BY potential_reach, like_count;`;
     verifyFormatting(query, expected);
   });
 
@@ -216,7 +218,8 @@ RETURN name, count(*) AS count ORDER BY count`;
   MATCH (m:Movie)
   RETURN m.title AS name
 }
-RETURN name, count(*) AS count ORDER BY count`;
+RETURN name, count(*) AS count
+ORDER BY count`;
     verifyFormatting(query, expected);
   });
 
@@ -238,7 +241,8 @@ RETURN name, count(*) AS count ORDER BY count`;
   MATCH (m:Movie)
   RETURN m.title AS name
 }
-RETURN name, count(*) AS count ORDER BY count`;
+RETURN name, count(*) AS count
+ORDER BY count`;
     verifyFormatting(query, expected);
   });
 
@@ -255,7 +259,9 @@ RETURN
     WHEN n.eyes = 'blue' THEN 1
     WHEN n.age < 40 THEN 2
     ELSE 3
-  END AS result, n.eyes, n.age`;
+  END AS result,
+  n.eyes,
+  n.age`;
     verifyFormatting(query, expected);
   });
 
@@ -269,7 +275,8 @@ WHEN > 1000 THEN "Immortal"
 ELSE "Adult"
 END AS result`;
     const expected = `MATCH (n:Person)
-RETURN n.name,
+RETURN
+  n.name,
   CASE n.age
     WHEN = 0, = 1, = 2 THEN "Baby"
     WHEN <= 13 THEN "Child"
@@ -292,7 +299,8 @@ FOREACH (node2 IN [eventChain [i + 1]] |
 MERGE (node1)-[:NEXT_EVENT]->(node2))))`;
     const expected = `MATCH (u:User)
 MATCH (u)-[:USER_EVENT]->(e:Event)
-WITH u, e ORDER BY e ASC
+WITH u, e
+ORDER BY e ASC
 WITH u, collect(e) AS eventChain
 FOREACH (i IN range(0, size(eventChain) - 2) |
   FOREACH (node1 IN [eventChain[i]] |
@@ -325,9 +333,10 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
 
 ;`;
     const expected = `MATCH (c:Cuenta)-[:REALIZA]->(m:Movimiento)-[:HACIA]->(c2:Cuenta)
-WHERE NOT EXISTS {
-        MATCH (c)-[:TRANSFIERE]->(c2)
-      }
+WHERE
+  NOT EXISTS {
+    MATCH (c)-[:TRANSFIERE]->(c2)
+  }
 WITH c, c2, count(m) AS trxs, avg(m.monto) AS avgTrx, sum(m.monto) AS totalSum
 LIMIT 1000
 CALL (c, c2, trxs, avgTrx, totalSum) {
@@ -335,6 +344,21 @@ CALL (c, c2, trxs, avgTrx, totalSum) {
     ON CREATE SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
     ON MATCH SET r.totalTrx = trxs, r.avgTrx = avgTrx, r.total = totalSum
 } IN 10 CONCURRENT TRANSACTIONS OF 25 ROWS;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('should put SKIP on a newline, similarly to LIMIT and ORDER BY', () => {
+    const query = `MATCH (n)
+WITH n
+ORDER BY n.price ASC SKIP 10
+LIMIT 100
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n
+ORDER BY n.price ASC
+SKIP 10
+LIMIT 100
+RETURN n`;
     verifyFormatting(query, expected);
   });
 });

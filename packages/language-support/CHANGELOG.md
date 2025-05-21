@@ -1,5 +1,36 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.20
+
+### Patch Changes
+
+- 013e4ff: Adds support for the access-mode console command to the grammar
+
+## 2.0.0-next.19
+
+### Patch Changes
+
+- 88e4930: Fixes backticking of parameters and dbNames/aliases
+- 5bfdac2: restructure packages as part of move to pnpm
+
+## 2.0.0-next.18
+
+### Patch Changes
+
+- 1b971aa: adding support for :play command
+- 07ac90f: adding semantic validation for missing paramters
+
+## 2.0.0-next.17
+
+### Minor Changes
+
+- 1caab0c: Upgrades formatter from V1 -> V2
+
+### Patch Changes
+
+- bffbb19: Fix comment, QPP and pattern bugs in v1 formatter
+- 826d922: Add `:style` cmd to command parser
+
 ## 2.0.0-next.16
 
 ### Patch Changes

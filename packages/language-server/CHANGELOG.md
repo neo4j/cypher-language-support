@@ -1,5 +1,40 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updated dependencies [013e4ff]
+  - @neo4j-cypher/language-support@2.0.0-next.20
+  - @neo4j-cypher/query-tools@2.0.0-next.20
+
+## 2.0.0-next.20
+
+### Patch Changes
+
+- 5bfdac2: restructure packages as part of move to pnpm
+- Updated dependencies [88e4930]
+- Updated dependencies [5bfdac2]
+  - @neo4j-cypher/language-support@2.0.0-next.19
+  - @neo4j-cypher/query-tools@2.0.0-next.19
+
+## 2.0.0-next.19
+
+### Patch Changes
+
+- Updated dependencies [1b971aa]
+- Updated dependencies [07ac90f]
+  - @neo4j-cypher/language-support@2.0.0-next.18
+
+## 2.0.0-next.18
+
+### Patch Changes
+
+- Updated dependencies [bffbb19]
+- Updated dependencies [826d922]
+- Updated dependencies [1caab0c]
+  - @neo4j-cypher/language-support@2.0.0-next.17
+
 ## 2.0.0-next.17
 
 ### Patch Changes
@@ -154,4 +189,4 @@
 
 - Updated dependencies [5819f6385]
   - @neo4j-cypher/language-support@2.0.0-next.0
-  - @neo4j-cypher/schema-poller@2.0.0-next.0
+  - @neo4j-cypher/query-tools@2.0.0-next.0

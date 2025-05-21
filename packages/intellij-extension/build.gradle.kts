@@ -44,8 +44,7 @@ tasks {
 
         doLast {
             exec {
-                workingDir = file("../language-server")
-                commandLine = listOf("bash", "-c", "npm run bundle")
+                commandLine("bash", "-c", "cd ../.. && pnpm build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
             }
 
             copy {

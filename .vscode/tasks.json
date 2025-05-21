@@ -13,36 +13,12 @@
     },
     {
       "type": "npm",
-      "script": "watch",
-      "isBackground": true,
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "never"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.*)(npm ERR!)(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "turbo run build",
-          "endsPattern": "Time: "
-        }
-      }
-    },
-    {
-      "type": "npm",
-      "script": "build-vscode",
+      "script": "dev-vscode",
       "group": "build",
-      "problemMatcher": [],
-      "label": "npm: build-vscode",
-      "detail": "npm run build-vscode"
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "label": "npm: dev-vscode",
+      "detail": "pnpm dev-vscode"
     }
   ]
 }

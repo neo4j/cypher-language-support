@@ -1,5 +1,42 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.23
+
+### Patch Changes
+
+- Updated dependencies [013e4ff]
+  - @neo4j-cypher/language-support@2.0.0-next.20
+  - @neo4j-cypher/react-codemirror@2.0.0-next.23
+
+## 2.0.0-next.22
+
+### Patch Changes
+
+- 5bfdac2: restructure packages as part of move to pnpm
+- Updated dependencies [88e4930]
+- Updated dependencies [5bfdac2]
+  - @neo4j-cypher/language-support@2.0.0-next.19
+  - @neo4j-cypher/react-codemirror@2.0.0-next.22
+
+## 2.0.0-next.21
+
+### Patch Changes
+
+- Updated dependencies [1b971aa]
+- Updated dependencies [07ac90f]
+  - @neo4j-cypher/language-support@2.0.0-next.18
+  - @neo4j-cypher/react-codemirror@2.0.0-next.21
+
+## 2.0.0-next.20
+
+### Patch Changes
+
+- Updated dependencies [bffbb19]
+- Updated dependencies [826d922]
+- Updated dependencies [1caab0c]
+  - @neo4j-cypher/language-support@2.0.0-next.17
+  - @neo4j-cypher/react-codemirror@2.0.0-next.20
+
 ## 2.0.0-next.19
 
 ### Patch Changes

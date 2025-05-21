@@ -19,3 +19,7 @@ SYSINFO: S Y S I N F O;
 STYLE: S T Y L E;
 
 RESET: R E S E T;
+
+PLAY: P L A Y;
+
+ACCESSMODE: A C C E S S '-' M O D E;

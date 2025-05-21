@@ -1,4 +1,4 @@
-import { ConnectionError } from '@neo4j-cypher/schema-poller';
+import { ConnectionError } from '@neo4j-cypher/query-tools';
 import { window } from 'vscode';
 import {
   getActiveConnection,

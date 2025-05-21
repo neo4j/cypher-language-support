@@ -20,7 +20,7 @@ The project comprises several packages:
 - [intellij-extension](./packages/intellij-extension/README.md) - The Neo4j Intellij plugin which bundles the `language-server`
 - [react-codemirror](./packages/react-codemirror/README.md) - A set of [codemirror6](https://codemirror.net/) cypher language support plugins and a react wrapper.
 - [react-codemirror-playground](./packages/react-codemirror-playground/README.md) - A playground for the codemirror integration.
-- [schema-poller](./packages/schema-poller/README.md) - An internal package we use to manage the Neo4j connection and keep the schema (procedure names, labels, database names, etc.) up to date in the language server.
+- [query-tools](./packages/query-tools/README.md) - An internal package we use to manage the Neo4j connection and keep the schema (procedure names, labels, database names, etc.) up to date in the language server.
 
 ## Capabilities
 

@@ -19,6 +19,8 @@ consoleCommand: COLON (
     | welcomeCmd
     | sysInfoCmd
     | styleCmd
+    | playCmd
+    | accessModeCmd
 );
 
 paramsCmd: PARAM paramsArgs?;
@@ -47,12 +49,22 @@ styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
 
+playCmd: PLAY;
+
+accessModeArgs: (readCompletionRule | writeCompletionRule);
+
+accessModeCmd: ACCESSMODE accessModeArgs?;
+
 // These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
 
 useCompletionRule: USE;
 
 serverCompletionRule: SERVER;
+
+readCompletionRule: READ;
+
+writeCompletionRule: WRITE;
 
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
 unescapedSymbolicNameString: 

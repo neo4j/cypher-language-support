@@ -29,6 +29,7 @@ async function main() {
       extensionTestsEnv: {
         CYPHER_25: 'true',
         NEO4J_PORT: neo4jInstance.getMappedPort(7687).toString(),
+        DEBUG_VSCODE_TESTS: process.env.DEBUG_VSCODE_TESTS,
       },
     });
   } catch (err) {

@@ -1,0 +1,18 @@
+{
+  // the empty files is so you can run `tsc -b` in the root without double linting (first root, then subprojects)
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "packages/language-support" },
+    { "path": "packages/react-codemirror/" },
+    { "path": "packages/react-codemirror/tsconfig.node.json" },
+    { "path": "packages/react-codemirror-playground/" },
+    { "path": "packages/react-codemirror-playground/tsconfig.node.json" },
+    { "path": "packages/language-server/" },
+    { "path": "packages/language-server/tsconfig.node.json" },
+    { "path": "packages/vscode-extension/" },
+    { "path": "packages/vscode-extension/tsconfig.node.json" },
+    { "path": "packages/query-tools/" }
+    // { "path": "vendor/antlr4-c3" } -> this one does not inherit from the root tsconfig.json
+  ]
+}

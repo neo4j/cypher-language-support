@@ -1,8 +1,9 @@
 import {
   CypherDataTypeName,
   deserializeTypeAnnotations,
-} from '@neo4j-cypher/schema-poller';
+} from '@neo4j-cypher/query-tools';
 import * as vscode from 'vscode';
+import { CONSTANTS } from './constants';
 import { getExtensionContext } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
 
@@ -11,6 +12,7 @@ export interface Parameter {
   serializedValue: unknown;
   stringValue: string;
   type: CypherDataTypeName;
+  evaluatedStatement: string;
 }
 
 export type Parameters = {
@@ -35,6 +37,7 @@ export function getParameters(): Parameters {
 export async function clearParameters(): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(PARAMETERS_KEY, {});
+  await sendParametersToLanguageServer();
 }
 
 /**
@@ -63,19 +66,41 @@ export async function setParameter(param: Parameter) {
   const parameters = getParameters();
   const key = param.key;
   parameters[key] = param;
-  await saveParameters(parameters);
-  await sendParametersToLanguageServer();
-  void vscode.window.showInformationMessage(`Parameter \`${key}\` set.`);
+  await updateParameters(parameters);
+  void vscode.window.showInformationMessage(
+    CONSTANTS.MESSAGES.PARAMETER_SET(key),
+  );
 }
 
 /**
- * Saves a Parameters object to the global state.
+ * Deletes the parameter from the global state whose key is passed in to the procedure
+ * @returns void
+ */
+export async function deleteParameter(keyToDelete: string) {
+  const parameters = getParameters();
+  const modifiedParams = Object.fromEntries(
+    Object.entries(parameters).filter(([key]) => key !== keyToDelete),
+  );
+  await updateParameters(modifiedParams);
+  void vscode.window.showInformationMessage(
+    CONSTANTS.MESSAGES.PARAMETER_DELETED(keyToDelete),
+  );
+}
+
+export function getParameterByKey(key: string): Parameter | undefined {
+  const parameters = getParameters();
+  return parameters[key];
+}
+
+/**
+ * Updates the Parameters object in the global state and refreshes those in the language server
  * @param parameters The Parameters object to save.
  * @returns A void promise that resolves when the Parameters object has been saved.
  */
-async function saveParameters(parameters: Parameters): Promise<void> {
+async function updateParameters(parameters: Parameters): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(PARAMETERS_KEY, parameters);
+  await sendParametersToLanguageServer();
 }
 
 /**

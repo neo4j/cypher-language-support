@@ -1,4 +1,4 @@
-import { ConnnectionResult } from '@neo4j-cypher/schema-poller';
+import { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import { commands, Selection, TextEditor, window, workspace } from 'vscode';
 import {
   Connection,
@@ -150,6 +150,12 @@ export async function switchToDatabase(
     return;
   }
   const database = connectionItem.key;
+  await switchToDatabaseWithName(database);
+}
+
+export async function switchToDatabaseWithName(
+  database: string,
+): Promise<void> {
   const connection = getActiveConnection();
   const result = await switchDatabase({ ...connection, database });
   displayMessageForSwitchDatabaseResult(database, result);
@@ -190,8 +196,8 @@ export async function runCypher(): Promise<void> {
     const activeConnection = getActiveConnection();
 
     if (!activeConnection) {
-      await window.showErrorMessage(
-        `You need to be connected to Neo4j to run queries`,
+      void window.showErrorMessage(
+        CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EXECUTION,
       );
 
       return;
@@ -220,9 +226,10 @@ export async function cypherFileFromSelection(): Promise<void> {
 
 export async function forceDisconnect(): Promise<void> {
   const activeConnection = getActiveConnection();
-  const { result, connection } =
-    await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
-  displayMessageForConnectionResult(connection, result);
+
+  await toggleConnectionAndUpdateDatabaseConnection(activeConnection);
+
+  void window.showInformationMessage(CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE);
 }
 
 export async function forceConnect(i: number): Promise<void> {

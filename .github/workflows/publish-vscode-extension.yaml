@@ -15,40 +15,23 @@ jobs:
     environment: publish-vscode-extension
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          lfs: true
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Setup antlr4
-        uses: ./.github/actions/setup-antlr4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Install dependencies with frozen lock file
-        run: npm ci
-
-      - name: Build all packages
-        run: npm run build
+      # todo verify caching works well here too
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
 
       - name: Publish to VSCode Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           cd packages/vscode-extension
-          npx vsce package
-          npx vsce publish
+          pnpm package
+          pnpm vsce publish --no-dependencies
 
       - name: Publish to OpenVSX
         env:
           VSX_PAT: ${{ secrets.VSX_PAT }}
         run: |
           cd packages/vscode-extension
-          npx ovsx publish -p $VSX_PAT
+          pnpm ovsx publish -p $VSX_PAT --no-dependencies

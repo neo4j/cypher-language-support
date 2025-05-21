@@ -45,8 +45,10 @@ CALL {
   MATCH (target:object)
   WHERE target.id = $id2
   @MATCH path = (source)-[*1..10]->(target)
-  WITH path, REDUCE (weight = 0, r IN relationships(path) | weight + r.weight)
-             AS Weight ORDER BY Weight LIMIT 3
+  WITH 
+    path, 
+    REDUCE(weight = 0, r IN relationships(path) | weight + r.weight) AS Weight 
+  ORDER BY Weight LIMIT 3
   RETURN length(path) AS l, Weight
 }
 RETURN count(*)`;
@@ -62,8 +64,10 @@ RETURN variable;`;
     const cursorPos = query.search('@');
     const result = formatQuery(query.replace('@', ''), cursorPos);
     const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
-WHERE variable.property = "String" OR namespaced.function() = false OR
-      $para@meter > 2
+WHERE
+  variable.property = "String" OR
+  namespaced.function() = false OR
+  $para@meter > 2
 RETURN variable;`;
     expect(result.newCursorPos).toEqual(formated.search('@'));
   });

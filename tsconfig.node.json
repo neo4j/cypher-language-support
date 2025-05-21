@@ -3,5 +3,5 @@
     "allowJs": true,
     "noEmit": true
   },
-  "include": ["turbowatch.ts", ".eslint.rc.js"]
+  "include": [".eslintrc.js", "vitest.workspace.ts"]
 }

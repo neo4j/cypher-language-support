@@ -9,12 +9,16 @@ import {
   saveConnectionAndDisplayConnectionResult,
   showConnectionPanelForConnectionItem,
   switchToDatabase,
+  switchToDatabaseWithName,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers/connection';
 import {
   addParameter,
   clearAllParameters,
+  editParameter,
   evaluateParam,
+  removeParameter,
+  removeParameterByKey,
 } from './commandHandlers/params';
 import { CONSTANTS } from './constants';
 import {
@@ -23,7 +27,7 @@ import {
 } from './treeviews/connectionTreeDataProvider';
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
-import { parametersTreeDataProvider } from './treeviews/parametersTreeProvider';
+import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvider';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -85,10 +89,19 @@ export function registerDisposables(): Disposable[] {
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
     ),
     commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.SWITCH_DATABASE,
+      switchToDatabaseWithName,
+    ),
+    commands.registerCommand(
       CONSTANTS.COMMANDS.CYPHER_FILE_FROM_SELECTION,
       cypherFileFromSelection,
     ),
     commands.registerCommand(CONSTANTS.COMMANDS.ADD_PARAMETER, addParameter),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.DELETE_PARAMETER,
+      removeParameter,
+    ),
+    commands.registerCommand(CONSTANTS.COMMANDS.EDIT_PARAMETER, editParameter),
     commands.registerCommand(
       CONSTANTS.COMMANDS.CLEAR_PARAMETERS,
       clearAllParameters,
@@ -96,6 +109,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
       evaluateParam,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.INTERNAL.FORCE_DELETE_PARAMETER,
+      removeParameterByKey,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,

@@ -1,13 +1,13 @@
 import { _internalFeatureFlags } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/schema-poller';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import { LinterTask, LintWorker } from './lintWorker';
+import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
-const pool = workerpool.pool(join(__dirname, 'lintWorker.js'), {
+const pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
@@ -47,10 +47,14 @@ async function rawLintDocument(
   }
 }
 
-export const lintDocument = debounce(rawLintDocument, 600, {
-  leading: false,
-  trailing: true,
-});
+export const lintDocument: typeof rawLintDocument = debounce(
+  rawLintDocument,
+  600,
+  {
+    leading: false,
+    trailing: true,
+  },
+);
 
 export const cleanupWorkers = () => {
   void pool.terminate();

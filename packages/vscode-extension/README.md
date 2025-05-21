@@ -1,22 +1,31 @@
-# Neo4j for VS Code Preview
+# Neo4j for VS Code
 
 ## Getting started
 
-After installing the extension from the VS Code Marketplace, open a file with a `.cypher` to start using the extension. To enable database aware features (such as completing labels/functions), set up a connection to a Neo4j instance using the database connection pane and any settings described in the settings section below.
+After installing the extension from the VS Code Marketplace, open a file with a `.cypher` extension to start using it. To enable database aware features (such as completing labels, functions and procedures), set up a connection to a Neo4j instance using the database connection pane.
 
 ## Feature Highlights
 
-Our extension preview provides a rich set of features for working with Cypher, the query language for Neo4j databases, including:
+Our extension provides a rich set of features for working with Cypher, the query language for Neo4j databases, including:
 
 - Syntax highlighting
-- Syntax checking - both simple and semantic errors (e.g. type errors, unknown labels, etc)
+- Linting - both simple and semantic errors (e.g. type errors, unknown labels, etc)
 - Autocompletion for Cypher keywords, functions, labels, properties, database names and more
 - Signature help for functions - shows the signature of the function while typing
 - Formatting - format the document according to the Cypher styleguide
+- Connection management.
+- Query parameter management.
+- Query execution.
 
 ![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo.gif?raw=true)
 
-It also provides a basic database connection management pane and syntax highlighting embedded in other languages, namely Markdown, Java, Python, Javascriopt, .NET and Go. This is possible having a multiline string that starts with `//cypher` or `/*cypher*/` or a single line string starting with `/*cypher*/`. We also support a templated string `/*cypher*/`{{query here}}` in Javascript. Examples:
+It also provides syntax highlighting embedded in other languages, namely Markdown, Java, Python, Javascriopt, .NET and Go. This is possible having a multiline string that starts with `//cypher` or `/*cypher*/` or a single line string starting with `/*cypher*/`. We also support a templated string `/*cypher*/`{{query here}}` in Javascript. 
+
+Inside those languages you can also select a Cypher snippet and either create a `cypher` file with language smarts (completions, linting, etc) from it or execute that snippet.
+
+![demo-embedded-cypher-menus](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-embedded-cypher-menus.png?raw=true)
+
+Examples for the syntax highligting:
 
 ### Markdown
 
@@ -65,24 +74,62 @@ const d = '/*cypher*/ MATCH (n) RETURN n';
 
 ## Managing connections
 
-You can launch the connection pane from the Neo4j icon in the Activity Bar, or by using the `Neo4j: Edit Connection` command from the Command Palette.
+To add a new instance connection, you can launch the connection pane from the Neo4j icon in the Activity Bar (either on the `Add new connection` button when the pane is empty or on the `+` icon), or by using the `Neo4j: Create New Connection` command from the Command Palette.
+
+![demo-new-connection](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-new-connection.png?raw=true)
 
 ![demo-manage-connection](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-manage-connection.png?raw=true)
 
-From here you can manage, connect to, or disconnect from your database connections.
+Clicking on an instance will automatically connect to it. You can also manage a connection by right clicking on it, to connect, disconnect or edit it.
 
 ![demo-connect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-connect.png?raw=true)
 ![demo-disconnect](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-disconnect.png?raw=true)
 
-Once a connection is added, and a connection to your Neo4j instance is established, you will be able to use database aware features of the extension.
+Once a connection is added, and a connection to your Neo4j instance is established, you will be able to use database aware features of the extension. You can change the database you want to run queries against by clicking or right clicking (`Switch to database`) on it.
+
+You can store connections to different Neo4j instances.
+
+## Managing parameters
+
+To add a new parameter, you can use the `Neo4j: Add parameter` command from the Command Palette or use the `+` on the Neo4j parameters pane:
+
+![demo-add-parameter](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-add-parameter.png?raw=true)
+
+You will be prompted for the name and value you want to use for that parameter. The type will be automatically recognized from the value. Some examples:
+
+```
+"something" // would set a string parameter
+1234 // would set an Integer parameter
+datetime() // would set a datetime parameter
+[1,2,3] // would set a List parameter
+```
+
+Any `expression` that can appear in a `RETURN expression` can be set as value.
+
+Parameters can be accessed from in a query prepending them with a dollar sign `$`.
+
+Parameters can be edited / deleted hovering over them.
+
+![demo-param-editing](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-param-editing.png?raw=true)
+
+
+
+## Executing a Cypher file
+
+Once you've written your desired query (for example `RETURN $a, $b`) you can execute it by either of:
+* Using the `Neo4j: Run cypher statements` command from the Command Palette.
+* Right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item.
+* Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the `alt` key depending on your keyboard).
+
+![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 
 ## Upcoming features
 
 We're working on adding more features to the extension, such as:
 
-- Improved database connection management
-- Embedded cypher support in other file types
-- Query execution and result visualization
+- Dynamically adjusting the language server depending on the neo4j version.
+- Improved query results table.
+- Graph visualization for the results.
 
 ## Extension settings
 

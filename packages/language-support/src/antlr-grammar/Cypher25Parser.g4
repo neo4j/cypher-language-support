@@ -27,7 +27,23 @@ statement
    ;
 
 regularQuery
+   : union | when
+   ;
+
+union
    : singleQuery (UNION (ALL | DISTINCT)? singleQuery)*
+   ;
+
+when
+   : whenBranch+ elseBranch?
+   ;
+
+whenBranch
+   : WHEN expression THEN singleQuery
+   ;
+
+elseBranch
+   : ELSE singleQuery
    ;
 
 singleQuery
@@ -47,7 +63,9 @@ clause
    | matchClause
    | mergeClause
    | withClause
+   | filterClause
    | unwindClause
+   | letClause
    | callClause
    | subqueryClause
    | loadCSVClause
@@ -74,7 +92,7 @@ returnClause
    ;
 
 returnBody
-   : DISTINCT? returnItems orderBy? skip? limit?
+   : (DISTINCT | ALL)? returnItems orderBy? skip? limit?
    ;
 
 returnItem
@@ -182,8 +200,20 @@ mergeAction
    : ON (MATCH | CREATE) setClause
    ;
 
+filterClause
+   : FILTER WHERE? expression
+   ;
+
 unwindClause
    : UNWIND expression AS variable
+   ;
+
+letClause
+   : LET letItem (COMMA letItem)*
+   ;
+
+letItem
+   : variable EQ expression
    ;
 
 callClause
@@ -227,7 +257,12 @@ subqueryInTransactionsBatchParameters
    ;
 
 subqueryInTransactionsErrorParameters
-   : ON ERROR (CONTINUE | BREAK | FAIL)
+   : ON ERROR RETRY (subqueryInTransactionsRetryParameters)? (THEN (CONTINUE | BREAK | FAIL))?
+   | ON ERROR (CONTINUE | BREAK | FAIL)
+   ;
+
+subqueryInTransactionsRetryParameters
+   : FOR? expression secondsToken
    ;
 
 subqueryInTransactionsReportParameters
@@ -530,6 +565,7 @@ expression1
    | reduceExpression
    | listItemsPredicate
    | normalizeFunction
+   | vectorFunction
    | trimFunction
    | patternExpression
    | shortestPathExpression
@@ -607,6 +643,10 @@ listItemsPredicate
 
 normalizeFunction
    : NORMALIZE LPAREN expression (COMMA normalForm)? RPAREN
+   ;
+
+vectorFunction
+   : VECTOR LPAREN vectorValue = expression COMMA dimension = expression COMMA vectorCoordinateType RPAREN
    ;
 
 trimFunction
@@ -724,7 +764,10 @@ typeName
    | STRING
    | INT
    | SIGNED? INTEGER
+   | INTEGER64
+   | INT64
    | FLOAT
+   | FLOAT64
    | DATE
    | LOCAL (TIME | DATETIME)
    | ZONED (TIME | DATETIME)
@@ -733,6 +776,8 @@ typeName
    | DURATION
    | POINT
    | NODE
+   | VECTOR LPAREN signedIntegerLiteral COMMA vectorCoordinateType RPAREN
+   | VECTOR (LT vectorCoordinateType GT)? (LPAREN signedIntegerLiteral RPAREN)?
    | VERTEX
    | RELATIONSHIP
    | EDGE
@@ -761,6 +806,23 @@ typeNullability
 typeListSuffix
    : (LIST | ARRAY) typeNullability?
    ;
+
+vectorCoordinateType
+    : (INT
+    | SIGNED? INTEGER
+    | INTEGER64
+    | INTEGER32
+    | INTEGER16
+    | INTEGER8
+    | INT64
+    | INT32
+    | INT16
+    | INT8
+    | FLOAT
+    | FLOAT64
+    | FLOAT32
+    ) typeNullability?
+    ;
 
 // Show, terminate, schema and admin commands
 
@@ -1266,7 +1328,6 @@ privilege
    | dropPrivilege
    | loadPrivilege
    | qualifiedGraphPrivileges
-   | qualifiedGraphPrivilegesWithProperty
    | removePrivilege
    | setPrivilege
    | showPrivilege
@@ -1346,10 +1407,9 @@ showPrivilege
 
 setPrivilege
    : SET (
-      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE ACCESS | DEFAULT LANGUAGE) ON DBMS
+      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE (ACCESS | DEFAULT LANGUAGE) | AUTH) ON DBMS
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
-      | AUTH ON DBMS
    )
    ;
 
@@ -1382,7 +1442,7 @@ databasePrivilege
 
 dbmsPrivilege
    : (
-      ALTER (ALIAS | DATABASE | USER)
+      ALTER (ALIAS | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
       | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER) MANAGEMENT
       | dbmsPrivilegeExecute
@@ -1463,12 +1523,8 @@ globPart
    | unescapedSymbolicNameString
    ;
 
-qualifiedGraphPrivilegesWithProperty
-   : (TRAVERSE | (READ | MATCH) propertiesResource) ON graphScope graphQualifier (LPAREN TIMES RPAREN)?
-   ;
-
 qualifiedGraphPrivileges
-   : (DELETE | MERGE propertiesResource) ON graphScope graphQualifier
+   : (TRAVERSE | DELETE | (READ | MATCH | MERGE) propertiesResource) ON graphScope graphQualifier
    ;
 
 labelsResource
@@ -1488,7 +1544,11 @@ nonEmptyStringList
 graphQualifier
    : (
       graphQualifierToken (TIMES | nonEmptyStringList)
-      | FOR LPAREN variable? (COLON symbolicNameString (BAR symbolicNameString)*)? (RPAREN WHERE expression | (WHERE expression | map) RPAREN)
+      | FOR (
+        LPAREN variable? (COLON symbolicNameString (BAR symbolicNameString)*)? (RPAREN WHERE expression | (WHERE expression | map) RPAREN)
+        | LPAREN RPAREN leftArrow? arrowLine LBRACKET variable? (COLON symbolicNameString (BAR symbolicNameString)*)?
+            (RBRACKET arrowLine rightArrow? LPAREN RPAREN WHERE expression | (WHERE expression | map) RBRACKET arrowLine rightArrow? LPAREN RPAREN)
+      )
    )?
    ;
 
@@ -1526,11 +1586,27 @@ graphScope
 // Database commands
 
 createCompositeDatabase
-   : COMPOSITE DATABASE databaseName (IF NOT EXISTS)? defaultLanguageSpecification? commandOptions? waitClause?
+   : COMPOSITE DATABASE databaseName (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? commandOptions? waitClause?
    ;
 
 createDatabase
-   : DATABASE databaseName (IF NOT EXISTS)? defaultLanguageSpecification? (TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
+   : DATABASE databaseName (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? (topology | shards)? commandOptions? waitClause?
+   ;
+
+shards
+   : (SET? graphShard)? SET? propertyShard
+   ;
+
+graphShard
+   : GRAPH SHARD LCURLY (SET? topology)? RCURLY
+   ;
+
+propertyShard
+   : PROPERTY (SHARD | SHARDS) LCURLY COUNT UNSIGNED_DECIMAL_INTEGER (SET? TOPOLOGY uIntOrIntParameter (REPLICA | REPLICAS))? RCURLY
+   ;
+
+topology
+   : SET? TOPOLOGY (primaryTopology | secondaryTopology)+
    ;
 
 primaryTopology
@@ -1617,7 +1693,7 @@ databaseName
 // Alias commands
 
 createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
    ;
 
 dropAlias
@@ -1631,6 +1707,7 @@ alterAlias
       | alterAliasPassword
       | alterAliasDriver
       | alterAliasProperties
+      | defaultLanguageSpecification
    )+
    ;
 
@@ -1846,8 +1923,11 @@ unescapedSymbolicNameString_
    | FAIL
    | FALSE
    | FIELDTERMINATOR
+   | FILTER
    | FINISH
-   | FLOAT
+   | FLOAT   
+   | FLOAT64
+   | FLOAT32
    | FOREACH
    | FOR
    | FROM
@@ -1872,7 +1952,15 @@ unescapedSymbolicNameString_
    | INFINITY
    | INSERT
    | INT
+   | INT64
+   | INT32
+   | INT16
+   | INT8
    | INTEGER
+   | INTEGER64
+   | INTEGER32
+   | INTEGER16
+   | INTEGER8
    | IS
    | JOIN
    | KEY
@@ -1880,6 +1968,7 @@ unescapedSymbolicNameString_
    | LABELS
    | LANGUAGE
    | LEADING
+   | LET
    | LIMITROWS
    | LIST
    | LOAD
@@ -1944,10 +2033,13 @@ unescapedSymbolicNameString_
    | RENAME
    | REPEATABLE
    | REPLACE
+   | REPLICA
+   | REPLICAS
    | REPORT
    | REQUIRE
    | REQUIRED
    | RESTRICT
+   | RETRY
    | RETURN
    | REVOKE
    | ROLE
@@ -1966,6 +2058,8 @@ unescapedSymbolicNameString_
    | SET
    | SETTING
    | SETTINGS
+   | SHARD
+   | SHARDS
    | SHORTEST
    | SHORTEST_PATH
    | SHOW

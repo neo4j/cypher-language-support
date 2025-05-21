@@ -1,6 +1,6 @@
 import { Token } from 'antlr4';
-import { CodeCompletionCore } from 'antlr4-c3';
 import { distance } from 'fastest-levenshtein';
+import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import {
@@ -51,6 +51,8 @@ export function completionCoreErrormessage(
           [CypherParser.RULE_useCompletionRule]: 'use',
           [CypherParser.RULE_listCompletionRule]: 'list',
           [CypherParser.RULE_serverCompletionRule]: 'server',
+          [CypherParser.RULE_readCompletionRule]: 'read',
+          [CypherParser.RULE_writeCompletionRule]: 'write',
         }
       : { [CypherParser.RULE_consoleCommand]: null }),
   };

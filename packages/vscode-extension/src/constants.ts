@@ -11,11 +11,15 @@ export const CONSTANTS = {
     RUN_CYPHER: 'neo4j.runCypher',
     CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
     ADD_PARAMETER: 'neo4j.addParameter',
+    DELETE_PARAMETER: 'neo4j.deleteParameter',
+    EDIT_PARAMETER: 'neo4j.editParameter',
     CLEAR_PARAMETERS: 'neo4j.clearParameters',
     INTERNAL: {
       EVAL_PARAMETER: 'neo4j.internal.evalParam',
+      FORCE_DELETE_PARAMETER: 'neo4j.internal.forceDeleteParam',
       FORCE_DISCONNECT: 'neo4j.internal.forceDisconnect',
       FORCE_CONNECT: 'neo4j.internal.forceConnect',
+      SWITCH_DATABASE: 'neo4j.internal.forceSwitchDatabase',
     },
   },
   MESSAGES: {
@@ -27,5 +31,18 @@ export const CONSTANTS = {
     CONNECTION_VALIDATION_MESSAGE: 'Please fill in all required fields.',
     SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE: 'Switched to database',
     ERROR_SWITCHING_DATABASE_MESSAGE: 'Error switching to database',
+    ERROR_DISCONNECTED_SET_PARAMS:
+      'You need to be connected to neo4j to set parameters.',
+    ERROR_DISCONNECTED_EDIT_PARAMS:
+      'You need to be connected to neo4j to edit parameters.',
+    ERROR_EMPTY_PARAM_NAME: 'Parameter name cannot be empty.',
+    ERROR_EMPTY_PARAM_VALUE: 'Parameter value cannot be empty.',
+    ERROR_PARAM_EVALUATION: 'Parameter evaluation failed.',
+    ERROR_PARAM_EVALUATION_SYSTEM_DB:
+      'Parameters cannot be evaluated against a system database. Please connect to a user database.',
+    ERROR_DISCONNECTED_EXECUTION:
+      'You need to be connected to Neo4j to run queries',
+    PARAMETER_SET: (key: string) => `Parameter '${key}' set.`,
+    PARAMETER_DELETED: (key: string) => `Parameter \`${key}\` deleted.`,
   },
 };

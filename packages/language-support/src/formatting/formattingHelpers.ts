@@ -18,25 +18,27 @@ https://github.com/neo4j/cypher-language-support.`.trim();
  */
 export const MAX_COL = 80;
 
-export enum AlignIndentationOptions {
-  Add = 1,
-  Remove = -1,
-  Maintain = 0,
-}
-
-export interface ChunkIndentation {
-  base: number;
-  special: number;
-  align: AlignIndentationOptions;
+export interface Group {
+  id: number;
+  // Should this group break in the "Prettier" fashion, breaking between
+  // all of its children?
+  shouldBreak?: boolean;
+  size: number;
+  // The full text of the group (used for debugging only)
+  dbgText: string;
 }
 
 export interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
-  groupsStarting: number;
-  groupsEnding: number;
-  indentation: ChunkIndentation;
+  groupsStarting: Group[];
+  groupsEnding: Group[];
+  indentation: IndentationModifier[];
+  // Comment that is attached to a chunk. Not to be confused with a comment
+  // that is in the chunklist (one with a newline before it.)
+  comment?: string;
+  mustBreak?: boolean;
 }
 
 // Regular chunk specific properties
@@ -45,35 +47,25 @@ export interface RegularChunk extends BaseChunk {
   node?: TerminalNode;
   noSpace?: boolean;
   noBreak?: boolean;
-  mustBreak?: boolean;
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
+  mustBreak?: boolean;
   type: 'SYNTAX_ERROR';
 }
 
 // Comment chunk specific properties
 export interface CommentChunk extends BaseChunk {
   type: 'COMMENT';
-  breakBefore: boolean;
 }
 
 // Union type for all chunk types
 export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 
-export const initialIndentation: ChunkIndentation = {
-  base: 0,
-  special: 0,
-  align: AlignIndentationOptions.Maintain,
-};
-
-export const emptyChunk: RegularChunk = {
-  type: 'REGULAR',
-  text: '',
-  groupsStarting: 0,
-  groupsEnding: 0,
-  indentation: { ...initialIndentation },
-};
+export interface IndentationModifier {
+  id: number;
+  change: 1 | -1;
+}
 
 const traillingCharacters = [
   CypherCmdLexer.SEMICOLON,
@@ -154,9 +146,77 @@ export function findTargetToken(
   return false;
 }
 
-export function isCommentBreak(chunk: Chunk, nextChunk: Chunk): boolean {
-  return (
-    chunk.type === 'COMMENT' ||
-    (nextChunk?.type === 'COMMENT' && nextChunk?.breakBefore)
-  );
+// These three are helpers for the fillInGroupSizes method to make it more manageable
+export function fillInRegularChunkGroupSizes(
+  chunk: RegularChunk,
+  activeGroups: Group[],
+) {
+  const groupsEnding = new Set<number>(chunk.groupsEnding.map((g) => g.id));
+  for (const group of activeGroups) {
+    if (!chunk.text) {
+      throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+    }
+    group.size += chunk.text.length;
+    // PERF: Right now we include dbgText always, even though it's only used for debugging.
+    // It does not seem to have any significant performance downsides, but only doing so
+    // when e.g. a flag is set might be a more prudent choice.
+    group.dbgText += chunk.text;
+    if (!chunk.noSpace && shouldAddSpace(chunk, chunk)) {
+      group.size++;
+      group.dbgText += ' ';
+    }
+    if (chunk.comment && !groupsEnding.has(group.id)) {
+      group.shouldBreak = true;
+    }
+  }
+}
+
+export function verifyGroupSizes(chunkList: Chunk[]) {
+  for (const chunk of chunkList) {
+    for (const group of chunk.groupsStarting) {
+      if (group.size !== group.dbgText.length) {
+        throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
+      }
+    }
+  }
+}
+
+const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
+
+export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+  if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
+    return false;
+  }
+  if (chunk.type === 'REGULAR') {
+    if (chunk.noSpace) {
+      return false;
+    }
+    if (chunk.node && openingCharacters.includes(chunk.node.symbol.type)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function getActiveGroups(
+  activeGroups: Group[],
+  groupsEnding: Set<number>,
+  chunk: Chunk,
+) {
+  for (const group of chunk.groupsStarting) {
+    activeGroups.push(group);
+  }
+  const newActiveGroups: Group[] = [];
+  for (const group of activeGroups) {
+    if (!groupsEnding.has(group.id)) {
+      newActiveGroups.push(group);
+    } else {
+      // Trim trailling spaces from groups that are ending
+      if (group.dbgText.at(-1) === ' ') {
+        group.size--;
+        group.dbgText = group.dbgText.slice(0, -1);
+      }
+    }
+  }
+  return newActiveGroups;
 }

@@ -1,6 +1,3 @@
-import { Token } from 'antlr4';
-import type { CandidateRule, CandidatesCollection } from 'antlr4-c3';
-import { CodeCompletionCore } from 'antlr4-c3';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -27,6 +24,12 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
+import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import {
+  CandidatesCollection,
+  CodeCompletionCore,
+  Token,
+} from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
@@ -41,20 +44,29 @@ const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 const versions = () =>
   _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
 
-export function backtickIfNeeded(e: string): string | undefined {
-  if (e == null || e == '') {
-    return undefined;
-  } else if (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
-    return `\`${e}\``;
-  } else {
-    return undefined;
-  }
-}
+type BacktickVariant = 'label' | 'propertyKey' | 'relType' | 'dbName' | 'param';
 
-function backtickDbNameIfNeeded(e: string): string | undefined {
+export function backtickIfNeeded(
+  e: string,
+  variant: BacktickVariant,
+): string | undefined {
   if (e == null || e == '') {
     return undefined;
-  } else if (/[^\p{L}\p{N}_.]/u.test(e) || /[^\p{L}_]/u.test(e[0])) {
+  } else if (
+    (variant === 'label' ||
+      variant === 'propertyKey' ||
+      variant === 'relType') &&
+    (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0]))
+  ) {
+    return `\`${e}\``;
+  } else if (
+    variant === 'dbName' &&
+    (/[^\p{L}\p{N}_.]/u.test(e) ||
+      /[^\p{L}_]/u.test(e[0]) ||
+      /[^\p{L}\p{N}_]/u.test(e.at(-1)))
+  ) {
+    return `\`${e}\``;
+  } else if (variant === 'param' && /[^\p{L}\p{N}_]/u.test(e)) {
     return `\`${e}\``;
   } else {
     return undefined;
@@ -81,7 +93,7 @@ const cypherVersionCompletions = () =>
 
 const labelCompletions = (dbSchema: DbSchema) =>
   dbSchema.labels?.map((labelName) => {
-    const backtickedName = backtickIfNeeded(labelName);
+    const backtickedName = backtickIfNeeded(labelName, 'label');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -96,7 +108,7 @@ const labelCompletions = (dbSchema: DbSchema) =>
 
 const reltypeCompletions = (dbSchema: DbSchema) =>
   dbSchema.relationshipTypes?.map((relType) => {
-    const backtickedName = backtickIfNeeded(relType);
+    const backtickedName = backtickIfNeeded(relType, 'relType');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -333,6 +345,7 @@ function getTokenCompletions(
 const parameterCompletions = (
   dbInfo: DbSchema,
   previousToken: Token | undefined,
+  tokens: Token[],
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
@@ -341,18 +354,23 @@ const parameterCompletions = (
       isExpectedParameterType(expectedType, paramType),
     )
     .map(([paramName]) => {
-      const backtickedName = backtickIfNeeded(paramName);
+      const backtickedName = backtickIfNeeded(paramName, 'param');
       let maybeInsertText = backtickedName
         ? { insertText: `$${backtickedName}` }
         : {};
       // If there is a preceding token and it's not empty, compute the suffix
       if (previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
-        const suffix = isSuffix(previousToken.text, param);
-        // We need to have the insert text without the starting $ in VSCode,
-        // otherwise when we have 'RETURN $' and we get offered $param
-        // we would complete RETURN $$param, which is not what we want
-        maybeInsertText = suffix ? { insertText: paramName } : {};
+        const hasDollar =
+          previousToken.type === CypherLexer.DOLLAR ||
+          tokens.at(previousToken.tokenIndex - 1).type === CypherLexer.DOLLAR;
+        // If the $ symbol is already there, we need to have the insert
+        // text without the starting $ in VSCode, otherwise when we have
+        // 'RETURN $' and we get offered $param we would complete
+        // RETURN $$param, which is not what we want
+        maybeInsertText = hasDollar
+          ? { insertText: param.slice(1) }
+          : maybeInsertText;
       }
 
       return {
@@ -362,12 +380,9 @@ const parameterCompletions = (
       };
     });
 
-function isSuffix(prefix: string, param: string): boolean {
-  return param.startsWith(prefix) || param.startsWith(`$${prefix}`);
-}
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
-    const backtickedName = backtickIfNeeded(propertyKey);
+    const backtickedName = backtickIfNeeded(propertyKey, 'propertyKey');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
       : {};
@@ -499,7 +514,7 @@ export function completionCoreCompletion(
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
   // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
-  // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
+  // The need for this caret movement is outlined in the documentation of vendor/antlr4-c3 in the section about caret position
   // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1];
@@ -532,6 +547,8 @@ export function completionCoreCompletion(
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
           CypherParser.RULE_serverCompletionRule,
+          CypherParser.RULE_readCompletionRule,
+          CypherParser.RULE_writeCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -614,6 +631,7 @@ export function completionCoreCompletion(
         return parameterCompletions(
           dbSchema,
           previousToken,
+          tokens,
           inferExpectedParameterTypeFromContext(candidateRule),
         );
       }
@@ -678,6 +696,7 @@ export function completionCoreCompletion(
         return completeAliasName({
           candidateRule,
           dbSchema,
+          tokens,
           parsingResult,
         });
       }
@@ -687,6 +706,7 @@ export function completionCoreCompletion(
           candidateRule,
           dbSchema,
           previousToken,
+          tokens,
           parsingResult,
         });
       }
@@ -724,6 +744,14 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_serverCompletionRule) {
         return [{ label: 'server', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_readCompletionRule) {
+        return [{ label: 'read', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
+        return [{ label: 'write', kind: CompletionItemKind.Event }];
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
@@ -780,6 +808,7 @@ type CompletionHelperArgs = {
   parsingResult: ParsedStatement;
   dbSchema: DbSchema;
   previousToken?: Token;
+  tokens: Token[];
   candidateRule: CandidateRule;
 };
 function completeAliasName({
@@ -834,7 +863,7 @@ function completeAliasName({
     )
   ) {
     return (dbSchema.aliasNames ?? []).map((aliasName) => {
-      const backtickedName = backtickDbNameIfNeeded(aliasName);
+      const backtickedName = backtickIfNeeded(aliasName, 'dbName');
       const maybeInsertText = backtickedName
         ? { insertText: backtickedName }
         : {};
@@ -850,7 +879,7 @@ function completeAliasName({
   return (dbSchema.databaseNames ?? [])
     .concat(dbSchema.aliasNames ?? [])
     .map((databaseName) => {
-      const backtickedName = backtickDbNameIfNeeded(databaseName);
+      const backtickedName = backtickIfNeeded(databaseName, 'dbName');
       const maybeInsertText = backtickedName
         ? { insertText: backtickedName }
         : {};
@@ -867,12 +896,14 @@ function completeSymbolicName({
   candidateRule,
   dbSchema,
   previousToken,
+  tokens,
   parsingResult,
 }: CompletionHelperArgs): CompletionItem[] {
   // parameters are valid values in all cases of symbolic name
   const parameterSuggestions = parameterCompletions(
     dbSchema,
     previousToken,
+    tokens,
     inferExpectedParameterTypeFromContext(candidateRule),
   );
 
