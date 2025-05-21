@@ -287,14 +287,16 @@
           "id": "neo4jQueryDetails",
           "name": "Query Details",
           "initialSize": 1,
-          "when": "neo4j:showBottomPanel"
+          "when": "neo4j:showBottomPanel",
+          "icon": "$(list-tree)"
         },
         {
           "type": "webview",
           "id": "neo4jQueryVisualization",
           "name": "Visualization",
           "initialSize": 7,
-          "when": "neo4j:showBottomPanel"
+          "when": "neo4j:showBottomPanel",
+          "icon": "resources/images/visualization.svg"
         }
       ],
       "neo4j-explorer": [
