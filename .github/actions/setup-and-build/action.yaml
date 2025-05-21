@@ -57,8 +57,10 @@ runs:
       shell: bash
       env:
         NODE_OPTIONS: '--max_old_space_size=4096'
-      run: pnpm build
-
+      run: |
+        pnpm build
+        rm -rf packages/intellij-extension/build
+      
     - name: Cache build output
       if: steps.restore-cache.outputs.cache-hit != 'true'
       uses: actions/cache@v4
