@@ -1,7 +1,7 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
   _internalFeatureFlags,
-  cypherVersions,
+  allCypherVersions,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
@@ -181,7 +181,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     });
 
     const versions: (CypherVersion | undefined)[] = supportsCypherAnnotation
-      ? cypherVersions
+      ? allCypherVersions
       : [undefined];
 
     versions.forEach((cypherVersion) => {
