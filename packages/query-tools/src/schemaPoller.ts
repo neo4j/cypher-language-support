@@ -13,7 +13,7 @@ import {
 } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
-import { getVersion } from './queries/version';
+import { getCypherVersions } from './queries/version';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -181,8 +181,8 @@ export class Neo4jSchemaPoller {
     );
 
     const { query: versionQuery, queryConfig: versionQueryConfig } =
-      getVersion();
-    const { serverVersion } = await this.driver.executeQuery(
+      getCypherVersions();
+    const { languageVersions } = await this.driver.executeQuery(
       versionQuery,
       {},
       versionQueryConfig,
@@ -191,7 +191,7 @@ export class Neo4jSchemaPoller {
     this.metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
-      serverVersion,
+      languageVersions,
       this.connection,
       this.events,
     );

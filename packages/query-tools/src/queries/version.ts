@@ -1,23 +1,25 @@
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
-/**
- * Get dbms version
- */
-export function getVersion(): ExecuteQueryArgs<{
-  serverVersion: string | undefined;
+export function getCypherVersions(): ExecuteQueryArgs<{
+  languageVersions: string[] | undefined;
 }> {
-  const query = 'CALL dbms.components() YIELD versions';
+  const query = 'CALL dbms.components() YIELD name, versions';
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
       const obj = record.toObject();
+      const name = obj.name as string;
       const versions = obj.versions as string[];
-      const version = versions?.at(0);
-      return version;
+      return { name, versions };
     },
-    collect(versions, summary) {
-      return { serverVersion: versions.at(0), summary };
+    collect(rows, summary) {
+      rows.forEach((row) => {
+        if (row.name === 'Cypher') {
+          return { languageVersions: row.versions, summary };
+        }
+      });
+      return { languageVersions: ['5'], summary };
     },
   });
 
