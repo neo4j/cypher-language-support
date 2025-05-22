@@ -515,7 +515,7 @@ RETURN [stop in n[..-1] | stop.name] AS stops`;
 MATCH
   SHORTEST 1
   (:Station {name: 'Hartlebury'}) (()--(n))+(:Station {name: 'Cheltenham Spa'})
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -530,8 +530,8 @@ MATCH
   ((:Station {name: 'Hartlebury'})
     (()--(n:Station))+
     (:Station {name: 'Cheltenham Spa'})
-    WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -550,10 +550,10 @@ MATCH
     (:Station {name: 'Cheltenham Spa'})
     WHERE
       none(
-        stop IN n[.. -1]
+        stop IN n[..-1]
         WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -569,8 +569,8 @@ MATCH
     ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
       (()--(n:Station))+
       (:Station {name: 'Cheltenham Spa'})
-      WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+      WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -1127,14 +1127,14 @@ LIMIT "g68S0y7w";`;
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
 RETURN deleteNodes`;
     const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode,
-  duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode,
+  duplicates["oMXseK4u"..] AS deleteNodes
 RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
