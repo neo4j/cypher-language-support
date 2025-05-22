@@ -36,20 +36,26 @@ tasks {
     }
 
     prepareSandbox {
-        doFirst {
-            exec {
-                commandLine("bash", "-c", "cd ../.. && pnpm build && cp packages/language-server/dist/cypher-language-server.js ./editor-plugin/intellij")
-            }
-        }
+
         from(".") {
             include("*.js")
-            into("cypher-lsp-support")
+            into("neo4j-for-intellij")
         }
     }
 
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("242.*")
+    buildPlugin {
+        dependsOn(prepareSandbox)
+    }
+
+    runIde {
+        dependsOn(buildPlugin, prepareSandbox)
+
+        debugOptions {
+           enabled = false
+           port = 8000
+           server = true
+           suspend = true
+       }
     }
 
     signPlugin {
