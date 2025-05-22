@@ -95,6 +95,7 @@ import {
   ShowCommandYieldContext,
   SkipContext,
   StatementsOrCommandsContext,
+  StringAndListComparisonContext,
   SubqueryClauseContext,
   SubqueryScopeContext,
   TrimFunctionContext,
@@ -280,7 +281,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Skips any preceding comments or special chunks we did not expect.
    */
   setChunkProperty = (
-    propertyName: 'noSpace' | 'noBreak' | 'mustBreak',
+    propertyName:
+      | 'noSpace'
+      | 'noBreak'
+      | 'mustBreak'
+      | 'specialSplit'
+      | 'oneItem',
   ): void => {
     if (this.chunkList.length === 0) {
       return;
@@ -294,6 +300,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   avoidSpaceBetween = (): void => {
     this.setChunkProperty('noSpace');
+  };
+
+  setSpecialSplitProperty = (): void => {
+    this.setChunkProperty('specialSplit');
+  };
+
+  setOneItemProperty = (): void => {
+    this.setChunkProperty('oneItem');
   };
 
   avoidBreakBetween = (): void => {
@@ -361,6 +375,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const modifier: IndentationModifier = {
       id: indentId,
       change: 1,
+      isApplied: true,
     };
     this.indentStack.push(modifier);
     this._addIndentationModifier(modifier);
@@ -371,10 +386,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.indentStack.length === 0 || this.indentStack.at(-1).id !== id) {
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
+    const lastModifier = this.indentStack.pop();
     const modifier: IndentationModifier = {
-      ...this.indentStack.pop(),
+      ...lastModifier,
       change: -1,
     };
+    // Adds reference of removeModifier to addModifier
+    // This allows addModifier to tell removeModifier if it has been applied
+    lastModifier.removeReference = modifier;
     this._addIndentationModifier(modifier);
   };
 
@@ -895,9 +914,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.avoidBreakBetween();
       this._visit(ctx.DISTINCT());
     }
-    const returnItemsIndent = this.addIndentation();
     this._visit(ctx.returnItems());
-    this.removeIndentation(returnItemsIndent);
     if (ctx.orderBy() || ctx.skip()) {
       this.breakLine();
       this._visit(ctx.orderBy());
@@ -910,6 +927,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     const unwindClauseGrp = this.startGroup();
     this._visit(ctx.UNWIND());
+    this.setOneItemProperty();
     const unwindIndent = this.addIndentation();
     this._visit(ctx.expression());
     const asGrp = this.startGroup();
@@ -949,6 +967,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.TIMES());
     }
     const n = ctx.returnItem_list().length;
+    if (n === 1) {
+      this.setOneItemProperty();
+    }
     let commaIdx = 0;
     if (ctx.TIMES() && n > 0) {
       this._visit(ctx.COMMA(commaIdx));
@@ -990,6 +1011,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const inGrp = this.startGroup();
     this._visit(ctx.variable(1));
     this._visit(ctx.IN());
+    this.setOneItemProperty();
     this.endGroup(inGrp);
     this._visit(ctx.expression(1));
     this.avoidBreakBetween();
@@ -1940,6 +1962,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.ALL());
     this._visit(ctx.DISTINCT());
     const n = ctx.functionArgument_list().length;
+    if (n === 1) {
+      this.setOneItemProperty();
+    }
     for (let i = 0; i < n; i++) {
       // Don't put a space between the ( and the first argument
       if (i == 0 && !ctx.DISTINCT() && !ctx.ALL()) {
@@ -1954,6 +1979,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this.removeIndentation(argsIndent);
+    // Check for right parenthesis
+    // Should not avoid break if parenthesis is missing
+    // See test 'incomplete function call'
+    if (n === 1 && ctx.RPAREN()) {
+      this.avoidBreakBetween();
+    }
     this._visitTerminalRaw(ctx.RPAREN(), {
       dontConcatenate: true,
       spacingChoice: 'SPACE_AFTER',
@@ -2063,6 +2094,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMap = (ctx: MapContext) => {
     const mapGrp = this.startGroup();
     this._visit(ctx.LCURLY());
+    this.setSpecialSplitProperty();
     const mapIndent = this.addIndentation();
     this.avoidSpaceBetween();
     const n = ctx.expression_list().length;
@@ -2108,6 +2140,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitMapProjection = (ctx: MapProjectionContext) => {
     const mapWrappingGrp = this.startGroup();
     this._visit(ctx.variable());
+    this.setSpecialSplitProperty();
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const mapProjectionIndent = this.addIndentation();
@@ -2166,6 +2199,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitListLiteral = (ctx: ListLiteralContext) => {
     const listGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
+    this.setSpecialSplitProperty();
     const listIndent = this.addIndentation();
     const n = ctx.expression_list().length;
     for (let i = 0; i < n; i++) {
@@ -2312,6 +2346,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(callGrp);
     this.removeIndentation(callIndent);
+  };
+
+  visitStringAndListComparison = (ctx: StringAndListComparisonContext) => {
+    this._visit(ctx.REGEQ());
+    this._visit(ctx.STARTS());
+    this._visit(ctx.ENDS());
+    this._visit(ctx.WITH());
+    this._visit(ctx.CONTAINS());
+    this._visit(ctx.IN());
+    this.setOneItemProperty();
+    this._visit(ctx.expression6());
   };
 }
 
