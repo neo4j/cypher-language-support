@@ -12,12 +12,46 @@ export function getVersion(): ExecuteQueryArgs<{
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
       const obj = record.toObject();
+      const name = obj.name as string;
       const versions = obj.versions as string[];
-      const version = versions?.at(0);
-      return version;
+      return { name, versions };
     },
-    collect(versions, summary) {
-      return { serverVersion: versions.at(0), summary };
+    collect(rows, summary) {
+      rows.forEach((row) => {
+        if (row.name === 'Neo4j Kernel') {
+          return { serverVersion: row.versions, summary };
+        }
+      });
+      //We should not reach this unless the "name" field changes
+      return { serverVersion: undefined, summary };
+    },
+  });
+
+  return {
+    query,
+    queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
+  };
+}
+
+export function getCypherVersions(): ExecuteQueryArgs<{
+  serverCypherVersions: string[] | undefined;
+}> {
+  const query = 'CALL dbms.components() YIELD name, versions';
+
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      const obj = record.toObject();
+      const name = obj.name as string;
+      const versions = obj.versions as string[];
+      return { name, versions };
+    },
+    collect(rows, summary) {
+      rows.forEach((row) => {
+        if (row.name === 'Cypher') {
+          return { serverCypherVersions: row.versions, summary };
+        }
+      });
+      return { serverCypherVersions: ['5'], summary };
     },
   });
 
