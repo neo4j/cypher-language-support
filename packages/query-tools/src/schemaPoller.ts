@@ -180,18 +180,18 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    const { query: versionQuery, queryConfig: versionQueryConfig } =
+    const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
       getCypherVersions();
-    const { cypherVersions } = await this.driver.executeQuery(
-      versionQuery,
+    const { serverCypherVersions } = await this.driver.executeQuery(
+      cypherVersionQuery,
       {},
-      versionQueryConfig,
+      cypherVersionQueryConfig,
     );
 
     this.metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
-      cypherVersions,
+      serverCypherVersions,
       this.connection,
       this.events,
     );

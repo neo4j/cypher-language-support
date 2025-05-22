@@ -1,8 +1,40 @@
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
+/**
+ * Get dbms version
+ */
+export function getVersion(): ExecuteQueryArgs<{
+  serverVersion: string | undefined;
+}> {
+  const query = 'CALL dbms.components() YIELD versions';
+
+  const resultTransformer = resultTransformers.mappedResultTransformer({
+    map(record) {
+      const obj = record.toObject();
+      const name = obj.name as string;
+      const versions = obj.versions as string[];
+      return { name, versions };
+    },
+    collect(rows, summary) {
+      rows.forEach((row) => {
+        if (row.name === 'Neo4j Kernel') {
+          return { serverVersion: row.versions, summary };
+        }
+      });
+      //We should not reach this unless the "name" field changes
+      return { serverVersion: undefined, summary };
+    },
+  });
+
+  return {
+    query,
+    queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
+  };
+}
+
 export function getCypherVersions(): ExecuteQueryArgs<{
-  cypherVersions: string[] | undefined;
+  serverCypherVersions: string[] | undefined;
 }> {
   const query = 'CALL dbms.components() YIELD name, versions';
 
@@ -16,10 +48,10 @@ export function getCypherVersions(): ExecuteQueryArgs<{
     collect(rows, summary) {
       rows.forEach((row) => {
         if (row.name === 'Cypher') {
-          return { cypherVersions: row.versions, summary };
+          return { serverCypherVersions: row.versions, summary };
         }
       });
-      return { cypherVersions: ['5'], summary };
+      return { serverCypherVersions: ['5'], summary };
     },
   });
 
