@@ -114,13 +114,13 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   constructor(
     databases: Database[],
     parameters: Record<string, unknown>,
-    languageVersions: string[] | undefined,
+    cypherVersions: string[] | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
     super();
     const supportsCypherAnnotation =
-      _internalFeatureFlags.cypher25 || languageVersions?.includes('25');
+      _internalFeatureFlags.cypher25 || cypherVersions?.includes('25');
 
     this.dbSchema.parameters = parameters;
 

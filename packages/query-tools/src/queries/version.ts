@@ -2,7 +2,7 @@ import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 
 export function getCypherVersions(): ExecuteQueryArgs<{
-  languageVersions: string[] | undefined;
+  cypherVersions: string[] | undefined;
 }> {
   const query = 'CALL dbms.components() YIELD name, versions';
 
@@ -16,10 +16,10 @@ export function getCypherVersions(): ExecuteQueryArgs<{
     collect(rows, summary) {
       rows.forEach((row) => {
         if (row.name === 'Cypher') {
-          return { languageVersions: row.versions, summary };
+          return { cypherVersions: row.versions, summary };
         }
       });
-      return { languageVersions: ['5'], summary };
+      return { cypherVersions: ['5'], summary };
     },
   });
 
