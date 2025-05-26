@@ -45,6 +45,7 @@ import {
   ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
+  FilterClauseContext,
   ForeachClauseContext,
   FulltextNodePatternContext,
   FunctionInvocationContext,
@@ -936,6 +937,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this._visit(ctx.skip());
     }
     this._visit(ctx.limit());
+  };
+
+  visitFilterClause = (ctx: FilterClauseContext) => {
+    const filterGrp = this.startGroup();
+    this._visit(ctx.FILTER());
+    if (ctx.WHERE()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.WHERE());
+    }
+    const filterIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.endGroup(filterGrp);
+    this.removeIndentation(filterIndent);
   };
 
   visitUnwindClause = (ctx: UnwindClauseContext) => {

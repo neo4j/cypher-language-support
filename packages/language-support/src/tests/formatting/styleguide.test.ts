@@ -380,4 +380,20 @@ ELSE
   RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('basic FILTER formatting', () => {
+    const query = `match (n) filter n.name > 5 return n`;
+    const expected = `MATCH (n)
+FILTER n.name > 5
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic FILTER formatting with WHERE', () => {
+    const query = `match (n) filter where n.name > 5 return n`;
+    const expected = `MATCH (n)
+FILTER WHERE n.name > 5
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
