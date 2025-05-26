@@ -2,7 +2,7 @@ import semver from 'semver';
 import { integer } from 'vscode-languageserver-types';
 
 export function cypher25Supported(serverVersion: string) {
-  const minSupportedVersion = '5.27.0-2025040';
+  const minSupportedVersion = '2025.8.0';
   return compareVersions(minSupportedVersion, serverVersion) <= 0;
 }
 
@@ -10,18 +10,58 @@ export function cypher25Supported(serverVersion: string) {
  *  - -1 if v1 < v2
  *  -  0 if v1 === v2
  *  -  1 if  v1 > v2
+ *  But ignores patch version,
+ *  and returns undefined if versions are of incorrect format */
+export function compareMajorMinorVersions(
+  version1: string,
+  version2: string,
+): integer | undefined {
+  let semVer1: semver.SemVer;
+  let semVer2: semver.SemVer;
+  try {
+    semVer1 = semver.coerce(version1, {
+      includePrerelease: false,
+    });
+    semVer2 = semver.coerce(version2, {
+      includePrerelease: false,
+    });
+  } catch (e) {
+    return undefined;
+  }
+  if (semVer1 && semVer2) {
+    semVer1.patch = 0;
+    semVer2.patch = 0;
+    return semver.compare(semVer1, semVer2);
+  }
+}
+
+/**Like semver.compare - Returns:
+ *  - -1 if v1 < v2
+ *  -  0 if v1 === v2
+ *  -  1 if  v1 > v2
+ *  But if versions are of incorrect format, returns undefined
  *
  *  But taking only numerical prerelease versions into account,
  *  ignoring ones that are strings */
-export function compareVersions(version1: string, version2: string): integer {
-  const v1 = semver.coerce(version1, {
-    includePrerelease: false,
-  });
-  const v2 = semver.coerce(version2, {
-    includePrerelease: false,
-  });
-  if (v1 && v2) {
-    const comparison = semver.compare(v1, v2);
+export function compareVersions(
+  version1: string,
+  version2: string,
+): integer | undefined {
+  let semVer1: semver.SemVer;
+  let semVer2: semver.SemVer;
+  try {
+    semVer1 = semver.coerce(version1, {
+      includePrerelease: false,
+    });
+    semVer2 = semver.coerce(version2, {
+      includePrerelease: false,
+    });
+  } catch (e) {
+    return undefined;
+  }
+
+  if (semVer1 && semVer2) {
+    const comparison = semver.compare(semVer1, semVer2);
     const prerelease1 = semver.prerelease(version1)?.at(0);
     const prerelease2 = semver.prerelease(version2)?.at(0);
     if (
