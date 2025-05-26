@@ -1389,6 +1389,17 @@ WHEN
   RETURN n`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('filter with long expression', () => {
+    const query = `MATCH (n)
+FILTER WHERE n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETUR n`;
+    const expected = `MATCH (n)
+FILTER WHERE
+  n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETUR n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
