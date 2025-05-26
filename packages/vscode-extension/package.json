@@ -441,7 +441,9 @@
     "neo4j-driver": "catalog:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vscode-languageclient": "^8.1.0"
+    "vscode-languageclient": "^8.1.0",
+    "tar": "^7.4.3",
+    "axios": "^1.9.0"
   },
   "devDependencies": {
     "@testcontainers/neo4j": "^10.4.0",
