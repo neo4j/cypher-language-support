@@ -122,9 +122,9 @@ RETURN path`;
     q23,
   ];
 
-  test('keeps all queries within the max column width', () => {
+  test('keeps all queries within the default max column width', () => {
     queries.forEach((query) => {
-      const formatted = formatQuery(query);
+      const formatted = formatQuery(query).formattedString;
       const lines = formatted.split('\n');
       lines.forEach((line) => {
         expect(line.length).toBeLessThanOrEqual(DEFAULT_MAX_COL);
