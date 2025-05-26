@@ -1982,6 +1982,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(normalizeGrp);
   };
 
+  // Decided to not bother with line breaks here and just force it to stick together.
   visitVectorFunction = (ctx: VectorFunctionContext) => {
     this._visitTerminalRaw(ctx.VECTOR());
     this.avoidSpaceBetween();
