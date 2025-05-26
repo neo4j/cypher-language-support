@@ -990,7 +990,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const letItemGrp = this.startGroup();
     this._visit(ctx.variable());
     this.avoidBreakBetween();
-    this.visit(ctx.EQ());
+    this._visit(ctx.EQ());
     const expressionIndent = this.addIndentation();
     this._visit(ctx.expression());
     this.removeIndentation(expressionIndent);
@@ -1990,9 +1990,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LPAREN());
     const vectorArgsIndent = this.addIndentation();
     this._visit(ctx._vectorValue);
-    this.visit(ctx.COMMA(0));
-    this.visit(ctx._dimension);
-    this.visit(ctx.COMMA(1));
+    this._visit(ctx.COMMA(0));
+    this._visit(ctx._dimension);
+    this._visit(ctx.COMMA(1));
     this._visit(ctx.vectorCoordinateType());
     this.removeIndentation(vectorArgsIndent);
     this.avoidSpaceBetween();
