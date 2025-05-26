@@ -2279,7 +2279,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-interface FormattingResultWithCursor {
+interface FormattingResult {
   formattedString: string;
   newCursorPos?: number;
 }
@@ -2294,11 +2294,11 @@ export function formatQuery(query: string): string;
 export function formatQuery(
   query: string,
   formattingOptions?: FormattingOptions,
-): FormattingResultWithCursor;
+): FormattingResult;
 export function formatQuery(
   query: string,
   formattingOptions?: FormattingOptions,
-): string | FormattingResultWithCursor {
+): string | FormattingResult {
   const { tree, tokens, unParseable, firstUnParseableToken } =
     getParseTreeAndTokens(query);
 
