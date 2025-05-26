@@ -1400,6 +1400,19 @@ FILTER WHERE
 RETUR n`;
     verifyFormatting(query, expected);
   });
+
+  test('long let clause', () => {
+    const query = `match (n)
+let aaaaaaaaaage = n.age, prooooooooooooooooooop = n.prop, otherproooooooooooooooooop = n.otherprop
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaage = n.age,
+  prooooooooooooooooooop = n.prop,
+  otherproooooooooooooooooop = n.otherprop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
