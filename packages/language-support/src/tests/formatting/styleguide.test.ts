@@ -414,8 +414,8 @@ RETURN a, b`;
   });
 
   test('basic vector function formatting', () => {
-    const query = `return vector(1,2,INT16)`;
-    const expected = `RETURN vector(1, 2, INT16)`;
+    const query = `return VECTOR(1,2,INT16)`;
+    const expected = `RETURN VECTOR(1, 2, INT16)`;
     verifyFormatting(query, expected);
   });
 });
