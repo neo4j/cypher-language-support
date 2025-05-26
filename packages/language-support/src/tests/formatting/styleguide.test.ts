@@ -372,4 +372,12 @@ ELSE
   RETURN m`;
     verifyFormatting(query, expected);
   });
+
+  test('WHEN without ELSE', () => {
+    const query = `when true then match (n) return n`;
+    const expected = `WHEN true THEN
+  MATCH (n)
+  RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
