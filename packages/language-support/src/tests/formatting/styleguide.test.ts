@@ -101,7 +101,7 @@ RETURN person.name`;
   });
 });
 
-describe('other styleguide recommendations', () => {
+describe('other styleguide or docs recommendations', () => {
   test('order by', () => {
     const query = `RETURN user.id ORDER BY potential_reach, like_count;`;
     const expected = `RETURN user.id
@@ -359,6 +359,17 @@ ORDER BY n.price ASC
 SKIP 10
 LIMIT 100
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic WHEN formatting', () => {
+    const query = `when true then match (n) return n else match (m) return m`;
+    const expected = `WHEN true THEN
+  MATCH (n)
+  RETURN n
+ELSE
+  MATCH (m)
+  RETURN m`;
     verifyFormatting(query, expected);
   });
 });

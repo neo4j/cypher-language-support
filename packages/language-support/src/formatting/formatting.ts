@@ -33,6 +33,7 @@ import {
   DeleteClauseContext,
   DynamicPropertyContext,
   DynamicPropertyExpressionContext,
+  ElseBranchContext,
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
@@ -101,6 +102,8 @@ import {
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
+  WhenBranchContext,
+  WhenContext,
   WhereClauseContext,
   WithClauseContext,
 } from '../generated-parser/CypherCmdParser';
@@ -764,6 +767,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.COLON());
     this.avoidSpaceBetween();
     this.visit(ctx.symbolicNameString());
+  };
+
+  visitWhen = (ctx: WhenContext) => {
+    const n = ctx.whenBranch_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this.visit(ctx.whenBranch(i));
+    }
+    this.breakLine();
+    this.visit(ctx.elseBranch());
+  };
+
+  visitWhenBranch = (ctx: WhenBranchContext) => {
+    const whenGrp = this.startGroup();
+    this.visit(ctx.WHEN());
+    const whenIndent = this.addIndentation();
+    this.visit(ctx.expression());
+    this.visit(ctx.THEN());
+    this.endGroup(whenGrp);
+    this.visit(ctx.singleQuery());
+    this.removeIndentation(whenIndent);
+  };
+
+  visitElseBranch = (ctx: ElseBranchContext) => {
+    this.visit(ctx.ELSE());
+    const elseIndent = this.addIndentation();
+    this.visit(ctx.singleQuery());
+    this.removeIndentation(elseIndent);
   };
 
   // Handled separately because clauses should start on new lines, see
