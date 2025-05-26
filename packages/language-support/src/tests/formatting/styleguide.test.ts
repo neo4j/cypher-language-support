@@ -396,4 +396,20 @@ FILTER WHERE n.name > 5
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('basic let clause formatting', () => {
+    const query = `match (n) let a = n.name return a`;
+    const expected = `MATCH (n)
+LET a = n.name
+RETURN a`;
+    verifyFormatting(query, expected);
+  });
+
+  test('let clause with multiple items', () => {
+    const query = `match (n) let a = n.name, b = n.age return a, b`;
+    const expected = `MATCH (n)
+LET a = n.name, b = n.age
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
 });

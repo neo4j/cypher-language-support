@@ -56,6 +56,8 @@ import {
   LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
+  LetClauseContext,
+  LetItemContext,
   LimitContext,
   ListComprehensionContext,
   ListItemsPredicateContext,
@@ -966,6 +968,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation(unwindIndent);
     this.endGroup(asGrp);
     this.endGroup(unwindClauseGrp);
+  };
+
+  visitLetClause = (ctx: LetClauseContext) => {
+    const letGrp = this.startGroup();
+    this._visit(ctx.LET());
+    const letIndent = this.addIndentation();
+    const n = ctx.letItem_list().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.letItem(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+    }
+    this.removeIndentation(letIndent);
+    this.endGroup(letGrp);
+  };
+
+  visitLetItem = (ctx: LetItemContext) => {
+    const letItemGrp = this.startGroup();
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this.visit(ctx.EQ());
+    const expressionIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(expressionIndent);
+    this.endGroup(letItemGrp);
   };
 
   visitLimit = (ctx: LimitContext) => {
