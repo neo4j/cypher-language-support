@@ -1,4 +1,4 @@
-# Neo4j for VS Code Preview
+# Neo4j for VS Code
 
 ## Getting started
 
@@ -6,7 +6,7 @@ After installing the extension from the VS Code Marketplace, open a file with a 
 
 ## Feature Highlights
 
-Our extension preview provides a rich set of features for working with Cypher, the query language for Neo4j databases, including:
+Our extension provides a rich set of features for working with Cypher, the query language for Neo4j databases, including:
 
 - Syntax highlighting
 - Linting - both simple and semantic errors (e.g. type errors, unknown labels, etc)

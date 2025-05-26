@@ -17,7 +17,7 @@ runs:
     - name: Setup node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: 'pnpm'
         registry-url: 'https://registry.npmjs.org'
 
@@ -40,6 +40,7 @@ runs:
           **/dist
           **/build
           **/out
+          **/lintWorker.mjs
 
         key: build-${{ github.sha }}
         restore-keys: |

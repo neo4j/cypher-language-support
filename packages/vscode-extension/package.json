@@ -6,7 +6,7 @@
   "publisher": "neo4j-extensions",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "1.9.0",
+  "version": "1.11.0",
   "preview": false,
   "categories": [
     "Programming Languages",
@@ -22,6 +22,7 @@
   ],
   "icon": "resources/images/logo.png",
   "main": "./dist/extension.js",
+  "activationEvents": [],
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -31,7 +32,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2",
+    "node": ">=22.15.0",
     "vscode": "^1.75.0"
   },
   "contributes": {
@@ -82,7 +83,8 @@
       {
         "command": "neo4j.runCypher",
         "title": "Run Cypher statements",
-        "category": "Neo4j"
+        "category": "Neo4j",
+        "icon": "$(play)"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
@@ -142,6 +144,13 @@
           "command": "neo4j.cypherFileFromSelection",
           "when": "editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python)",
           "group": "z_commands"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "neo4j.runCypher",
+          "when": "resourceLangId == cypher",
+          "group": "navigation"
         }
       ],
       "commandPalette": [
@@ -255,6 +264,14 @@
       ]
     },
     "viewsContainers": {
+      "panel": [
+        {
+          "id": "neo4jQueryResults",
+          "title": "Query Results",
+          "icon": "resources/images/neo4j.png",
+          "when": "neo4j:showBottomPanel"
+        }
+      ],
       "activitybar": [
         {
           "id": "neo4j-explorer",
@@ -264,6 +281,24 @@
       ]
     },
     "views": {
+      "neo4jQueryResults": [
+        {
+          "type": "webview",
+          "id": "neo4jQueryDetails",
+          "name": "Query Details",
+          "initialSize": 1,
+          "when": "neo4j:showBottomPanel",
+          "icon": "$(list-tree)"
+        },
+        {
+          "type": "webview",
+          "id": "neo4jQueryVisualization",
+          "name": "Visualization",
+          "initialSize": 7,
+          "when": "neo4j:showBottomPanel",
+          "icon": "resources/images/visualization.svg"
+        }
+      ],
       "neo4j-explorer": [
         {
           "type": "tree",
@@ -417,14 +452,16 @@
   "scripts": {
     "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "pnpm build",
-    "bundle-language-server": "cd ../language-server && pnpm bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && pnpm bundle-worker && cp dist/lintWorker.js ../vscode-extension/dist/",
-    "bundle-extension": "node ./esbuild-extension.js --production",
+    "bundle-language-server": "cd ../language-server && pnpm bundle && cp dist/cypher-language-server.js ../vscode-extension/dist/ && pnpm copy-lint-worker && cp dist/lintWorker.cjs ../vscode-extension/dist/",
+    "bundle-extension": "node --experimental-strip-types esbuild-extension.mts --production",
     "update-ndl-css": "esbuild src/ndl.ts --outfile=resources/styles/ndl.js --bundle --loader:.woff2=dataurl && rm resources/styles/ndl.js",
-    "bundle-extension:dev": "node ./esbuild-extension.js",
+    "bundle-extension:dev": "node --experimental-strip-types esbuild-extension.mts",
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
-    "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension:dev && pnpm bundle-language-server && pnpm bundle-webview-controllers",
-    "clean": "rm -rf dist",
+    "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
+    "dev": "tsc -b && pnpm gen-textmate && concurrently 'node --experimental-strip-types esbuild-extension.mts' 'pnpm bundle-webview-controllers --watch' ",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
+    "package": "pnpm vsce package --pre-release --no-dependencies",
     "test:e2e": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
     "test:apiAndUnit": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && rm -rf .vscode-test/user-data && node ./dist/tests/runApiAndUnitTests.js",
     "test:webviews": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && wdio run ./dist/tests/runWebviewTests.js"
@@ -433,8 +470,10 @@
     "@neo4j-cypher/language-server": "workspace:*",
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
-    "@neo4j-ndl/base": "^2.12.3",
-    "@neo4j-ndl/react": "^2.16.5",
+    "@neo4j-ndl/base": "3.4.2",
+    "@neo4j-ndl/react": "3.5.5",
+    "@neo4j-nvl/base": "0.3.8",
+    "@neo4j-nvl/react": "0.3.8",
     "neo4j-driver": "catalog:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -444,13 +483,12 @@
     "@testcontainers/neo4j": "^10.4.0",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.11.7",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/sinon": "^17.0.3",
     "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^2.29.0",
+    "@vscode/vsce": "^3.3.2",
     "@wdio/cli": "^8.41.0",
     "@wdio/globals": "^8.41.0",
     "@wdio/local-runner": "^8.41.0",

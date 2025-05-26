@@ -31,7 +31,11 @@ import {
 } from './helpers';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
-import { CypherVersion, cypherVersionNumbers, cypherVersions } from './types';
+import {
+  CypherVersion,
+  cypherVersionNumbers,
+  allCypherVersions,
+} from './types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -494,7 +498,7 @@ class CypherVersionCollector extends ParseTreeListener {
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
       const parsedVersion = 'CYPHER ' + ctx.getText();
-      cypherVersions.forEach((validVersion) => {
+      allCypherVersions.forEach((validVersion) => {
         if (parsedVersion === validVersion) {
           this.cypherVersion = parsedVersion;
         }
@@ -538,7 +542,8 @@ export type ParsedCommandNoPosition =
   | { type: 'parse-error' }
   | { type: 'sysinfo' }
   | { type: 'style'; operation?: 'reset' }
-  | { type: 'play' };
+  | { type: 'play' }
+  | { type: 'access-mode'; operation?: string };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -695,6 +700,40 @@ function parseToCommand(
       const playCmd = consoleCmd.playCmd();
       if (playCmd) {
         return { type: 'play', start, stop };
+      }
+
+      const accessModeCmd = consoleCmd.accessModeCmd();
+      const accessModeArgs = accessModeCmd?.accessModeArgs();
+
+      if (accessModeCmd && !accessModeArgs) {
+        return {
+          type: 'access-mode',
+          operation: undefined,
+          start,
+          stop,
+        };
+      }
+
+      if (accessModeArgs) {
+        const read = accessModeArgs.readCompletionRule()?.READ();
+        if (read) {
+          return {
+            type: 'access-mode',
+            operation: 'read',
+            start,
+            stop,
+          };
+        }
+
+        const write = accessModeArgs.writeCompletionRule()?.WRITE();
+        if (write) {
+          return {
+            type: 'access-mode',
+            operation: 'write',
+            start,
+            stop,
+          };
+        }
       }
 
       return { type: 'parse-error', start, stop };

@@ -509,7 +509,7 @@ RETURN [stop in n[..-1] | stop.name] AS stops`;
 MATCH
   SHORTEST 1
   (:Station {name: 'Hartlebury'}) (()--(n))+(:Station {name: 'Cheltenham Spa'})
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -524,8 +524,8 @@ MATCH
   ((:Station {name: 'Hartlebury'})
     (()--(n:Station))+
     (:Station {name: 'Cheltenham Spa'})
-    WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -544,10 +544,10 @@ MATCH
     (:Station {name: 'Cheltenham Spa'})
     WHERE
       none(
-        stop IN n[.. -1]
+        stop IN n[..-1]
         WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -563,8 +563,8 @@ MATCH
     ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
       (()--(n:Station))+
       (:Station {name: 'Cheltenham Spa'})
-      WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+      WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -1282,14 +1282,14 @@ LIMIT "g68S0y7w";`;
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
 RETURN deleteNodes`;
     const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode,
-  duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode,
+  duplicates["oMXseK4u"..] AS deleteNodes
 RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
@@ -1377,6 +1377,148 @@ CALL {
 }
 RETURN count(*)`.trimStart();
     const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('should keep the ORDER BY parts together', () => {
+    // Right now this works because ORDER BY doesn't have a group at all.
+    // This should be fine since we wouldn't want to break it anyway, but might break if we decide
+    // to start e.g. putting ASC/DESCENDING on a new line and indent them.
+    const query = `MATCH (n)
+WITH n
+ORDER BY n.priiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiice ASC
+LIMIT 100
+RETURN n`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('SKIP that needs to break should handle it gracefully', () => {
+    const query = `MATCH (n)
+WITH n
+SKIP CASE WHEN n.department = 'Engineering' THEN 'Engineer' WHEN n.department = 'Sales' THEN 'Sales Leader' ELSE 'Manager' END
+LIMIT 100
+RETURN n`;
+    const expected = `MATCH (n)
+WITH n
+SKIP
+  CASE
+    WHEN n.department = 'Engineering' THEN 'Engineer'
+    WHEN n.department = 'Sales' THEN 'Sales Leader'
+    ELSE 'Manager'
+  END
+LIMIT 100
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('CALL should not break between CALL and the left brace', () => {
+    const query = `MATCH
+  u0 =
+    (v3:mn:op:tuv {xy: fghij})-[s1:abc {m1: "x"}]->
+    (w2 {n5: [-8392754106, 517362948, 2073946581]})
+WITH
+  u0,
+  COLLECT {
+    MATCH x1 = (y0)
+    CALL
+    {
+      WITH w2, s1, u0
+      MATCH
+        c2 =
+          (w2)<-[t2:defg]-
+          (:wx:tuv:mn:yz:op:ab:cd:ef:gh)--
+          (z1)-[:hij*..8]->
+          (:mn:ij:ab {m1: "y"})--
+          (w2)-[:klm {pqr: 714026583}]->
+          (a5:ij {xy: fghij})
+      CALL
+      {
+        WITH w2, t2, u0, c2
+        OPTIONAL MATCH (:wx)
+        RETURN w2 AS b6
+      }
+      RETURN s1 AS e5, c2 AS d3
+    }
+    RETURN e5.stu
+  } AS uvwxyz
+RETURN *`;
+    const expected = `MATCH
+  u0 =
+    (v3:mn:op:tuv {xy: fghij})-[s1:abc {m1: "x"}]->
+    (w2 {n5: [-8392754106, 517362948, 2073946581]})
+WITH
+  u0,
+  COLLECT {
+    MATCH x1 = (y0)
+    CALL {
+      WITH w2, s1, u0
+      MATCH
+        c2 =
+          (w2)<-[t2:defg]-
+          (:wx:tuv:mn:yz:op:ab:cd:ef:gh)--
+          (z1)-[:hij*..8]->
+          (:mn:ij:ab {m1: "y"})--
+          (w2)-[:klm {pqr: 714026583}]->
+          (a5:ij {xy: fghij})
+      CALL {
+        WITH w2, t2, u0, c2
+        OPTIONAL MATCH (:wx)
+        RETURN w2 AS b6
+      }
+      RETURN s1 AS e5, c2 AS d3
+    }
+    RETURN e5.stu
+  } AS uvwxyz
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('CALL with star', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (*) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('CALL with arguments', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (x, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    const expected = `MATCH (x)-[z:QWERTY]-(y)
+CALL (x, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+}
+RETURN x`;
+    verifyFormatting(query, expected);
+  });
+
+  test('CALL with long arguments that need to break', () => {
+    const query = `MATCH (x)-[z:QWERTY]-(y)
+CALL (looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongarg, z, y) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+  RETURN pqrstu, vwxyza, q
+  UNION
+  RETURN x AS pqrstu, y AS vwxyza, z AS q
+}
+RETURN x`;
+    const expected = `MATCH (x)-[z:QWERTY]-(y)
+CALL (
+  looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongarg,
+  z,
+  y
+) {
+  MATCH (pqrstu)-[q:QWER|ZXCVB {pr_keyxy: "AbC123xY"}]-(vwxyza)
+  RETURN pqrstu, vwxyza, q
+    UNION
+  RETURN x AS pqrstu, y AS vwxyza, z AS q
+}
+RETURN x`;
     verifyFormatting(query, expected);
   });
 });

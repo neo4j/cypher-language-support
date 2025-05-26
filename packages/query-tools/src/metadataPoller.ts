@@ -1,11 +1,10 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
-  cypher25Supported,
-  cypherVersions,
+  _internalFeatureFlags,
+  allCypherVersions,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
-  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { EventEmitter } from 'events';
 import { Neo4jConnection } from './neo4jConnection.js';
@@ -115,14 +114,13 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   constructor(
     databases: Database[],
     parameters: Record<string, unknown>,
-    serverVersion: string | undefined,
+    serverCypherVersions: string[] | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
     super();
     const supportsCypherAnnotation =
-      _internalFeatureFlags.cypher25 ||
-      (serverVersion && cypher25Supported(serverVersion));
+      _internalFeatureFlags.cypher25 || serverCypherVersions?.includes('25');
 
     this.dbSchema.parameters = parameters;
 
@@ -183,7 +181,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     });
 
     const versions: (CypherVersion | undefined)[] = supportsCypherAnnotation
-      ? cypherVersions
+      ? allCypherVersions
       : [undefined];
 
     versions.forEach((cypherVersion) => {

@@ -1,6 +1,3 @@
-import type { CandidateRule, CandidatesCollection } from '@vendor/antlr4-c3';
-import { CodeCompletionCore } from '@vendor/antlr4-c3';
-import { Token } from 'antlr4';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -27,6 +24,12 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
+import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import {
+  CandidatesCollection,
+  CodeCompletionCore,
+  Token,
+} from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
@@ -544,6 +547,8 @@ export function completionCoreCompletion(
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
           CypherParser.RULE_serverCompletionRule,
+          CypherParser.RULE_readCompletionRule,
+          CypherParser.RULE_writeCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -739,6 +744,14 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_serverCompletionRule) {
         return [{ label: 'server', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_readCompletionRule) {
+        return [{ label: 'read', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
+        return [{ label: 'write', kind: CompletionItemKind.Event }];
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {

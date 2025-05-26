@@ -24,14 +24,21 @@ export { lintCypherQuery } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
-export { cypherVersions } from './types';
+export { allCypherVersions } from './types';
 export type {
   CompletionItem,
   CypherVersion,
   Neo4jFunction,
   Neo4jProcedure,
 } from './types';
-export { cypher25Supported } from './version';
-export { CypherLexer, CypherParser };
+export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
+
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser from './generated-parser/CypherCmdParser';
+import CypherParserListener from './generated-parser/CypherCmdParserListener';
+import CypherParserVisitor from './generated-parser/CypherCmdParserVisitor';
+
+export * from './generated-parser/CypherCmdLexer';
+export * from './generated-parser/CypherCmdParser';
+export * from './generated-parser/CypherCmdParserListener';
+export * from './generated-parser/CypherCmdParserVisitor';

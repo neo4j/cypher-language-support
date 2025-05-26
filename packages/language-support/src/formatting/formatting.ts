@@ -93,9 +93,11 @@ import {
   SetPropContext,
   SetPropsContext,
   ShowCommandYieldContext,
+  SkipContext,
   StatementsOrCommandsContext,
   StringAndListComparisonContext,
   SubqueryClauseContext,
+  SubqueryScopeContext,
   TrimFunctionContext,
   UnionContext,
   UnwindClauseContext,
@@ -866,6 +868,16 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(deleteClauseGrp);
   };
 
+  visitSkip = (ctx: SkipContext) => {
+    const skipGrp = this.startGroup();
+    this._visit(ctx.OFFSET());
+    this._visit(ctx.SKIPROWS());
+    const skipIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(skipIndent);
+    this.endGroup(skipGrp);
+  };
+
   // Separate the return items from the return body so that ORDER BY and LIMIT can be
   // excluded from the whole RETURN group.
   // Used by returnClause and withClause
@@ -882,10 +894,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
     if (ctx.orderBy() || ctx.skip()) {
       this.breakLine();
-      const orderSkipGrp = this.startGroup();
       this._visit(ctx.orderBy());
+      this.breakLine();
       this._visit(ctx.skip());
-      this.endGroup(orderSkipGrp);
     }
     this._visit(ctx.limit());
   };
@@ -905,11 +916,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.returnItems());
     if (ctx.orderBy() || ctx.skip()) {
-      const orderSkipGrp = this.startGroup();
       this.breakLine();
       this._visit(ctx.orderBy());
+      this.breakLine();
       this._visit(ctx.skip());
-      this.endGroup(orderSkipGrp);
     }
     this._visit(ctx.limit());
   };
@@ -1651,18 +1661,29 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitIndexPostfix = (ctx: IndexPostfixContext) => {
-    this._visit(ctx.LBRACKET());
-    this._visit(ctx.expression());
     this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const indexPostfixGrp = this.startGroup();
+    this._visit(ctx.LBRACKET());
+    this.avoidBreakBetween();
+    this._visit(ctx.expression());
     this._visit(ctx.RBRACKET());
+    this.endGroup(indexPostfixGrp);
   };
 
   visitRangePostfix = (ctx: RangePostfixContext) => {
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    const rangePostfixGrp = this.startGroup();
     this._visit(ctx.LBRACKET());
     if (ctx._fromExp) {
       this._visit(ctx.expression(0));
     }
-    this._visit(ctx.DOTDOT());
+    if (ctx.DOTDOT()) {
+      this.avoidSpaceBetween();
+      this._visit(ctx.DOTDOT());
+      this.avoidSpaceBetween();
+    }
     if (ctx._toExp) {
       if (ctx._fromExp) {
         this._visit(ctx.expression(1));
@@ -1672,6 +1693,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.avoidSpaceBetween();
     this._visit(ctx.RBRACKET());
+    this.endGroup(rangePostfixGrp);
   };
 
   // Handled separately because it contains subclauses (and thus indentation rules)
@@ -1834,6 +1856,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.OPTIONAL());
     this._visit(ctx.CALL());
     this._visit(ctx.subqueryScope());
+    this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
     this.breakLine();
@@ -1842,6 +1865,33 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.breakLine();
     this._visit(ctx.RCURLY());
     this._visit(ctx.subqueryInTransactionsParameters());
+  };
+
+  visitSubqueryScope = (ctx: SubqueryScopeContext) => {
+    this.avoidBreakBetween();
+    const subqueryScopeGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const subqueryScopeIndent = this.addIndentation();
+    if (ctx.TIMES()) {
+      this._visit(ctx.TIMES());
+    } else {
+      const n = ctx.variable_list().length;
+      for (let i = 0; i < n; i++) {
+        const functionArgGrp = this.startGroup();
+        this._visit(ctx.variable(i));
+        if (i < n - 1) {
+          this._visit(ctx.COMMA(i));
+        }
+        this.endGroup(functionArgGrp);
+      }
+    }
+    this.avoidSpaceBetween();
+    this.removeIndentation(subqueryScopeIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(subqueryScopeGrp);
   };
 
   // Handled separately because UNION wants to look a certain way

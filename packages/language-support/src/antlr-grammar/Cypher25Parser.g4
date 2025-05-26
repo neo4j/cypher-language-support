@@ -92,7 +92,7 @@ returnClause
    ;
 
 returnBody
-   : DISTINCT? returnItems orderBy? skip? limit?
+   : (DISTINCT | ALL)? returnItems orderBy? skip? limit?
    ;
 
 returnItem
@@ -764,7 +764,10 @@ typeName
    | STRING
    | INT
    | SIGNED? INTEGER
+   | INTEGER64
+   | INT64
    | FLOAT
+   | FLOAT64
    | DATE
    | LOCAL (TIME | DATETIME)
    | ZONED (TIME | DATETIME)
@@ -773,8 +776,8 @@ typeName
    | DURATION
    | POINT
    | NODE
-   | VECTOR LPAREN UNSIGNED_DECIMAL_INTEGER COMMA vectorCoordinateType RPAREN
-   | VECTOR (LT vectorCoordinateType GT)? (LPAREN UNSIGNED_DECIMAL_INTEGER RPAREN)?
+   | VECTOR LPAREN signedIntegerLiteral COMMA vectorCoordinateType RPAREN
+   | VECTOR (LT vectorCoordinateType GT)? (LPAREN signedIntegerLiteral RPAREN)?
    | VERTEX
    | RELATIONSHIP
    | EDGE

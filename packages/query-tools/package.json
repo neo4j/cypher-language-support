@@ -3,7 +3,7 @@
   "description": "",
   "author": "Neo4j Inc.",
   "license": "Apache-2.0",
-  "version": "2.0.0-next.19",
+  "version": "2.0.0-next.20",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "exports": {
@@ -22,7 +22,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=22.15.0"
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
@@ -30,12 +30,10 @@
     "neo4j-driver": "catalog:"
   },
   "scripts": {
-    "build": "concurrently \"npm:build-esm\" \"npm:build-commonjs\"",
+    "build": "concurrently 'npm:build-esm' 'npm:build-commonjs'",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
-    "clean": "rm -rf dist"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0"
+    "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
+    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   }
 }
