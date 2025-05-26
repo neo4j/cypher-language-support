@@ -1271,7 +1271,7 @@ RETURN u`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 40 });
   });
 
-  test('long chained pattern wraps within 50 columns', () => {
+  test('long pattern wraps within 50 columns', () => {
     const query = `MATCH (a:VeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
 RETURN a, b, c`;
     const expected = `
@@ -1280,6 +1280,15 @@ MATCH
   (b:AnotherVeryLongLabelName)
 RETURN a, b, c`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 50 });
+  });
+
+  test('long pattern does not wrap with high column limit', () => {
+    const query = `MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 100 });
   });
 
   test('function invocation with nested call stays within 45 columns', () => {
