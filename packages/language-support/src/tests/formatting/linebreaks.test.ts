@@ -1270,6 +1270,35 @@ MATCH
 RETURN u`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 40 });
   });
+
+  test('long chained pattern wraps within 50 columns', () => {
+    const query = `MATCH (a:VeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH
+  (a:VeryLongLabelName)-[:RELTYPE]->
+  (b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 50 });
+  });
+
+  test('function invocation with nested call stays within 45 columns', () => {
+    const query = `RETURN apoc.text.join(['One','Two','Three', 'Four', 'Five', 'Six'],'; ') AS joined`;
+    const expected = `
+RETURN
+  apoc.text.join(
+    [
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six'
+    ],
+    '; '
+  ) AS joined`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 45 });
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
