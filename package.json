@@ -21,7 +21,7 @@
     "clean": "pnpm --recursive --parallel clean",
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
-    "test:formattingIntegrity": "ts-node ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
+    "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
     "lint": "eslint . --ext .ts,.tsx,.js,.mts",
     "lint-fix": "pnpm lint --fix",
     "format": "prettier --config .prettierrc.json '**/*.ts' --write",
@@ -49,6 +49,7 @@
     "rimraf": "^6.0.1",
     "semver": "^7.6.1",
     "ts-node": "10.9.1",
+    "tsx": "^4.19.4",
     "typescript": "5.8.3",
     "vitest": "^2.1.9"
   },
