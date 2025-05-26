@@ -1367,6 +1367,28 @@ CALL (
 RETURN x`;
     verifyFormatting(query, expected);
   });
+
+  test('when with long expression', () => {
+    const query = `WHEN 10000000000 + 1000000000000000 + 10000000 + 10000000+ 100000000000 + 1000000000000 + 100000000 + 100000000 + 100000000 < 5 THEN
+MATCH (n)
+RETURN n`;
+    const expected = `
+WHEN
+  10000000000 +
+  1000000000000000 +
+  10000000 +
+  10000000 +
+  100000000000 +
+  1000000000000 +
+  100000000 +
+  100000000 +
+  100000000 <
+  5
+  THEN
+  MATCH (n)
+  RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {

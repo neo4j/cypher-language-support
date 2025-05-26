@@ -773,27 +773,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.whenBranch_list().length;
     for (let i = 0; i < n; i++) {
       this.breakLine();
-      this.visit(ctx.whenBranch(i));
+      this._visit(ctx.whenBranch(i));
     }
     this.breakLine();
-    this.visit(ctx.elseBranch());
+    this._visit(ctx.elseBranch());
   };
 
   visitWhenBranch = (ctx: WhenBranchContext) => {
     const whenGrp = this.startGroup();
-    this.visit(ctx.WHEN());
+    this._visit(ctx.WHEN());
     const whenIndent = this.addIndentation();
-    this.visit(ctx.expression());
-    this.visit(ctx.THEN());
+    this._visit(ctx.expression());
+    this._visit(ctx.THEN());
     this.endGroup(whenGrp);
-    this.visit(ctx.singleQuery());
+    this._visit(ctx.singleQuery());
     this.removeIndentation(whenIndent);
   };
 
   visitElseBranch = (ctx: ElseBranchContext) => {
-    this.visit(ctx.ELSE());
+    this._visit(ctx.ELSE());
     const elseIndent = this.addIndentation();
-    this.visit(ctx.singleQuery());
+    this._visit(ctx.singleQuery());
     this.removeIndentation(elseIndent);
   };
 
