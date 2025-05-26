@@ -10,7 +10,7 @@ describe('tests for correct cursor position', () => {
   test('cursor at end', () => {
     const query = 'RETURN -1, -2, -3';
     const result = formatQuery(query, { cursorPosition: query.length - 1 });
-    expect(result.newCursorPos).toEqual(result.formattedString.length - 1);
+    expect(result.newCursorPos).toEqual(result.formattedQuery.length - 1);
   });
   test('cursor at newline', () => {
     const query = `MATCH (n:Person)

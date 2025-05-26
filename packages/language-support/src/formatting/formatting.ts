@@ -2280,7 +2280,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 }
 
 interface FormattingResult {
-  formattedString: string;
+  formattedQuery: string;
   newCursorPos?: number; // Only set if cursorPosition is provided
 }
 
@@ -2306,19 +2306,19 @@ export function formatQuery(
     unParseable,
     firstUnParseableToken,
   );
-  if (!formattingOptions) return { formattedString: visitor.format() };
+  if (!formattingOptions) return { formattedQuery: visitor.format() };
 
   const cursorPosition = formattingOptions?.cursorPosition;
   if (cursorPosition === undefined) {
     return {
-      formattedString: visitor.format(),
+      formattedQuery: visitor.format(),
     };
   }
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
     const result = visitor.format();
     return {
-      formattedString: result,
+      formattedQuery: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
     };
   }
@@ -2326,7 +2326,7 @@ export function formatQuery(
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
   if (!targetToken) {
     return {
-      formattedString: visitor.format(),
+      formattedQuery: visitor.format(),
       newCursorPos: 0,
     };
   }
@@ -2334,7 +2334,7 @@ export function formatQuery(
   visitor.targetToken = targetToken.tokenIndex;
 
   return {
-    formattedString: visitor.format(),
+    formattedQuery: visitor.format(),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
