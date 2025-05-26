@@ -2290,6 +2290,22 @@ export interface FormattingOptions {
   cursorPosition?: number;
 }
 
+/**
+ * Formats a Cypher query according to the Cypher style guide. Runs in O(n) time.
+ * Makes a best-effort attempt if the query is not parseable.
+ *
+ * @param query - Raw Cypher query string to format.
+ * @param formattingOptions - Formatting behaviour flags.
+ * @param formattingOptions.maxColumn - Maximum column width for the formatted query (80 recommended).
+ *     Defaults to 80.
+ * @param formattingOptions.cursorPosition - Index for the caret in the raw query.
+ *     If supplied the return value will include `newCursorPos` which
+ *     indicates its new position in the formatted query
+ *
+ * @returns An object containing:
+ * * `formattedQuery` – formatted query string.
+ * * `newCursorPos`   – updated cursor index (only when the caller passed `cursorPosition`).
+ */
 export function formatQuery(
   query: string,
   formattingOptions?: FormattingOptions,
