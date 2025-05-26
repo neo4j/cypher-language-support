@@ -1308,6 +1308,18 @@ RETURN
   ) AS joined`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 45 });
   });
+
+  test('list literal with 10 col width', () => {
+    const query = `
+RETURN ['A','B']`;
+    const expected = `
+RETURN
+  [
+    'A',
+    'B'
+  ]`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 10 });
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
