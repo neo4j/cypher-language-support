@@ -131,7 +131,10 @@ connection.onNotification(
   'updateLintWorker',
   (connectionSettings: Neo4jConnectionSettings) => {
     const lintWorkerPath = connectionSettings.lintWorkerPath;
-    void (async () => await setLintWorker(lintWorkerPath))();
+    void (async () => {
+      await setLintWorker(lintWorkerPath);
+      relintAllDocuments();
+    })();
   },
 );
 

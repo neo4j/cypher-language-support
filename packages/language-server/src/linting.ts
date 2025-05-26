@@ -11,18 +11,21 @@ let pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
-
-export let workerPath = join(__dirname, 'lintWorker.cjs');
+const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+export let workerPath = defaultWorkerPath;
 let lastSemanticJob: LinterTask | undefined;
 
-export async function setLintWorker(lintWorkerPath: string) {
-  await cleanupWorkers();
-  workerPath = lintWorkerPath;
-  (pool = workerpool.pool(workerPath)),
-    {
+/**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
+export async function setLintWorker(lintWorkerPath: string | undefined) {
+  lintWorkerPath = lintWorkerPath ? lintWorkerPath : defaultWorkerPath;
+  if (lintWorkerPath !== workerPath) {
+    await cleanupWorkers();
+    workerPath = lintWorkerPath;
+    pool = workerpool.pool(workerPath, {
       minWorkers: 2,
       workerTerminateTimeout: 2000,
-    };
+    });
+  }
 }
 
 async function rawLintDocument(
