@@ -44,7 +44,9 @@ function verifyFormatting(query: string): void {
 }
 
 function verifyFormattingOfSampleQueries() {
-  const filePath = path.join(__dirname, 'sample_queries.json');
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore import.meta is valid at runtime under tsx, despite TS’s commonjs config
+  const filePath = path.join(import.meta.dirname, 'sample_queries.json');
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const queries: string[] = JSON.parse(fileContent) as string[];
   queries.forEach((query) => verifyFormatting(query));
