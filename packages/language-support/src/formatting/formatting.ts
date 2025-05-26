@@ -105,6 +105,7 @@ import {
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
+  VectorFunctionContext,
   WhenBranchContext,
   WhenContext,
   WhereClauseContext,
@@ -1979,6 +1980,22 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.RPAREN());
     this.endGroup(normalizeGrp);
+  };
+
+  visitVectorFunction = (ctx: VectorFunctionContext) => {
+    this._visitTerminalRaw(ctx.VECTOR());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    this.avoidBreakBetween();
+    this._visit(ctx._vectorValue);
+    this.visit(ctx.COMMA(0));
+    this.visit(ctx._dimension);
+    this.visit(ctx.COMMA(1));
+    this.avoidBreakBetween();
+    this._visit(ctx.vectorCoordinateType());
+    this.avoidBreakBetween();
+    this._visit(ctx.RPAREN());
   };
 
   visitTrimFunction = (ctx: TrimFunctionContext) => {
