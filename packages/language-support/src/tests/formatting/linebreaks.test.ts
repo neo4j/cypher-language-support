@@ -1393,11 +1393,11 @@ WHEN
   test('filter with long expression', () => {
     const query = `MATCH (n)
 FILTER WHERE n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
-RETUR n`;
+RETURN n`;
     const expected = `MATCH (n)
 FILTER WHERE
   n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
-RETUR n`;
+RETURN n`;
     verifyFormatting(query, expected);
   });
 
