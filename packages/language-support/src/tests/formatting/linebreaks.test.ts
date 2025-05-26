@@ -1413,6 +1413,18 @@ LET
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('long let clause item', () => {
+    const query = `match (n)
+let aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage = n.age
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage =
+    n.age
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
