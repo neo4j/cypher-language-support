@@ -1982,21 +1982,25 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(normalizeGrp);
   };
 
-  // Decided to not bother with line breaks here and just force it to stick together.
   visitVectorFunction = (ctx: VectorFunctionContext) => {
+    const vectorGrp = this.startGroup();
     this._visitTerminalRaw(ctx.VECTOR());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
-    this.avoidBreakBetween();
+    const vectorArgsIndent = this.addIndentation();
     this._visit(ctx._vectorValue);
     this.visit(ctx.COMMA(0));
     this.visit(ctx._dimension);
     this.visit(ctx.COMMA(1));
-    this.avoidBreakBetween();
     this._visit(ctx.vectorCoordinateType());
-    this.avoidBreakBetween();
-    this._visit(ctx.RPAREN());
+    this.removeIndentation(vectorArgsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
   };
 
   visitTrimFunction = (ctx: TrimFunctionContext) => {

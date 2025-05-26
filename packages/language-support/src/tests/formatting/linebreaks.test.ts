@@ -1425,6 +1425,39 @@ LET
 RETURN n`;
     verifyFormatting(query, expected);
   });
+
+  test('long vector function', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16)`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  )`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function with other return items also', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16), 50`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  ),
+  50`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for respcecting user line breaks', () => {
