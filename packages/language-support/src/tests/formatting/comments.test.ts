@@ -48,19 +48,11 @@ RETURN n`;
   });
 
   test('weird inline comments', () => {
-    const inlinemultiline = `MERGE (n) /* Ensuring the node exists */ 
+    const inlinemultiline = `MERGE /* Ensuring the node exists */ (n)
   ON CREATE SET n.prop = 0 /* Set default property */
-MERGE (a:A) /* Create or match 'a:A' */
-  -[:T]-> (b:B) /* Link 'a' to 'b' */
-RETURN a.prop /* Return the property of 'a' */
-`;
-    const expected = `MERGE (n) /* Ensuring the node exists */
-  ON CREATE SET n.prop = 0 /* Set default property */
-MERGE
-  (a:A)- /* Create or match 'a:A' */
-    [:T]->
-  (b:B) /* Link 'a' to 'b' */
+MERGE /* Create or match 'a:A' */ (a:A)-[:T]->(b:B) // test
 RETURN a.prop /* Return the property of 'a' */`;
+    const expected = inlinemultiline;
     verifyFormatting(inlinemultiline, expected);
   });
 
@@ -302,12 +294,8 @@ RETURN n`;
     const query = `
 MATCH (a:Node) // first match
 WITH a, /* intermediate comment */ a.property AS prop
-RETURN prop; // final return`;
-    const expected = `MATCH (a:Node) // first match
-WITH
-  a, /* intermediate comment */
-  a.property AS prop
-RETURN prop; // final return`;
+RETURN prop; // final return`.trimStart();
+    const expected = query;
     verifyFormatting(query, expected);
   });
 
@@ -565,6 +553,20 @@ MATCH // One comment.
   (m)-[:RELATION]->(n)
 RETURN m, n`.trim();
     const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('inline comment', () => {
+    const query = `
+MATCH /* One comment. */ (m)-[:RELATION]->(n)
+RETURN m, n`.trim();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+  test('inline comment within a chunk', () => {
+    const query = `MATCH (m/*comment*/)-[:RELATION]->(n)
+RETURN m, n`;
+    const expected = `MATCH (m)- /*comment*/ [:RELATION]->(n)
+RETURN m, n`;
     verifyFormatting(query, expected);
   });
 });
