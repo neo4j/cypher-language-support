@@ -174,7 +174,7 @@ REQUIRE a.id IS UNIQUE
 OPTIONS {constraintName: 'Athlete_Id_Unique'}`;
     verifyFormatting(query, expected);
   });
-  test('OPTION should have be able to to nice map print', () => {
+  test('OPTION should be able to have nice map print', () => {
     const query =
       "CREATE DATABASE testdb OPTIONS {existingData: 'use', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar'};";
     const expected = `CREATE DATABASE testdb
