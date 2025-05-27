@@ -545,7 +545,6 @@ UNWIND // Expands lists into multiple rows
     const expected = query.trim();
     verifyFormatting(query, expected);
   });
-
   test('two comments after a clause should not break alignment', () => {
     const query = `
 MATCH // One comment.
@@ -570,10 +569,19 @@ RETURN m, n`;
     verifyFormatting(query, expected);
   });
   test('long inline comment within a chunk', () => {
-    const query = `MATCH (m/*commentcommentcommentcommentcommentcommentcommentcomment*/)-[:RELATION]->(n)
+    const query = `MATCH (m/*commentcommentcommentcommentcommentcommentcommentcom*/)-[:RELATION]->(n)
 RETURN m, n`;
     const expected = `MATCH
-  (m)- /*commentcommentcommentcommentcommentcommentcommentcomment*/ [:RELATION]->
+  (m)- /*commentcommentcommentcommentcommentcommentcommentcom*/ [:RELATION]->(n)
+RETURN m, n`;
+    verifyFormatting(query, expected);
+  });
+  test('long inline comment within a chunk should break everything', () => {
+    // See the extra m at the end of the comment compared to above test, that m makes it over 80 characters
+    const query = `MATCH (m/*commentcommentcommentcommentcommentcommentcommentcomm*/)-[:RELATION]->(n)
+RETURN m, n`;
+    const expected = `MATCH
+  (m)- /*commentcommentcommentcommentcommentcommentcommentcomm*/ [:RELATION]->
   (n)
 RETURN m, n`;
     verifyFormatting(query, expected);

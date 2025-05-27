@@ -158,15 +158,19 @@ export function fillInRegularChunkGroupSizes(
     }
     group.size += chunk.text.length;
     if (chunk.comment && chunk.comment.startsWith('/*')) {
-      group.size += chunk.comment.length;
-      group.dbgText += chunk.comment;
+      group.size += chunk.comment.length + 2;
+      group.dbgText += ' ' + chunk.comment + ' ';
     }
 
     // PERF: Right now we include dbgText always, even though it's only used for debugging.
     // It does not seem to have any significant performance downsides, but only doing so
     // when e.g. a flag is set might be a more prudent choice.
     group.dbgText += chunk.text;
-    if (!chunk.noSpace && shouldAddSpace(chunk, chunk)) {
+    if (
+      !chunk.noSpace &&
+      shouldAddSpace(chunk, chunk) &&
+      !(chunk.comment && chunk.comment.startsWith('/*'))
+    ) {
       group.size++;
       group.dbgText += ' ';
     }
