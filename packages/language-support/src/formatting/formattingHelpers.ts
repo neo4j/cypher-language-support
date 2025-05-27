@@ -167,8 +167,9 @@ export function fillInRegularChunkGroupSizes(
     }
     group.size += chunk.text.length;
     if (isInlineComment(chunk)) {
-      group.size += chunk.comment.length + 2;
-      group.dbgText += ' ' + chunk.comment + ' ';
+      const inlineComment = ' ' + chunk.comment + ' ';
+      group.size += inlineComment.length;
+      group.dbgText += inlineComment;
     }
 
     // PERF: Right now we include dbgText always, even though it's only used for debugging.
