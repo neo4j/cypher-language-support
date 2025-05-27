@@ -165,7 +165,11 @@ export function fillInRegularChunkGroupSizes(
       group.size++;
       group.dbgText += ' ';
     }
-    if (chunk.comment && !groupsEnding.has(group.id)) {
+    if (
+      chunk.comment &&
+      !groupsEnding.has(group.id) &&
+      !chunk.comment.startsWith('/*')
+    ) {
       group.shouldBreak = true;
     }
   }

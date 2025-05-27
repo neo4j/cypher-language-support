@@ -109,7 +109,19 @@ function appendChunkText(state: State, chunk: Chunk) {
 
 function handleComments(state: State, chunk: Chunk) {
   if (chunk.comment) {
-    state.pendingComments.push(chunk.comment);
+    if (chunk.comment.startsWith('/*')) {
+      // Inline comment - append directly
+      state.formatted += ' ';
+      state.formatted += chunk.comment;
+      state.column += chunk.comment.length;
+      if (chunk.type === 'REGULAR' && chunk.noSpace) {
+        state.formatted += ' ';
+        state.column++;
+      }
+    } else {
+      // For regular comments, we store them to append later
+      state.pendingComments.push(chunk.comment);
+    }
   }
 }
 
