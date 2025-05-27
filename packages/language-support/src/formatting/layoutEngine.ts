@@ -3,6 +3,7 @@ import {
   Group,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
+  isInlineComment,
   MAX_COL,
   shouldAddSpace,
 } from './formattingHelpers';
@@ -108,20 +109,21 @@ function appendChunkText(state: State, chunk: Chunk) {
 }
 
 function handleComments(state: State, chunk: Chunk) {
-  if (chunk.comment) {
-    if (chunk.comment.startsWith('/*')) {
-      // Inline comment - append directly
+  if (isInlineComment(chunk)) {
+    // Inline comment - append directly
+    state.formatted += ' ';
+    state.formatted += chunk.comment;
+    state.column += chunk.comment.length;
+    // Always include space after, even if the chunk has noSpace
+    if (chunk.type === 'REGULAR' && chunk.noSpace) {
       state.formatted += ' ';
-      state.formatted += chunk.comment;
-      state.column += chunk.comment.length;
-      if (chunk.type === 'REGULAR' && chunk.noSpace) {
-        state.formatted += ' ';
-        state.column++;
-      }
-    } else {
-      // For regular comments, we store them to append later
-      state.pendingComments.push(chunk.comment);
+      state.column++;
     }
+    return;
+  }
+  if (chunk.comment) {
+    // For regular comments, we store them to append later
+    state.pendingComments.push(chunk.comment);
   }
 }
 
