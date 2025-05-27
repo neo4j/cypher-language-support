@@ -157,6 +157,11 @@ export function fillInRegularChunkGroupSizes(
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     group.size += chunk.text.length;
+    if (chunk.comment && chunk.comment.startsWith('/*')) {
+      group.size += chunk.comment.length;
+      group.dbgText += chunk.comment;
+    }
+
     // PERF: Right now we include dbgText always, even though it's only used for debugging.
     // It does not seem to have any significant performance downsides, but only doing so
     // when e.g. a flag is set might be a more prudent choice.
@@ -174,7 +179,6 @@ export function fillInRegularChunkGroupSizes(
     }
   }
 }
-
 export function verifyGroupSizes(chunkList: Chunk[]) {
   for (const chunk of chunkList) {
     for (const group of chunk.groupsStarting) {

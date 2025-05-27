@@ -569,4 +569,13 @@ RETURN m, n`;
 RETURN m, n`;
     verifyFormatting(query, expected);
   });
+  test('long inline comment within a chunk', () => {
+    const query = `MATCH (m/*commentcommentcommentcommentcommentcommentcommentcomment*/)-[:RELATION]->(n)
+RETURN m, n`;
+    const expected = `MATCH
+  (m)- /*commentcommentcommentcommentcommentcommentcommentcomment*/ [:RELATION]->
+  (n)
+RETURN m, n`;
+    verifyFormatting(query, expected);
+  });
 });
