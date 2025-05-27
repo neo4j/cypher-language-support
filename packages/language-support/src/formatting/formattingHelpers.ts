@@ -94,6 +94,9 @@ export function isComment(token: Token) {
   );
 }
 
+export const isInlineComment = (chunk: Chunk) =>
+  chunk.comment && chunk.comment.startsWith('/*');
+
 // Variables or property names that have the same name as a keyword should not be
 // treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
@@ -157,7 +160,7 @@ export function fillInRegularChunkGroupSizes(
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     group.size += chunk.text.length;
-    if (chunk.comment && chunk.comment.startsWith('/*')) {
+    if (isInlineComment(chunk)) {
       group.size += chunk.comment.length + 2;
       group.dbgText += ' ' + chunk.comment + ' ';
     }
@@ -169,7 +172,7 @@ export function fillInRegularChunkGroupSizes(
     if (
       !chunk.noSpace &&
       shouldAddSpace(chunk, chunk) &&
-      !(chunk.comment && chunk.comment.startsWith('/*'))
+      !isInlineComment(chunk)
     ) {
       group.size++;
       group.dbgText += ' ';
@@ -177,7 +180,7 @@ export function fillInRegularChunkGroupSizes(
     if (
       chunk.comment &&
       !groupsEnding.has(group.id) &&
-      !chunk.comment.startsWith('/*')
+      !isInlineComment(chunk)
     ) {
       group.shouldBreak = true;
     }
