@@ -540,11 +540,10 @@ RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     "qk5jpmGl", // Name of the projected graph
     ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
     {
-      connection:
-        {
-          type: "R3e8WLkh", // Include all relationships
-          orientation: "weFW44Gy" // Treat relationships as undirected
-        }
+      connection: {
+        type: "R3e8WLkh", // Include all relationships
+        orientation: "weFW44Gy" // Treat relationships as undirected
+      }
     }
   )
   YIELD graphName, nodeCount, relationshipCount, createMillis
