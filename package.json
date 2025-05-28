@@ -13,6 +13,7 @@
     "prepare": "husky install",
     "build": "pnpm --recursive build",
     "build-vscode": "pnpm --filter='neo4j-for-vscode...' build",
+    "build-intellij": "pnpm --filter='intellij-extension...' build",
     "dev-codemirror": "pnpm --recursive --parallel --filter='@neo4j-cypher/react-codemirror-playground...' dev",
     "dev-vscode": "pnpm --recursive --parallel --filter='neo4j-for-vscode...' dev",
     "release": "pnpm build && pnpm publish -r --tag next --access=public",
