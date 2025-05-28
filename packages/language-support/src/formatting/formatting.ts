@@ -180,7 +180,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   format = () => {
     this._visit(this.root);
     this.fillInGroupSizes();
-    const maxColumn = this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL;
+    const maxColumn = Math.max(
+      0,
+      this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL,
+    );
     const result = chunksToFormattedString(this.chunkList, maxColumn);
     this.cursorPos += result.cursorPos;
     const resultString = result.formatted + this.unParseable;
