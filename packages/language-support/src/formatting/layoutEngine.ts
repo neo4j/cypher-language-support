@@ -3,7 +3,6 @@ import {
   Group,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
-  MAX_COL,
   shouldAddSpace,
 } from './formattingHelpers';
 
@@ -24,10 +23,14 @@ interface State {
   pendingComments: string[];
 }
 
-function shouldBreak(chunk: Chunk, state: State): boolean {
+function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
   if (chunk.type === 'COMMENT') return true;
 
   if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
+    return false;
+  }
+
+  if (applySpecialBreak(state, chunk, nextChunk)) {
     return false;
   }
 
@@ -38,9 +41,14 @@ function shouldBreak(chunk: Chunk, state: State): boolean {
   );
 }
 
-function updateActiveGroups(state: State, chunk: Chunk): void {
+function updateActiveGroups(
+  state: State,
+  chunk: Chunk,
+  maxColumn: number,
+): void {
   for (const group of chunk.groupsStarting) {
-    const breaksAll = state.column + group.size > MAX_COL || group.shouldBreak;
+    const breaksAll =
+      state.column + group.size > maxColumn || group.shouldBreak;
     state.activeGroups.push({ ...group, shouldBreak: breaksAll });
   }
   for (const group of chunk.groupsEnding) {
@@ -56,9 +64,11 @@ function updateActiveGroups(state: State, chunk: Chunk): void {
   }
 }
 
-function updateIndentationState(state: State, chunk: Chunk) {
+function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
   for (const indent of chunk.indentation) {
-    if (indent.change === 1) {
+    if (applySpecialBreak(state, chunk, nextChunk)) {
+      indent.removeReference.isApplied = false;
+    } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
     }
@@ -66,6 +76,10 @@ function updateIndentationState(state: State, chunk: Chunk) {
       const indexToRemove = state.activeIndentations.findIndex(
         (item) => item.id === indent.id,
       );
+
+      if (!state.activeIndentations[indexToRemove]?.isApplied) {
+        continue;
+      }
 
       if (indexToRemove !== -1) {
         state.activeIndentations.splice(indexToRemove, 1);
@@ -148,23 +162,33 @@ function validateFinalState(state: State) {
   }
 }
 
+function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
+  // First, check if the next chunk is a special split
+  // because that one includes the allowance of special split, opening bracket e.g.
+  // Current chunk has oneItem set only if it has one child
+  // Lastly we should not special split if the chunk contains comment
+  // as it might cause the comment to refer to the wrong thing
+  return nextChunk?.specialSplit && chunk.oneItem && !chunk.comment;
+}
+
 export function chunksToFormattedString(
   chunkList: Chunk[],
+  maxColumn: number,
 ): FinalResultWithPos {
   const state = createInitialState();
 
   for (let i = 0; i < chunkList.length; i++) {
     const chunk = chunkList[i];
-    const nextChunk = chunkList[i + 1];
+    const nextChunk: Chunk = chunkList[i + 1];
 
     applyIndentationIfNeeded(state);
     checkAndSetCursorPosition(state, chunk);
-    updateActiveGroups(state, chunk);
+    updateActiveGroups(state, chunk, maxColumn);
     appendChunkText(state, chunk);
-    updateIndentationState(state, chunk);
+    updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);
 
-    if (shouldBreak(chunk, state)) {
+    if (shouldBreak(state, chunk, nextChunk)) {
       processLineBreak(state, chunk, nextChunk);
       continue;
     }

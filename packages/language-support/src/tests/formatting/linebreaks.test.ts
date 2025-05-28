@@ -1,5 +1,5 @@
 import { formatQuery } from '../../formatting/formatting';
-import { MAX_COL } from '../../formatting/formattingHelpers';
+import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers';
 import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
@@ -122,12 +122,12 @@ RETURN path`;
     q23,
   ];
 
-  test('keeps all queries within the max column width', () => {
+  test('keeps all queries within the default max column width', () => {
     queries.forEach((query) => {
-      const formatted = formatQuery(query);
+      const formatted = formatQuery(query).formattedQuery;
       const lines = formatted.split('\n');
       lines.forEach((line) => {
-        expect(line.length).toBeLessThanOrEqual(MAX_COL);
+        expect(line.length).toBeLessThanOrEqual(DEFAULT_MAX_COL);
       });
     });
   });
@@ -174,12 +174,11 @@ WHERE
   test('aligns large maps one further than the opening brace', () => {
     const query = `RETURN {looooooooooooooooooooooongkey:value, loooooooooooooooooooongkeeeyyyyyyyy:value2, looooooooooooooongkeeey:value3}`;
     const expected = `
-RETURN
-  {
-    looooooooooooooooooooooongkey: value,
-    loooooooooooooooooooongkeeeyyyyyyyy: value2,
-    looooooooooooooongkeeey: value3
-  }`.trimStart();
+RETURN {
+  looooooooooooooooooooooongkey: value,
+  loooooooooooooooooooongkeeeyyyyyyyy: value2,
+  looooooooooooooongkeeey: value3
+}`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -192,8 +191,7 @@ WHERE p.article_number IN [
 RETURN p`;
     const expected = `MATCH (p:Product)
 WHERE
-  p.article_number IN
-  [
+  p.article_number IN [
     "OCj0AswA",
     "dFRbj1s3",
     "oMbdvgm7",
@@ -293,8 +291,7 @@ RETURN p`;
 WHERE
   p.price > 1000 AND
   p.stock > 50 AND
-  p.category IN
-  [
+  p.category IN [
     'Electronics',
     'Home Appliances',
     'Garden Tools',
@@ -334,32 +331,29 @@ RETURN p`;
   test('should align arguments of function invocation after opening bracket', () => {
     const query = `RETURN collect(create_this1 { datetime: apoc.date.convertFormat(toString(create_this1.datetime), "OZQvXyoU", "EhpkDy8g") }) AS data`;
     const expected = `RETURN
-  collect(
-    create_this1 {
-      datetime:
-        apoc.date.convertFormat(
-          toString(create_this1.datetime),
-          "OZQvXyoU",
-          "EhpkDy8g"
-        )
-    }
-  ) AS data`.trimStart();
+  collect(create_this1 {
+    datetime:
+      apoc.date.convertFormat(
+        toString(create_this1.datetime),
+        "OZQvXyoU",
+        "EhpkDy8g"
+      )
+  }) AS data`.trimStart();
     verifyFormatting(query, expected);
   });
 
   test('should not forget about alignment for unwind clause', () => {
     const query = `UNWIND [{_id:"MiltPFxk", properties:{name:"5nIou0gC", id:"ha44MrBy", value:"6o5lzHd6"}}, {_id:"2uMA2cW8", properties:{name:"WOsBC4Ks", id:"bP526OzE", value:"WhYP4dxd"}}] AS row RETURN row`;
-    const expected = `UNWIND
-  [
-    {
-      _id: "MiltPFxk",
-      properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}
-    },
-    {
-      _id: "2uMA2cW8",
-      properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}
-    }
-  ] AS row
+    const expected = `UNWIND [
+  {
+    _id: "MiltPFxk",
+    properties: {name: "5nIou0gC", id: "ha44MrBy", value: "6o5lzHd6"}
+  },
+  {
+    _id: "2uMA2cW8",
+    properties: {name: "WOsBC4Ks", id: "bP526OzE", value: "WhYP4dxd"}
+  }
+] AS row
 RETURN row`.trimStart();
     verifyFormatting(query, expected);
   });
@@ -515,7 +509,7 @@ RETURN [stop in n[..-1] | stop.name] AS stops`;
 MATCH
   SHORTEST 1
   (:Station {name: 'Hartlebury'}) (()--(n))+(:Station {name: 'Cheltenham Spa'})
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -530,8 +524,8 @@ MATCH
   ((:Station {name: 'Hartlebury'})
     (()--(n:Station))+
     (:Station {name: 'Cheltenham Spa'})
-    WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+    WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -550,10 +544,10 @@ MATCH
     (:Station {name: 'Cheltenham Spa'})
     WHERE
       none(
-        stop IN n[.. -1]
+        stop IN n[..-1]
         WHERE stop.name = 'Bromsgroveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
       ))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -569,8 +563,8 @@ MATCH
     ((:Station {name: 'Thisisanabsurdlylongnametomakeitawkward'})
       (()--(n:Station))+
       (:Station {name: 'Cheltenham Spa'})
-      WHERE none(stop IN n[.. -1] WHERE stop.name = 'Bromsgrove'))
-RETURN [stop IN n[.. -1] | stop.name] AS stops`.trimStart();
+      WHERE none(stop IN n[..-1] WHERE stop.name = 'Bromsgrove'))
+RETURN [stop IN n[..-1] | stop.name] AS stops`.trimStart();
     verifyFormatting(query, expected);
   });
 
@@ -764,7 +758,84 @@ RETURN Alice123`.trimStart();
 
   test('long list in a return', () => {
     const query = `
+RETURN [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB",
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]
+RETURN p`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('long list in a FILTER', () => {
+    const query = `
+WITH [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB",
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('long list in a WITH', () => {
+    const query = `
+WITH [
+  "OCj0AswA",
+  "dFRbj1s3",
+  "oMbdvgm7",
+  "L4Vey8xn",
+  "GNgeDIkA",
+  "pU4RE0lM",
+  "M6XNVJsO",
+  "NcdW0tuB",
+  "Pf6RIuP4",
+  "6tKStKwl",
+  "HfvahDu5",
+  "gJoq3HnU",
+  "g7LjxbGD"
+]`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('two long list in a return', () => {
+    const query = `
 RETURN ["OCj0AswA",
+       "dFRbj1s3",
+       "oMbdvgm7",
+       "L4Vey8xn",
+       "GNgeDIkA",
+       "pU4RE0lM",
+       "M6XNVJsO",
+       "NcdW0tuB",
+       "Pf6RIuP4",
+       "6tKStKwl",
+       "HfvahDu5",
+       "gJoq3HnU",
+       "g7LjxbGD"],
+       ["OCj0AswA",
        "dFRbj1s3",
        "oMbdvgm7",
        "L4Vey8xn",
@@ -794,8 +865,92 @@ RETURN
     "HfvahDu5",
     "gJoq3HnU",
     "g7LjxbGD"
+  ],
+  [
+    "OCj0AswA",
+    "dFRbj1s3",
+    "oMbdvgm7",
+    "L4Vey8xn",
+    "GNgeDIkA",
+    "pU4RE0lM",
+    "M6XNVJsO",
+    "NcdW0tuB",
+    "Pf6RIuP4",
+    "6tKStKwl",
+    "HfvahDu5",
+    "gJoq3HnU",
+    "g7LjxbGD"
   ]
 RETURN p`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('two map projections in a return', () => {
+    const query = `
+RETURN
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo,
+  p {
+    .name,
+    .age,
+    .email,
+    .phone,
+    address: {street: p.street, city: c.name, zip: p.zip},
+    .occupation,
+    .nationality,
+    .birthdate,
+    .gender
+  } AS personInfo`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('two map:s in a return', () => {
+    const query = `
+RETURN
+  {
+    name: "Graph Database",
+    created: 2023,
+    isActive: true,
+    tags: ["database", "graph", "nosql"],
+    metrics: {performance: "high", scalability: "excellent"}
+  },
+  {
+    name: "Graph Database",
+    created: 2023,
+    isActive: true,
+    tags: ["database", "graph", "nosql"],
+    metrics: {performance: "high", scalability: "excellent"}
+  }`.trimStart();
+    const expected = query;
+    verifyFormatting(query, expected);
+  });
+
+  test('test for a list in a function invocation as argument', () => {
+    const query = `MATCH (p:Person)
+WHERE
+  p.name IN
+  apoc.coll.shuffle([
+    'John',
+    'Sarah',
+    'Michael',
+    'Emma',
+    'Sarah',
+    'Michael',
+    'Emma'
+  ])
+RETURN p.name, p.age
+LIMIT 2`;
+    const expected = query;
     verifyFormatting(query, expected);
   });
 
@@ -1127,14 +1282,14 @@ LIMIT "g68S0y7w";`;
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode, duplicates["oMXseK4u" ..] AS deleteNodes
 RETURN deleteNodes`;
     const expected = `MATCH (n:Course {id: "fxmrRAfg"})-[r*]->(b)
 WITH n, collect(n) AS duplicates
 WHERE size(duplicates) > "zuEVCUOg"
 WITH
-  duplicates["2x5H4FCD"] AS keepNode,
-  duplicates["oMXseK4u" ..] AS deleteNodes
+  duplicates["2x5HHHH4FCD"] AS keepNode,
+  duplicates["oMXseK4u"..] AS deleteNodes
 RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
@@ -1186,8 +1341,7 @@ RETURN deleteNodes`;
 RETURN
   reduce(
     alongsssssssssssssssstring = '',
-    word IN
-    [
+    word IN [
       'Hello',
       ' ',
       'World',
@@ -1366,6 +1520,159 @@ CALL (
 }
 RETURN x`;
     verifyFormatting(query, expected);
+  });
+
+  test('when with long expression', () => {
+    const query = `WHEN 10000000000 + 1000000000000000 + 10000000 + 10000000+ 100000000000 + 1000000000000 + 100000000 + 100000000 + 100000000 < 5 THEN
+MATCH (n)
+RETURN n`;
+    const expected = `
+WHEN
+  10000000000 +
+  1000000000000000 +
+  10000000 +
+  10000000 +
+  100000000000 +
+  1000000000000 +
+  100000000 +
+  100000000 +
+  100000000 <
+  5
+  THEN
+  MATCH (n)
+  RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('filter with long expression', () => {
+    const query = `MATCH (n)
+FILTER WHERE n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    const expected = `MATCH (n)
+FILTER WHERE
+  n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause', () => {
+    const query = `match (n)
+let aaaaaaaaaage = n.age, prooooooooooooooooooop = n.prop, otherproooooooooooooooooop = n.otherprop
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaage = n.age,
+  prooooooooooooooooooop = n.prop,
+  otherproooooooooooooooooop = n.otherprop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause item', () => {
+    const query = `match (n)
+let aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage = n.age
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage =
+    n.age
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16)`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  )`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function with other return items also', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16), 50`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  ),
+  50`.trimStart();
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for line breaks with non-default max column width', () => {
+  test('should keep this node pattern within 40 columns', () => {
+    const query = `MATCH (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+RETURN u`;
+    const expected = `
+MATCH
+  (u:User)-[r:IS_AA_MEMBER_OF]->
+  (g:Group)
+RETURN u`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 40 });
+  });
+
+  test('long pattern wraps within 50 columns', () => {
+    const query = `MATCH (a:VeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH
+  (a:VeryLongLabelName)-[:RELTYPE]->
+  (b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 50 });
+  });
+
+  test('long pattern does not wrap with high column limit', () => {
+    const query = `MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 100 });
+  });
+
+  test('function invocation with nested call stays within 45 columns', () => {
+    const query = `RETURN apoc.text.join(['One','Two','Three', 'Four', 'Five', 'Six'],'; ') AS joined`;
+    const expected = `
+RETURN
+  apoc.text.join(
+    [
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six'
+    ],
+    '; '
+  ) AS joined`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 45 });
+  });
+
+  test('list literal with 10 col width', () => {
+    const query = `
+RETURN ['A','B']`;
+    const expected = `
+RETURN [
+  'A',
+  'B'
+]`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 10 });
   });
 });
 

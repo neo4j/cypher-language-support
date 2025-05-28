@@ -189,7 +189,7 @@ RETURN
     description:
       CASE
         WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-        ELSE p.Description[.. "VM6fSkTL"]
+        ELSE p.Description[.."VM6fSkTL"]
       END
   } AS node,
   r,
@@ -198,7 +198,7 @@ RETURN
     description:
       CASE
         WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-        ELSE b.Description[.. "NHIwucAy"]
+        ELSE b.Description[.."NHIwucAy"]
       END
   } AS endNode;`.trimStart();
     verifyFormatting(query, expected);
@@ -219,7 +219,7 @@ RETURN
     description:
       CASE p.age
         WHEN p.Description IS NULL OR size(p.Description) = "TxWb1jb3" THEN []
-        ELSE p.Description[.. "VM6fSkTL"]
+        ELSE p.Description[.."VM6fSkTL"]
       END
   } AS node,
   r,
@@ -228,7 +228,7 @@ RETURN
     description:
       CASE p.age
         WHEN b.Description IS NULL OR size(b.Description) = "wnBMZdOC" THEN []
-        ELSE b.Description[.. "NHIwucAy"]
+        ELSE b.Description[.."NHIwucAy"]
       END
   } AS endNode;`;
     verifyFormatting(query, expected);
@@ -294,51 +294,49 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     const expected = `WITH
   s,
   t.name AS tableName,
-  collect(
-    {
-      name: c.name,
-      pk:
-        CASE (NOT pk IS NULL AND $printKeyInfo)
-          WHEN
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true
-            THEN "(PK)"
-          ELSE ""
-        END,
-      fk:
-        CASE
-          WHEN
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true
-            THEN "(FK)"
-          ELSE ""
-        END
-    }
-  ) AS columns`;
+  collect({
+    name: c.name,
+    pk:
+      CASE (NOT pk IS NULL AND $printKeyInfo)
+        WHEN
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true
+          THEN "(PK)"
+        ELSE ""
+      END,
+    fk:
+      CASE
+        WHEN
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true
+          THEN "(FK)"
+        ELSE ""
+      END
+  }) AS columns`;
     verifyFormatting(query, expected);
   });
 
@@ -542,11 +540,10 @@ RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     "qk5jpmGl", // Name of the projected graph
     ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
     {
-      connection:
-        {
-          type: "R3e8WLkh", // Include all relationships
-          orientation: "weFW44Gy" // Treat relationships as undirected
-        }
+      connection: {
+        type: "R3e8WLkh", // Include all relationships
+        orientation: "weFW44Gy" // Treat relationships as undirected
+      }
     }
   )
   YIELD graphName, nodeCount, relationshipCount, createMillis
@@ -691,18 +688,17 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN
-  p {
-    .name,
-    .age,
-    .email,
-    .phone,
-    .address,
-    .occupation,
-    .nationality,
-    .birthdate,
-    .gender
-  } AS personInfo`;
+RETURN p {
+  .name,
+  .age,
+  .email,
+  .phone,
+  .address,
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -712,18 +708,17 @@ RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN
-  p {
-    .name,
-    .age,
-    .email,
-    .phone,
-    address: {street: p.street, city: c.name, zip: p.zip},
-    .occupation,
-    .nationality,
-    .birthdate,
-    .gender
-  } AS personInfo`;
+RETURN p {
+  .name,
+  .age,
+  .email,
+  .phone,
+  address: {street: p.street, city: c.name, zip: p.zip},
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -1113,6 +1108,54 @@ OR ( aaaaaa ) < - [ : aaaaaa ] - ( : aaaaaa ) - [ : aaaaaa ] - > ( aaaaaa ) //IK
 WHERE
   (aaaaaa)-[:aaaaaa|aaaaaa]-(aaaaaa) OR //eZOSdvhfCrCvLOnlAGSwWWPrYZtgoiTJoGysORO
   (aaaaaa)<-[:aaaaaa]-(:aaaaaa)-[:aaaaaa]->(aaaaaa) //IKCKaFRvOLUsiwpZZgdhsXrNwWHZHLoUkraBtkoUQrFiLEW`;
+    verifyFormatting(query, expected);
+  });
+
+  test('postfix after a collect', () => {
+    const query = `WITH DISTINCT
+  COLLECT {
+    MATCH (p)-[:XYZ_ABCD12]->(q)
+    RETURN q.blnk
+  }
+  [
+  "Ab12Cd34"] AS sdflkjl52_2462,
+  qwer1["Bc34Df56"] AS ftgy3_hjkl_pqr23,
+  qwer1["Gh78Ij90"] AS zxcv5_bnmd_qwe45,
+  qwer1["Kl12Mn34"] AS rtyu6_asdf_ghj67,
+  qwer1
+
+RETURN *`;
+    const expected = `WITH DISTINCT
+  COLLECT {
+    MATCH (p)-[:XYZ_ABCD12]->(q)
+    RETURN q.blnk
+  }["Ab12Cd34"] AS sdflkjl52_2462,
+  qwer1["Bc34Df56"] AS ftgy3_hjkl_pqr23,
+  qwer1["Gh78Ij90"] AS zxcv5_bnmd_qwe45,
+  qwer1["Kl12Mn34"] AS rtyu6_asdf_ghj67,
+  qwer1
+
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('range postfix after a collect', () => {
+    const query = `MATCH (n)
+RETURN
+  COLLECT {
+    MATCH (n)
+    RETURN n
+  }
+  [
+  1
+  ..
+  10]`;
+    const expected = `MATCH (n)
+RETURN
+  COLLECT {
+    MATCH (n)
+    RETURN n
+  }[1..10]`;
     verifyFormatting(query, expected);
   });
 });

@@ -24,18 +24,14 @@ export { lintCypherQuery } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
-export { cypherVersions } from './types';
+export { allCypherVersions } from './types';
 export type {
   CompletionItem,
   CypherVersion,
   Neo4jFunction,
   Neo4jProcedure,
 } from './types';
-export {
-  cypher25Supported,
-  compareVersions,
-  compareMajorMinorVersions,
-} from './version';
+export { compareVersions, compareMajorMinorVersions } from './version';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
 import CypherLexer from './generated-parser/CypherCmdLexer';

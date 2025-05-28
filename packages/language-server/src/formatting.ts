@@ -16,7 +16,7 @@ export const formatDocument = (
   }
 
   const text = document.getText();
-  const formattedText = formatQuery(text);
+  const formattedText = formatQuery(text).formattedQuery;
 
   if (text === formattedText) {
     return [];
