@@ -4,6 +4,8 @@ import { formatQuery } from './index.js';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
+const CYPHER_FILE_EXTENSIONS = ['.cy', '.cyp', '.cypher'];
+
 function printUsage() {
   console.error(`Usage: cypherfmt [options] [file|directory]
 
@@ -69,9 +71,7 @@ async function processDirectory(
       allFilesFormatted = allFilesFormatted && subDirResult;
     } else if (
       entry.isFile() &&
-      (entry.name.endsWith('.cy') ||
-        entry.name.endsWith('.cyp') ||
-        entry.name.endsWith('.cypher'))
+      CYPHER_FILE_EXTENSIONS.some((ext) => entry.name.endsWith(ext))
     ) {
       const fileResult = processFile(fullPath, options);
       allFilesFormatted = allFilesFormatted && fileResult;
