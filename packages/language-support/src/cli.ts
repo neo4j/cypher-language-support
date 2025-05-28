@@ -13,7 +13,7 @@ Options:
   -h, --help        Show this help message
 
 If no file is provided, reads from stdin.
-If a directory is provided, it will be processed recursively.
+If a directory is provided, it will be processed recursively, and format all .cy or .cypher files in place.
 `);
   process.exit(1);
 }
