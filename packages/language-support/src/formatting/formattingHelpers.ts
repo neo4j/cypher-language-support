@@ -39,6 +39,11 @@ export interface BaseChunk {
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
   mustBreak?: boolean;
+  // If the chunk wants to special split
+  // Opening bracket in list e.g.
+  specialSplit?: boolean;
+  // If Chunk only has one child, therefore can allow a special split
+  oneItem?: boolean;
 }
 
 // Regular chunk specific properties
@@ -50,7 +55,6 @@ export interface RegularChunk extends BaseChunk {
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
-  mustBreak?: boolean;
   type: 'SYNTAX_ERROR';
 }
 
@@ -65,6 +69,8 @@ export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 export interface IndentationModifier {
   id: number;
   change: 1 | -1;
+  removeReference?: IndentationModifier;
+  isApplied: boolean;
 }
 
 const traillingCharacters = [
