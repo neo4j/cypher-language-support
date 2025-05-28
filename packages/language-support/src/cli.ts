@@ -15,7 +15,7 @@ Options:
   -h, --help        Show this help message
 
 If no file is provided, reads from stdin.
-If a directory is provided, it will be processed recursively, and format all .cy, .cyp, or .cypher files in place.
+If a directory is provided, it will be processed recursively, and format all .cy, .cyp, or .cypher files in place (unless --check is used).
 `);
   process.exit(1);
 }
