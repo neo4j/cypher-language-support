@@ -85,6 +85,10 @@ function main() {
     } else if (arg === '-c' || arg === '--check') {
       check = true;
     } else if (!arg.startsWith('-')) {
+      if (inputPath) {
+        console.error('Error: Multiple input paths provided');
+        printUsage();
+      }
       inputPath = arg;
     } else {
       console.error(`Unknown option: ${arg}`);
