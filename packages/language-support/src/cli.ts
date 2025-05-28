@@ -20,10 +20,6 @@ If a directory is provided, it will be processed recursively, and format all .cy
   process.exit(1);
 }
 
-function readStdin(): string {
-  return readFileSync(0, 'utf8');
-}
-
 function processFile(
   filePath: string,
   options: { inPlace: boolean; check: boolean },
@@ -47,10 +43,10 @@ function processFile(
   return true;
 }
 
-async function processDirectory(
+function processDirectory(
   dirPath: string,
   options: { inPlace: boolean; check: boolean },
-): Promise<boolean> {
+): boolean {
   let allFilesFormatted = true;
 
   const entries = readdirSync(dirPath, { withFileTypes: true });
@@ -59,7 +55,7 @@ async function processDirectory(
     const fullPath = join(dirPath, entry.name);
 
     if (entry.isDirectory()) {
-      const subDirResult = await processDirectory(fullPath, options);
+      const subDirResult = processDirectory(fullPath, options);
       allFilesFormatted = allFilesFormatted && subDirResult;
     } else if (
       entry.isFile() &&
@@ -73,7 +69,7 @@ async function processDirectory(
   return allFilesFormatted;
 }
 
-async function main() {
+function main() {
   const args = process.argv.slice(2);
   let inPlace = false;
   let check = false;
@@ -103,7 +99,7 @@ async function main() {
         // Automatically set inPlace to true when processing a directory, since printing to stdout
         // does not make sense in that case. If check is set that will take precedence though.
         inPlace = true;
-        const success = await processDirectory(inputPath, { inPlace, check });
+        const success = processDirectory(inputPath, { inPlace, check });
         if (!success) {
           process.exit(1);
         }
@@ -114,7 +110,8 @@ async function main() {
         }
       }
     } else {
-      const input = readStdin();
+      // No file or directory provided, read from stdin.
+      const input = readFileSync(0, 'utf8');
       const formatted = formatQuery(input).formattedQuery;
       if (check) {
         if (input !== formatted) {
@@ -134,4 +131,4 @@ async function main() {
   }
 }
 
-void main();
+main();
