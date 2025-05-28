@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { formatQuery } from './index.js';
+import { formatQuery } from '../index.js';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
