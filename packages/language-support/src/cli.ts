@@ -109,7 +109,8 @@ async function main() {
     if (inputPath) {
       const stats = statSync(inputPath);
       if (stats.isDirectory()) {
-        // Automatically set inPlace to true when processing a directory
+        // Automatically set inPlace to true when processing a directory, since printing to stdout
+        // does not make sense in that case. If check is set that will take precedence though.
         inPlace = true;
         const success = await processDirectory(inputPath, { inPlace, check });
         if (!success) {
