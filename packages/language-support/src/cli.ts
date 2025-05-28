@@ -10,7 +10,7 @@ function printUsage() {
   console.error(`Usage: cypherfmt [options] [file|directory]
 
 Options:
-  -i, --in-place    Modify files in place (overwrite the input file)
+  -i, --in-place    Modify file in place (overwrite the input file)
   -c, --check       Check if files are formatted correctly (exit with error if not)
   -h, --help        Show this help message
 
