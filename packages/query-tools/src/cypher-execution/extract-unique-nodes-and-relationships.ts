@@ -10,12 +10,34 @@ import { isNode, isPath, isRelationship } from 'neo4j-driver';
 import { CypherProperty } from '../data-types/cypher-data-types';
 
 export type Properties = RecordShape<string, CypherProperty>;
+
+/**
+ * Result type containing deduplicated nodes and relationships extracted from Neo4j records.
+ */
 export type DeduplicatedBasicNodesAndRels = {
+  /** Array of unique nodes found in the records */
   nodes: Node<Integer, Properties, string>[];
+  /** Array of unique relationships found in the records */
   relationships: Relationship<Integer, Properties, string>[];
+  /** Whether the max node limit was reached during extraction */
   limitHit: boolean;
 };
 
+/**
+ * Extracts and deduplicates nodes and relationships from Neo4j query records.
+ *
+ * This function processes Neo4j records to find all nodes and relationships,
+ * removing duplicates based on their element IDs. It can handle various data
+ * structures including individual nodes/relationships, paths, arrays, and
+ * nested objects.
+ *
+ * @param records - Array of Neo4j records to process
+ * @param options - Configuration options for extraction
+ * @param options.nodeLimit - Maximum number of unique nodes to extract (optional)
+ * @param options.keepDanglingRels - Whether to keep relationships whose start/end nodes are missing (default: false)
+ *
+ * @returns The {@link DeduplicatedBasicNodesAndRels} containing unique nodes and relationships
+ */
 export const extractUniqueNodesAndRels = (
   records: Record[],
   {
