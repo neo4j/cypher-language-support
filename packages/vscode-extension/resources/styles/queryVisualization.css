@@ -1,0 +1,7 @@
+@import './components/vizWrapper.css';
+
+body {
+  background-color: rgb(var(--theme-palette-neutral-bg-default));
+  color: rgb(var(--theme-palette-neutral-text-default));
+  font-size: var(--vscode-editor-font-size);
+}

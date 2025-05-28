@@ -33,7 +33,7 @@ test('Can turn linting back on', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'METCH',
-    `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
+    `Invalid input 'METCH': expected 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'FOREACH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
 });
 
@@ -45,7 +45,7 @@ test('Syntactic errors are surfaced', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'METCH',
-    `Invalid input 'METCH': expected 'FOREACH', 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
+    `Invalid input 'METCH': expected 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'FOREACH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'`,
   );
 });
 
@@ -138,7 +138,7 @@ test('Semantic errors are correctly accumulated', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
 
@@ -153,12 +153,12 @@ test('Multiline errors are correctly placed', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     'MATCH (n)',
-    'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD)',
+    'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
   );
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
 
@@ -178,9 +178,27 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
 
   await editorPage.checkErrorMessage(
     '-1',
-    "Invalid input. '-1' is not a valid value. Must be a positive integer",
+    "Invalid input. '-1' is not a valid value. Must be a positive integer.",
   );
 });
+
+test('Syntax highlighting works as expected with multiple separate linting messages', async ( {
+  page,
+  mount
+}) => {
+  const editorPage = new CypherEditorPage(page);
+  const query = `MATCH (n)--(m) CALL (n) {RETURN id(n) AS b} RETURN apoc.create.uuid(), a`;
+
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
+  await expect(
+    editorPage.page.locator('.cm-deprecated-element').last(),
+  ).toBeVisible({ timeout: 10000 });
+  await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
+  await editorPage.checkWarningMessage('id', `The query used a deprecated function. ('id' has been replaced by 'elementId or an application-generated id')`);
+
+  await editorPage.checkWarningMessage('apoc.create.uuid', 'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function');
+  await editorPage.checkErrorMessage('a', 'Variable `a` not defined');
+})
 
 test('Strikethroughs are shown for deprecated functions', async ({
   page,
@@ -194,6 +212,7 @@ test('Strikethroughs are shown for deprecated functions', async ({
     editorPage.page.locator('.cm-deprecated-element').last(),
   ).toBeVisible({ timeout: 10000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
+  await editorPage.checkErrorMessage('id', `Insufficient parameters for function 'id'`);
 });
 
 test('Strikethroughs are shown for deprecated procedures', async ({
@@ -210,7 +229,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is deprecated.',
+    "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
   );
 });
 
@@ -231,13 +250,13 @@ test('Syntax validation depends on the Cypher version', async ({
 
   await editorPage.checkWarningMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is deprecated.',
+    "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
   );
 
   await textField.fill('CYPHER 25 CALL apoc.create.uuids(5)');
 
   await editorPage.checkErrorMessage(
     'apoc.create.uuids',
-    'Procedure apoc.create.uuids is not present in the database.',
+    `Procedure apoc.create.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   );
 });

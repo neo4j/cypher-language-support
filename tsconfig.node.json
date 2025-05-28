@@ -3,5 +3,5 @@
     "allowJs": true,
     "noEmit": true
   },
-  "include": [".eslint.rc.js", "vitest.workspace.ts"]
+  "include": [".eslintrc.js", "vitest.workspace.ts"]
 }

@@ -1,5 +1,12 @@
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import {
+  commands,
+  ExtensionContext,
+  RelativePattern,
+  Uri,
+  window,
+  workspace,
+} from 'vscode';
 import {
   LanguageClient,
   LanguageClientOptions,
@@ -24,6 +31,16 @@ export async function activate(context: ExtensionContext) {
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
+
+  // show query result bottom panel only if showBottomPanel is set to true
+  const config = workspace.getConfiguration('neo4j.features');
+  const showBottomPanel = config.get('showBottomPanel', false);
+  await commands.executeCommand(
+    'setContext',
+    'neo4j:showBottomPanel',
+    showBottomPanel,
+  );
+
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -64,6 +81,25 @@ export async function activate(context: ExtensionContext) {
   // Handle any sequence events for activation
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
+
+  // in developement mode, we manually reload the extension.
+  if (process.env.watch === 'true') {
+    const watcher = workspace.createFileSystemWatcher(
+      new RelativePattern(
+        Uri.file(context.asAbsolutePath('dist')),
+        'extension.js',
+      ),
+    );
+
+    watcher.onDidChange(() => {
+      void window.showInformationMessage('Extension rebuilt, reloading...');
+      void commands.executeCommand<void>(
+        'workbench.action.restartExtensionHost',
+      );
+    });
+
+    context.subscriptions.push(watcher);
+  }
 }
 
 export async function deactivate(): Promise<void> | undefined {

@@ -5,9 +5,9 @@ import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import { LinterTask, LintWorker } from './lintWorker';
+import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
-const pool = workerpool.pool(join(__dirname, 'lintWorker.js'), {
+const pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
