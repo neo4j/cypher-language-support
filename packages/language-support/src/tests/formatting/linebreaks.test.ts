@@ -1577,11 +1577,10 @@ RETURN
     const query = `
 RETURN ['A','B']`;
     const expected = `
-RETURN
-  [
-    'A',
-    'B'
-  ]`.trimStart();
+RETURN [
+  'A',
+  'B'
+]`.trimStart();
     verifyFormatting(query, expected, { maxColumn: 10 });
   });
 });
