@@ -6,18 +6,32 @@ import { extractUniqueNodesAndRels } from './extract-unique-nodes-and-relationsh
 
 describe('extractNodesAndRels', () => {
   test('should map bolt records with a path to nodes and relationships', () => {
-    const startNode = new Node(1, ['Person'], {
-      prop1: 'prop1',
-    });
-    const endNode = new Node(2, ['Movie'], {
-      prop2: 'prop2',
-    });
+    const startNode = new Node(
+      1,
+      ['Person'],
+      {
+        prop1: 'prop1',
+      },
+      'node1',
+    );
+    const endNode = new Node(
+      2,
+      ['Movie'],
+      {
+        prop2: 'prop2',
+      },
+      'node2',
+    );
+
     const relationship = new Relationship(
       3,
-      startNode.identity,
-      endNode.identity,
+      1,
+      2,
       'ACTED_IN',
       {},
+      'rel1',
+      'node1',
+      'node2',
     );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
@@ -30,8 +44,12 @@ describe('extractNodesAndRels', () => {
 
     const { nodes, relationships } = extractUniqueNodesAndRels([boltRecord]);
 
-    const [graphNodeStart] = nodes.filter((node) => node.id === '1');
-    const [graphNodeEnd] = nodes.filter((node) => node.id === '2');
+    const [graphNodeStart] = nodes.filter(
+      (node) => node.elementId.toString() === 'node1',
+    );
+    const [graphNodeEnd] = nodes.filter(
+      (node) => node.elementId.toString() === 'node2',
+    );
     const [firstRel] = relationships;
 
     if (
@@ -45,32 +63,45 @@ describe('extractNodesAndRels', () => {
     expect(nodes.length).toBe(2);
 
     expect(graphNodeStart.labels).toEqual(['Person']);
-    expect(graphNodeStart.properties).toEqual({ prop1: '"prop1"' });
+    expect(graphNodeStart.properties).toEqual({ prop1: 'prop1' });
 
     expect(graphNodeEnd.labels).toEqual(['Movie']);
-    expect(graphNodeEnd.properties).toEqual({ prop2: '"prop2"' });
+    expect(graphNodeEnd.properties).toEqual({ prop2: 'prop2' });
     expect(relationships.length).toBe(1);
 
-    expect(firstRel.id).toEqual('3');
-    expect(firstRel.startNodeId).toEqual('1');
-    expect(firstRel.endNodeId).toEqual('2');
+    expect(firstRel.elementId.toString()).toEqual('rel1');
+    expect(firstRel.startNodeElementId.toString()).toEqual('node1');
+    expect(firstRel.endNodeElementId.toString()).toEqual('node2');
     expect(firstRel.type).toEqual('ACTED_IN');
     expect(firstRel.properties).toEqual({});
   });
 
   test('should deduplicate bolt records based on node id and filter out dangling relationships', () => {
-    const node1 = new Node(1, ['Person'], {
-      prop1: 'prop1',
-    });
-    const node2 = new Node(1, ['Person'], {
-      prop1: 'prop1',
-    });
+    const node1 = new Node(
+      1,
+      ['Person'],
+      {
+        prop1: 'prop1',
+      },
+      'node1',
+    );
+    const node2 = new Node(
+      1,
+      ['Person'],
+      {
+        prop1: 'prop1',
+      },
+      'node1',
+    );
     const relationship = new Relationship(
       2,
-      node1.identity,
+      1,
       34,
       'ACTED_IN',
       {},
+      'rel1',
+      'node1',
+      'node34',
     );
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -88,18 +119,31 @@ describe('extractNodesAndRels', () => {
   });
 
   test('should respect the max nodes limit and filter out dangling relations', () => {
-    const startNode = new Node(1, ['Person'], {
-      prop1: 'prop1',
-    });
-    const endNode = new Node(2, ['Movie'], {
-      prop2: 'prop2',
-    });
+    const startNode = new Node(
+      1,
+      ['Person'],
+      {
+        prop1: 'prop1',
+      },
+      'node1',
+    );
+    const endNode = new Node(
+      2,
+      ['Movie'],
+      {
+        prop2: 'prop2',
+      },
+      'node2',
+    );
     const relationship = new Relationship(
       3,
-      startNode.identity,
-      endNode.identity,
+      1,
+      2,
       'ACTED_IN',
       {},
+      'rel1',
+      'node1',
+      'node2',
     );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
@@ -122,23 +166,36 @@ describe('extractNodesAndRels', () => {
       throw new Error('Error in test data, got undefined');
     }
     expect(graphNodeStart.labels).toEqual(['Person']);
-    expect(graphNodeStart.properties).toEqual({ prop1: '"prop1"' });
+    expect(graphNodeStart.properties).toEqual({ prop1: 'prop1' });
     expect(relationships.length).toBe(0);
   });
 
   test('should respect the max nodes limit and filter out dangling relations unless asked to keep them', () => {
-    const startNode = new Node(1, ['Person'], {
-      prop1: 'prop1',
-    });
-    const endNode = new Node(2, ['Movie'], {
-      prop2: 'prop2',
-    });
+    const startNode = new Node(
+      1,
+      ['Person'],
+      {
+        prop1: 'prop1',
+      },
+      'node1',
+    );
+    const endNode = new Node(
+      2,
+      ['Movie'],
+      {
+        prop2: 'prop2',
+      },
+      'node2',
+    );
     const relationship = new Relationship(
       3,
-      startNode.identity,
-      endNode.identity,
+      1,
+      2,
       'ACTED_IN',
       {},
+      'rel1',
+      'node1',
+      'node2',
     );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
@@ -165,7 +222,7 @@ describe('extractNodesAndRels', () => {
     }
 
     expect(graphNodeStart.labels).toEqual(['Person']);
-    expect(graphNodeStart.properties).toEqual({ prop1: '"prop1"' });
+    expect(graphNodeStart.properties).toEqual({ prop1: 'prop1' });
     expect(relationships.length).toBe(1);
   });
 });

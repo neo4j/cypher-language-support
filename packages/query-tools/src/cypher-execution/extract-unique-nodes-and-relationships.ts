@@ -1,4 +1,5 @@
 import type {
+  Integer,
   Node,
   Path,
   Record,
@@ -6,22 +7,12 @@ import type {
   Relationship,
 } from 'neo4j-driver';
 import { isNode, isPath, isRelationship } from 'neo4j-driver';
+import { CypherProperty } from '../data-types/cypher-data-types';
 
+export type Properties = RecordShape<string, CypherProperty>;
 export type DeduplicatedBasicNodesAndRels = {
-  nodes: {
-    id: string;
-    elementId: string;
-    labels: string[];
-    properties: RecordShape<string, unknown>;
-  }[];
-  relationships: {
-    id: string;
-    elementId: string;
-    startNodeId: string;
-    endNodeId: string;
-    type: string;
-    properties: RecordShape<string, unknown>;
-  }[];
+  nodes: Node<Integer, Properties, string>[];
+  relationships: Relationship<Integer, Properties, string>[];
   limitHit: boolean;
 };
 
@@ -98,38 +89,20 @@ export const extractUniqueNodesAndRels = (
     }
   }
 
-  const nodes = Array.from(nodeMap.values()).map((item) => {
-    return {
-      id: item.elementId.toString(),
-      elementId: item.elementId,
-      labels: item.labels,
-      properties: item.properties,
-    };
+  const nodes = Array.from(nodeMap.values());
+
+  const relationships = Array.from(relMap.values()).filter((item) => {
+    if (keepDanglingRels) {
+      return true;
+    }
+
+    // We'd get dangling relationships from
+    // match ()-[a:ACTED_IN]->() return a;
+    // or from hitting the node limit
+    const start = item.startNodeElementId.toString();
+    const end = item.endNodeElementId.toString();
+    return nodeMap.has(start) && nodeMap.has(end);
   });
-
-  const relationships = Array.from(relMap.values())
-    .filter((item) => {
-      if (keepDanglingRels) {
-        return true;
-      }
-
-      // We'd get dangling relationships from
-      // match ()-[a:ACTED_IN]->() return a;
-      // or from hitting the node limit
-      const start = item.startNodeElementId.toString();
-      const end = item.endNodeElementId.toString();
-      return nodeMap.has(start) && nodeMap.has(end);
-    })
-    .map((item) => {
-      return {
-        id: item.elementId.toString(),
-        elementId: item.elementId,
-        startNodeId: item.startNodeElementId.toString(),
-        endNodeId: item.endNodeElementId.toString(),
-        type: item.type,
-        properties: item.properties,
-      };
-    });
 
   return { nodes, relationships, limitHit };
 };

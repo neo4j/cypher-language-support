@@ -17,7 +17,7 @@ export type {
 } from './metadataPoller';
 export type { Neo4jConnection, QueryResultWithLimit } from './neo4jConnection';
 export type { Database } from './queries/databases';
-export * from './result-transformers/graph-result-transformer';
+export { graphResultTransformer } from './result-transformers/graph-result-transformer';
 export { Neo4jSchemaPoller } from './schemaPoller';
 export type { ConnnectionResult } from './schemaPoller';
 export type { CypherDataType } from './types/cypher-data-types';
