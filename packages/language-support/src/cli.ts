@@ -57,7 +57,6 @@ async function processDirectory(
   dirPath: string,
   options: { inPlace: boolean; check: boolean },
 ): Promise<boolean> {
-  const skipDirs = ['node_modules', '.git', 'dist', 'build'];
   let allFilesFormatted = true;
 
   const entries = readdirSync(dirPath, { withFileTypes: true });
@@ -66,10 +65,8 @@ async function processDirectory(
     const fullPath = join(dirPath, entry.name);
 
     if (entry.isDirectory()) {
-      if (!skipDirs.includes(entry.name)) {
-        const subDirResult = await processDirectory(fullPath, options);
-        allFilesFormatted = allFilesFormatted && subDirResult;
-      }
+      const subDirResult = await processDirectory(fullPath, options);
+      allFilesFormatted = allFilesFormatted && subDirResult;
     } else if (
       entry.isFile() &&
       (entry.name.endsWith('.cy') || entry.name.endsWith('.cypher'))
