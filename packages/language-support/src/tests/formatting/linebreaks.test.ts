@@ -1,5 +1,5 @@
 import { formatQuery } from '../../formatting/formatting';
-import { MAX_COL } from '../../formatting/formattingHelpers';
+import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers';
 import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
@@ -122,12 +122,12 @@ RETURN path`;
     q23,
   ];
 
-  test('keeps all queries within the max column width', () => {
+  test('keeps all queries within the default max column width', () => {
     queries.forEach((query) => {
-      const formatted = formatQuery(query);
+      const formatted = formatQuery(query).formattedQuery;
       const lines = formatted.split('\n');
       lines.forEach((line) => {
-        expect(line.length).toBeLessThanOrEqual(MAX_COL);
+        expect(line.length).toBeLessThanOrEqual(DEFAULT_MAX_COL);
       });
     });
   });
@@ -1520,6 +1520,68 @@ CALL (
 }
 RETURN x`;
     verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for line breaks with non-default max column width', () => {
+  test('should keep this node pattern within 40 columns', () => {
+    const query = `MATCH (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+RETURN u`;
+    const expected = `
+MATCH
+  (u:User)-[r:IS_AA_MEMBER_OF]->
+  (g:Group)
+RETURN u`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 40 });
+  });
+
+  test('long pattern wraps within 50 columns', () => {
+    const query = `MATCH (a:VeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH
+  (a:VeryLongLabelName)-[:RELTYPE]->
+  (b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 50 });
+  });
+
+  test('long pattern does not wrap with high column limit', () => {
+    const query = `MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 100 });
+  });
+
+  test('function invocation with nested call stays within 45 columns', () => {
+    const query = `RETURN apoc.text.join(['One','Two','Three', 'Four', 'Five', 'Six'],'; ') AS joined`;
+    const expected = `
+RETURN
+  apoc.text.join(
+    [
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six'
+    ],
+    '; '
+  ) AS joined`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 45 });
+  });
+
+  test('list literal with 10 col width', () => {
+    const query = `
+RETURN ['A','B']`;
+    const expected = `
+RETURN [
+  'A',
+  'B'
+]`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 10 });
   });
 });
 

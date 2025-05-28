@@ -3,7 +3,6 @@ import {
   Group,
   IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
-  MAX_COL,
   shouldAddSpace,
 } from './formattingHelpers';
 
@@ -42,9 +41,14 @@ function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
   );
 }
 
-function updateActiveGroups(state: State, chunk: Chunk): void {
+function updateActiveGroups(
+  state: State,
+  chunk: Chunk,
+  maxColumn: number,
+): void {
   for (const group of chunk.groupsStarting) {
-    const breaksAll = state.column + group.size > MAX_COL || group.shouldBreak;
+    const breaksAll =
+      state.column + group.size > maxColumn || group.shouldBreak;
     state.activeGroups.push({ ...group, shouldBreak: breaksAll });
   }
   for (const group of chunk.groupsEnding) {
@@ -169,6 +173,7 @@ function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
 
 export function chunksToFormattedString(
   chunkList: Chunk[],
+  maxColumn: number,
 ): FinalResultWithPos {
   const state = createInitialState();
 
@@ -178,7 +183,7 @@ export function chunksToFormattedString(
 
     applyIndentationIfNeeded(state);
     checkAndSetCursorPosition(state, chunk);
-    updateActiveGroups(state, chunk);
+    updateActiveGroups(state, chunk, maxColumn);
     appendChunkText(state, chunk);
     updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);

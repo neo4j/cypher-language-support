@@ -109,6 +109,7 @@ import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
 import {
   Chunk,
   CommentChunk,
+  DEFAULT_MAX_COL,
   fillInRegularChunkGroupSizes,
   findTargetToken,
   getParseTreeAndTokens,
@@ -136,6 +137,7 @@ interface RawTerminalOptions {
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
 export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
+  formattingOptions: FormattingOptions;
   root: StatementsOrCommandsContext;
   query: string;
   chunkList: Chunk[] = [];
@@ -155,6 +157,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   firstUnParseableToken: Token | undefined;
 
   constructor(
+    formattingOptions: FormattingOptions,
     private tokenStream: CommonTokenStream,
     root: StatementsOrCommandsContext,
     query: string,
@@ -162,6 +165,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     firstUnParseableToken: Token | undefined,
   ) {
     super();
+    this.formattingOptions = formattingOptions;
     this.root = root;
     this.query = query;
     if (unParseable) {
@@ -176,7 +180,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   format = () => {
     this._visit(this.root);
     this.fillInGroupSizes();
-    const result = chunksToFormattedString(this.chunkList);
+    const maxColumn = Math.max(
+      0,
+      this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL,
+    );
+    const result = chunksToFormattedString(this.chunkList, maxColumn);
     this.cursorPos += result.cursorPos;
     const resultString = result.formatted + this.unParseable;
     const originalNonWhitespaceCount = this.query.replace(/\s/g, '').length;
@@ -2360,38 +2368,62 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-interface FormattingResultWithCursor {
-  formattedString: string;
-  newCursorPos: number;
+interface FormattingResult {
+  formattedQuery: string;
+  newCursorPos?: number; // Only set if cursorPosition is provided
 }
 
-export function formatQuery(query: string): string;
+export interface FormattingOptions {
+  // Not a hard limit, see comment on DEFAULT_MAX_COL
+  maxColumn?: number;
+  cursorPosition?: number;
+}
+
+/**
+ * Formats a Cypher query according to the Cypher style guide. Runs in O(n) time.
+ * Makes a best-effort attempt if the query is not parseable.
+ *
+ * @param query - Raw Cypher query string to format.
+ * @param formattingOptions - Formatting behaviour flags.
+ * @param formattingOptions.maxColumn - Maximum column width for the formatted query (80 recommended).
+ *     Defaults to 80.
+ * @param formattingOptions.cursorPosition - Index for the caret in the raw query.
+ *     If supplied the return value will include `newCursorPos` which
+ *     indicates its new position in the formatted query
+ *
+ * @returns An object containing:
+ * * `formattedQuery` – formatted query string.
+ * * `newCursorPos`   – updated cursor index (only when the caller passed `cursorPosition`).
+ */
 export function formatQuery(
   query: string,
-  cursorPosition: number,
-): FormattingResultWithCursor;
-export function formatQuery(
-  query: string,
-  cursorPosition?: number,
-): string | FormattingResultWithCursor {
+  formattingOptions?: FormattingOptions,
+): FormattingResult {
   const { tree, tokens, unParseable, firstUnParseableToken } =
     getParseTreeAndTokens(query);
 
   tokens.fill();
   const visitor = new TreePrintVisitor(
+    formattingOptions,
     tokens,
     tree,
     query,
     unParseable,
     firstUnParseableToken,
   );
+  if (!formattingOptions) return { formattedQuery: visitor.format() };
 
-  if (cursorPosition === undefined) return visitor.format();
+  const cursorPosition = formattingOptions?.cursorPosition;
+  if (cursorPosition === undefined) {
+    return {
+      formattedQuery: visitor.format(),
+    };
+  }
 
   if (cursorPosition >= query.length || cursorPosition <= 0) {
     const result = visitor.format();
     return {
-      formattedString: result,
+      formattedQuery: result,
       newCursorPos: cursorPosition === 0 ? 0 : result.length,
     };
   }
@@ -2399,7 +2431,7 @@ export function formatQuery(
   const targetToken = findTargetToken(tokens.tokens, cursorPosition);
   if (!targetToken) {
     return {
-      formattedString: visitor.format(),
+      formattedQuery: visitor.format(),
       newCursorPos: 0,
     };
   }
@@ -2407,7 +2439,7 @@ export function formatQuery(
   visitor.targetToken = targetToken.tokenIndex;
 
   return {
-    formattedString: visitor.format(),
+    formattedQuery: visitor.format(),
     newCursorPos: visitor.cursorPos + relativePosition,
   };
 }
