@@ -13,7 +13,7 @@ Options:
   -h, --help        Show this help message
 
 If no file is provided, reads from stdin.
-If a directory is provided, it will be processed recursively, and format all .cy or .cypher files in place.
+If a directory is provided, it will be processed recursively, and format all .cy, .cyp, or .cypher files in place.
 `);
   process.exit(1);
 }
@@ -69,7 +69,9 @@ async function processDirectory(
       allFilesFormatted = allFilesFormatted && subDirResult;
     } else if (
       entry.isFile() &&
-      (entry.name.endsWith('.cy') || entry.name.endsWith('.cypher'))
+      (entry.name.endsWith('.cy') ||
+        entry.name.endsWith('.cyp') ||
+        entry.name.endsWith('.cypher'))
     ) {
       const fileResult = processFile(fullPath, options);
       allFilesFormatted = allFilesFormatted && fileResult;
