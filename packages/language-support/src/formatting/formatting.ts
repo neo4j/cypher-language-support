@@ -33,6 +33,7 @@ import {
   DeleteClauseContext,
   DynamicPropertyContext,
   DynamicPropertyExpressionContext,
+  ElseBranchContext,
   ExistsExpressionContext,
   Expression10Context,
   Expression2Context,
@@ -44,6 +45,7 @@ import {
   ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
+  FilterClauseContext,
   ForeachClauseContext,
   FulltextNodePatternContext,
   FunctionInvocationContext,
@@ -54,6 +56,8 @@ import {
   LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
+  LetClauseContext,
+  LetItemContext,
   LimitContext,
   ListComprehensionContext,
   ListItemsPredicateContext,
@@ -102,6 +106,9 @@ import {
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
+  VectorFunctionContext,
+  WhenBranchContext,
+  WhenContext,
   WhereClauseContext,
   WithClauseContext,
 } from '../generated-parser/CypherCmdParser';
@@ -794,6 +801,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.symbolicNameString());
   };
 
+  visitWhen = (ctx: WhenContext) => {
+    const n = ctx.whenBranch_list().length;
+    for (let i = 0; i < n; i++) {
+      this.breakLine();
+      this._visit(ctx.whenBranch(i));
+    }
+    this.breakLine();
+    this._visit(ctx.elseBranch());
+  };
+
+  visitWhenBranch = (ctx: WhenBranchContext) => {
+    const whenGrp = this.startGroup();
+    this._visit(ctx.WHEN());
+    const whenIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this._visit(ctx.THEN());
+    this.endGroup(whenGrp);
+    this._visit(ctx.singleQuery());
+    this.removeIndentation(whenIndent);
+  };
+
+  visitElseBranch = (ctx: ElseBranchContext) => {
+    this._visit(ctx.ELSE());
+    const elseIndent = this.addIndentation();
+    this._visit(ctx.singleQuery());
+    this.removeIndentation(elseIndent);
+  };
+
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
@@ -933,6 +968,19 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.limit());
   };
 
+  visitFilterClause = (ctx: FilterClauseContext) => {
+    const filterGrp = this.startGroup();
+    this._visit(ctx.FILTER());
+    if (ctx.WHERE()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.WHERE());
+    }
+    const filterIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.endGroup(filterGrp);
+    this.removeIndentation(filterIndent);
+  };
+
   visitUnwindClause = (ctx: UnwindClauseContext) => {
     const unwindClauseGrp = this.startGroup();
     this._visit(ctx.UNWIND());
@@ -948,6 +996,32 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation(unwindIndent);
     this.endGroup(asGrp);
     this.endGroup(unwindClauseGrp);
+  };
+
+  visitLetClause = (ctx: LetClauseContext) => {
+    const letGrp = this.startGroup();
+    this._visit(ctx.LET());
+    const letIndent = this.addIndentation();
+    const n = ctx.letItem_list().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.letItem(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+    }
+    this.removeIndentation(letIndent);
+    this.endGroup(letGrp);
+  };
+
+  visitLetItem = (ctx: LetItemContext) => {
+    const letItemGrp = this.startGroup();
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.EQ());
+    const expressionIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(expressionIndent);
+    this.endGroup(letItemGrp);
   };
 
   visitLimit = (ctx: LimitContext) => {
@@ -1937,6 +2011,27 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this._visit(ctx.RPAREN());
     this.endGroup(normalizeGrp);
+  };
+
+  visitVectorFunction = (ctx: VectorFunctionContext) => {
+    const vectorGrp = this.startGroup();
+    this._visitTerminalRaw(ctx.VECTOR());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const vectorArgsIndent = this.addIndentation();
+    this._visit(ctx._vectorValue);
+    this._visit(ctx.COMMA(0));
+    this._visit(ctx._dimension);
+    this._visit(ctx.COMMA(1));
+    this._visit(ctx.vectorCoordinateType());
+    this.removeIndentation(vectorArgsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
   };
 
   visitTrimFunction = (ctx: TrimFunctionContext) => {

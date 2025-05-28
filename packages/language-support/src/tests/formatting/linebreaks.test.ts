@@ -1521,6 +1521,97 @@ CALL (
 RETURN x`;
     verifyFormatting(query, expected);
   });
+
+  test('when with long expression', () => {
+    const query = `WHEN 10000000000 + 1000000000000000 + 10000000 + 10000000+ 100000000000 + 1000000000000 + 100000000 + 100000000 + 100000000 < 5 THEN
+MATCH (n)
+RETURN n`;
+    const expected = `
+WHEN
+  10000000000 +
+  1000000000000000 +
+  10000000 +
+  10000000 +
+  100000000000 +
+  1000000000000 +
+  100000000 +
+  100000000 +
+  100000000 <
+  5
+  THEN
+  MATCH (n)
+  RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('filter with long expression', () => {
+    const query = `MATCH (n)
+FILTER WHERE n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    const expected = `MATCH (n)
+FILTER WHERE
+  n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause', () => {
+    const query = `match (n)
+let aaaaaaaaaage = n.age, prooooooooooooooooooop = n.prop, otherproooooooooooooooooop = n.otherprop
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaage = n.age,
+  prooooooooooooooooooop = n.prop,
+  otherproooooooooooooooooop = n.otherprop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause item', () => {
+    const query = `match (n)
+let aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage = n.age
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage =
+    n.age
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16)`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  )`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function with other return items also', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16), 50`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  ),
+  50`.trimStart();
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for line breaks with non-default max column width', () => {
