@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { formatQuery } from './index.js';
-import * as fs from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
 function printUsage() {
   console.error(`Usage: cypherfmt [options] [file]
@@ -50,7 +50,7 @@ async function main() {
   try {
     let input: string;
     if (inputFile) {
-      input = fs.readFileSync(inputFile, 'utf8');
+      input = readFileSync(inputFile, 'utf8');
     } else {
       input = await readStdin();
     }
@@ -58,7 +58,7 @@ async function main() {
     const formatted = formatQuery(input).formattedQuery;
 
     if (inPlace && inputFile) {
-      fs.writeFileSync(inputFile, formatted);
+      writeFileSync(inputFile, formatted);
     } else {
       process.stdout.write(formatted);
     }
