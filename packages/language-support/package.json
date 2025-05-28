@@ -27,7 +27,7 @@
   "module": "./dist/esm/project/language-support/src/index.js",
   "types": "./dist/esm/project/language-support/src/index.d.ts",
   "bin": {
-    "cypherfmt": "./dist/cjs/cli.js"
+    "cypherfmt": "./dist/cjs/cli.mjs"
   },
   "exports": {
     ".": {
