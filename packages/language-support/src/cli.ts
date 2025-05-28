@@ -20,16 +20,8 @@ If a directory is provided, it will be processed recursively, and format all .cy
   process.exit(1);
 }
 
-async function readStdin(): Promise<string> {
-  return new Promise((resolve) => {
-    let data = '';
-    process.stdin.on('data', (chunk: Buffer) => {
-      data += chunk.toString('utf8');
-    });
-    process.stdin.on('end', () => {
-      resolve(data);
-    });
-  });
+function readStdin(): string {
+  return readFileSync(0, 'utf8');
 }
 
 function processFile(
@@ -122,7 +114,7 @@ async function main() {
         }
       }
     } else {
-      const input = await readStdin();
+      const input = readStdin();
       const formatted = formatQuery(input).formattedQuery;
       if (check) {
         if (input !== formatted) {
