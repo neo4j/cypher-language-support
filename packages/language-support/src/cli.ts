@@ -109,6 +109,8 @@ async function main() {
     if (inputPath) {
       const stats = statSync(inputPath);
       if (stats.isDirectory()) {
+        // Automatically set inPlace to true when processing a directory
+        inPlace = true;
         const success = await processDirectory(inputPath, { inPlace, check });
         if (!success) {
           process.exit(1);
