@@ -52,6 +52,25 @@ describe('Syntactic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
           "Invalid input 'WERE': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
         offsets: {
           end: 21,
@@ -76,6 +95,25 @@ describe('Syntactic validation spec', () => {
     const query = "MATCH (n:Person) WERE n.name = 'foo'";
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           "Invalid input 'WERE': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
@@ -106,6 +144,63 @@ describe('Syntactic validation spec', () => {
     `;
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 114,
+          start: 60,
+        },
+        range: {
+          end: {
+            character: 47,
+            line: 2,
+          },
+          start: {
+            character: 19,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 112,
+          start: 89,
+        },
+        range: {
+          end: {
+            character: 45,
+            line: 2,
+          },
+          start: {
+            character: 22,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: n)',
+        offsets: {
+          end: 97,
+          start: 96,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 2,
+          },
+          start: {
+            character: 29,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
       {
         message:
           "Invalid input 'n': expected an expression, 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or '}'",
@@ -729,6 +824,44 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        message:
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+        offsets: {
+          end: 41,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 41,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 25,
+          start: 7,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 7,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
         message: "Invalid input '}': expected an expression, '*' or 'DISTINCT'",
         offsets: {
           end: 25,
@@ -939,6 +1072,24 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
+        message: 'No auth given for user.',
+        offsets: {
+          end: 39,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 1,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
         message:
           "Invalid input 'foo': expected a parameter, a string or 'CHANGE'",
         offsets: {
@@ -997,6 +1148,25 @@ describe('Syntactic validation spec', () => {
         query,
       }),
     ).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 41,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 41,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message: `Invalid input '"foo"': expected '}' or an integer value`,
         offsets: {
