@@ -3,7 +3,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 describe('CLI formatting', () => {
-  const cliPath = join(__dirname, '../../../dist/cjs/formatting/cli.mjs');
+  const cliPath = join(__dirname, '../../../dist/esm/formatting/cli.mjs');
   const testFilesDir = join(__dirname, 'cli-test-files');
 
   test('should output formatted input unchanged when reading from stdin', async () => {
