@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.24
+
+### Patch Changes
+
+- Updated dependencies [8b03317]
+- Updated dependencies [4b0ee37]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.24
+  - @neo4j-cypher/language-support@2.0.0-next.21
+
 ## 2.0.0-next.23
 
 ### Patch Changes

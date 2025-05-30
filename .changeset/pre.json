@@ -9,7 +9,8 @@
     "@neo4j-cypher/query-tools": "1.0.0",
     "antlr4": "4.13.1",
     "antlr4-c3": "3.0.1",
-    "neo4j-for-vscode": "1.2.2"
+    "neo4j-for-vscode": "1.2.2",
+    "@neo4j-cypher/lint-worker": "2025.4.0"
   },
   "changesets": [
     "afraid-beans-juggle",
@@ -19,6 +20,7 @@
     "brown-ravens-obey",
     "chatty-needles-guess",
     "chatty-plants-greet",
+    "chatty-views-hide",
     "chilled-dots-guess",
     "clean-apes-pay",
     "cuddly-vans-flash",
@@ -71,6 +73,7 @@
     "stupid-coins-itch",
     "tender-insects-admire",
     "thirty-bats-pay",
+    "true-olives-stay",
     "twelve-cycles-call",
     "unlucky-dragons-tickle",
     "violet-peas-float",

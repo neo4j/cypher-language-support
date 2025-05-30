@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.21
+
+### Minor Changes
+
+- 4b0ee37: New interface for formatQuery, support maxColumn option
+
 ## 2.0.0-next.20
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.24
+
+### Patch Changes
+
+- 8b03317: resetting z index for cm panels
+- Updated dependencies [4b0ee37]
+  - @neo4j-cypher/language-support@2.0.0-next.21
+  - @neo4j-cypher/lint-worker@2025.4.1-next.0
+
 ## 2.0.0-next.23
 
 ### Patch Changes
