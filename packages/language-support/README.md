@@ -33,7 +33,7 @@ cypherfmt file.cy
 # Format a file in place
 cypherfmt -i file.cy
 
-# Check if a file is formatted correctly
+# Check if a file is formatted correctly (exits with code 1 if not formatted correctly)
 cypherfmt -c file.cy
 
 # Format all .cy, .cyp, and .cypher files in a directory recursively
