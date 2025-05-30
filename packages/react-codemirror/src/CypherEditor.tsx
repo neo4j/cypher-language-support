@@ -183,12 +183,12 @@ export interface CypherEditorProps {
 const format = (view: EditorView): void => {
   try {
     const doc = view.state.doc.toString();
-    const { formattedString, newCursorPos } = formatQuery(doc, view.state.selection.main.anchor);
+    const { formattedQuery, newCursorPos } = formatQuery(doc, {cursorPosition: view.state.selection.main.anchor});
     view.dispatch({
       changes: {
         from: 0,
         to: doc.length,
-        insert: formattedString,
+        insert: formattedQuery,
       },
       selection: { anchor: newCursorPos },
     });

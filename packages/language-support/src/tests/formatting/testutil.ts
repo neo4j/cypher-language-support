@@ -1,8 +1,12 @@
-import { formatQuery } from '../../formatting/formatting';
+import { formatQuery, FormattingOptions } from '../../formatting/formatting';
 import { standardizeQuery } from '../../formatting/standardizer';
 
-export function verifyFormatting(query: string, expected: string): void {
-  const formatted = formatQuery(query);
+export function verifyFormatting(
+  query: string,
+  expected: string,
+  formattingOptions?: FormattingOptions,
+): void {
+  const formatted = formatQuery(query, formattingOptions).formattedQuery;
   expect(formatted).toEqual(expected);
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
@@ -12,6 +16,6 @@ export function verifyFormatting(query: string, expected: string): void {
     );
   }
   // Idempotency check
-  const formattedTwice = formatQuery(formatted);
+  const formattedTwice = formatQuery(query, formattingOptions).formattedQuery;
   expect(formattedTwice).toEqual(formatted);
 }

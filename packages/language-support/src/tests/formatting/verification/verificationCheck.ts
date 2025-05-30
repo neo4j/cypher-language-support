@@ -16,7 +16,7 @@ ${formatted}
 }
 
 function verifyFormatting(query: string): void {
-  const formatted = formatQuery(query);
+  const formatted = formatQuery(query).formattedQuery;
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
   const originalNonWhitespaceCount = query.replace(/\s/g, '').length;
@@ -37,7 +37,7 @@ function verifyFormatting(query: string): void {
   }
 
   // Idempotency check
-  const formattedTwice = formatQuery(formatted);
+  const formattedTwice = formatQuery(formatted).formattedQuery;
   if (formattedTwice !== formatted) {
     throwError('Formatting is not idempotent', query, formatted);
   }

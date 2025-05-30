@@ -1,5 +1,5 @@
 import { formatQuery } from '../../formatting/formatting';
-import { MAX_COL } from '../../formatting/formattingHelpers';
+import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers';
 import { verifyFormatting } from './testutil';
 
 describe('tests for line breaks', () => {
@@ -122,12 +122,12 @@ RETURN path`;
     q23,
   ];
 
-  test('keeps all queries within the max column width', () => {
+  test('keeps all queries within the default max column width', () => {
     queries.forEach((query) => {
-      const formatted = formatQuery(query);
+      const formatted = formatQuery(query).formattedQuery;
       const lines = formatted.split('\n');
       lines.forEach((line) => {
-        expect(line.length).toBeLessThanOrEqual(MAX_COL);
+        expect(line.length).toBeLessThanOrEqual(DEFAULT_MAX_COL);
       });
     });
   });
@@ -1520,6 +1520,159 @@ CALL (
 }
 RETURN x`;
     verifyFormatting(query, expected);
+  });
+
+  test('when with long expression', () => {
+    const query = `WHEN 10000000000 + 1000000000000000 + 10000000 + 10000000+ 100000000000 + 1000000000000 + 100000000 + 100000000 + 100000000 < 5 THEN
+MATCH (n)
+RETURN n`;
+    const expected = `
+WHEN
+  10000000000 +
+  1000000000000000 +
+  10000000 +
+  10000000 +
+  100000000000 +
+  1000000000000 +
+  100000000 +
+  100000000 +
+  100000000 <
+  5
+  THEN
+  MATCH (n)
+  RETURN n`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('filter with long expression', () => {
+    const query = `MATCH (n)
+FILTER WHERE n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    const expected = `MATCH (n)
+FILTER WHERE
+  n.looooooooooooooooooooooooooooooooooooooooooooooooooooongprooooooooooooooooooop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause', () => {
+    const query = `match (n)
+let aaaaaaaaaage = n.age, prooooooooooooooooooop = n.prop, otherproooooooooooooooooop = n.otherprop
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaage = n.age,
+  prooooooooooooooooooop = n.prop,
+  otherproooooooooooooooooop = n.otherprop
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long let clause item', () => {
+    const query = `match (n)
+let aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage = n.age
+return n`;
+    const expected = `MATCH (n)
+LET
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage =
+    n.age
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16)`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  )`.trimStart();
+    verifyFormatting(query, expected);
+  });
+
+  test('long vector function with other return items also', () => {
+    const query = `return VECTOR(100000000000000 + 100000000000000000000 + 100000000000000 + 10000000000000000 + 100000000000000,2,INT16), 50`;
+    const expected = `
+RETURN
+  VECTOR(
+    100000000000000 +
+    100000000000000000000 +
+    100000000000000 +
+    10000000000000000 +
+    100000000000000,
+    2,
+    INT16
+  ),
+  50`.trimStart();
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for line breaks with non-default max column width', () => {
+  test('should keep this node pattern within 40 columns', () => {
+    const query = `MATCH (u:User)-[r:IS_AA_MEMBER_OF]->(g:Group)
+RETURN u`;
+    const expected = `
+MATCH
+  (u:User)-[r:IS_AA_MEMBER_OF]->
+  (g:Group)
+RETURN u`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 40 });
+  });
+
+  test('long pattern wraps within 50 columns', () => {
+    const query = `MATCH (a:VeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH
+  (a:VeryLongLabelName)-[:RELTYPE]->
+  (b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 50 });
+  });
+
+  test('long pattern does not wrap with high column limit', () => {
+    const query = `MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`;
+    const expected = `
+MATCH (a:VeeeeeeeeeeeeeeeeeeeeeeryLongLabelName)-[:RELTYPE]->(b:AnotherVeryLongLabelName)
+RETURN a, b, c`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 100 });
+  });
+
+  test('function invocation with nested call stays within 45 columns', () => {
+    const query = `RETURN apoc.text.join(['One','Two','Three', 'Four', 'Five', 'Six'],'; ') AS joined`;
+    const expected = `
+RETURN
+  apoc.text.join(
+    [
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six'
+    ],
+    '; '
+  ) AS joined`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 45 });
+  });
+
+  test('list literal with 10 col width', () => {
+    const query = `
+RETURN ['A','B']`;
+    const expected = `
+RETURN [
+  'A',
+  'B'
+]`.trimStart();
+    verifyFormatting(query, expected, { maxColumn: 10 });
   });
 });
 

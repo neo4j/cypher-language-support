@@ -91,6 +91,7 @@ export const createCypherTheme = ({
     '& .cm-panels': {
       backgroundColor: settings.searchPanel.background,
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+      zIndex: 0,
     },
     '& .cm-completionLabel': {
       fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',

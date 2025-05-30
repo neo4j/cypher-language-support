@@ -21,3 +21,26 @@ autocomplete('MATCH (n:', schema); // yields CompletionItem[] containing "Person
 
 validateSyntax('RETRN 123', schema); // yields SyntaxDiagnostic[] with Invalid keyword, did you mean RETURN?
 ```
+
+## Cypherfmt CLI
+
+This package includes a command-line tool for formatting Cypher queries using `cypherfmt`. After installation, you can use it via the `cypherfmt` command:
+
+```bash
+# Format a file and output to stdout
+cypherfmt file.cy
+
+# Format a file in place
+cypherfmt -i file.cy
+
+# Check if a file is formatted correctly (exits with code 1 if not formatted correctly)
+cypherfmt -c file.cy
+
+# Format all .cy, .cyp, and .cypher files in a directory recursively
+cypherfmt directory/
+
+# Format input from stdin
+cat file.cy | cypherfmt
+```
+
+For more information, run `cypherfmt --help`.

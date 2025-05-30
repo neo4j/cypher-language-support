@@ -101,7 +101,7 @@ RETURN person.name`;
   });
 });
 
-describe('other styleguide recommendations', () => {
+describe('other styleguide or docs recommendations', () => {
   test('order by', () => {
     const query = `RETURN user.id ORDER BY potential_reach, like_count;`;
     const expected = `RETURN user.id
@@ -359,6 +359,63 @@ ORDER BY n.price ASC
 SKIP 10
 LIMIT 100
 RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic WHEN formatting', () => {
+    const query = `when true then match (n) return n else match (m) return m`;
+    const expected = `WHEN true THEN
+  MATCH (n)
+  RETURN n
+ELSE
+  MATCH (m)
+  RETURN m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('WHEN without ELSE', () => {
+    const query = `when true then match (n) return n`;
+    const expected = `WHEN true THEN
+  MATCH (n)
+  RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic FILTER formatting', () => {
+    const query = `match (n) filter n.name > 5 return n`;
+    const expected = `MATCH (n)
+FILTER n.name > 5
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic FILTER formatting with WHERE', () => {
+    const query = `match (n) filter where n.name > 5 return n`;
+    const expected = `MATCH (n)
+FILTER WHERE n.name > 5
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic let clause formatting', () => {
+    const query = `match (n) let a = n.name return a`;
+    const expected = `MATCH (n)
+LET a = n.name
+RETURN a`;
+    verifyFormatting(query, expected);
+  });
+
+  test('let clause with multiple items', () => {
+    const query = `match (n) let a = n.name, b = n.age return a, b`;
+    const expected = `MATCH (n)
+LET a = n.name, b = n.age
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
+  test('basic vector function formatting', () => {
+    const query = `return VECTOR(1,2,INT16)`;
+    const expected = `RETURN VECTOR(1, 2, INT16)`;
     verifyFormatting(query, expected);
   });
 });
