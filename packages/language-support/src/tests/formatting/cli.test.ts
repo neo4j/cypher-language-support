@@ -10,7 +10,7 @@ describe('CLI formatting', () => {
   const cliPath = join(__dirname, '../../../dist/esm/formatting/cli.mjs');
   const testFilesDir = join(__dirname, 'cli-test-files');
 
-  test('should output formatted input unchanged when reading from stdin', async () => {
+  test('should format input from stdin', async () => {
     const result = await new Promise<string>((resolve, reject) => {
       const process = spawn('node', [cliPath]);
       let output = '';
@@ -27,7 +27,7 @@ describe('CLI formatting', () => {
         }
       });
 
-      process.stdin.write(formattedInput);
+      process.stdin.write(unformattedInput);
       process.stdin.end();
     });
 
