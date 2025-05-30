@@ -110,21 +110,19 @@ ON EACH [a.name]`.trimStart();
     const expected = `CREATE CONSTRAINT aaaaaa
 FOR (aaaaaa:aaaaaa)
 REQUIRE (aaaaaa.aaaaaa) IS UNIQUE
-OPTIONS
-  {
-    aaaaaa: "20z9vakp",
-    aaaaaa:
-      {
-        aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
-        aaaaaa: ["WqAr9IvS", "j5fYJwuN"],
-        aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
-        aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
-        aaaaaa: ["zcBcWjoJ", "dz78begI"],
-        aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],
-        aaaaaa: ["Jmw0tXjZ", "ALiXrHno", "QRYTGYFd"],
-        aaaaaa: ["EEJJKZGC", "GGDt2msc"]
-      }
-  }`;
+OPTIONS {
+  aaaaaa: "20z9vakp",
+  aaaaaa: {
+    aaaaaa: ["aotV0uiw", "SCxu0Vyn", "ekTx6ngu"],
+    aaaaaa: ["WqAr9IvS", "j5fYJwuN"],
+    aaaaaa: ["HUDXLCRN", "LUfKWGc7"],
+    aaaaaa: ["qbk3JzMe", "Ca4n1Ea9", "I96Uwq16"],
+    aaaaaa: ["zcBcWjoJ", "dz78begI"],
+    aaaaaa: ["MIADLwls", "qkacQgzY", "wYYAgiGo"],
+    aaaaaa: ["Jmw0tXjZ", "ALiXrHno", "QRYTGYFd"],
+    aaaaaa: ["EEJJKZGC", "GGDt2msc"]
+  }
+}`;
     verifyFormatting(query, expected);
   });
 
@@ -174,6 +172,18 @@ REQUIRE a.id IS UNIQUE
 
 // This is a comment and there is an explicit newline
 OPTIONS {constraintName: 'Athlete_Id_Unique'}`;
+    verifyFormatting(query, expected);
+  });
+  test('OPTION should be able to have nice map print', () => {
+    const query =
+      "CREATE DATABASE testdb OPTIONS {existingData: 'use', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar'};";
+    const expected = `CREATE DATABASE testdb
+OPTIONS {
+  existingData: 'use',
+  seedURI: 's3://bucketpath',
+  seedConfig: 'region=eu-west-1',
+  seedCredentials: 'foo;bar'
+};`;
     verifyFormatting(query, expected);
   });
 });
