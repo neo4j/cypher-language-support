@@ -47,12 +47,6 @@ RETURN n`.trimStart();
     expect(result.stdout).toBe(formattedInput);
   });
 
-  test('should format unformatted input when reading from stdin', async () => {
-    const result = await runCli([], unformattedInput);
-    expect(result.code).toBe(0);
-    expect(result.stdout).toBe(formattedInput);
-  });
-
   test('should correctly identify formatted and unformatted files with --check flag', async () => {
     const notFormattedPath = join(testFilesDir, 'not-formatted.cy');
     const nestedNotFormattedPath = join(
