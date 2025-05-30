@@ -7,10 +7,9 @@ describe('CLI formatting', () => {
   const testFilesDir = join(__dirname, 'cli-test-files');
 
   test('should output formatted input unchanged when reading from stdin', async () => {
-    const formattedInput = readFileSync(
-      join(testFilesDir, 'formatted.cy'),
-      'utf8',
-    );
+    const formattedInput = `
+MATCH (n)
+RETURN n`.trimStart();
 
     const result = await new Promise<string>((resolve, reject) => {
       const process = spawn('node', [cliPath]);
