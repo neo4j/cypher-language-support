@@ -19,7 +19,8 @@
     "cypher",
     "autocompletion",
     "linting",
-    "highlighting"
+    "highlighting",
+    "formatting"
   ],
   "version": "2.0.0-next.20",
   "type": "module",
