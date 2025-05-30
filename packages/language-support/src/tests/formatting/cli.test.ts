@@ -1,14 +1,13 @@
 import { spawn } from 'child_process';
 import { join } from 'path';
 
-const unformattedInput = `match (n) return n`;
-const formattedInput = `
-MATCH (n)
-RETURN n`.trimStart();
-
 describe('CLI formatting', () => {
   const cliPath = join(__dirname, '../../../dist/esm/formatting/cli.mjs');
   const testFilesDir = join(__dirname, 'cli-test-files');
+  const unformattedInput = `match (n) return n`;
+  const formattedInput = `
+MATCH (n)
+RETURN n`.trimStart();
 
   test('should format input from stdin', async () => {
     const result = await new Promise<string>((resolve, reject) => {
