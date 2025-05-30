@@ -69,13 +69,17 @@ function processDirectory(
   return allFilesFormatted;
 }
 
-function main() {
-  const args = process.argv.slice(2);
+interface ParsedArgs {
+  inPlace: boolean;
+  check: boolean;
+  inputPath?: string;
+}
+
+function parseArgs(args: string[]): ParsedArgs {
   let inPlace = false;
   let check = false;
   let inputPath: string | undefined;
 
-  // Parse arguments
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === '-h' || arg === '--help') {
@@ -96,14 +100,19 @@ function main() {
     }
   }
 
+  return { inPlace, check, inputPath };
+}
+
+function main() {
+  const { inPlace, check, inputPath } = parseArgs(process.argv.slice(2));
+
   try {
     if (inputPath) {
       const stats = statSync(inputPath);
       if (stats.isDirectory()) {
         // Automatically set inPlace to true when processing a directory, since printing to stdout
         // does not make sense in that case. If check is set that will take precedence though.
-        inPlace = true;
-        const success = processDirectory(inputPath, { inPlace, check });
+        const success = processDirectory(inputPath, { inPlace: true, check });
         if (!success) {
           process.exit(1);
         }
