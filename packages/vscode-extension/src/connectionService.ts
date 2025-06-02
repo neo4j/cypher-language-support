@@ -12,13 +12,15 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
-import { getVersion } from '@neo4j-cypher/query-tools';
-import { compareMajorMinorVersions } from '@neo4j-cypher/language-support';
 import * as tar from 'tar';
 import * as path from 'path';
 import { pipeline } from 'stream/promises';
 import axios from 'axios';
 import * as vscode from 'vscode';
+import {
+  getServerVersion,
+  serverVersionToLinter,
+} from '@neo4j-cypher/language-server/src/linting';
 
 export type Scheme =
   | 'neo4j'
@@ -422,7 +424,8 @@ async function downloadLintWorker(
   serverVersion: string,
 ): Promise<void> {
   const filePath = path.join(destDir, fileName);
-  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-${serverVersion}.tgz`; //`http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-2025.3.0.tgz`;
+  //TODO: Set this to proper npm registry when package is published.
+  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-${serverVersion}.tgz`;
   const response = await axios.get(downloadUrl, { responseType: 'stream' });
   await pipeline(
     response.data,
@@ -464,20 +467,23 @@ async function getDestDir(
 }
 
 export async function checkNeo4jServerVersion(): Promise<void> {
-  const { query: versionQuery, queryConfig: versionQueryConfig } = getVersion();
   const poller = getSchemaPoller();
   const driver = poller.driver;
   if (driver) {
-    const { serverVersion } = await driver.executeQuery(
-      versionQuery,
-      {},
-      versionQueryConfig,
-    );
+    const serverVersion = await getServerVersion(poller);
+
+    poller.serverVersion = serverVersion;
+
     //removes zero padding on month of new versions
-    const sanitizedServerVersion = serverVersion.replace(/(\.0+)(?=\d)/g, '.');
+    //TODO Handle nicely serverVersion being undefined
+    const sanitizedServerVersion = serverVersion
+      ? serverVersion.replace(/(\.0+)(?=\d)/g, '.')
+      : undefined;
 
     //since not every release has a linter release
-    const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+    const linterVersion = serverVersion
+      ? serverVersionToLinter(sanitizedServerVersion)
+      : undefined;
 
     //If the server is newer than the latest published package on npm, use default linter
     if (!linterVersion) {
@@ -494,43 +500,6 @@ export async function checkNeo4jServerVersion(): Promise<void> {
       await switchWorkerOnLanguageServer(fileName, destDir);
     }
   }
-}
-
-function serverVersionToLinter(serverVersion: string) {
-  //This can be made into an array (the key is not needed) but having it this way helps see what lang-supp release we would use
-  const availableLinters: Record<string, string> = {
-    //We should probably have version comparison where patches are lumped in with the original release
-    '2.0.0-next.20': '2025.4.0', // 29/4 - 2025.04.0=30/4
-    //"2.0.0-next.19": "", // 22/4 - maybe SKIP
-    //"2.0.0-next.18": "", // 7/4  - skip because next release is 2025.04.0
-    '2.0.0-next.17': '2025.3.0', // 25/3 - 2025.03.0=27/3
-    '2.0.0-next.16': '2025.2.0', // 17/2 - 2025.02.0=27/2
-    //"2.0.0-next.15": "", // 10/2 - maybe SKIP
-    '2.0.0-next.14': '2025.1.0', // 4/2  - 2025.01.0=6/2
-    //"2.0.0-next.13": "", // 23/12 2024 - skip, next is 01.0
-    '2.0.0-next.12': '5.26.0', // 13/12 - 5.26(.x)=9/12 (very close to initial 5.26, if after)
-    //"2.0.0-next.11": "", // 13/11 - SKIP
-    //"2.0.0-next.10": "", // 13/11 - SKIP
-    '2.0.0-next.9': '5.25.0', // 28/10 - 5.25 = 31/10
-    '2.0.0-next.8': '5.24.0', // 14/9 - 5.24 = 27/9
-    '2.0.0-next.7': '5.23', // 29/7 - 5.23 = 22/8
-    '2.0.0-next.6': '5.20', // 3/5 - 5.20 = 23/5
-    '2.0.0-next.5': '5.19', // 2/4 - 5.19 = 12/4
-    '2.0.0-next.4': '5.18', // 6/3 - 5.18 = 13/3
-    '2.0.0-next.3': '5.17', // 7/2 - 5.17 = 23/2
-    '2.0.0-next.2': '5.14', // 24/11 2023 - 5.14 = 24/11
-    //"2.0.0-next.1": "",  // 22/11 - SKIP
-    '2.0.0-next.0': '5.13', // 25/10 - 5.13 = 23/10
-  };
-  let candidate: string = undefined;
-  for (const x in availableLinters) {
-    if (compareMajorMinorVersions(serverVersion, availableLinters[x]) <= 0) {
-      candidate = availableLinters[x];
-    } else {
-      break;
-    }
-  }
-  return candidate;
 }
 
 /**
