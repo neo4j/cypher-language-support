@@ -17,7 +17,7 @@
     "cypher",
     "lint worker"
   ],
-  "version": "2025.6.0",
+  "version": "2025.7.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"

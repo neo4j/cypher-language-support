@@ -48,7 +48,7 @@ export async function activate(context: ExtensionContext) {
     debug: {
       module: debugServer,
       transport: TransportKind.ipc,
-      options: { env: { CYPHER_25: 'true' } },
+      options: { env: { CYPHER_25: 'false' } }, //TODO: Do we even need this feature flag at all?
     },
   };
 
