@@ -136,6 +136,18 @@ importers:
       '@neo4j-cypher/language-support':
         specifier: workspace:*
         version: link:../language-support
+      '@neo4j-cypher/query-tools':
+        specifier: workspace:*
+        version: link:../query-tools
+      languageSupport-next.13:
+        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.13
+        version: '@neo4j-cypher/language-support@2.0.0-next.13'
+      languageSupport-next.3:
+        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.3
+        version: '@neo4j-cypher/language-support@2.0.0-next.3'
+      vscode-languageserver:
+        specifier: ^8.1.0
+        version: 8.1.0
       workerpool:
         specifier: ^9.0.4
         version: 9.0.4
@@ -328,6 +340,9 @@ importers:
       '@neo4j-cypher/language-support':
         specifier: workspace:*
         version: link:../language-support
+      '@neo4j-cypher/lint-worker':
+        specifier: workspace:*
+        version: link:../lint-worker
       '@neo4j-cypher/query-tools':
         specifier: workspace:*
         version: link:../query-tools
