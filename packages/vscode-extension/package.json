@@ -470,6 +470,7 @@
     "@neo4j-cypher/language-server": "workspace:*",
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
+    "@neo4j-cypher/lint-worker": "workspace:*",
     "@neo4j-ndl/base": "3.4.2",
     "@neo4j-ndl/react": "3.5.5",
     "@neo4j-nvl/base": "0.3.8",

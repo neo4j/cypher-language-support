@@ -20,7 +20,7 @@ import * as vscode from 'vscode';
 import {
   getServerVersion,
   serverVersionToLinter,
-} from '@neo4j-cypher/language-server/src/linting';
+} from '@neo4j-cypher/lint-worker';
 
 export type Scheme =
   | 'neo4j'
