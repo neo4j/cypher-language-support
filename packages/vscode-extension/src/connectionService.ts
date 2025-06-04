@@ -522,13 +522,15 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
-  if (result.success) {
-    await checkNeo4jServerVersion();
-  }
-
   result.success
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)
     : await sendNotificationToLanguageClient('connectionDisconnected');
+
+  const config = vscode.workspace.getConfiguration('neo4j.features');
+  const versionedLintersEnabled = config.get('useVersionedLinters', false);
+  if (result.success && versionedLintersEnabled) {
+    await checkNeo4jServerVersion();
+  }
 
   await saveConnection({
     ...connection,
