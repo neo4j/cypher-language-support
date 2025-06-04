@@ -29,7 +29,7 @@ export class Neo4jSchemaPoller {
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
   public driver?: Driver;
-  public serverVersion?: string; //TODO - decide if we want this as an attribute of poller or something else
+  public serverVersion?: string;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
