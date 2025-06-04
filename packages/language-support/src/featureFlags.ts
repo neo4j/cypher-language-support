@@ -1,6 +1,7 @@
 interface FeatureFlags {
   consoleCommands: boolean;
   cypher25: boolean;
+  versionedLinters: boolean;
 }
 
 export const _internalFeatureFlags: FeatureFlags = {
@@ -13,4 +14,5 @@ export const _internalFeatureFlags: FeatureFlags = {
   */
   consoleCommands: false,
   cypher25: false,
+  versionedLinters: false,
 };

@@ -11,7 +11,6 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
 import {
   _internalFeatureFlags,
   syntaxColouringLegend,
@@ -131,6 +130,7 @@ connection.onNotification(
   'updateLintWorker',
   (connectionSettings: Neo4jConnectionSettings) => {
     const lintWorkerPath = connectionSettings.lintWorkerPath;
+    _internalFeatureFlags.versionedLinters = true;
     void (async () => {
       await setLintWorker(lintWorkerPath);
       relintAllDocuments();
@@ -141,6 +141,7 @@ connection.onNotification(
 connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jConnectionSettings) => {
+    _internalFeatureFlags.versionedLinters = false;
     changeConnection(connectionSettings);
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
