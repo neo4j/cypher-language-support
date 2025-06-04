@@ -30,7 +30,6 @@ export async function convertDbSchema(
   const serverVersion = await getServerVersion(neo4j);
   const linterVersion = serverVersionToLinter(serverVersion);
 
-  //Todo: remove always true on tested condition first
   if (compareMajorMinorVersions(linterVersion, '5.18.0') < 0) {
     let oldFunctions: Record<string, Neo4jFunction> = {};
     let oldProcedures: Record<string, Neo4jProcedure> = {};
