@@ -472,32 +472,29 @@ export async function checkNeo4jServerVersion(): Promise<void> {
   if (driver) {
     const serverVersion = await getServerVersion(poller);
 
-    poller.serverVersion = serverVersion;
+    if (serverVersion) {
+      //removes zero padding on month of new versions
+      const sanitizedServerVersion = serverVersion.replace(
+        /(\.0+)(?=\d)/g,
+        '.',
+      );
 
-    //removes zero padding on month of new versions
-    //TODO Handle nicely serverVersion being undefined
-    const sanitizedServerVersion = serverVersion
-      ? serverVersion.replace(/(\.0+)(?=\d)/g, '.')
-      : undefined;
+      //since not every release has a linter release
+      const linterVersion = serverVersionToLinter(sanitizedServerVersion);
 
-    //since not every release has a linter release
-    const linterVersion = serverVersion
-      ? serverVersionToLinter(sanitizedServerVersion)
-      : undefined;
+      //If the server is newer than the latest published package on npm, use default linter
+      if (!linterVersion) {
+        return switchWorkerOnLanguageServer(undefined, undefined);
+      }
+      const fileName = `${linterVersion}-lintWorker.cjs`;
+      const { fileExists, destDir } = await getDestDir(fileName);
 
-    //If the server is newer than the latest published package on npm, use default linter
-    if (!linterVersion) {
-      return switchWorkerOnLanguageServer(undefined, undefined);
-    }
-    //const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/language-server/-/language-server-2.0.0-next.21.tgz`;
-    const fileName = `${linterVersion}-lintWorker.cjs`;
-    const { fileExists, destDir } = await getDestDir(fileName);
-
-    if (fileExists) {
-      await switchWorkerOnLanguageServer(fileName, destDir);
-    } else {
-      await downloadLintWorker(fileName, destDir, linterVersion);
-      await switchWorkerOnLanguageServer(fileName, destDir);
+      if (fileExists) {
+        await switchWorkerOnLanguageServer(fileName, destDir);
+      } else {
+        await downloadLintWorker(fileName, destDir, linterVersion);
+        await switchWorkerOnLanguageServer(fileName, destDir);
+      }
     }
   }
 }
