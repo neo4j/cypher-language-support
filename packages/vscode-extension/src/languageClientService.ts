@@ -4,7 +4,8 @@ import { getLanguageClient } from './contextService';
 export type MethodName =
   | 'connectionUpdated'
   | 'connectionDisconnected'
-  | 'updateParameters';
+  | 'updateParameters'
+  | 'updateLintWorker';
 
 /**
  * Communicates to the language client that a connection has been updated or disconnected and needs to take action.

@@ -28,7 +28,8 @@ export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
-  private driver?: Driver;
+  public driver?: Driver;
+  public serverVersion?: string;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
@@ -102,6 +103,8 @@ export class Neo4jSchemaPoller {
           config,
           database,
         );
+
+        this.serverVersion = undefined; //So when checking serverversion, we dont use the one from the last connection
 
         return this.handleSuccessfulConnection();
       } catch (error) {

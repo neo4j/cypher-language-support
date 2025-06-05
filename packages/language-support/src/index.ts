@@ -31,6 +31,7 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
 } from './types';
+export { compareVersions, compareMajorMinorVersions } from './version';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
 import CypherLexer from './generated-parser/CypherCmdLexer';
