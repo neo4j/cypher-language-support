@@ -89,7 +89,7 @@ export class CypherEditorPage {
        the second interaction on, we won't be able to see that second element
     */
     await this.page.mouse.move(0, 0);
-    // Make the sure the tooltip closed
+    // Make sure the tooltip closed
     await expect(
       this.page.locator('.cm-tooltip-hover').last(),
     ).not.toBeVisible();
