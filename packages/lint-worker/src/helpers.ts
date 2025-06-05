@@ -101,7 +101,6 @@ export async function getServerVersion(
 export function serverVersionToLinter(serverVersion: string) {
   //This can be made into an array (the key is not needed) but having it this way helps see what lang-supp release we would use
   const availableLinters: Record<string, string> = {
-    //We should probably have version comparison where patches are lumped in with the original release
     '2.0.0-next.20': '2025.4.0', // 29/4 - 2025.04.0=30/4
     //"2.0.0-next.19": "", // 22/4 - maybe SKIP
     //"2.0.0-next.18": "", // 7/4  - skip because next release is 2025.04.0
