@@ -1,11 +1,6 @@
 import semver from 'semver';
 import { integer } from 'vscode-languageserver-types';
 
-export function cypher25Supported(serverVersion: string) {
-  const minSupportedVersion = '2025.8.0';
-  return compareVersions(minSupportedVersion, serverVersion) <= 0;
-}
-
 /**Like semver.compare - Returns:
  *  - -1 if v1 < v2
  *  -  0 if v1 === v2
@@ -41,8 +36,8 @@ export function compareMajorMinorVersions(
  *  -  1 if  v1 > v2
  *  But if versions are of incorrect format, returns undefined
  *
- *  But taking only numerical prerelease versions into account,
- *  ignoring ones that are strings */
+ *  If major- minor- and patch versions are equal,
+ *  compares prerelease versions too, provided that they are numerical. */
 export function compareVersions(
   version1: string,
   version2: string,
