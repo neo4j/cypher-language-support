@@ -9,11 +9,13 @@ import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { SignatureInformation } from 'vscode-languageserver';
 import { DbSchema as DbSchema2 } from 'languageSupport-next.13';
 import { DbSchema as DbSchema1 } from 'languageSupport-next.3';
+import axios from 'axios';
+import semver from 'semver';
 
-export function convertDbSchema(
+export async function convertDbSchema(
   originalSchema: DbSchema3,
   neo4j: Neo4jSchemaPoller,
-): DbSchema3 | DbSchema2 | DbSchema1 {
+): Promise<DbSchema3 | DbSchema2 | DbSchema1> {
   let oldFunctions: Record<string, Neo4jFunction> = {};
   let oldProcedures: Record<string, Neo4jProcedure> = {};
   if (!originalSchema) {
@@ -28,7 +30,7 @@ export function convertDbSchema(
   }
 
   const serverVersion = neo4j.connection?.serverVersion;
-  const linterVersion = serverVersionToLinter(serverVersion);
+  const linterVersion = await serverVersionToLinter(serverVersion);
 
   if (compareMajorMinorVersions(linterVersion, '5.18.0') < 0) {
     let oldFunctions: Record<string, Neo4jFunction> = {};
@@ -77,35 +79,39 @@ export function convertDbSchema(
   }
 }
 
-export function serverVersionToLinter(serverVersion: string) {
+interface NpmPackageInfo {
+  versions: Record<string, Record<string, string>>;
+  //I don't think the value being Record<string,string> is quite true, but eslint wont let me have "any"
+}
+
+export async function fetchNPMVersions(): Promise<string[]> {
+  //TODO : replace with //"https://registry.npmjs.org/" when npm published
+  const URL = 'http://localhost:4873/@neo4j-cypher/lint-worker';
+
+  const returnVal = axios.get<NpmPackageInfo>(URL).then((response) => {
+    return response?.data?.versions ? Object.keys(response.data.versions) : [];
+  });
+  return returnVal;
+}
+
+export function filterLinterVersions(allLinters: string[]): string[] {
+  return allLinters.filter((version) => {
+    const semVer: semver.SemVer | null = semver.coerce(version, {
+      includePrerelease: false,
+    });
+    return semVer ? semVer.major > 4 && semVer.major < 2300 : false;
+  });
+}
+
+export async function serverVersionToLinter(serverVersion: string) {
+  const linters = filterLinterVersions(await fetchNPMVersions());
+
   //This can be made into an array (the key is not needed) but having it this way helps see what lang-supp release we would use
-  const availableLinters: Record<string, string> = {
-    '2.0.0-next.20': '2025.4.0', // 29/4 - 2025.04.0=30/4
-    //"2.0.0-next.19": "", // 22/4 - maybe SKIP
-    //"2.0.0-next.18": "", // 7/4  - skip because next release is 2025.04.0
-    '2.0.0-next.17': '2025.3.0', // 25/3 - 2025.03.0=27/3
-    '2.0.0-next.16': '2025.2.0', // 17/2 - 2025.02.0=27/2
-    //"2.0.0-next.15": "", // 10/2 - maybe SKIP
-    '2.0.0-next.14': '2025.1.0', // 4/2  - 2025.01.0=6/2
-    //"2.0.0-next.13": "", // 23/12 2024 - skip, next is 01.0
-    '2.0.0-next.12': '5.26.0', // 13/12 - 5.26(.x)=9/12 (very close to initial 5.26, if after)
-    //"2.0.0-next.11": "", // 13/11 - SKIP
-    //"2.0.0-next.10": "", // 13/11 - SKIP
-    '2.0.0-next.9': '5.25.0', // 28/10 - 5.25 = 31/10
-    '2.0.0-next.8': '5.24.0', // 14/9 - 5.24 = 27/9
-    '2.0.0-next.7': '5.23.0', // 29/7 - 5.23 = 22/8
-    '2.0.0-next.6': '5.20.0', // 3/5 - 5.20 = 23/5
-    '2.0.0-next.5': '5.19.0', // 2/4 - 5.19 = 12/4
-    '2.0.0-next.4': '5.18.0', // 6/3 - 5.18 = 13/3
-    '2.0.0-next.3': '5.17.0', // 7/2 - 5.17 = 23/2
-    '2.0.0-next.2': '5.14.0', // 24/11 2023 - 5.14 = 24/11
-    //"2.0.0-next.1": "",  // 22/11 - SKIP
-    '2.0.0-next.0': '5.13.0', // 25/10 - 5.13 = 23/10
-  };
+
   let candidate: string = undefined;
-  for (const x in availableLinters) {
-    if (compareMajorMinorVersions(serverVersion, availableLinters[x]) <= 0) {
-      candidate = availableLinters[x];
+  for (const linterVersion of linters) {
+    if (compareMajorMinorVersions(serverVersion, linterVersion) <= 0) {
+      candidate = linterVersion;
     } else {
       break;
     }
