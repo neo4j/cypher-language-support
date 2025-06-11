@@ -17,10 +17,7 @@ import * as path from 'path';
 import { pipeline } from 'stream/promises';
 import axios from 'axios';
 import * as vscode from 'vscode';
-import {
-  getServerVersion,
-  serverVersionToLinter,
-} from '@neo4j-cypher/lint-worker';
+import { serverVersionToLinter } from '@neo4j-cypher/lint-worker';
 
 export type Scheme =
   | 'neo4j'
@@ -421,11 +418,11 @@ export async function switchWorkerOnLanguageServer(
 async function downloadLintWorker(
   fileName: string,
   destDir: string,
-  serverVersion: string,
+  linterVersion: string,
 ): Promise<void> {
   const filePath = path.join(destDir, fileName);
   //TODO: Set this to proper npm registry when package is published.
-  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-${serverVersion}.tgz`;
+  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-${linterVersion}.tgz`;
   const response = await axios.get(downloadUrl, { responseType: 'stream' });
   await pipeline(
     response.data,
@@ -457,6 +454,8 @@ async function getDestDir(
   await vscode.workspace.fs.createDirectory(storageUri);
   const filePath = path.join(destDir, fileName);
   const fileUri = vscode.Uri.file(filePath);
+
+  //checking metadata of file, just to see if the file is there
   let stats: vscode.FileStat;
   try {
     stats = await vscode.workspace.fs.stat(fileUri);
@@ -466,11 +465,10 @@ async function getDestDir(
   return { fileExists: stats !== undefined, destDir };
 }
 
-export async function checkNeo4jServerVersion(): Promise<void> {
+async function dynamicallyAdjustLinter(): Promise<void> {
   const poller = getSchemaPoller();
-  const driver = poller.driver;
-  if (driver) {
-    const serverVersion = await getServerVersion(poller);
+  if (poller) {
+    const serverVersion = poller.connection?.serverVersion;
 
     if (serverVersion) {
       //removes zero padding on month of new versions
@@ -526,7 +524,7 @@ async function connectToDatabaseAndNotifyLanguageClient(
   const config = vscode.workspace.getConfiguration('neo4j.features');
   const versionedLintersEnabled = config.get('useVersionedLinters', false);
   if (result.success && versionedLintersEnabled) {
-    await checkNeo4jServerVersion();
+    await dynamicallyAdjustLinter();
   }
 
   await saveConnection({

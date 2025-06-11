@@ -39,6 +39,7 @@ async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
   neo4j: Neo4jSchemaPoller,
+  versionedLinters: boolean,
 ) {
   const query = document.getText();
   if (query.length === 0) {
@@ -54,8 +55,8 @@ async function rawLintDocument(
 
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
-    const fixedDbSchema = _internalFeatureFlags.versionedLinters
-      ? await convertDbSchema(dbSchema, neo4j)
+    const fixedDbSchema = versionedLinters
+      ? convertDbSchema(dbSchema, neo4j)
       : dbSchema;
     lastSemanticJob = proxyWorker.lintCypherQuery(
       query,

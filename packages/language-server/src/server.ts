@@ -22,6 +22,7 @@ import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import {
+  LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jParameters,
   Neo4jSettings,
@@ -49,6 +50,7 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
         });
       },
       neo4jSchemaPoller,
+      settings?.features?.useVersionedLinters,
     );
   } else {
     void connection.sendDiagnostics({
@@ -128,12 +130,12 @@ connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onNotification(
   'updateLintWorker',
-  (connectionSettings: Neo4jConnectionSettings) => {
-    const lintWorkerPath = connectionSettings.lintWorkerPath;
-    _internalFeatureFlags.versionedLinters = true;
+  (linterSettings: LintWorkerSettings) => {
+    const lintWorkerPath = linterSettings.lintWorkerPath;
+
     void (async () => {
       await setLintWorker(lintWorkerPath);
-      relintAllDocuments();
+      neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
     })();
   },
 );
@@ -141,7 +143,6 @@ connection.onNotification(
 connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jConnectionSettings) => {
-    _internalFeatureFlags.versionedLinters = false;
     changeConnection(connectionSettings);
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },

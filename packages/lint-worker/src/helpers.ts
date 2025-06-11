@@ -1,19 +1,19 @@
+import { compareMajorMinorVersions } from './version';
 import {
-  compareMajorMinorVersions,
-  DbSchema,
+  DbSchema as DbSchema3,
   Neo4jFunction,
   Neo4jProcedure,
   toSignatureInformation,
 } from '@neo4j-cypher/language-support';
-import { getVersion, Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { SignatureInformation } from 'vscode-languageserver';
-import { DbSchema as NoCyphVerSchema } from 'languageSupport-next.13';
-import { DbSchema as FuncOnlySigSchema } from 'languageSupport-next.3';
+import { DbSchema as DbSchema2 } from 'languageSupport-next.13';
+import { DbSchema as DbSchema1 } from 'languageSupport-next.3';
 
-export async function convertDbSchema(
-  originalSchema: DbSchema,
+export function convertDbSchema(
+  originalSchema: DbSchema3,
   neo4j: Neo4jSchemaPoller,
-): Promise<DbSchema | NoCyphVerSchema | FuncOnlySigSchema> {
+): DbSchema3 | DbSchema2 | DbSchema1 {
   let oldFunctions: Record<string, Neo4jFunction> = {};
   let oldProcedures: Record<string, Neo4jProcedure> = {};
   if (!originalSchema) {
@@ -27,7 +27,7 @@ export async function convertDbSchema(
     oldProcedures = originalSchema.procedures['CYPHER 5'];
   }
 
-  const serverVersion = await getServerVersion(neo4j);
+  const serverVersion = neo4j.connection?.serverVersion;
   const linterVersion = serverVersionToLinter(serverVersion);
 
   if (compareMajorMinorVersions(linterVersion, '5.18.0') < 0) {
@@ -59,14 +59,14 @@ export async function convertDbSchema(
         ]),
       );
 
-    const dbSchemaOld = {
+    const dbSchemaOld: DbSchema1 = {
       ...originalSchema,
       functionSignatures,
       procedureSignatures,
     };
     return dbSchemaOld;
   } else if (compareMajorMinorVersions(linterVersion, '2025.1.0') < 0) {
-    const dbSchemaOld: NoCyphVerSchema = {
+    const dbSchemaOld: DbSchema2 = {
       ...originalSchema,
       functions: oldFunctions,
       procedures: oldProcedures,
@@ -74,27 +74,6 @@ export async function convertDbSchema(
     return dbSchemaOld;
   } else {
     return originalSchema;
-  }
-}
-
-export async function getServerVersion(
-  neo4j: Neo4jSchemaPoller,
-): Promise<string> {
-  if (neo4j.serverVersion) {
-    return neo4j.serverVersion;
-  } else {
-    const { query: versionQuery, queryConfig: versionQueryConfig } =
-      getVersion();
-    const driver = neo4j.driver;
-    if (driver) {
-      const { serverVersion } = await driver.executeQuery(
-        versionQuery,
-        {},
-        versionQueryConfig,
-      );
-      neo4j.serverVersion = serverVersion;
-      return serverVersion;
-    }
   }
 }
 

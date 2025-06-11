@@ -13,7 +13,7 @@ import {
 } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
-import { getCypherVersions } from './queries/version';
+import { getCypherVersions, getVersion } from './queries/version';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -28,8 +28,7 @@ export class Neo4jSchemaPoller {
   public connection?: Neo4jConnection;
   public metadata?: MetadataPoller;
   public events: EventEmitter = new EventEmitter();
-  public driver?: Driver;
-  public serverVersion?: string;
+  private driver?: Driver;
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
@@ -103,8 +102,6 @@ export class Neo4jSchemaPoller {
           config,
           database,
         );
-
-        this.serverVersion = undefined; //So when checking serverversion, we dont use the one from the last connection
 
         return this.handleSuccessfulConnection();
       } catch (error) {
@@ -190,6 +187,16 @@ export class Neo4jSchemaPoller {
       {},
       cypherVersionQueryConfig,
     );
+
+    const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
+      getVersion();
+    const { serverVersion } = await this.driver.executeQuery(
+      serverVersionQuery,
+      {},
+      serverVersionQueryConfig,
+    );
+
+    this.connection.serverVersion = serverVersion;
 
     this.metadata = new ConnectedMetadataPoller(
       databases,
