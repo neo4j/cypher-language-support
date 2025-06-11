@@ -37,7 +37,8 @@
     "languageSupport-next.3": "npm:@neo4j-cypher/language-support@2.0.0-next.3",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-types": "^3.17.3",
-    "workerpool": "^9.0.4"
+    "workerpool": "^9.0.4",
+    "axios": "^1.9.0"
   },
   "scripts": {
     "build": "pnpm build-types && pnpm build-lintworker-esm && pnpm build-lintworker-commonjs && pnpm build-commonjs && pnpm build-esm",
