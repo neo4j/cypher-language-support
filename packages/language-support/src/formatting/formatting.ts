@@ -1784,10 +1784,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.EXISTS());
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
-    if (ctx.regularQuery()) {
+    if (ctx.nextStatement()) {
       this.breakLine();
       const queryIndent = this.addIndentation();
-      this._visit(ctx.regularQuery());
+      this._visit(ctx.nextStatement());
       this.removeIndentation(queryIndent);
       this.mustBreakBetween();
       this._visit(ctx.RCURLY());
@@ -1814,7 +1814,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
-    this._visit(ctx.regularQuery());
+    this._visit(ctx.nextStatement());
     this.removeIndentation(queryIndent);
     this.breakLine();
     this._visit(ctx.RCURLY());
@@ -1825,9 +1825,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
 
-    if (ctx.regularQuery()) {
+    if (ctx.nextStatement()) {
       const queryIndent = this.addIndentation();
-      this._visit(ctx.regularQuery());
+      this._visit(ctx.nextStatement());
       this.removeIndentation(queryIndent);
       this.breakLine();
       this.mustBreakBetween();
@@ -1943,7 +1943,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
     this.breakLine();
-    this._visit(ctx.regularQuery());
+    this._visit(ctx.nextStatement());
     this.removeIndentation(queryIndent);
     this.breakLine();
     this._visit(ctx.RCURLY());
