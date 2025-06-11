@@ -2192,4 +2192,17 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       },
     ]);
   });
+
+  test('Semantic analysis should not error on using cypher 25', () => {
+    const query = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
 });
