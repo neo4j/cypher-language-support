@@ -1,4 +1,7 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import {
+  LintWorkerSettings,
+  Neo4jConnectionSettings,
+} from '@neo4j-cypher/language-server/src/types';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
@@ -6,7 +9,7 @@ import CypherRunner from './cypherRunner';
 type LanguageClient = {
   sendNotification: (
     method: string,
-    settings?: Neo4jConnectionSettings,
+    settings?: Neo4jConnectionSettings | LintWorkerSettings,
   ) => Promise<void>;
 };
 

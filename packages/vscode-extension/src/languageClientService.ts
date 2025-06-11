@@ -1,4 +1,7 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import {
+  LintWorkerSettings,
+  Neo4jConnectionSettings,
+} from '@neo4j-cypher/language-server/src/types';
 import { getLanguageClient } from './contextService';
 
 export type MethodName =
@@ -14,7 +17,7 @@ export type MethodName =
  */
 export async function sendNotificationToLanguageClient(
   methodName: MethodName,
-  settings?: Neo4jConnectionSettings,
+  settings?: Neo4jConnectionSettings | LintWorkerSettings,
 ) {
   const languageClient = getLanguageClient();
   await languageClient.sendNotification(methodName, settings);

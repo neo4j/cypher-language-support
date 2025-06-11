@@ -5,7 +5,8 @@
   "license": "Apache-2.0",
   "sideEffects": false,
   "files": [
-    "./dist",
+    "./dist/cjs/lintWorker.cjs",
+    "./dist/esm/lintWorker.mjs",
     "./src",
     "package.json",
     "README.md",
@@ -31,11 +32,12 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
+    "@neo4j-cypher/query-tools": "workspace:*",
     "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
     "languageSupport-next.3": "npm:@neo4j-cypher/language-support@2.0.0-next.3",
-    "@neo4j-cypher/query-tools": "workspace:*",
-    "workerpool": "^9.0.4",
-    "vscode-languageserver": "^8.1.0"
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-types": "^3.17.3",
+    "workerpool": "^9.0.4"
   },
   "scripts": {
     "build": "pnpm build-types && pnpm build-lintworker-esm && pnpm build-lintworker-commonjs && pnpm build-commonjs && pnpm build-esm",
@@ -44,10 +46,12 @@
     "build-commonjs": "esbuild ./src/index.ts --bundle --platform=node --conditions=require --outfile=dist/cjs/index.cjs --format=cjs --minify",
     "build-esm": "esbuild ./src/index.ts --bundle --platform=node --conditions=require --outfile=dist/esm/index.mjs --format=esm --minify",
     "clean": "rm -rf dist",
-    "build-types": "tsc --emitDeclarationOnly --outDir dist/types"
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9"
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/semver": "^7.7.0"
   },
   "types": "./dist/types/src/index.d.ts",
   "exports": {
