@@ -1,16 +1,16 @@
+import {
+  GraphVisualization,
+  NeoNode,
+  NeoRel,
+  SegmentedControl,
+} from '@neo4j-ndl/react';
 import React from 'react';
 import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
-import { InteractiveNvlWrapper } from '@neo4j-nvl/react';
-import {
-  Node as NvlNode,
-  Relationship as NvlRelationship,
-} from '@neo4j-nvl/base';
-import { SegmentedControl } from '@neo4j-ndl/react';
 
 type VizWrapperProps = {
   rows: ResultRows;
-  nodes: NvlNode[];
-  relationships: NvlRelationship[];
+  nodes: NeoNode[];
+  relationships: NeoRel[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,30 +85,7 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
           renderTable(rows)
         ) : (
           <div className="vizWrapper-graph">
-            <InteractiveNvlWrapper
-              nodes={nodes}
-              rels={relationships}
-              layout="d3Force"
-              style={{
-                height: 'calc(100vh - 20px)',
-              }}
-              nvlOptions={{
-                useWebGL: false,
-                disableWebGL: true,
-                minZoom: 0.05,
-                maxZoom: 3,
-                relationshipThreshold: 0.55,
-                disableTelemetry: true,
-              }}
-              interactionOptions={{
-                selectOnClick: true,
-              }}
-              mouseEventCallbacks={{
-                onPan: true,
-                onZoom: true,
-                onDrag: true,
-              }}
-            />
+            <GraphVisualization nodes={nodes} rels={relationships} />
           </div>
         )}
       </div>
