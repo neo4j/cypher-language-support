@@ -27,6 +27,12 @@
   align-items: center;
 }
 
+.collapsible-title:focus-visible {
+  outline-width: 2px;
+  outline-offset: 2px;
+  outline-color: rgb(var(--theme-palette-primary-focus));
+}
+
 .collapsible-title-text {
   padding-left: 6px;
   overflow: hidden;

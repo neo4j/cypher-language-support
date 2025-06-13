@@ -14,17 +14,18 @@ type VizWrapperProps = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function renderRow(keys: any[], row: Record<string, unknown>) {
+function renderRow(keys: any[], row: Record<string, unknown>, index: number) {
   return (
     <tr>
+      <td>{index}</td>
       {keys.map((key, i) => (
         <td key={i}>
-          <pre>
+          <div className="vizWrapper-table-cell n-code">
             {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               JSON.stringify(row[key], null, 2)
             }
-          </pre>
+          </div>
         </td>
       ))}
     </tr>
@@ -40,12 +41,15 @@ function renderTable(rows: ResultRows) {
     <table>
       <thead>
         <tr>
+          <th></th>
           {Object.keys(rows[0]).map((key) => (
             <th key={key}>{key.toString()}</th>
           ))}
         </tr>
       </thead>
-      <tbody>{rows.map((row) => renderRow(Object.keys(row), row))}</tbody>
+      <tbody>
+        {rows.map((row, i) => renderRow(Object.keys(row), row, i + 1))}
+      </tbody>
     </table>
   );
 }
@@ -82,7 +86,7 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
           </div>
         )}
         {selectedView === 'table' ? (
-          renderTable(rows)
+          <div className="vizWrapper-table">{renderTable(rows)}</div>
         ) : (
           <div className="vizWrapper-graph">
             <GraphVisualization nodes={nodes} rels={relationships} />

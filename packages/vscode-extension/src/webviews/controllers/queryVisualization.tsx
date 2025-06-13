@@ -49,6 +49,11 @@ export function QueryVisualization() {
         // passing the message to parent to update the title
         vscode.postMessage(message);
         setStatementResult(message.result);
+      } else if (message.type === 'themeUpdate') {
+        document.documentElement.classList.toggle(
+          'ndl-theme-dark',
+          message.isDarkTheme,
+        );
       }
     };
 
