@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.22
+
+### Patch Changes
+
+- a38255f: Updates grammar and semantic analysis to version 2025.06
+
 ## 2.0.0-next.21
 
 ### Minor Changes
