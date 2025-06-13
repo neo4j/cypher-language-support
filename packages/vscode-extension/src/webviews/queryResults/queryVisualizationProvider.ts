@@ -12,10 +12,19 @@ import { QueryResultsMessage, views } from './queryResultsTypes';
 
 export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
+  private viewReadyResolver!: (view: WebviewView) => void;
+  public viewReadyPromise: Promise<WebviewView>;
+
+  constructor() {
+    this.viewReadyPromise = new Promise((resolve) => {
+      this.viewReadyResolver = resolve;
+    });
+  }
 
   resolveWebviewView(webviewView: WebviewView) {
     this.view = webviewView;
     views.visualizationView = webviewView;
+    this.viewReadyResolver(webviewView);
 
     webviewView.webview.options = {
       enableScripts: true,

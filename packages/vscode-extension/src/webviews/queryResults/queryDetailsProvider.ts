@@ -18,7 +18,6 @@ import {
 import path from 'path';
 import {
   ColorThemeKind,
-  commands,
   Uri,
   WebviewView,
   WebviewViewProvider,
@@ -63,7 +62,6 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   }
 
   async executeStatements(statements: string[]) {
-    await commands.executeCommand('neo4jQueryDetails.focus');
     this.view ?? (await this.viewReadyPromise);
     const webview = this.view.webview;
 
