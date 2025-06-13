@@ -3,7 +3,7 @@ import {
   CypherDataType,
   CypherProperty,
   QueryResultWithLimit,
-  getPropertyTypeDisplayName
+  getPropertyTypeDisplayName,
 } from '@neo4j-cypher/query-tools';
 import { NeoNode, NeoRel } from '@neo4j-ndl/react';
 import {
@@ -190,7 +190,6 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     const nodes = Array.from(nodeMap.values()).map((item): NeoNode => {
       return {
         id: item.identity.toString(),
-        // elementId: item.elementId,
         labels: item.labels,
         properties: Object.entries(item.properties).reduce(
           (
@@ -205,16 +204,6 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
           },
           {},
         ),
-        /*
-        properties: Object.entries(item.properties).reduce(
-          (res: Record<string, unknown>, [currKey, currVal]) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            res[currKey] = currVal.toString();
-            return res;
-          },
-          {},
-        ),
-        */
       };
     });
 
