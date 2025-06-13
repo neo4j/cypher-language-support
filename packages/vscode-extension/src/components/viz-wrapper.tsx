@@ -85,14 +85,7 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
           renderTable(rows)
         ) : (
           <div className="vizWrapper-graph">
-            <div
-              style={{
-                height: '700px',
-                width: '700px',
-              }}
-            >
-              <GraphVisualization nodes={nodes} rels={relationships} />
-            </div>
+            <GraphVisualization nodes={nodes} rels={relationships} />
           </div>
         )}
       </div>
