@@ -39,4 +39,9 @@ export type QueryResultsMessage =
       type: 'executionUpdate';
       result: QueryResult;
       to: QueryResultViews;
+    }
+  | {
+      type: 'themeUpdate';
+      isDarkTheme: boolean;
+      to: QueryResultViews;
     };

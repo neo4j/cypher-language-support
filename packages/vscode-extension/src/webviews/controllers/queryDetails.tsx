@@ -61,6 +61,11 @@ export function QueryDetails() {
           }
           return newState;
         });
+      } else if (message.type === 'themeUpdate') {
+        document.documentElement.classList.toggle(
+          'ndl-theme-dark',
+          message.isDarkTheme,
+        );
       }
     };
 

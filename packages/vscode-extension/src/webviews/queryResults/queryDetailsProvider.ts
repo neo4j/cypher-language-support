@@ -59,6 +59,16 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         void views.visualizationView.webview.postMessage(msg);
       }
     });
+
+    window.onDidChangeActiveColorTheme(async (e) => {
+      await this.view.webview.postMessage({
+        type: 'themeUpdate',
+        isDarkTheme:
+          e.kind === ColorThemeKind.Dark ||
+          e.kind === ColorThemeKind.HighContrast,
+        to: 'detailsView',
+      });
+    });
   }
 
   async executeStatements(statements: string[]) {

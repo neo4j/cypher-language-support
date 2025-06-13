@@ -39,6 +39,16 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
           : `Visualization`;
       }
     });
+
+    window.onDidChangeActiveColorTheme(async (e) => {
+      await this.view.webview.postMessage({
+        type: 'themeUpdate',
+        isDarkTheme:
+          e.kind === ColorThemeKind.Dark ||
+          e.kind === ColorThemeKind.HighContrast,
+        to: 'visualizationView',
+      });
+    });
   }
 
   renderQueryVisualization() {
