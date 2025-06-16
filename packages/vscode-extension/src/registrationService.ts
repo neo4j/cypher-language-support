@@ -12,6 +12,7 @@ import {
   switchToDatabaseWithName,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers/connection';
+import { views } from './webviews/queryResults/queryResultsTypes';
 import {
   addParameter,
   clearAllParameters,
@@ -38,6 +39,7 @@ import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVi
 export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
+  const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
 
   disposables.push(
     window.registerWebviewViewProvider(
@@ -47,7 +49,7 @@ export function registerDisposables(): Disposable[] {
     ),
     window.registerWebviewViewProvider(
       'neo4jQueryVisualization',
-      new Neo4jQueryVisualizationProvider(),
+      queryVisualizationProvider,
       { webviewOptions: { retainContextWhenHidden: true } },
     ),
     window.registerTreeDataProvider(
@@ -98,6 +100,11 @@ export function registerDisposables(): Disposable[] {
     ),
     commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () =>
       runCypher(async (statements: string[]) => {
+        views.detailsView ??
+          (await commands.executeCommand('neo4jQueryDetails.focus'));
+        views.visualizationView ??
+          (await commands.executeCommand('neo4jQueryVisualization.focus'));
+        await queryVisualizationProvider.viewReadyPromise;
         await queryDetailsProvider.executeStatements(statements);
       }),
     ),

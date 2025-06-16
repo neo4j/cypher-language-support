@@ -1,32 +1,34 @@
 import {
-  WebviewViewProvider,
-  WebviewView,
-  Uri,
-  commands,
-  window,
-  ColorThemeKind,
-} from 'vscode';
-import { getExtensionContext, getSchemaPoller } from '../../contextService';
-import path from 'path';
-import { getNonce } from '../../getNonce';
-import { QueryResultWithLimit } from '@neo4j-cypher/query-tools';
-import { getDeserializedParams } from '../../parameterService';
-import { toNativeTypes } from '../../typeUtils';
-import { querySummary } from '../resultWindow';
-import { QueryResultsMessage, views } from './queryResultsTypes';
-import {
-  Node as NvlNode,
-  Relationship as NvlRelationship,
-} from '@neo4j-nvl/base';
+  cypherDataToString,
+  CypherDataType,
+  CypherProperty,
+  QueryResultWithLimit,
+  getPropertyTypeDisplayName,
+} from '@neo4j-cypher/query-tools';
+import { NeoNode, NeoRel } from '@neo4j-ndl/react';
 import {
   isNode,
   isPath,
   isRelationship,
   Node as Neo4jNode,
-  Path,
   Record as Neo4jRecord,
   Relationship as Neo4jRelationship,
+  Path,
 } from 'neo4j-driver';
+import path from 'path';
+import {
+  ColorThemeKind,
+  Uri,
+  WebviewView,
+  WebviewViewProvider,
+  window,
+} from 'vscode';
+import { getExtensionContext, getSchemaPoller } from '../../contextService';
+import { getNonce } from '../../getNonce';
+import { getDeserializedParams } from '../../parameterService';
+import { toNativeTypes } from '../../typeUtils';
+import { querySummary } from '../resultWindow';
+import { QueryResultsMessage, views } from './queryResultsTypes';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
@@ -57,10 +59,19 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         void views.visualizationView.webview.postMessage(msg);
       }
     });
+
+    window.onDidChangeActiveColorTheme(async (e) => {
+      await this.view.webview.postMessage({
+        type: 'themeUpdate',
+        isDarkTheme:
+          e.kind === ColorThemeKind.Dark ||
+          e.kind === ColorThemeKind.HighContrast,
+        to: 'detailsView',
+      });
+    });
   }
 
   async executeStatements(statements: string[]) {
-    await commands.executeCommand('neo4jQueryDetails.focus');
     this.view ?? (await this.viewReadyPromise);
     const webview = this.view.webview;
 
@@ -121,8 +132,8 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   }
 
   private extractUniqueNodesAndRels(records: Neo4jRecord[]): {
-    nodes: NvlNode[];
-    relationships: NvlRelationship[];
+    nodes: NeoNode[];
+    relationships: NeoRel[];
   } {
     if (records.length === 0) {
       return { nodes: [], relationships: [] };
@@ -184,20 +195,24 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       }
     }
 
-    const nodes = Array.from(nodeMap.values()).map((item) => {
+    const nodes = Array.from(nodeMap.values()).map((item): NeoNode => {
       return {
         id: item.identity.toString(),
-        elementId: item.elementId,
         labels: item.labels,
         properties: Object.entries(item.properties).reduce(
-          (res: Record<string, unknown>, [currKey, currVal]) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            res[currKey] = currVal.toString();
+          (
+            res: Record<string, { stringified: string; type: string }>,
+            [currKey, currVal],
+          ) => {
+            res[currKey] = {
+              stringified: cypherDataToString(currVal as CypherDataType),
+              type: getPropertyTypeDisplayName(currVal as CypherProperty),
+            };
             return res;
           },
           {},
         ),
-      } as NvlNode;
+      };
     });
 
     const relationships = Array.from(relMap.values())
@@ -216,14 +231,19 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
           to: item.end.toString(),
           type: item.type,
           properties: Object.entries(item.properties).reduce(
-            (res: Record<string, unknown>, [currKey, currVal]) => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-              res[currKey] = currVal.toString();
+            (
+              res: Record<string, { stringified: string; type: string }>,
+              [currKey, currVal],
+            ) => {
+              res[currKey] = {
+                stringified: cypherDataToString(currVal as CypherDataType),
+                type: getPropertyTypeDisplayName(currVal as CypherProperty),
+              };
               return res;
             },
             {},
           ),
-        } as NvlRelationship;
+        };
       });
 
     return { nodes, relationships };

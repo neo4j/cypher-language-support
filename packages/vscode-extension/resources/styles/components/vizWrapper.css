@@ -6,7 +6,9 @@
   height: calc(100vh - 20px);
   width: calc(100vw - 20px);
   min-height: 100px;
-  overflow: scroll;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .vizWrapper-controls {
@@ -18,7 +20,7 @@
 
 .vizWrapper-controls.block {
   position: initial;
-  padding-bottom: 4px;
+  padding: 2px;
 }
 
 .vizWrapper-graph {
@@ -28,24 +30,52 @@
   height: 100%;
 }
 
-.vizWrapper table {
-  border-collapse: collapse;
-  overflow: scroll;
-  background-color: rgb(var(--theme-palette-neutral-bg-weak));
+.vizWrapper-table {
+  overflow-y: scroll;
+  flex: 1;
 }
 
-.vizWrapper th,
-.vizWrapper td {
+.vizWrapper table {
+  border-collapse: collapse;
+  overflow-y: scroll;
+  flex: 1;
+  width: 100%;
+}
+
+.vizWrapper thead {
+  position: sticky;
+  top: 0;
+  background-color: rgb(var(--theme-palette-neutral-bg-default));
+}
+
+.vizWrapper th:not(:first-child),
+.vizWrapper td:not(:first-child) {
   padding: 10px;
-  border: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
   text-align: left;
 }
 
 .vizWrapper th {
   font-weight: bold;
-  text-align: center;
+}
+
+.vizWrapper td:first-child,
+.vizWrapper th:first-child {
+  color: rgb(var(--theme-palette-neutral-text-weakest));
+  font-size: 8px;
+  padding-left: 4px;
+  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  width: 6px;
 }
 
 .vizWrapper tr:hover {
   background-color: rgb(var(--theme-palette-neutral-bg-on-bg-weak));
+}
+
+.vizWrapper-table-cell {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+  font-size: var(--vscode-editor-font-size);
 }

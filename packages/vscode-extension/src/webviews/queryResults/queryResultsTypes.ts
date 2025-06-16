@@ -1,8 +1,5 @@
+import { NeoNode, NeoRel } from '@neo4j-ndl/react';
 import * as vscode from 'vscode';
-import {
-  Node as NvlNode,
-  Relationship as NvlRelationship,
-} from '@neo4j-nvl/base';
 
 export const views = {
   detailsView: undefined as vscode.WebviewView | undefined,
@@ -20,8 +17,8 @@ export type QueryResult =
       statement: string;
       type: 'success';
       rows: ResultRows;
-      nodes: NvlNode[];
-      relationships: NvlRelationship[];
+      nodes: NeoNode[];
+      relationships: NeoRel[];
       querySummary: string[];
     };
 
@@ -41,5 +38,10 @@ export type QueryResultsMessage =
   | {
       type: 'executionUpdate';
       result: QueryResult;
+      to: QueryResultViews;
+    }
+  | {
+      type: 'themeUpdate';
+      isDarkTheme: boolean;
       to: QueryResultViews;
     };

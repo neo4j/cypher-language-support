@@ -19,13 +19,17 @@
     "cypher",
     "autocompletion",
     "linting",
-    "highlighting"
+    "highlighting",
+    "formatting"
   ],
-  "version": "2.0.0-next.20",
+  "version": "2.0.0-next.21",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/project/language-support/src/index.js",
   "types": "./dist/esm/project/language-support/src/index.d.ts",
+  "bin": {
+    "cypherfmt": "./dist/esm/formatting/cli.mjs"
+  },
   "exports": {
     ".": {
       "types": "./dist/esm/project/language-support/src/index.d.ts",
@@ -53,9 +57,10 @@
   },
   "scripts": {
     "gen-parser": "cross-env ANTLR4_TOOLS_ANTLR_VERSION=4.13.2 antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
-    "build": "cd ../../vendor/antlr4-c3/ && pnpm build && cd - && pnpm gen-parser && concurrently 'npm:build-esm-and-types' 'npm:build-commonjs'",
+    "build": "cd ../../vendor/antlr4-c3/ && pnpm build && cd - && pnpm gen-parser && concurrently 'npm:build-esm-and-types' 'npm:build-commonjs' 'npm:build-cypherfmt-cli'",
     "build-esm-and-types": "tsc --module esnext --outDir dist/esm/project/language-support && cp src/syntaxValidation/semanticAnalysis.js dist/esm/project/language-support/src/syntaxValidation/semanticAnalysis.js && mkdir -p dist/esm/vendor/antlr4-c3/dist/ && cp -r ../../vendor/antlr4-c3/dist/esm  dist/esm/vendor/antlr4-c3/dist/",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --outfile=dist/cjs/index.cjs",
+    "build-cypherfmt-cli": "esbuild ./src/formatting/cli.ts --bundle --format=esm --sourcemap --outfile=dist/esm/formatting/cli.mjs --external:fs --external:path",
     "dev": "pnpm build && concurrently 'tsc --module esnext --outDir dist/esm/project/language-support --watch' 'npm:build-commonjs -- --watch'",
     "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf {dist,src/generated-parser}",

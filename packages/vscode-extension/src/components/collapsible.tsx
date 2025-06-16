@@ -2,7 +2,6 @@ import { IconButton } from '@neo4j-ndl/react';
 import {
   ChevronDownIconOutline,
   ChevronRightIconOutline,
-  ExploreIcon,
 } from '@neo4j-ndl/react/icons';
 import React from 'react';
 
@@ -43,25 +42,20 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
           )}
         </IconButton>
 
-        <span
+        <div
           className="collapsible-title"
           data-active={active}
+          tabIndex={0}
           onClick={onToggle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onToggle();
+            }
+          }}
         >
           <p className="collapsible-title-text">{title}</p>
-          <IconButton
-            isClean
-            ariaLabel="Show visualization"
-            size="small"
-            className="collapsible-title-icon"
-            isActive={active}
-            htmlAttributes={{
-              title: 'Show in visualization panel',
-            }}
-          >
-            <ExploreIcon />
-          </IconButton>
-        </span>
+        </div>
       </div>
       {expanded && <div className="collapsible-content">{children}</div>}
     </div>

@@ -195,7 +195,6 @@ test('Syntax highlighting works as expected with multiple separate linting messa
   ).toBeVisible({ timeout: 10000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
   await editorPage.checkWarningMessage('id', `The query used a deprecated function. ('id' has been replaced by 'elementId or consider using an application-generated id')`);
-
   await editorPage.checkWarningMessage('apoc.create.uuid', 'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function');
   await editorPage.checkErrorMessage('a', 'Variable `a` not defined');
 })

@@ -107,6 +107,10 @@ ACTIVE
    : A C T I V E
    ;
 
+ADD
+   : A D D
+   ;
+
 ADMIN
    : A D M I N
    ;
@@ -130,6 +134,10 @@ ALL_SHORTEST_PATHS
 ALL
    : A L L
    ;
+
+ALLREDUCE
+  : A L L R E D U C E
+  ;
 
 ALTER
    : A L T E R
@@ -740,6 +748,10 @@ PERCENT
    : '%'
    ;
 
+IMPLIES
+  : I M P L I E S
+  ;
+
 INVALID_NEQ
    : '!='
    ;
@@ -778,6 +790,10 @@ NFKD
 
 NEW
    : N E W
+   ;
+
+NEXT
+   : N E X T
    ;
 
 NODE

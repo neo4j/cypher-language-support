@@ -13,10 +13,10 @@ along with your input on GitHub:
 https://github.com/neo4j/cypher-language-support.`.trim();
 
 /**
- * The maximum column width for the formatter. Not a hard limit as overflow
+ * The (default) maximum column width for the formatter. Not a hard limit as overflow
  * is unavoidable in some cases, but we always prefer a solution that doesn't overflow.
  */
-export const MAX_COL = 80;
+export const DEFAULT_MAX_COL = 80;
 
 export interface Group {
   id: number;
@@ -39,6 +39,11 @@ export interface BaseChunk {
   // that is in the chunklist (one with a newline before it.)
   comment?: string;
   mustBreak?: boolean;
+  // If the chunk wants to special split
+  // Opening bracket in list e.g.
+  specialSplit?: boolean;
+  // If Chunk only has one child, therefore can allow a special split
+  oneItem?: boolean;
 }
 
 // Regular chunk specific properties
@@ -50,7 +55,6 @@ export interface RegularChunk extends BaseChunk {
 }
 
 export interface SyntaxErrorChunk extends BaseChunk {
-  mustBreak?: boolean;
   type: 'SYNTAX_ERROR';
 }
 
@@ -65,6 +69,8 @@ export type Chunk = RegularChunk | CommentChunk | SyntaxErrorChunk;
 export interface IndentationModifier {
   id: number;
   change: 1 | -1;
+  removeReference?: IndentationModifier;
+  isApplied: boolean;
 }
 
 const traillingCharacters = [
@@ -93,6 +99,9 @@ export function isComment(token: Token) {
     token.type === CypherCmdLexer.SINGLE_LINE_COMMENT
   );
 }
+
+export const isInlineComment = (chunk: Chunk) =>
+  chunk.comment && chunk.comment.startsWith('/*');
 
 // Variables or property names that have the same name as a keyword should not be
 // treated as keywords
@@ -157,20 +166,33 @@ export function fillInRegularChunkGroupSizes(
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
     }
     group.size += chunk.text.length;
+    if (isInlineComment(chunk)) {
+      const inlineComment = ' ' + chunk.comment + ' ';
+      group.size += inlineComment.length;
+      group.dbgText += inlineComment;
+    }
+
     // PERF: Right now we include dbgText always, even though it's only used for debugging.
     // It does not seem to have any significant performance downsides, but only doing so
     // when e.g. a flag is set might be a more prudent choice.
     group.dbgText += chunk.text;
-    if (!chunk.noSpace && shouldAddSpace(chunk, chunk)) {
+    if (
+      !chunk.noSpace &&
+      shouldAddSpace(chunk, chunk) &&
+      !isInlineComment(chunk)
+    ) {
       group.size++;
       group.dbgText += ' ';
     }
-    if (chunk.comment && !groupsEnding.has(group.id)) {
+    if (
+      chunk.comment &&
+      !groupsEnding.has(group.id) &&
+      !isInlineComment(chunk)
+    ) {
       group.shouldBreak = true;
     }
   }
 }
-
 export function verifyGroupSizes(chunkList: Chunk[]) {
   for (const chunk of chunkList) {
     for (const group of chunk.groupsStarting) {

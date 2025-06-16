@@ -294,51 +294,49 @@ AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE AND TRUE THEN "(FK)" ELSE 
     const expected = `WITH
   s,
   t.name AS tableName,
-  collect(
-    {
-      name: c.name,
-      pk:
-        CASE (NOT pk IS NULL AND $printKeyInfo)
-          WHEN
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true
-            THEN "(PK)"
-          ELSE ""
-        END,
-      fk:
-        CASE
-          WHEN
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true AND
-            true
-            THEN "(FK)"
-          ELSE ""
-        END
-    }
-  ) AS columns`;
+  collect({
+    name: c.name,
+    pk:
+      CASE (NOT pk IS NULL AND $printKeyInfo)
+        WHEN
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true
+          THEN "(PK)"
+        ELSE ""
+      END,
+    fk:
+      CASE
+        WHEN
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true AND
+          true
+          THEN "(FK)"
+        ELSE ""
+      END
+  }) AS columns`;
     verifyFormatting(query, expected);
   });
 
@@ -542,11 +540,10 @@ RETURN graphName, nodeCount, relationshipCount, createMillis;`;
     "qk5jpmGl", // Name of the projected graph
     ["TB4Tvv6q", "2iCI1Rll", "kaLEqBxX"], // Node labels to include
     {
-      connection:
-        {
-          type: "R3e8WLkh", // Include all relationships
-          orientation: "weFW44Gy" // Treat relationships as undirected
-        }
+      connection: {
+        type: "R3e8WLkh", // Include all relationships
+        orientation: "weFW44Gy" // Treat relationships as undirected
+      }
     }
   )
   YIELD graphName, nodeCount, relationshipCount, createMillis
@@ -691,18 +688,17 @@ RETURN f`;
 RETURN p {.name, .age, .email, .phone, .address, .occupation, .nationality,
        .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})
-RETURN
-  p {
-    .name,
-    .age,
-    .email,
-    .phone,
-    .address,
-    .occupation,
-    .nationality,
-    .birthdate,
-    .gender
-  } AS personInfo`;
+RETURN p {
+  .name,
+  .age,
+  .email,
+  .phone,
+  .address,
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 
@@ -712,18 +708,17 @@ RETURN p {.name, .age, .email, .phone, address:
     {street: p.street, city: c.name, zip: p.zip}, .occupation, .nationality,
     .birthdate, .gender} AS personInfo`;
     const expected = `MATCH (p:Person {name: "Alice"})-[:LIVES_IN]->(c:City)
-RETURN
-  p {
-    .name,
-    .age,
-    .email,
-    .phone,
-    address: {street: p.street, city: c.name, zip: p.zip},
-    .occupation,
-    .nationality,
-    .birthdate,
-    .gender
-  } AS personInfo`;
+RETURN p {
+  .name,
+  .age,
+  .email,
+  .phone,
+  address: {street: p.street, city: c.name, zip: p.zip},
+  .occupation,
+  .nationality,
+  .birthdate,
+  .gender
+} AS personInfo`;
     verifyFormatting(query, expected);
   });
 

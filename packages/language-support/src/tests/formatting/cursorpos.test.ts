@@ -4,21 +4,21 @@ import { formatQuery } from '../../formatting/formatting';
 describe('tests for correct cursor position', () => {
   test('cursor at beginning', () => {
     const query = 'RETURN -1, -2, -3';
-    const result = formatQuery(query, 0);
+    const result = formatQuery(query, { cursorPosition: 0 });
     expect(result.newCursorPos).toEqual(0);
   });
   test('cursor at end', () => {
     const query = 'RETURN -1, -2, -3';
-    const result = formatQuery(query, query.length - 1);
-    expect(result.newCursorPos).toEqual(result.formattedString.length - 1);
+    const result = formatQuery(query, { cursorPosition: query.length - 1 });
+    expect(result.newCursorPos).toEqual(result.formattedQuery.length - 1);
   });
   test('cursor at newline', () => {
     const query = `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n 
 @LIMIT 12;`;
-    const cursorPos = query.search('@');
-    const result = formatQuery(query.replace('@', ''), cursorPos);
+    const cursorPosition = query.search('@');
+    const result = formatQuery(query.replace('@', ''), { cursorPosition });
     const formated = `MATCH (n:Person)
 WHERE n.name = "Steve" 
 RETURN n@LIMIT 12;`;
@@ -36,8 +36,8 @@ CALL {
   RETURN length(path) as l, Weight 
 } 
 RETURN count(*)`;
-    const cursorPos = query.search('@');
-    const result = formatQuery(query.replace('@', ''), cursorPos);
+    const cursorPosition = query.search('@');
+    const result = formatQuery(query.replace('@', ''), { cursorPosition });
     const formated = `UNWIND range(1, 100) AS _
 CALL {
   MATCH (source:object)
@@ -61,8 +61,8 @@ WHERE variable.property = "String"
     OR namespaced.function() = false
     OR $para@meter > 2 
 RETURN variable;`;
-    const cursorPos = query.search('@');
-    const result = formatQuery(query.replace('@', ''), cursorPos);
+    const cursorPosition = query.search('@');
+    const result = formatQuery(query.replace('@', ''), { cursorPosition });
     const formated = `MATCH (variable:Label)-[:REL_TYPE]->()
 WHERE
   variable.property = "String" OR

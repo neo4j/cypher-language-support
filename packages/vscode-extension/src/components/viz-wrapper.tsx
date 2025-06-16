@@ -1,30 +1,31 @@
+import {
+  GraphVisualization,
+  NeoNode,
+  NeoRel,
+  SegmentedControl,
+} from '@neo4j-ndl/react';
 import React from 'react';
 import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
-import { InteractiveNvlWrapper } from '@neo4j-nvl/react';
-import {
-  Node as NvlNode,
-  Relationship as NvlRelationship,
-} from '@neo4j-nvl/base';
-import { SegmentedControl } from '@neo4j-ndl/react';
 
 type VizWrapperProps = {
   rows: ResultRows;
-  nodes: NvlNode[];
-  relationships: NvlRelationship[];
+  nodes: NeoNode[];
+  relationships: NeoRel[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function renderRow(keys: any[], row: Record<string, unknown>) {
+function renderRow(keys: any[], row: Record<string, unknown>, index: number) {
   return (
     <tr>
+      <td>{index}</td>
       {keys.map((key, i) => (
         <td key={i}>
-          <pre>
+          <div className="vizWrapper-table-cell n-code">
             {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               JSON.stringify(row[key], null, 2)
             }
-          </pre>
+          </div>
         </td>
       ))}
     </tr>
@@ -40,12 +41,15 @@ function renderTable(rows: ResultRows) {
     <table>
       <thead>
         <tr>
+          <th></th>
           {Object.keys(rows[0]).map((key) => (
             <th key={key}>{key.toString()}</th>
           ))}
         </tr>
       </thead>
-      <tbody>{rows.map((row) => renderRow(Object.keys(row), row))}</tbody>
+      <tbody>
+        {rows.map((row, i) => renderRow(Object.keys(row), row, i + 1))}
+      </tbody>
     </table>
   );
 }
@@ -82,33 +86,10 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
           </div>
         )}
         {selectedView === 'table' ? (
-          renderTable(rows)
+          <div className="vizWrapper-table">{renderTable(rows)}</div>
         ) : (
           <div className="vizWrapper-graph">
-            <InteractiveNvlWrapper
-              nodes={nodes}
-              rels={relationships}
-              layout="d3Force"
-              style={{
-                height: 'calc(100vh - 20px)',
-              }}
-              nvlOptions={{
-                useWebGL: false,
-                disableWebGL: true,
-                minZoom: 0.05,
-                maxZoom: 3,
-                relationshipThreshold: 0.55,
-                disableTelemetry: true,
-              }}
-              interactionOptions={{
-                selectOnClick: true,
-              }}
-              mouseEventCallbacks={{
-                onPan: true,
-                onZoom: true,
-                onDrag: true,
-              }}
-            />
+            <GraphVisualization nodes={nodes} rels={relationships} />
           </div>
         )}
       </div>
