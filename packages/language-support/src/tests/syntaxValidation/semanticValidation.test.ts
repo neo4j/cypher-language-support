@@ -337,7 +337,7 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
-  test('Does not trigger semantic errors when there are syntactic errors', () => {
+  test('Does not trigger semantic errors when there are irrecoverable syntactic errors', () => {
     const query = 'METCH (n) RETURN m';
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
@@ -398,6 +398,85 @@ describe('Semantic validation spec', () => {
           },
           start: {
             character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Shows errors for undefined variables on queries that are not completed', () => {
+    const query = 'MATCH (n) RETURN a,b,n,c,';
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message: 'Variable `a` not defined',
+        offsets: {
+          end: 25,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `b` not defined',
+        offsets: {
+          end: 20,
+          start: 19,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 0,
+          },
+          start: {
+            character: 19,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Variable `c` not defined',
+        offsets: {
+          end: 24,
+          start: 23,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: "Invalid input '': expected an expression",
+        offsets: {
+          end: 25,
+          start: 25,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 25,
             line: 0,
           },
         },
@@ -1289,31 +1368,6 @@ Attempted to access graph other`,
           },
           start: {
             character: 15,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
-  test('Shows errors about semantic features not enabled yet in Cypher 25', () => {
-    const query = 'CYPHER 25 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message: `Match modes such as \`DIFFERENT RELATIONSHIPS\` are not supported yet.`,
-        offsets: {
-          end: 38,
-          start: 16,
-        },
-        range: {
-          end: {
-            character: 38,
-            line: 0,
-          },
-          start: {
-            character: 16,
             line: 0,
           },
         },

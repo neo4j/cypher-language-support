@@ -39,7 +39,7 @@ export function validateParamInput(
   );
   if (errors.length > 0) {
     return (
-      'Value cannot be evaluated: ' + errors.map((e) => e.message).join(' ')
+      'Value cannot be evaluated: ' + errors.map((e) => e.message).join('. ')
     );
   }
   return undefined;
