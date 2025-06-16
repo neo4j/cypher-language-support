@@ -41,9 +41,7 @@
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8",
-    "workerpool": "^9.0.4",
-    "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
-    "languageSupport-next.3": "npm:@neo4j-cypher/language-support@2.0.0-next.3"
+    "workerpool": "^9.0.4"
   },
   "scripts": {
     "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm copy-lint-worker",
