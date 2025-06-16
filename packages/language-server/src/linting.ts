@@ -56,7 +56,7 @@ async function rawLintDocument(
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
     const fixedDbSchema = versionedLinters
-      ? await convertDbSchema(dbSchema, neo4j)
+      ? convertDbSchema(dbSchema, neo4j)
       : dbSchema;
     lastSemanticJob = proxyWorker.lintCypherQuery(
       query,

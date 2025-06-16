@@ -418,11 +418,10 @@ export async function switchWorkerOnLanguageServer(
 async function downloadLintWorker(
   fileName: string,
   destDir: string,
-  linterVersion: string,
 ): Promise<void> {
   const filePath = path.join(destDir, fileName);
   //TODO: Set this to proper npm registry when package is published.
-  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-${linterVersion}.tgz`;
+  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
   const response = await axios.get(downloadUrl, { responseType: 'stream' });
   await pipeline(
     response.data,
@@ -490,7 +489,7 @@ async function dynamicallyAdjustLinter(): Promise<void> {
       if (fileExists) {
         await switchWorkerOnLanguageServer(fileName, destDir);
       } else {
-        await downloadLintWorker(fileName, destDir, linterVersion);
+        await downloadLintWorker(fileName, destDir);
         await switchWorkerOnLanguageServer(fileName, destDir);
       }
     }
