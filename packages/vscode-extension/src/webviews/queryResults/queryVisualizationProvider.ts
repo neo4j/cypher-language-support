@@ -12,10 +12,19 @@ import { QueryResultsMessage, views } from './queryResultsTypes';
 
 export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;
+  private viewReadyResolver!: (view: WebviewView) => void;
+  public viewReadyPromise: Promise<WebviewView>;
+
+  constructor() {
+    this.viewReadyPromise = new Promise((resolve) => {
+      this.viewReadyResolver = resolve;
+    });
+  }
 
   resolveWebviewView(webviewView: WebviewView) {
     this.view = webviewView;
     views.visualizationView = webviewView;
+    this.viewReadyResolver(webviewView);
 
     webviewView.webview.options = {
       enableScripts: true,
@@ -29,6 +38,16 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
           ? `Visualization: ${msg.result.statement}`
           : `Visualization`;
       }
+    });
+
+    window.onDidChangeActiveColorTheme(async (e) => {
+      await this.view.webview.postMessage({
+        type: 'themeUpdate',
+        isDarkTheme:
+          e.kind === ColorThemeKind.Dark ||
+          e.kind === ColorThemeKind.HighContrast,
+        to: 'visualizationView',
+      });
     });
   }
 
