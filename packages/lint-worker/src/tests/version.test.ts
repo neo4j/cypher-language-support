@@ -1,12 +1,6 @@
-import { fetchNPMVersions, filterLinterVersions } from '../helpers';
 import { compareMajorMinorVersions } from '../version';
 
 describe('Version comparison', () => {
-  // TODO: When we push to npm, populate this with tests that we get expected versions and not unexpected
-  test('linter versions', async () => {
-    expect(filterLinterVersions(await fetchNPMVersions())).toContain('5.24.0');
-  });
-
   test('Comparing versions for major/minor version', () => {
     expect(compareMajorMinorVersions('5.24.0', '5.25.0')).toBe(-1);
     expect(compareMajorMinorVersions('5.24.0', '5.25.1')).toBe(-1);

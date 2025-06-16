@@ -135,7 +135,7 @@ connection.onNotification(
 
     void (async () => {
       await setLintWorker(lintWorkerPath);
-      neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
+      relintAllDocuments();
     })();
   },
 );
