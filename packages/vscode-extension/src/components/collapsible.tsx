@@ -2,7 +2,6 @@ import { IconButton } from '@neo4j-ndl/react';
 import {
   ChevronDownIconOutline,
   ChevronRightIconOutline,
-  ExploreIcon,
 } from '@neo4j-ndl/react/icons';
 import React from 'react';
 
