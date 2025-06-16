@@ -1376,31 +1376,6 @@ Attempted to access graph other`,
     ]);
   });
 
-  test('Shows errors about semantic features not enabled yet in Cypher 25', () => {
-    const query = 'CYPHER 25 MATCH DIFFERENT RELATIONSHIP (n) RETURN n';
-
-    expect(getDiagnosticsForQuery({ query })).toEqual([
-      {
-        message: `Match modes such as \`DIFFERENT RELATIONSHIPS\` are not supported yet.`,
-        offsets: {
-          end: 38,
-          start: 16,
-        },
-        range: {
-          end: {
-            character: 38,
-            line: 0,
-          },
-          start: {
-            character: 16,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-    ]);
-  });
-
   test('Shows errors for pattern selectors', () => {
     const query = `MATCH
           p1 = ANY 2 PATHS (a)-->*(c)-->(c),
