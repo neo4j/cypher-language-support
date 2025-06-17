@@ -170,7 +170,7 @@ describe('extractNodesAndRels', () => {
     expect(relationships.length).toBe(0);
   });
 
-  test('should respect the max nodes limit and filter out dangling relations unless asked to keep them', () => {
+  test('should respect the max nodes limit and not filter out dangling relations when asked to keep them', () => {
     const startNode = new Node(
       1,
       ['Person'],
