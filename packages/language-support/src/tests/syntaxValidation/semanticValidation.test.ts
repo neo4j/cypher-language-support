@@ -14,6 +14,32 @@ describe('Semantic validation spec', () => {
     _internalFeatureFlags.cypher25 = isCypher25;
   });
 
+  test('SyntaxChecker-exceptions work', () => {
+    const query1 = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25000';
+    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
+    expect(diagnostics1).toEqual([
+      {
+        message:
+          "Invalid Cypher version '25000'. Valid Cypher versions are: 5, 25",
+        offsets: {
+          end: 54,
+          start: 49,
+        },
+        range: {
+          end: {
+            character: 54,
+            line: 0,
+          },
+          start: {
+            character: 49,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Semantic analysis is dependant on cypher version', () => {
     const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
