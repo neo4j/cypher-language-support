@@ -225,4 +225,11 @@ describe('extractNodesAndRels', () => {
     expect(graphNodeStart.properties).toEqual({ prop1: 'prop1' });
     expect(relationships.length).toBe(1);
   });
+
+  test('should handle empty results', () => {
+    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([]);
+    expect(limitHit).toBe(false);
+    expect(nodes.length).toBe(0);
+    expect(relationships.length).toBe(0);
+  });
 });

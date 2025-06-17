@@ -14,7 +14,7 @@ export type Properties = RecordShape<string, CypherProperty>;
 /**
  * Result type containing deduplicated nodes and relationships extracted from Neo4j records.
  */
-export type DeduplicatedBasicNodesAndRels = {
+export type DeduplicatedNodesAndRels = {
   /** Array of unique nodes found in the records */
   nodes: Node<Integer, Properties, string>[];
   /** Array of unique relationships found in the records */
@@ -36,7 +36,7 @@ export type DeduplicatedBasicNodesAndRels = {
  * @param options.nodeLimit - Maximum number of unique nodes to extract (optional)
  * @param options.keepDanglingRels - Whether to keep relationships whose start/end nodes are missing (default: false)
  *
- * @returns The {@link DeduplicatedBasicNodesAndRels} containing unique nodes and relationships
+ * @returns The {@link DeduplicatedNodesAndRels} containing unique nodes and relationships
  */
 export const extractUniqueNodesAndRels = (
   records: Record[],
@@ -44,11 +44,8 @@ export const extractUniqueNodesAndRels = (
     nodeLimit,
     keepDanglingRels = false,
   }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
-): DeduplicatedBasicNodesAndRels => {
+): DeduplicatedNodesAndRels => {
   let limitHit = false;
-  if (records.length === 0) {
-    return { nodes: [], relationships: [], limitHit: false };
-  }
 
   const items = new Set<unknown>();
 

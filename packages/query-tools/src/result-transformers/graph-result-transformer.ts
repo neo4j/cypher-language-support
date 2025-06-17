@@ -6,7 +6,7 @@ import {
 } from 'neo4j-driver';
 
 import {
-  DeduplicatedBasicNodesAndRels,
+  DeduplicatedNodesAndRels,
   extractUniqueNodesAndRels,
 } from '../cypher-execution/extract-unique-nodes-and-relationships';
 
@@ -14,9 +14,9 @@ import {
  * Result type for graph queries that includes deduplicated nodes and relationships
  * along with the original records and query summary.
  *
- * See {@link DeduplicatedBasicNodesAndRels} for the type of the nodes and relationships.
+ * See {@link DeduplicatedNodesAndRels} for the type of the nodes and relationships.
  */
-export type GraphResult = DeduplicatedBasicNodesAndRels & {
+export type GraphResult = DeduplicatedNodesAndRels & {
   /** Original Neo4j records returned by the query */
   records: Record[];
   summary: ResultSummary<Integer>;
